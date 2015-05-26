@@ -24,12 +24,20 @@
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+
+  <!--
+  | The base-package indicates where components stored. Spring will scan this
+  | folder and find out the annotated beans and register it in Spring container.
+  -->
+  <context:component-scan base-package="org.jasig.cas" />
 
   <!-- Scan CAS artifacts to mvc annotations, such as controllers.
        The scan is controlled by the application context config file -->
@@ -68,6 +76,11 @@
   <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="1"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
+
+
+    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="1"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
   -->
 
   <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
@@ -99,7 +112,11 @@
       <util:properties>
         <prop key="/serviceValidate">serviceValidateController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
-        
+
+        <!--
+        <prop key="/samlValidate">samlValidateController</prop>
+        -->
+
         <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
         <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
         <prop key="/validate">legacyValidateController</prop>
@@ -250,7 +267,8 @@
         p:argumentExtractors-ref="argumentExtractors"
         p:warnCookieGenerator-ref="warnCookieGenerator"
         p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
-        p:servicesManager-ref="servicesManager"  />
+        p:servicesManager-ref="servicesManager"
+        p:enableFlowOnAbsentServiceRequest="${create.sso.missing.service:true}"  />
 
   <bean id="genericSuccessViewAction" class="org.jasig.cas.web.flow.GenericSuccessViewAction"
         c:centralAuthenticationService-ref="centralAuthenticationService" />
@@ -268,7 +286,7 @@
         c:centralAuthenticationService-ref="centralAuthenticationService"
         c:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
         c:servicesManager-ref="servicesManager"
-        p:createSsoSessionCookieOnRenewAuthentications="${create.sso.renewed.authn:true}"  />
+        p:createSsoSessionCookieOnRenewAuthentications="${create.sso.renewed.authn:true}" />
 
   <bean id="gatewayServicesManagementCheck" class="org.jasig.cas.web.flow.GatewayServicesManagementCheck"
     c:servicesManager-ref="servicesManager" />
@@ -291,4 +309,16 @@
         c:cas-ref="centralAuthenticationService"
         c:tgtCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
         c:warnCookieGenerator-ref="warnCookieGenerator"/>
+
+  <bean id="acceptableUsagePolicyFormAction" class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
+
+  <!--
+  <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
+          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
+          p:centralAuthenticationService-ref="centralAuthenticationService"
+          p:proxyHandler-ref="proxy20Handler"
+          p:argumentExtractor-ref="samlArgumentExtractor"
+          p:successView="casSamlServiceSuccessView"
+          p:failureView="casSamlServiceFailureView"/>
+  -->
 </beans>

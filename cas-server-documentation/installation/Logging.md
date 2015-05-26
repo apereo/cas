@@ -51,7 +51,7 @@ The `log4j2.xml` itself controls the refresh interval of the logging configurati
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="60">
     <Appenders>
-		...
+        ...
 {% endhighlight %}
 
 ###Appenders
@@ -120,162 +120,7 @@ SERVER IP ADDRESS: ...
 {% endhighlight %}
 
 Certain number of characters are left at the trailing end of the ticket id to assist with troubleshooting and diagnostics. This is achieved by providing a specific binding for the SLF4j configuration. 
-
-##Performance Statistics
-CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics. 
-
-###Configuration
-The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
-
-{% highlight bash %}
-
-# Define how often should metric data be reported. Default is 30 seconds.
-# metrics.refresh.internal=30s
-
-{% endhighlight %}
-
-Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans. 
-
-{% highlight xml %}
-
-<metrics:reporter type="jmx" metric-registry="metrics" />
-
-{% endhighlight %}
-
-To explore this you can use VisualVM (which ships with most JDKs as jvisualvm) with the VisualVM-MBeans plugins installed or JConsole (which ships with most JDKs as jconsole):
-
-![](http://i.imgur.com/g8fmUlE.png)
-
-Additionally, various metrics on JVM performance and data are also reported. The metrics contain a number of reusable gauges and metric sets which allow you to easily instrument JVM internals.
-
-{% highlight xml %}
-
-<metrics:register metric-registry="metrics">
-    <bean metrics:name="jvm.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
-    <bean metrics:name="jvm.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
-    <bean metrics:name="jvm.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet" />
-    <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
-</metrics:register>
-
-{% endhighlight %}
-
-Supported metrics include:
-
-- Run count and elapsed times for all supported garbage collectors
-- Memory usage for all memory pools, including off-heap memory
-- Breakdown of thread states, including deadlocks
-- File descriptor usage
-- ...
-
-###Loggers
-All performance data and metrics are routed to a log file via the Log4j configuration:
-
-{% highlight xml %}
-...
-<RollingFile name="perfFileAppender" fileName="perfStats.log" append="true"
-             filePattern="perfStats-%d{yyyy-MM-dd-HH}-%i.log">
-    <PatternLayout pattern="%m%n"/>
-    <Policies>
-        <OnStartupTriggeringPolicy />
-        <SizeBasedTriggeringPolicy size="10 MB"/>
-        <TimeBasedTriggeringPolicy />
-    </Policies>
-</RollingFile>
-
-...
-
-<Logger name="perfStatsLogger" level="info" additivity="false">
-	<AppenderRef ref="perfFileAppender"/>
-</Logger>
-
-{% endhighlight %}
-
-
-###Sample Output
-{% highlight bash %}
-type=GAUGE, name=jvm.gc.Copy.count, value=22
-type=GAUGE, name=jvm.gc.Copy.time, value=466
-type=GAUGE, name=jvm.gc.MarkSweepCompact.count, value=3
-type=GAUGE, name=jvm.gc.MarkSweepCompact.time, value=414
-type=GAUGE, name=jvm.memory.heap.committed, value=259653632
-type=GAUGE, name=jvm.memory.heap.init, value=268435456
-type=GAUGE, name=jvm.memory.heap.max, value=1062338560
-type=GAUGE, name=jvm.memory.heap.usage, value=0.09121857348376773
-type=GAUGE, name=jvm.memory.heap.used, value=96905008
-
-type=METER, name=org.jasig.cas.CentralAuthenticationServiceImpl.CREATE_TICKET_GRANTING_TICKET_METER, count=0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond
-
-type=METER, name=org.jasig.cas.CentralAuthenticationServiceImpl.DESTROY_TICKET_GRANTING_TICKET_METER, count=0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond
-
-type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.GRANT_SERVICE_TICKET_TIMER, count=0, min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
-
-type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.VALIDATE_SERVICE_TICKET_TIMER, count=0, min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
-
-{% endhighlight %}
-
-###Viewing Metrics on the Web
-The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser. The endpoint is protected by Spring Security, and the access rules are placed inside the `cas.properties` file:
-
-{% highlight bash %}
-# Spring Security's EL-based access rules for the /statistics URI of CAS that exposes stats about the CAS server
-cas.securityContext.statistics.access=hasIpAddress('127.0.0.1')
-{% endhighlight %}
-
-Once access is granted, the following sub-endpoints can be used to query the CAS server's status and metrics:
-
-####`/statistics/ping`
-Reports back `pong` to indicate that the CAS server is running.
-
-####`/statistics/metrics?pretty=true`
-Reports back metrics and performance data. The optional `pretty` flag attempts to format the JSON output.
-
-####`/statistics/threads`
-Reports back JVM thread info.
-
-####`/statistics/healthcheck`
-Unused at this point, but may be used later to output health examinations of the CAS server's internals, such as ticket registry, etc.
-
-##Routing logs to SysLog
-CAS logging framework does have the ability to route messages to an external syslog instance. To configure this, you first to configure the `SysLogAppender` and then specify which messages needs to be routed over to this instance:
-
-{% highlight xml %}
-...
-<Appenders>
-    <Syslog name="SYSLOG" format="RFC5424" host="localhost" port="8514"
-            protocol="TCP" appName="MyApp" includeMDC="true"
-            facility="LOCAL0" enterpriseNumber="18060" newLine="true"
-            messageId="Audit" id="App"/>
-</Appenders>
-
-...
-
-<logger name="org.jasig" additivity="true">
-    <level value="DEBUG" />
-    <appender-ref ref="cas" />
-    <appender-ref ref="SYSLOG" />
-</logger>
-
-{% endhighlight %}
-
-You can also configure the remote destination output over SSL and specify the related keystore configuration:
-
-{% highlight xml %}
-...
-
-<Appenders>
-    <TLSSyslog name="bsd" host="localhost" port="6514">
-      <SSL>
-        <KeyStore location="log4j2-keystore.jks" password="changeme"/>
-        <TrustStore location="truststore.jks" password="changeme"/>
-      </SSL>
-    </TLSSyslog>
-</Appenders>
-
-...
-
-{% endhighlight %}
-
-For additional logging functionality, please refer to the Log4j configuration url.  
+ 
 
 #Audits
 CAS uses the [Inspektr framework](https://github.com/dima767/inspektr) for auditing purposes and statistics. The Inspektr project allows for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
@@ -308,19 +153,86 @@ Audit functionality is specifically controlled by the `WEB-INF/spring-configurat
 ###Database Audits
 By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager`. If you intend to use a database for auditing functionality, adjust the audit manager to match the sample configuration below:
 {% highlight xml %}
-<bean id="auditManager" class="com.github.inspektr.audit.support.JdbcAuditTrailManager">
-  <constructor-arg index="0" ref="inspektrTransactionTemplate" />
-  <property name="dataSource" ref="dataSource" />
-  <property name="cleanupCriteria" ref="auditCleanupCriteria" />
-</bean>
 <bean id="auditCleanupCriteria"
-  class="com.github.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
-  <constructor-arg index="0" value="180" />
+    class="com.github.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
+    <constructor-arg index="0" value="180" />
 </bean>
+
+<bean id="auditTrailManager"
+      class="com.github.inspektr.audit.support.JdbcAuditTrailManager"
+      c:transactionTemplate-ref="inspektrTransactionTemplate"
+      p:dataSource-ref="dataSource"
+      p:cleanupCriteria-ref="auditCleanupCriteria" />
+
+<bean id="inspektrTransactionManager"
+      class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+      p:dataSource-ref="dataSource" />
+
+<bean id="inspektrTransactionTemplate"
+      class="org.springframework.transaction.support.TransactionTemplate"
+      p:transactionManager-ref="inspektrTransactionManager"
+      p:isolationLevelName="ISOLATION_READ_COMMITTED"
+      p:propagationBehaviorName="PROPAGATION_REQUIRED" />
 {% endhighlight %}
 
-Refer to [Inspektr documentation](https://github.com/dima767/inspektr/wiki/Inspektr-Auditing) on how to create the database schema.
+You'll need to have a `dataSource` that defines a connection to your database. The following snippet
+demonstrates a data source that connects to HSQLDB v1.8:
 
+{% highlight xml %}
+<bean id="dataSource" 
+      class="org.apache.commons.dbcp.BasicDataSource" 
+      destroy-method="close" lazy-init="true"
+      p:poolPreparedStatements="true"
+      p:url="jdbc:hsqldb:hsql://localhost:9001/misagh"
+      p:username="SA"
+      p:password=""
+      p:driverClassName="org.hsqldb.jdbcDriver"
+      p:validationQuery="SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS;" />
+{% endhighlight %}
+
+In order to configure the `dataSource` you will furthermore need additional dependencies
+in the `pom.xml` file that deal with creating connections. 
+
+{% highlight xml %}
+<dependency>
+    <groupId>commons-dbcp</groupId>
+    <artifactId>commons-dbcp</artifactId>
+    <version>${dbcp.version}</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>commons-pool</groupId>
+    <artifactId>commons-pool</artifactId>
+    <version>${commons.pool.version}</version>
+    <scope>runtime</scope>
+</dependency>
+<!-- Replace with your specific database of choice. -->
+<dependency>
+    <groupId>org.hsqldb</groupId>
+    <artifactId>hsqldb</artifactId>
+    <version>${hsqldb.version}</version>
+    <scope>runtime</scope>
+</dependency>
+{% endhighlight %}
+
+You will also need the dependency for the database driver that you have chosen. 
+
+Finally, the following database table needs to be created beforehand:
+
+{% highlight sql %}
+CREATE TABLE COM_AUDIT_TRAIL
+(
+    AUD_USER      VARCHAR(100) NOT NULL,
+    AUD_CLIENT_IP VARCHAR(15)   NOT NULL,
+    AUD_SERVER_IP VARCHAR(15)   NOT NULL,
+    AUD_RESOURCE  VARCHAR(100) NOT NULL,
+    AUD_ACTION    VARCHAR(100) NOT NULL,
+    APPLIC_CD     VARCHAR(15)   NOT NULL,
+    AUD_DATE      TIMESTAMP     NOT NULL
+);
+{% endhighlight %}
+
+You may need to augment the syntax and column types per your specific database implementation.
 
 ##Sample Log Output
 {% highlight bash %}

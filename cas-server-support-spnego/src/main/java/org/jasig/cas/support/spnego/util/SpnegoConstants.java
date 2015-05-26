@@ -18,9 +18,6 @@
  */
 package org.jasig.cas.support.spnego.util;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Bytes;
-
 /**
  * Spnego Constants.
  *
@@ -49,9 +46,8 @@ public interface SpnegoConstants {
     String SPNEGO_CREDENTIALS = "spnegoCredentials";
 
     /** The ntlmssp signature. */
-    Byte[] NTLMSSP_SIGNATURE = (Byte[]) ImmutableList.copyOf(
-            Bytes.asList(new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
-            (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0})).toArray();
+    Byte[] NTLMSSP_SIGNATURE = {Byte.valueOf((byte) 'N'), Byte.valueOf((byte) 'T'), Byte.valueOf((byte) 'L'),
+        Byte.valueOf((byte) 'M'), Byte.valueOf((byte) 'S'), Byte.valueOf((byte) 'S'), Byte.valueOf((byte) 'P'), Byte.valueOf((byte) 0)};
 
     /** The ntlm. */
     String NTLM = "NTLM";
