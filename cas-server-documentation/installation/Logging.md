@@ -123,7 +123,7 @@ Certain number of characters are left at the trailing end of the ticket id to as
  
 
 #Audits
-CAS uses the [Inspektr framework](https://github.com/Jasig/inspektr) for auditing purposes and statistics. The Inspektr project allows for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
+CAS uses the [Inspektr framework](https://github.com/dima767/inspektr) for auditing purposes and statistics. The Inspektr project allows for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
 
 ##Components
 
