@@ -19,17 +19,27 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 
 <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 
-<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-    <property name="dataSource" ref="dataSource"/>
-    <property name="jpaVendorAdapter">
-      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="generateDdl" value="true"/>
-        <property name="showSql" value="true" />
-      </bean>
-    </property>
+<util:list id="packagesToScan">
+    <value>org.jasig.cas.services</value>
+    <value>org.jasig.cas.ticket</value>
+    <value>org.jasig.cas.adaptors.jdbc</value>
+</util:list>
+
+<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+    id="jpaVendorAdapter"
+    p:generateDdl="true"
+    p:showSql="true" />
+    
+<bean id="entityManagerFactory" 
+    class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+    p:dataSource-ref="dataSource"
+    p:jpaVendorAdapter-ref="jpaVendorAdapter"
+    p:packagesToScan-ref="packagesToScan">
     <property name="jpaProperties">
       <props>
-        <prop key="hibernate.hbm2ddl.auto">update</prop>
+        <prop key="hibernate.dialect">${database.dialect}</prop>
+        <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+        <prop key="hibernate.jdbc.batch_size">${database.batchSize}</prop>
       </props>
     </property>
 </bean>
