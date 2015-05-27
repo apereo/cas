@@ -163,7 +163,7 @@
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyOKWithAuthorizationHeader() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">final</strong> MockHttpServletRequest mockRequest = <strong class="jxr_keyword">new</strong> MockHttpServletRequest(<span class="jxr_string">"GET"</span>, CONTEXT
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>                 + OAuthConstants.PROFILE_URL);
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         mockRequest.addHeader(<span class="jxr_string">"Authorization"</span>, <span class="jxr_string">"bearer "</span> + TGT_ID);
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         mockRequest.addHeader(<span class="jxr_string">"Authorization"</span>, OAuthConstants.BEARER_TOKEN + <span class="jxr_string">" "</span> + TGT_ID);
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         <strong class="jxr_keyword">final</strong> MockHttpServletResponse mockResponse = <strong class="jxr_keyword">new</strong> MockHttpServletResponse();
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">final</strong> OAuth20WrapperController oauth20WrapperController = <strong class="jxr_keyword">new</strong> OAuth20WrapperController();
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>         <strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry = mock(TicketRegistry.<strong class="jxr_keyword">class</strong>);
