@@ -21,7 +21,7 @@ package org.jasig.cas.authentication;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.github.inspektr.audit.annotation.Audit;
+import org.jasig.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;

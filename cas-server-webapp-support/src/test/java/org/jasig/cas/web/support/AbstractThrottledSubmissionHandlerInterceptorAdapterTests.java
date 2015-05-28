@@ -18,8 +18,8 @@
  */
 package org.jasig.cas.web.support;
 
-import com.github.inspektr.common.web.ClientInfo;
-import com.github.inspektr.common.web.ClientInfoHolder;
+import org.jasig.inspektr.common.web.ClientInfo;
+import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
