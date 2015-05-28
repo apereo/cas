@@ -38,7 +38,7 @@
 
   <aop:aspectj-autoproxy/>
 
-  <bean id="auditTrailManagementAspect" class="com.github.inspektr.audit.AuditTrailManagementAspect"
+  <bean id="auditTrailManagementAspect" class="org.jasig.inspektr.audit.AuditTrailManagementAspect"
     c:applicationCode="CAS" c:auditablePrincipalResolver-ref="auditablePrincipalResolver" 
     c:auditTrailManagers-ref="auditTrailManager" c:auditActionResolverMap-ref="auditActionResolverMap"
     c:auditResourceResolverMap-ref="auditResourceResolverMap" />
@@ -51,7 +51,7 @@
       <ref bean="ticketCreationActionResolver" />
     </entry>
     <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
-      <bean class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver" />
+      <bean class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver" />
     </entry>
     <entry key="GRANT_SERVICE_TICKET_RESOLVER">
       <ref bean="ticketCreationActionResolver" />
@@ -89,19 +89,19 @@
     c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="authenticationActionResolver"
-    class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver"
+    class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"
     c:successSuffix="_SUCCESS" c:failureSuffix="_FAILED" />
   
   <bean id="ticketCreationActionResolver"
-    class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver"
+    class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"
     c:successSuffix="_CREATED" c:failureSuffix="_NOT_CREATED" />
   
   <bean id="ticketValidationActionResolver"
-    class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver"
+    class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver"
     c:successSuffix="D" c:failureSuffix="_FAILED" />
   
   <bean id="returnValueResourceResolver"
-     class="com.github.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver" />
+     class="org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver" />
      
   <bean id="ticketResourceResolver"
     class="org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver" />

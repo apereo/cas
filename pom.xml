@@ -413,15 +413,27 @@
                 <version>${maven-aspectj-plugin.version}</version>
                 <executions>
                     <execution>
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <source>${project.build.sourceVersion}</source>
-                    <target>${project.build.targetVersion}</target>
+                    <sources/>
                     <complianceLevel>${project.build.sourceVersion}</complianceLevel>
+                    <forceAjcCompile>true</forceAjcCompile>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.jasig.inspektr</groupId>
+                            <artifactId>inspektr-aspect</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                    <weaveDirectories>
+                        <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
+                    </weaveDirectories>
+                    <skip>false</skip>
+                    <showWeaveInfo />
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -635,6 +647,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jasig.inspektr</groupId>
+            <artifactId>inspektr-aspect</artifactId>
+            <version>${inspektr.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -808,7 +826,7 @@
 
             <!-- Inspektr Dependencies -->
             <dependency>
-                <groupId>com.github.inspektr</groupId>
+                <groupId>org.jasig.inspektr</groupId>
                 <artifactId>inspektr-audit</artifactId>
                 <version>${inspektr.version}</version>
                 <exclusions>
@@ -824,7 +842,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.github.inspektr</groupId>
+                <groupId>org.jasig.inspektr</groupId>
                 <artifactId>inspektr-common</artifactId>
                 <version>${inspektr.version}</version>
                 <exclusions>
@@ -840,7 +858,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.github.inspektr</groupId>
+                <groupId>org.jasig.inspektr</groupId>
                 <artifactId>inspektr-support-spring</artifactId>
                 <version>${inspektr.version}</version>
                 <exclusions>
@@ -1466,7 +1484,7 @@
         <junit.version>4.12</junit.version>
         <checkstyle.version>6.5</checkstyle.version>
         <commons.lang.version>3.4</commons.lang.version>
-        <inspektr.version>1.1.GA</inspektr.version>
+        <inspektr.version>1.2.GA-SNAPSHOT</inspektr.version>
         <commons.io.version>2.4</commons.io.version>
         <mockito.version>1.10.19</mockito.version>
         <ehcache.version>2.10.0</ehcache.version>
