@@ -27,6 +27,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -79,12 +80,9 @@ public final class ServiceTicketImpl extends AbstractTicket implements
      * Service are null.
      */
     protected ServiceTicketImpl(final String id,
-        final TicketGrantingTicketImpl ticket, final Service service,
+        @NotNull final TicketGrantingTicketImpl ticket, @NotNull final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, ticket, policy);
-
-        Assert.notNull(ticket, "ticket cannot be null");
-        Assert.notNull(service, "service cannot be null");
 
         this.service = service;
         this.fromNewLogin = fromNewLogin;
@@ -146,8 +144,8 @@ public final class ServiceTicketImpl extends AbstractTicket implements
             this.grantedTicketAlready = Boolean.TRUE;
         }
 
-        return new TicketGrantingTicketImpl(id, this.getGrantingTicket(),
-            authentication, expirationPolicy);
+        return new TicketGrantingTicketImpl(id, service,
+                this.getGrantingTicket(), authentication, expirationPolicy);
     }
 
     public Authentication getAuthentication() {
