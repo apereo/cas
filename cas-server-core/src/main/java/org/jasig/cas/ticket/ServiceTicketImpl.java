@@ -21,7 +21,6 @@ package org.jasig.cas.ticket;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.springframework.util.Assert;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
