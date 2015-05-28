@@ -275,16 +275,27 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             throw new UnauthorizedSsoServiceException();
         }
 
-        //CAS-1019
-        final List<Authentication> authns = ticketGrantingTicket.getChainedAuthentications();
-        if(authns.size() > 1) {
-            if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
-                final String message = String.
-                        format("ServiceManagement: Proxy attempt by service [%s] (registered service [%s]) is not allowed.",
-                        service.getId(), registeredService.toString());
-                logger.warn(message);
-                throw new UnauthorizedProxyingException(message);
+        final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
+        if (proxiedBy != null) {
+            logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
+            final RegisteredService proxyingService = servicesManager.findServiceBy(proxiedBy);
+
+            if (proxyingService != null) {
+                logger.debug("Located proxying service [{}] in the service registry", proxyingService);
+                if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
+                    logger.warn("Found proxying service [{}], but proxy attempt by service [{}] (registered service [{}]) is not allowed.",
+                            proxyingService.getId(), service.getId(), registeredService.toString());
+                    throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                            + registeredService.getId());
+                }
+            } else {
+                logger.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
+                        service.getId(), registeredService.getId());
+                throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                        + registeredService.getId());
             }
+        } else {
+            logger.trace("TGT is not proxied by another service");
         }
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
