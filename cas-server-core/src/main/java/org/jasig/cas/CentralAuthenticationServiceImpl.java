@@ -283,8 +283,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             if (proxyingService != null) {
                 logger.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
-                    logger.warn("Found proxying service [{}], but proxy attempt by service [{}] (registered service [{}]) is not allowed.",
-                            proxyingService.getId(), service.getId(), registeredService.toString());
+                    logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
+                            proxyingService.getId(), service.getId());
                     throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
                             + registeredService.getId());
                 }
