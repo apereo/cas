@@ -31,7 +31,7 @@
 <html xml:lang="en" lang="en" ng-app="casmgmt">
 
     <head>
-        <title><spring:message code="management.services.title" /></title>
+        <title><spring:message code="management.services.header.apptitle" /></title>
         <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
         <link rel="icon" href="<c:url value=" ../favicon.ico" />" type="image/x-icon" />
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -57,7 +57,7 @@
             <div class="casmgmt-manage" ng-show="action.isSelected('manage')">
                 <div class="row">
                     <div class="col-sm-12">
-                        <h1><i class="fa fa-gears"></i> <spring:message code="manageServiceView" /></h1>
+                        <h1><i class="fa fa-gears"></i> <spring:message code="management.services.header.navbar.navitem.manageService" /></h1>
 
                         <!-- Warning alert -->
                         <c:if test="${fn:length(services) eq 0}">
@@ -127,7 +127,7 @@
 
                 <div class="row">
                     <div class="col-sm-12">
-                        <button class="btn btn-info" ng-click="action.selectAction('add')"><i class="fa fa-plus-circle"></i> <spring:message code="addServiceView" /></button>
+                        <button class="btn btn-info" ng-click="action.selectAction('add')"><i class="fa fa-plus-circle"></i> <spring:message code="management.services.header.navbar.navitem.addNewService" /></button>
                     </div>
                 </div>
             </div> <!-- end .casmgmt-manage div -->

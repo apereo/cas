@@ -33,15 +33,15 @@
                 <div class="navbar-brand">
                     <img src="<c:url value="/images/logo_cas.png"/>" alt="Jasig CAS logo" />
                 </div>
-                <h4>Services Management</h4>
+                <h4><spring:message code="management.services.header.apptitle" /></h4>
             </div> <!-- end .navbar-header div -->
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="casmgt-navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href ng-click="action.selectAction('manage')"><i class="fa fa-gears"></i> <spring:message code="manageServiceView" /></a></li>
-                    <li><a href ng-click="action.selectAction('add')"><i class="fa fa-plus-circle"></i> <spring:message code="addServiceView" /></a></li>
-                    <li><a href="logout.html"><i class="fa fa-sign-out"></i> <spring:message code="management.services.link.logout" /></a></li>
+                    <li><a href ng-click="action.selectAction('manage')"><i class="fa fa-gears"></i> <spring:message code="management.services.header.navbar.navitem.manageService" /></a></li>
+                    <li><a href ng-click="action.selectAction('add')"><i class="fa fa-plus-circle"></i> <spring:message code="management.services.header.navbar.navitem.addNewService" /></a></li>
+                    <li><a href="logout.html"><i class="fa fa-sign-out"></i> <spring:message code="management.services.header.navbar.navitem.logout" /></a></li>
                 </ul>
             </div><!-- end .navbar-collapse div -->
         </div> <!-- end .container-fluid div -->
