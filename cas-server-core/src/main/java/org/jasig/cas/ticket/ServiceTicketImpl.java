@@ -21,6 +21,7 @@ package org.jasig.cas.ticket;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.Assert;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -83,6 +84,8 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, ticket, policy);
 
+        Assert.notNull(service, "service cannot be null");
+        Assert.notNull(ticket, "ticket cannot be null");
         this.service = service;
         this.fromNewLogin = fromNewLogin;
     }
