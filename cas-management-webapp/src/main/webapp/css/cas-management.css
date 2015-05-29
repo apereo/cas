@@ -6695,6 +6695,9 @@ html {
 .casmgmt-app .casmgmt-form label {
   padding-top: 7px;
 }
+.casmgmt-app .casmgmt-form .form-padding {
+  margin-top: 10px;
+}
 .casmgmt-app .casmgmt-form .form-tooltip-icon {
   float: right;
   padding-top: 5px;
@@ -6703,8 +6706,18 @@ html {
 .casmgmt-app .casmgmt-form .form-tooltip-icon:hover {
   color: #5db0d4;
 }
-.casmgmt-app .casmgmt-form .radio-group {
+.casmgmt-app .casmgmt-form .input-group-required {
+  color: #641621;
+}
+.casmgmt-app .casmgmt-form .radio-group,
+.casmgmt-app .casmgmt-form .checkbox-group {
   margin-bottom: 10px;
+}
+.casmgmt-app .casmgmt-form .services-button-group {
+  margin: 20px;
+  padding: 20px;
+  border-top: 1px solid #cccccc;
+  text-align: center;
 }
 .casmgmt-app #casmgmt-header {
   border-bottom: 1px solid #6ec066;
@@ -6747,19 +6760,6 @@ html {
 }
 .casmgmt-app .casmgmt-content .services-table tbody {
   border: 1px solid #e6e6e6;
-}
-.casmgmt-app .casmgmt-content .form-padding {
-  margin-top: 10px;
-}
-.casmgmt-app .casmgmt-content .input-group-required {
-  background-color: #f0bcc4;
-  color: #641621;
-}
-.casmgmt-app .casmgmt-content .services-button-group {
-  margin: 20px;
-  padding: 20px;
-  border-top: 1px solid #cccccc;
-  text-align: center;
 }
 .casmgmt-app .casmgmt-content .services-summary-table td {
   border-top: none;
