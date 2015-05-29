@@ -22,7 +22,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
-import org.apache.commons.collections.functors.TruePredicate;
+import org.apache.commons.collections4.functors.TruePredicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -118,7 +118,7 @@ public final class StatisticsController implements ServletContextAware {
         int expiredSts = 0;
 
         try {
-            final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(TruePredicate.getInstance());
+            final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(TruePredicate.INSTANCE);
 
             for (final Ticket ticket : tickets) {
                 if (ticket instanceof ServiceTicket) {
