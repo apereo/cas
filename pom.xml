@@ -251,7 +251,9 @@
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
                 <executions>
                   <execution>
                     <phase>generate-sources</phase>
@@ -1557,6 +1559,7 @@
         <maven-findbugs-contrib-plugin.version>6.0.0</maven-findbugs-contrib-plugin.version>
         <maven-findbugs-security-plugin.version>1.4.0</maven-findbugs-security-plugin.version>
         <maven-buildnumber-plugin-version>1.3</maven-buildnumber-plugin-version>
+        <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
 
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
