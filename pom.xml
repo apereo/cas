@@ -251,6 +251,28 @@
 
         <plugins>
             <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <phase>generate-sources</phase>
+                    <goals>
+                      <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                      <outputDirectory>${project.build.directory}/unwoven-classes</outputDirectory>
+                      <resources>
+                        <resource>
+                            <directory>${basedir}</directory>
+                            <includes>
+                                <include>none</include>
+                            </includes>
+                        </resource>
+                      </resources>
+                    </configuration>
+                  </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>${maven-findbugs-plugin.version}</version>
@@ -348,7 +370,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>${project.build.sourceVersion}</source>
-                    <target>${project.build.targetVersion}</target>
+                    <target>${project.build.targetVersion}</target>          
+                    <compilerArguments>
+                        <d>${project.build.directory}/unwoven-classes</d>
+                    </compilerArguments>
                 </configuration>
             </plugin>
             <plugin>
@@ -430,7 +455,7 @@
                         </aspectLibrary>
                     </aspectLibraries>
                     <weaveDirectories>
-                        <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
+                        <weaveDirectory>${project.build.directory}/unwoven-classes</weaveDirectory>
                     </weaveDirectories>
                     <skip>false</skip>
                     <showWeaveInfo />
