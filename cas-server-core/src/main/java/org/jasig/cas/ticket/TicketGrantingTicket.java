@@ -30,7 +30,6 @@ import java.util.Map;
  * CAS cannot do anything.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 public interface TicketGrantingTicket extends Ticket {
@@ -109,4 +108,15 @@ public interface TicketGrantingTicket extends Ticket {
      * @return Non-null list of authentication associated with this ticket in leaf-first order.
      */
     List<Authentication> getChainedAuthentications();
+
+
+    /**
+    * Gets the service that produced a proxy-granting ticket.
+    *
+    * @return  Service that produced proxy-granting ticket or null if this is
+    * not a proxy-granting ticket.
+     * @since 4.1
+    */
+    Service getProxiedBy();
+
 }
