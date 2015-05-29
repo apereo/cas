@@ -18,7 +18,7 @@
  */
 package org.jasig.cas;
 
-import org.apache.commons.collections.functors.TruePredicate;
+import org.apache.commons.collections4.functors.TruePredicate;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
