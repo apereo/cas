@@ -217,6 +217,11 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
 
         @Override
+        public Service getProxiedBy() {
+            return getTicket().getProxiedBy();
+        }
+
+        @Override
         public List<Authentication> getSupplementalAuthentications() {
             return getTicket().getSupplementalAuthentications();
         }
