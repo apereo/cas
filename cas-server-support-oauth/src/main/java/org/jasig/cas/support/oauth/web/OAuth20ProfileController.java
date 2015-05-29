@@ -68,7 +68,8 @@ public final class OAuth20ProfileController extends AbstractController {
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader("Authorization");
-            if (StringUtils.isNotBlank(authHeader) && authHeader.startsWith(OAuthConstants.BEARER_TOKEN + " ")) {
+            if (StringUtils.isNotBlank(authHeader) 
+                    && authHeader.toLowerCase().startsWith(OAuthConstants.BEARER_TOKEN_IGNORE_CASE + " ")) {
                 accessToken = authHeader.substring(OAuthConstants.BEARER_TOKEN.length() + 1);
             }
         }
