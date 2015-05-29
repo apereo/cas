@@ -426,7 +426,7 @@
                     <aspectLibraries>
                         <aspectLibrary>
                             <groupId>org.jasig.inspektr</groupId>
-                            <artifactId>inspektr-aspect</artifactId>
+                            <artifactId>inspektr-aspects</artifactId>
                         </aspectLibrary>
                     </aspectLibraries>
                     <weaveDirectories>
@@ -649,9 +649,9 @@
 
         <dependency>
             <groupId>org.jasig.inspektr</groupId>
-            <artifactId>inspektr-aspect</artifactId>
+            <artifactId>inspektr-aspects</artifactId>
             <version>${inspektr.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
