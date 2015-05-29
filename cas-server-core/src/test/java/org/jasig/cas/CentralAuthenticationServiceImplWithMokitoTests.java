@@ -185,7 +185,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
 
     @Test
     public void getTicketsWithNoPredicate() {
-        final Collection<Ticket> c = this.cas.getTickets(TruePredicate.getInstance());
+        final Collection<Ticket> c = this.cas.getTickets(TruePredicate.INSTANCE);
         assertEquals(c.size(), this.ticketRegMock.getTickets().size());
     }
 
