@@ -56,9 +56,6 @@ public interface OAuthConstants {
     /** The bearer token. */
     String BEARER_TOKEN = "Bearer";
     
-    /** The bearer token in lower case. */
-    String BEARER_TOKEN_IGNORE_CASE = BEARER_TOKEN.toLowerCase();
-
     /** The OAUT h20_ callbackurl. */
     String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
 
