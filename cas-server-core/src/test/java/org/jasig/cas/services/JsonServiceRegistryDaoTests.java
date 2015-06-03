@@ -49,7 +49,7 @@ public class JsonServiceRegistryDaoTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private ServiceRegistryDao dao;
+    private final ServiceRegistryDao dao;
 
     public JsonServiceRegistryDaoTests() throws Exception {
         this.dao = new JsonServiceRegistryDao(RESOURCE.getFile());
