@@ -262,13 +262,15 @@ public class KryoTranscoderTests {
 
         private int usageCount;
 
+        private Service proxiedBy;
+
         private final Date creationDate = new Date();
 
         private final Authentication authentication;
 
         /** Factory to create the principal type. **/
         @NotNull
-        private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+        private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
         /** Constructor for serialization support. */
         MockTicketGrantingTicket() {
@@ -312,6 +314,11 @@ public class KryoTranscoderTests {
                 final boolean credentialsProvided) {
             this.usageCount++;
             return new MockServiceTicket(id);
+        }
+
+        @Override
+        public Service getProxiedBy() {
+            return proxiedBy;
         }
 
         @Override
