@@ -69,7 +69,7 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 3.0.0
  */
-public class CentralAuthenticationServiceImplWithMokitoTests {
+public class CentralAuthenticationServiceImplWithMockitoTests {
     private static final String TGT_ID = "tgt-id";
     private static final String TGT2_ID = "tgt2-id";
     
@@ -117,8 +117,9 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         final TicketGrantingTicket tgtRootMock = createRootTicketGrantingTicket();
         
         final TicketGrantingTicket tgtMock = createMockTicketGrantingTicket(TGT_ID, stMock, false,
-                tgtRootMock, new ArrayList<Authentication>()); 
-                
+                tgtRootMock, new ArrayList<Authentication>());
+        when(tgtMock.getProxiedBy()).thenReturn(TestUtils.getService("proxiedBy"));
+
         final List<Authentication> authnListMock = mock(List.class);
         //Size is required to be 2, so that we can simulate proxying capabilities
         when(authnListMock.size()).thenReturn(2);
@@ -220,7 +221,7 @@ public class CentralAuthenticationServiceImplWithMokitoTests {
         final TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);
         when(tgtMock.isExpired()).thenReturn(isExpired);
         when(tgtMock.getId()).thenReturn(id);
-        
+
         final String svcId = svcTicket.getService().getId();
         when(tgtMock.grantServiceTicket(anyString(), argThat(new VerifyServiceByIdMatcher(svcId)),
                 any(ExpirationPolicy.class), anyBoolean())).thenReturn(svcTicket);

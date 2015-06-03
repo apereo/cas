@@ -60,7 +60,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     private boolean expired;
 
-    private Map<String, Service> services = new HashMap<>();
+    private Service proxiedBy;
+
+    private final Map<String, Service> services = new HashMap<>();
 
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");
@@ -75,6 +77,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         created = new Date();
     }
 
+    @Override
     public Authentication getAuthentication() {
         return authentication;
     }
@@ -83,6 +86,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, true);
     }
 
+    @Override
     public ServiceTicket grantServiceTicket(
             final String id,
             final Service service,
@@ -92,38 +96,52 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         return new MockServiceTicket(id, service, this);
     }
 
+    @Override
+    public Service getProxiedBy() {
+        return this.proxiedBy;
+    }
+
+    @Override
     public boolean isRoot() {
         return true;
     }
 
+    @Override
     public TicketGrantingTicket getRoot() {
         return this;
     }
 
+    @Override
     public List<Authentication> getSupplementalAuthentications() {
         return Collections.emptyList();
     }
 
+    @Override
     public List<Authentication> getChainedAuthentications() {
         return Collections.emptyList();
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public boolean isExpired() {
         return expired;
     }
 
+    @Override
     public TicketGrantingTicket getGrantingTicket() {
         return this;
     }
 
+    @Override
     public long getCreationTime() {
         return created.getTime();
     }
 
+    @Override
     public int getCountOfUses() {
         return usageCount;
     }
