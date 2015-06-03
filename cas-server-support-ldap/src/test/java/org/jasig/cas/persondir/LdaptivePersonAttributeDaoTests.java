@@ -20,6 +20,7 @@ package org.jasig.cas.persondir;
 
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.jasig.services.persondir.IPersonAttributes;
+import org.jasig.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,17 +34,17 @@ import java.util.Collection;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for {@link LdapPersonAttributeDao}.
+ * Unit test for {@link org.jasig.services.persondir.support.ldap.LdaptivePersonAttributeDao}.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/ldap-context.xml", "/ldap-persondir-test.xml"})
-public class LdapPersonAttributeDaoTests extends AbstractLdapTests {
+public class LdaptivePersonAttributeDaoTests extends AbstractLdapTests {
 
     @Autowired
-    private LdapPersonAttributeDao attributeDao;
+    private LdaptivePersonAttributeDao attributeDao;
 
     @BeforeClass
     public static void bootstrap() throws Exception {
