@@ -33,7 +33,7 @@
     </bean>
 
     <bean id="ldapPersonAttributeDao"
-          class="org.jasig.cas.persondir.LdapPersonAttributeDao"
+          class="org.jasig.services.persondir.support.ldap.LdaptivePersonAttributeDao"
           p:connectionFactory-ref="pooledLdapConnectionFactory"
           p:baseDN="${ldap.baseDn}"
           p:searchControls-ref="searchControls"
@@ -45,7 +45,7 @@
                    -->
                 <entry key="cn" value="commonName" />
                 <entry key="mail" value="mail" />
-                <entry key="displayName" value="displayName" />
+                <entry key="displayname" value="displayName" />
             </map>
         </property>
     </bean>
