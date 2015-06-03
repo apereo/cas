@@ -29,6 +29,7 @@
 
 <html lang="en">
 <head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
   <meta charset="UTF-8" />
   
   <title>CAS &#8211; Central Authentication Service</title>
