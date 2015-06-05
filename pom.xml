@@ -251,6 +251,30 @@
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                  <execution>
+                    <phase>generate-sources</phase>
+                    <goals>
+                      <goal>copy-resources</goal>
+                    </goals>
+                    <configuration>
+                      <outputDirectory>${project.build.directory}/unwoven-classes</outputDirectory>
+                      <resources>
+                        <resource>
+                            <directory>${basedir}</directory>
+                            <includes>
+                                <include>none</include>
+                            </includes>
+                        </resource>
+                      </resources>
+                    </configuration>
+                  </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>${maven-findbugs-plugin.version}</version>
@@ -348,7 +372,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>${project.build.sourceVersion}</source>
-                    <target>${project.build.targetVersion}</target>
+                    <target>${project.build.targetVersion}</target>          
                 </configuration>
             </plugin>
             <plugin>
@@ -413,15 +437,27 @@
                 <version>${maven-aspectj-plugin.version}</version>
                 <executions>
                     <execution>
+                        <phase>process-classes</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <source>${project.build.sourceVersion}</source>
-                    <target>${project.build.targetVersion}</target>
+                    <sources/>
                     <complianceLevel>${project.build.sourceVersion}</complianceLevel>
+                    <forceAjcCompile>true</forceAjcCompile>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.jasig.inspektr</groupId>
+                            <artifactId>inspektr-aspects</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                    <weaveDirectories>
+                        <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
+                    </weaveDirectories>
+                    <skip>false</skip>
+                    <showWeaveInfo />
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -635,6 +671,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.jasig.inspektr</groupId>
+            <artifactId>inspektr-aspects</artifactId>
+            <version>${inspektr.version}</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <repositories>
@@ -815,7 +857,7 @@
 
             <!-- Inspektr Dependencies -->
             <dependency>
-                <groupId>com.github.inspektr</groupId>
+                <groupId>org.jasig.inspektr</groupId>
                 <artifactId>inspektr-audit</artifactId>
                 <version>${inspektr.version}</version>
                 <exclusions>
@@ -831,7 +873,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.github.inspektr</groupId>
+                <groupId>org.jasig.inspektr</groupId>
                 <artifactId>inspektr-common</artifactId>
                 <version>${inspektr.version}</version>
                 <exclusions>
@@ -847,7 +889,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.github.inspektr</groupId>
+                <groupId>org.jasig.inspektr</groupId>
                 <artifactId>inspektr-support-spring</artifactId>
                 <version>${inspektr.version}</version>
                 <exclusions>
@@ -1482,7 +1524,7 @@
         <checkstyle.version>6.5</checkstyle.version>
         <commons.lang.version>3.4</commons.lang.version>
         <commons.collections.version>4.0</commons.collections.version>
-        <inspektr.version>1.1.GA</inspektr.version>
+        <inspektr.version>1.2.GA</inspektr.version>
         <commons.io.version>2.4</commons.io.version>
         <mockito.version>1.10.19</mockito.version>
         <ehcache.version>2.10.0</ehcache.version>
@@ -1530,6 +1572,7 @@
         <maven-findbugs-contrib-plugin.version>6.0.0</maven-findbugs-contrib-plugin.version>
         <maven-findbugs-security-plugin.version>1.4.0</maven-findbugs-security-plugin.version>
         <maven-buildnumber-plugin-version>1.3</maven-buildnumber-plugin-version>
+        <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
 
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
