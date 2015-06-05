@@ -330,6 +330,6 @@ public class JsonServiceRegistryDaoTests {
 
         this.dao.save(r);
         final List<RegisteredService> list = this.dao.load();
-        assertEquals(list.size(), 1);
+        assertNotNull(this.dao.findServiceById(r.getId()));
     }
 }
