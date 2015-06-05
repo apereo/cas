@@ -373,9 +373,6 @@
                 <configuration>
                     <source>${project.build.sourceVersion}</source>
                     <target>${project.build.targetVersion}</target>          
-                    <compilerArguments>
-                        <d>${project.build.directory}/unwoven-classes</d>
-                    </compilerArguments>
                 </configuration>
             </plugin>
             <plugin>
@@ -457,7 +454,7 @@
                         </aspectLibrary>
                     </aspectLibraries>
                     <weaveDirectories>
-                        <weaveDirectory>${project.build.directory}/unwoven-classes</weaveDirectory>
+                        <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
                     </weaveDirectories>
                     <skip>false</skip>
                     <showWeaveInfo />
