@@ -136,6 +136,10 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
         final File f = makeFile(service);
         try (final LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f));) {
             this.registeredServiceJsonSerializer.toJson(out, service);
+
+            if (this.serviceMap.containsKey(service.getId())) {
+                LOGGER.debug("Found existing service definition by id [{}]. Saving...", service.getId());
+            }
             this.serviceMap.put(service.getId(), service);
             LOGGER.debug("Saved service to [{}]", f.getCanonicalPath());
         } catch (final IOException e) {
@@ -170,6 +174,13 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
             if (file.length() > 0) {
                 try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
                     final RegisteredService service = this.registeredServiceJsonSerializer.fromJson(in);
+
+                    if (temp.containsKey(service.getId())) {
+                        LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
+                                + "This will overwrite previous service definitions and is likely a "
+                                + "configuration problem. Make sure all services have a unique id and try again.",
+                                service.getServiceId(), service.getId());
+                    }
                     temp.put(service.getId(), service);
                 } catch (final Exception e) {
                     errorCount++;
@@ -180,7 +191,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
         if (errorCount == 0) {
             this.serviceMap = temp;
         }
-        return new ArrayList<RegisteredService>(this.serviceMap.values());
+        return new ArrayList<>(this.serviceMap.values());
     }
 
     @Override

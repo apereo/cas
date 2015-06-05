@@ -36,7 +36,7 @@ import java.util.Set;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -157,7 +157,7 @@ public class KryoTranscoderTests {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         @SuppressWarnings("unchecked")
         final TicketGrantingTicket expectedTGT =
-                new MockTicketGrantingTicket(TGT_ID, userPassCredential, ListOrderedMap.decorate(this.principalAttributes));
+                new MockTicketGrantingTicket(TGT_ID, userPassCredential, ListOrderedMap.listOrderedMap(this.principalAttributes));
         expectedTGT.grantServiceTicket(ST_ID, null, null, false);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
     }
@@ -262,13 +262,15 @@ public class KryoTranscoderTests {
 
         private int usageCount;
 
+        private Service proxiedBy;
+
         private final Date creationDate = new Date();
 
         private final Authentication authentication;
 
         /** Factory to create the principal type. **/
         @NotNull
-        private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+        private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
         /** Constructor for serialization support. */
         MockTicketGrantingTicket() {
@@ -312,6 +314,11 @@ public class KryoTranscoderTests {
                 final boolean credentialsProvided) {
             this.usageCount++;
             return new MockServiceTicket(id);
+        }
+
+        @Override
+        public Service getProxiedBy() {
+            return proxiedBy;
         }
 
         @Override
