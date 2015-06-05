@@ -30,7 +30,7 @@
   <description>CAS core</description>
   <dependencies>
         <dependency>
-            <groupId>com.github.inspektr</groupId>
+            <groupId>org.jasig.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -179,7 +179,7 @@
         </dependency>
 
         <dependency>
-          <groupId>com.github.inspektr</groupId>
+          <groupId>org.jasig.inspektr</groupId>
           <artifactId>inspektr-support-spring</artifactId>
           <scope>test</scope>
           <exclusions>
