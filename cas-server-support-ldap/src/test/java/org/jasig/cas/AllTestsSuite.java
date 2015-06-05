@@ -37,7 +37,6 @@ import org.junit.runners.Suite;
     LdapAuthenticationHandlerTests.class,
     ConnectionFactoryMonitorTests.class,
     PooledConnectionFactoryMonitorTests.class,
-    LdaptivePersonAttributeDaoTests.class,
     LdapUserDetailsServiceTests.class
 })
 public class AllTestsSuite {
