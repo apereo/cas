@@ -144,7 +144,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolverTests.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoCredentialsToPrincipalResolverTests.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterActionTests.java">org/jasig/cas/support/spnego/web/flow/client/LdapSpnegoKnownClientSystemsFilterActionTests.java</a>
                 </td>
                 <td>
                   0
@@ -172,21 +172,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterActionTests.java">org/jasig/cas/support/spnego/web/flow/client/LdapSpnegoKnownClientSystemsFilterActionTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.SpnegoNegociateCredentialsAction.java">org/jasig/cas/support/spnego/web/flow/SpnegoNegociateCredentialsAction.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolverTests.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoCredentialsToPrincipalResolverTests.java</a>
                 </td>
                 <td>
                   0
@@ -201,6 +187,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver.java">org/jasig/cas/support/spnego/authentication/principal/SpnegoPrincipalResolver.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-spnego//checkstyle.html#org.jasig.cas.support.spnego.web.flow.SpnegoNegociateCredentialsAction.java">org/jasig/cas/support/spnego/web/flow/SpnegoNegociateCredentialsAction.java</a>
                 </td>
                 <td>
                   0

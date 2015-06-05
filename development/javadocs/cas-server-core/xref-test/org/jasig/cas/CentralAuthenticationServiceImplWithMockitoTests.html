@@ -26,7 +26,7 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.collections.functors.TruePredicate;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.collections4.functors.TruePredicate;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Authentication;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AuthenticationHandler;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AuthenticationManager;
@@ -194,7 +194,7 @@
 <a class="jxr_linenumber" name="L186" href="#L186">186</a> 
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>     @Test
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> getTicketsWithNoPredicate() {
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; c = <strong class="jxr_keyword">this</strong>.cas.getTickets(TruePredicate.getInstance());
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; c = <strong class="jxr_keyword">this</strong>.cas.getTickets(TruePredicate.INSTANCE);
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>         assertEquals(c.size(), <strong class="jxr_keyword">this</strong>.ticketRegMock.getTickets().size());
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>     }
 <a class="jxr_linenumber" name="L192" href="#L192">192</a> 

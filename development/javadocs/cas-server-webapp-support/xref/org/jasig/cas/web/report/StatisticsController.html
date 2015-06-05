@@ -30,7 +30,7 @@
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> com.codahale.metrics.health.HealthCheckRegistry;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> com.codahale.metrics.servlets.HealthCheckServlet;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> com.codahale.metrics.servlets.MetricsServlet;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.collections.functors.TruePredicate;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.collections4.functors.TruePredicate;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CentralAuthenticationService;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ServiceTicket;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.Ticket;
@@ -126,7 +126,7 @@
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         <strong class="jxr_keyword">int</strong> expiredSts = 0;
 <a class="jxr_linenumber" name="L119" href="#L119">119</a> 
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>             <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; tickets = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.getTickets(TruePredicate.getInstance());
+<a class="jxr_linenumber" name="L121" href="#L121">121</a>             <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; tickets = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.getTickets(TruePredicate.INSTANCE);
 <a class="jxr_linenumber" name="L122" href="#L122">122</a> 
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Ticket ticket : tickets) {
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>                 <strong class="jxr_keyword">if</strong> (ticket instanceof ServiceTicket) {
