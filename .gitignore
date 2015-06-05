@@ -12,5 +12,5 @@ target
 overlays/
 pom.xml.versionsBackup
 *.log
-
+build.xml
 bin/
