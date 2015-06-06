@@ -109,10 +109,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             throw (AuthenticationException) e;
         }
         log.error("{} threw error authenticating {}", handlerName, credentials, e);
-        throw new UncategorizedAuthenticationException(e.getClass().getName(), e) {
-            // Anonymous inner class allows us to throw uncategorized authentication error
-            // since base class is abstract.
-        };
+        throw new UncategorizedAuthenticationException(e.getClass().getSimpleName(), e.getMessage());
     }
 
 

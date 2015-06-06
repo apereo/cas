@@ -110,7 +110,7 @@ public abstract class AuthenticationException extends Exception {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         String msg = getCode();
         if (getMessage() != null && getMessage().trim().length() > 0)
             msg = ":" + getMessage();
