@@ -211,7 +211,7 @@ public abstract class AbstractCasView extends AbstractView {
 
         final Assertion assertion = getAssertionFrom(model);
         final List<Authentication> chainedAuthentications = assertion.getChainedAuthentications();
-        for (int i = 0; i < chainedAuthentications.size() - 2; i++) {
+        for (int i = 0; i < chainedAuthentications.size() - 1; i++) {
             chainedAuthenticationsToReturn.add(chainedAuthentications.get(i));
         }
         return chainedAuthenticationsToReturn;

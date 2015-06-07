@@ -45,9 +45,9 @@ public class CasLoggerFactoryTests {
 
     private static final File LOG_FILE = new File("target", "slf4j.log");
 
-    private static final String ID1 = "TGT-1-B0tjWgMIhUU4kgCZdXbxnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
-    private static final String ID2 = "PGT-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
-
+    private static final String ID1 = TicketGrantingTicket.PREFIX + "-1-B0tjWgMIhUU4kgCZdXbxnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
+    private static final String ID2 = TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
+    private static final String ID3 = TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
     private Logger logger;
 
     @BeforeClass
@@ -124,6 +124,12 @@ public class CasLoggerFactoryTests {
     @Test
     public void verifyLogging9() {
         logger.trace(getMessageToLog(), new RuntimeException(ID1, new InvalidTicketException(ID2)));
+        validateLogData();
+    }
+
+    @Test
+    public void verifyLogging10() {
+        logger.debug(getMarker("debug"), getMessageToLogWithParams(), ID3, ID1);
         validateLogData();
     }
 
@@ -345,6 +351,7 @@ public class CasLoggerFactoryTests {
             assertTrue("Logged buffer data is blank in " + LOG_FILE.getCanonicalPath(), StringUtils.isNotBlank(data));
             assertFalse("Logged buffer data should not contain " + ID1, data.contains(ID1));
             assertFalse("Logged buffer data should not contain " + ID2, data.contains(ID2));
+            assertFalse("Logged buffer data should not contain " + ID3, data.contains(ID3));
         } catch (final IOException e) {
             fail(e.getMessage());
         }
