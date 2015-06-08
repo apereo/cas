@@ -45,9 +45,12 @@ public class CasLoggerFactoryTests {
 
     private static final File LOG_FILE = new File("target", "slf4j.log");
 
-    private static final String ID1 = TicketGrantingTicket.PREFIX + "-1-B0tjWgMIhUU4kgCZdXbxnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
-    private static final String ID2 = TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
-    private static final String ID3 = TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
+    private static final String ID1 = TicketGrantingTicket.PREFIX
+            + "-1-B0tjWgMIhUU4kgCZdXbxnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
+    private static final String ID2 = TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+            + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
+    private static final String ID3 = TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX
+            + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
     private Logger logger;
 
     @BeforeClass
