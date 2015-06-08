@@ -43,7 +43,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.samba.jcifs</groupId>
+            <groupId>jcifs</groupId>
             <artifactId>jcifs</artifactId>
             <version>${jcifs.version}</version>
         </dependency>
@@ -84,7 +84,7 @@
 
     <properties>
         <cs.dir>${project.parent.basedir}</cs.dir>
-    <jcifs.version>1.2.25</jcifs.version>
-    <jcifs.ext.version>0.9.4</jcifs.ext.version>
+        <jcifs.version>1.3.17</jcifs.version>
+        <jcifs.ext.version>0.9.4</jcifs.ext.version>
     </properties>
 </project>
