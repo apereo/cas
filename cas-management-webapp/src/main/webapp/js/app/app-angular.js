@@ -35,23 +35,41 @@
     app.controller('ServiceFormController', function () {
         this.serviceForm = {};
 
+        this.serviceTypeList=[
+            {
+                name: 'CAS client',
+                value: 'cas'
+            },
+            {
+                name: 'OAuth Client',
+                value: 'oauth'
+            }
+        ];
+        this.serviceType = this.serviceTypeList[0];
 
+        this.logoutTypeList=[
+            {
+                name: '0 - None',
+                value: 'none'
+            },
+            {
+                name: '1 - BACK_CHANNEL',
+                value: 'back'
+            },
+            {
+                name: '2 = FRONT_CHANNEL',
+                value: 'front'
+            }
+        ];
+        this.logoutType = this.logoutTypeList[0];
 
-            //logoutTypes = [
-            //    { 'name': 'None', 'value': 'None' },
-            //    { 'name': 'Back Channel', 'value': 'back_channel' },
-            //    { 'name': 'Front Channel', 'value': 'front_channel' }
-            //];
-
-            //service = { type : logoutTypes[0].value };
-
-            // serviceForm.service.logoutType = [
-            //     { 'name': 'None', 'value': 'None' },
-            //     { 'name': 'Back Channel', 'value': 'back_channel' },
-            //     { 'name': 'Front Channel', 'value': 'front_channel' }
-            // ];
-
-            // serviceForm.service.logoutType = serviceForm.service.logoutType[0].value;
+        this.publicKeyAlgorithmList=[
+            {
+                name: 'RSA',
+                value: "rsa"
+            }
+        ];
+        this.publicKeyAlgorithm = this.publicKeyAlgorithmList[0];
 
             this.addService = function (service) {
                 // service.services.push(this.service);
