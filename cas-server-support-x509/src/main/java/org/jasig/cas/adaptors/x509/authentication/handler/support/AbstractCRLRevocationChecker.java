@@ -22,6 +22,7 @@ import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
@@ -48,6 +49,8 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     @NotNull
     private RevocationPolicy<X509CRL> expiredCRLPolicy = new ThresholdExpiredCRLRevocationPolicy();
 
+    /** Flag to indicate whether all crls should be checked for the cert resource. **/
+    protected boolean checkAll = false;
 
     /**
      * {@inheritDoc}
@@ -58,19 +61,24 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             throw new IllegalArgumentException("Certificate cannot be null.");
         }
         logger.debug("Evaluating certificate revocation status for {}", CertUtils.toString(cert));
-        final X509CRL crl = getCRL(cert);
-        if (crl == null) {
+        final List<X509CRL> crls = getCRLs(cert);
+
+        if (crls == null || crls.isEmpty()) {
             logger.warn("CRL data is not available for {}", CertUtils.toString(cert));
             this.unavailableCRLPolicy.apply(null);
             return;
         }
-        if (CertUtils.isExpired(crl)) {
-            logger.warn("CRL data expired on {}", crl.getNextUpdate());
-            this.expiredCRLPolicy.apply(crl);
-        }
-        final X509CRLEntry entry = crl.getRevokedCertificate(cert);
-        if (entry != null) {
-            throw new RevokedCertificateException(entry);
+
+        for (int i = 0; i < crls.size(); i++) {
+            final X509CRL crl = crls.get(i);
+            if (CertUtils.isExpired(crl)) {
+                logger.warn("CRL data expired on {}", crl.getNextUpdate());
+                this.expiredCRLPolicy.apply(crl);
+            }
+            final X509CRLEntry entry = crl.getRevokedCertificate(cert);
+            if (entry != null) {
+                throw new RevokedCertificateException(entry);
+            }
         }
     }
 
@@ -92,14 +100,33 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         this.expiredCRLPolicy = policy;
     }
 
+
     /**
-     * Gets the CRL for the given certificate.
+     * Indicates whether all resources should be checked,
+     * or revocation should stop at the first resource
+     * that produces the cert.
+     *
+     * @param checkAll the check all
+     */
+    public final void setCheckAll(final boolean checkAll) {
+        this.checkAll = checkAll;
+    }
+
+    /**
+     * Gets the first fetched CRL for the given certificate.
      *
      * @param cert Certificate for which the CRL of the issuing CA should be retrieved.
      *
-     * @return CRL for given cert.
+     * @return CRL for given cert, or null
      */
-    protected abstract X509CRL getCRL(final X509Certificate cert);
+    public final X509CRL getCRL(final X509Certificate cert) {
+        final List<X509CRL> list = getCRLs(cert);
+        if (list != null && !list.isEmpty()) {
+            return list.get(0);
+        }
+        logger.debug("No CRL could be found for {}", CertUtils.toString(cert));
+        return null;
+    }
 
     /**
      * Records the addition of a new CRL entry.
@@ -109,4 +136,12 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      * @since 4.1
      */
     protected abstract boolean addCRL(final Object id, final X509CRL crl);
+
+    /**
+     * Gets the collection of CRLs for the given certificate.
+     *
+     * @param cert Certificate for which the CRL of the issuing CA should be retrieved.
+     * @return CRLs for given cert.
+     */
+    protected abstract List<X509CRL> getCRLs(final X509Certificate cert);
 }
