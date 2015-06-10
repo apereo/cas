@@ -30,6 +30,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,6 +67,10 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     @Column(name="EXPIRED", nullable=false)
     private Boolean expired = Boolean.FALSE;
 
+    /** Service that produced a proxy-granting ticket. */
+    @Column(name="PROXIED_BY", nullable=true)
+    private Service proxiedBy;
+
     /** The services associated to this ticket. */
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = 1000000)
@@ -87,18 +92,24 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * May throw an {@link IllegalArgumentException} if the Authentication object is null.
      *
      * @param id the id of the Ticket
-     * @param ticketGrantingTicket the parent ticket
+     * @param proxiedBy Service that produced this proxy ticket.
+     * @param parentTicketGrantingTicket the parent ticket
      * @param authentication the Authentication request for this ticket
      * @param policy the expiration policy for this ticket.
      */
     public TicketGrantingTicketImpl(final String id,
-        final TicketGrantingTicket ticketGrantingTicket,
-        final Authentication authentication, final ExpirationPolicy policy) {
-        super(id, ticketGrantingTicket, policy);
+        final Service proxiedBy,
+        final TicketGrantingTicket parentTicketGrantingTicket,
+        @NotNull final Authentication authentication, final ExpirationPolicy policy) {
 
+        super(id, parentTicketGrantingTicket, policy);
+
+        if (parentTicketGrantingTicket != null && proxiedBy == null) {
+            throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
+        }
         Assert.notNull(authentication, "authentication cannot be null");
-
         this.authentication = authentication;
+        this.proxiedBy = proxiedBy;
     }
 
     /**
@@ -111,7 +122,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      */
     public TicketGrantingTicketImpl(final String id,
         final Authentication authentication, final ExpirationPolicy policy) {
-        this(id, null, authentication, policy);
+        this(id, null, null, authentication, policy);
     }
 
     /**
@@ -233,6 +244,11 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
         list.addAll(getGrantingTicket().getChainedAuthentications());
         return Collections.unmodifiableList(list);
+    }
+
+    @Override
+    public Service getProxiedBy() {
+        return this.proxiedBy;
     }
 
     /**
