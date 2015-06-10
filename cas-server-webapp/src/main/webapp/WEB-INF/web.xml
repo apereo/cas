@@ -43,7 +43,7 @@
 
     <filter>
         <filter-name>CAS Client Info Logging Filter</filter-name>
-        <filter-class>com.github.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
+        <filter-class>org.jasig.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CAS Client Info Logging Filter</filter-name>
@@ -104,6 +104,8 @@
         <listener-class>
             org.springframework.web.context.ContextLoaderListener
         </listener-class>
+    </listener>
+    <listener>
         <listener-class>
             org.jasig.cas.CasEnvironmentContextListener
         </listener-class>

@@ -56,7 +56,7 @@
         <Logger name="org.jasig.cas.web.flow" level="info" additivity="true">
             <AppenderRef ref="file"/>
         </Logger>
-        <Logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+        <Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
             <AppenderRef ref="file"/>
         </Logger>
         <Root level="error">

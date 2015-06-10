@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
@@ -178,6 +179,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      *
      * @return the configuration
      */
+    @JsonIgnore
     public MutableConfiguration<String, Map<String, Object>> getConfiguration() {
         return this.cache.getConfiguration(MutableConfiguration.class);
     }

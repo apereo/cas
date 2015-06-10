@@ -37,7 +37,7 @@
 
   </bean>
 
-  <bean id="auditTrailManagementAspect" class="com.github.inspektr.audit.AuditTrailManagementAspect">
+  <bean id="auditTrailManagementAspect" class="org.jasig.inspektr.audit.AuditTrailManagementAspect">
     <!-- String applicationCode -->
     <constructor-arg index="0" value="CAS" />
 
@@ -61,7 +61,7 @@
           <ref bean="ticketCreationActionResolver" />
         </entry>
         <entry key="DESTROY_TICKET_GRANTING_TICKET_RESOLVER">
-          <bean class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver" />
+          <bean class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver" />
         </entry>
         <entry key="GRANT_SERVICE_TICKET_RESOLVER">
           <ref bean="ticketCreationActionResolver" />
@@ -112,16 +112,16 @@
     </constructor-arg>
   </bean>
 
-  <bean id="saveServiceResourceResolver" class="com.github.inspektr.audit.spi.support.ParametersAsStringResourceResolver" />
+  <bean id="saveServiceResourceResolver" class="org.jasig.inspektr.audit.spi.support.ParametersAsStringResourceResolver" />
 
   <bean id="deleteServiceResourceResolver" class="org.jasig.cas.audit.spi.ServiceManagementResourceResolver" />
 
-  <bean id="saveServiceActionResolver" class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
+  <bean id="saveServiceActionResolver" class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver">
     <constructor-arg index="0" value="_SUCCEEDED" />
     <constructor-arg index="1" value="_FAILED" />
   </bean>
 
-  <bean id="deleteServiceActionResolver" class="com.github.inspektr.audit.spi.support.ObjectCreationAuditActionResolver">
+  <bean id="deleteServiceActionResolver" class="org.jasig.inspektr.audit.spi.support.ObjectCreationAuditActionResolver">
     <constructor-arg index="0" value="_SUCCEEDED" />
     <constructor-arg index="1" value="_FAILED" />
   </bean>
@@ -130,7 +130,7 @@
         c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="authenticationActionResolver"
-        class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
+        class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver">
     <!-- String successSuffix -->
     <constructor-arg index="0" value="_SUCCESS" />
 
@@ -139,7 +139,7 @@
   </bean>
 
   <bean id="ticketCreationActionResolver"
-        class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
+        class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver">
     <!-- String successSuffix -->
     <constructor-arg index="0" value="_CREATED" />
 
@@ -148,7 +148,7 @@
   </bean>
 
   <bean id="ticketValidationActionResolver"
-        class="com.github.inspektr.audit.spi.support.DefaultAuditActionResolver">
+        class="org.jasig.inspektr.audit.spi.support.DefaultAuditActionResolver">
     <!-- String successSuffix -->
     <constructor-arg index="0" value="D" />
 
@@ -157,12 +157,12 @@
   </bean>
 
   <bean id="returnValueResourceResolver"
-        class="com.github.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver" />
+        class="org.jasig.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver" />
 
   <bean id="ticketResourceResolver"
         class="org.jasig.cas.audit.spi.TicketAsFirstParameterResourceResolver" />
 
-  <bean id="auditTrailManager" class="com.github.inspektr.audit.support.JdbcAuditTrailManager">
+  <bean id="auditTrailManager" class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager">
     <constructor-arg index="0" ref="inspektrTransactionTemplate" />
     <property name="dataSource" ref="dataSource" />
   </bean>
