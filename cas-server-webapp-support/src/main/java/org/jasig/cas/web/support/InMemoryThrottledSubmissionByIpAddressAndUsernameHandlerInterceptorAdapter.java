@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.web.support;
 
-import com.github.inspektr.common.web.ClientInfoHolder;
+import org.jasig.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
 
