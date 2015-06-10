@@ -54,7 +54,10 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
     @NotNull
     private String warningAttributeValue;
 
-    /** True to opt into password expiration warnings on match, false to opt out on match. */
+    /**
+     * True to opt into password expiration
+     * warnings on match, false to opt out on match.
+     **/
     private boolean displayWarningOnMatch = true;
 
 

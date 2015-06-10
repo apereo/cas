@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.services;
 
-import com.github.inspektr.audit.annotation.Audit;
+import org.jasig.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

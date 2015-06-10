@@ -31,7 +31,7 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.github.inspektr</groupId>
+            <groupId>org.jasig.inspektr</groupId>
             <artifactId>inspektr-support-spring</artifactId>
             <scope>runtime</scope>
         </dependency>
