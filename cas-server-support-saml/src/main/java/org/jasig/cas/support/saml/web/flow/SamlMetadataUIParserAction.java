@@ -21,6 +21,11 @@ package org.jasig.cas.support.saml.web.flow;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.web.support.WebUtils;
 import org.joda.time.DateTime;
@@ -79,7 +84,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     public static final String MDUI_FLOW_PARAMETER_NAME = "mduiContext";
 
-    private static final int DEFAULT_METADATA_REFRESH_INTERNAL_MINS = 60;
+    private static final int DEFAULT_METADATA_REFRESH_INTERNAL_MINS = 0;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -101,6 +106,10 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     @Autowired(required=true)
     @NotNull
     private OpenSamlConfigBean configBean;
+
+    @Autowired
+    @NotNull
+    private ServicesManager servicesManager;
 
     /**
      * Instantiates a new Saml mdui parser action.
@@ -129,7 +138,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * Runs the resolution process on the background
      */
     @PostConstruct
-    public synchronized void buildMetadataResolver() {
+    public synchronized void refreshMetadata() {
         final Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -157,51 +166,61 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         final String entityId = request.getParameter(this.entityIdParameterName);
         if (StringUtils.isBlank(entityId)) {
             logger.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
-            return new EventFactorySupport().success(this);
+            return success();
+        }
+
+        final WebApplicationService service = new SimpleWebApplicationServiceImpl(entityId);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Entity " + entityId + " not recognized");
         }
 
         if (shouldRefreshMetadata()) {
-            buildMetadataResolver();
+            refreshMetadata();
         }
 
         final EntityDescriptor entityDescriptor = getEntityDescriptorForEntityId(entityId);
         if (entityDescriptor == null) {
             logger.debug("Entity descriptor not found for [{}]", entityId);
-            return new EventFactorySupport().success(this);
+            return success();
         }
 
         final SPSSODescriptor spssoDescriptor = getSPSSODescriptor(entityDescriptor);
         if (spssoDescriptor == null) {
             logger.debug("SP SSO descriptor not found for [{}]", entityId);
-            return new EventFactorySupport().success(this);
+            return success();
         }
 
         final Extensions extensions = spssoDescriptor.getExtensions();
         final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
         if (spExtensions.isEmpty()) {
             logger.debug("No extensions are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
-            return new EventFactorySupport().success(this);
+            return success();
         }
+
+        final SimpleMetadataUIInfo mdui = new SimpleMetadataUIInfo(registeredService);
 
         for (final XMLObject obj : spExtensions) {
             if (obj instanceof UIInfo) {
                 final UIInfo uiInfo = (UIInfo) obj;
-                logger.info("Found UI info for [{}]", entityId);
-                requestContext.getFlowScope().put(MDUI_FLOW_PARAMETER_NAME, uiInfo);
+                logger.debug("Found UI info for [{}] and added to flow context", entityId);
+                mdui.setUIInfo(uiInfo);
             }
         }
-        return new EventFactorySupport().success(this);
+
+        requestContext.getFlowScope().put(MDUI_FLOW_PARAMETER_NAME, mdui);
+        return success();
     }
 
     /**
      * Should refresh metadata based on the interval set?
      *
-     * @return true if metadtaa should be refreshed
+     * @return true if metadata should be refreshed
      */
     private boolean shouldRefreshMetadata() {
-        if (this.metadataRefreshedDateTime
-                .plusHours(this.refreshIntervalInMinutes)
-                .isBeforeNow()) {
+        if (this.refreshIntervalInMinutes > 0
+                && this.metadataRefreshedDateTime.plusMinutes(this.refreshIntervalInMinutes).isBeforeNow()) {
             logger.info("Metadata was last refreshed at [{}]. Refreshing...",
                     this.metadataRefreshedDateTime);
             return true;
@@ -217,7 +236,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     private SPSSODescriptor getSPSSODescriptor(final EntityDescriptor entityDescriptor) {
         logger.debug("Locating SP SSO descriptor for SAML2 protocol...");
-        SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20_NS);
+        SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (spssoDescriptor == null) {
             logger.debug("Locating SP SSO descriptor for SAML11 protocol...");
             spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML11P_NS);
