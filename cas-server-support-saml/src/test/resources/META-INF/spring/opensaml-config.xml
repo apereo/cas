@@ -78,7 +78,7 @@
           c:metadataResources-ref="metadataResources" />
 
     <util:list id="metadataResources">
-        <value>classpath:sample-metadata.xml</value>
+        <value>http://md.incommon.org/InCommon/InCommon-metadata.xml</value>
     </util:list>
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
