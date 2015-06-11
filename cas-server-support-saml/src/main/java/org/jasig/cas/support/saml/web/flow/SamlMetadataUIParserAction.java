@@ -57,6 +57,13 @@ import java.util.List;
 /**
  * This is {@link SamlMetadataUIParserAction} that attempts to parse
  * the mdui extension block for a SAML SP from the provided metadata locations.
+ * The result is put into the flow request context under the parameter
+ * {@link #MDUI_FLOW_PARAMETER_NAME}. The entity id parameter is
+ * specified by default at {@link #ENTITY_ID_PARAMETER_NAME}.
+ *
+ * <p>This action is best suited to be invoked when the CAS login page
+ * is about to render so that the page, once the MDUI info is obtained,
+ * has a chance to populate the UI with relevant info about the SP.</p>
  *
  * @author Misagh Moayyed
  * @since 4.1.0
@@ -72,7 +79,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     public static final String MDUI_FLOW_PARAMETER_NAME = "mduiContext";
 
-    private static final int METADATA_TIMEOUT_MILLIS = 15000;
+    private static final int DEFAULT_METADATA_REFRESH_INTERNAL_MINS = 60;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -82,6 +89,10 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     private MetadataResolver metadataResolver;
 
     private boolean requireValidMetadata = true;
+
+    private int refreshIntervalInMinutes = DEFAULT_METADATA_REFRESH_INTERNAL_MINS;
+
+    private DateTime metadataRefreshedDateTime;
 
     @NotNull
     @Size(min=1)
@@ -107,7 +118,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @param entityIdParameterName the entity id parameter name
      * @param metadataResources     the metadata resources
      */
-    public SamlMetadataUIParserAction(final String entityIdParameterName, final Collection<Resource> metadataResources) {
+    public SamlMetadataUIParserAction(final String entityIdParameterName,
+                                      final Collection<Resource> metadataResources) {
         this.entityIdParameterName = entityIdParameterName;
         this.metadataResources = metadataResources;
     }
@@ -117,7 +129,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * Runs the resolution process on the background
      */
     @PostConstruct
-    public void buildMetadataResolver() {
+    public synchronized void buildMetadataResolver() {
         final Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -135,6 +147,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             throw new RuntimeException(e);
         } finally {
             logger.info("Resolved metadata at [{}].", DateTime.now());
+            metadataRefreshedDateTime = DateTime.now();
         }
     }
 
@@ -142,36 +155,58 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
         final String entityId = request.getParameter(this.entityIdParameterName);
+        if (StringUtils.isBlank(entityId)) {
+            logger.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
+            return new EventFactorySupport().success(this);
+        }
 
-        if (StringUtils.isNotBlank(entityId)) {
-            final EntityDescriptor entityDescriptor = getEntityDescriptorForEntityId(entityId);
-            if (entityDescriptor == null) {
-                logger.debug("Entity descriptor not found for [{}]", entityId);
-                return new EventFactorySupport().success(this);
-            }
+        if (shouldRefreshMetadata()) {
+            buildMetadataResolver();
+        }
 
-            final SPSSODescriptor spssoDescriptor = getSPSSODescriptor(entityDescriptor);
-            if (spssoDescriptor == null) {
-                logger.debug("SP SSO descriptor not found for [{}]", entityId);
-                return new EventFactorySupport().success(this);
-            }
+        final EntityDescriptor entityDescriptor = getEntityDescriptorForEntityId(entityId);
+        if (entityDescriptor == null) {
+            logger.debug("Entity descriptor not found for [{}]", entityId);
+            return new EventFactorySupport().success(this);
+        }
 
-            final Extensions extensions = spssoDescriptor.getExtensions();
-            final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
-            if (spExtensions.isEmpty()) {
-                logger.debug("No extensions are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
-                return new EventFactorySupport().success(this);
-            }
+        final SPSSODescriptor spssoDescriptor = getSPSSODescriptor(entityDescriptor);
+        if (spssoDescriptor == null) {
+            logger.debug("SP SSO descriptor not found for [{}]", entityId);
+            return new EventFactorySupport().success(this);
+        }
 
-            for (final XMLObject obj : spExtensions) {
-                if (obj instanceof UIInfo) {
-                    final UIInfo uiInfo = (UIInfo) obj;
-                    logger.debug("Found UI info for [{}]", entityId);
-                    requestContext.getFlowScope().put(MDUI_FLOW_PARAMETER_NAME, uiInfo);
-                }
+        final Extensions extensions = spssoDescriptor.getExtensions();
+        final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
+        if (spExtensions.isEmpty()) {
+            logger.debug("No extensions are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
+            return new EventFactorySupport().success(this);
+        }
+
+        for (final XMLObject obj : spExtensions) {
+            if (obj instanceof UIInfo) {
+                final UIInfo uiInfo = (UIInfo) obj;
+                logger.debug("Found UI info for [{}]", entityId);
+                requestContext.getFlowScope().put(MDUI_FLOW_PARAMETER_NAME, uiInfo);
             }
         }
         return new EventFactorySupport().success(this);
+    }
+
+    /**
+     * Should refresh metadata based on the interval set?
+     *
+     * @return true if metadtaa should be refreshed
+     */
+    private boolean shouldRefreshMetadata() {
+        if (this.metadataRefreshedDateTime
+                .plusHours(this.refreshIntervalInMinutes)
+                .isBeforeNow()) {
+            logger.info("Metadata was last refreshed at [{}]. Refreshing...",
+                    this.metadataRefreshedDateTime);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -264,5 +299,9 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
     public void setRequireValidMetadata(final boolean requireValidMetadata) {
         this.requireValidMetadata = requireValidMetadata;
+    }
+
+    public void setRefreshIntervalInMinutes(final int refreshIntervalInMinutes) {
+        this.refreshIntervalInMinutes = refreshIntervalInMinutes;
     }
 }
