@@ -81,6 +81,15 @@
         <value>http://md.incommon.org/InCommon/InCommon-metadata.xml</value>
     </util:list>
 
+    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+            c:serviceRegistryDao-ref="serviceRegistryDao" />
+
+    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+        <property name="registeredServices">
+            <bean class="org.jasig.cas.services.RegexRegisteredService"
+                    p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description" />
+        </property>
+    </bean>
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 </beans>
