@@ -90,6 +90,10 @@
         </binder>
         <on-entry>
             <set name="viewScope.commandName" value="'credential'"/>
+
+            <!--
+            <evaluate expression="samlMetadataUIParserAction" />
+            -->
         </on-entry>
         <transition on="submit" bind="true" validate="true" to="realSubmit"/>
     </view-state>
