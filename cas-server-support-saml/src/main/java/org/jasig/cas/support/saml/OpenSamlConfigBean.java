@@ -28,8 +28,10 @@ import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
 
 /**
  * Load the opensaml config context.
@@ -39,7 +41,8 @@ import javax.annotation.PostConstruct;
 public final class OpenSamlConfigBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenSamlConfigBean.class);
 
-    @Autowired
+    @Autowired(required=true)
+    @NotNull
     private ParserPool parserPool;
 
     /**
@@ -62,6 +65,7 @@ public final class OpenSamlConfigBean {
     @PostConstruct
     public void init() {
         LOGGER.debug("Initializing OpenSaml configuration...");
+        Assert.notNull(this.parserPool, "parserPool cannot be null");
 
         try {
             InitializationService.initialize();

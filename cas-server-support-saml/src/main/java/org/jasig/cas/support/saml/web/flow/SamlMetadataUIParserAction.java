@@ -186,7 +186,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         for (final XMLObject obj : spExtensions) {
             if (obj instanceof UIInfo) {
                 final UIInfo uiInfo = (UIInfo) obj;
-                logger.debug("Found UI info for [{}]", entityId);
+                logger.info("Found UI info for [{}]", entityId);
                 requestContext.getFlowScope().put(MDUI_FLOW_PARAMETER_NAME, uiInfo);
             }
         }
