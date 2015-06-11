@@ -40,6 +40,9 @@ public interface TicketGrantingTicket extends Ticket {
     /** The prefix to use when generating an id for a Proxy Granting Ticket. */
     String PROXY_GRANTING_TICKET_PREFIX = "PGT";
 
+    /** The prefix to use when generating an id for a Proxy Granting Ticket IOU. */
+    String PROXY_GRANTING_TICKET_IOU_PREFIX = "PGTIOU";
+
     /**
      * Method to retrieve the authentication.
      *
