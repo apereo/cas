@@ -67,6 +67,7 @@ This project includes:
   Jasig CAS Ehcache Integration under Apache 2
   JASYPT: Java Simplified Encryption under The Apache Software License, Version 2.0
   Java Persistence API under LGPL, v2.1
+  Java Transaction API under Commons Development and Distribution License, Version 1.0
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API under Sun Binary Code License
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
@@ -83,7 +84,6 @@ This project includes:
   json-lib under Apache License, Version 2.0
   Json-lib4Spring under The Apache Software License, Version 2.0
   JSR 105 - Java(TM) XML Digital Signature API under JDL license
-  jta under Commons Development and Distribution License, Version 1.0
   JTidy under Java HTML Tidy License
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0
@@ -134,7 +134,7 @@ This project includes:
   spring-tx under The Apache Software License, Version 2.0
   spring-web under The Apache Software License, Version 2.0
   spring-webmvc under The Apache Software License, Version 2.0
-  stax-api under Sun Binary Code License
+  Streaming API for XML under Sun Binary Code License
   TagSoup under Apache License 2.0
   Transaction 1.1 API under lgpl
   tyrex under BSD Style License

@@ -94,7 +94,7 @@ This project includes:
   spring-tx under The Apache Software License, Version 2.0
   spring-web under The Apache Software License, Version 2.0
   spring-webmvc under The Apache Software License, Version 2.0
-  stax-api under Sun Binary Code License
+  Streaming API for XML under Sun Binary Code License
   Transaction 1.1 API under lgpl
   Xalan Java under The Apache Software License, Version 2.0
   Xalan Java Serializer under The Apache Software License, Version 2.0
