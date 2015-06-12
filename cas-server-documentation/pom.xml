@@ -23,7 +23,7 @@
   <parent>
     <artifactId>cas-server</artifactId>
     <groupId>org.jasig.cas</groupId>
-    <version>3.6.0</version>
+    <version>3.6.1-SNAPSHOT</version>
   </parent>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-documentation</artifactId>
