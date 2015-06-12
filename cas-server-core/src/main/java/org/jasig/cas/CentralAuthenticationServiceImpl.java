@@ -82,7 +82,7 @@ import java.util.Set;
  * central, organizing component of CAS's internal implementation.
  * <p>
  * This class is threadsafe.
- * <p>
+ * </p>
  * This class has the following properties that must be set:
  * <ul>
  * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
