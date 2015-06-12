@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.w3c.dom.Document;
@@ -173,7 +172,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Entity " + entityId + " not recognized");
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
+                    "Entity " + entityId + " not recognized");
         }
 
         if (shouldRefreshMetadata()) {
