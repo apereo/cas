@@ -33,10 +33,11 @@ import java.nio.charset.Charset;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
- * {@link org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential}.<br>
+ * {@link org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential}.
+ * <p>
  * Once AbstractNonInteractiveCredentialsAction has executed the authentication
  * procedure, this action check whether a principal is present in Credential and
- * add corresponding response headers.
+ * add corresponding response headers.</p>
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
@@ -51,7 +52,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
     private String messageBeginPrefix = constructMessagePrefix();
 
     /**
-     * Behavior in case of SPNEGO authentication failure :<br>
+     * Behavior in case of SPNEGO authentication failure :
      * <ul><li>True : if SPNEGO is the last authentication method with no fallback.</li>
      * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
      * </ul>
