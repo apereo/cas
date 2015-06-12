@@ -78,12 +78,26 @@ Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig
 - "Close" the repository.
 - "Release" the repository.  Both c and d should be accompanied by email confirmation.
 
-Finally:
+## Housekeeping
 
 - Close [the milestone](https://github.com/Jasig/cas/milestones) for this release.
-- Find [the release](https://github.com/Jasig/cas/releases) that is mapped to the released tag, update the description with the list of resolved/fixed issues and mark it as released. 
+- Find [the release](https://github.com/Jasig/cas/releases) that is mapped to the released tag, update the description with the list of resolved/fixed issues and publish it as released. 
 
-Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists. A template follows:
+To generate the changelog and release notes, use the below steps:
+
+1. Download and install [this tool](https://github.com/lalitkapoor/github-changes)
+2. Generate a github access token [here](https://github.com/settings/tokens)
+3. Execute the following command:
+
+{% highlight bash %}
+github-changes -o Jasig -r cas -b x.y.z -k <TOKEN> -a --use-commit-body
+{% endhighlight %}
+
+Note that `x.y.z` is the name of the branch that is released. The output will be saved in `ChangeLog.md` file. Comb
+through the file, edit, format and paste the final content under the release tag. 
+
+
+- Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists. A template follows:
 
 {% highlight bash %}
 CAS Community,
