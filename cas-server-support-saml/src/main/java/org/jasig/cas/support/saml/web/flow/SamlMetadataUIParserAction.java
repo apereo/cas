@@ -21,6 +21,7 @@ package org.jasig.cas.support.saml.web.flow;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
+import org.cryptacular.util.KeyPairUtil;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
@@ -35,6 +36,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Extensions;
@@ -43,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -55,8 +58,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link SamlMetadataUIParserAction} that attempts to parse
@@ -100,7 +104,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
     @NotNull
     @Size(min=1)
-    private final Collection<Resource> metadataResources;
+    private final Map<Resource, MetadataFilterChain> metadataResources;
 
     @Autowired(required=true)
     @NotNull
@@ -111,23 +115,23 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     private ServicesManager servicesManager;
 
     /**
-     * Instantiates a new Saml mdui parser action.
+     * Instantiates a new SAML mdui parser action.
      * Defaults the parameter name to {@link #ENTITY_ID_PARAMETER_NAME}.
      *
      * @param metadataResources the metadata resources
      */
-    public SamlMetadataUIParserAction(final Collection<Resource> metadataResources) {
+    public SamlMetadataUIParserAction(final Map<Resource, MetadataFilterChain> metadataResources) {
         this(ENTITY_ID_PARAMETER_NAME, metadataResources);
     }
 
     /**
-     * Instantiates a new Saml mdui parser action.
+     * Instantiates a new SAML mdui parser action.
      *
      * @param entityIdParameterName the entity id parameter name
      * @param metadataResources     the metadata resources
      */
     public SamlMetadataUIParserAction(final String entityIdParameterName,
-                                      final Collection<Resource> metadataResources) {
+                                      final Map<Resource, MetadataFilterChain> metadataResources) {
         this.entityIdParameterName = entityIdParameterName;
         this.metadataResources = metadataResources;
     }
@@ -270,7 +274,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @param metadataResources the metadata resources
      * @return the metadata resolver
      */
-    protected MetadataResolver resolveMetadata(final Collection<Resource> metadataResources) {
+    protected MetadataResolver resolveMetadata(final Map<Resource, MetadataFilterChain> metadataResources) {
         try {
 
             final ChainingMetadataResolver metadataManager = new ChainingMetadataResolver();
@@ -278,7 +282,11 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
             final List<MetadataResolver> resolvers = new ArrayList<>(metadataResources.size());
 
-            for (final Resource resource : metadataResources) {
+            final Set<Map.Entry<Resource, MetadataFilterChain>> entries = metadataResources.entrySet();
+
+            for (final Map.Entry<Resource, MetadataFilterChain> entry : entries) {
+                final Resource resource = entry.getKey();
+
                 logger.debug("Loading [{}]", resource.getFilename());
 
                 if (!resource.exists() || !resource.isReadable()) {
@@ -299,14 +307,15 @@ public class SamlMetadataUIParserAction extends AbstractAction {
                 metadataProvider.setFailFastInitialization(true);
                 metadataProvider.setRequireValidMetadata(this.requireValidMetadata);
                 metadataProvider.setId(metadataProvider.getClass().getCanonicalName());
-
+                if (entry.getValue() != null) {
+                    metadataProvider.setMetadataFilter(entry.getValue());
+                }
                 logger.debug("Initializing metadata resolver for [{}]", resource.getFilename());
                 metadataProvider.initialize();
                 resolvers.add(metadataProvider);
             }
 
             metadataManager.setResolvers(resolvers);
-
             logger.info("Collected metadata from [{}] resources. Initializing aggregate...", resolvers.size());
             metadataManager.initialize();
             logger.info("Metadata aggregate initialized successfully.", resolvers.size());
@@ -322,5 +331,12 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
     public void setRefreshIntervalInMinutes(final int refreshIntervalInMinutes) {
         this.refreshIntervalInMinutes = refreshIntervalInMinutes;
+    }
+
+    public static void main(final String[] args) throws Exception {
+        final UrlResource res = new UrlResource("https://ds.incommon.org/certs/inc-md-cert.pem");
+        final InputStream in = res.getInputStream();
+        KeyPairUtil.readPublicKey(in);
+
     }
 }
