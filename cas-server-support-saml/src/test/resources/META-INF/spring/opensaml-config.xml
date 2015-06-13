@@ -77,9 +77,58 @@
           c:entityIdParameterName="entityId"
           c:metadataResources-ref="metadataResources" />
 
-    <util:list id="metadataResources">
-        <value>http://md.incommon.org/InCommon/InCommon-metadata.xml</value>
-    </util:list>
+    <util:map id="metadataResources">
+        <!-- http://md.incommon.org/InCommon/InCommon-metadata.xml -->
+        <entry key="classpath:/sample-metadata.xml"
+               value-ref="inCommonMetadataFilters" />
+    </util:map>
+
+    <bean id="inCommonMetadataFilters" class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
+        <property name="filters">
+            <list>
+                <bean class="org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter"
+                      c:maxValidity="1300" />
+                <bean class="org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter"
+                      c:engine-ref="inCommonTrustEngine" p:requireSignature="true"  />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter" />
+                <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter" />
+                <bean class="net.shibboleth.ext.spring.config.BooleanToPredicateConverter" />
+                <bean class="net.shibboleth.ext.spring.config.StringBooleanToPredicateConverter" />
+                <bean class="net.shibboleth.ext.spring.config.StringToResourceConverter" />
+            </set>
+        </property>
+    </bean>
+
+
+    <bean id="inCommonTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine"
+            c:keyInfoResolver-ref="keyInfoResolver"
+            c:resolver-ref="credentialResolver" />
+
+    <bean id="keyInfoResolver" class="org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver">
+        <constructor-arg name="keyInfoProviders">
+            <list>
+                <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider" />
+                <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider" />
+                <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider" />
+                <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="credentialResolver" class="org.opensaml.security.credential.impl.StaticCredentialResolver"
+          c:credential-ref="credentialFactoryBean" />
+
+    <bean id="credentialFactoryBean"
+          class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialFactoryBean"
+          p:publicKeyInfo="file:c:\\Misagh\\GitWorkspace\\cas-server\\misagh.pem" >
+    </bean>
 
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
             c:serviceRegistryDao-ref="serviceRegistryDao" />
@@ -90,6 +139,7 @@
                     p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description" />
         </property>
     </bean>
+
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 </beans>
