@@ -19,6 +19,7 @@
 
 package org.jasig.cas.support.saml.web.flow;
 
+import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.KeyPairUtil;
@@ -36,6 +37,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.filter.FilterException;
 import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -281,7 +283,6 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             metadataManager.setId(ChainingMetadataResolver.class.getCanonicalName());
 
             final List<MetadataResolver> resolvers = new ArrayList<>(metadataResources.size());
-
             final Set<Map.Entry<Resource, MetadataFilterChain>> entries = metadataResources.entrySet();
 
             for (final Map.Entry<Resource, MetadataFilterChain> entry : entries) {
@@ -311,8 +312,13 @@ public class SamlMetadataUIParserAction extends AbstractAction {
                     metadataProvider.setMetadataFilter(entry.getValue());
                 }
                 logger.debug("Initializing metadata resolver for [{}]", resource.getFilename());
-                metadataProvider.initialize();
-                resolvers.add(metadataProvider);
+
+                try {
+                    metadataProvider.initialize();
+                    resolvers.add(metadataProvider);
+                } catch (final ComponentInitializationException ex) {
+                    logger.warn("Could not initialize metadata resolver. Resource will be ignored", ex);
+                }
             }
 
             metadataManager.setResolvers(resolvers);
@@ -333,10 +339,4 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         this.refreshIntervalInMinutes = refreshIntervalInMinutes;
     }
 
-    public static void main(final String[] args) throws Exception {
-        final UrlResource res = new UrlResource("https://ds.incommon.org/certs/inc-md-cert.pem");
-        final InputStream in = res.getInputStream();
-        KeyPairUtil.readPublicKey(in);
-
-    }
 }
