@@ -26,12 +26,14 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+                           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:component-scan base-package="org.jasig.cas.support.saml"/>
-    <context:annotation-config/>
+    <context:component-scan base-package="org.jasig.cas.support.saml" annotation-config="true" />
+    <context:annotation-config />
 
     <bean id="shibboleth.OpenSAMLConfig" class="org.jasig.cas.support.saml.OpenSamlConfigBean"
           depends-on="shibboleth.ParserPool"/>
@@ -86,26 +88,15 @@
     <bean id="inCommonMetadataFilters" class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
         <property name="filters">
             <list>
+                <!--
                 <bean class="org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter"
-                      c:maxValidity="1300" />
+                      c:maxValidity="0"  />
+                -->
                 <bean class="org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter"
                       c:engine-ref="inCommonTrustEngine" p:requireSignature="true"  />
             </list>
         </property>
     </bean>
-
-    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
-        <property name="converters">
-            <set>
-                <bean class="net.shibboleth.ext.spring.config.DurationToLongConverter" />
-                <bean class="net.shibboleth.ext.spring.config.StringToIPRangeConverter" />
-                <bean class="net.shibboleth.ext.spring.config.BooleanToPredicateConverter" />
-                <bean class="net.shibboleth.ext.spring.config.StringBooleanToPredicateConverter" />
-                <bean class="net.shibboleth.ext.spring.config.StringToResourceConverter" />
-            </set>
-        </property>
-    </bean>
-
 
     <bean id="inCommonTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine"
             c:keyInfoResolver-ref="keyInfoResolver"
@@ -127,7 +118,7 @@
 
     <bean id="credentialFactoryBean"
           class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialFactoryBean"
-          p:publicKeyInfo="file:c:\\Misagh\\GitWorkspace\\cas-server\\misagh.pem" >
+          p:publicKeyInfo="classpath:inc-md-pub.pem" >
     </bean>
 
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
