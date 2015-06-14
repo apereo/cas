@@ -93,7 +93,7 @@
                       c:maxValidity="0"  />
                 -->
                 <bean class="org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter"
-                      c:engine-ref="inCommonTrustEngine" p:requireSignature="true"  />
+                      c:engine-ref="inCommonTrustEngine" p:requireSignature="false"  />
             </list>
         </property>
     </bean>
