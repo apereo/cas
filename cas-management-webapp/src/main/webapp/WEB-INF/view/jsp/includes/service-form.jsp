@@ -138,7 +138,7 @@
                                 <spring:message code="services.form.label.theme" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="management.services.tooltip.name" />"></i>
                             </label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="serviceTheme" ng-model="serviceFormCtrl.serviceTheme">
+                                <select class="form-control" id="themeType" ng-model="serviceFormCtrl.themeType" ng-options="type.name for type in serviceFormCtrl.themeList"></select>
                             </div>
                         </div>
                     </div>
