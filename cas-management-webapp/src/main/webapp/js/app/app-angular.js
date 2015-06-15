@@ -66,10 +66,23 @@
         this.publicKeyAlgorithmList=[
             {
                 name: 'RSA',
-                value: "rsa"
+                value: 'rsa'
             }
         ];
         this.publicKeyAlgorithm = this.publicKeyAlgorithmList[0];
+
+        this.themeList=[
+            {
+                name: 'Theme 01',
+                value: 'theme01'
+            },
+            {
+                name: 'Theme 02',
+                value: 'theme02'
+            }
+        ];
+
+        this.themeType = this.themeList[0];
 
             this.addService = function (service) {
                 // service.services.push(this.service);
