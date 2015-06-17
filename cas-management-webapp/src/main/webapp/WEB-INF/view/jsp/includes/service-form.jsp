@@ -138,7 +138,7 @@
                                 <spring:message code="services.form.label.theme" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="management.services.tooltip.name" />"></i>
                             </label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="serviceTheme" ng-model="serviceFormCtrl.serviceTheme">
+                                <select class="form-control" id="themeType" ng-model="serviceFormCtrl.themeType" ng-options="type.name for type in serviceFormCtrl.themeList"></select>
                             </div>
                         </div>
                     </div>
@@ -158,23 +158,11 @@
 
                 <!-- Service Required Handlers -->
                 <div class="form-group">
-                    <label class="col-sm-4" for="serviceReqHandlers">
+                    <label class="col-sm-3" for="reqHandler">
                         <spring:message code="services.form.label.requiredHandlers" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="management.services.tooltip.name" />"></i>
                     </label>
-                    <div class="col-sm-8">
-                        <div class="input-group">
-                            <input type="text" class="form-control">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button"><i class="fa fa-plus-circle"></i></button>
-                            </span>
-                        </div>
-                        <select multiple class="form-control form-padding" id="serviceReqHandlers" ng-model="serviceFormCtrl.serviceReqHandlers">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                        </select>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="reqHandler" ng-model="serviceFormCtrl.reqHandler" ng-options="type.name for type in serviceFormCtrl.reqHandlerList"></select>
                     </div>
                 </div>
 
