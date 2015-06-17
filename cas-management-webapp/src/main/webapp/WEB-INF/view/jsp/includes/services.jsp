@@ -19,37 +19,49 @@
 
 --%>
 
-<div class="row">
-    <div class="col-sm-12">
-        <table class="table table-striped table-hover services-table">
-            <thead>
-                <tr>
-                <th class="col-sm-4"><spring:message code="management.services.table.header.name" /></th>
-                <th class="col-sm-4"><spring:message code="management.services.table.header.serviceUrl" /></th>
-                <th class="col-sm-2"><spring:message code="management.services.table.header.evaluationOrder" /></th>
-                <th class="col-sm-1"></th>
-                <th class="col-sm-1"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <c:forEach items="${services}" var="service" varStatus="status">
-                <tr id="row${status.index}"${param.id eq service.id ? ' class="added"' : ''}>
-                    <td id="${service.id}">${service.name}</td>
-                    <td>${fn:length(service.serviceId) < 100 ? service.serviceId : fn:substring(service.serviceId, 0, 100)}</td>
-                    <td>${service.evaluationOrder}</td>
-                    <td id="edit${status.index}">
-                        <button class="btn btn-success" ng-click="action.selectAction('add')">
-                            <i class="fa fa-lg fa-pencil"></i> <spring:message code="management.services.table.button.edit" />
-                        </button>
-                    </td>
-                    <td id="delete${status.index}">
-                        <button class="btn btn-danger" onclick="javascript:;">
-                            <i class="fa fa-lg fa-trash"></i> <spring:message code="management.services.table.button.delete" />
-                        </button>
-                    </td>
-                </tr>
-            </c:forEach>
-        </tbody>
-        </table>  <!-- end .services-table table -->
-    </div> <!-- end .col-sm-12 div -->
-</div> <!-- end .row div -->
+<div class="services-table-container" ng-controller="ServicesTableController as serviceTableCtrl">
+    <div class="row">
+        <div class="col-sm-3 col-sm-offset-9 form-inline">
+            <div class="form-group pull-right">
+                <label><spring:message code="management.services.table.label.search" /></label>
+                <input type="text" class="form-control input-sm" ng-model="serviceTableCtrl.serviceTableQuery" placeholder="<spring:message code="management.services.table.label.search" /> ">
+                <button class="btn btn-sm btn-link" ng-click="serviceTableCtrl.clearFilter()" type="button"><i class="fa fa-2x fa-times-circle-o"></i></button>
+            </div>
+        </div>
+    </div> <!-- end .row div -->
+    <div class="row">
+        <div class="col-sm-12">
+            <table class="table table-hover services-table">
+                <thead>
+                    <tr>
+                        <th class="col-sm-4"><spring:message code="management.services.table.header.name" /></th>
+                        <th class="col-sm-4"><spring:message code="management.services.table.header.serviceUrl" /></th>
+                        <th class="col-sm-2"><spring:message code="management.services.table.header.evaluationOrder" /></th>
+                        <th class="col-sm-1"></th>
+                        <th class="col-sm-1"></th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="item in serviceTableCtrl.dataTable | filter: serviceTableCtrl.serviceTableQuery">
+                    <tr class="main-row" ng-click="serviceTableCtrl.toggleDetail($index)">
+                        <td>{{ item.serviceName }} <i class="fa fa-chevron-down"></i></td>
+                        <td>{{ item.serviceUrl }}</td>
+                        <td>{{ item.serviceOrder }}</td>
+                        <td>
+                            <button class="btn btn-success" ng-click="action.selectAction('add')">
+                                <i class="fa fa-lg fa-pencil"></i> <spring:message code="management.services.table.button.edit" />
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-danger" onclick="javascript:;">
+                                <i class="fa fa-lg fa-trash"></i> <spring:message code="management.services.table.button.delete" />
+                            </button>
+                        </td>
+                    </tr>
+                    <tr class="detail-row" ng-show="serviceTableCtrl.activePosition == $index">
+                        <td colspan="5">Quick-view details about service.</td>
+                    </tr>
+                </tbody>
+            </table>  <!-- end .services-table table -->
+        </div> <!-- end .col-sm-12 div -->
+    </div> <!-- end .row div -->
+</div> <!-- end .services-table-container div -->
