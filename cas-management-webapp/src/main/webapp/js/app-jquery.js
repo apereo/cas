@@ -19,5 +19,5 @@
 
  // Initialize Bootstrap Tooltip
 $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
+    $('[data-toggle="tooltip"]').tooltip();
 });
