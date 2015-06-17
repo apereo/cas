@@ -84,10 +84,47 @@
 
         this.themeType = this.themeList[0];
 
+        this.reqHandlerList=[
+            {
+                name: 'This Required Handler',
+                value: 'reqHandler01'
+            },
+            {
+                name: 'That Required Handler',
+                value: 'reqHandler01'
+            }
+        ];
+
+        this.reqHandler = this.reqHandlerList[0];
+
             this.addService = function (service) {
                 // service.services.push(this.service);
 
                 this.serviceForm = {};
             };
         });
-    })();
+
+    app.controller('ServicesTableController', ['$http', function ($http) {
+        var servicesData = this;
+        servicesData.dataTable = [];
+        $http.get('js/app/data/data.json').success(function (data) {
+            servicesData.dataTable = data;
+        });
+
+        this.clearFilter = function() {
+            this.serviceTableQuery = "";
+        };
+
+        //directionalArrow = "fa fa-chevron-down";
+
+        this.toggleDetail = function($index) {
+            this.activePosition = this.activePosition == $index ? -1 : $index;
+            //if(directionalArrow === "fa fa-chevron-down") {
+            //    directionalArrow = "fa fa-chevron-up";
+            //} else {
+            //    directionalArrow = "fa fa-chevron-down";
+            //}
+            //console.log(directionalArrow);
+        };
+    }]);
+})();
