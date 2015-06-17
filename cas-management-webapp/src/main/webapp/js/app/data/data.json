@@ -1,0 +1,13 @@
+[
+    {
+        "serviceName": "Apereo",
+        "serviceUrl": "Tom",
+        "serviceOrder": "0"
+    },
+    {
+        "serviceName": "HTTPS and IMAPS",
+        "serviceUrl": "^(https|imaps)://.*",
+        "serviceOrder": "10000001"
+    }
+]
+
