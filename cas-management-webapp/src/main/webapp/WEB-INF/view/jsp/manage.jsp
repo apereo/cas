@@ -33,16 +33,18 @@
     <head>
         <title><spring:message code="management.services.header.apptitle" /></title>
         <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
-        <link rel="icon" href="<c:url value=" ../favicon.ico" />" type="image/x-icon" />
+        <link rel="icon" href="<c:url value="/images/favicon.ico" />" type="image/x-icon" />
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="<c:url value="/css/cas-management.css" />" type="text/css" />
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script type="text/javascript"  
-        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.16/angular.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.16/angular-route.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-sortable/0.13.4/sortable.min.js"></script>
         <script type="text/javascript" src="<c:url value="/js/app/app-angular.js"/>"></script>
-    <script type="text/javascript" src="<c:url value="/js/app-jquery.js"/>"></script>
+        <script type="text/javascript" src="<c:url value="/js/app-jquery.js"/>"></script>
     </head>
 
     <body class="casmgmt-app" ng-controller="actionsController as action">

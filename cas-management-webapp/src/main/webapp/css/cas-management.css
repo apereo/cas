@@ -6719,6 +6719,12 @@ html {
   border-top: 1px solid #cccccc;
   text-align: center;
 }
+.casmgmt-app .search-form .search-clear {
+  pointer-events: auto;
+  text-decoration: none;
+  cursor: pointer;
+  color: #999999;
+}
 .casmgmt-app #casmgmt-header {
   border-bottom: 1px solid #6ec066;
 }

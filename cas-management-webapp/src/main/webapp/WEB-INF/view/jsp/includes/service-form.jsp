@@ -302,10 +302,7 @@
                                     <spring:message code="services.form.label.publicKey.algorithm" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="management.services.tooltip.name" />"></i>
                                 </label>
                                 <div class="col-sm-8">
-                                    <div class="input-group">
-                                        <div class="input-group-addon input-group-required"><i class="fa fa-lg fa-exclamation-triangle"></i></div>
-                                        <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.publicKeyAlgorithm" ng-options="type.name for type in serviceFormCtrl.publicKeyAlgorithmList"></select>
-                                    </div>
+                                    <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.publicKeyAlgorithm" ng-options="type.name for type in serviceFormCtrl.publicKeyAlgorithmList" disabled></select>
                                 </div>
                             </div>
                         </div> <!-- end .panel-body div -->
@@ -494,8 +491,8 @@
                                         <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed">
                                             <thead>
                                                 <tr>
-                                                    <th class="col-md-4">Attribute</th>
-                                                    <th class="col-md-8">Remapped</th>
+                                                    <th class="col-md-4"><spring:message code="services.form.label.attRelease.policies.sourceAttribute" /></th>
+                                                    <th class="col-md-8"><spring:message code="services.form.label.attRelease.policies.casAttribute" /></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
