@@ -21,17 +21,16 @@
 
 <div class="services-table-container" ng-controller="ServicesTableController as serviceTableCtrl">
     <div class="row">
-        <div class="col-sm-3 col-sm-offset-9 form-inline">
-            <div class="form-group pull-right">
-                <label><spring:message code="management.services.table.label.search" /></label>
-                <input type="text" class="form-control input-sm" ng-model="serviceTableCtrl.serviceTableQuery" placeholder="<spring:message code="management.services.table.label.search" /> ">
-                <button class="btn btn-sm btn-link" ng-click="serviceTableCtrl.clearFilter()" type="button"><i class="fa fa-2x fa-times-circle-o"></i></button>
+        <div class="col-sm-12">
+            <div class="form-group has-feedback search-form">
+                <input type="text" class="form-control input-lg" ng-model="serviceTableCtrl.serviceTableQuery" placeholder="<spring:message code="management.services.table.label.search" /> " autofocus/>
+                <a class="fa fa-2x fa-times-circle-o form-control-feedback search-clear" ng-click="serviceTableCtrl.clearFilter()"></a>
             </div>
         </div>
     </div> <!-- end .row div -->
     <div class="row">
         <div class="col-sm-12">
-            <table class="table table-hover services-table">
+            <table class="table table-hover services-table" ui.sortable ng-model="serviceTableCtrl.dataTable">
                 <thead>
                     <tr>
                         <th class="col-sm-4"><spring:message code="management.services.table.header.name" /></th>
