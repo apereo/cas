@@ -18,7 +18,7 @@
  */
 
 (function () {
-    var app = angular.module('casmgmt', []);
+    var app = angular.module('casmgmt', ['ui.sortable']);
 
     app.controller('actionsController', function () {
         this.actionPanel = 'manage';
@@ -37,7 +37,7 @@
 
         this.serviceTypeList=[
             {
-                name: 'CAS client',
+                name: 'CAS Client',
                 value: 'cas'
             },
             {
