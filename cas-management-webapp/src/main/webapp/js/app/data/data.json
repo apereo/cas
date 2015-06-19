@@ -1,13 +1,21 @@
 [
     {
         "serviceName": "Apereo",
-        "serviceUrl": "Tom",
-        "serviceOrder": "0"
+        "serviceId": "11234",
+        "serviceDesc": "The Apereo service for authentication.",
+        "serviceOrder": "0001"
     },
     {
         "serviceName": "HTTPS and IMAPS",
-        "serviceUrl": "^(https|imaps)://.*",
-        "serviceOrder": "10000001"
+        "serviceId": "43021",
+        "serviceDesc": "The HTTP and IMAPS service for authentication.",
+        "serviceOrder": "0002"
+    },
+    {
+        "serviceName": "Another Service",
+        "serviceId": "90432",
+        "serviceDesc": "Another service you can use for authentication.",
+        "serviceOrder": "0003"
     }
 ]
 
