@@ -6725,6 +6725,12 @@ html {
   cursor: pointer;
   color: #999999;
 }
+.casmgmt-app .services-table-container .grabber-icon {
+  display: inline-block;
+  color: #999999;
+  margin: 0 5px;
+  cursor: move;
+}
 .casmgmt-app #casmgmt-header {
   border-bottom: 1px solid #6ec066;
 }
