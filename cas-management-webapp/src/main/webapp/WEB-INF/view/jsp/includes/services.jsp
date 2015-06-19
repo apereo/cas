@@ -30,21 +30,23 @@
     </div> <!-- end .row div -->
     <div class="row">
         <div class="col-sm-12">
-            <table class="table table-hover services-table" ui.sortable ng-model="serviceTableCtrl.dataTable">
+            <table class="table table-hover table-striped services-table" ng-model="serviceTableCtrl.dataTable">
                 <thead>
                     <tr>
-                        <th class="col-sm-4"><spring:message code="management.services.table.header.name" /></th>
-                        <th class="col-sm-4"><spring:message code="management.services.table.header.serviceUrl" /></th>
+                        <th class="col-sm-3"><spring:message code="management.services.table.header.serviceName" /></th>
+                        <th class="col-sm-2"><spring:message code="management.services.table.header.serviceId" /></th>
+                        <th class="col-sm-3"><spring:message code="management.services.table.header.serviceDesc" /></th>
                         <th class="col-sm-2"><spring:message code="management.services.table.header.evaluationOrder" /></th>
                         <th class="col-sm-1"></th>
                         <th class="col-sm-1"></th>
                     </tr>
                 </thead>
-                <tbody ng-repeat="item in serviceTableCtrl.dataTable | filter: serviceTableCtrl.serviceTableQuery">
-                    <tr class="main-row" ng-click="serviceTableCtrl.toggleDetail($index)">
-                        <td>{{ item.serviceName }} <i class="fa fa-chevron-down"></i></td>
-                        <td>{{ item.serviceUrl }}</td>
-                        <td>{{ item.serviceOrder }}</td>
+                <tbody ui-sortable="serviceTable.dataTable">
+                    <tr ng-repeat="item in serviceTableCtrl.dataTable | filter: serviceTableCtrl.serviceTableQuery" class="main-row" ng-click="serviceTableCtrl.toggleDetail($index)">
+                        <td><div class="grabber-icon"><i class="fa fa-lg fa-ellipsis-v"></i></div> {{ item.serviceName }} <i class="fa fa-chevron-down"></i></td>
+                        <td>{{ item.serviceId }}</td>
+                        <td>{{ item.serviceDesc }}</td>
+                        <td>{{ $index }}</td>
                         <td>
                             <button class="btn btn-success" ng-click="action.selectAction('add')">
                                 <i class="fa fa-lg fa-pencil"></i> <spring:message code="management.services.table.button.edit" />
@@ -56,9 +58,9 @@
                             </button>
                         </td>
                     </tr>
-                    <tr class="detail-row" ng-show="serviceTableCtrl.activePosition == $index">
-                        <td colspan="5">Quick-view details about service.</td>
-                    </tr>
+                    <%--<tr class="detail-row" ng-show="serviceTableCtrl.activePosition == $index">--%>
+                        <%--<td colspan="5">Quick-view details about service.</td>--%>
+                    <%--</tr>--%>
                 </tbody>
             </table>  <!-- end .services-table table -->
         </div> <!-- end .col-sm-12 div -->
