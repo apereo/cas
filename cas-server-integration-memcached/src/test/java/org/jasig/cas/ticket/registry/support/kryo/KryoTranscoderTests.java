@@ -39,12 +39,12 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.RememberMeCredential;
@@ -281,7 +281,7 @@ public class KryoTranscoderTests {
         public MockTicketGrantingTicket(final String id, final Credential credential, final Map<String, Object> principalAttributes) {
             this.id = id;
             final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credential);
-            final AuthenticationBuilder builder = new AuthenticationBuilder();
+            final DefaultAuthenticationBuilder builder = new DefaultAuthenticationBuilder();
             builder.setPrincipal(this.principalFactory.createPrincipal(USERNAME, principalAttributes));
             builder.setAuthenticationDate(new Date());
             builder.addCredential(credentialMetaData);
@@ -394,11 +394,11 @@ public class KryoTranscoderTests {
     public static class MockAuthenticationHandler implements AuthenticationHandler {
 
         @Override
-        public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
+        public DefaultHandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
             if (credential instanceof HttpBasedServiceCredential) {
-                return new HandlerResult(this, (HttpBasedServiceCredential) credential);
+                return new DefaultHandlerResult(this, (HttpBasedServiceCredential) credential);
             } else {
-                return new HandlerResult(this, new BasicCredentialMetaData(credential));
+                return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential));
             }
         }
 
