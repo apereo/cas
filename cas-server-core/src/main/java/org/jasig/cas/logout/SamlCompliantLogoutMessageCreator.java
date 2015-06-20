@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * A builder that uses the saml standard's <code>LogoutRequest</code> template in order
  * to build the logout request.
  * @author Misagh Moayyed
- * @see LogoutRequest
+ * @see DefaultLogoutRequest
  * @since 4.0.0
  */
 public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
@@ -46,7 +46,7 @@ public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCre
             + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>";
 
     @Override
-    public String create(final LogoutRequest request) {
+    public String create(final DefaultLogoutRequest request) {
         final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
                 new ISOStandardDateFormat().getCurrentDateAndTime(), request.getTicketId());
         

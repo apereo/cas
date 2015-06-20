@@ -34,7 +34,7 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final DefaultAuthenticationBuilder builder, final Credential credential) {
         logger.debug("Processing request to capture the credential for [{}]", credential.getId());
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
         builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, c.getPassword());

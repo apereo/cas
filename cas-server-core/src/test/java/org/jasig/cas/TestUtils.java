@@ -19,11 +19,11 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -166,9 +166,9 @@ public final class TestUtils {
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
-        return new AuthenticationBuilder(principal)
+        return new DefaultAuthenticationBuilder(principal)
                 .addCredential(meta)
-                .addSuccess("testHandler", new HandlerResult(handler, meta))
+                .addSuccess("testHandler", new DefaultHandlerResult(handler, meta))
                 .setAttributes(attributes)
                 .build();
     }

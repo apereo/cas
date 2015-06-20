@@ -34,7 +34,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class AuthenticationBuilder {
+public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     /** Authenticated principal. */
     private Principal principal;
 
@@ -56,7 +56,7 @@ public class AuthenticationBuilder {
     /**
      * Creates a new instance using the current date for the authentication date.
      */
-    public AuthenticationBuilder() {
+    public DefaultAuthenticationBuilder() {
         authenticationDate = new DateTime();
     }
 
@@ -66,7 +66,7 @@ public class AuthenticationBuilder {
      *
      * @param p Authenticated principal.
      */
-    public AuthenticationBuilder(final Principal p) {
+    public DefaultAuthenticationBuilder(final Principal p) {
         this();
         this.principal = p;
     }
@@ -87,6 +87,7 @@ public class AuthenticationBuilder {
      *
      * @return This builder instance.
      */
+    @Override
     public AuthenticationBuilder setAuthenticationDate(final Date d) {
         this.authenticationDate = new DateTime(d);
         return this;
@@ -97,6 +98,7 @@ public class AuthenticationBuilder {
      *
      * @return Principal.
      */
+    @Override
     public Principal getPrincipal() {
         return this.principal;
     }
@@ -108,6 +110,7 @@ public class AuthenticationBuilder {
      *
      * @return This builder instance.
      */
+    @Override
     public AuthenticationBuilder setPrincipal(final Principal p) {
         this.principal = p;
         return this;
@@ -143,6 +146,7 @@ public class AuthenticationBuilder {
      *
      * @return This builder instance.
      */
+    @Override
     public AuthenticationBuilder addCredential(final CredentialMetaData credential) {
         this.credentials.add(credential);
         return this;
@@ -181,6 +185,7 @@ public class AuthenticationBuilder {
      *
      * @return This builder instance.
      */
+    @Override
     public AuthenticationBuilder addAttribute(final String key, final Object value) {
         this.attributes.put(key, value);
         return this;
@@ -191,6 +196,7 @@ public class AuthenticationBuilder {
      *
      * @return Non-null map of handler names to successful handler authentication results.
      */
+    @Override
     public Map<String, HandlerResult> getSuccesses() {
         return this.successes;
     }
@@ -219,6 +225,7 @@ public class AuthenticationBuilder {
      *
      * @return This builder instance.
      */
+    @Override
     public AuthenticationBuilder addSuccess(final String key, final HandlerResult value) {
         this.successes.put(key, value);
         return this;
@@ -229,6 +236,7 @@ public class AuthenticationBuilder {
      *
      * @return Non-null authentication failure map.
      */
+    @Override
     public Map<String, Class<? extends Exception>> getFailures() {
         return this.failures;
     }
@@ -257,6 +265,7 @@ public class AuthenticationBuilder {
      *
      * @return This builder instance.
      */
+    @Override
     public AuthenticationBuilder addFailure(final String key, final Class<? extends Exception> value) {
         this.failures.put(key, value);
         return this;
@@ -267,6 +276,7 @@ public class AuthenticationBuilder {
      *
      * @return Immutable authentication.
      */
+    @Override
     public Authentication build() {
         return new ImmutableAuthentication(
                 this.authenticationDate,
@@ -285,7 +295,7 @@ public class AuthenticationBuilder {
      * @return New builder instance initialized with all fields in the given authentication source.
      */
     public static AuthenticationBuilder newInstance(final Authentication source) {
-        final AuthenticationBuilder builder = new AuthenticationBuilder(source.getPrincipal());
+        final DefaultAuthenticationBuilder builder = new DefaultAuthenticationBuilder(source.getPrincipal());
         builder.setAuthenticationDate(source.getAuthenticationDate());
         builder.setCredentials(source.getCredentials());
         builder.setSuccesses(source.getSuccesses());
