@@ -20,11 +20,11 @@ package org.jasig.cas.mock;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -68,10 +68,10 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
         id = ID_GENERATOR.getNewTicketId("TGT");
         final CredentialMetaData metaData = new BasicCredentialMetaData(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
-        authentication = new AuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal))
+        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal))
                             .addCredential(metaData)
                             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                            new HandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
+                            new DefaultHandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
                             .build();
 
         created = new Date();

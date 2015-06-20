@@ -32,7 +32,7 @@ import java.util.Arrays;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class Message implements Serializable {
+public class DefaultMessageDescriptor implements MessageDescriptor {
 
     /** Serialization support. */
     private static final long serialVersionUID = 1227390629186486032L;
@@ -48,7 +48,7 @@ public class Message implements Serializable {
      *
      * @param code the code
      */
-    public Message(final String code) {
+    public DefaultMessageDescriptor(final String code) {
         this(code, code);
     }
 
@@ -59,7 +59,7 @@ public class Message implements Serializable {
      * @param defaultMessage the default message
      * @param params the params
      */
-    public Message(final String code, final String defaultMessage, final Serializable... params) {
+    public DefaultMessageDescriptor(final String code, final String defaultMessage, final Serializable... params) {
         Assert.hasText(code, "Code cannot be null or empty");
         Assert.hasText(defaultMessage, "Default message cannot be null or empty");
         this.code = code;
@@ -98,13 +98,13 @@ public class Message implements Serializable {
 
     @Override
     public boolean equals(final Object other) {
-        if (other == null || !(other instanceof Message)) {
+        if (other == null || !(other instanceof DefaultMessageDescriptor)) {
             return false;
         }
         if (other == this) {
             return true;
         }
-        final Message m = (Message) other;
+        final DefaultMessageDescriptor m = (DefaultMessageDescriptor) other;
         return this.code.equals(m.getCode())
                 && this.defaultMessage.equals(m.getDefaultMessage())
                 && Arrays.equals(this.params, m.getParams());

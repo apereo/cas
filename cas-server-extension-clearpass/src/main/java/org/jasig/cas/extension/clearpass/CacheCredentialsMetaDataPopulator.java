@@ -19,7 +19,7 @@
 package org.jasig.cas.extension.clearpass;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -52,7 +52,7 @@ public final class CacheCredentialsMetaDataPopulator implements AuthenticationMe
     }
 
     @Override
-    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final DefaultAuthenticationBuilder builder, final Credential credential) {
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
         final Authentication authentication = builder.build();
         this.credentialCache.put(authentication.getPrincipal().getId(), c.getPassword());

@@ -20,12 +20,12 @@ package org.jasig.cas.support.saml.authentication;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
@@ -55,7 +55,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
-        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        final DefaultAuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -67,7 +67,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
-        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        final DefaultAuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -83,7 +83,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
         this.populator.setUserDefinedMappings(added);
 
-        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        final DefaultAuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -99,11 +99,11 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         }
     }
 
-    private static AuthenticationBuilder newAuthenticationBuilder(final Principal principal) {
+    private static DefaultAuthenticationBuilder newAuthenticationBuilder(final Principal principal) {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        return new AuthenticationBuilder(principal)
+        return new DefaultAuthenticationBuilder(principal)
                 .addCredential(meta)
-                .addSuccess("test", new HandlerResult(handler, meta));
+                .addSuccess("test", new DefaultHandlerResult(handler, meta));
     }
 }

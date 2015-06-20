@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.authentication.support;
 
-import org.jasig.cas.Message;
+import org.jasig.cas.DefaultMessageDescriptor;
+import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
@@ -80,7 +81,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
     }
 
     @Override
-    public List<Message> handle(final AuthenticationResponse response, final LdapPasswordPolicyConfiguration configuration)
+    public List<MessageDescriptor> handle(final AuthenticationResponse response, final LdapPasswordPolicyConfiguration configuration)
             throws LoginException {
 
         final AccountState state = response.getAccountState();
@@ -94,7 +95,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             error = null;
             warning = null;
         }
-        final List<Message> messages = new ArrayList<>();
+        final List<MessageDescriptor> messages = new ArrayList<>();
         handleError(error, response, configuration, messages);
         handleWarning(warning, response, configuration, messages);
         return messages;
@@ -116,7 +117,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final AccountState.Error error,
             final AuthenticationResponse response,
             final LdapPasswordPolicyConfiguration configuration,
-            final List<Message> messages)
+            final List<MessageDescriptor> messages)
             throws LoginException {
 
         logger.debug("Handling {}", error);
@@ -142,7 +143,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final AccountState.Warning warning,
             final AuthenticationResponse response,
             final LdapPasswordPolicyConfiguration configuration,
-            final List<Message> messages) {
+            final List<MessageDescriptor> messages) {
 
         if (warning == null) {
             logger.debug("Account state warning not defined");
@@ -157,13 +158,13 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
                 configuration.getPasswordWarningNumberOfDays());
         if (configuration.isAlwaysDisplayPasswordExpirationWarning()
                 || ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
-            messages.add(new PasswordExpiringWarningMessage(
+            messages.add(new PasswordExpiringWarningMessageDescriptor(
                     "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
                     ttl.getDays(),
                     configuration.getPasswordPolicyUrl()));
         }
         if (warning.getLoginsRemaining() > 0) {
-            messages.add(new Message(
+            messages.add(new DefaultMessageDescriptor(
                     "password.expiration.loginsRemaining",
                     "You have {0} logins remaining before you MUST change your password.",
                     warning.getLoginsRemaining()));

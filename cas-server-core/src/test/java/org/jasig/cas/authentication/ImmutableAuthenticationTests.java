@@ -52,7 +52,7 @@ public class ImmutableAuthenticationTests {
         final Map<String, Object> attributes = new HashMap<>();
         attributes.put("authenticationMethod", "password");
         final Map<String, HandlerResult> successes = new HashMap<>();
-        successes.put("handler1", new HandlerResult(authenticationHandler, credential1));
+        successes.put("handler1", new DefaultHandlerResult(authenticationHandler, credential1));
         final Map<String, Class<? extends Exception>> failures = new HashMap<>();
         failures.put("handler2", FailedLoginException.class);
         final ImmutableAuthentication auth = new ImmutableAuthentication(
@@ -75,7 +75,7 @@ public class ImmutableAuthenticationTests {
             logger.debug("Adding authentication credential metadata failed correctly");
         }
         try {
-            auth.getSuccesses().put("test", new HandlerResult(authenticationHandler, credential1));
+            auth.getSuccesses().put("test", new DefaultHandlerResult(authenticationHandler, credential1));
             fail("Should have failed");
         } catch (final RuntimeException e) {
             logger.debug("Adding authentication success event failed correctly");
