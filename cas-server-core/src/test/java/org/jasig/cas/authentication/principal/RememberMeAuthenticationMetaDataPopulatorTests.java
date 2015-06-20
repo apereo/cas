@@ -20,11 +20,12 @@ package org.jasig.cas.authentication.principal;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.RememberMeUsernamePasswordCredential;
@@ -49,7 +50,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     public void verifyWithTrueRememberMeCredentials() {
         final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(true);
-        final DefaultAuthenticationBuilder builder = newBuilder(c);
+        final AuthenticationBuilder builder = newBuilder(c);
         final Authentication auth = builder.build();
 
         assertEquals(true, auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
@@ -59,7 +60,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     public void verifyWithFalseRememberMeCredentials() {
         final RememberMeUsernamePasswordCredential c = new RememberMeUsernamePasswordCredential();
         c.setRememberMe(false);
-        final DefaultAuthenticationBuilder builder = newBuilder(c);
+        final AuthenticationBuilder builder = newBuilder(c);
         final Authentication auth = builder.build();
 
         assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
@@ -67,16 +68,16 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifyWithoutRememberMeCredentials() {
-        final DefaultAuthenticationBuilder builder = newBuilder(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationBuilder builder = newBuilder(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final Authentication auth = builder.build();
 
         assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
     }
 
-    private DefaultAuthenticationBuilder newBuilder(final Credential credential) {
+    private AuthenticationBuilder newBuilder(final Credential credential) {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final DefaultAuthenticationBuilder builder = new DefaultAuthenticationBuilder(TestUtils.getPrincipal())
+        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(TestUtils.getPrincipal())
                 .addCredential(meta)
                 .addSuccess("test", new DefaultHandlerResult(handler, meta));
 

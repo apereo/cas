@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.support.saml.authentication;
 
-import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
@@ -78,7 +78,7 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
     }
 
     @Override
-    public final void populateAttributes(final DefaultAuthenticationBuilder builder, final Credential credential) {
+    public final void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
 
         final String credentialsClass = credential.getClass().getName();
         final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
