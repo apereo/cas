@@ -23,6 +23,7 @@ import javax.security.auth.login.FailedLoginException;
 import static org.junit.Assert.*;
 
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.HandlerResult;
 import org.junit.Before;
 import org.junit.Test;
 

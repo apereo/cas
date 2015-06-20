@@ -117,7 +117,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @return all logout requests.
      */
     @Override
-    public List<DefaultLogoutRequest> performLogout(final TicketGrantingTicket ticket) {
+    public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
         final Map<String, Service> services;
         // synchronize the retrieval of the services and their cleaning for the TGT
         // to avoid concurrent logout mess ups
@@ -127,7 +127,7 @@ public final class LogoutManagerImpl implements LogoutManager {
         }
         ticket.markTicketExpired();
 
-        final List<DefaultLogoutRequest> logoutRequests = new ArrayList<>();
+        final List<LogoutRequest> logoutRequests = new ArrayList<>();
         // if SLO is not disabled
         if (!this.singleLogoutCallbacksDisabled) {
             // through all services
@@ -135,7 +135,7 @@ public final class LogoutManagerImpl implements LogoutManager {
                 // it's a SingleLogoutService, else ignore
                 final Service service = entry.getValue();
                 if (service instanceof SingleLogoutService) {
-                    final DefaultLogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, entry.getKey());
+                    final LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, entry.getKey());
                     if (logoutRequest != null) {
                         LOGGER.debug("Captured logout request [{}]", logoutRequest);
                         logoutRequests.add(logoutRequest);
@@ -166,7 +166,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param ticketId the ticket id
      * @return the logout request
      */
-    private DefaultLogoutRequest handleLogoutForSloService(final SingleLogoutService singleLogoutService, final String ticketId) {
+    private LogoutRequest handleLogoutForSloService(final SingleLogoutService singleLogoutService, final String ticketId) {
         if (!singleLogoutService.isLoggedOutAlready()) {
 
             final RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
@@ -226,7 +226,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param request the logout request.
      * @return if the logout has been performed.
      */
-    private boolean performBackChannelLogout(final DefaultLogoutRequest request) {
+    private boolean performBackChannelLogout(final LogoutRequest request) {
         try {
             final String logoutRequest = this.logoutMessageBuilder.create(request);
             final SingleLogoutService logoutService = request.getService();
@@ -248,7 +248,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param logoutRequest the logout request.
      * @return a front SAML logout message.
      */
-    public String createFrontChannelLogoutMessage(final DefaultLogoutRequest logoutRequest) {
+    public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
         final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
         LOGGER.trace("Attempting to deflate the logout message [{}]", logoutMessage);
         return CompressionUtils.deflate(logoutMessage);

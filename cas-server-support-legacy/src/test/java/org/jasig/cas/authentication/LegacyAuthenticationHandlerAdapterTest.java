@@ -50,7 +50,7 @@ public class LegacyAuthenticationHandlerAdapterTest {
 
     @Test
     public void verifyAuthenticateSuccess() throws Exception {
-        final DefaultHandlerResult result = alwaysPassHandler.authenticate(new UsernamePasswordCredential("a", "b"));
+        final HandlerResult result = alwaysPassHandler.authenticate(new UsernamePasswordCredential("a", "b"));
         assertEquals("TestAlwaysPassAuthenticationHandler", result.getHandlerName());
     }
 
