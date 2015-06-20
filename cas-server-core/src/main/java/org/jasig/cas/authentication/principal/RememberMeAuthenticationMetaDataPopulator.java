@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.RememberMeCredential;
@@ -29,13 +29,11 @@ import org.jasig.cas.authentication.RememberMeCredential;
  *
  * @author Scott Battaglia
  * @since 3.2.1
- *
  */
-public final class RememberMeAuthenticationMetaDataPopulator implements
-    AuthenticationMetaDataPopulator {
+public final class RememberMeAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     @Override
-    public void populateAttributes(final DefaultAuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         final RememberMeCredential r = (RememberMeCredential) credential;
         if (r.isRememberMe()) {
             builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
