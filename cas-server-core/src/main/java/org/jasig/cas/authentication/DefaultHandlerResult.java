@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.jasig.cas.Message;
+import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -37,7 +36,7 @@ import org.springframework.util.StringUtils;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class HandlerResult implements Serializable {
+public class DefaultHandlerResult implements HandlerResult {
 
     /** Serialization support. */
     private static final long serialVersionUID = -3113998493287982485L;
@@ -52,10 +51,10 @@ public class HandlerResult implements Serializable {
     private Principal principal;
 
     /** List of warnings issued by the authentication source while authenticating the credential. */
-    private List<Message> warnings;
+    private List<MessageDescriptor> warnings;
 
     /** No-arg constructor for serialization support. */
-    private HandlerResult() {}
+    private DefaultHandlerResult() {}
 
     /**
      * Instantiates a new handler result.
@@ -63,7 +62,7 @@ public class HandlerResult implements Serializable {
      * @param source the source
      * @param metaData the meta data
      */
-    public HandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
+    public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
         this(source, metaData, null, null);
     }
 
@@ -74,7 +73,7 @@ public class HandlerResult implements Serializable {
      * @param metaData the meta data
      * @param p the p
      */
-    public HandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
+    public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
         this(source, metaData, p, null);
     }
 
@@ -85,8 +84,8 @@ public class HandlerResult implements Serializable {
      * @param metaData the meta data
      * @param warnings the warnings
      */
-    public HandlerResult(
-            final AuthenticationHandler source, final CredentialMetaData metaData, final List<Message> warnings) {
+    public DefaultHandlerResult(
+            final AuthenticationHandler source, final CredentialMetaData metaData, final List<MessageDescriptor> warnings) {
         this(source, metaData, null, warnings);
     }
 
@@ -98,11 +97,11 @@ public class HandlerResult implements Serializable {
      * @param p the p
      * @param warnings the warnings
      */
-    public HandlerResult(
+    public DefaultHandlerResult(
             final AuthenticationHandler source,
             final CredentialMetaData metaData,
             final Principal p,
-            final List<Message> warnings) {
+            final List<MessageDescriptor> warnings) {
         Assert.notNull(source, "Source cannot be null.");
         Assert.notNull(metaData, "Credential metadata cannot be null.");
         this.handlerName = source.getName();
@@ -114,21 +113,25 @@ public class HandlerResult implements Serializable {
         this.warnings = warnings;
     }
 
+    @Override
     public String getHandlerName() {
         return this.handlerName;
     }
 
+    @Override
     public CredentialMetaData getCredentialMetaData() {
         return this.credentialMetaData;
     }
 
+    @Override
     public Principal getPrincipal() {
         return this.principal;
     }
 
-    public List<Message> getWarnings() {
+    @Override
+    public List<MessageDescriptor> getWarnings() {
         return this.warnings == null
-                ? Collections.<Message>emptyList()
+                ? Collections.<MessageDescriptor>emptyList()
                 : Collections.unmodifiableList(this.warnings);
     }
 
@@ -144,13 +147,13 @@ public class HandlerResult implements Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof HandlerResult)) {
+        if (!(obj instanceof DefaultHandlerResult)) {
             return false;
         }
         if (obj == this) {
             return true;
         }
-        final HandlerResult other = (HandlerResult) obj;
+        final DefaultHandlerResult other = (DefaultHandlerResult) obj;
         final EqualsBuilder builder = new EqualsBuilder();
         builder.append(this.handlerName, other.handlerName);
         builder.append(this.credentialMetaData, other.credentialMetaData);

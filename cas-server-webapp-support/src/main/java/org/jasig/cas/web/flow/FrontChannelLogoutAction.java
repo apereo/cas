@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.logout.LogoutManager;
-import org.jasig.cas.logout.LogoutRequest;
+import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -68,11 +68,11 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,
             final RequestContext context) throws Exception {
 
-        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
+        final List<DefaultLogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
         final Integer startIndex = getLogoutIndex(context);
         if (logoutRequests != null) {
             for (int i = startIndex; i < logoutRequests.size(); i++) {
-                final LogoutRequest logoutRequest = logoutRequests.get(i);
+                final DefaultLogoutRequest logoutRequest = logoutRequests.get(i);
                 if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
                     // assume it has been successful
                     logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);

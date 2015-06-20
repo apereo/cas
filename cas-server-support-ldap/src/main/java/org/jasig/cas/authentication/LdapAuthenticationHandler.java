@@ -20,7 +20,7 @@ package org.jasig.cas.authentication;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
-import org.jasig.cas.Message;
+import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
@@ -178,7 +178,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         logger.debug("LDAP response: {}", response);
 
-        final List<Message> messageList;
+        final List<MessageDescriptor> messageList;
         
         final LdapPasswordPolicyConfiguration ldapPasswordPolicyConfiguration =
                 (LdapPasswordPolicyConfiguration) super.getPasswordPolicyConfiguration();

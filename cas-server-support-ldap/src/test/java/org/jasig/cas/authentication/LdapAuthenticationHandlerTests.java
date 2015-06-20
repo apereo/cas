@@ -55,7 +55,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         for (final LdapEntry entry : this.getEntries()) {
             final String username = getUsername(entry);
             final String psw = entry.getAttribute("userPassword").getStringValue();
-            final HandlerResult result = this.handler.authenticate(
+            final DefaultHandlerResult result = this.handler.authenticate(
                     new UsernamePasswordCredential(username, psw));
             assertNotNull(result.getPrincipal());
             assertEquals(username, result.getPrincipal().getId());
