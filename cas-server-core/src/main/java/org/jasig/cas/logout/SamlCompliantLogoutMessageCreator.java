@@ -46,7 +46,7 @@ public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCre
             + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>";
 
     @Override
-    public String create(final DefaultLogoutRequest request) {
+    public String create(final LogoutRequest request) {
         final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
                 new ISOStandardDateFormat().getCurrentDateAndTime(), request.getTicketId());
         

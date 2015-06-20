@@ -20,6 +20,7 @@ package org.jasig.cas.support.saml.authentication;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
@@ -55,7 +56,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
-        final DefaultAuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -67,7 +68,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
-        final DefaultAuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -83,7 +84,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
         this.populator.setUserDefinedMappings(added);
 
-        final DefaultAuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -99,7 +100,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         }
     }
 
-    private static DefaultAuthenticationBuilder newAuthenticationBuilder(final Principal principal) {
+    private static AuthenticationBuilder newAuthenticationBuilder(final Principal principal) {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         return new DefaultAuthenticationBuilder(principal)

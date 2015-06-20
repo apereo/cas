@@ -117,4 +117,14 @@ public interface AuthenticationBuilder extends Serializable {
      * @return This builder instance.
      */
     AuthenticationBuilder addFailure(String key, Class<? extends Exception> value);
+
+    /**
+     * Sets the authentication metadata attributes.
+     *
+     * @param attributes Non-null map of authentication metadata attributes.
+     *
+     * @return This builder instance.
+     */
+    AuthenticationBuilder setAttributes(Map<String, Object> attributes);
+
 }

@@ -23,7 +23,7 @@ import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
 import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
@@ -136,7 +136,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setStaticSalt(STATIC_SALT);
 
         final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword("user1");
-        final DefaultHandlerResult r = q.authenticateUsernamePasswordInternal(c);
+        final HandlerResult r = q.authenticateUsernamePasswordInternal(c);
 
         assertNotNull(r);
         assertEquals(r.getPrincipal().getId(), "user1");
@@ -157,7 +157,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         });
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
-        final DefaultHandlerResult r = q.authenticateUsernamePasswordInternal(
+        final HandlerResult r = q.authenticateUsernamePasswordInternal(
                 TestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
