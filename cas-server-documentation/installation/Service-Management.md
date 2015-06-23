@@ -464,6 +464,13 @@ Finally, when adding a new source new dependencies may be required on Hibernate,
 {% highlight xml %}
 
 <dependency>
+  	<groupId>org.jasig.cas</groupId>
+  	<artifactId>cas-server-support-jdbc</artifactId>
+  	<version>${cas.version}</version>
+  	<scope>runtime</scope>
+</dependency>
+
+<dependency>
   	<groupId>org.apache.commons</groupId>
   	<artifactId>commons-dbcp2</artifactId>
 	<version>${commons.dbcp.version}</version>
