@@ -345,7 +345,7 @@ create table RegisteredServiceImpl (
     logout_type integer, 
     logout_url varchar(255),
     name varchar(255) not null, 
-    proxy_policy blob(255) not null, 
+    proxy_policy blob(255), 
     required_handlers blob(255), 
     public_key blob(255), 
     serviceId varchar(255) not null, 
@@ -361,7 +361,7 @@ The following configuration template may be applied to `deployerConfigContext.xm
 registered service storage. The configuration assumes a `dataSource` bean is defined in the context.
 
 {% highlight xml %}
-<tx:annotation-driven transaction-manager-ref="transactionManager" />
+<tx:annotation-driven />
 
 <bean id="factoryBean"
       class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
@@ -370,12 +370,18 @@ registered service storage. The configuration assumes a `dataSource` bean is def
       p:packagesToScan-ref="packagesToScan">
     <property name="jpaProperties">
       <props>
-        <prop key="hibernate.dialect">${database.dialect}</prop>
+        <prop key="hibernate.dialect">${database.hibernate.dialect}</prop>
         <prop key="hibernate.hbm2ddl.auto">update</prop>
-        <prop key="hibernate.jdbc.batch_size">${database.batchSize}</prop>
+        <prop key="hibernate.jdbc.batch_size">${database.hibernate.batchSize:10}</prop>
       </props>
     </property>
 </bean>
+
+<util:list id="packagesToScan">
+    <value>org.jasig.cas.services</value>
+    <value>org.jasig.cas.ticket</value>
+    <value>org.jasig.cas.adaptors.jdbc</value>
+</util:list>
 
 <bean id="jpaVendorAdapter"
       class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
@@ -407,7 +413,7 @@ If you prefer a direct connection to the database, here's a sample configuration
 {% highlight xml %}
  <bean
         id="dataSource"
-        class="com.mchange.v2.c3p0.ComboPooledDataSource"
+        class="org.apache.commons.dbcp2.BasicDataSource"
         p:driverClassName="org.hsqldb.jdbcDriver"
         p:jdbcUrl-ref="database"
         p:password=""
@@ -419,7 +425,7 @@ The data source will need to be modified for your particular database (i.e. Orac
 {% highlight xml %}
 <bean
         id="dataSource"
-        class="org.apache.commons.dbcp.BasicDataSource"
+        class="org.apache.commons.dbcp2.BasicDataSource"
         p:driverClassName="com.mysql.jdbc.Driver"
         p:url="jdbc:mysql://localhost:3306/test?autoReconnect=true"
         p:password=""
@@ -453,13 +459,14 @@ You will also need to ensure that the xml configuration file contains the `tx` n
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 {% endhighlight %}
 
-Finally, when adding a new source new dependencies may be required on Hibernate, commons-dbcp. Be sure to add those to your `pom.xml`. Below is a sample configuration for MYSQL. Be sure to adjust the version elements for the appropriate version number.
+Finally, when adding a new source new dependencies may be required on Hibernate, `commons-dbcp2`. Be sure to add those to your `pom.xml`. Below is a sample configuration for MYSQL. Be sure to adjust the version elements for the appropriate version number.
 
 {% highlight xml %}
+
 <dependency>
-    <groupId>commons-dbcp</groupId>
-    <artifactId>commons-dbcp</artifactId>
-    <version>${commons.dbcp.version}</version>
+  	<groupId>org.apache.commons</groupId>
+  	<artifactId>commons-dbcp2</artifactId>
+	<version>${commons.dbcp.version}</version>
     <scope>runtime</scope>
 </dependency>
  
