@@ -64,7 +64,6 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
@@ -222,7 +221,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Timed(name = "DESTROY_TICKET_GRANTING_TICKET_TIMER")
     @Metered(name="DESTROY_TICKET_GRANTING_TICKET_METER")
     @Counted(name="DESTROY_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
-    @Transactional(readOnly = false)
     @Override
     public List<LogoutRequest> destroyTicketGrantingTicket(@NotNull final String ticketGrantingTicketId) {
         try {
@@ -245,7 +243,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Timed(name="GRANT_SERVICE_TICKET_TIMER")
     @Metered(name="GRANT_SERVICE_TICKET_METER")
     @Counted(name="GRANT_SERVICE_TICKET_COUNTER", monotonic=true)
-    @Transactional(readOnly = false)
     @Override
     public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId,
@@ -365,7 +362,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Timed(name = "GRANT_SERVICE_TICKET_TIMER")
     @Metered(name="GRANT_SERVICE_TICKET_METER")
     @Counted(name="GRANT_SERVICE_TICKET_COUNTER", monotonic=true)
-    @Transactional(readOnly = false)
     @Override
     public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId,
         final Service service) throws TicketException {
@@ -383,7 +379,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Timed(name="GRANT_PROXY_GRANTING_TICKET_TIMER")
     @Metered(name="GRANT_PROXY_GRANTING_TICKET_METER")
     @Counted(name="GRANT_PROXY_GRANTING_TICKET_COUNTER", monotonic=true)
-    @Transactional(readOnly = false)
     @Override
     public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, TicketException {
@@ -425,7 +420,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Timed(name="VALIDATE_SERVICE_TICKET_TIMER")
     @Metered(name="VALIDATE_SERVICE_TICKET_METER")
     @Counted(name="VALIDATE_SERVICE_TICKET_COUNTER", monotonic=true)
-    @Transactional(readOnly = false)
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
@@ -488,7 +482,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Timed(name = "CREATE_TICKET_GRANTING_TICKET_TIMER")
     @Metered(name = "CREATE_TICKET_GRANTING_TICKET_METER")
     @Counted(name="CREATE_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
-    @Transactional(readOnly = false)
     @Override
     public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
             throws AuthenticationException, TicketException {
@@ -513,7 +506,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /**
      * {@inheritDoc}
      */
-    @Transactional(readOnly = true)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
     @Counted(name="GET_TICKET_COUNTER", monotonic=true)
@@ -542,7 +534,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /**
      * {@inheritDoc}
      */
-    @Transactional(readOnly = true)
     @Timed(name = "GET_TICKETS_TIMER")
     @Metered(name = "GET_TICKETS_METER")
     @Counted(name="GET_TICKETS_COUNTER", monotonic=true)
