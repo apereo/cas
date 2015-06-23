@@ -713,6 +713,13 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
+                <version>${dbcp.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.ldaptive</groupId>
                 <artifactId>ldaptive</artifactId>
                 <version>${ldaptive.version}</version>
@@ -1551,6 +1558,7 @@
         <jose.version>0.4.1</jose.version>
         <woodstox.version>4.4.1</woodstox.version>
         <pac4j.version>1.7.0</pac4j.version>
+        <dbcp.version>2.1</dbcp.version>
 
         <!-- Plugin Versions -->
         <coveralls-maven-plugin.version>3.1.0</coveralls-maven-plugin.version>
