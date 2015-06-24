@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.support.saml.web.flow;
+package org.jasig.cas.support.saml.web.flow.mdui;
 
 import org.jasig.cas.services.RegisteredService;
 import org.opensaml.core.xml.schema.XSString;
