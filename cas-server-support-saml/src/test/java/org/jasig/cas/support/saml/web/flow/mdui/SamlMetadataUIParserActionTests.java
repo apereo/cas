@@ -17,11 +17,12 @@
  * under the License.
  */
 
-package org.jasig.cas.support.saml.web.flow;
+package org.jasig.cas.support.saml.web.flow.mdui;
 
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -39,10 +40,15 @@ import static org.junit.Assert.*;
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Autowired
+    @Qualifier("samlMetadataUIParserAction")
     private SamlMetadataUIParserAction samlMetadataUIParserAction;
 
+    @Autowired
+    @Qualifier("samlDynamicMetadataUIParserAction")
+    private SamlMetadataUIParserAction samlDynamicMetadataUIParserAction;
+
     @Test
-    public void testEntityIdUIInfo() throws Exception {
+    public void verifyEntityIdUIInfoExists() throws Exception {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(SamlMetadataUIParserAction.ENTITY_ID_PARAMETER_NAME, "https://carmenwiki.osu.edu/shibboleth");
@@ -56,7 +62,21 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void testEntityIdUIInfoNoParam() throws Exception {
+    public void verifyEntityIdUIInfoExistsDynamically() throws Exception {
+        final MockRequestContext ctx = new MockRequestContext();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter(SamlMetadataUIParserAction.ENTITY_ID_PARAMETER_NAME, "https://carmenwiki.osu.edu/shibboleth");
+
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+
+        final MockServletContext sCtx = new MockServletContext();
+        ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
+        samlDynamicMetadataUIParserAction.doExecute(ctx);
+        assertTrue(ctx.getFlowScope().contains(SamlMetadataUIParserAction.MDUI_FLOW_PARAMETER_NAME));
+    }
+
+    @Test
+    public void verifyEntityIdUIInfoNoParam() throws Exception {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("somethingelse", "https://carmenwiki.osu.edu/shibboleth");
