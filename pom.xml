@@ -968,7 +968,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <issues.projectKey>CAS</issues.projectKey>
     <spring.webflow.version>2.3.2.RELEASE</spring.webflow.version>
     <spring.version>3.2.6.RELEASE</spring.version>
-    <ldaptive.version>1.0.3</ldaptive.version>
+    <ldaptive.version>1.0.6</ldaptive.version>
     <spring.security.version>3.2.0.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
     <aspectj.version>1.7.2</aspectj.version>
