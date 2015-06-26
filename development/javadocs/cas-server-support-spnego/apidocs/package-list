@@ -1,0 +1,5 @@
+org.jasig.cas.support.spnego.authentication.handler.support
+org.jasig.cas.support.spnego.authentication.principal
+org.jasig.cas.support.spnego.util
+org.jasig.cas.support.spnego.web.flow
+org.jasig.cas.support.spnego.web.flow.client

@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+<rss version="0.91">
+  <channel>
+    <title>Apereo CAS JDBC Support - Checkstyle report</title>
+    <link>http://www.jasig.org/cas/cas-server-support-jdbc/</link>
+    <description>Apereo CAS JDBC Support - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2004 - 2015 Jasig</copyright>
+    <item>
+      <title>File: 17,
+             Errors: 0,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.ticket.registry.support.JpaLockingStrategyTests.java">org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.AbstractJdbcUsernamePasswordAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/AbstractJdbcUsernamePasswordAuthenticationHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.services.JpaServiceRegistryDaoImpl.java">org/jasig/cas/services/JpaServiceRegistryDaoImpl.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.ticket.registry.JpaTicketRegistry.java">org/jasig/cas/ticket/registry/JpaTicketRegistry.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.monitor.DataSourceMonitor.java">org/jasig/cas/monitor/DataSourceMonitor.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/BindModeSearchDatabaseAuthenticationHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandlerTests.java">org/jasig/cas/adaptors/jdbc/SearchModeSearchDatabaseAuthenticationHandlerTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.ticket.registry.support.JpaLockingStrategy.java">org/jasig/cas/ticket/registry/support/JpaLockingStrategy.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/QueryDatabaseAuthenticationHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/SearchModeSearchDatabaseAuthenticationHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.services.JpaServiceRegistryDaoImplTests.java">org/jasig/cas/services/JpaServiceRegistryDaoImplTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler.java">org/jasig/cas/adaptors/jdbc/QueryAndEncodeDatabaseAuthenticationHandler.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerTests.java">org/jasig/cas/adaptors/jdbc/QueryDatabaseAuthenticationHandlerTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.ticket.registry.JpaTicketRegistryTests.java">org/jasig/cas/ticket/registry/JpaTicketRegistryTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandlerTests.java">org/jasig/cas/adaptors/jdbc/QueryAndEncodeDatabaseAuthenticationHandlerTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.monitor.SessionMonitorJpaTests.java">org/jasig/cas/monitor/SessionMonitorJpaTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-support-jdbc//checkstyle.html#org.jasig.cas.monitor.DataSourceMonitorTests.java">org/jasig/cas/monitor/DataSourceMonitorTests.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+
