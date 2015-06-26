@@ -30,6 +30,10 @@ import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 
@@ -43,7 +47,9 @@ import static java.nio.file.StandardWatchEventKinds.*;
 class JsonServiceRegistryConfigWatcher implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryConfigWatcher.class);
 
-    private final Object lock = new Object();
+    private final AtomicBoolean running = new AtomicBoolean(false);
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Lock readLock = this.lock.readLock();
 
     private final WatchService watcher;
 
@@ -68,81 +74,115 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
 
     @Override
     public void run() {
-        for (;;) {
-
-            // wait for key to be signaled
-            final WatchKey key;
-            try {
-                key = watcher.take();
-            } catch (final InterruptedException e) {
-                return;
-            }
-
-            try {
-                for (final WatchEvent<?> event : key.pollEvents()) {
-                    if (event.count() <= 1) {
-                        final WatchEvent.Kind kind = event.kind();
-
-                        //The filename is the context of the event.
-                        final WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                        final Path filename = ev.context();
-
-                        final Path parent = (Path) key.watchable();
-                        final Path fullPath = parent.resolve(filename);
-                        final File file = fullPath.toFile();
-
-                        LOGGER.trace("Detected event [{}] on file [{}]. Loading change...", kind, file);
-                        synchronized (this.lock) {
-                            if (kind.name().equals(ENTRY_CREATE.name()) && file.exists()) {
-                                //load the entry and add it to the map
-                                final RegisteredService service = this.serviceRegistryDao.loadRegisteredServiceFromFile(file);
-                                if (this.serviceRegistryDao.findServiceById(service.getId()) != null) {
-                                    LOGGER.warn("Found a service definition [{}] with a duplicate id [{}] in [{}]. "
-                                                    + "This will overwrite previous service definitions and is likely a "
-                                                    + "configuration problem. Make sure all services have a unique id and try again.",
-                                            service.getServiceId(), service.getId(), file.getAbsolutePath());
-
-                                }
-                                this.serviceRegistryDao.updateRegisteredService(service);
-                                this.serviceRegistryDao.refreshServicesManager();
-                            } else if (kind.name().equals(ENTRY_DELETE.name())) {
-                                this.serviceRegistryDao.load();
-                                this.serviceRegistryDao.refreshServicesManager();
-                            } else if (kind.name().equals(ENTRY_MODIFY.name()) && file.exists()) {
-                                /*
-                                    load the entry and save it back to the map
-                                    without any warnings on duplicate ids.
-                                 */
-                                final RegisteredService newService = this.serviceRegistryDao.loadRegisteredServiceFromFile(file);
-                                if (newService == null) {
-                                    LOGGER.warn("New service definition could not be loaded from [{}]", file.getAbsolutePath());
-                                } else {
-                                    final RegisteredService oldService = this.serviceRegistryDao.findServiceById(newService.getId());
-
-                                    if (!newService.equals(oldService)) {
-                                        this.serviceRegistryDao.updateRegisteredService(newService);
-                                        this.serviceRegistryDao.refreshServicesManager();
-                                    }
-                                }
-                            }
-                        }
+        if (running.compareAndSet(false, true)) {
+            while (running.get()) {
+                // wait for key to be signaled
+                WatchKey key = null;
+                try {
+                    key = watcher.take();
+                    handleEvent(key);
+                } catch (final InterruptedException e) {
+                    return;
+                } finally {
+                    /*
+                        Reset the key -- this step is critical to receive
+                        further watch events. If the key is no longer valid, the directory
+                        is inaccessible so exit the loop.
+                     */
+                    final boolean valid = (key != null && key.reset());
+                    if (!valid) {
+                        LOGGER.warn("Directory key is no longer valid. Quitting watcher service");
+                        break;
                     }
-
-                }
-            } finally {
-                /*
-                    Reset the key -- this step is critical to receive
-                    further watch events. If the key is no longer valid, the directory
-                    is inaccessible so exit the loop.
-                 */
-                final boolean valid = key.reset();
-                if (!valid) {
-                    LOGGER.warn("Directory key is no longer valid. Quitting watcher service");
-                    break;
                 }
             }
-
         }
 
+    }
+
+    /**
+     * Handle event.
+     *
+     * @param key the key
+     */
+    private void handleEvent(final WatchKey key) {
+        this.readLock.lock();
+        try {
+            for (final WatchEvent<?> event : key.pollEvents()) {
+                if (event.count() <= 1) {
+                    final WatchEvent.Kind kind = event.kind();
+
+                    //The filename is the context of the event.
+                    final WatchEvent<Path> ev = (WatchEvent<Path>) event;
+                    final Path filename = ev.context();
+
+                    final Path parent = (Path) key.watchable();
+                    final Path fullPath = parent.resolve(filename);
+                    final File file = fullPath.toFile();
+
+                    LOGGER.trace("Detected event [{}] on file [{}]. Loading change...", kind, file);
+                    if (kind.name().equals(ENTRY_CREATE.name()) && file.exists()) {
+                        handleCreateEvent(file);
+                    } else if (kind.name().equals(ENTRY_DELETE.name())) {
+                        handleDeleteEvent();
+                    } else if (kind.name().equals(ENTRY_MODIFY.name()) && file.exists()) {
+                        handleModifyEvent(file);
+                    }
+                }
+
+            }
+        } finally {
+            this.readLock.unlock();
+        }
+    }
+
+    /**
+     * Handle modify event.
+     *
+     * @param file the file
+     */
+    private void handleModifyEvent(final File file) {
+    /*
+        load the entry and save it back to the map
+        without any warnings on duplicate ids.
+     */
+        final RegisteredService newService = this.serviceRegistryDao.loadRegisteredServiceFromFile(file);
+        if (newService == null) {
+            LOGGER.warn("New service definition could not be loaded from [{}]", file.getAbsolutePath());
+        } else {
+            final RegisteredService oldService = this.serviceRegistryDao.findServiceById(newService.getId());
+
+            if (!newService.equals(oldService)) {
+                this.serviceRegistryDao.updateRegisteredService(newService);
+                this.serviceRegistryDao.refreshServicesManager();
+            }
+        }
+    }
+
+    /**
+     * Handle delete event.
+     */
+    private void handleDeleteEvent() {
+        this.serviceRegistryDao.load();
+        this.serviceRegistryDao.refreshServicesManager();
+    }
+
+    /**
+     * Handle create event.
+     *
+     * @param file the file
+     */
+    private void handleCreateEvent(final File file) {
+        //load the entry and add it to the map
+        final RegisteredService service = this.serviceRegistryDao.loadRegisteredServiceFromFile(file);
+        if (this.serviceRegistryDao.findServiceById(service.getId()) != null) {
+            LOGGER.warn("Found a service definition [{}] with a duplicate id [{}] in [{}]. "
+                            + "This will overwrite previous service definitions and is likely a "
+                            + "configuration problem. Make sure all services have a unique id and try again.",
+                    service.getServiceId(), service.getId(), file.getAbsolutePath());
+
+        }
+        this.serviceRegistryDao.updateRegisteredService(service);
+        this.serviceRegistryDao.refreshServicesManager();
     }
 }
