@@ -1,7 +1,0 @@
-org.jasig.cas.adaptors.ldap.services
-org.jasig.cas.authentication
-org.jasig.cas.authentication.support
-org.jasig.cas.monitor
-org.jasig.cas.persondir
-org.jasig.cas.userdetails
-org.jasig.cas.util
