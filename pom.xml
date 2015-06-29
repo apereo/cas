@@ -1519,7 +1519,7 @@
         <metrics.version>3.1.1</metrics.version>
         <commons.codec.version>1.10</commons.codec.version>
         <metrics.spring.version>3.0.4</metrics.spring.version>
-        <log4j.version>2.2</log4j.version>
+        <log4j.version>2.3</log4j.version>
         <junit.version>4.12</junit.version>
         <checkstyle.version>6.5</checkstyle.version>
         <commons.lang.version>3.4</commons.lang.version>
