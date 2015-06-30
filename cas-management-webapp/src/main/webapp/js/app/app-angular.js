@@ -73,7 +73,7 @@
 
         this.themeList=[
             {
-                name: '(No theme)',
+                name: '(No Theme)',
                 value: '0'
             },
             {
@@ -89,6 +89,10 @@
         this.themeType = this.themeList[0];
 
         this.reqHandlerList=[
+            {
+                name: '(No Required Handler)',
+                value: '0'
+            },
             {
                 name: 'This Required Handler',
                 value: 'reqHandler01'
