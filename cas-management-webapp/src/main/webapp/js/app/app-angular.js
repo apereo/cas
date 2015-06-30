@@ -73,6 +73,10 @@
 
         this.themeList=[
             {
+                name: '(No theme)',
+                value: '0'
+            },
+            {
                 name: 'Theme 01',
                 value: 'theme01'
             },
