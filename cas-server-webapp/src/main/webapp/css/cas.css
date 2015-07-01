@@ -257,3 +257,34 @@ footer a:link, footer a:visited {
     #sidebar .sidebar-content { padding: 0; }
 }
 
+
+
+/* ---------------
+*/
+
+#container-stable table {
+    width: 100%;
+}
+
+#container-stable .tblsso th, 
+#container-stable .tblsso td {
+    padding: 0 10px;
+}
+
+
+#jsonContent h3, 
+#jsonContent table th, 
+#jsonContent table td,
+.tblsso th, .tblsso td {
+    font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+}
+
+#jsonContent table th, 
+#jsonContent table td {
+    padding: 0 10px;
+}
+
+#jsonContent table th {
+    text-align: left;   
+}
+
