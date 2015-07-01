@@ -165,8 +165,8 @@ public final class RegisteredServiceSimpleFormController {
     }
 
     /**
-     * Render the page noted by {@link #VIEW_NAME}.
-     * The view is first updated by {@link #updateModelMap(ModelMap, HttpServletRequest)}.
+     * Handles displaying the add and edit view by first updating the view by calling
+     * {@link #updateModelMap(ModelMap, HttpServletRequest)}.
      * @param request the request
      * @param model the model
      * @return the model and view

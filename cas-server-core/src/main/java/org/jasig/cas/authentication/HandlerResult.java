@@ -87,7 +87,7 @@ public class HandlerResult implements Serializable {
      */
     public HandlerResult(
             final AuthenticationHandler source, final CredentialMetaData metaData, final List<Message> warnings) {
-        this(source, metaData, null, null);
+        this(source, metaData, null, warnings);
     }
 
     /**
