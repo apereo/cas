@@ -290,10 +290,7 @@
                                     <spring:message code="services.form.label.publicKey.location" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="management.services.tooltip.name" />"></i>
                                 </label>
                                 <div class="col-sm-8">
-                                    <div class="input-group">
-                                        <div class="input-group-addon input-group-required"><i class="fa fa-lg fa-exclamation-triangle"></i></div>
-                                        <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.publicKeyLocation">
-                                    </div>
+                                    <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.publicKeyLocation">
                                 </div>
                             </div>
                             <!-- Public Key Algorithm -->
