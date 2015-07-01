@@ -33,21 +33,26 @@
                 showInfo("No SSO Sessions are available at this point.");
             } else {
                 $("#jsonContent").empty();
+                
                 for (var i = activeSsoSessions.length - 1; i >= 0; i--) {
-                    var sso = activeSsoSessions[i];
-
-                    $("#jsonContent").append("<h3>Principal: "
-                    + sso.authenticated_principal
-                    + "</h3>");
+                    var sso = activeSsoSessions[i];                   
+                    
+                    $("#jsonContent").append("<h3><table><tr>"
+                    + "<td><span>" + sso.authenticated_principal + "</span></td>"
+                    + "<td><span>" + sso.authentication_date + "</span></td>"
+                    + "<td><span>" + sso.number_of_uses + "</span></td>"
+                    + "<td><span>Kill Button</span></td>"
+                    + "</tr></table></h3>");
 
                     $("#jsonContent").append("<div>"
-                    + "<ul>"
-                    + "<li><strong>Authentication Date: </strong>" + sso.authentication_date + "</li>"
-                    + "<li><strong>Usage Count: </strong>" + sso.number_of_uses + "</li>"
-                    + "<li><strong>Ticket Granting Ticket: </strong>"
+                    + "<table>"
+                    //+ "<tr><th>Authentication Date:</th><th>Usage Count</th><th>Ticket Granting Ticket</th></tr>"
+                    //+ "<tr><td>" + sso.authentication_date + "</td>"
+                    //+ "<tr><td>" + sso.number_of_uses + "</td>"
+                    + "<td>Ticket Granting Ticket</td><td>"
                     + (sso.ticket_granting_ticket == undefined ? new Array(30).join("*") : sso.ticket_granting_ticket)
-                    + "</li>"
-                    + "</ul>"
+                    + "</td></tr>"
+                    + "</table>"
                     + "</div>");
                 };
 
@@ -81,11 +86,24 @@
 
 <div>
     <div>
-        <h1>SSO Sessions Report</h1>
-        <p>
-        <div id="msg" style="display:none"></div>
+       <h1>SSO Sessions Report</h1>
 
+       <div class="section" id="container-stable" >
+        <table class="tblsso">
+        <tr>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>            
+            <th>User</th>
+            <th>Authentication Date</th>
+            <th>Usage Count</th>
+            <th>Kill</th>
+        </tr>
+        </table> 
+
+       <div id="msg" style="display:none"></div>
+        
         <div id="jsonContent"></div>
+        </div>
 
         <div id="login">
             <div><br/></div>
