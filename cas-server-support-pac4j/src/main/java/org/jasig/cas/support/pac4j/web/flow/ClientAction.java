@@ -53,12 +53,12 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
 /**
- * This class represents an action to put at the beginning of the webflow.<br>
+ * This class represents an action to put at the beginning of the webflow.
+ * <p>
  * Before any authentication, redirection urls are computed for the different clients defined as well as the theme,
- * locale, method and service are saved into the web session.<br>
+ * locale, method and service are saved into the web session.</p>
  * After authentication, appropriate information are expected on this callback url to finish the authentication
  * process with the provider.
- *
  * @author Jerome Leleu
  * @since 3.5.0
  */

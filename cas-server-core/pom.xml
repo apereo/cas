@@ -30,7 +30,7 @@
   <description>CAS core</description>
   <dependencies>
         <dependency>
-            <groupId>com.github.inspektr</groupId>
+            <groupId>org.jasig.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -58,9 +58,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>compile</scope>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
         </dependency>
       
         <dependency>
@@ -180,7 +179,7 @@
         </dependency>
 
         <dependency>
-          <groupId>com.github.inspektr</groupId>
+          <groupId>org.jasig.inspektr</groupId>
           <artifactId>inspektr-support-spring</artifactId>
           <scope>test</scope>
           <exclusions>
@@ -219,6 +218,10 @@
         <dependency>
             <groupId>org.bitbucket.b_c</groupId>
             <artifactId>jose4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
         </dependency>
   </dependencies>
 

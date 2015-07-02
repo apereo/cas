@@ -64,7 +64,7 @@ username from the same IP address. This component requires that the
       p:failureThreshold="1" />
 
 <bean id="auditTrailManager"
-      class="com.github.inspektr.audit.support.JdbcAuditTrailManager"
+      class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
       c:transactionTemplate-ref="inspektrTransactionTemplate"
       p:dataSource-ref="dataSource" />
 {% endhighlight %}

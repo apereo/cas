@@ -47,12 +47,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * @deprecated As of 4.1. Use {@link org.jasig.services.persondir.support.ldap.LdaptivePersonAttributeDao}.
+ *
  * Person directory <code>IPersonAttribute</code> implementation that queries an LDAP directory
  * with ldaptive components to populate person attributes.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Deprecated
 public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<SearchFilter> {
 
     /** Logger instance. **/

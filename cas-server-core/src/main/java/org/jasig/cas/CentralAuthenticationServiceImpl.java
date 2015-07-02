@@ -21,8 +21,8 @@ package org.jasig.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import com.github.inspektr.audit.annotation.Audit;
-import org.apache.commons.collections.Predicate;
+import org.jasig.inspektr.audit.annotation.Audit;
+import org.apache.commons.collections4.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -82,7 +82,7 @@ import java.util.Set;
  * central, organizing component of CAS's internal implementation.
  * <p>
  * This class is threadsafe.
- * <p>
+ * </p>
  * This class has the following properties that must be set:
  * <ul>
  * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list

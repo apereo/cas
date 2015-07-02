@@ -20,6 +20,13 @@ CAS user interface should properly and comfortably lend itself to all major brow
 
 Note that certain older version of IE, particularly IE 9 and below may impose additional difficulty in getting the right UI configuration in place.
 
+## Internet Explorer
+To instruct CAS to render UI in compatibility mode, add the following to relevant UI components:
+
+{% highlight jsp %}
+<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+{% endhighlight %}
+
 #Getting Started
 
 ##CSS

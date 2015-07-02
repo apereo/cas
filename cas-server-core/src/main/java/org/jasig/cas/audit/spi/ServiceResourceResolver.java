@@ -20,7 +20,7 @@ package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
 
-import com.github.inspektr.audit.spi.AuditResourceResolver;
+import org.jasig.inspektr.audit.spi.AuditResourceResolver;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.util.AopUtils;
