@@ -18,7 +18,7 @@
  */
 package org.jasig.cas;
 
-import org.apache.commons.collections.functors.TruePredicate;
+import org.apache.commons.collections4.functors.TruePredicate;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
@@ -186,7 +186,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void getTicketsWithNoPredicate() {
-        final Collection<Ticket> c = this.cas.getTickets(TruePredicate.getInstance());
+        final Collection<Ticket> c = this.cas.getTickets(TruePredicate.INSTANCE);
         assertEquals(c.size(), this.ticketRegMock.getTickets().size());
     }
 
