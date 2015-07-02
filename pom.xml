@@ -676,6 +676,12 @@
             <artifactId>inspektr-aspects</artifactId>
             <version>${inspektr.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
