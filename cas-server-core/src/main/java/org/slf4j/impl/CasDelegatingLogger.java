@@ -44,7 +44,7 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     private static final long serialVersionUID = 6182834493563598289L;
 
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(" + TicketGrantingTicket.PREFIX + "|"
-            + TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+            + TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + "|" + TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
             + ")(-)*(\\w)*(-)*(\\w)*");
 
     /**
