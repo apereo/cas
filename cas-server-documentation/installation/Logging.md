@@ -87,7 +87,7 @@ Additional loggers are available to specify the logging level for component cate
 <Logger name="org.jasig.cas.web.flow" level="info" additivity="true">
     <AppenderRef ref="file"/>
 </Logger>
-<Logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+<Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
     <AppenderRef ref="file"/>
 </Logger>
 <Root level="error">
@@ -123,7 +123,7 @@ Certain number of characters are left at the trailing end of the ticket id to as
  
 
 #Audits
-CAS uses the [Inspektr framework](https://github.com/dima767/inspektr) for auditing purposes and statistics. The Inspektr project allows for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
+CAS uses the [Inspektr framework](https://github.com/Jasig/inspektr) for auditing purposes and statistics. The Inspektr project allows for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
 
 ##Components
 
@@ -154,12 +154,12 @@ Audit functionality is specifically controlled by the `WEB-INF/spring-configurat
 By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager`. If you intend to use a database for auditing functionality, adjust the audit manager to match the sample configuration below:
 {% highlight xml %}
 <bean id="auditCleanupCriteria"
-    class="com.github.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
+    class="org.jasig.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
     <constructor-arg index="0" value="180" />
 </bean>
 
 <bean id="auditTrailManager"
-      class="com.github.inspektr.audit.support.JdbcAuditTrailManager"
+      class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
       c:transactionTemplate-ref="inspektrTransactionTemplate"
       p:dataSource-ref="dataSource"
       p:cleanupCriteria-ref="auditCleanupCriteria" />

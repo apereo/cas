@@ -48,7 +48,7 @@ The following snippet assumes that connection information beans are already defi
 
 {% highlight xml %}
 <bean id="ldapPersonAttributeDao"
-      class="org.jasig.cas.persondir.LdapPersonAttributeDao"
+      class="org.jasig.services.persondir.support.ldap.LdaptivePersonAttributeDao"
       p:connectionFactory-ref="pooledLdapConnectionFactory"
       p:baseDN="${ldap.baseDn}"
       p:searchControls-ref="searchControls"

@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.audit.spi;
 
-import com.github.inspektr.common.spi.PrincipalResolver;
+import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
