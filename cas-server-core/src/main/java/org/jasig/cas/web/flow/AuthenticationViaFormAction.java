@@ -87,8 +87,6 @@ public class AuthenticationViaFormAction {
     @NotNull
     private CookieGenerator warnCookieGenerator;
 
-    /** Flag indicating whether message context contains warning messages. */
-    private boolean hasWarningMessages;
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -100,8 +98,9 @@ public class AuthenticationViaFormAction {
             this.credentialsBinder.bind(request, credential);
         }
     }
+
     public final Event submit(final RequestContext context, final Credential credential,
-            final MessageContext messageContext) throws Exception {
+                              final MessageContext messageContext) throws Exception {
         // Validate login ticket
         final String authoritativeLoginTicket = WebUtils.getLoginTicketFromFlowScope(context);
         final String providedLoginTicket = WebUtils.getLoginTicketFromRequest(context);
@@ -127,7 +126,7 @@ public class AuthenticationViaFormAction {
             } catch (final TicketCreationException e) {
                 logger.warn(
                         "Invalid attempt to access service using renew=true with different credential. "
-                        + "Ending SSO session.");
+                                + "Ending SSO session.");
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
             } catch (final TicketException e) {
                 return newEvent(ERROR, e);
@@ -139,12 +138,7 @@ public class AuthenticationViaFormAction {
             WebUtils.putTicketGrantingTicketInFlowScope(context, tgtId);
             putWarnCookieIfRequestParameterPresent(context);
             final TicketGrantingTicket tgt = (TicketGrantingTicket) this.ticketRegistry.getTicket(tgtId);
-            for (final Map.Entry<String, HandlerResult> entry : tgt.getAuthentication().getSuccesses().entrySet()) {
-                for (final Message message : entry.getValue().getWarnings()) {
-                    addWarningToContext(messageContext, message);
-                }
-            }
-            if (this.hasWarningMessages) {
+            if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
             return newEvent(SUCCESS);
@@ -153,6 +147,27 @@ public class AuthenticationViaFormAction {
         } catch (final Exception e) {
             return newEvent(ERROR, e);
         }
+    }
+
+    /**
+     * Add warning messages to message context if needed.
+     *
+     * @param tgtId          the tgt id
+     * @param messageContext the message context
+     * @return true if warnings were found and added, false otherwise.
+     * @since 4.1.0
+     */
+    private boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
+                                                               final MessageContext messageContext) {
+        boolean foundAndAddedWarnings = false;
+        for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
+            for (final Message message : entry.getValue().getWarnings()) {
+                addWarningToContext(messageContext, message);
+                foundAndAddedWarnings = true;
+            }
+        }
+        return foundAndAddedWarnings;
+
     }
 
     private void putWarnCookieIfRequestParameterPresent(final RequestContext context) {
@@ -221,6 +236,6 @@ public class AuthenticationViaFormAction {
                 .defaultText(warning.getDefaultMessage())
                 .args(warning.getParams());
         context.addMessage(builder.build());
-        this.hasWarningMessages = true;
     }
+
 }
