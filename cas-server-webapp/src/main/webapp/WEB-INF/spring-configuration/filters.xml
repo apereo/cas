@@ -31,12 +31,12 @@
             p:forceEncoding="true" />
 
     <bean id="requestParameterSecurityFilter"
-        class="org.jasig.cas.security.RequestParameterPolicyEnforcementFilter"
-          p:allowMultiValueParameters="false">
+          class="org.jasig.cas.security.RequestParameterPolicyEnforcementFilter"
+          p:allowMultiValueParameters="${cas.http.allow.multivalue.params:false}">
         <property name="parametersToCheck">
             <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
                 <constructor-arg type="java.lang.String"
-                                 value="ticket,service,renew,gateway,warn,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService"/>
+                                 value="${cas.http.check.params:ticket,service,renew,gateway,warn,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService}"/>
             </bean>
         </property>
         <property name="charactersToForbid">
@@ -45,7 +45,7 @@
         <property name="onlyPostParameters">
             <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
                 <constructor-arg type="java.lang.String"
-                                 value="username,password"/>
+                                 value="${cas.http.allow.post.params:username,password}"/>
             </bean>
         </property>
     </bean>
