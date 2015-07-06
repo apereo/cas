@@ -36,6 +36,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.51</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.opensaml</groupId>
             <artifactId>opensaml-core</artifactId>
             <version>${opensaml.version}</version>
@@ -76,12 +82,12 @@
                     <artifactId>log4j-over-slf4j</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>bcprov-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
-                </exclusion>
-                <exclusion>
                     <artifactId>slf4j-api</artifactId>
                     <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bcprov-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -138,14 +144,18 @@
             <version>${opensaml.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>bcprov-jdk15on</artifactId>
-                    <groupId>org.bouncycastle</groupId>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
                 </exclusion>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
                     <groupId>org.slf4j</groupId>
                 </exclusion>
-            </exclusions>
+                <exclusion>
+                	<artifactId>bcprov-jdk15on</artifactId>
+                    <groupId>org.bouncycastle</groupId>
+                </exclusion>
+             </exclusions>
         </dependency>
 
         <dependency>
@@ -153,7 +163,7 @@
             <artifactId>quartz</artifactId>
             <scope>compile</scope>
         </dependency>
-
+        
         <dependency>
             <groupId>javax.xml</groupId>
             <artifactId>xmldsig</artifactId>
