@@ -223,6 +223,8 @@
                                 <value>240</value>
                             </systemProperty>
                         </systemProperties>
+                        <!-- Works with remote debugging and mvn jetty:run-forked -->
+                        <jvmArgs>-Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n</jvmArgs>
                     </configuration>
                 </plugin>
                 <plugin>
