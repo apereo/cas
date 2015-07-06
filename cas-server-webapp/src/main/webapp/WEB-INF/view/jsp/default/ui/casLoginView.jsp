@@ -153,6 +153,7 @@
                             <option value="de">Deutsch</option>
                             <option value="ja">Japanese</option>
                             <option value="hr">Croatian</option>
+                            <option value="uk">Ukranian</option>
                             <option value="cs">Czech</option>
                             <option value="sl">Slovenian</option>
                             <option value="pl">Polish</option>
@@ -182,6 +183,7 @@
                         <li><a href="${loginUrl}de">Deutsch</a></li>
                         <li><a href="${loginUrl}ja">Japanese</a></li>
                         <li><a href="${loginUrl}hr">Croatian</a></li>
+                        <li><a href="${loginUrl}uk">Ukranian</a></li>
                         <li><a href="${loginUrl}cs">Czech</a></li>
                         <li><a href="${loginUrl}sl">Slovenian</a></li>
                         <li><a href="${loginUrl}ca">Catalan</a></li>
