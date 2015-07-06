@@ -1527,7 +1527,7 @@
         <metrics.spring.version>3.1.0</metrics.spring.version>
         <log4j.version>2.3</log4j.version>
         <junit.version>4.12</junit.version>
-        <checkstyle.version>6.5</checkstyle.version>
+        <checkstyle.version>6.7</checkstyle.version>
         <commons.lang.version>3.4</commons.lang.version>
         <commons.collections.version>4.0</commons.collections.version>
         <inspektr.version>1.2.GA</inspektr.version>
