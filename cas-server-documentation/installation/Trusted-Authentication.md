@@ -50,7 +50,7 @@ Add an additional state to `login-webflow.xml`:
 
 {% highlight xml %}
 <action-state id="remoteAuthenticate">
-  <evaluate expression="principalFromRemoteAction" />.
+  <evaluate expression="principalFromRemoteAction" />
   <transition on="success" to="sendTicketGrantingTicket" />
   <transition on="error" to="viewLoginForm" />
 </action-state>
