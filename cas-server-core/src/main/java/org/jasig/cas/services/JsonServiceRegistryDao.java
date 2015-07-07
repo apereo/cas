@@ -208,7 +208,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
      * @throws IllegalArgumentException if file name is invalid
      */
     protected File makeFile(final RegisteredService service) {
-        final String fileName = service.getName() + "-" + service.getId() + "." + FILE_EXTENSION;
+        final String fileName = service.getName() + '-' + service.getId() + '.' + FILE_EXTENSION;
         try {
             final File svcFile = new File(serviceRegistryDirectory, fileName);
             LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());

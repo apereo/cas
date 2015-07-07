@@ -76,7 +76,7 @@ public class TicketsResource {
                                                                    final HttpServletRequest request) {
         try (Formatter fmt = new Formatter()) {
             final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
-            final URI ticketReference = new URI(request.getRequestURL().toString() + "/" + tgtId.getId());
+            final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
