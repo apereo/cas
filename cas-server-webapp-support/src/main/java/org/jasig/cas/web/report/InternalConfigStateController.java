@@ -110,7 +110,7 @@ public final class InternalConfigStateController {
 
             final StringWriter writer = new StringWriter();
             writer.append('{');
-            writer.append("\"" + entry.getKey() + "\":");
+            writer.append('\"' + entry.getKey() + "\":");
             serializer.toJson(writer, obj);
             writer.append('}');
             builder.append(writer);
@@ -119,7 +119,7 @@ public final class InternalConfigStateController {
                 builder.append(',');
             }
         }
-        builder.append("]");
+        builder.append(']');
         final ModelAndView mv = new ModelAndView(VIEW_CONFIG);
         final String jsonData = StringEscapeUtils.escapeJson(builder.toString());
 
