@@ -81,7 +81,7 @@ public final class InitialFlowSetupAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         if (!this.pathPopulated) {
             final String contextPath = context.getExternalContext().getContextPath();
-            final String cookiePath = StringUtils.hasText(contextPath) ? contextPath + "/" : "/";
+            final String cookiePath = StringUtils.hasText(contextPath) ? contextPath + '/' : "/";
             logger.info("Setting path for cookies to: {} ", cookiePath);
             this.warnCookieGenerator.setCookiePath(cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
