@@ -259,32 +259,25 @@ footer a:link, footer a:visited {
 
 
 
-/* ---------------
+/* --------------- CUSTOM STYLES
 */
 
-#container-stable table {
-    width: 100%;
+#container-stable {
+    margin: 20px 0 0;   
+    font-family: Futura, "Trebuchet MS", Arial, sans-serif;    
 }
 
-#container-stable .tblsso th, 
-#container-stable .tblsso td {
-    padding: 0 10px;
-}
-
-
-#jsonContent h3, 
-#jsonContent table th, 
-#jsonContent table td,
-.tblsso th, .tblsso td {
+#container-stable h3, 
+#container-stable table th, 
+#container-stable table td {
     font-family: Futura, "Trebuchet MS", Arial, sans-serif;
 }
 
-#jsonContent table th, 
-#jsonContent table td {
-    padding: 0 10px;
-}
-
-#jsonContent table th {
+#container-stable  table th {
     text-align: left;   
 }
 
+#table-monitor-hdr {
+    margin-left: 30px;
+    font-weight: bold;
+}
