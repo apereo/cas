@@ -115,7 +115,7 @@ components that perform authentication in front of CAS.</p>
 <p>Add an additional state to <code>login-webflow.xml</code>:</p>
 
 <div class="highlight"><pre><code class="xml"><span class="nt">&lt;action-state</span> <span class="na">id=</span><span class="s">&quot;remoteAuthenticate&quot;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;evaluate</span> <span class="na">expression=</span><span class="s">&quot;principalFromRemoteAction&quot;</span> <span class="nt">/&gt;</span>.
+  <span class="nt">&lt;evaluate</span> <span class="na">expression=</span><span class="s">&quot;principalFromRemoteAction&quot;</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;transition</span> <span class="na">on=</span><span class="s">&quot;success&quot;</span> <span class="na">to=</span><span class="s">&quot;sendTicketGrantingTicket&quot;</span> <span class="nt">/&gt;</span>
   <span class="nt">&lt;transition</span> <span class="na">on=</span><span class="s">&quot;error&quot;</span> <span class="na">to=</span><span class="s">&quot;viewLoginForm&quot;</span> <span class="nt">/&gt;</span>
 <span class="nt">&lt;/action-state&gt;</span>
