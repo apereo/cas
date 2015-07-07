@@ -23,13 +23,20 @@
 </div> <!-- END #content -->
 
 <footer>
-    <div id="copyright">
+    <div id="copyright" class="container">
         <p><spring:message code="copyright" /></p>
         <p>Powered by <a href="http://www.apereo.org/cas">Apereo Central Authentication Service <%=org.jasig.cas.CasVersion.getVersion()%></a></p>
     </div>
 </footer>
 
 </div> <!-- END #container -->
+
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/js/bootstrap.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js"></script>
 <spring:theme code="cas.javascript.file" var="casJavascriptFile" text="" />
 <script type="text/javascript" src="<c:url value="${casJavascriptFile}" />"></script>
