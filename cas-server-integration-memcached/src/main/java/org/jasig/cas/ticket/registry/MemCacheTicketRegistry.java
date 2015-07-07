@@ -69,7 +69,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
      * @param serviceTicketTimeOut        ST timeout in seconds.
      */
     public MemCacheTicketRegistry(final String[] hostnames, final int ticketGrantingTicketTimeOut,
-final int serviceTicketTimeOut) {
+                                  final int serviceTicketTimeOut) {
         try {
             this.client = new MemcachedClient(AddrUtil.getAddresses(Arrays.asList(hostnames)));
         } catch (final IOException e) {
@@ -92,9 +92,8 @@ final int serviceTicketTimeOut) {
     @Deprecated
     public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut,
             final String[] hostnames) {
-        this(hostnames,
-                Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(ticketGrantingTicketTimeOut)).intValue(),
-                Long.valueOf(TimeUnit.MILLISECONDS.toSeconds(serviceTicketTimeOut)).intValue());
+        this(hostnames, (int) TimeUnit.MILLISECONDS.toSeconds(ticketGrantingTicketTimeOut),
+                (int) TimeUnit.MILLISECONDS.toSeconds(serviceTicketTimeOut));
     }
 
     /**
