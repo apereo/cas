@@ -130,7 +130,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_zh_CN.properties">messages_zh_CN.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_pt_BR.properties">messages_pt_BR.properties</a>
                 </td>
                 <td>
                   0
@@ -144,7 +144,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_pt_BR.properties">messages_pt_BR.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_zh_CN.properties">messages_zh_CN.properties</a>
                 </td>
                 <td>
                   0
@@ -256,20 +256,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_zh_TW.properties">messages_zh_TW.properties</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#cas_views.properties">cas_views.properties</a>
                 </td>
                 <td>
@@ -284,7 +270,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_cs.properties">messages_cs.properties</a>
+                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_zh_TW.properties">messages_zh_TW.properties</a>
                 </td>
                 <td>
                   0
@@ -299,6 +285,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_sl.properties">messages_sl.properties</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-webapp//checkstyle.html#messages_cs.properties">messages_cs.properties</a>
                 </td>
                 <td>
                   0

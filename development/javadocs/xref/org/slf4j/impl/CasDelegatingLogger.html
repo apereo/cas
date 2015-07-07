@@ -108,7 +108,7 @@
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>             <strong class="jxr_keyword">final</strong> Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">while</strong> (matcher.find()) {
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>                 <strong class="jxr_keyword">final</strong> String match = matcher.group();
-<a class="jxr_linenumber" name="L103" href="#L103">103</a>                 <strong class="jxr_keyword">final</strong> String newId = matcher.group(1) + <span class="jxr_string">"-"</span>
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>                 <strong class="jxr_keyword">final</strong> String newId = matcher.group(1) + '-'
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>                         + StringUtils.repeat(<span class="jxr_string">"*"</span>, match.length() - VISIBLE_ID_TAIL_LENGTH)
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>                         + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> 

@@ -216,7 +216,7 @@
 <a class="jxr_linenumber" name="L208" href="#L208">208</a> <em class="jxr_javadoccomment">     * @throws IllegalArgumentException if file name is invalid</em>
 <a class="jxr_linenumber" name="L209" href="#L209">209</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>     <strong class="jxr_keyword">protected</strong> File makeFile(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> service) {
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>         <strong class="jxr_keyword">final</strong> String fileName = service.getName() + <span class="jxr_string">"-"</span> + service.getId() + <span class="jxr_string">"."</span> + FILE_EXTENSION;
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>         <strong class="jxr_keyword">final</strong> String fileName = service.getName() + '-' + service.getId() + '.' + FILE_EXTENSION;
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>             <strong class="jxr_keyword">final</strong> File svcFile = <strong class="jxr_keyword">new</strong> File(serviceRegistryDirectory, fileName);
 <a class="jxr_linenumber" name="L214" href="#L214">214</a>             LOGGER.debug(<span class="jxr_string">"Using [{}] as the service definition file"</span>, svcFile.getCanonicalPath());

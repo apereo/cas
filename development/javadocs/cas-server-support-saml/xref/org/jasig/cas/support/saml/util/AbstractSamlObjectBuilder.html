@@ -153,9 +153,9 @@
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>             <strong class="jxr_keyword">final</strong> QName qName = (QName) f.get(<strong class="jxr_keyword">null</strong>);
 <a class="jxr_linenumber" name="L146" href="#L146">146</a>             <strong class="jxr_keyword">return</strong> qName;
 <a class="jxr_linenumber" name="L147" href="#L147">147</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> NoSuchFieldException e) {
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Cannot find field "</span> + objectType.getName() + <span class="jxr_string">"."</span> + DEFAULT_ELEMENT_NAME_FIELD);
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Cannot find field "</span> + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD);
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> IllegalAccessException e) {
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Cannot access field "</span> + objectType.getName() + <span class="jxr_string">"."</span> + DEFAULT_ELEMENT_NAME_FIELD);
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Cannot access field "</span> + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD);
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>         }
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>     }
 <a class="jxr_linenumber" name="L153" href="#L153">153</a> 

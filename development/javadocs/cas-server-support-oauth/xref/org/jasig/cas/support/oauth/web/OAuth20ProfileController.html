@@ -77,7 +77,7 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">if</strong> (StringUtils.isBlank(accessToken)) {
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>              <strong class="jxr_keyword">final</strong> String authHeader = request.getHeader(<span class="jxr_string">"Authorization"</span>);
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>              <strong class="jxr_keyword">if</strong> (StringUtils.isNotBlank(authHeader) 
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>                      &amp;&amp; authHeader.toLowerCase().startsWith(OAuthConstants.BEARER_TOKEN.toLowerCase() + <span class="jxr_string">" "</span>)) {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>                      &amp;&amp; authHeader.toLowerCase().startsWith(OAuthConstants.BEARER_TOKEN.toLowerCase() + ' ')) {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>                  accessToken = authHeader.substring(OAuthConstants.BEARER_TOKEN.length() + 1);
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>              }
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          }

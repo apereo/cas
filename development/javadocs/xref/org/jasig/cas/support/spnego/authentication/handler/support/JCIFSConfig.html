@@ -96,9 +96,9 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      @Override
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> afterPropertiesSet() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">if</strong> (System.getProperty(SYS_PROP_LOGIN_CONF) != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              logger.warn(<span class="jxr_string">"found login config in system property, may overide : {}"</span>
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>                      , System.getProperty(SYS_PROP_LOGIN_CONF));
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          <strong class="jxr_keyword">final</strong> String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">if</strong> (propValue != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>              logger.warn(<span class="jxr_string">"found login config in system property, may overide : {}"</span>, propValue);
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          }
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          URL url = getClass().getResource(
@@ -114,124 +114,123 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>                 System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>             }
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         }
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>         logger.debug(<span class="jxr_string">"configured login configuration path : {}"</span>
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>                 , System.getProperty(SYS_PROP_LOGIN_CONF));
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>     }
-<a class="jxr_linenumber" name="L112" href="#L112">112</a> 
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     * Sets the jcifs service password.</em>
-<a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     * @param jcifsServicePassword the new jcifs service password</em>
-<a class="jxr_linenumber" name="L117" href="#L117">117</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsServicePassword(<strong class="jxr_keyword">final</strong> String jcifsServicePassword) {
-<a class="jxr_linenumber" name="L119" href="#L119">119</a>         logger.debug(<span class="jxr_string">"jcifsServicePassword is set to *****"</span>);
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>         Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
-<a class="jxr_linenumber" name="L121" href="#L121">121</a>     }
-<a class="jxr_linenumber" name="L122" href="#L122">122</a> 
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">     * Sets the jcifs service principal.</em>
-<a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     * @param jcifsServicePrincipal the new jcifs service principal</em>
-<a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsServicePrincipal(<strong class="jxr_keyword">final</strong> String jcifsServicePrincipal) {
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>         logger.debug(<span class="jxr_string">"jcifsServicePrincipal is set to {}"</span>, jcifsServicePrincipal);
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>         Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>     }
-<a class="jxr_linenumber" name="L132" href="#L132">132</a> 
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L134" href="#L134">134</a> <em class="jxr_javadoccomment">     * Sets the kerberos conf.</em>
-<a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     * @param kerberosConf the new kerberos conf</em>
-<a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setKerberosConf(<strong class="jxr_keyword">final</strong> String kerberosConf) {
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>         logger.debug(<span class="jxr_string">"kerberosConf is set to :{}"</span>, kerberosConf);
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>     }
-<a class="jxr_linenumber" name="L142" href="#L142">142</a> 
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">     * Sets the kerberos kdc.</em>
-<a class="jxr_linenumber" name="L145" href="#L145">145</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L146" href="#L146">146</a> <em class="jxr_javadoccomment">     * @param kerberosKdc the new kerberos kdc</em>
-<a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setKerberosKdc(<strong class="jxr_keyword">final</strong> String kerberosKdc) {
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         logger.debug(<span class="jxr_string">"kerberosKdc is set to : {}"</span>, kerberosKdc);
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         System.setProperty(SYS_PROP_KERBEROS_KDC, kerberosKdc);
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>     }
-<a class="jxr_linenumber" name="L152" href="#L152">152</a> 
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L154" href="#L154">154</a> <em class="jxr_javadoccomment">     * Sets the kerberos realm.</em>
-<a class="jxr_linenumber" name="L155" href="#L155">155</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L156" href="#L156">156</a> <em class="jxr_javadoccomment">     * @param kerberosRealm the new kerberos realm</em>
-<a class="jxr_linenumber" name="L157" href="#L157">157</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setKerberosRealm(<strong class="jxr_keyword">final</strong> String kerberosRealm) {
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>         logger.debug(<span class="jxr_string">"kerberosRealm is set to :{}"</span>, kerberosRealm);
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>         System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     }
-<a class="jxr_linenumber" name="L162" href="#L162">162</a> 
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLoginConf(<strong class="jxr_keyword">final</strong> String loginConf) {
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>         <strong class="jxr_keyword">this</strong>.loginConf = loginConf;
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>     }
-<a class="jxr_linenumber" name="L166" href="#L166">166</a> 
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L168" href="#L168">168</a> <em class="jxr_javadoccomment">     * Sets the use subject creds only.</em>
-<a class="jxr_linenumber" name="L169" href="#L169">169</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L170" href="#L170">170</a> <em class="jxr_javadoccomment">     * @param useSubjectCredsOnly the new use subject creds only</em>
-<a class="jxr_linenumber" name="L171" href="#L171">171</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUseSubjectCredsOnly(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> useSubjectCredsOnly) {
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         logger.debug(<span class="jxr_string">"useSubjectCredsOnly is set to {}"</span>, useSubjectCredsOnly);
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>         System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, Boolean.toString(useSubjectCredsOnly));
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>     }
-<a class="jxr_linenumber" name="L176" href="#L176">176</a> 
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L178" href="#L178">178</a> <em class="jxr_javadoccomment">     * Sets the kerberos debug.</em>
-<a class="jxr_linenumber" name="L179" href="#L179">179</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L180" href="#L180">180</a> <em class="jxr_javadoccomment">     * @param kerberosDebug the new kerberos debug</em>
-<a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setKerberosDebug(<strong class="jxr_keyword">final</strong> String kerberosDebug) {
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>         logger.debug(<span class="jxr_string">"kerberosDebug is set to : {}"</span>, kerberosDebug);
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>         System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>     }
-<a class="jxr_linenumber" name="L186" href="#L186">186</a> 
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L188" href="#L188">188</a> <em class="jxr_javadoccomment">     * @param jcifsDomain the jcifsDomain to set</em>
-<a class="jxr_linenumber" name="L189" href="#L189">189</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsDomain(<strong class="jxr_keyword">final</strong> String jcifsDomain) {
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>         logger.debug(<span class="jxr_string">"jcifsDomain is set to {}"</span>, jcifsDomain);
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>         Config.setProperty(JCIFS_PROP_CLIENT_DOMAIN, jcifsDomain);
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>     }
-<a class="jxr_linenumber" name="L194" href="#L194">194</a> 
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L196" href="#L196">196</a> <em class="jxr_javadoccomment">     * @param jcifsDomainController the jcifsDomainController to set</em>
-<a class="jxr_linenumber" name="L197" href="#L197">197</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsDomainController(<strong class="jxr_keyword">final</strong> String jcifsDomainController) {
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         logger.debug(<span class="jxr_string">"jcifsDomainController is set to {}"</span>, jcifsDomainController);
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>         Config.setProperty(JCIFS_PROP_DOMAIN_CONTROLLER, jcifsDomainController);
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>     }
-<a class="jxr_linenumber" name="L202" href="#L202">202</a> 
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">     * @param jcifsPassword the jcifsPassword to set</em>
-<a class="jxr_linenumber" name="L205" href="#L205">205</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsPassword(<strong class="jxr_keyword">final</strong> String jcifsPassword) {
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>         Config.setProperty(JCIFS_PROP_CLIENT_PASSWORD, jcifsPassword);
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>         logger.debug(<span class="jxr_string">"jcifsPassword is set to *****"</span>);
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>     }
-<a class="jxr_linenumber" name="L210" href="#L210">210</a> 
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     * @param jcifsUsername the jcifsUsername to set</em>
-<a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsUsername(<strong class="jxr_keyword">final</strong> String jcifsUsername) {
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>         logger.debug(<span class="jxr_string">"jcifsUsername is set to {}"</span>, jcifsUsername);
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>         Config.setProperty(JCIFS_PROP_CLIENT_USERNAME, jcifsUsername);
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>     }
-<a class="jxr_linenumber" name="L218" href="#L218">218</a> 
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L220" href="#L220">220</a> <em class="jxr_javadoccomment">     * @param jcifsNetbiosWins the jcifsNetbiosWins to set</em>
-<a class="jxr_linenumber" name="L221" href="#L221">221</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsNetbiosWins(<strong class="jxr_keyword">final</strong> String jcifsNetbiosWins) {
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>         logger.debug(<span class="jxr_string">"jcifsNetbiosWins is set to {}"</span>, jcifsNetbiosWins);
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>         Config.setProperty(JCIFS_PROP_NETBIOS_WINS, jcifsNetbiosWins);
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>     }
-<a class="jxr_linenumber" name="L226" href="#L226">226</a> }
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         logger.debug(<span class="jxr_string">"configured login configuration path : {}"</span>, propValue);
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>     }
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> 
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     * Sets the jcifs service password.</em>
+<a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     * @param jcifsServicePassword the new jcifs service password</em>
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsServicePassword(<strong class="jxr_keyword">final</strong> String jcifsServicePassword) {
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         logger.debug(<span class="jxr_string">"jcifsServicePassword is set to *****"</span>);
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     }
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> 
+<a class="jxr_linenumber" name="L122" href="#L122">122</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L123" href="#L123">123</a> <em class="jxr_javadoccomment">     * Sets the jcifs service principal.</em>
+<a class="jxr_linenumber" name="L124" href="#L124">124</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     * @param jcifsServicePrincipal the new jcifs service principal</em>
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsServicePrincipal(<strong class="jxr_keyword">final</strong> String jcifsServicePrincipal) {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         logger.debug(<span class="jxr_string">"jcifsServicePrincipal is set to {}"</span>, jcifsServicePrincipal);
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>     }
+<a class="jxr_linenumber" name="L131" href="#L131">131</a> 
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> <em class="jxr_javadoccomment">     * Sets the kerberos conf.</em>
+<a class="jxr_linenumber" name="L134" href="#L134">134</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     * @param kerberosConf the new kerberos conf</em>
+<a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setKerberosConf(<strong class="jxr_keyword">final</strong> String kerberosConf) {
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>         logger.debug(<span class="jxr_string">"kerberosConf is set to :{}"</span>, kerberosConf);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>         System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>     }
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> 
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L143" href="#L143">143</a> <em class="jxr_javadoccomment">     * Sets the kerberos kdc.</em>
+<a class="jxr_linenumber" name="L144" href="#L144">144</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> <em class="jxr_javadoccomment">     * @param kerberosKdc the new kerberos kdc</em>
+<a class="jxr_linenumber" name="L146" href="#L146">146</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setKerberosKdc(<strong class="jxr_keyword">final</strong> String kerberosKdc) {
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         logger.debug(<span class="jxr_string">"kerberosKdc is set to : {}"</span>, kerberosKdc);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         System.setProperty(SYS_PROP_KERBEROS_KDC, kerberosKdc);
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>     }
+<a class="jxr_linenumber" name="L151" href="#L151">151</a> 
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L153" href="#L153">153</a> <em class="jxr_javadoccomment">     * Sets the kerberos realm.</em>
+<a class="jxr_linenumber" name="L154" href="#L154">154</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L155" href="#L155">155</a> <em class="jxr_javadoccomment">     * @param kerberosRealm the new kerberos realm</em>
+<a class="jxr_linenumber" name="L156" href="#L156">156</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setKerberosRealm(<strong class="jxr_keyword">final</strong> String kerberosRealm) {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         logger.debug(<span class="jxr_string">"kerberosRealm is set to :{}"</span>, kerberosRealm);
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>     }
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> 
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLoginConf(<strong class="jxr_keyword">final</strong> String loginConf) {
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>         <strong class="jxr_keyword">this</strong>.loginConf = loginConf;
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>     }
+<a class="jxr_linenumber" name="L165" href="#L165">165</a> 
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_javadoccomment">     * Sets the use subject creds only.</em>
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> <em class="jxr_javadoccomment">     * @param useSubjectCredsOnly the new use subject creds only</em>
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUseSubjectCredsOnly(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> useSubjectCredsOnly) {
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>         logger.debug(<span class="jxr_string">"useSubjectCredsOnly is set to {}"</span>, useSubjectCredsOnly);
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>         System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, Boolean.toString(useSubjectCredsOnly));
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>     }
+<a class="jxr_linenumber" name="L175" href="#L175">175</a> 
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> <em class="jxr_javadoccomment">     * Sets the kerberos debug.</em>
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L179" href="#L179">179</a> <em class="jxr_javadoccomment">     * @param kerberosDebug the new kerberos debug</em>
+<a class="jxr_linenumber" name="L180" href="#L180">180</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setKerberosDebug(<strong class="jxr_keyword">final</strong> String kerberosDebug) {
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         logger.debug(<span class="jxr_string">"kerberosDebug is set to : {}"</span>, kerberosDebug);
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     }
+<a class="jxr_linenumber" name="L185" href="#L185">185</a> 
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L187" href="#L187">187</a> <em class="jxr_javadoccomment">     * @param jcifsDomain the jcifsDomain to set</em>
+<a class="jxr_linenumber" name="L188" href="#L188">188</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsDomain(<strong class="jxr_keyword">final</strong> String jcifsDomain) {
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>         logger.debug(<span class="jxr_string">"jcifsDomain is set to {}"</span>, jcifsDomain);
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>         Config.setProperty(JCIFS_PROP_CLIENT_DOMAIN, jcifsDomain);
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>     }
+<a class="jxr_linenumber" name="L193" href="#L193">193</a> 
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L195" href="#L195">195</a> <em class="jxr_javadoccomment">     * @param jcifsDomainController the jcifsDomainController to set</em>
+<a class="jxr_linenumber" name="L196" href="#L196">196</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsDomainController(<strong class="jxr_keyword">final</strong> String jcifsDomainController) {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>         logger.debug(<span class="jxr_string">"jcifsDomainController is set to {}"</span>, jcifsDomainController);
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         Config.setProperty(JCIFS_PROP_DOMAIN_CONTROLLER, jcifsDomainController);
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>     }
+<a class="jxr_linenumber" name="L201" href="#L201">201</a> 
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L203" href="#L203">203</a> <em class="jxr_javadoccomment">     * @param jcifsPassword the jcifsPassword to set</em>
+<a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsPassword(<strong class="jxr_keyword">final</strong> String jcifsPassword) {
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         Config.setProperty(JCIFS_PROP_CLIENT_PASSWORD, jcifsPassword);
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         logger.debug(<span class="jxr_string">"jcifsPassword is set to *****"</span>);
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>     }
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> 
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L211" href="#L211">211</a> <em class="jxr_javadoccomment">     * @param jcifsUsername the jcifsUsername to set</em>
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsUsername(<strong class="jxr_keyword">final</strong> String jcifsUsername) {
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>         logger.debug(<span class="jxr_string">"jcifsUsername is set to {}"</span>, jcifsUsername);
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>         Config.setProperty(JCIFS_PROP_CLIENT_USERNAME, jcifsUsername);
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
+<a class="jxr_linenumber" name="L217" href="#L217">217</a> 
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L219" href="#L219">219</a> <em class="jxr_javadoccomment">     * @param jcifsNetbiosWins the jcifsNetbiosWins to set</em>
+<a class="jxr_linenumber" name="L220" href="#L220">220</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setJcifsNetbiosWins(<strong class="jxr_keyword">final</strong> String jcifsNetbiosWins) {
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>         logger.debug(<span class="jxr_string">"jcifsNetbiosWins is set to {}"</span>, jcifsNetbiosWins);
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>         Config.setProperty(JCIFS_PROP_NETBIOS_WINS, jcifsNetbiosWins);
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>     }
+<a class="jxr_linenumber" name="L225" href="#L225">225</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>

@@ -84,7 +84,7 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>                                                                     <strong class="jxr_keyword">final</strong> HttpServletRequest request) {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">try</strong> (Formatter fmt = <strong class="jxr_keyword">new</strong> Formatter()) {
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>              <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtId = <strong class="jxr_keyword">this</strong>.cas.createTicketGrantingTicket(obtainCredential(requestBody));
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">final</strong> URI ticketReference = <strong class="jxr_keyword">new</strong> URI(request.getRequestURL().toString() + <span class="jxr_string">"/"</span> + tgtId.getId());
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">final</strong> URI ticketReference = <strong class="jxr_keyword">new</strong> URI(request.getRequestURL().toString() + '/' + tgtId.getId());
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>              <strong class="jxr_keyword">final</strong> HttpHeaders headers = <strong class="jxr_keyword">new</strong> HttpHeaders();
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>              headers.setLocation(ticketReference);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>              headers.setContentType(MediaType.TEXT_HTML);

@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">this</strong>.randomStringGenerator = randomStringGenerator;
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">this</strong>.numericGenerator = numericGenerator;
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">this</strong>.suffix = StringUtils.isNoneBlank(suffix) ? <span class="jxr_string">"-"</span> + suffix : <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">this</strong>.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      }
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      <em class="jxr_javadoccomment">/**</em>
@@ -120,9 +120,9 @@
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>             + number.length());
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> 
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>         buffer.append(prefix);
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>         buffer.append(<span class="jxr_string">"-"</span>);
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         buffer.append('-');
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         buffer.append(number);
-<a class="jxr_linenumber" name="L117" href="#L117">117</a>         buffer.append(<span class="jxr_string">"-"</span>);
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>         buffer.append('-');
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         buffer.append(<strong class="jxr_keyword">this</strong>.randomStringGenerator.getNewString());
 <a class="jxr_linenumber" name="L119" href="#L119">119</a> 
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.suffix != <strong class="jxr_keyword">null</strong>) {

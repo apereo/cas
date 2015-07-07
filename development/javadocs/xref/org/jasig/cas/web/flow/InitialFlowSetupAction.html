@@ -89,7 +89,7 @@
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          <strong class="jxr_keyword">final</strong> HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          <strong class="jxr_keyword">if</strong> (!<strong class="jxr_keyword">this</strong>.pathPopulated) {
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>              <strong class="jxr_keyword">final</strong> String contextPath = context.getExternalContext().getContextPath();
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>              <strong class="jxr_keyword">final</strong> String cookiePath = StringUtils.hasText(contextPath) ? contextPath + <span class="jxr_string">"/"</span> : <span class="jxr_string">"/"</span>;
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>              <strong class="jxr_keyword">final</strong> String cookiePath = StringUtils.hasText(contextPath) ? contextPath + '/' : <span class="jxr_string">"/"</span>;
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>              logger.info(<span class="jxr_string">"Setting path for cookies to: {} "</span>, cookiePath);
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>              <strong class="jxr_keyword">this</strong>.warnCookieGenerator.setCookiePath(cookiePath);
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>              <strong class="jxr_keyword">this</strong>.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);

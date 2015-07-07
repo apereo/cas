@@ -74,7 +74,7 @@
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> String createFlowExecutionUrl(<strong class="jxr_keyword">final</strong> String flowId, <strong class="jxr_keyword">final</strong> String flowExecutionKey, <strong class="jxr_keyword">final</strong> HttpServletRequest request) {
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">final</strong> StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder();
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          builder.append(request.getRequestURI());
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          builder.append(<span class="jxr_string">"?"</span>);
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          builder.append('?');
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>          @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; flowParams = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;String, Object&gt;(request.getParameterMap());
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          flowParams.put(<strong class="jxr_keyword">this</strong>.flowExecutionKeyParameter, flowExecutionKey);
@@ -85,7 +85,7 @@
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      @Override
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> String createFlowDefinitionUrl(<strong class="jxr_keyword">final</strong> String flowId, <strong class="jxr_keyword">final</strong> AttributeMap input, <strong class="jxr_keyword">final</strong> HttpServletRequest request) {
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>          <strong class="jxr_keyword">return</strong> request.getRequestURI()
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>              + (request.getQueryString() != <strong class="jxr_keyword">null</strong> ? <span class="jxr_string">"?"</span>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>              + (request.getQueryString() != <strong class="jxr_keyword">null</strong> ? '?'
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>              + request.getQueryString() : <span class="jxr_string">""</span>);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      }
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  }

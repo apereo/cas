@@ -181,15 +181,15 @@
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">double</strong> time = Math.floor(difference / value);
 <a class="jxr_linenumber" name="L174" href="#L174">174</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">double</strong> newDifference = difference - time * value;
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>         <strong class="jxr_keyword">final</strong> String currentLabel = labels.remove();
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>         <strong class="jxr_keyword">final</strong> String label = time == 0 || time &gt; 1 ? currentLabel + <span class="jxr_string">"s"</span> : currentLabel;
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>         <strong class="jxr_keyword">final</strong> String label = time == 0 || time &gt; 1 ? currentLabel + 's' : currentLabel;
 <a class="jxr_linenumber" name="L177" href="#L177">177</a> 
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">return</strong> Integer.toString((<strong class="jxr_keyword">int</strong>) time) + <span class="jxr_string">" "</span> + label + <span class="jxr_string">" "</span> + calculateUptime(newDifference, calculations, labels);
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">return</strong> Integer.toString((<strong class="jxr_keyword">int</strong>) time) + ' ' + label + ' ' + calculateUptime(newDifference, calculations, labels);
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>     }
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> 
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>     @Override
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setServletContext(<strong class="jxr_keyword">final</strong> ServletContext servletContext) {
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>         servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, <strong class="jxr_keyword">this</strong>.metricsRegistry);
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>         servletContext.setAttribute(MetricsServlet.SHOW_SAMPLES, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>         servletContext.setAttribute(MetricsServlet.SHOW_SAMPLES, Boolean.TRUE);
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         servletContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, <strong class="jxr_keyword">this</strong>.healthCheckRegistry);
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> }
