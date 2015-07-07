@@ -21,7 +21,9 @@
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/flick/jquery-ui.css">
+    
 
+    
 <script type="text/javascript">
 
     function parseJsonPayload() {
@@ -37,21 +39,27 @@
                 for (var i = activeSsoSessions.length - 1; i >= 0; i--) {
                     var sso = activeSsoSessions[i];                   
                     
-                    $("#jsonContent").append("<h3><table><tr>"
-                    + "<td><span>" + sso.authenticated_principal + "</span></td>"
-                    + "<td><span>" + sso.authentication_date + "</span></td>"
-                    + "<td><span>" + sso.number_of_uses + "</span></td>"
-                    + "<td><span>Kill Button</span></td>"
-                    + "</tr></table></h3>");
+                    $("#jsonContent").append("<h3><div class='row'>"
+                    + "<div class='col-xs-3'><span>" + sso.authenticated_principal + "</span></div>"
+                    + "<div class='col-xs-2'><span>" + sso.authenticated_principal + "</span></div>"
+                    + "<div class='col-xs-3'><span>" + sso.authentication_date + "</span></div>"
+                    + "<div class='col-xs-2'><span>" + sso.number_of_uses + "</span></div>"
+                    + "<div class='col-xs-2'><button class='btn btn-danger btn-xs' type='submit'>Kill</button></div>"
+                    + "</div></h3>");
 
                     $("#jsonContent").append("<div>"
-                    + "<table>"
+                    + "<table class='table table-striped table-hover'>"
                     //+ "<tr><th>Authentication Date:</th><th>Usage Count</th><th>Ticket Granting Ticket</th></tr>"
                     //+ "<tr><td>" + sso.authentication_date + "</td>"
                     //+ "<tr><td>" + sso.number_of_uses + "</td>"
-                    + "<td>Ticket Granting Ticket</td><td>"
-                    + (sso.ticket_granting_ticket == undefined ? new Array(30).join("*") : sso.ticket_granting_ticket)
-                    + "</td></tr>"
+                    + "<tr><td>Ticket Granting Ticket</td>"
+                    + "<td>" + (sso.ticket_granting_ticket == undefined ? new Array(30).join("*") : sso.ticket_granting_ticket) + "</td></tr>"
+                    + "<tr><td>Principal Attributes</td>"
+                    + "<td>SAMPLE</td></tr>"
+                    + "<tr><td>Proxy Ticket</td>"
+                    + "<td>YES</td></tr>"
+                    + "<tr><td>Ticket Granting Ticket Service</td>"
+                    + "<td>SAMPLE</td></tr>"
                     + "</table>"
                     + "</div>");
                 };
@@ -85,33 +93,28 @@
 
 
 <div>
-    <div>
        <h1>SSO Sessions Report</h1>
 
-       <div class="section" id="container-stable" >
-        <table class="tblsso">
-        <tr>
-            <th>&nbsp;</th>
-            <th>&nbsp;</th>            
-            <th>User</th>
-            <th>Authentication Date</th>
-            <th>Usage Count</th>
-            <th>Kill</th>
-        </tr>
-        </table> 
+    <div id="container-stable">
+       <div id="table-monitor-hdr" class="row">
+            <div class="col-xs-3">&nbsp;</div>
+            <div class="col-xs-2">User</div>
+            <div class="col-xs-3">Authentication Date</div>
+            <div class="col-xs-2">Usage Count</div>
+            <div class="col-xs-2">Kill</div>
+       </div>
 
        <div id="msg" style="display:none"></div>
         
-        <div id="jsonContent"></div>
-        </div>
-
-        <div id="login">
-            <div><br/></div>
-            <input class="btn-submit" type="button" onclick="location.reload();" value="Refresh">
-        </div>
-
+       <div id="jsonContent"></div>
     </div>
+
+       <div id="login">
+            <div><br/></div>
+            <input class="btn btn-success" type="button" onclick="location.reload();" value="Refresh">
+       </div>
 </div>
+
 
 
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>
