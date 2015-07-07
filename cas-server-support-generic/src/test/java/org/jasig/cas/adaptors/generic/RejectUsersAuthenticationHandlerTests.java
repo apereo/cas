@@ -27,8 +27,8 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -38,12 +38,12 @@ import static org.junit.Assert.*;
  */
 public class RejectUsersAuthenticationHandlerTests {
 
-    private final List<String> users;
+    private final Set<String> users;
 
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() throws Exception {
-        this.users = new ArrayList<>();
+        this.users = new HashSet<>();
 
         this.users.add("scott");
         this.users.add("dima");
