@@ -22,7 +22,6 @@ import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.support.spnego.util.SpnegoConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
