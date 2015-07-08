@@ -48,7 +48,7 @@ public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
             }
             return new QName(SAMLConstants.SAML20_NS, name, XMLConstants.DEFAULT_NS_PREFIX);
         } catch (final Exception e){
-            throw new IllegalStateException("Cannot access field " + objectType.getName() + "." + DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
+            throw new IllegalStateException("Cannot access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
         }
     }
 }
