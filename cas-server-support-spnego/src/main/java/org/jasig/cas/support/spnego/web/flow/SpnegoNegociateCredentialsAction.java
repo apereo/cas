@@ -179,7 +179,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
      */
     protected String constructMessagePrefix() {
         return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                + " ";
+                + ' ';
     }
 
     /**
