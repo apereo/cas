@@ -172,7 +172,35 @@
 
   This behaviour can be altered by defining an explicit CipherBean.
   -->
-  <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"/>
+    <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"
+          c:cipherBean-ref="loginFlowCipherBean" />
+
+    <bean id="loginFlowCipherBean" class="org.cryptacular.bean.BufferedBlockCipherBean"
+          p:keyAlias="${cas.webflow.keyalias:aes128}"
+          p:keyStore-ref="loginFlowCipherKeystore"
+          p:keyPassword="${cas.webflow.keypassword:changeit}">
+        <property name="nonce">
+            <bean class="org.cryptacular.generator.sp80038a.RBGNonce" />
+        </property>
+        <property name="blockCipherSpec">
+            <bean class="org.cryptacular.spec.BufferedBlockCipherSpec"
+                  c:algName="${cas.webflow.cipher.alg:AES}"
+                  c:cipherMode="${cas.webflow.cipher.mode:CBC}"
+                  c:cipherPadding="${cas.webflow.cipher.padding:PKCS7}" />
+        </property>
+    </bean>
+
+    <bean id="loginFlowCipherKeystore" class="java.security.KeyStore"
+          factory-bean="loginFlowCipherKeystoreFactory" factory-method="newInstance" />
+
+    <bean id="loginFlowCipherKeystoreFactory" class="org.cryptacular.bean.KeyStoreFactoryBean"
+          c:type="${cas.webflow.keystore.type:JCEKS}"
+          c:password="${cas.webflow.keystore.password:changeit}">
+        <constructor-arg name="resource">
+            <bean class="org.cryptacular.io.URLResource"
+                  c:url="${cas.webflow.keystore:classpath:/etc/keystore.jceks}" />
+        </constructor-arg>
+    </bean>
 
   <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
     <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
