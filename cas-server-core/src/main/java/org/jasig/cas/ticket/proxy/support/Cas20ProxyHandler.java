@@ -75,17 +75,17 @@ public final class Cas20ProxyHandler implements ProxyHandler {
         stringBuffer.append(serviceCredentialsAsString);
 
         if (callbackUrl.getQuery() != null) {
-            stringBuffer.append("&");
+            stringBuffer.append('&');
         } else {
-            stringBuffer.append("?");
+            stringBuffer.append('?');
         }
 
         stringBuffer.append(PARAMETER_PROXY_GRANTING_TICKET_IOU);
-        stringBuffer.append("=");
+        stringBuffer.append('=');
         stringBuffer.append(proxyIou);
-        stringBuffer.append("&");
+        stringBuffer.append('&');
         stringBuffer.append(PARAMETER_PROXY_GRANTING_TICKET_ID);
-        stringBuffer.append("=");
+        stringBuffer.append('=');
         stringBuffer.append(proxyGrantingTicketId);
 
         if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
