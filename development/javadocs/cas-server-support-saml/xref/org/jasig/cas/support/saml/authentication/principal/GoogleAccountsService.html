@@ -217,10 +217,11 @@
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>         <strong class="jxr_keyword">final</strong> StringWriter writer = <strong class="jxr_keyword">new</strong> StringWriter();
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>         BUILDER.marshalSamlXmlObject(response, writer);
 <a class="jxr_linenumber" name="L211" href="#L211">211</a> 
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>         logger.debug(<span class="jxr_string">"Generated Google SAML response: {}"</span>, writer.toString());
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">return</strong> writer.toString();
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>     }
-<a class="jxr_linenumber" name="L215" href="#L215">215</a> }
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">final</strong> String result = writer.toString();
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>         logger.debug(<span class="jxr_string">"Generated Google SAML response: {}"</span>, result);
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>         <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>     }
+<a class="jxr_linenumber" name="L216" href="#L216">216</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.jasig.org">Jasig</a>. All rights reserved.</div>
