@@ -66,6 +66,10 @@
       <param-name>allowMultiValuedParameters</param-name>
       <param-value>false</param-value>
     </init-param>
+    <init-param>
+      <param-name>onlyPostParameters</param-name>
+      <param-value>username password</param-value>
+    </init-param>
   </filter>
   <filter-mapping>
     <filter-name>requestParameterSecurityFilter</filter-name>
