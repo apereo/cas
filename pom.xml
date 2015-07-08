@@ -992,7 +992,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <ehcache.version>2.7.2</ehcache.version>
     <hsqldb.version>2.0.0</hsqldb.version>
     <joda-time.version>2.2</joda-time.version>
-    <cas-server-security-filter.version>2.0.0</cas-server-security-filter.version>
+    <cas-server-security-filter.version>2.0.3</cas-server-security-filter.version>
 	
     <project.build.sourceVersion>1.6</project.build.sourceVersion>
     <project.build.targetVersion>1.6</project.build.targetVersion>
