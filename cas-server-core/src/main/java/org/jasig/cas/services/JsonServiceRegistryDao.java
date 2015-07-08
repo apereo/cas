@@ -18,18 +18,25 @@
  */
 package org.jasig.cas.services;
 
+
 import org.apache.commons.io.FileUtils;
-import org.jasig.cas.util.LockedOutputStream;
 import org.jasig.cas.util.JsonSerializer;
+import org.jasig.cas.util.LockedOutputStream;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -79,7 +86,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class JsonServiceRegistryDao implements ServiceRegistryDao {
+public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
 
@@ -96,12 +103,14 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     /**
      * The Service registry directory.
      */
-    private final File serviceRegistryDirectory;
+    private final Path serviceRegistryDirectory;
 
     /**
      * The Registered service json serializer.
      */
     private final JsonSerializer<RegisteredService> registeredServiceJsonSerializer;
+
+    private ApplicationContext applicationContext;
 
     /**
      * Instantiates a new Json service registry dao.
@@ -109,11 +118,12 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
      * @param configDirectory                 the config directory
      * @param registeredServiceJsonSerializer the registered service json serializer
      */
-    public JsonServiceRegistryDao(final File configDirectory, final JsonSerializer<RegisteredService> registeredServiceJsonSerializer) {
+    public JsonServiceRegistryDao(final Path configDirectory, final JsonSerializer<RegisteredService> registeredServiceJsonSerializer) {
         this.serviceRegistryDirectory = configDirectory;
-        Assert.isTrue(this.serviceRegistryDirectory.exists(), serviceRegistryDirectory + " does not exist");
-        Assert.isTrue(this.serviceRegistryDirectory.isDirectory(), serviceRegistryDirectory + " is not a directory");
+        Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), serviceRegistryDirectory + " does not exist");
+        Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), serviceRegistryDirectory + " is not a directory");
         this.registeredServiceJsonSerializer = registeredServiceJsonSerializer;
+        initializeWatchServiceThread();
     }
 
     /**
@@ -123,8 +133,20 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
      *
      * @param configDirectory the config directory where service registry files can be found.
      */
-    public JsonServiceRegistryDao(final File configDirectory) {
+    public JsonServiceRegistryDao(final Path configDirectory) {
         this(configDirectory, new RegisteredServiceJsonSerializer());
+    }
+
+    /**
+     * Instantiates a new Json service registry dao.
+     * Sets the path to the directory where JSON service registry entries are
+     * stored. Uses the {@link RegisteredServiceJsonSerializer} by default.
+     *
+     * @param configDirectory the config directory where service registry files can be found.
+     * @throws IOException the IO exception
+     */
+    public JsonServiceRegistryDao(final File configDirectory) throws IOException {
+        this(Paths.get(configDirectory.getCanonicalPath()));
     }
 
     @Override
@@ -169,22 +191,20 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     public final synchronized List<RegisteredService> load() {
         final Map<Long, RegisteredService> temp = new ConcurrentHashMap<>();
         int errorCount = 0;
-        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory, new String[] {FILE_EXTENSION}, true);
+        final Collection<File> c = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[] {FILE_EXTENSION}, true);
         for (final File file : c) {
             if (file.length() > 0) {
-                try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
-                    final RegisteredService service = this.registeredServiceJsonSerializer.fromJson(in);
-
+                final RegisteredService service = loadRegisteredServiceFromFile(file);
+                if (service == null) {
+                    errorCount++;
+                } else {
                     if (temp.containsKey(service.getId())) {
                         LOGGER.warn("Found a service definition [{}] with a duplicate id [{}]. "
-                                + "This will overwrite previous service definitions and is likely a "
-                                + "configuration problem. Make sure all services have a unique id and try again.",
+                                        + "This will overwrite previous service definitions and is likely a "
+                                        + "configuration problem. Make sure all services have a unique id and try again.",
                                 service.getServiceId(), service.getId());
                     }
                     temp.put(service.getId(), service);
-                } catch (final Exception e) {
-                    errorCount++;
-                    LOGGER.error("Error reading configuration file", e);
                 }
             }
         }
@@ -200,6 +220,34 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     }
 
     /**
+     * Load registered service from file.
+     *
+     * @param file the file
+     * @return the registered service
+     */
+    RegisteredService loadRegisteredServiceFromFile(final File file) {
+        try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            return this.registeredServiceJsonSerializer.fromJson(in);
+        } catch (final Exception e) {
+            LOGGER.error("Error reading configuration file", e);
+        }
+        return null;
+    }
+
+    /**
+     * Insert registered service into the existing map.
+     *
+     * @param service the service
+     */
+    void updateRegisteredService(final RegisteredService service) {
+        this.serviceMap.put(service.getId(), service);
+    }
+
+    Path getServiceRegistryDirectory() {
+        return serviceRegistryDirectory;
+    }
+
+    /**
      * Creates a JSON file for a registered service.
      * The file is named as <code>[SERVICE-NAME]-[SERVICE-ID]-.{@value #FILE_EXTENSION}</code>
      *
@@ -210,12 +258,33 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao {
     protected File makeFile(final RegisteredService service) {
         final String fileName = service.getName() + '-' + service.getId() + '.' + FILE_EXTENSION;
         try {
-            final File svcFile = new File(serviceRegistryDirectory, fileName);
+            final File svcFile = new File(serviceRegistryDirectory.toFile(), fileName);
             LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
             return svcFile;
         } catch (final IOException e) {
             LOGGER.warn("Service file name {} is invalid; Examine for illegal characters in the name.", fileName);
             throw new IllegalArgumentException(e);
         }
+    }
+
+    /**
+     * Initialize watch service thread.
+     */
+    private void initializeWatchServiceThread() {
+        final Thread thread = new Thread(new JsonServiceRegistryConfigWatcher(this));
+        thread.start();
+    }
+
+    /**
+     * Refreshes the services manager, forcing it to reload.
+     */
+    void refreshServicesManager() {
+        final ReloadableServicesManager manager = this.applicationContext.getBean(ReloadableServicesManager.class);
+        manager.reload();
+    }
+
+    @Override
+    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
