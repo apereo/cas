@@ -21,9 +21,32 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
     <bean id="characterEncodingFilter" class="org.springframework.web.filter.CharacterEncodingFilter"
             p:encoding="${httprequest.web.encoding:UTF-8}"
             p:forceEncoding="${httprequest.web.encoding.force:true}" />
+
+    <bean id="requestParameterSecurityFilter"
+          class="org.jasig.cas.security.RequestParameterPolicyEnforcementFilter"
+          p:allowMultiValueParameters="${cas.http.allow.multivalue.params:false}">
+        <property name="parametersToCheck">
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String"
+                                 value="${cas.http.check.params:ticket,service,renew,gateway,warn,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService}"/>
+            </bean>
+        </property>
+        <property name="charactersToForbid">
+            <util:set />
+        </property>
+        <property name="onlyPostParameters">
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String"
+                                 value="${cas.http.allow.post.params:username,password}"/>
+            </bean>
+        </property>
+    </bean>
 </beans>
