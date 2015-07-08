@@ -120,8 +120,8 @@
                     <artifactId>log4j-over-slf4j</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>slf4j-api</artifactId>
                     <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -152,8 +152,8 @@
                     <groupId>org.slf4j</groupId>
                 </exclusion>
                 <exclusion>
-                	<artifactId>bcprov-jdk15on</artifactId>
                     <groupId>org.bouncycastle</groupId>
+                	<artifactId>bcprov-jdk15on</artifactId>
                 </exclusion>
              </exclusions>
         </dependency>

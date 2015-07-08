@@ -41,7 +41,7 @@ import javax.validation.constraints.NotNull;
 public final class OpenSamlConfigBean {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenSamlConfigBean.class);
 
-    @Autowired(required=true)
+    @Autowired
     @NotNull
     private ParserPool parserPool;
 
