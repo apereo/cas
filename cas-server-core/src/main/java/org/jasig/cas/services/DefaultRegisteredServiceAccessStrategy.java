@@ -174,10 +174,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
 
+        final Map<String, Set<String>> requiredAttrs = this.getRequiredAttributes();
         logger.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
-                getRequiredAttributes(), principalAttributes);
+                requiredAttrs, principalAttributes);
 
-        final Sets.SetView<String> difference = Sets.intersection(getRequiredAttributes().keySet(), principalAttributes.keySet());
+        final Sets.SetView<String> difference = Sets.intersection(requiredAttrs.keySet(), principalAttributes.keySet());
         final Set<String> copy = difference.immutableCopy();
 
         if (this.requireAllAttributes && copy.size() < this.requiredAttributes.size()) {
@@ -187,7 +188,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
         for (final String key : copy) {
             final Set<?> requiredValues = this.requiredAttributes.get(key);
-            Set<?> availableValues;
+            final Set<?> availableValues;
 
             final Object objVal = principalAttributes.get(key);
             if (objVal instanceof Collection) {
