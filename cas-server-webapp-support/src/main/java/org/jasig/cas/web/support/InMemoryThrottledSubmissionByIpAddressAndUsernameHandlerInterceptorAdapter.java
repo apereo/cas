@@ -40,6 +40,6 @@ public final class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInter
             return request.getRemoteAddr();
         }
 
-        return ClientInfoHolder.getClientInfo().getClientIpAddress() + ";" + username.toLowerCase();
+        return ClientInfoHolder.getClientInfo().getClientIpAddress() + ';' + username.toLowerCase();
     }
 }
