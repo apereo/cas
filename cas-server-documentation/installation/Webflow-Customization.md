@@ -172,7 +172,7 @@ Default encryption strategy controlled via the `loginFlowStateTranscoder` compon
 # cas.webflow.keystore.password=changeit
 # cas.webflow.keyalias=aes128
 # cas.webflow.keypassword=changeit
-{% endhighlight %
+{% endhighlight %}
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
 While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and transcoding of the web session state.</p></div>
