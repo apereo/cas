@@ -62,8 +62,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
     @Override
     protected Credential constructCredentialsFromRequest(
             final RequestContext context) {
-        final HttpServletRequest request = WebUtils
-                .getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
         final String authorizationHeader = request
                 .getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
@@ -76,6 +75,10 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
                     authorizationHeader.length() - this.messageBeginPrefix.length());
 
             final byte[] token = CompressionUtils.decodeBase64ToByteArray(authorizationHeader.substring(this.messageBeginPrefix.length()));
+            if (token == null) {
+                logger.warn("Could not compress authorization header in base64");
+                return null;
+            }
             logger.debug("Obtained token: {}", new String(token, Charset.defaultCharset()));
             return new SpnegoCredential(token);
         }
@@ -90,7 +93,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
      */
     protected String constructMessagePrefix() {
         return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                + " ";
+                + ' ';
     }
 
     @Override
@@ -125,7 +128,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
             logger.debug("Obtained output token: {}", new String(nextToken, Charset.defaultCharset()));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
                     ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                    + " " + CompressionUtils.encodeBase64(nextToken));
+                    + ' ' + CompressionUtils.encodeBase64(nextToken));
         } else {
             logger.debug("Unable to obtain the output token required.");
         }
