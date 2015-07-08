@@ -161,8 +161,9 @@ public class LdapUserDetailsService implements UserDetailsService {
             throw new IllegalStateException(
                     "Found multiple results for user which is not allowed (allowMultipleResults=false).");
         }
-        final String userDn = userResult.getEntry().getDn();
-        final LdapAttribute userAttribute = userResult.getEntry().getAttribute(this.userAttributeName);
+        final LdapEntry userResultEntry = userResult.getEntry();
+        final String userDn = userResultEntry.getDn();
+        final LdapAttribute userAttribute = userResultEntry.getAttribute(this.userAttributeName);
         if (userAttribute == null) {
             throw new IllegalStateException(this.userAttributeName + " attribute not found in results.");
         }
