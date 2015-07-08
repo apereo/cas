@@ -63,7 +63,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     protected boolean requireValidMetadata = true;
 
     /** The openSAML config bean. **/
-    @Autowired(required=true)
+    @Autowired
     @NotNull
     protected OpenSamlConfigBean configBean;
 
