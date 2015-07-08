@@ -70,7 +70,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @NotNull
     protected List<String> additionalAttributes = Collections.emptyList();
 
-    /** Performs LDAP authentication given username/password. */
+    /**
+     * Performs LDAP authentication given username/password.
+     **/
     @NotNull
     private final Authenticator authenticator;
 

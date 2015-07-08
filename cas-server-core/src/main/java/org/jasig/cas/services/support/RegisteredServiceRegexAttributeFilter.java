@@ -101,24 +101,31 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
             logger.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
             if (attributeValue != null) {
                 if (attributeValue instanceof Collection) {
+                    logger.trace("Attribute value {} is a collection", attributeValue);
                     final String[] filteredAttributes = filterArrayAttributes(
                             ((Collection<String>) attributeValue).toArray(new String[] {}), attributeName);
                     if (filteredAttributes.length > 0) {
                         attributesToRelease.put(attributeName, Arrays.asList(filteredAttributes));
                     }
                 } else if (attributeValue.getClass().isArray()) {
+                    logger.trace("Attribute value {} is an array", attributeValue);
                     final String[] filteredAttributes = filterArrayAttributes((String[]) attributeValue, attributeName);
                     if (filteredAttributes.length > 0) {
                         attributesToRelease.put(attributeName, Arrays.asList(filteredAttributes));
                     }
                 } else if (attributeValue instanceof Map) {
+                    logger.trace("Attribute value {} is a map", attributeValue);
                     final Map<String, String> filteredAttributes = filterMapAttributes((Map<String, String>) attributeValue);
                     if (filteredAttributes.size() > 0) {
                         attributesToRelease.put(attributeName, filteredAttributes);
                     }
-                } else if (patternMatchesAttributeValue(attributeValue.toString())) {
-                    logReleasedAttributeEntry(attributeName, attributeValue.toString());
-                    attributesToRelease.put(attributeName, attributeValue);
+                } else {
+                    logger.trace("Attribute value {} is a string", attributeValue);
+                    final String attrValue = attributeValue.toString();
+                    if (patternMatchesAttributeValue(attrValue)) {
+                        logReleasedAttributeEntry(attributeName, attrValue);
+                        attributesToRelease.put(attributeName, attrValue);
+                    }
                 }
             }
         }
