@@ -66,7 +66,7 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         final StringBuilder builder = new StringBuilder();
         builder.append(request.getRequestURI());
-        builder.append("?");
+        builder.append('?');
         @SuppressWarnings("unchecked")
         final Map<String, Object> flowParams = new LinkedHashMap<String, Object>(request.getParameterMap());
         flowParams.put(this.flowExecutionKeyParameter, flowExecutionKey);
@@ -77,7 +77,7 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     @Override
     public String createFlowDefinitionUrl(final String flowId, final AttributeMap input, final HttpServletRequest request) {
         return request.getRequestURI()
-            + (request.getQueryString() != null ? "?"
+            + (request.getQueryString() != null ? '?'
             + request.getQueryString() : "");
     }
 }
