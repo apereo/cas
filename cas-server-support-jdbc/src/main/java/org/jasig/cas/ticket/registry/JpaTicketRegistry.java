@@ -53,6 +53,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @NotNull
     private String ticketGrantingTicketPrefix = "TGT";
 
+    @Transactional(readOnly = false)
     @Override
     protected void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
