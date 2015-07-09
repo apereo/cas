@@ -29,7 +29,7 @@
 
         this.isSelected = function (checkAction) {
             return this.actionPanel === checkAction;
-        }
+        };
     });
 
     app.controller('ServiceFormController', function () {
@@ -115,7 +115,7 @@
     app.controller('ServicesTableController', ['$http', function ($http) {
         var servicesData = this;
         servicesData.dataTable = [];
-        $http.get('js/app/data/data.json').success(function (data) {
+        $http.get('js/app/data/services.json').success(function (data) {
             servicesData.dataTable = data;
         });
 
