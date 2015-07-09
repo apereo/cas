@@ -42,25 +42,37 @@
                     </tr>
                 </thead>
                 <tbody ui-sortable="serviceTable.dataTable">
-                    <tr ng-repeat="item in serviceTableCtrl.dataTable | filter: serviceTableCtrl.serviceTableQuery" class="main-row" ng-click="serviceTableCtrl.toggleDetail($index)">
-                        <td><div class="grabber-icon"><i class="fa fa-lg fa-ellipsis-v"></i></div> {{ item.serviceName }} <i class="fa fa-chevron-down"></i></td>
-                        <td>{{ item.serviceId }}</td>
-                        <td>{{ item.serviceDesc }}</td>
-                        <td>{{ $index }}</td>
-                        <td>
+                    <tr ng-repeat="item in serviceTableCtrl.dataTable | filter: serviceTableCtrl.serviceTableQuery">
+                        <td colspan="6">
+
+                <table>
+                    <tr class="main-row" ng-click="serviceTableCtrl.toggleDetail($index)">
+                        <td class="col-sm-3">
+                            <div class="grabber-icon"><i class="fa fa-lg fa-ellipsis-v"></i></div>
+                            {{ item.serviceName }}
+                            <i class="fa fa-chevron-{{ serviceTableCtrl.activePosition === $index ? 'up' : 'down' }}"></i>
+                        </td>
+                        <td class="col-sm-2">{{ item.serviceId }}</td>
+                        <td class="col-sm-3">{{ item.serviceDesc }}</td>
+                        <td class="col-sm-2">{{ $index }}</td>
+                        <td class="col-sm-1">
                             <button class="btn btn-success" ng-click="action.selectAction('add')">
                                 <i class="fa fa-lg fa-pencil"></i> <spring:message code="management.services.table.button.edit" />
                             </button>
                         </td>
-                        <td>
+                        <td class="col-sm-1">
                             <button class="btn btn-danger" onclick="javascript:;">
                                 <i class="fa fa-lg fa-trash"></i> <spring:message code="management.services.table.button.delete" />
                             </button>
                         </td>
                     </tr>
-                    <%--<tr class="detail-row" ng-show="serviceTableCtrl.activePosition == $index">--%>
-                        <%--<td colspan="5">Quick-view details about service.</td>--%>
-                    <%--</tr>--%>
+                    <tr class="detail-row" ng-show="serviceTableCtrl.activePosition == $index">
+                        <td colspan="6">Quick-view details about service.</td>
+                    </tr>
+                </table>
+
+                        </td>
+                    </tr>
                 </tbody>
             </table>  <!-- end .services-table table -->
         </div> <!-- end .col-sm-12 div -->
