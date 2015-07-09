@@ -101,9 +101,10 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
     public String generate(final Principal principal, final Service service) {
         try {
             final MessageDigest md = MessageDigest.getInstance("SHA");
-            md.update(service.getId().getBytes(Charset.defaultCharset()));
+            final Charset charset = Charset.defaultCharset();
+            md.update(service.getId().getBytes(charset));
             md.update(CONST_SEPARATOR);
-            md.update(principal.getId().getBytes(Charset.defaultCharset()));
+            md.update(principal.getId().getBytes(charset));
             md.update(CONST_SEPARATOR);
 
             final String result = CompressionUtils.encodeBase64(md.digest(this.salt));

@@ -88,9 +88,9 @@ public final class JCIFSConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (System.getProperty(SYS_PROP_LOGIN_CONF) != null) {
-            logger.warn("found login config in system property, may overide : {}"
-                    , System.getProperty(SYS_PROP_LOGIN_CONF));
+        final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
+        if (propValue != null) {
+            logger.warn("found login config in system property, may overide : {}", propValue);
         }
 
         URL url = getClass().getResource(
@@ -106,8 +106,7 @@ public final class JCIFSConfig implements InitializingBean {
                 System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
             }
         }
-        logger.debug("configured login configuration path : {}"
-                , System.getProperty(SYS_PROP_LOGIN_CONF));
+        logger.debug("configured login configuration path : {}", propValue);
     }
 
     /**
