@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.services;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
@@ -35,6 +37,7 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Transactional(readOnly = false)
     @Override
     public boolean delete(final RegisteredService registeredService) {
         if (this.entityManager.contains(registeredService)) {
@@ -45,12 +48,14 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
         return true;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<RegisteredService> load() {
         return this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class)
                 .getResultList();
     }
 
+    @Transactional(readOnly = false)
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         final boolean isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
@@ -64,6 +69,7 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
         return r;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public RegisteredService findServiceById(final long id) {
         return this.entityManager.find(AbstractRegisteredService.class, id);

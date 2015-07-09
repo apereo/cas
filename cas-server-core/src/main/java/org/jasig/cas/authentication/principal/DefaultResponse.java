@@ -94,10 +94,10 @@ public final class DefaultResponse implements Response {
                     builder.append(url.contains("?") ? "&" : "?");
                     isFirst = false;
                 } else {
-                    builder.append("&");
+                    builder.append('&');
                 }
                 builder.append(entry.getKey());
-                builder.append("=");
+                builder.append('=');
 
                 try {
                     builder.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
@@ -108,7 +108,7 @@ public final class DefaultResponse implements Response {
         }
 
         if (fragmentSplit.length > 1) {
-            builder.append("#");
+            builder.append('#');
             builder.append(fragmentSplit[1]);
         }
 

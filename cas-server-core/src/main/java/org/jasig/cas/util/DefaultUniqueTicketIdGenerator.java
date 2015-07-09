@@ -86,7 +86,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
         this.randomStringGenerator = randomStringGenerator;
         this.numericGenerator = numericGenerator;
-        this.suffix = StringUtils.isNoneBlank(suffix) ? "-" + suffix : null;
+        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : null;
     }
 
     /**
@@ -112,9 +112,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
             + number.length());
 
         buffer.append(prefix);
-        buffer.append("-");
+        buffer.append('-');
         buffer.append(number);
-        buffer.append("-");
+        buffer.append('-');
         buffer.append(this.randomStringGenerator.getNewString());
 
         if (this.suffix != null) {
