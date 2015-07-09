@@ -2,8 +2,7 @@
     padding-bottom: 40px;
 
     .services-table {
-
-        thead {
+       thead {
             background-color: @gray8;
             color: @white;
             font-weight: bold;
@@ -11,6 +10,11 @@
 
         tbody {
             border: 1px solid @gray1;
+        }
+
+        > tbody > tr > td {width: 100%; border: none; padding: 0;}
+        table {width: 100%;
+            td {padding: 8px;}
         }
     }
 

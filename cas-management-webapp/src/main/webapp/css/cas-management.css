@@ -6773,6 +6773,15 @@ html {
 .casmgmt-app .casmgmt-content .services-table tbody {
   border: 1px solid #e6e6e6;
 }
+.casmgmt-app .casmgmt-content .services-table > tbody > tr > td {
+  width: 100%; border: none; padding: 0;
+}
+.casmgmt-app .casmgmt-content .services-table table {
+  width: 100%;
+}
+.casmgmt-app .casmgmt-content .services-table table td {
+  padding: 8px;
+}
 .casmgmt-app .casmgmt-content .services-summary-table td {
   border-top: none;
 }
