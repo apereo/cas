@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <name>Jasig Central Authentication Service</name>
   <description>Jasig CAS SSO server libraries and Web application.</description>
-  <version>4.0.3</version>
+  <version>4.0.4-SNAPSHOT</version>
   <url>http://www.jasig.org/cas/</url>
   <inceptionYear>2004</inceptionYear>
 
@@ -191,7 +191,7 @@
     <connection>scm:git:git@github.com:Jasig/cas.git</connection>
     <developerConnection>scm:git:git@github.com:Jasig/cas.git</developerConnection>
     <url>https://github.com/Jasig/cas</url>
-    <tag>v4.0.3</tag>
+    <tag>HEAD</tag>
   </scm>
 	
   <distributionManagement>
