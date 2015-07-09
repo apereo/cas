@@ -39,19 +39,16 @@
                 for (var i = activeSsoSessions.length - 1; i >= 0; i--) {
                     var sso = activeSsoSessions[i];                   
                     
-                    $("#jsonContent").append("<h3><div class='row'>"
+                    $("#jsonContent").append("<h3><div class='row text-center'>"
+                    + "<div class='col-xs-1'><span class='label label-primary'>Proxy</span></div>"
                     + "<div class='col-xs-3'><span>" + sso.authenticated_principal + "</span></div>"
-                    + "<div class='col-xs-2'><span>" + sso.authenticated_principal + "</span></div>"
-                    + "<div class='col-xs-3'><span>" + sso.authentication_date + "</span></div>"
+                    + "<div class='col-xs-4'><span>" + sso.authentication_date + "</span></div>"
                     + "<div class='col-xs-2'><span>" + sso.number_of_uses + "</span></div>"
-                    + "<div class='col-xs-2'><button class='btn btn-danger btn-xs' type='submit'>Kill</button></div>"
+                    + "<div class='col-xs-2'><span class='glyphicon glyphicon-flash' aria-hidden='true'></span></div>"
                     + "</div></h3>");
 
                     $("#jsonContent").append("<div>"
-                    + "<table class='table table-striped table-hover'>"
-                    //+ "<tr><th>Authentication Date:</th><th>Usage Count</th><th>Ticket Granting Ticket</th></tr>"
-                    //+ "<tr><td>" + sso.authentication_date + "</td>"
-                    //+ "<tr><td>" + sso.number_of_uses + "</td>"
+                    + "<table class='table table-bordered table-striped table-hover'>"
                     + "<tr><td>Ticket Granting Ticket</td>"
                     + "<td>" + (sso.ticket_granting_ticket == undefined ? new Array(30).join("*") : sso.ticket_granting_ticket) + "</td></tr>"
                     + "<tr><td>Principal Attributes</td>"
@@ -92,27 +89,46 @@
 </script>
 
 
-<div>
-       <h1>SSO Sessions Report</h1>
-
-    <div id="container-stable">
-       <div id="table-monitor-hdr" class="row">
-            <div class="col-xs-3">&nbsp;</div>
-            <div class="col-xs-2">User</div>
-            <div class="col-xs-3">Authentication Date</div>
-            <div class="col-xs-2">Usage Count</div>
-            <div class="col-xs-2">Kill</div>
-       </div>
-
-       <div id="msg" style="display:none"></div>
-        
-       <div id="jsonContent"></div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>SSO Sessions Report</h4>
     </div>
+    <div class="panel-body">
+        <div>
 
-       <div id="login">
-            <div><br/></div>
-            <input class="btn btn-success" type="button" onclick="location.reload();" value="Refresh">
-       </div>
+        <div class="btn-group btn-group-sm pull-right" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="radio" name="options" id="option1" autocomplete="off" checked> All
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="options" id="option2" autocomplete="off"> Proxied
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="options" id="option3" autocomplete="off"> Non-Proxied
+          </label>
+        </div>
+                
+
+        <button class="btn btn-sm btn-danger" type="button">Bulk Kill</button></div>
+        
+        <div id="container-stable">
+           <div id="table-monitor-hdr" class="row">
+                <div class="col-xs-1">&nbsp;</div>
+                <div class="col-xs-3">User</div>
+                <div class="col-xs-4">Authentication Date</div>
+                <div class="col-xs-2">Usage Count</div>
+                <div class="col-xs-2">Kill</div>
+           </div>
+
+           <div id="msg" style="display:none"></div>
+
+           <div id="jsonContent"></div>
+        </div>
+
+        <div id="login">
+                <input class="btn btn-success btn-sm" type="button" onclick="location.reload();" value="Refresh">
+        </div>
+    </div>
 </div>
 
 
