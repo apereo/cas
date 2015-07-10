@@ -35,7 +35,8 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * First action of a SPNEGO flow : negotiation.<br> The server checks if the
+ * First action of a SPNEGO flow : negotiation.
+ * <p>The server checks if the
  * negotiation string is in the request header and this is a supported browser:
  * <ul>
  * <li>If found do nothing and return <code>success()</code></li>
@@ -178,7 +179,7 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
      */
     protected String constructMessagePrefix() {
         return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                + " ";
+                + ' ';
     }
 
     /**

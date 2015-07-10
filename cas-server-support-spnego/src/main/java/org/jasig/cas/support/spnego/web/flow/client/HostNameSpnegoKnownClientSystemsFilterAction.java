@@ -46,10 +46,13 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
     }
 
     /**
-     * {@inheritDoc}. <p/>
+     * {@inheritDoc}.
+     * <p>
      * Checks whether the IP should even be paid attention to,
      * then does a reverse DNS lookup, and if it matches the supplied pattern, performs SPNEGO
      * else skips the process.
+     *
+     * @param remoteIp The remote ip address to validate
      */
     @Override
     protected boolean shouldDoSpnego(final String remoteIp) {

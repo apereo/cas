@@ -154,16 +154,28 @@ By default, the conversational state of Spring Webflow is managed inside the app
 
 {% highlight xml %}
 <bean id="loginFlowExecutionRepository" 
-    class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
+    class="org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
     c:flowExecutionFactory-ref="loginFlowExecutionFactory"
     c:flowDefinitionLocator-ref="loginFlowRegistry"
     c:transcoder-ref="loginFlowStateTranscoder" />
 
-<bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"/>
-
 {% endhighlight %}
 
-Default encryption strategy is using the 128-bit AES in CBC ciphering mode with compression turned on.
+Default encryption strategy controlled via the `loginFlowStateTranscoder` component is using the 128-bit AES in CBC ciphering mode with compression turned on. These settings can be controlled via the following settings defined in the `cas.properties` file:
+
+{% highlight properties %}
+# cas.webflow.cipher.alg=AES
+# cas.webflow.cipher.mode=CBC
+# cas.webflow.cipher.padding=PKCS7
+# cas.webflow.keystore=classpath:/etc/keystore.jceks
+# cas.webflow.keystore.type=JCEKS
+# cas.webflow.keystore.password=changeit
+# cas.webflow.keyalias=aes128
+# cas.webflow.keypassword=changeit
+{% endhighlight %}
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>
+While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and transcoding of the web session state.</p></div>
 
 ##Required Service for Authentication Flow
 By default, CAS will present a generic success page if the initial authentication request does not identify
