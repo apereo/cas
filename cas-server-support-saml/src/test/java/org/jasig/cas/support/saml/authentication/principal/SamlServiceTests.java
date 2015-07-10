@@ -18,8 +18,7 @@
  */
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.jasig.cas.authentication.principal.DefaultResponse;
-import org.jasig.cas.authentication.principal.DefaultResponse.ResponseType;
+import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
@@ -41,9 +40,9 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter("TARGET", "service");
         final SamlService impl = SamlService.createServiceFrom(request);
 
-        final DefaultResponse response = impl.getResponse("ticketId");
+        final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertTrue(response.getUrl().contains("SAMLart="));
     }
 
@@ -62,9 +61,9 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter("TARGET", "service");
         final SamlService impl = SamlService.createServiceFrom(request);
 
-        final DefaultResponse response = impl.getResponse(null);
+        final Response response = impl.getResponse(null);
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("SAMLart="));
     }
 

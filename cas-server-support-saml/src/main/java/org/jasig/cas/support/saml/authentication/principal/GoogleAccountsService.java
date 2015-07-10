@@ -21,6 +21,7 @@ package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.DefaultResponse;
+import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
@@ -151,7 +152,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     @Override
-    public DefaultResponse getResponse(final String ticketId) {
+    public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<>();
         final String samlResponse = constructSamlResponse();
         final String signedResponse = BUILDER.signSamlResponse(samlResponse,

@@ -20,7 +20,7 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.logout.DefaultLogoutRequest;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -61,9 +61,9 @@ public final class LogoutAction extends AbstractLogoutAction {
 
         boolean needFrontSlo = false;
         putLogoutIndex(context, 0);
-        final List<DefaultLogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
+        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(context);
         if (logoutRequests != null) {
-            for (final DefaultLogoutRequest logoutRequest : logoutRequests) {
+            for (final LogoutRequest logoutRequest : logoutRequests) {
                 // if some logout request must still be attempted
                 if (logoutRequest.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED) {
                     needFrontSlo = true;

@@ -21,7 +21,7 @@ package org.jasig.cas;
 import java.util.List;
 
 import org.jasig.cas.logout.LogoutManager;
-import org.jasig.cas.logout.DefaultLogoutRequest;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
 /**
@@ -39,14 +39,14 @@ public final class MockExpireUpdateTicketLogoutManager implements LogoutManager 
     }
 
     @Override
-    public List<DefaultLogoutRequest> performLogout(final TicketGrantingTicket ticket) {
+    public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
         ticket.markTicketExpired();
         registry.updateTicket(ticket);
         return null;
     }
 
     @Override
-    public String createFrontChannelLogoutMessage(final DefaultLogoutRequest logoutRequest) {
+    public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
         throw new UnsupportedOperationException("Not implemented");
     }
 }
