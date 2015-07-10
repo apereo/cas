@@ -25,7 +25,7 @@ import java.security.GeneralSecurityException;
 
 import javax.security.auth.login.FailedLoginException;
 
-import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
@@ -72,7 +72,7 @@ public final class ClientAuthenticationHandlerTests {
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setFacebookProfile(facebookProfile);
-        final DefaultHandlerResult result = this.handler.authenticate(this.clientCredential);
+        final HandlerResult result = this.handler.authenticate(this.clientCredential);
         final Principal principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getSimpleName() + "#" + ID, principal.getId());
     }
@@ -83,7 +83,7 @@ public final class ClientAuthenticationHandlerTests {
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setFacebookProfile(facebookProfile);
-        final DefaultHandlerResult result = this.handler.authenticate(this.clientCredential);
+        final HandlerResult result = this.handler.authenticate(this.clientCredential);
         final Principal principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
     }

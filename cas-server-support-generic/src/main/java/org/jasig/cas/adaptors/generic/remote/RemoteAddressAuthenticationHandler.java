@@ -21,6 +21,7 @@ package org.jasig.cas.adaptors.generic.remote;
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.HandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

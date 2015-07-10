@@ -20,7 +20,6 @@ package org.jasig.cas.authentication.principal;
 
 import static org.junit.Assert.*;
 
-import org.jasig.cas.authentication.principal.DefaultResponse.ResponseType;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -39,9 +38,9 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter("service", "service");
         final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
 
-        final DefaultResponse response = impl.getResponse("ticketId");
+        final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
     }
 
     @Test
@@ -67,9 +66,9 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter("service", "service");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
 
-        final DefaultResponse response = impl.getResponse(null);
+        final Response response = impl.getResponse(null);
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
     }
 
@@ -79,9 +78,9 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter("service", "http://foo.com/");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
 
-        final DefaultResponse response = impl.getResponse(null);
+        final Response response = impl.getResponse(null);
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
         assertEquals("http://foo.com/", response.getUrl());
     }
@@ -92,9 +91,9 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter("service", "http://foo.com/?param=test");
         final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
 
-        final DefaultResponse response = impl.getResponse(null);
+        final Response response = impl.getResponse(null);
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertEquals("http://foo.com/?param=test", response.getUrl());
     }
 }
