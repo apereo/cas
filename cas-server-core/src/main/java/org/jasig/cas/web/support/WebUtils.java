@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.logout.DefaultLogoutRequest;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -250,7 +250,7 @@ public final class WebUtils {
      * @param context the context
      * @param requests the requests
      */
-    public static void putLogoutRequests(final RequestContext context, final List<DefaultLogoutRequest> requests) {
+    public static void putLogoutRequests(final RequestContext context, final List<LogoutRequest> requests) {
         context.getFlowScope().put("logoutRequests", requests);
     }
 
@@ -260,8 +260,8 @@ public final class WebUtils {
      * @param context the context
      * @return the logout requests
      */
-    public static List<DefaultLogoutRequest> getLogoutRequests(final RequestContext context) {
-        return (List<DefaultLogoutRequest>) context.getFlowScope().get("logoutRequests");
+    public static List<LogoutRequest> getLogoutRequests(final RequestContext context) {
+        return (List<LogoutRequest>) context.getFlowScope().get("logoutRequests");
     }
 
     /**

@@ -22,6 +22,7 @@ import edu.vt.middleware.crypt.util.CryptReader;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Test;
@@ -245,7 +246,7 @@ public class X509CredentialsAuthenticationHandlerTests {
     public void verifyAuthenticate() {
         try {
             if (this.handler.supports(this.credential)) {
-                final DefaultHandlerResult result = this.handler.authenticate(this.credential);
+                final HandlerResult result = this.handler.authenticate(this.credential);
                 if (this.expectedResult instanceof DefaultHandlerResult) {
                     assertEquals(this.expectedResult, result);
                 } else {

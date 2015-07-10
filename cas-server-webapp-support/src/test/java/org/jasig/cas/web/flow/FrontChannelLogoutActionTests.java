@@ -35,6 +35,7 @@ import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.DefaultLogoutRequest;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
@@ -120,7 +121,7 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutNoIndex() throws Exception {
-        WebUtils.putLogoutRequests(this.requestContext, Collections.<DefaultLogoutRequest>emptyList());
+        WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
     }
@@ -129,7 +130,7 @@ public class FrontChannelLogoutActionTests {
     public void verifyLogoutOneLogoutRequestSuccess() throws Exception {
         final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest("", null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
-        WebUtils.putLogoutRequests(this.requestContext, Collections.<DefaultLogoutRequest>emptyList());
+        WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
         assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
@@ -137,13 +138,13 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutOneLogoutRequestNotAttempted() throws Exception {
-        final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(TICKET_ID,
+        final LogoutRequest logoutRequest = new DefaultLogoutRequest(TICKET_ID,
                 new SimpleWebApplicationServiceImpl(TEST_URL),
                 new URL(TEST_URL));
         final Event event = getLogoutEvent(Arrays.asList(logoutRequest));
 
         assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
-        final List<DefaultLogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
+        final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get(FrontChannelLogoutAction.DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL);
         assertTrue(url.startsWith(TEST_URL + "?" + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + "="));
@@ -172,7 +173,7 @@ public class FrontChannelLogoutActionTests {
         tgt.getServices().put("service", service);
         final Event event = getLogoutEvent(this.logoutManager.performLogout(tgt));
         assertEquals(FrontChannelLogoutAction.REDIRECT_APP_EVENT, event.getId());
-        final List<DefaultLogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
+        final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get(FrontChannelLogoutAction.DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL);
         assertTrue(url.startsWith(svc.getLogoutUrl().toExternalForm()));
@@ -189,7 +190,7 @@ public class FrontChannelLogoutActionTests {
         return svc;
     }
 
-    private Event getLogoutEvent(final List<DefaultLogoutRequest> requests) throws Exception {
+    private Event getLogoutEvent(final List<LogoutRequest> requests) throws Exception {
         WebUtils.putLogoutRequests(this.requestContext, requests);
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
         return this.frontChannelLogoutAction.doExecute(this.requestContext);

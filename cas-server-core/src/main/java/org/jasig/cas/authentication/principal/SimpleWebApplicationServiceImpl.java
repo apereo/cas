@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.authentication.principal.DefaultResponse.ResponseType;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;

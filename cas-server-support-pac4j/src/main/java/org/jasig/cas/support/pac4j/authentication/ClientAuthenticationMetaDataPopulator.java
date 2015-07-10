@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.support.pac4j.authentication;
 
-import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
@@ -41,7 +41,7 @@ public final class ClientAuthenticationMetaDataPopulator implements Authenticati
      * {@inheritDoc}
      */
     @Override
-    public void populateAttributes(final DefaultAuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         final ClientCredential clientCredential = (ClientCredential) credential;
         builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
     }
