@@ -54,16 +54,19 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * attribute values extracted from DN attribute values.
      * <p>
      * EXAMPLE:
-     * <p>
+     * </p>
+     * {@code
      * <code>
      * &lt;bean class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
      *   p:descriptor="$UID@$DC.$DC" /&gt;
      * </code>
+     * }
+     *
+     * The above bean when applied to a certificate with the DN
      * <p>
-     * The above bean when applied to a certificate with the DN<br>
-     * <strong>DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto</strong><br>
-     * produces the principal <strong>jacky@vt.edu</strong>.
-     * </p>
+     * <b>DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto</b></p>
+     * <p>
+     * produces the principal <strong>jacky@vt.edu</strong>.</p>
      *
      * @param s Descriptor string where attribute names are prefixed with "$"
      * to identify replacement by real attribute values from the subject DN.
