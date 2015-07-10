@@ -35,7 +35,7 @@ public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDat
     public static final String SUCCESSFUL_AUTHENTICATION_HANDLERS = "successfulAuthenticationHandlers";
 
     @Override
-    public void populateAttributes(final DefaultAuthenticationBuilder builder, final Credential credential) {
+    public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         builder.addAttribute(SUCCESSFUL_AUTHENTICATION_HANDLERS, new HashSet(builder.getSuccesses().keySet()));
     }
 

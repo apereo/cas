@@ -94,30 +94,30 @@ public class LogoutManagerImplTests {
     @Test
     public void verifyServiceLogoutUrlIsUsed() throws Exception {
         this.registeredService.setLogoutUrl(new URL("https://www.apereo.org"));
-        final Collection<DefaultLogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
-        final DefaultLogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
         assertEquals(logoutRequest.getLogoutUrl(), this.registeredService.getLogoutUrl());
     }
 
     @Test
     public void verifyLogoutDisabled() {
         this.logoutManager.setSingleLogoutCallbacksDisabled(true);
-        final Collection<DefaultLogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
 
     @Test
     public void verifyLogoutAlreadyLoggedOut() {
         this.simpleWebApplicationServiceImpl.setLoggedOutAlready(true);
-        final Collection<DefaultLogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
 
     @Test
     public void verifyLogoutTypeNotSet() {
-        final Collection<DefaultLogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
-        final DefaultLogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
@@ -126,9 +126,9 @@ public class LogoutManagerImplTests {
     @Test
     public void verifyLogoutTypeBack() {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
-        final Collection<DefaultLogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
-        final DefaultLogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.SUCCESS, logoutRequest.getStatus());
@@ -137,25 +137,25 @@ public class LogoutManagerImplTests {
     @Test
     public void verifyLogoutTypeNone() {
         this.registeredService.setLogoutType(LogoutType.NONE);
-        final Collection<DefaultLogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
 
     @Test
     public void verifyLogoutTypeNull() {
         this.registeredService.setLogoutType(null);
-        final Collection<DefaultLogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
-        final DefaultLogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
     }
 
     @Test
     public void verifyLogoutTypeFront() {
         this.registeredService.setLogoutType(LogoutType.FRONT_CHANNEL);
-        final Collection<DefaultLogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
-        final DefaultLogoutRequest logoutRequest = logoutRequests.iterator().next();
+        final LogoutRequest logoutRequest = logoutRequests.iterator().next();
         assertEquals(ID, logoutRequest.getTicketId());
         assertEquals(this.simpleWebApplicationServiceImpl, logoutRequest.getService());
         assertEquals(LogoutRequestStatus.NOT_ATTEMPTED, logoutRequest.getStatus());
@@ -165,7 +165,7 @@ public class LogoutManagerImplTests {
     public void verifyAsynchronousLogout() {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
         this.logoutManager.setAsynchronous(false);
-        final Collection<DefaultLogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
+        final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
     }
 }

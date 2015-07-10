@@ -19,7 +19,7 @@
 package org.jasig.cas.support.openid.authentication.principal;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.DefaultResponse;
+import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.util.ApplicationContextProvider;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,7 +72,7 @@ public class OpenIdServiceTests {
     @Test
     public void verifyGetResponse() {
         openIdService = OpenIdService.createServiceFrom(request);
-        final DefaultResponse response = this.openIdService.getResponse("test");
+        final Response response = this.openIdService.getResponse("test");
         try {
             verify(cas, never()).validateServiceTicket("test", openIdService);
         } catch (final Exception e) {
@@ -84,7 +84,7 @@ public class OpenIdServiceTests {
         assertEquals("http://www.ja-sig.org/?service=fa", response.getAttributes().get("openid.return_to"));
         assertEquals("http://openid.ja-sig.org/battags", response.getAttributes().get("openid.identity"));
 
-        final DefaultResponse response2 = this.openIdService.getResponse(null);
+        final Response response2 = this.openIdService.getResponse(null);
         assertEquals("cancel", response2.getAttributes().get("openid.mode"));
     }
 
@@ -99,7 +99,7 @@ public class OpenIdServiceTests {
             fail("Could not generate association");
         }
         when(sharedAssociations.load("test")).thenReturn(association);
-        final DefaultResponse response = this.openIdService.getResponse("test");
+        final Response response = this.openIdService.getResponse("test");
         try {
             verify(cas).validateServiceTicket("test", openIdService);
         } catch (final Exception e) {
@@ -132,7 +132,7 @@ public class OpenIdServiceTests {
                 fail("Could not wait long enough to check association expiry date");
             }
         }
-        final DefaultResponse response = this.openIdService.getResponse("test");
+        final Response response = this.openIdService.getResponse("test");
         request.removeParameter("openid.assoc_handle");
         assertNotNull(response);
 

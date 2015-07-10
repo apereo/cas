@@ -168,6 +168,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      *
      * @return This builder instance.
      */
+    @Override
     public AuthenticationBuilder setAttributes(final Map<String, Object> attributes) {
         Assert.notNull(attributes, "Attributes cannot be null");
         this.attributes.clear();
