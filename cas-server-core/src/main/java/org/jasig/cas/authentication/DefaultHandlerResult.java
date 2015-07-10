@@ -164,6 +164,6 @@ public class DefaultHandlerResult implements HandlerResult {
 
     @Override
     public String toString() {
-        return this.handlerName + ":" + this.credentialMetaData;
+        return this.handlerName + ':' + this.credentialMetaData;
     }
 }
