@@ -211,7 +211,17 @@ public abstract class AbstractCasView extends AbstractView {
 
         final Assertion assertion = getAssertionFrom(model);
         final List<Authentication> chainedAuthentications = assertion.getChainedAuthentications();
-        for (int i = 0; i < chainedAuthentications.size() - 2; i++) {
+
+        /**
+         * Note that the last index in the list always describes the primary authentication
+         * event. All others in the chain should denote proxies. Per the CAS protocol,
+         * when authentication has proceeded through multiple proxies,
+         * the order in which the proxies were traversed MUST be reflected in the response.
+         * The most recently-visited proxy MUST be the first proxy listed, and all the
+         * other proxies MUST be shifted down as new proxies are added. I
+         */
+        final int numberAuthenticationsExceptPrimary = chainedAuthentications.size() - 1;
+        for (int i = 0; i < numberAuthenticationsExceptPrimary; i++) {
             chainedAuthenticationsToReturn.add(chainedAuthentications.get(i));
         }
         return chainedAuthenticationsToReturn;

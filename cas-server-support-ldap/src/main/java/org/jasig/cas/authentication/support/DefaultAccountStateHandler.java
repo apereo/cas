@@ -40,6 +40,7 @@ import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,19 +85,15 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             throws LoginException {
 
         final AccountState state = response.getAccountState();
-        final AccountState.Error error;
-        final AccountState.Warning warning;
-        if (state != null) {
-            error = state.getError();
-            warning = state.getWarning();
-        } else {
-            logger.debug("Account state not defined");
-            error = null;
-            warning = null;
+        if (state == null) {
+            logger.debug("Account state not defined. Returning empty list of messages.");
+            return Collections.emptyList();
         }
+
         final List<Message> messages = new ArrayList<>();
-        handleError(error, response, configuration, messages);
-        handleWarning(warning, response, configuration, messages);
+        handleError(state.getError(), response, configuration, messages);
+        handleWarning(state.getWarning(), response, configuration, messages);
+
         return messages;
     }
 
@@ -119,7 +116,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final List<Message> messages)
             throws LoginException {
 
-        logger.debug("Handling {}", error);
+        logger.debug("Handling error {}", error);
         final LoginException ex = this.errorMap.get(error);
         if (ex != null) {
             throw ex;
@@ -144,6 +141,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final LdapPasswordPolicyConfiguration configuration,
             final List<Message> messages) {
 
+        logger.debug("Handling warning {}", warning);
         if (warning == null) {
             logger.debug("Account state warning not defined");
             return;
