@@ -6782,6 +6782,10 @@ html {
 .casmgmt-app .casmgmt-content .services-table table td {
   padding: 8px;
 }
+.casmgmt-app .casmgmt-content .services-table table .more {
+  color: #333333;
+  text-underline: none;
+}
 .casmgmt-app .casmgmt-content .services-summary-table td {
   border-top: none;
 }
