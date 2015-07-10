@@ -36,11 +36,11 @@ import javax.servlet.http.HttpServletRequest;
  */
 public final class DefaultCasCookieValueManager implements CookieValueManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
-    private static final String COOKIE_FIELD_SEPARATOR = "@";
+    private static final char COOKIE_FIELD_SEPARATOR = '@';
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
     /** The cipher exec that is responsible for encryption and signing of the cookie. */
-    private CipherExecutor cipherExecutor;
+    private final CipherExecutor cipherExecutor;
 
     /**
      * Instantiates a new Cas cookie value manager.
@@ -93,7 +93,7 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
             return null;
         }
 
-        final String[] cookieParts = cookieValue.split(COOKIE_FIELD_SEPARATOR);
+        final String[] cookieParts = cookieValue.split(String.valueOf(COOKIE_FIELD_SEPARATOR));
         if (cookieParts.length != COOKIE_FIELDS_LENGTH) {
             throw new IllegalStateException("Invalid cookie. Required fields are missing");
         }
