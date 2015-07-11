@@ -41,20 +41,23 @@
                         <th class="col-sm-1"></th>
                     </tr>
                 </thead>
-                <tbody ui-sortable="serviceTable.dataTable">
-                    <tr ng-repeat="item in serviceTableCtrl.dataTable | filter: serviceTableCtrl.serviceTableQuery">
+                <tbody ui-sortable="serviceTableCtrl.sortableOptions" ng-model="serviceTableCtrl.dataTable">
+                    <tr id="assignedId_{{ item.assignedId }}" ng-repeat="item in serviceTableCtrl.dataTable | filter: serviceTableCtrl.serviceTableQuery">
                         <td colspan="6">
 
                 <table>
-                    <tr class="main-row" ng-click="serviceTableCtrl.toggleDetail($index)">
+                    <tr class="main-row">
                         <td class="col-sm-3">
                             <div class="grabber-icon"><i class="fa fa-lg fa-ellipsis-v"></i></div>
-                            {{ item.serviceName }}
-                            <i class="fa fa-chevron-{{ serviceTableCtrl.activePosition === $index ? 'up' : 'down' }}"></i>
+                            {{ item.name }}
+                            <a href="javascript://" class="more" ng-click="serviceTableCtrl.toggleDetail(item.evalOrder)">
+<%-- Needs accessibility text for screen readers, something like "a11y OffScreen" (Google) --%>
+                                <i class="fa fa-chevron-{{ serviceTableCtrl.activePosition === item.evalOrder ? 'up' : 'down' }}"></i>
+                            </a>
                         </td>
-                        <td class="col-sm-2">{{ item.serviceId }}</td>
-                        <td class="col-sm-3">{{ item.serviceDesc }}</td>
-                        <td class="col-sm-2">{{ $index }}</td>
+                        <td class="col-sm-2">{{ item.assignedId }}</td>
+                        <td class="col-sm-3">{{ item.description }}</td>
+                        <td class="col-sm-2">{{ item.evalOrder }}</td>
                         <td class="col-sm-1">
                             <button class="btn btn-success" ng-click="action.selectAction('add')">
                                 <i class="fa fa-lg fa-pencil"></i> <spring:message code="management.services.table.button.edit" />
@@ -66,7 +69,7 @@
                             </button>
                         </td>
                     </tr>
-                    <tr class="detail-row" ng-show="serviceTableCtrl.activePosition == $index">
+                    <tr class="detail-row" ng-show="serviceTableCtrl.activePosition == item.evalOrder">
                         <td colspan="6">Quick-view details about service.</td>
                     </tr>
                 </table>
