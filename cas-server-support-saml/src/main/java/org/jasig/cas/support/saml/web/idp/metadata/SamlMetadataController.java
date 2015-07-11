@@ -17,10 +17,9 @@
  * under the License.
  */
 
-package org.jasig.cas.support.saml.web.idp;
+package org.jasig.cas.support.saml.web.idp.metadata;
 
 import org.apache.commons.io.FileUtils;
-import org.jasig.cas.support.saml.web.idp.metadata.GenerateSamlMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
