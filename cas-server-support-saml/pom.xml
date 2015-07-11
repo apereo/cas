@@ -38,7 +38,12 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.51</version>
+            <version>${bouncycastle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>${bouncycastle.version}</version>
         </dependency>
 
         <dependency>
@@ -61,12 +66,29 @@
         <dependency>
             <groupId>net.shibboleth.utilities</groupId>
             <artifactId>java-support</artifactId>
-            <version>7.1.1</version>
+            <version>${idp.java.utilities.version}</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>
                     <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>net.shibboleth.idp</groupId>
+            <artifactId>idp-installer</artifactId>
+            <version>${idp.installer.version}</version>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcprov-jdk15on</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -135,14 +157,14 @@
         <dependency>
             <groupId>javax.xml</groupId>
             <artifactId>xmldsig</artifactId>
-            <version>1.0</version>
+            <version>${xmldsig.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
-            <version>1.0</version>
+            <version>${jdom.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -163,6 +185,11 @@
 
     <properties>
         <cs.dir>${project.parent.basedir}</cs.dir>
+        <idp.installer.version>3.1.2</idp.installer.version>
+        <idp.java.utilities.version>7.1.1</idp.java.utilities.version>
+        <xmldsig.version>1.0</xmldsig.version>
+        <jdom.version>1.0</jdom.version>
+        <bouncycastle.version>1.51</bouncycastle.version>
     </properties>
 
     <repositories>
