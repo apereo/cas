@@ -53,7 +53,7 @@ public final class SamlMetadataController {
     @Value("${server.prefix}")
     private String entityId;
 
-    @Value("${host.name}")
+    @Value("${cas.samlidp.hostname}")
     private String hostName;
 
     @Value("${cas.samlidp.scope}")
