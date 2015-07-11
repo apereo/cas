@@ -294,7 +294,7 @@
                                     <spring:message code="services.form.label.pubKey.location" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.location" />"></i>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.pubKeyLocation">
+                                    <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.publicKeyLocation">
                                 </div>
                             </div>
                             <!-- Public Key Algorithm -->
@@ -303,7 +303,7 @@
                                     <spring:message code="services.form.label.pubKey.algorithm" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.algorithm" />"></i>
                                 </label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.publicKeyAlgorithm" ng-options="type.name for type in serviceFormCtrl.pubKeyAlgorithmList" disabled></select>
+                                    <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.publicKeyAlgorithm" ng-options="type.name for type in serviceFormCtrl.publicKeyAlgorithmList" disabled></select>
                                 </div>
                             </div>
                         </div> <!-- end .panel-body div -->
