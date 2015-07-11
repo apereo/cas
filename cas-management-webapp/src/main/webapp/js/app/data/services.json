@@ -1,20 +1,20 @@
 [
     {
-        "serviceName": "Apereo",
-        "serviceId": "11234",
-        "serviceDesc": "The Apereo service for authentication.",
-        "serviceOrder": "0001"
+        "assignedId": 11234,
+        "name": "Apereo",
+        "description": "The Apereo service for authentication.",
+        "evalOrder": 1
     },
     {
-        "serviceName": "HTTPS and IMAPS",
-        "serviceId": "43021",
-        "serviceDesc": "The HTTP and IMAPS service for authentication.",
-        "serviceOrder": "0002"
+        "assignedId": 43021,
+        "name": "HTTPS and IMAPS",
+        "description": "The HTTP and IMAPS service for authentication.",
+        "evalOrder": 2
     },
     {
-        "serviceName": "Another Service",
-        "serviceId": "90432",
-        "serviceDesc": "Another service you can use for authentication.",
-        "serviceOrder": "0003"
+        "assignedId": 90432,
+        "name": "Another Service",
+        "description": "Another service you can use for authentication.",
+        "evalOrder": 3
     }
 ]
