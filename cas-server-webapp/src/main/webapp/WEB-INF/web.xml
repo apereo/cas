@@ -247,7 +247,7 @@
 
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
-        <url-pattern>idp/profile/*</url-pattern>
+        <url-pattern>/idp/profile/*</url-pattern>
     </servlet-mapping>
 
     <session-config>
