@@ -4,7 +4,7 @@
         "serviceId": "https://hello.+",
         "name": "Apereo",
         "description": "The Apereo service for authentication.",
-        "logoUrl": "http://www.everythingisawesome.com/images/captain-awesome.jpg",
+        "logoUrl": "http://cdn2-b.examiner.com/sites/default/files/styles/image_content_width/hash/66/4f/664f6ba9444d349a914428750cb5187e.jpg",
         "proxyPolicy": {
             "type": "refuse",
             "value": null
@@ -41,7 +41,7 @@
         "serviceId": "http?://*.shield.net+",
         "name": "Another Service",
         "description": "Another service you can use for authentication. But if you really want, then you can pick something pre-made. Maybe?",
-        "logoUrl": "http://www.shield.net/images/logoCrest.png",
+        "logoUrl": "http://aggressivecomix.com/wp-content/uploads/2012/08/SHIELD_Logo.png",
         "proxyPolicy": {
             "type": "regex",
             "value": "{h((.*)a)(.*)}"

@@ -74,28 +74,28 @@
                             <table>
                                 <tr>
                                     <td class="col-sm-2 detail-label">Full Description:</td>
-                                    <td class="col-sm-7">{{ item.description }}</td>
-                                    <td class="col-sm-3 detail-logo" colspan="2" rowspan="5" ng-if="item.logoUrl"><img src="{{ item.logoUrl }}" alt="{{ item.name }}" /></td>
+                                    <td class="col-sm-8">{{ item.description }}</td>
+                                    <td class="col-sm-2 detail-logo" colspan="2" rowspan="5" ng-if="item.logoUrl"><img src="{{ item.logoUrl }}" alt="{{ item.name }}" /></td>
 <%-- TODO: Confirm security of the item.logoUrl and item.name values so that they won't break the code/layout. --%>
                                 </tr>
                                 <tr>
                                     <td class="col-sm-2 detail-label">Proxy Policy:</td>
-                                    <td class="col-sm-7">
+                                    <td class="col-sm-8">
                                         <span ng-if="!item.proxyPolicy.value">{{ item.proxyPolicy.type | uppercase }}</span>
                                         <span nf-if="item.proxyPolicy.value">{{ item.proxyPolicy.value }}</span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="col-sm-2 detail-label">Attribute Policy Option:</td>
-                                    <td class="col-sm-7">{{ item.attrRelease.attrPolicy.type | uppercase }}</td>
+                                    <td class="col-sm-8">{{ item.attrRelease.attrPolicy.type | uppercase }}</td>
                                 </tr>
                                 <tr>
                                     <td class="col-sm-2 detail-label">Release Credential:</td>
-                                    <td class="col-sm-7">{{ item.attrRelease.releasePassword | checkmark }}</td>
+                                    <td class="col-sm-8">{{ item.attrRelease.releasePassword | checkmark }}</td>
                                 </tr>
                                 <tr>
                                     <td class="col-sm-2 detail-label">Release Proxy ID:</td>
-                                    <td class="col-sm-7">{{ item.attrRelease.releaseTicket | checkmark }}</td>
+                                    <td class="col-sm-8">{{ item.attrRelease.releaseTicket | checkmark }}</td>
                                 </tr>
                             </table>
                         </td>
