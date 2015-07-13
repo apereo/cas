@@ -6784,7 +6784,25 @@ html {
 }
 .casmgmt-app .casmgmt-content .services-table table .more {
   color: #333333;
-  text-underline: none;
+  text-decoration: none;
+}
+.casmgmt-app .casmgmt-content .services-table table .detail-row .detail-label {
+  font-weight: bold;
+  text-align: right;
+}
+.casmgmt-app .casmgmt-content .services-table table .detail-row .detail-label + td {
+  vertical-align: top;
+}
+.casmgmt-app .casmgmt-content .services-table table .detail-row .detail-logo {
+  text-align: center;
+}
+.casmgmt-app .casmgmt-content .services-table table .detail-row .detail-logo img {
+  max-width: 100%;
+  max-height: 100px;
+}
+.casmgmt-app .casmgmt-content .services-table table .ui-sortable-placeholder {
+  display: table-row;
+  min-height: 50px;
 }
 .casmgmt-app .casmgmt-content .services-summary-table td {
   border-top: none;

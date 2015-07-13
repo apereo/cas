@@ -15,9 +15,9 @@
         "requiredHandlers": [
             "reqHandler02"
         ],
-        "logoutUrl": "http://www.everythingisawesome.com/not-awesome",
         "logoUrl": "http://www.everythingisawesome.com/images/captain-awesome.jpg",
-        "logoutType": "NONE",
+        "logoutUrl": null,
+        "logoutType": "none",
         "userAttrProvider": {
             "type": "default",
             "value": null
