@@ -1,20 +1,57 @@
 [
     {
         "assignedId": 11234,
+        "serviceId": "https://hello.+",
         "name": "Apereo",
         "description": "The Apereo service for authentication.",
-        "evalOrder": 1
+        "logoUrl": "http://www.everythingisawesome.com/images/captain-awesome.jpg",
+        "proxyPolicy": {
+            "type": "refuse",
+            "value": null
+        },
+        "attrRelease": {
+            "releasePassword": true,
+            "releaseTicket": true,
+            "attrPolicy": {
+                "type": "all"
+            }
+        }
     },
     {
         "assignedId": 43021,
+        "serviceId": "http?://batman**",
         "name": "HTTPS and IMAPS",
         "description": "The HTTP and IMAPS service for authentication.",
-        "evalOrder": 2
+        "logoUrl": null,
+        "proxyPolicy": {
+            "type": "regex",
+            "value": "(.*)"
+        },
+        "attrRelease": {
+            "releasePassword": true,
+            "releaseTicket": false,
+            "attrPolicy": {
+                "type": "allowed"
+            }
+        }
+
     },
     {
         "assignedId": 90432,
+        "serviceId": "http?://*.shield.net+",
         "name": "Another Service",
-        "description": "Another service you can use for authentication.",
-        "evalOrder": 3
+        "description": "Another service you can use for authentication. But if you really want, then you can pick something pre-made. Maybe?",
+        "logoUrl": "http://www.shield.net/images/logoCrest.png",
+        "proxyPolicy": {
+            "type": "regex",
+            "value": "{h((.*)a)(.*)}"
+        },
+        "attrRelease": {
+            "releasePassword": false,
+            "releaseTicket": false,
+            "attrPolicy": {
+                "type": "mapped"
+            }
+        }
     }
 ]
