@@ -155,7 +155,7 @@ public class AuthenticationViaFormAction {
      * @param tgtId          the tgt id
      * @param messageContext the message context
      * @return true if warnings were found and added, false otherwise.
-     * @since 4.1.0
+     * @since 4.0.3
      */
     private boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId,
                                                                final MessageContext messageContext) {
