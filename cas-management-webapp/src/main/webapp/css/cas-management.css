@@ -6782,27 +6782,27 @@ html {
 .casmgmt-app .casmgmt-content .services-table table td {
   padding: 8px;
 }
-.casmgmt-app .casmgmt-content .services-table table .more {
+.casmgmt-app .casmgmt-content .services-table .more {
   color: #333333;
   text-decoration: none;
 }
-.casmgmt-app .casmgmt-content .services-table table .detail-row .detail-label {
+.casmgmt-app .casmgmt-content .services-table .detail-row .detail-label {
   font-weight: bold;
   text-align: right;
 }
-.casmgmt-app .casmgmt-content .services-table table .detail-row .detail-label + td {
+.casmgmt-app .casmgmt-content .services-table .detail-row .detail-label + td {
   vertical-align: top;
 }
-.casmgmt-app .casmgmt-content .services-table table .detail-row .detail-logo {
+.casmgmt-app .casmgmt-content .services-table .detail-row .detail-logo {
   text-align: center;
 }
-.casmgmt-app .casmgmt-content .services-table table .detail-row .detail-logo img {
+.casmgmt-app .casmgmt-content .services-table .detail-row .detail-logo img {
   max-width: 100%;
-  max-height: 100px;
+  max-height: 150px;
 }
-.casmgmt-app .casmgmt-content .services-table table .ui-sortable-placeholder {
+.casmgmt-app .casmgmt-content .services-table .tr-placeholder {
   display: table-row;
-  min-height: 50px;
+  min-height: 53px;
 }
 .casmgmt-app .casmgmt-content .services-summary-table td {
   border-top: none;
