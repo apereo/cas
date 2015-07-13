@@ -24,7 +24,9 @@
         <div class="col-sm-12">
             <div class="form-group has-feedback search-form">
                 <input type="text" class="form-control input-lg" ng-model="serviceTableCtrl.serviceTableQuery" placeholder="<spring:message code="management.services.table.label.search" /> " autofocus/>
-                <a class="fa fa-2x fa-times-circle-o form-control-feedback search-clear" ng-click="serviceTableCtrl.clearFilter()"></a>
+                <a href="javascript://" class="fa fa-2x fa-times-circle-o form-control-feedback search-clear" ng-click="serviceTableCtrl.clearFilter()">
+<%-- TODO: Needs accessibility text for screen readers --%>
+                </a>
             </div>
         </div>
     </div> <!-- end .row div -->
@@ -34,9 +36,8 @@
                 <thead>
                     <tr>
                         <th class="col-sm-3"><spring:message code="management.services.table.header.serviceName" /></th>
-                        <th class="col-sm-2"><spring:message code="management.services.table.header.serviceId" /></th>
-                        <th class="col-sm-3"><spring:message code="management.services.table.header.serviceDesc" /></th>
-                        <th class="col-sm-2"><spring:message code="management.services.table.header.evaluationOrder" /></th>
+                        <th class="col-sm-3"><spring:message code="management.services.table.header.serviceId" /></th>
+                        <th class="col-sm-4"><spring:message code="management.services.table.header.serviceDesc" /></th>
                         <th class="col-sm-1"></th>
                         <th class="col-sm-1"></th>
                     </tr>
@@ -50,14 +51,13 @@
                         <td class="col-sm-3">
                             <div class="grabber-icon"><i class="fa fa-lg fa-ellipsis-v"></i></div>
                             {{ item.name }}
-                            <a href="javascript://" class="more" ng-click="serviceTableCtrl.toggleDetail(item.evalOrder)">
-<%-- Needs accessibility text for screen readers, something like "a11y OffScreen" (Google) --%>
-                                <i class="fa fa-chevron-{{ serviceTableCtrl.activePosition === item.evalOrder ? 'up' : 'down' }}"></i>
+                            <a href="javascript://" class="more" ng-click="serviceTableCtrl.toggleDetail(item.assignedId)">
+<%-- TODO: Needs accessibility text for screen readers --%>
+                                <i class="fa fa-chevron-{{ serviceTableCtrl.detailRow === item.assignedId ? 'up' : 'down' }}"></i>
                             </a>
                         </td>
-                        <td class="col-sm-2">{{ item.assignedId }}</td>
-                        <td class="col-sm-3">{{ item.description }}</td>
-                        <td class="col-sm-2">{{ item.evalOrder }}</td>
+                        <td class="col-sm-3">{{ item.serviceId }}</td>
+                        <td class="col-sm-4">{{ item.description | wordCharTrunc:60 }}</td>
                         <td class="col-sm-1">
                             <button class="btn btn-success" ng-click="action.selectAction('add')">
                                 <i class="fa fa-lg fa-pencil"></i> <spring:message code="management.services.table.button.edit" />
@@ -69,15 +69,43 @@
                             </button>
                         </td>
                     </tr>
-                    <tr class="detail-row" ng-show="serviceTableCtrl.activePosition == item.evalOrder">
-                        <td colspan="6">Quick-view details about service.</td>
+                    <tr class="detail-row" ng-show="serviceTableCtrl.detailRow == item.assignedId">
+                        <td colspan="6">
+                            <table>
+                                <tr>
+                                    <td class="col-sm-2 detail-label">Full Description:</td>
+                                    <td class="col-sm-7">{{ item.description }}</td>
+                                    <td class="col-sm-3 detail-logo" colspan="2" rowspan="5" ng-if="item.logoUrl"><img src="{{ item.logoUrl }}" alt="{{ item.name }}" /></td>
+<%-- TODO: Confirm security of the item.logoUrl and item.name values so that they won't break the code/layout. --%>
+                                </tr>
+                                <tr>
+                                    <td class="col-sm-2 detail-label">Proxy Policy:</td>
+                                    <td class="col-sm-7">
+                                        <span ng-if="!item.proxyPolicy.value">{{ item.proxyPolicy.type | uppercase }}</span>
+                                        <span nf-if="item.proxyPolicy.value">{{ item.proxyPolicy.value }}</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="col-sm-2 detail-label">Attribute Policy Option:</td>
+                                    <td class="col-sm-7">{{ item.attrRelease.attrPolicy.type | uppercase }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-sm-2 detail-label">Release Credential:</td>
+                                    <td class="col-sm-7">{{ item.attrRelease.releasePassword | checkmark }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="col-sm-2 detail-label">Release Proxy ID:</td>
+                                    <td class="col-sm-7">{{ item.attrRelease.releaseTicket | checkmark }}</td>
+                                </tr>
+                            </table>
+                        </td>
                     </tr>
                 </table>
 
                         </td>
                     </tr>
                 </tbody>
-            </table>  <!-- end .services-table table -->
-        </div> <!-- end .col-sm-12 div -->
-    </div> <!-- end .row div -->
-</div> <!-- end .services-table-container div -->
+            </table><%-- end .services-table table --%>
+        </div><%-- end .col-sm-12 div --%>
+    </div><%-- end .row div --%>
+</div><%-- end .services-table-container div --%>
