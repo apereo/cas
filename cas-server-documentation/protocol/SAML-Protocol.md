@@ -129,9 +129,7 @@ In `cas-servlet.xml`:
   p:argumentExtractor-ref="samlArgumentExtractor"
   p:successView="casSamlServiceSuccessView"
   p:failureView="casSamlServiceFailureView"/>
-{% endhighlight %}
 
-{% highlight xml %}
 <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
   <property name="mappings">
     <props>
