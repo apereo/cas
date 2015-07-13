@@ -21,11 +21,13 @@ package org.jasig.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.apache.commons.collections4.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
@@ -38,7 +40,6 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
-import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.AttributeReleasePolicy;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceContext;
@@ -460,7 +461,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             
             final String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service);
             final Principal modifiedPrincipal = this.principalFactory.createPrincipal(principalId, attributesToRelease);
-            final AuthenticationBuilder builder = AuthenticationBuilder.newInstance(authentication);
+            final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
 
             return new ImmutableAssertion(
