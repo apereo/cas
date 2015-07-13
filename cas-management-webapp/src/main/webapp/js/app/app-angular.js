@@ -88,15 +88,11 @@
                 axis: 'y',
                 items: '> tr',
                 handle: '.grabber-icon',
-                placeholder: 'ui-sortable-placeholder',
+                placeholder: 'tr-placeholder',
                 start: function(e, ui) {
-                    $log.log('start');
-                },
-                activate: function(e, ui) {
-                    $log.log('activate');
+                    servicesData.detailRow = 0; // Should close any visible details-row
                 },
                 update: function(e, ui) {
-                    servicesData.detailRow = 0; // Auto-close any visible details-row
 /**
                     $http.post('/rest/services/reorder', $(this).sortable('serialize')) // TODO: fix URL
                         .success(function() {
