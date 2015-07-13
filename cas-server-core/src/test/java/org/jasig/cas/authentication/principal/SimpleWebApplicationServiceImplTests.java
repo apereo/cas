@@ -20,7 +20,6 @@ package org.jasig.cas.authentication.principal;
 
 import static org.junit.Assert.*;
 
-import org.jasig.cas.authentication.principal.Response.ResponseType;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -41,7 +40,7 @@ public class SimpleWebApplicationServiceImplTests {
 
         final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
     }
 
     @Test
@@ -69,7 +68,7 @@ public class SimpleWebApplicationServiceImplTests {
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
     }
 
@@ -81,7 +80,7 @@ public class SimpleWebApplicationServiceImplTests {
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
         assertEquals("http://foo.com/", response.getUrl());
     }
@@ -94,7 +93,7 @@ public class SimpleWebApplicationServiceImplTests {
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertEquals("http://foo.com/?param=test", response.getUrl());
     }
 }

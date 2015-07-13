@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>39</version>
+        <version>40</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.cas</groupId>
@@ -503,8 +503,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <header>${cs.dir}/src/licensing/header.txt</header>
                     <skipExistingHeaders>true</skipExistingHeaders>
@@ -731,6 +731,13 @@
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons.collections.version}</version>
                 <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
+                <version>${dbcp.version}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>
@@ -1354,6 +1361,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>cas-server-core-api</module>
         <module>cas-server-core</module>
         <module>cas-server-webapp</module>
         <module>cas-server-webapp-support</module>
@@ -1572,6 +1580,7 @@
         <jose.version>0.4.1</jose.version>
         <woodstox.version>4.4.1</woodstox.version>
         <pac4j.version>1.7.1</pac4j.version>
+        <dbcp.version>2.1</dbcp.version>
 
         <!-- Plugin Versions -->
         <coveralls-maven-plugin.version>3.1.0</coveralls-maven-plugin.version>
