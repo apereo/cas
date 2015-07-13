@@ -1361,6 +1361,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>cas-server-core-api</module>
         <module>cas-server-core</module>
         <module>cas-server-webapp</module>
         <module>cas-server-webapp-support</module>
