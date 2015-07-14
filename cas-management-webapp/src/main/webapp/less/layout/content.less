@@ -12,23 +12,27 @@
             border: 1px solid @gray1;
         }
 
-        > tbody > tr > td {width: 100%; border: none; padding: 0;}
+        > tbody > tr {
+            &.ui-sortable-helper {opacity: 0.7;}
+            > td {width: 100%; border: none; padding: 0;}
+        }
         table {width: 100%;
             td {padding: 8px;}
         }
         
         .more {color: @gray8; text-decoration: none;}
 
-        .detail-row {
-            .detail-label {font-weight: bold; text-align: right;
-                + td {vertical-align: top;}
+        .detail-row {border-top: 1px solid @gray1;
+            tbody {border: none;
+                td {vertical-align: top; padding: 4px;}
             }
+            .detail-label {font-weight: bold; text-align: right;}
             .detail-logo {text-align: center;
                 img {max-width: 100%; max-height: 150px;}
             }
         }
 
-        .tr-placeholder {display: table-row; height: 53px;}
+        .tr-placeholder {display: table-row; height: 53px; background-color: @color2-lighter;}
     }
 
     .services-summary-table {
