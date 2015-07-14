@@ -43,10 +43,11 @@
                     </tr>
                 </thead>
                 <tbody ui-sortable="serviceTableCtrl.sortableOptions" ng-model="serviceTableCtrl.dataTable">
-                    <tr id="assignedId_{{ item.assignedId }}" ng-repeat="item in serviceTableCtrl.dataTable | filter: serviceTableCtrl.serviceTableQuery">
+                    <tr id="assignedId_{{ item.assignedId }}"
+                        ng-repeat="item in serviceTableCtrl.dataTable | serviceTableFilter:['name','serviceId','description']:serviceTableCtrl.serviceTableQuery">
                         <td colspan="6">
 
-                <table>
+                <table class="table-service">
                     <tr class="main-row">
                         <td class="col-sm-3">
                             <div class="grabber-icon"><i class="fa fa-lg fa-ellipsis-v"></i></div>
@@ -71,7 +72,7 @@
                     </tr>
                     <tr class="detail-row" ng-show="serviceTableCtrl.detailRow == item.assignedId">
                         <td colspan="6">
-                            <table>
+                            <table class="table-details">
                                 <tr>
                                     <td class="col-sm-2 detail-label">Full Description:</td>
                                     <td class="col-sm-8">{{ item.description }}</td>
