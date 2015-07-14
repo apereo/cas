@@ -30,6 +30,12 @@
   <description>CAS core</description>
   <dependencies>
         <dependency>
+          <groupId>org.jasig.cas</groupId>
+          <artifactId>cas-server-core-api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.jasig.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>

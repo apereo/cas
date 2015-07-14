@@ -21,6 +21,7 @@ package org.jasig.cas;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
@@ -62,7 +63,7 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
         final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
         final String valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
-            return new HandlerResult(this, new BasicCredentialMetaData(otp),
+            return new DefaultHandlerResult(this, new BasicCredentialMetaData(otp),
                     new DefaultPrincipalFactory().createPrincipal(otp.getId()));
         }
         throw new FailedLoginException();
