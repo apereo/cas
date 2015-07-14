@@ -35,9 +35,6 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 /**
@@ -51,9 +48,9 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
     private static final int DEFAULT_METADATA_REFRESH_INTERNAL_MINS = 300;
 
     /**
-     * Refresh metadata every {@link #DEFAULT_METADATA_REFRESH_INTERNAL_MINS}
-     * minutes by default.
-     **/
+      * Refresh metadata every {@link #DEFAULT_METADATA_REFRESH_INTERNAL_MINS}
+      * minutes by default.
+      **/
     private int refreshIntervalInMinutes = DEFAULT_METADATA_REFRESH_INTERNAL_MINS;
 
     /**
@@ -76,14 +73,6 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
         this.refreshIntervalInMinutes = refreshIntervalInMinutes;
     }
 
-    @Override
-    protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
-        if (!resource.exists() || !resource.isReadable()) {
-            throw new FileNotFoundException("Resource does not exist or is unreadable");
-        }
-        return resource.getInputStream();
-    }
-
     /**
      * Refresh metadata. Schedules the job to retrieve metadata.
      * @throws SchedulerException the scheduler exception
@@ -93,7 +82,7 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
         final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                buildMetadataResolverAggregate(null);
+                buildMetadataResolverAggregate();
             }
         });
         thread.start();
@@ -101,9 +90,9 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
         final JobDetail job = JobBuilder.newJob(this.getClass())
                 .withIdentity(this.getClass().getSimpleName()).build();
         final Trigger trigger = TriggerBuilder.newTrigger()
-                                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                                            .withIntervalInMinutes(this.refreshIntervalInMinutes)
-                                            .repeatForever()).build();
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInMinutes(this.refreshIntervalInMinutes)
+                        .repeatForever()).build();
 
         final SchedulerFactory schFactory = new StdSchedulerFactory();
         final Scheduler sch = schFactory.getScheduler();
@@ -113,7 +102,6 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
 
     @Override
     public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        buildMetadataResolverAggregate(null);
+        buildMetadataResolverAggregate();
     }
-
 }
