@@ -45,10 +45,6 @@ public interface SpnegoConstants {
     /** The spnego credentials. */
     String SPNEGO_CREDENTIALS = "spnegoCredentials";
 
-    /** The ntlmssp signature. */
-    Byte[] NTLMSSP_SIGNATURE = {Byte.valueOf((byte) 'N'), Byte.valueOf((byte) 'T'), Byte.valueOf((byte) 'L'),
-        Byte.valueOf((byte) 'M'), Byte.valueOf((byte) 'S'), Byte.valueOf((byte) 'S'), Byte.valueOf((byte) 'P'), Byte.valueOf((byte) 0)};
-
     /** The ntlm. */
     String NTLM = "NTLM";
 }
