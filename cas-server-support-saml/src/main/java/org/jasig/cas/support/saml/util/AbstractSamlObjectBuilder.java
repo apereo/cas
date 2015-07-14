@@ -100,22 +100,6 @@ public abstract class AbstractSamlObjectBuilder {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
-     * Initialize and bootstrap opensaml.
-     * Check for prior OpenSAML initialization to prevent double init
-     * that would overwrite existing OpenSAML configuration.
-     */
-    static {
-        try {
-
-            if (XMLObjectProviderRegistrySupport.getParserPool() == null) {
-                InitializationService.initialize();
-            }
-        } catch (final InitializationException e) {
-            throw new IllegalStateException("Error initializing OpenSAML library.", e);
-        }
-    }
-
-    /**
      * Create a new SAML object.
      *
      * @param <T> the generic type
@@ -212,6 +196,9 @@ public abstract class AbstractSamlObjectBuilder {
         try {
             final MarshallerFactory marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
             final Marshaller marshaller = marshallerFactory.getMarshaller(object);
+            if (marshaller == null) {
+                throw new IllegalArgumentException("Could not obtain marshaller for object " + object);
+            }
             final Element element = marshaller.marshall(object);
             element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", SAMLConstants.SAML20_NS);
             element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#");
