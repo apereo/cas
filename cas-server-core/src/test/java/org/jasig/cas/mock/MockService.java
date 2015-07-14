@@ -19,7 +19,7 @@
 package org.jasig.cas.mock;
 
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Service;
 
 import java.util.Map;
@@ -44,7 +44,7 @@ public class MockService implements Service {
         return null;
     }
 
-    public Response getResponse(final String ticketId) {
+    public DefaultResponse getResponse(final String ticketId) {
         return null;
     }
 

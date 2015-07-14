@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.Message;
+import org.jasig.cas.MessageDescriptor;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -94,7 +94,7 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
             final AccountState.Warning warning,
             final AuthenticationResponse response,
             final LdapPasswordPolicyConfiguration configuration,
-            final List<Message> messages) {
+            final List<MessageDescriptor> messages) {
 
         final LdapAttribute attribute = response.getLdapEntry().getAttribute(this.warningAttributeName);
         boolean matches = false;
