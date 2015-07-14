@@ -3,7 +3,7 @@
         "assignedId": 90432,
         "serviceId": "http?://*.shield.net+",
         "name": "Another Service",
-        "description": "Another service you can use for authentication.",
+        "description": "Another service you can use for authentication. But if you really want, then you can pick something pre-made. Maybe?",
         "type": 1,
         "oauth": {
             "clientSecret": "Hail Hydra",
@@ -15,9 +15,9 @@
         "requiredHandlers": [
             "reqHandler01"
         ],
-        "logoutUrl": "http://www.shield.net/logout",
         "logoUrl": "http://www.shield.net/images/logoCrest.png",
-        "logoutType": "BACK_CHANNEL",
+        "logoutUrl": "http://www.shield.net/logout",
+        "logoutType": "back",
         "userAttrProvider": {
             "type": "attr",
             "value": "usernameAttrField"

@@ -16,9 +16,9 @@
             "reqHandler01",
             "reqHandler02"
         ],
-        "logoutUrl": "",
-        "logoUrl": "http://batman.com",
-        "logoutType": "FRONT_CHANNEL",
+        "logoUrl": null,
+        "logoutUrl": "http://batman.com/wayne-persona",
+        "logoutType": "front",
         "userAttrProvider": {
             "type": "anon",
             "value": "~~thisIsMySalt!~~"
