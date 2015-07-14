@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>39</version>
+        <version>40</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.cas</groupId>
@@ -503,8 +503,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <header>${cs.dir}/src/licensing/header.txt</header>
                     <skipExistingHeaders>true</skipExistingHeaders>
@@ -1361,6 +1361,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>cas-server-core-api</module>
         <module>cas-server-core</module>
         <module>cas-server-webapp</module>
         <module>cas-server-webapp-support</module>

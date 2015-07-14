@@ -30,7 +30,7 @@ import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 
 import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.RegexRegisteredService;
@@ -117,7 +117,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(Date.class, new DefaultSerializers.DateSerializer());
         kryo.register(HardTimeoutExpirationPolicy.class);
         kryo.register(HashMap.class);
-        kryo.register(HandlerResult.class);
+        kryo.register(DefaultHandlerResult.class);
         kryo.register(ImmutableAuthentication.class);
         kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
         kryo.register(NeverExpiresExpirationPolicy.class);
