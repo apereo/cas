@@ -36,13 +36,11 @@
         })
         .filter('serviceTableFilter', function() {
             return function(services, fields, regex) {
-                console.log(JSON.stringify(services));
                 if(typeof fields == 'string') { fields = [fields]; }
                 try {
                     regex = regex ? new RegExp(regex) : false;
                 } catch(e) {
                     // TODO: How do we want to tell the user their regex is bad? On error, return list or null?
-                    console.error('RegEx \''+ regex +'\' is invalid.');
                     regex = false;
                 }
                 if(!services || !fields || !regex) { return services; }
