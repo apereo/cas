@@ -21,10 +21,12 @@ package org.jasig.cas.support.saml.web.flow.mdui;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -36,6 +38,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.validation.constraints.NotNull;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -98,7 +101,13 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @return the input stream
      * @throws IOException if stream cannot be read
      */
-    protected abstract InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException;
+    protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
+        logger.debug("Locating metadata resource from input stream.");
+        if (!resource.exists() || !resource.isReadable()) {
+            throw new FileNotFoundException("Resource does not exist or is unreadable");
+        }
+        return resource.getInputStream();
+    }
 
     @Override
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
@@ -116,34 +125,24 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
 
     /**
      * Build metadata resolver aggregate.
+     *
+     */
+    protected final void buildMetadataResolverAggregate() {
+        buildMetadataResolverAggregate(null);
+    }
+
+    /**
+     * Build metadata resolver aggregate. Loops through metadata resources
+     * and attempts to resolve the metadata.
      * @param entityId the entity id
      */
-    protected final void buildMetadataResolverAggregate(final String entityId) {
+    public final void buildMetadataResolverAggregate(final String entityId) {
         try {
-            final List<MetadataResolver> resolvers = new ArrayList<>(metadataResources.size());
             final Set<Map.Entry<Resource, MetadataFilterChain>> entries = metadataResources.entrySet();
-
             for (final Map.Entry<Resource, MetadataFilterChain> entry : entries) {
                 final Resource resource = entry.getKey();
-
                 logger.debug("Loading [{}]", resource.getFilename());
-                try (final InputStream in = getResourceInputStream(resource, entityId)) {
-                    logger.debug("Parsing [{}]", resource.getFilename());
-                    final Document document = this.configBean.getParserPool().parse(in);
-
-                    buildSingleMetadataResolver(resolvers, entry, resource, document);
-                    this.metadataResolver = new ChainingMetadataResolver();
-                    synchronized (this.lock) {
-                        this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-                        this.metadataResolver.setResolvers(resolvers);
-                        logger.info("Collected metadata from [{}] resources. Initializing aggregate...", resolvers.size());
-                        this.metadataResolver.initialize();
-                        logger.info("Metadata aggregate initialized successfully.", resolvers.size());
-                    }
-                } catch (final IOException e) {
-                    logger.warn("Could not retrieve input stream from resource. Moving on...");
-                    continue;
-                }
+                loadMetadataFromResource(entry.getValue(), resource, entityId);
             }
         } catch (final Exception ex) {
             throw new RuntimeException(ex.getMessage(), ex);
@@ -151,34 +150,63 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     }
 
     /**
+     * Load metadata from resource.
+     *
+     * @param metadataFilter the metadata filter
+     * @param resource the resource
+     * @param entityId the entity id
+     */
+    private void loadMetadataFromResource(final MetadataFilter metadataFilter,
+                                          final Resource resource, final String entityId) {
+
+        try (final InputStream in = getResourceInputStream(resource, entityId)) {
+            logger.debug("Parsing [{}]", resource.getFilename());
+            final Document document = this.configBean.getParserPool().parse(in);
+
+            final List<MetadataResolver> resolvers = buildSingleMetadataResolver(metadataFilter, resource, document);
+            this.metadataResolver = new ChainingMetadataResolver();
+            synchronized (this.lock) {
+                this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+                this.metadataResolver.setResolvers(resolvers);
+                logger.info("Collected metadata from [{}] resource(s). Initializing aggregate resolver...",
+                        resolvers.size());
+                this.metadataResolver.initialize();
+                logger.info("Metadata aggregate initialized successfully.", resolvers.size());
+            }
+        } catch (final Exception e) {
+            logger.warn("Could not retrieve input stream from resource. Moving on...", e);
+        }
+    }
+
+    /**
      * Build single metadata resolver.
      *
-     * @param resolvers the resolvers
-     * @param entry the entry
+     * @param metadataFilterChain the metadata filters chained together
      * @param resource the resource
-     * @param inCommonMDDoc the in common mD doc
+     * @param document the xml document to parse
      * @throws IOException the iO exception
      */
-    private void buildSingleMetadataResolver(final List<MetadataResolver> resolvers,
-                                             final Map.Entry<Resource, MetadataFilterChain> entry,
-                                             final Resource resource, final Document inCommonMDDoc) throws IOException {
-        final Element metadataRoot = inCommonMDDoc.getDocumentElement();
+    private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain,
+                                             final Resource resource, final Document document) throws IOException {
+        final List<MetadataResolver> resolvers = new ArrayList<>();
+        final Element metadataRoot = document.getDocumentElement();
         final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
 
         metadataProvider.setParserPool(this.configBean.getParserPool());
         metadataProvider.setFailFastInitialization(true);
         metadataProvider.setRequireValidMetadata(this.requireValidMetadata);
         metadataProvider.setId(metadataProvider.getClass().getCanonicalName());
-        if (entry.getValue() != null) {
-            metadataProvider.setMetadataFilter(entry.getValue());
+        if (metadataFilterChain != null) {
+            metadataProvider.setMetadataFilter(metadataFilterChain);
         }
         logger.debug("Initializing metadata resolver for [{}]", resource.getURL());
 
         try {
             metadataProvider.initialize();
-            resolvers.add(metadataProvider);
         } catch (final ComponentInitializationException ex) {
             logger.warn("Could not initialize metadata resolver. Resource will be ignored", ex);
         }
+        resolvers.add(metadataProvider);
+        return resolvers;
     }
 }
