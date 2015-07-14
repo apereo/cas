@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * A builder that uses the saml standard's <code>LogoutRequest</code> template in order
  * to build the logout request.
  * @author Misagh Moayyed
- * @see LogoutRequest
+ * @see DefaultLogoutRequest
  * @since 4.0.0
  */
 public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {

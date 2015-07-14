@@ -21,7 +21,7 @@ package org.jasig.cas.authentication.support;
 import java.util.List;
 import javax.security.auth.login.LoginException;
 
-import org.jasig.cas.Message;
+import org.jasig.cas.MessageDescriptor;
 import org.ldaptive.auth.AuthenticationResponse;
 
 /**
@@ -42,6 +42,6 @@ public interface AccountStateHandler {
      *
      * @throws LoginException When account state causes authentication failure.
      */
-    List<Message> handle(AuthenticationResponse response, LdapPasswordPolicyConfiguration configuration)
+    List<MessageDescriptor> handle(AuthenticationResponse response, LdapPasswordPolicyConfiguration configuration)
             throws LoginException;
 }

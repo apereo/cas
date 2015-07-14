@@ -19,7 +19,6 @@
 package org.jasig.cas.web.flow;
 
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.net.MalformedURLException;
@@ -35,6 +34,7 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
+import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
@@ -128,7 +128,7 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutOneLogoutRequestSuccess() throws Exception {
-        final LogoutRequest logoutRequest = new LogoutRequest("", null, null);
+        final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest("", null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Collections.<LogoutRequest>emptyList());
         this.requestContext.getFlowScope().put(FrontChannelLogoutAction.LOGOUT_INDEX, 0);
@@ -138,7 +138,7 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutOneLogoutRequestNotAttempted() throws Exception {
-        final LogoutRequest logoutRequest = new LogoutRequest(TICKET_ID,
+        final LogoutRequest logoutRequest = new DefaultLogoutRequest(TICKET_ID,
                 new SimpleWebApplicationServiceImpl(TEST_URL),
                 new URL(TEST_URL));
         final Event event = getLogoutEvent(Arrays.asList(logoutRequest));
