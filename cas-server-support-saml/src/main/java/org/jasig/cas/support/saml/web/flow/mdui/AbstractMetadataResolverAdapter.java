@@ -21,7 +21,6 @@ package org.jasig.cas.support.saml.web.flow.mdui;
 
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import net.shibboleth.utilities.java.support.xml.XMLParserException;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
@@ -184,6 +183,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param metadataFilterChain the metadata filters chained together
      * @param resource the resource
      * @param document the xml document to parse
+     * @return list of resolved metadata from resources.
      * @throws IOException the iO exception
      */
     private List<MetadataResolver> buildSingleMetadataResolver(final MetadataFilter metadataFilterChain,
