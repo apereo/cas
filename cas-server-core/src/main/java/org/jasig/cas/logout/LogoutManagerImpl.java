@@ -173,7 +173,7 @@ public final class LogoutManagerImpl implements LogoutManager {
             if (serviceSupportsSingleLogout(registeredService)) {
 
                 final URL logoutUrl = determineLogoutUrl(registeredService, singleLogoutService);
-                final LogoutRequest logoutRequest = new LogoutRequest(ticketId, singleLogoutService, logoutUrl);
+                final DefaultLogoutRequest logoutRequest = new DefaultLogoutRequest(ticketId, singleLogoutService, logoutUrl);
                 final LogoutType type = registeredService.getLogoutType() == null
                         ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
 

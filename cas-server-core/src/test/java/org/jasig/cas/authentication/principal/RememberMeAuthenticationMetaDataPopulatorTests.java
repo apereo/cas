@@ -25,7 +25,8 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -76,9 +77,9 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     private AuthenticationBuilder newBuilder(final Credential credential) {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final AuthenticationBuilder builder = new AuthenticationBuilder(TestUtils.getPrincipal())
+        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(TestUtils.getPrincipal())
                 .addCredential(meta)
-                .addSuccess("test", new HandlerResult(handler, meta));
+                .addSuccess("test", new DefaultHandlerResult(handler, meta));
 
         if (this.p.supports(credential)) {
             this.p.populateAttributes(builder, credential);
