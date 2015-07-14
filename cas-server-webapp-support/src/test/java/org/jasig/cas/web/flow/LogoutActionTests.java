@@ -19,6 +19,7 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
@@ -147,7 +148,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     public void verifyLogoutRequestBack() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        final LogoutRequest logoutRequest = new LogoutRequest("", null, null);
+        final LogoutRequest logoutRequest = new DefaultLogoutRequest("", null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
@@ -159,7 +160,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     public void verifyLogoutRequestFront() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        final LogoutRequest logoutRequest = new LogoutRequest("", null, null);
+        final LogoutRequest logoutRequest = new DefaultLogoutRequest("", null, null);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FRONT_EVENT, event.getId());

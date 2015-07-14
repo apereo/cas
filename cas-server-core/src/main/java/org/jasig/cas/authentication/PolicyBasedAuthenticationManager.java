@@ -203,7 +203,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected AuthenticationBuilder authenticateInternal(final Credential... credentials)
             throws AuthenticationException {
 
-        final AuthenticationBuilder builder = new AuthenticationBuilder(NullPrincipal.getInstance());
+        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         for (final Credential c : credentials) {
             builder.addCredential(new BasicCredentialMetaData(c));
         }
