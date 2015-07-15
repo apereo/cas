@@ -6706,6 +6706,9 @@ html {
 .casmgmt-app .casmgmt-form .form-tooltip-icon:hover {
   color: #5db0d4;
 }
+.casmgmt-app .casmgmt-form .form-tooltip-icon.no-float {
+  float: none;
+}
 .casmgmt-app .casmgmt-form .input-group-required {
   color: #641621;
 }
