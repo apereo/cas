@@ -38,7 +38,7 @@
             return function(services, fields, regex) {
                 if(typeof fields == 'string') { fields = [fields]; }
                 try {
-                    regex = regex ? new RegExp(regex) : false;
+                    regex = regex ? new RegExp(regex, 'i') : false;
                 } catch(e) {
                     // TODO: How do we want to tell the user their regex is bad? On error, return list or null?
                     regex = false;
