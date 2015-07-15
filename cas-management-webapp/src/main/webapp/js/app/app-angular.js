@@ -18,20 +18,44 @@
  */
 
 (function () {
-    var app = angular.module('casmgmt', ['ui.sortable'])
-                .filter('checkmark', function() {
-                    return function(input) {
-                        return input ? '\u2713' : '\u2718';
-                    };
-                })
-                .filter('wordCharTrunc', function() {
-                    return function(str, limit) {
-                        if(typeof str != 'string') { return ''; }
-                        if(!limit || str.length <= limit) { return str; }
-                        var newStr = str.substring(0, limit).replace(/\w+$/, '');
-                        return (newStr ? newStr : str.substring(0, limit)) + '...';
-                    };
+    var app = angular.module('casmgmt', ['ui.sortable']);
+
+    app.filter('checkmark', function() {
+            return function(input) {
+                return input ? '\u2713' : '\u2718';
+            };
+        })
+        .filter('wordCharTrunc', function() {
+            return function(str, limit) {
+                if(typeof str != 'string') { return ''; }
+                if(!limit || str.length <= limit) { return str; }
+
+                var newStr = str.substring(0, limit).replace(/\w+$/, '');
+                return (newStr ? newStr : str.substring(0, limit)) + '...';
+            };
+        })
+        .filter('serviceTableFilter', function() {
+            return function(services, fields, regex) {
+                if(typeof fields == 'string') { fields = [fields]; }
+                try {
+                    regex = regex ? new RegExp(regex) : false;
+                } catch(e) {
+                    // TODO: How do we want to tell the user their regex is bad? On error, return list or null?
+                    regex = false;
+                }
+                if(!services || !fields || !regex) { return services; }
+
+                var matches = [];
+                angular.forEach(services, function(service, i) {
+                    angular.forEach(fields, function(field, j) {
+                        if(regex.test(service[field]) && matches.indexOf(service) == -1) {
+                            matches.push(service);
+                        }
+                    });
                 });
+                return matches;
+            };
+        });
 
 /** // Routes not working yet, so commented out
     app.config([
