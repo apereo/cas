@@ -114,19 +114,16 @@
                 handle: '.grabber-icon',
                 placeholder: 'tr-placeholder',
                 start: function(e, ui) {
-                    servicesData.detailRow = 0; // Should close any visible details-row
+                    servicesData.detailRow = 0;
                 },
                 update: function(e, ui) {
 /**
                     $http.post('/rest/services/reorder', $(this).sortable('serialize')) // TODO: fix URL
                         .success(function() {
-                            // TODO: Once the POST URL is in place, kill off the n² loop and uncomment the line below.
-                            //servicesData.getServices();
-                            $log.log('sorting post successful');
+                            //servicesData.getServices(); // TODO: Need/want? Helpful if multiple instances/users.
                         })
                         .error(function(data, status) {
-                            // TODO: how do we want to show an error, like server down or etc?
-                            $log.error(data, status);
+                            // TODO: If an error does occur, what happens?
                         });
 **/
                 }
@@ -186,9 +183,11 @@
             this.themeType = this.themeList[0];
 
             this.reqHandlerList=[
-                {name: '(No Required Handler)', value: ''},
-                {name: 'This Required Handler', value: 'reqHandler01'},
-                {name: 'That Required Handler', value: 'reqHandler01'}
+                {name: 'Required Handler 1', value: 'reqHandler01'},
+                {name: 'Required Handler 2', value: 'reqHandler02'},
+                {name: 'Required Handler 3', value: 'reqHandler03'},
+                {name: 'Required Handler 4', value: 'reqHandler04'},
+                {name: 'Required Handler 5', value: 'reqHandler05'}
             ];
             this.reqHandler = this.reqHandlerList[0];
 
