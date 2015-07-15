@@ -1,34 +1,17 @@
 .casmgmt-form {
+    label {padding-top: 7px;}
 
-    label {
-        padding-top: 7px;
+    .form-padding {margin-top: 10px;}
+
+    .form-tooltip-icon {float: right; padding-top: 5px; color: @brand-info;
+        &:hover {color: lighten(@brand-info, 10%);}
+        &.no-float {float: none;}
     }
 
-    .form-padding {
-        margin-top: 10px;
-    }
+    .input-group-required {color: @state-danger-text;}
 
-    .form-tooltip-icon {
-        float: right;
-        padding-top: 5px;
-        color: @brand-info;
-        &:hover {
-            color: lighten(@brand-info, 10%);
-        }
-    }
+    .radio-group,
+    .checkbox-group {margin-bottom: 10px;}
 
-    .input-group-required {
-        color: @state-danger-text;
-    }
-
-    .radio-group, .checkbox-group {
-        margin-bottom: 10px;
-    }
-
-    .services-button-group {
-        margin: 20px;
-        padding: 20px;
-        border-top: 1px solid @gray2;
-        text-align: center;
-    }
+    .services-button-group {margin: 20px; padding: 20px; border-top: 1px solid @gray2; text-align: center;}
 }
