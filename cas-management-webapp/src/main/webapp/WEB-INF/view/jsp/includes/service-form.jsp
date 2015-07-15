@@ -21,13 +21,13 @@
 
 
     <!-- Add/Manage Service Form -->
-    <form class="form-horizontal" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.addService(service)" novalidate>
+    <form class="service-editor orm-horizontal" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.addService(service)" novalidate>
         <h1>
             <i class="fa fa-plus-circle"></i>
             <span ng-if="action.isSelected('edit')"><spring:message code="services.form.header.page.editService" /></span>
             <span ng-if="!action.isSelected('edit')"><spring:message code="services.form.header.page.addService" /></span>
         </h1>
-        <div class="row">
+        <div class="row col-sm-12">
             <div class="col-sm-6">
 
                 <!-- Service Form Instructions -->
