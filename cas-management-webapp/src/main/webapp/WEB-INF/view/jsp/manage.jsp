@@ -136,7 +136,7 @@
             </div> <!-- end .casmgmt-manage div -->
 
             <!-- Add/edit services form -->
-            <div class="casmgmt-form" ng-show="action.isSelected('add')">
+            <div class="casmgmt-form" ng-show="action.isSelected('add') || action.isSelected('edit')">
                 <%@include file="includes/service-form.jsp" %>
             </div> <!-- end .casmgmt-form div -->
 
