@@ -278,6 +278,8 @@ The example below searches an LDAP instance found in the X509 certificate, based
 <bean id="connectionPool"
       class="org.ldaptive.pool.BlockingConnectionPool"
       lazy-init="true"
+      init-method="initialize"
+      destroy-method="close"
       p:poolConfig-ref="ldapPoolConfig"
       p:blockWaitTime="${ldap.pool.blockWaitTime}"
       p:validator-ref="searchValidator"
