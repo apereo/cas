@@ -18,7 +18,9 @@
  */
 
 (function () {
-    var app = angular.module('casmgmt', ['ui.sortable']);
+    var app = angular.module('casmgmt', [
+            'ui.sortable',
+        ]);
 
     app.filter('checkmark', function() {
             return function(input) {
@@ -31,7 +33,7 @@
                 if(!limit || str.length <= limit) { return str; }
 
                 var newStr = str.substring(0, limit).replace(/\w+$/, '');
-                return (newStr ? newStr : str.substring(0, limit)) + '...';
+                return (newStr || str.substring(0, limit)) + '...';
             };
         })
         .filter('serviceTableFilter', function() {
@@ -130,9 +132,24 @@
             };
 
             this.getServices = function() {
-                $http.get('js/app/data/services.json').success(function (data) { // TODO: fix URL
-                    servicesData.dataTable = data;
-                });
+                $http.get('js/app/data/services.json') // TODO: fix URL
+                    .success(function (data) {
+                        servicesData.dataTable = data;
+                    });
+            };
+
+            this.deleteService = function(item) {
+                $log.log('Deleting entry ' + item.name + ' (' + item.assignedId + ')...');
+                servicesData.modalItem = null;
+/**
+                $http.post('/rest/service/delete', {'assignedId': item.assignedId})
+                    .success(function() {
+                        servicesData.getServices(); // TODO: Same Q as for update, or we can remove from JS object.
+                    })
+                    .error(function(data, status) {
+                        // TODO: how do we want to show an error, like server down or etc?
+                    });
+**/
             };
 
             this.clearFilter = function() {
@@ -143,6 +160,8 @@
                 this.detailRow = this.detailRow == rowId ? 0 : rowId;
             };
 
+
+            // Final action
             this.getServices();
         }
     ]);
@@ -191,19 +210,12 @@
             ];
             this.reqHandler = this.reqHandlerList[0];
 
-            this.loadForm = function() {
-                // TODO: Needed?
-            };
-
             this.saveForm = function() {
-                $log.log('saveForm()');
                 serviceForm.validateForm();
-
-                //if(this.formErrors) {}
+                //if(this.formErrors) { ... }
             };
 
             this.validateForm = function() {
-                $log.log('validateForm()');
                 serviceForm.formErrors = null;
             };
 
@@ -213,10 +225,9 @@
             };
 
 /**
-            if($routeParams.assignedId) {
+            if($routeParams.assignedId) { // TODO: replace conditional with $routeParams.assignedId
                 $http.get('js/app/data/service-' + $routeParams.assignedId + '.json').success(function (data) { // TODO: fix URL
                     serviceForm.formData = data[0];
-                    serviceForm.loadForm();
                 });
             }
 **/
