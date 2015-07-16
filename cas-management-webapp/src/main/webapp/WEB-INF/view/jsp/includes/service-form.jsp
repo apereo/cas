@@ -21,7 +21,7 @@
 
 
     <!-- Add/Manage Service Form -->
-    <form class="service-editor orm-horizontal" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.addService(service)" novalidate>
+    <form class="service-editor form-horizontal" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.addService(service)" novalidate>
         <h1>
             <i class="fa fa-plus-circle"></i>
             <span ng-if="action.isSelected('edit')"><spring:message code="services.form.header.page.editService" /></span>
@@ -154,7 +154,7 @@
                                 <spring:message code="services.form.label.evalOrder" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.evalOrder" />"></i>
                             </label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control" id="evalOrder" ng-model="serviceFormCtrl.evalOrder">
+                                <input type="number" min="0" max="100" class="form-control" id="evalOrder" ng-model="serviceFormCtrl.evalOrder">
                             </div>
                         </div>
                     </div>
@@ -166,7 +166,7 @@
                         <spring:message code="services.form.label.requiredHandlers" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.requiredHandlers" />"></i>
                     </label>
                     <div class="col-sm-9">
-                        <select class="form-control" id="reqHandler" ng-model="serviceFormCtrl.reqHandler" ng-options="type.name for type in serviceFormCtrl.reqHandlerList"></select>
+                        <select multiple class="form-control" id="reqHandler" ng-model="serviceFormCtrl.reqHandler" ng-options="type.name for type in serviceFormCtrl.reqHandlerList"></select>
                     </div>
                 </div>
 
@@ -368,12 +368,14 @@
                                     <label>
                                         <input type="checkbox" value="relPassword">
                                         <spring:message code="services.form.label.attrRelease.releaseCredPassword" />
+                                        <i class="fa fa-lg fa-info-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.releaseCredPassword" />"></i>
                                     </label>
                                 </div>
                                 <div class="checkbox">
                                     <label>
                                         <input type="checkbox" value="releasePgt">
                                         <spring:message code="services.form.label.attrRelease.releaseProxyTicket" />
+                                        <i class="fa fa-lg fa-info-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.releaseProxyTicket" />"></i>
                                     </label>
                                 </div>
                             </div> <!-- end .checkbox-group div -->
@@ -493,7 +495,10 @@
                                             <thead>
                                                 <tr>
                                                     <th class="col-md-4"><spring:message code="services.form.label.attrRelease.policies.sourceAttribute" /></th>
-                                                    <th class="col-md-8"><spring:message code="services.form.label.attrRelease.policies.casAttribute" /></th>
+                                                    <th class="col-md-8">
+                                                        <spring:message code="services.form.label.attrRelease.policies.casAttribute" />
+                                                        <i class="fa fa-lg fa-info-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.policies.returnMapped" />"></i>
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -522,9 +527,15 @@
                 <div class="col-sm-12">
                     <div class="form-group services-button-group">
                         <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-floppy-o"></i> <spring:message code="services.form.button.save" />
-                        </button>&nbsp;&nbsp;&nbsp;
-                        <a href ng-click="action.isSelected('manage')" class="btn btn-default"><i class="fa fa-times"></i> <spring:message code="services.form.button.cancel" /></a>
+                            <i class="fa fa-floppy-o"></i>
+                            <spring:message code="services.form.button.save" />
+                        </button>
+                        &nbsp;&nbsp;&nbsp;
+<%-- TODO: Make the link below a button, and add css padding to remvoe above spaces. --%>
+                        <a href ng-click="action.selectAction('manage')" class="btn btn-default">
+                            <i class="fa fa-times"></i>
+                            <spring:message code="services.form.button.cancel" />
+                        </a>
                     </div> <!-- end services-button-group div -->
                 </div>
             </div>
