@@ -88,7 +88,7 @@ public final class ClientActionTests {
         assertEquals(MY_METHOD, mockSession.getAttribute(ClientAction.METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         assertTrue(((String) flowScope.get("FacebookClientUrl"))
-                .startsWith("https://www.facebook.com/dialog/oauth?client_id=my_key&redirect_uri=http%3A%2F%2Fcasserver%2Flogin%3F"
+                .startsWith("https://www.facebook.com/v2.2/dialog/oauth?client_id=my_key&redirect_uri=http%3A%2F%2Fcasserver%2Flogin%3F"
                         + Clients.DEFAULT_CLIENT_NAME_PARAMETER + "%3DFacebookClient&state="));
         assertEquals(MY_LOGIN_URL + "?" + Clients.DEFAULT_CLIENT_NAME_PARAMETER
                 + "=TwitterClient&needs_client_redirection=true", flowScope.get("TwitterClientUrl"));
