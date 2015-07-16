@@ -29,7 +29,8 @@
                 </a>
             </div>
         </div>
-    </div> <!-- end .row div -->
+    </div>
+
     <div class="row">
         <div class="col-sm-12">
             <table class="table table-hover table-striped services-table" ng-model="serviceTableCtrl.dataTable">
@@ -51,10 +52,11 @@
                     <tr class="main-row">
                         <td class="col-sm-3">
                             <div class="grabber-icon"><i class="fa fa-lg fa-ellipsis-v"></i></div>
+<%-- TODO: How does uiSortable deal with keyboard accessibility requirements for drag-and-drop? --%>
                             {{ item.name }}
                             <a href="javascript://" class="more" ng-click="serviceTableCtrl.toggleDetail(item.assignedId)">
-<%-- TODO: Needs accessibility text for screen readers --%>
                                 <i class="fa fa-chevron-{{ serviceTableCtrl.detailRow === item.assignedId ? 'up' : 'down' }}"></i>
+<%-- TODO: Needs accessibility text for screen readers --%>
                             </a>
                         </td>
                         <td class="col-sm-3">{{ item.serviceId }}</td>
