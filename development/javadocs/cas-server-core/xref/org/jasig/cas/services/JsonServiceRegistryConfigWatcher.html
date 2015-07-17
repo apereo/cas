@@ -154,11 +154,11 @@
 <a class="jxr_linenumber" name="L146" href="#L146">146</a> <em class="jxr_comment">        load the entry and save it back to the map</em>
 <a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_comment">        without any warnings on duplicate ids.</em>
 <a class="jxr_linenumber" name="L148" href="#L148">148</a> <em class="jxr_comment">     */</em>
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> newService = <strong class="jxr_keyword">this</strong>.serviceRegistryDao.loadRegisteredServiceFromFile(file);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> RegisteredService newService = <strong class="jxr_keyword">this</strong>.serviceRegistryDao.loadRegisteredServiceFromFile(file);
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">if</strong> (newService == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>             LOGGER.warn(<span class="jxr_string">"New service definition could not be loaded from [{}]"</span>, file.getAbsolutePath());
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> oldService = <strong class="jxr_keyword">this</strong>.serviceRegistryDao.findServiceById(newService.getId());
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>             <strong class="jxr_keyword">final</strong> RegisteredService oldService = <strong class="jxr_keyword">this</strong>.serviceRegistryDao.findServiceById(newService.getId());
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">if</strong> (!newService.equals(oldService)) {
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>                 <strong class="jxr_keyword">this</strong>.serviceRegistryDao.updateRegisteredService(newService);
@@ -182,7 +182,7 @@
 <a class="jxr_linenumber" name="L174" href="#L174">174</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleCreateEvent(<strong class="jxr_keyword">final</strong> File file) {
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>         <em class="jxr_comment">//load the entry and add it to the map</em>
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> service = <strong class="jxr_keyword">this</strong>.serviceRegistryDao.loadRegisteredServiceFromFile(file);
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">final</strong> RegisteredService service = <strong class="jxr_keyword">this</strong>.serviceRegistryDao.loadRegisteredServiceFromFile(file);
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.serviceRegistryDao.findServiceById(service.getId()) != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>             LOGGER.warn(<span class="jxr_string">"Found a service definition [{}] with a duplicate id [{}] in [{}]. "</span>
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>                             + <span class="jxr_string">"This will overwrite previous service definitions and is likely a "</span>

@@ -37,7 +37,7 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/authentication/NotPreventedAuthenticationPolicy.html">NotPreventedAuthenticationPolicy</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../org/jasig/cas/authentication/AnyAuthenticationPolicy.html">AnyAuthenticationPolicy</a> {
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>      @Override
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isSatisfiedBy(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> authentication) {
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isSatisfiedBy(<strong class="jxr_keyword">final</strong> Authentication authentication) {
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String handler : authentication.getFailures().keySet()) {
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>              <strong class="jxr_keyword">if</strong> (authentication.getFailures().get(handler).isAssignableFrom(PreventedException.<strong class="jxr_keyword">class</strong>)) {
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>                  <strong class="jxr_keyword">return</strong> false;

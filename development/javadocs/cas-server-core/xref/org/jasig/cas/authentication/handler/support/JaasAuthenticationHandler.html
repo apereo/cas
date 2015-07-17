@@ -120,8 +120,8 @@
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>     @Override
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/HandlerResult.html">HandlerResult</a> authenticateUsernamePasswordInternal(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/UsernamePasswordCredential.html">UsernamePasswordCredential</a> credential)
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>             <strong class="jxr_keyword">throws</strong> GeneralSecurityException, <a href="../../../../../../org/jasig/cas/authentication/PreventedException.html">PreventedException</a> {
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> HandlerResult authenticateUsernamePasswordInternal(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/UsernamePasswordCredential.html">UsernamePasswordCredential</a> credential)
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>             <strong class="jxr_keyword">throws</strong> GeneralSecurityException, PreventedException {
 <a class="jxr_linenumber" name="L117" href="#L117">117</a> 
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.kerberosKdcSystemProperty != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>             logger.debug(<span class="jxr_string">"Setting kerberos system property {} to {}"</span>, SYS_PROP_KERB5_KDC, <strong class="jxr_keyword">this</strong>.kerberosKdcSystemProperty);
@@ -144,7 +144,7 @@
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>             lc.logout();
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>         }
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> 
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>         <a href="../../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>         Principal principal = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">final</strong> Set&lt;java.security.Principal&gt; principals = lc.getSubject().getPrincipals();
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">if</strong> (principals != <strong class="jxr_keyword">null</strong> &amp;&amp; principals.size() &gt; 0) {
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>             principal = <strong class="jxr_keyword">this</strong>.principalFactory.createPrincipal(principals.iterator().next().getName());

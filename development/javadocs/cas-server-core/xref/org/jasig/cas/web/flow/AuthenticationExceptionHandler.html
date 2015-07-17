@@ -117,7 +117,7 @@
 <a class="jxr_linenumber" name="L109" href="#L109">109</a> <em class="jxr_javadoccomment">     * &lt;code&gt;[messageBundlePrefix][exceptionClassSimpleName]&lt;/code&gt; for each handler error that is</em>
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> <em class="jxr_javadoccomment">     * configured. If not match is found, {@value #UNKNOWN} is returned.</em>
 <a class="jxr_linenumber" name="L111" href="#L111">111</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L112" href="#L112">112</a>     <strong class="jxr_keyword">public</strong> String handle(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/AuthenticationException.html">AuthenticationException</a> e, <strong class="jxr_keyword">final</strong> MessageContext messageContext) {
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>     <strong class="jxr_keyword">public</strong> String handle(<strong class="jxr_keyword">final</strong> AuthenticationException e, <strong class="jxr_keyword">final</strong> MessageContext messageContext) {
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>         <strong class="jxr_keyword">if</strong> (e != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>             <strong class="jxr_keyword">final</strong> MessageBuilder builder = <strong class="jxr_keyword">new</strong> MessageBuilder();
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> Exception&gt; kind : <strong class="jxr_keyword">this</strong>.errors) {

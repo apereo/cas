@@ -36,10 +36,10 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * A builder that uses the saml standard's &lt;code&gt;LogoutRequest&lt;/code&gt; template in order</em>
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * to build the logout request.</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * @see LogoutRequest</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * @see DefaultLogoutRequest</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> * @since 4.0.0</em>
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/logout/SamlCompliantLogoutMessageCreator.html">SamlCompliantLogoutMessageCreator</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../org/jasig/cas/logout/LogoutMessageCreator.html">LogoutMessageCreator</a> {
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/logout/SamlCompliantLogoutMessageCreator.html">SamlCompliantLogoutMessageCreator</a> <strong class="jxr_keyword">implements</strong> LogoutMessageCreator {
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      <em class="jxr_javadoccomment">/** The logger. */</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger LOGGER = LoggerFactory.getLogger(SamlCompliantLogoutMessageCreator.<strong class="jxr_keyword">class</strong>);
@@ -54,7 +54,7 @@
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>              + <span class="jxr_string">"&lt;/saml:NameID&gt;&lt;samlp:SessionIndex&gt;%s&lt;/samlp:SessionIndex&gt;&lt;/samlp:LogoutRequest&gt;"</span>;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      @Override
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> String create(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/LogoutRequest.html">LogoutRequest</a> request) {
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">public</strong> String create(<strong class="jxr_keyword">final</strong> LogoutRequest request) {
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">final</strong> String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId(<span class="jxr_string">"LR"</span>),
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>                  <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/util/ISOStandardDateFormat.html">ISOStandardDateFormat</a>().getCurrentDateAndTime(), request.getTicketId());
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          

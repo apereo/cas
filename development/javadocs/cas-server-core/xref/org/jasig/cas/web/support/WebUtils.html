@@ -98,11 +98,11 @@
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  <em class="jxr_javadoccomment">     * @param request the request</em>
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">     * @return the service, or null.</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> getService(
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> WebApplicationService getService(
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          <strong class="jxr_keyword">final</strong> List&lt;ArgumentExtractor&gt; argumentExtractors,
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">final</strong> HttpServletRequest request) {
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> ArgumentExtractor argumentExtractor : argumentExtractors) {
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> service = argumentExtractor
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">final</strong> WebApplicationService service = argumentExtractor
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>                  .extractService(request);
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>             <strong class="jxr_keyword">if</strong> (service != <strong class="jxr_keyword">null</strong>) {
@@ -120,7 +120,7 @@
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">     * @param context the context</em>
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">     * @return the service</em>
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> getService(
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> WebApplicationService getService(
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">final</strong> List&lt;ArgumentExtractor&gt; argumentExtractors,
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>         <strong class="jxr_keyword">final</strong> RequestContext context) {
 <a class="jxr_linenumber" name="L118" href="#L118">118</a>         <strong class="jxr_keyword">final</strong> HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a> <em class="jxr_javadoccomment">     * @param context the context</em>
 <a class="jxr_linenumber" name="L126" href="#L126">126</a> <em class="jxr_javadoccomment">     * @return the service</em>
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> getService(<strong class="jxr_keyword">final</strong> RequestContext context) {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> WebApplicationService getService(<strong class="jxr_keyword">final</strong> RequestContext context) {
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         <strong class="jxr_keyword">return</strong> context != <strong class="jxr_keyword">null</strong> ? (WebApplicationService) context.getFlowScope().get(<span class="jxr_string">"service"</span>) : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>     }
 <a class="jxr_linenumber" name="L131" href="#L131">131</a> 
@@ -143,7 +143,7 @@
 <a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     * @param context the context</em>
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     * @return the service</em>
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> getRegisteredService(<strong class="jxr_keyword">final</strong> RequestContext context) {
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> RegisteredService getRegisteredService(<strong class="jxr_keyword">final</strong> RequestContext context) {
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>         <strong class="jxr_keyword">return</strong> context != <strong class="jxr_keyword">null</strong> ? (RegisteredService) context.getFlowScope().get(<span class="jxr_string">"registeredService"</span>) : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>     }
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> 
@@ -154,7 +154,7 @@
 <a class="jxr_linenumber" name="L146" href="#L146">146</a> <em class="jxr_javadoccomment">     * @param ticket the ticket value</em>
 <a class="jxr_linenumber" name="L147" href="#L147">147</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> putTicketGrantingTicketInScopes(
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> RequestContext context, @NotNull <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> ticket) {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> RequestContext context, @NotNull <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticket) {
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">final</strong> String ticketValue = ticket != <strong class="jxr_keyword">null</strong> ? ticket.getId() : <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>         putTicketGrantingTicketInScopes(context, ticketValue);
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>     }
@@ -204,7 +204,7 @@
 <a class="jxr_linenumber" name="L196" href="#L196">196</a> <em class="jxr_javadoccomment">     * @param ticketValue the ticket value</em>
 <a class="jxr_linenumber" name="L197" href="#L197">197</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> putServiceTicketInRequestScope(
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/ServiceTicket.html">ServiceTicket</a> ticketValue) {
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> ServiceTicket ticketValue) {
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>         context.getRequestScope().put(<span class="jxr_string">"serviceTicketId"</span>, ticketValue.getId());
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>     }
 <a class="jxr_linenumber" name="L202" href="#L202">202</a> 
@@ -278,7 +278,7 @@
 <a class="jxr_linenumber" name="L270" href="#L270">270</a> <em class="jxr_javadoccomment">     * @param context the context</em>
 <a class="jxr_linenumber" name="L271" href="#L271">271</a> <em class="jxr_javadoccomment">     * @param service the service</em>
 <a class="jxr_linenumber" name="L272" href="#L272">272</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> putService(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service) {
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> putService(<strong class="jxr_keyword">final</strong> RequestContext context, <strong class="jxr_keyword">final</strong> Service service) {
 <a class="jxr_linenumber" name="L274" href="#L274">274</a>         context.getFlowScope().put(<span class="jxr_string">"service"</span>, service);
 <a class="jxr_linenumber" name="L275" href="#L275">275</a>     }
 <a class="jxr_linenumber" name="L276" href="#L276">276</a> 
@@ -299,7 +299,7 @@
 <a class="jxr_linenumber" name="L291" href="#L291">291</a> <em class="jxr_javadoccomment">     * @param registeredService the service</em>
 <a class="jxr_linenumber" name="L292" href="#L292">292</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L293" href="#L293">293</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> putRegisteredService(<strong class="jxr_keyword">final</strong> RequestContext context,
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>                                             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>                                             <strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L295" href="#L295">295</a>         context.getFlowScope().put(<span class="jxr_string">"registeredService"</span>, registeredService);
 <a class="jxr_linenumber" name="L296" href="#L296">296</a>     }
 <a class="jxr_linenumber" name="L297" href="#L297">297</a> 
@@ -309,11 +309,11 @@
 <a class="jxr_linenumber" name="L301" href="#L301">301</a> <em class="jxr_javadoccomment">     * @param context the context</em>
 <a class="jxr_linenumber" name="L302" href="#L302">302</a> <em class="jxr_javadoccomment">     * @return the credential, or null if it cant be found in the context or if it has no id.</em>
 <a class="jxr_linenumber" name="L303" href="#L303">303</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> getCredential(@NotNull <strong class="jxr_keyword">final</strong> RequestContext context) {
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> cFromRequest = (Credential) context.getRequestScope().get(<span class="jxr_string">"credential"</span>);
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> cFromFlow = (Credential) context.getFlowScope().get(<span class="jxr_string">"credential"</span>);
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Credential getCredential(@NotNull <strong class="jxr_keyword">final</strong> RequestContext context) {
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>         <strong class="jxr_keyword">final</strong> Credential cFromRequest = (Credential) context.getRequestScope().get(<span class="jxr_string">"credential"</span>);
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>         <strong class="jxr_keyword">final</strong> Credential cFromFlow = (Credential) context.getFlowScope().get(<span class="jxr_string">"credential"</span>);
 <a class="jxr_linenumber" name="L307" href="#L307">307</a> 
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential = cFromRequest != <strong class="jxr_keyword">null</strong> ? cFromRequest : cFromFlow;
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>         <strong class="jxr_keyword">final</strong> Credential credential = cFromRequest != <strong class="jxr_keyword">null</strong> ? cFromRequest : cFromFlow;
 <a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">if</strong> (credential != <strong class="jxr_keyword">null</strong> &amp;&amp; StringUtils.isBlank(credential.getId())) {
 <a class="jxr_linenumber" name="L310" href="#L310">310</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L311" href="#L311">311</a>         }

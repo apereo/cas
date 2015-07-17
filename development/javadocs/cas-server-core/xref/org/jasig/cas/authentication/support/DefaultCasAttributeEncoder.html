@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">     * @param servicesManager the services manager</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/authentication/support/DefaultCasAttributeEncoder.html">DefaultCasAttributeEncoder</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/ServicesManager.html">ServicesManager</a> servicesManager) {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/authentication/support/DefaultCasAttributeEncoder.html">DefaultCasAttributeEncoder</a>(<strong class="jxr_keyword">final</strong> ServicesManager servicesManager) {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>          <strong class="jxr_keyword">super</strong>(servicesManager);
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>      }
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  
@@ -61,8 +61,8 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">     * @param servicesManager the services manager</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     * @param cipherExecutor the cipher executor</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/authentication/support/DefaultCasAttributeEncoder.html">DefaultCasAttributeEncoder</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/ServicesManager.html">ServicesManager</a> servicesManager,
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>                                        <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/util/services/RegisteredServiceCipherExecutor.html">RegisteredServiceCipherExecutor</a> cipherExecutor) {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/authentication/support/DefaultCasAttributeEncoder.html">DefaultCasAttributeEncoder</a>(<strong class="jxr_keyword">final</strong> ServicesManager servicesManager,
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>                                        <strong class="jxr_keyword">final</strong> RegisteredServiceCipherExecutor cipherExecutor) {
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">super</strong>(servicesManager, cipherExecutor);
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      }
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
@@ -79,8 +79,8 @@
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> encodeAndEncryptCredentialPassword(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes,
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>                                                        <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; cachedAttributesToEncode,
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>                                                        <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/util/services/RegisteredServiceCipherExecutor.html">RegisteredServiceCipherExecutor</a> cipher,
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>                                                        <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>                                                        <strong class="jxr_keyword">final</strong> RegisteredServiceCipherExecutor cipher,
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>                                                        <strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>                  CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>                  cipher, registeredService);
@@ -96,8 +96,8 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> encodeAndEncryptProxyGrantingTicket(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes,
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>                                                         <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; cachedAttributesToEncode,
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>                                                         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/util/services/RegisteredServiceCipherExecutor.html">RegisteredServiceCipherExecutor</a> cipher,
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>                                                         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>                                                         <strong class="jxr_keyword">final</strong> RegisteredServiceCipherExecutor cipher,
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>                                                         <strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>                  CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, cipher, registeredService);
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>      }
@@ -114,8 +114,8 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> encryptAndEncodeAndPutIntoAttributesMap(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes,
 <a class="jxr_linenumber" name="L107" href="#L107">107</a>                                                            <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; cachedAttributesToEncode,
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>                                                            <strong class="jxr_keyword">final</strong> String cachedAttributeName,
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>                                                            <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/util/services/RegisteredServiceCipherExecutor.html">RegisteredServiceCipherExecutor</a> cipher,
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>                                                            <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>                                                            <strong class="jxr_keyword">final</strong> RegisteredServiceCipherExecutor cipher,
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>                                                            <strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         <strong class="jxr_keyword">final</strong> String cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         <strong class="jxr_keyword">if</strong> (StringUtils.isNotBlank(cachedAttribute)) {
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>             logger.debug(<span class="jxr_string">"Retrieved [{}] as a cached model attribute..."</span>, cachedAttributeName);
@@ -133,8 +133,8 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     @Override
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> encodeAttributesInternal(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes,
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>                                             <strong class="jxr_keyword">final</strong> Map&lt;String, String&gt; cachedAttributesToEncode,
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>                                             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/util/services/RegisteredServiceCipherExecutor.html">RegisteredServiceCipherExecutor</a> cipher,
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>                                             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>                                             <strong class="jxr_keyword">final</strong> RegisteredServiceCipherExecutor cipher,
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>                                             <strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>         encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher, registeredService);
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>         encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher, registeredService);
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>     }

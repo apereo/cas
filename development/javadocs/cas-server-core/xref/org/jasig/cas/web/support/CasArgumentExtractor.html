@@ -40,7 +40,7 @@
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/web/support/CasArgumentExtractor.html">CasArgumentExtractor</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../org/jasig/cas/web/support/AbstractArgumentExtractor.html">AbstractArgumentExtractor</a> {
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      @Override
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> extractServiceInternal(<strong class="jxr_keyword">final</strong> HttpServletRequest request) {
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> WebApplicationService extractServiceInternal(<strong class="jxr_keyword">final</strong> HttpServletRequest request) {
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>          <strong class="jxr_keyword">return</strong> SimpleWebApplicationServiceImpl.createServiceFrom(request);
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      }
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  }

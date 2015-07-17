@@ -43,7 +43,7 @@
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment"> * @since 4.1.0</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/services/PrincipalAttributeRegisteredServiceUsernameProvider.html">PrincipalAttributeRegisteredServiceUsernameProvider</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceUsernameAttributeProvider.html">RegisteredServiceUsernameAttributeProvider</a> {
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/services/PrincipalAttributeRegisteredServiceUsernameProvider.html">PrincipalAttributeRegisteredServiceUsernameProvider</a> <strong class="jxr_keyword">implements</strong> RegisteredServiceUsernameAttributeProvider {
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -3546719400741715137L;
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  
@@ -73,7 +73,7 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      @Override
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">public</strong> String resolveUsername(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service) {
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      <strong class="jxr_keyword">public</strong> String resolveUsername(<strong class="jxr_keyword">final</strong> Principal principal, <strong class="jxr_keyword">final</strong> Service service) {
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          String principalId = principal.getId();
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>          
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">if</strong> (principal.getAttributes().containsKey(<strong class="jxr_keyword">this</strong>.usernameAttribute)) {

@@ -30,7 +30,7 @@
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> javax.validation.constraints.NotNull;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.Message;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.MessageDescriptor;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.ldaptive.LdapAttribute;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.ldaptive.auth.AccountState;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.ldaptive.auth.AuthenticationResponse;
@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>              <strong class="jxr_keyword">final</strong> AccountState.Warning warning,
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">final</strong> AuthenticationResponse response,
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/support/LdapPasswordPolicyConfiguration.html">LdapPasswordPolicyConfiguration</a> configuration,
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">final</strong> List&lt;Message&gt; messages) {
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">final</strong> List&lt;MessageDescriptor&gt; messages) {
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          <strong class="jxr_keyword">final</strong> LdapAttribute attribute = response.getLdapEntry().getAttribute(<strong class="jxr_keyword">this</strong>.warningAttributeName);
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">boolean</strong> matches = false;

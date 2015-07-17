@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> * @since 3.1</em>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/services/InMemoryServiceRegistryDaoImpl.html">InMemoryServiceRegistryDaoImpl</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../org/jasig/cas/services/ServiceRegistryDao.html">ServiceRegistryDao</a> {
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/services/InMemoryServiceRegistryDaoImpl.html">InMemoryServiceRegistryDaoImpl</a> <strong class="jxr_keyword">implements</strong> ServiceRegistryDao {
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
@@ -58,12 +58,12 @@
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      }
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Override
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> delete(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> delete(<strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.registeredServices.remove(registeredService);
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      }
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      @Override
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> findServiceById(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> id) {
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> RegisteredService findServiceById(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> id) {
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> RegisteredService r : <strong class="jxr_keyword">this</strong>.registeredServices) {
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>              <strong class="jxr_keyword">if</strong> (r.getId() == id) {
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>                  <strong class="jxr_keyword">return</strong> r;
@@ -79,7 +79,7 @@
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      @Override
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> save(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> RegisteredService save(<strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">if</strong> (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>              ((<a href="../../../../org/jasig/cas/services/AbstractRegisteredService.html">AbstractRegisteredService</a>) registeredService).setId(findHighestId()+1);
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          }

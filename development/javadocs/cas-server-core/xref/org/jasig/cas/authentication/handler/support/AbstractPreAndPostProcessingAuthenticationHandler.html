@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">     * @param credential the Credential supplied</em>
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment">     * @return true if authentication should continue, false otherwise.</em>
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> preAuthenticate(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential) {
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> preAuthenticate(<strong class="jxr_keyword">final</strong> Credential credential) {
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>      }
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  
@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * @return An authentication handler result that MAY be different or modified from that provided.</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../../org/jasig/cas/authentication/HandlerResult.html">HandlerResult</a> postAuthenticate(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential, <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/HandlerResult.html">HandlerResult</a> result) {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">protected</strong> HandlerResult postAuthenticate(<strong class="jxr_keyword">final</strong> Credential credential, <strong class="jxr_keyword">final</strong> HandlerResult result) {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">return</strong> result;
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      }
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
@@ -77,8 +77,8 @@
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  <em class="jxr_javadoccomment">     **/</em>
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Override
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/HandlerResult.html">HandlerResult</a> authenticate(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential)
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>              <strong class="jxr_keyword">throws</strong> GeneralSecurityException, <a href="../../../../../../org/jasig/cas/authentication/PreventedException.html">PreventedException</a> {
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> HandlerResult authenticate(<strong class="jxr_keyword">final</strong> Credential credential)
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>              <strong class="jxr_keyword">throws</strong> GeneralSecurityException, PreventedException {
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>  
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">if</strong> (!preAuthenticate(credential)) {
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> FailedLoginException();
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">     * {@link #authenticate(org.jasig.cas.authentication.Credential)}.</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     * @throws PreventedException On the indeterminate case when authentication is prevented.</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <a href="../../../../../../org/jasig/cas/authentication/HandlerResult.html">HandlerResult</a> doAuthentication(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/Credential.html">Credential</a> credential)
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> HandlerResult doAuthentication(<strong class="jxr_keyword">final</strong> Credential credential)
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>              <strong class="jxr_keyword">throws</strong> GeneralSecurityException, PreventedException;
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  }
 </pre>

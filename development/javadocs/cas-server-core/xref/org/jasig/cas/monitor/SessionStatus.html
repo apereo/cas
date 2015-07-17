@@ -32,7 +32,7 @@
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_javadoccomment"> * @author Marvin S. Addison</em>
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment"> * @since 3.5.0</em>
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/monitor/SessionStatus.html">SessionStatus</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a> {
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/monitor/SessionStatus.html">SessionStatus</a> <strong class="jxr_keyword">extends</strong> Status {
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>      <em class="jxr_javadoccomment">/** Total number of SSO sessions maintained by CAS. */</em>
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> sessionCount;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
@@ -47,7 +47,7 @@
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">     * @see #getCode()</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/SessionStatus.html">SessionStatus</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> code, <strong class="jxr_keyword">final</strong> String desc) {
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/SessionStatus.html">SessionStatus</a>(<strong class="jxr_keyword">final</strong> StatusCode code, <strong class="jxr_keyword">final</strong> String desc) {
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">this</strong>(code, desc, 0, 0);
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      }
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
@@ -62,7 +62,7 @@
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">     * @see #getCode()</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>       <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/SessionStatus.html">SessionStatus</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> code, <strong class="jxr_keyword">final</strong> String desc, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> sessions, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> serviceTickets) {
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>       <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/SessionStatus.html">SessionStatus</a>(<strong class="jxr_keyword">final</strong> StatusCode code, <strong class="jxr_keyword">final</strong> String desc, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> sessions, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">int</strong> serviceTickets) {
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">super</strong>(code, desc);
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">this</strong>.sessionCount = sessions;
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">this</strong>.serviceTicketCount = serviceTickets;

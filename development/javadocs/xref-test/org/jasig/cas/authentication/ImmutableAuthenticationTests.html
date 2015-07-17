@@ -60,7 +60,7 @@
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>          attributes.put(<span class="jxr_string">"authenticationMethod"</span>, <span class="jxr_string">"password"</span>);
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, HandlerResult&gt; successes = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>          successes.put(<span class="jxr_string">"handler1"</span>, <strong class="jxr_keyword">new</strong> HandlerResult(authenticationHandler, credential1));
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>          successes.put(<span class="jxr_string">"handler1"</span>, <strong class="jxr_keyword">new</strong> DefaultHandlerResult(authenticationHandler, credential1));
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> Exception&gt;&gt; failures = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          failures.put(<span class="jxr_string">"handler2"</span>, FailedLoginException.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">final</strong> ImmutableAuthentication auth = <strong class="jxr_keyword">new</strong> ImmutableAuthentication(
@@ -83,7 +83,7 @@
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>              logger.debug(<span class="jxr_string">"Adding authentication credential metadata failed correctly"</span>);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          }
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>              auth.getSuccesses().put(<span class="jxr_string">"test"</span>, <strong class="jxr_keyword">new</strong> HandlerResult(authenticationHandler, credential1));
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>              auth.getSuccesses().put(<span class="jxr_string">"test"</span>, <strong class="jxr_keyword">new</strong> DefaultHandlerResult(authenticationHandler, credential1));
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>              fail(<span class="jxr_string">"Should have failed"</span>);
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> RuntimeException e) {
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>              logger.debug(<span class="jxr_string">"Adding authentication success event failed correctly"</span>);

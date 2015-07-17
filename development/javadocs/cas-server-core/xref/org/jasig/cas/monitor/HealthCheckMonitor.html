@@ -68,18 +68,18 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Override
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/HealthStatus.html">HealthStatus</a> observe() {
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">final</strong> Map&lt;String, Status&gt; results = <strong class="jxr_keyword">new</strong> LinkedHashMap&lt;&gt;(<strong class="jxr_keyword">this</strong>.monitors.size());
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> code = StatusCode.UNKNOWN;
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>          <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a> result;
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          StatusCode code = StatusCode.UNKNOWN;
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          Status result;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Monitor monitor : <strong class="jxr_keyword">this</strong>.monitors) {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>                  result = monitor.observe();
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>                  <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> resCode = result.getCode();
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>                  <strong class="jxr_keyword">final</strong> StatusCode resCode = result.getCode();
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>                  <strong class="jxr_keyword">if</strong> (resCode.value() &gt; code.value()) {
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>                      code = resCode;
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>                  }
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>              } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>                  code = StatusCode.ERROR;
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  result = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a>(code, e.getClass().getSimpleName() + <span class="jxr_string">": "</span> + e.getMessage());
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>                  result = <strong class="jxr_keyword">new</strong> Status(code, e.getClass().getSimpleName() + <span class="jxr_string">": "</span> + e.getMessage());
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>              }
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>              results.put(monitor.getName(), result);
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          }

@@ -240,7 +240,7 @@
 <a class="jxr_linenumber" name="L232" href="#L232">232</a>     }
 <a class="jxr_linenumber" name="L233" href="#L233">233</a> 
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>     @Override
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>     <strong class="jxr_keyword">public</strong> Map&lt;String, Object&gt; getAttributes(@NotNull <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> p) {
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>     <strong class="jxr_keyword">public</strong> Map&lt;String, Object&gt; getAttributes(@NotNull <strong class="jxr_keyword">final</strong> Principal p) {
 <a class="jxr_linenumber" name="L236" href="#L236">236</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; cachedAttributes = <strong class="jxr_keyword">this</strong>.cache.get(p.getId());
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>         <strong class="jxr_keyword">if</strong> (cachedAttributes != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>             LOGGER.debug(<span class="jxr_string">"Found [{}] cached attributes for principal [{}]"</span>, cachedAttributes.size(), p.getId());
@@ -276,7 +276,7 @@
 <a class="jxr_linenumber" name="L268" href="#L268">268</a> <em class="jxr_javadoccomment">     * @param p  the principal carrying attributes</em>
 <a class="jxr_linenumber" name="L269" href="#L269">269</a> <em class="jxr_javadoccomment">     * @return person attributes</em>
 <a class="jxr_linenumber" name="L270" href="#L270">270</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, List&lt;Object&gt;&gt; convertPrincipalAttributesToPersonAttributes(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> p) {
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, List&lt;Object&gt;&gt; convertPrincipalAttributesToPersonAttributes(<strong class="jxr_keyword">final</strong> Principal p) {
 <a class="jxr_linenumber" name="L272" href="#L272">272</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; convertedAttributes = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;(p.getAttributes().size());
 <a class="jxr_linenumber" name="L273" href="#L273">273</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; principalAttributes = p.getAttributes();
 <a class="jxr_linenumber" name="L274" href="#L274">274</a> 

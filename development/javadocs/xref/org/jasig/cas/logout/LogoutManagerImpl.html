@@ -181,7 +181,7 @@
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>             <strong class="jxr_keyword">if</strong> (serviceSupportsSingleLogout(registeredService)) {
 <a class="jxr_linenumber" name="L174" href="#L174">174</a> 
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>                 <strong class="jxr_keyword">final</strong> URL logoutUrl = determineLogoutUrl(registeredService, singleLogoutService);
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/LogoutRequest.html">LogoutRequest</a> logoutRequest = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/logout/LogoutRequest.html">LogoutRequest</a>(ticketId, singleLogoutService, logoutUrl);
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/DefaultLogoutRequest.html">DefaultLogoutRequest</a> logoutRequest = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/logout/DefaultLogoutRequest.html">DefaultLogoutRequest</a>(ticketId, singleLogoutService, logoutUrl);
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/LogoutType.html">LogoutType</a> type = registeredService.getLogoutType() == <strong class="jxr_keyword">null</strong>
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>                         ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
 <a class="jxr_linenumber" name="L179" href="#L179">179</a> 

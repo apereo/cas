@@ -52,14 +52,14 @@
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  @MappedSuperclass
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/ticket/AbstractTicket.html">AbstractTicket</a> <strong class="jxr_keyword">implements</strong> Ticket, <a href="../../../../org/jasig/cas/ticket/TicketState.html">TicketState</a> {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/ticket/AbstractTicket.html">AbstractTicket</a> <strong class="jxr_keyword">implements</strong> Ticket, TicketState {
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = -8506442397878267555L;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      <em class="jxr_javadoccomment">/** The ExpirationPolicy this ticket will be following. */</em>
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Lob
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      @Column(name=<span class="jxr_string">"EXPIRATION_POLICY"</span>, length = 1000000, nullable=false)
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/ticket/ExpirationPolicy.html">ExpirationPolicy</a> expirationPolicy;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <strong class="jxr_keyword">private</strong> ExpirationPolicy expirationPolicy;
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      <em class="jxr_javadoccomment">/** The unique identifier for this ticket. */</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      @Id
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <em class="jxr_javadoccomment">/** The TicketGrantingTicket this is associated with. */</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      @ManyToOne(targetEntity=TicketGrantingTicketImpl.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> ticketGrantingTicket;
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">private</strong> TicketGrantingTicket ticketGrantingTicket;
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      <em class="jxr_javadoccomment">/** The last time this ticket was used. */</em>
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      @Column(name=<span class="jxr_string">"LAST_TIME_USED"</span>)
@@ -102,8 +102,8 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     * @param expirationPolicy the expiration policy for the ticket.</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">     * @throws IllegalArgumentException if the id or expiration policy is null.</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/ticket/AbstractTicket.html">AbstractTicket</a>(<strong class="jxr_keyword">final</strong> String id, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> ticket,
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/ticket/ExpirationPolicy.html">ExpirationPolicy</a> expirationPolicy) {
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/ticket/AbstractTicket.html">AbstractTicket</a>(<strong class="jxr_keyword">final</strong> String id, <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticket,
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">final</strong> ExpirationPolicy expirationPolicy) {
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>          Assert.notNull(expirationPolicy, <span class="jxr_string">"expirationPolicy cannot be null"</span>);
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>         Assert.notNull(id, <span class="jxr_string">"id cannot be null"</span>);
 <a class="jxr_linenumber" name="L101" href="#L101">101</a> 
@@ -142,7 +142,7 @@
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.creationTime;
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>     }
 <a class="jxr_linenumber" name="L136" href="#L136">136</a> 
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> getGrantingTicket() {
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> TicketGrantingTicket getGrantingTicket() {
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.ticketGrantingTicket;
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>     }
 <a class="jxr_linenumber" name="L140" href="#L140">140</a> 

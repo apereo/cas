@@ -95,7 +95,7 @@
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      @Lob
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      @Column(name = <span class="jxr_string">"proxy_policy"</span>, nullable = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceProxyPolicy.html">RegisteredServiceProxyPolicy</a> proxyPolicy = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/services/RefuseRegisteredServiceProxyPolicy.html">RefuseRegisteredServiceProxyPolicy</a>();
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      <strong class="jxr_keyword">private</strong> RegisteredServiceProxyPolicy proxyPolicy = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/services/RefuseRegisteredServiceProxyPolicy.html">RefuseRegisteredServiceProxyPolicy</a>();
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      @Column(name = <span class="jxr_string">"evaluation_order"</span>, nullable = false)
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> evaluationOrder;
@@ -106,7 +106,7 @@
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>      @Lob
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>     @Column(name = <span class="jxr_string">"username_attr"</span>, nullable = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L101" href="#L101">101</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceUsernameAttributeProvider.html">RegisteredServiceUsernameAttributeProvider</a> usernameAttributeProvider =
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>     <strong class="jxr_keyword">private</strong> RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/services/DefaultRegisteredServiceUsernameProvider.html">DefaultRegisteredServiceUsernameProvider</a>();
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> 
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     <em class="jxr_javadoccomment">/**</em>
@@ -114,7 +114,7 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">     * The default logout type is the back channel one.</em>
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     @Column(name = <span class="jxr_string">"logout_type"</span>, nullable = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/services/LogoutType.html">LogoutType</a> logoutType = LogoutType.BACK_CHANNEL;
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">private</strong> LogoutType logoutType = LogoutType.BACK_CHANNEL;
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> 
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>     @Lob
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>     @Column(name = <span class="jxr_string">"required_handlers"</span>)
@@ -123,7 +123,7 @@
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>     <em class="jxr_javadoccomment">/** The attribute filtering policy. */</em>
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>     @Lob
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     @Column(name = <span class="jxr_string">"attribute_release"</span>, nullable = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/services/AttributeReleasePolicy.html">AttributeReleasePolicy</a> attributeReleasePolicy = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/services/ReturnAllowedAttributeReleasePolicy.html">ReturnAllowedAttributeReleasePolicy</a>();
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">private</strong> AttributeReleasePolicy attributeReleasePolicy = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/services/ReturnAllowedAttributeReleasePolicy.html">ReturnAllowedAttributeReleasePolicy</a>();
 <a class="jxr_linenumber" name="L119" href="#L119">119</a> 
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>     @Column(name = <span class="jxr_string">"logo"</span>)
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>     <strong class="jxr_keyword">private</strong> URL logo;
@@ -133,12 +133,12 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a> 
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>     @Lob
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>     @Column(name = <span class="jxr_string">"access_strategy"</span>, nullable = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceAccessStrategy.html">RegisteredServiceAccessStrategy</a> accessStrategy =
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <strong class="jxr_keyword">private</strong> RegisteredServiceAccessStrategy accessStrategy =
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>             <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/services/DefaultRegisteredServiceAccessStrategy.html">DefaultRegisteredServiceAccessStrategy</a>();
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> 
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>     @Lob
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>     @Column(name = <span class="jxr_string">"public_key"</span>, nullable = <strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/services/RegisteredServicePublicKey.html">RegisteredServicePublicKey</a> publicKey;
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>     <strong class="jxr_keyword">private</strong> RegisteredServicePublicKey publicKey;
 <a class="jxr_linenumber" name="L134" href="#L134">134</a> 
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>     @Override
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getId() {
@@ -166,12 +166,12 @@
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>     }
 <a class="jxr_linenumber" name="L159" href="#L159">159</a> 
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>     @Override
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceProxyPolicy.html">RegisteredServiceProxyPolicy</a> getProxyPolicy() {
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">public</strong> RegisteredServiceProxyPolicy getProxyPolicy() {
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.proxyPolicy;
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>     }
 <a class="jxr_linenumber" name="L164" href="#L164">164</a> 
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>     @Override
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceAccessStrategy.html">RegisteredServiceAccessStrategy</a> getAccessStrategy() {
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">public</strong> RegisteredServiceAccessStrategy getAccessStrategy() {
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.accessStrategy;
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
 <a class="jxr_linenumber" name="L169" href="#L169">169</a> 
@@ -257,7 +257,7 @@
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>                 .toHashCode();
 <a class="jxr_linenumber" name="L250" href="#L250">250</a>     }
 <a class="jxr_linenumber" name="L251" href="#L251">251</a> 
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setProxyPolicy(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceProxyPolicy.html">RegisteredServiceProxyPolicy</a> policy) {
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setProxyPolicy(<strong class="jxr_keyword">final</strong> RegisteredServiceProxyPolicy policy) {
 <a class="jxr_linenumber" name="L253" href="#L253">253</a>         <strong class="jxr_keyword">this</strong>.proxyPolicy = policy;
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>     }
 <a class="jxr_linenumber" name="L255" href="#L255">255</a> 
@@ -295,11 +295,11 @@
 <a class="jxr_linenumber" name="L287" href="#L287">287</a>     }
 <a class="jxr_linenumber" name="L288" href="#L288">288</a> 
 <a class="jxr_linenumber" name="L289" href="#L289">289</a>     @Override
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceUsernameAttributeProvider.html">RegisteredServiceUsernameAttributeProvider</a> getUsernameAttributeProvider() {
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>     <strong class="jxr_keyword">public</strong> RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider() {
 <a class="jxr_linenumber" name="L291" href="#L291">291</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.usernameAttributeProvider;
 <a class="jxr_linenumber" name="L292" href="#L292">292</a>     }
 <a class="jxr_linenumber" name="L293" href="#L293">293</a> 
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setAccessStrategy(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceAccessStrategy.html">RegisteredServiceAccessStrategy</a> accessStrategy) {
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setAccessStrategy(<strong class="jxr_keyword">final</strong> RegisteredServiceAccessStrategy accessStrategy) {
 <a class="jxr_linenumber" name="L295" href="#L295">295</a>         <strong class="jxr_keyword">this</strong>.accessStrategy = accessStrategy;
 <a class="jxr_linenumber" name="L296" href="#L296">296</a>     }
 <a class="jxr_linenumber" name="L297" href="#L297">297</a> 
@@ -313,12 +313,12 @@
 <a class="jxr_linenumber" name="L305" href="#L305">305</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">     * @param usernameProvider the new username attribute</em>
 <a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUsernameAttributeProvider(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredServiceUsernameAttributeProvider.html">RegisteredServiceUsernameAttributeProvider</a> usernameProvider) {
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setUsernameAttributeProvider(<strong class="jxr_keyword">final</strong> RegisteredServiceUsernameAttributeProvider usernameProvider) {
 <a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">this</strong>.usernameAttributeProvider = usernameProvider;
 <a class="jxr_linenumber" name="L310" href="#L310">310</a>     }
 <a class="jxr_linenumber" name="L311" href="#L311">311</a> 
 <a class="jxr_linenumber" name="L312" href="#L312">312</a>     @Override
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/LogoutType.html">LogoutType</a> getLogoutType() {
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> LogoutType getLogoutType() {
 <a class="jxr_linenumber" name="L314" href="#L314">314</a>         <strong class="jxr_keyword">return</strong> logoutType;
 <a class="jxr_linenumber" name="L315" href="#L315">315</a>     }
 <a class="jxr_linenumber" name="L316" href="#L316">316</a> 
@@ -327,12 +327,12 @@
 <a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L320" href="#L320">320</a> <em class="jxr_javadoccomment">     * @param logoutType the logout type of the service.</em>
 <a class="jxr_linenumber" name="L321" href="#L321">321</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setLogoutType(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/LogoutType.html">LogoutType</a> logoutType) {
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setLogoutType(<strong class="jxr_keyword">final</strong> LogoutType logoutType) {
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">this</strong>.logoutType = logoutType;
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>     }
 <a class="jxr_linenumber" name="L325" href="#L325">325</a> 
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>     @Override
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> clone() {
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> RegisteredService clone() {
 <a class="jxr_linenumber" name="L328" href="#L328">328</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/AbstractRegisteredService.html">AbstractRegisteredService</a> clone = newInstance();
 <a class="jxr_linenumber" name="L329" href="#L329">329</a>         clone.copyFrom(<strong class="jxr_keyword">this</strong>);
 <a class="jxr_linenumber" name="L330" href="#L330">330</a>         <strong class="jxr_keyword">return</strong> clone;
@@ -343,7 +343,7 @@
 <a class="jxr_linenumber" name="L335" href="#L335">335</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L336" href="#L336">336</a> <em class="jxr_javadoccomment">     * @param source Source service from which to copy properties.</em>
 <a class="jxr_linenumber" name="L337" href="#L337">337</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> copyFrom(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> source) {
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> copyFrom(<strong class="jxr_keyword">final</strong> RegisteredService source) {
 <a class="jxr_linenumber" name="L339" href="#L339">339</a>         <strong class="jxr_keyword">this</strong>.setId(source.getId());
 <a class="jxr_linenumber" name="L340" href="#L340">340</a>         <strong class="jxr_keyword">this</strong>.setProxyPolicy(source.getProxyPolicy());
 <a class="jxr_linenumber" name="L341" href="#L341">341</a>         <strong class="jxr_keyword">this</strong>.setDescription(source.getDescription());
@@ -367,7 +367,7 @@
 <a class="jxr_linenumber" name="L359" href="#L359">359</a> <em class="jxr_javadoccomment">     * @see #getEvaluationOrder()</em>
 <a class="jxr_linenumber" name="L360" href="#L360">360</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L361" href="#L361">361</a>     @Override
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> compareTo(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> other) {
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> compareTo(<strong class="jxr_keyword">final</strong> RegisteredService other) {
 <a class="jxr_linenumber" name="L363" href="#L363">363</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CompareToBuilder()
 <a class="jxr_linenumber" name="L364" href="#L364">364</a>                   .append(<strong class="jxr_keyword">this</strong>.getEvaluationOrder(), other.getEvaluationOrder())
 <a class="jxr_linenumber" name="L365" href="#L365">365</a>                   .append(<strong class="jxr_keyword">this</strong>.getName().toLowerCase(), other.getName().toLowerCase())
@@ -430,12 +430,12 @@
 <a class="jxr_linenumber" name="L422" href="#L422">422</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L423" href="#L423">423</a> <em class="jxr_javadoccomment">     * @param policy the new attribute filtering policy</em>
 <a class="jxr_linenumber" name="L424" href="#L424">424</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setAttributeReleasePolicy(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/AttributeReleasePolicy.html">AttributeReleasePolicy</a> policy) {
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setAttributeReleasePolicy(<strong class="jxr_keyword">final</strong> AttributeReleasePolicy policy) {
 <a class="jxr_linenumber" name="L426" href="#L426">426</a>         <strong class="jxr_keyword">this</strong>.attributeReleasePolicy = policy;
 <a class="jxr_linenumber" name="L427" href="#L427">427</a>     }
 <a class="jxr_linenumber" name="L428" href="#L428">428</a> 
 <a class="jxr_linenumber" name="L429" href="#L429">429</a>     @Override
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/AttributeReleasePolicy.html">AttributeReleasePolicy</a> getAttributeReleasePolicy() {
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> AttributeReleasePolicy getAttributeReleasePolicy() {
 <a class="jxr_linenumber" name="L431" href="#L431">431</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.attributeReleasePolicy;
 <a class="jxr_linenumber" name="L432" href="#L432">432</a>     }
 <a class="jxr_linenumber" name="L433" href="#L433">433</a> 
@@ -449,11 +449,11 @@
 <a class="jxr_linenumber" name="L441" href="#L441">441</a>     }
 <a class="jxr_linenumber" name="L442" href="#L442">442</a> 
 <a class="jxr_linenumber" name="L443" href="#L443">443</a>     @Override
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/services/RegisteredServicePublicKey.html">RegisteredServicePublicKey</a> getPublicKey() {
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>     <strong class="jxr_keyword">public</strong> RegisteredServicePublicKey getPublicKey() {
 <a class="jxr_linenumber" name="L445" href="#L445">445</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.publicKey;
 <a class="jxr_linenumber" name="L446" href="#L446">446</a>     }
 <a class="jxr_linenumber" name="L447" href="#L447">447</a> 
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPublicKey(@NotNull <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredServicePublicKey.html">RegisteredServicePublicKey</a> publicKey) {
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPublicKey(@NotNull <strong class="jxr_keyword">final</strong> RegisteredServicePublicKey publicKey) {
 <a class="jxr_linenumber" name="L449" href="#L449">449</a>         <strong class="jxr_keyword">this</strong>.publicKey = publicKey;
 <a class="jxr_linenumber" name="L450" href="#L450">450</a>     }
 <a class="jxr_linenumber" name="L451" href="#L451">451</a> }

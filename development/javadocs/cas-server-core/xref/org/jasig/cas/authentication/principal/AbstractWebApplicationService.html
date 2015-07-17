@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> * @author Scott Battaglia</em>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> * @since 3.1</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/authentication/principal/AbstractWebApplicationService.html">AbstractWebApplicationService</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../org/jasig/cas/authentication/principal/SingleLogoutService.html">SingleLogoutService</a> {
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/authentication/principal/AbstractWebApplicationService.html">AbstractWebApplicationService</a> <strong class="jxr_keyword">implements</strong> SingleLogoutService {
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 610105280927740076L;
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  
@@ -58,7 +58,7 @@
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String artifactId;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">private</strong> Principal principal;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> loggedOutAlready;
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  
@@ -137,7 +137,7 @@
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         }
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> 
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>         <strong class="jxr_keyword">if</strong> (object instanceof Service) {
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service = (Service) object;
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>             <strong class="jxr_keyword">final</strong> Service service = (Service) object;
 <a class="jxr_linenumber" name="L133" href="#L133">133</a> 
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>             <strong class="jxr_keyword">return</strong> getId().equals(service.getId());
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         }
@@ -152,16 +152,16 @@
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>                 .toHashCode();
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>     }
 <a class="jxr_linenumber" name="L146" href="#L146">146</a> 
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>     <strong class="jxr_keyword">protected</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> getPrincipal() {
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>     <strong class="jxr_keyword">protected</strong> Principal getPrincipal() {
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.principal;
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>     }
 <a class="jxr_linenumber" name="L150" href="#L150">150</a> 
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipal(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal) {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipal(<strong class="jxr_keyword">final</strong> Principal principal) {
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">this</strong>.principal = principal;
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>     }
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>     @Override
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> matches(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> matches(<strong class="jxr_keyword">final</strong> Service service) {
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>             <strong class="jxr_keyword">final</strong> String thisUrl = URLDecoder.decode(<strong class="jxr_keyword">this</strong>.id, <span class="jxr_string">"UTF-8"</span>);
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>             <strong class="jxr_keyword">final</strong> String serviceUrl = URLDecoder.decode(service.getId(), <span class="jxr_string">"UTF-8"</span>);

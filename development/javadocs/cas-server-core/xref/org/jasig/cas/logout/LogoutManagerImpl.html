@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> * @author Jerome Leleu</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment"> * @since 4.0.0</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/logout/LogoutManagerImpl.html">LogoutManagerImpl</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../org/jasig/cas/logout/LogoutManager.html">LogoutManager</a> {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/logout/LogoutManagerImpl.html">LogoutManagerImpl</a> <strong class="jxr_keyword">implements</strong> LogoutManager {
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      <em class="jxr_javadoccomment">/** The logger. */</em>
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> Logger LOGGER = LoggerFactory.getLogger(LogoutManagerImpl.<strong class="jxr_keyword">class</strong>);
@@ -65,14 +65,14 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      <em class="jxr_javadoccomment">/** The services manager. */</em>
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      @NotNull
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/ServicesManager.html">ServicesManager</a> servicesManager;
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ServicesManager servicesManager;
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      <em class="jxr_javadoccomment">/** An HTTP client. */</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      @NotNull
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/util/http/HttpClient.html">HttpClient</a> httpClient;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      @NotNull
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/LogoutMessageCreator.html">LogoutMessageCreator</a> logoutMessageBuilder;
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> LogoutMessageCreator logoutMessageBuilder;
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      <em class="jxr_javadoccomment">/** Whether single sign out is disabled or not. */</em>
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> singleLogoutCallbacksDisabled;
@@ -89,8 +89,8 @@
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  <em class="jxr_javadoccomment">     * @param httpClient an HTTP client.</em>
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">     * @param logoutMessageBuilder the builder to construct logout messages.</em>
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/logout/LogoutManagerImpl.html">LogoutManagerImpl</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/ServicesManager.html">ServicesManager</a> servicesManager, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/util/http/HttpClient.html">HttpClient</a> httpClient,
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>                               <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/LogoutMessageCreator.html">LogoutMessageCreator</a> logoutMessageBuilder) {
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/logout/LogoutManagerImpl.html">LogoutManagerImpl</a>(<strong class="jxr_keyword">final</strong> ServicesManager servicesManager, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/util/http/HttpClient.html">HttpClient</a> httpClient,
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>                               <strong class="jxr_keyword">final</strong> LogoutMessageCreator logoutMessageBuilder) {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">this</strong>.servicesManager = servicesManager;
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">this</strong>.httpClient = httpClient;
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">this</strong>.logoutMessageBuilder = logoutMessageBuilder;
@@ -125,7 +125,7 @@
 <a class="jxr_linenumber" name="L117" href="#L117">117</a> <em class="jxr_javadoccomment">     * @return all logout requests.</em>
 <a class="jxr_linenumber" name="L118" href="#L118">118</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>     @Override
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>     <strong class="jxr_keyword">public</strong> List&lt;LogoutRequest&gt; performLogout(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> ticket) {
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     <strong class="jxr_keyword">public</strong> List&lt;LogoutRequest&gt; performLogout(<strong class="jxr_keyword">final</strong> TicketGrantingTicket ticket) {
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Service&gt; services;
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>         <em class="jxr_comment">// synchronize the retrieval of the services and their cleaning for the TGT</em>
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>         <em class="jxr_comment">// to avoid concurrent logout mess ups</em>
@@ -141,9 +141,9 @@
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>             <em class="jxr_comment">// through all services</em>
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, Service&gt; entry : services.entrySet()) {
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>                 <em class="jxr_comment">// it's a SingleLogoutService, else ignore</em>
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service = entry.getValue();
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>                 <strong class="jxr_keyword">final</strong> Service service = entry.getValue();
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>                 <strong class="jxr_keyword">if</strong> (service instanceof SingleLogoutService) {
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/LogoutRequest.html">LogoutRequest</a> logoutRequest = handleLogoutForSloService((SingleLogoutService) service, entry.getKey());
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>                     <strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest = handleLogoutForSloService((SingleLogoutService) service, entry.getKey());
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>                     <strong class="jxr_keyword">if</strong> (logoutRequest != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L140" href="#L140">140</a>                         LOGGER.debug(<span class="jxr_string">"Captured logout request [{}]"</span>, logoutRequest);
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>                         logoutRequests.add(logoutRequest);
@@ -161,7 +161,7 @@
 <a class="jxr_linenumber" name="L153" href="#L153">153</a> <em class="jxr_javadoccomment">     * @param registeredService the registered service</em>
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> <em class="jxr_javadoccomment">     * @return true, if support is available.</em>
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> serviceSupportsSingleLogout(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> serviceSupportsSingleLogout(<strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">return</strong> registeredService != <strong class="jxr_keyword">null</strong>
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>                 &amp;&amp; registeredService.getAccessStrategy().isServiceAccessAllowed()
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>                 &amp;&amp; registeredService.getLogoutType() != LogoutType.NONE;
@@ -174,15 +174,15 @@
 <a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_javadoccomment">     * @param ticketId the ticket id</em>
 <a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_javadoccomment">     * @return the logout request</em>
 <a class="jxr_linenumber" name="L168" href="#L168">168</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>     <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/logout/LogoutRequest.html">LogoutRequest</a> handleLogoutForSloService(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/SingleLogoutService.html">SingleLogoutService</a> singleLogoutService, <strong class="jxr_keyword">final</strong> String ticketId) {
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>     <strong class="jxr_keyword">private</strong> LogoutRequest handleLogoutForSloService(<strong class="jxr_keyword">final</strong> SingleLogoutService singleLogoutService, <strong class="jxr_keyword">final</strong> String ticketId) {
 <a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">if</strong> (!singleLogoutService.isLoggedOutAlready()) {
 <a class="jxr_linenumber" name="L171" href="#L171">171</a> 
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService = servicesManager.findServiceBy(singleLogoutService);
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>             <strong class="jxr_keyword">final</strong> RegisteredService registeredService = servicesManager.findServiceBy(singleLogoutService);
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>             <strong class="jxr_keyword">if</strong> (serviceSupportsSingleLogout(registeredService)) {
 <a class="jxr_linenumber" name="L174" href="#L174">174</a> 
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>                 <strong class="jxr_keyword">final</strong> URL logoutUrl = determineLogoutUrl(registeredService, singleLogoutService);
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/LogoutRequest.html">LogoutRequest</a> logoutRequest = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/logout/LogoutRequest.html">LogoutRequest</a>(ticketId, singleLogoutService, logoutUrl);
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/LogoutType.html">LogoutType</a> type = registeredService.getLogoutType() == <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/DefaultLogoutRequest.html">DefaultLogoutRequest</a> logoutRequest = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/logout/DefaultLogoutRequest.html">DefaultLogoutRequest</a>(ticketId, singleLogoutService, logoutUrl);
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>                 <strong class="jxr_keyword">final</strong> LogoutType type = registeredService.getLogoutType() == <strong class="jxr_keyword">null</strong>
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>                         ? LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
 <a class="jxr_linenumber" name="L179" href="#L179">179</a> 
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>                 <strong class="jxr_keyword">switch</strong> (type) {
@@ -212,7 +212,7 @@
 <a class="jxr_linenumber" name="L204" href="#L204">204</a> <em class="jxr_javadoccomment">     * @param singleLogoutService the single logout service</em>
 <a class="jxr_linenumber" name="L205" href="#L205">205</a> <em class="jxr_javadoccomment">     * @return the uRL</em>
 <a class="jxr_linenumber" name="L206" href="#L206">206</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>     <strong class="jxr_keyword">private</strong> URL determineLogoutUrl(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService, <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/SingleLogoutService.html">SingleLogoutService</a> singleLogoutService) {
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>     <strong class="jxr_keyword">private</strong> URL determineLogoutUrl(<strong class="jxr_keyword">final</strong> RegisteredService registeredService, <strong class="jxr_keyword">final</strong> SingleLogoutService singleLogoutService) {
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>             URL logoutUrl = <strong class="jxr_keyword">new</strong> URL(singleLogoutService.getOriginalUrl());
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>             <strong class="jxr_keyword">final</strong> URL serviceLogoutUrl = registeredService.getLogoutUrl();
@@ -234,10 +234,10 @@
 <a class="jxr_linenumber" name="L226" href="#L226">226</a> <em class="jxr_javadoccomment">     * @param request the logout request.</em>
 <a class="jxr_linenumber" name="L227" href="#L227">227</a> <em class="jxr_javadoccomment">     * @return if the logout has been performed.</em>
 <a class="jxr_linenumber" name="L228" href="#L228">228</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> performBackChannelLogout(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/LogoutRequest.html">LogoutRequest</a> request) {
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> performBackChannelLogout(<strong class="jxr_keyword">final</strong> LogoutRequest request) {
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L231" href="#L231">231</a>             <strong class="jxr_keyword">final</strong> String logoutRequest = <strong class="jxr_keyword">this</strong>.logoutMessageBuilder.create(request);
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/SingleLogoutService.html">SingleLogoutService</a> logoutService = request.getService();
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>             <strong class="jxr_keyword">final</strong> SingleLogoutService logoutService = request.getService();
 <a class="jxr_linenumber" name="L233" href="#L233">233</a>             logoutService.setLoggedOutAlready(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>     
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>             LOGGER.debug(<span class="jxr_string">"Sending logout request for: [{}]"</span>, logoutService.getId());
@@ -256,7 +256,7 @@
 <a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_javadoccomment">     * @param logoutRequest the logout request.</em>
 <a class="jxr_linenumber" name="L249" href="#L249">249</a> <em class="jxr_javadoccomment">     * @return a front SAML logout message.</em>
 <a class="jxr_linenumber" name="L250" href="#L250">250</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>     <strong class="jxr_keyword">public</strong> String createFrontChannelLogoutMessage(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/logout/LogoutRequest.html">LogoutRequest</a> logoutRequest) {
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>     <strong class="jxr_keyword">public</strong> String createFrontChannelLogoutMessage(<strong class="jxr_keyword">final</strong> LogoutRequest logoutRequest) {
 <a class="jxr_linenumber" name="L252" href="#L252">252</a>         <strong class="jxr_keyword">final</strong> String logoutMessage = <strong class="jxr_keyword">this</strong>.logoutMessageBuilder.create(logoutRequest);
 <a class="jxr_linenumber" name="L253" href="#L253">253</a>         LOGGER.trace(<span class="jxr_string">"Attempting to deflate the logout message [{}]"</span>, logoutMessage);
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>         <strong class="jxr_keyword">return</strong> CompressionUtils.deflate(logoutMessage);

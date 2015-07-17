@@ -36,9 +36,9 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * @author Marvin S. Addison</em>
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * @since 3.5.1</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/monitor/CacheStatus.html">CacheStatus</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../org/jasig/cas/monitor/Status.html">Status</a> {
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/monitor/CacheStatus.html">CacheStatus</a> <strong class="jxr_keyword">extends</strong> Status {
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/monitor/CacheStatistics.html">CacheStatistics</a>[] statistics;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> CacheStatistics[] statistics;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment">     * Creates a new instance describing cache status.</em>
@@ -47,7 +47,7 @@
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment">     * @param description Optional status description.</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">     * @param statistics One or more sets of cache statistics.</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/CacheStatus.html">CacheStatus</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> code, <strong class="jxr_keyword">final</strong> String description, @NotNull <strong class="jxr_keyword">final</strong> CacheStatistics... statistics) {
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/CacheStatus.html">CacheStatus</a>(<strong class="jxr_keyword">final</strong> StatusCode code, <strong class="jxr_keyword">final</strong> String description, @NotNull <strong class="jxr_keyword">final</strong> CacheStatistics... statistics) {
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>          <strong class="jxr_keyword">super</strong>(code, buildDescription(description, statistics));
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">this</strong>.statistics = statistics;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      }
@@ -70,8 +70,8 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     * @return Cache statistics.</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/CacheStatistics.html">CacheStatistics</a>[] getStatistics() {
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">return</strong> ImmutableList.copyOf(<strong class="jxr_keyword">this</strong>.statistics).toArray(<strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/monitor/CacheStatistics.html">CacheStatistics</a>[<strong class="jxr_keyword">this</strong>.statistics.length]);
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> CacheStatistics[] getStatistics() {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">return</strong> ImmutableList.copyOf(<strong class="jxr_keyword">this</strong>.statistics).toArray(<strong class="jxr_keyword">new</strong> CacheStatistics[<strong class="jxr_keyword">this</strong>.statistics.length]);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  

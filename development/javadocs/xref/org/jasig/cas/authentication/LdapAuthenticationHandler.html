@@ -28,7 +28,7 @@
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> com.google.common.base.Functions;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> com.google.common.collect.Maps;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.Message;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.MessageDescriptor;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
@@ -188,7 +188,7 @@
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>         }
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>         logger.debug(<span class="jxr_string">"LDAP response: {}"</span>, response);
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> 
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">final</strong> List&lt;Message&gt; messageList;
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">final</strong> List&lt;MessageDescriptor&gt; messageList;
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>         
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/support/LdapPasswordPolicyConfiguration.html">LdapPasswordPolicyConfiguration</a> ldapPasswordPolicyConfiguration =
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>                 (<a href="../../../../org/jasig/cas/authentication/support/LdapPasswordPolicyConfiguration.html">LdapPasswordPolicyConfiguration</a>) <strong class="jxr_keyword">super</strong>.getPasswordPolicyConfiguration();

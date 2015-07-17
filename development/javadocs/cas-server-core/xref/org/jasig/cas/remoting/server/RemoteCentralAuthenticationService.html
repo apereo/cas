@@ -67,11 +67,11 @@
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  @Deprecated
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/remoting/server/RemoteCentralAuthenticationService.html">RemoteCentralAuthenticationService</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../org/jasig/cas/CentralAuthenticationService.html">CentralAuthenticationService</a> {
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/remoting/server/RemoteCentralAuthenticationService.html">RemoteCentralAuthenticationService</a> <strong class="jxr_keyword">implements</strong> CentralAuthenticationService {
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>      <em class="jxr_javadoccomment">/** The CORE to delegate to. */</em>
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      @NotNull
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../org/jasig/cas/CentralAuthenticationService.html">CentralAuthenticationService</a> centralAuthenticationService;
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">private</strong> CentralAuthenticationService centralAuthenticationService;
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      <em class="jxr_javadoccomment">/** The validators to check the Credential. */</em>
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      @NotNull
@@ -83,8 +83,8 @@
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">     * invalid credentials.</em>
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>      @Override
-<a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> createTicketGrantingTicket(<strong class="jxr_keyword">final</strong> Credential... credentials)
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">throws</strong> AuthenticationException, <a href="../../../../../org/jasig/cas/ticket/TicketException.html">TicketException</a> {
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>      <strong class="jxr_keyword">public</strong> TicketGrantingTicket createTicketGrantingTicket(<strong class="jxr_keyword">final</strong> Credential... credentials)
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>              <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException {
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          Assert.notNull(credentials, <span class="jxr_string">"credentials cannot be null"</span>);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          checkForErrors(credentials);
@@ -96,8 +96,8 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      @Override
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/ticket/ServiceTicket.html">ServiceTicket</a> grantServiceTicket(<strong class="jxr_keyword">final</strong> String ticketGrantingTicketId, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service)
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">throws</strong> <a href="../../../../../org/jasig/cas/ticket/TicketException.html">TicketException</a> {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">public</strong> ServiceTicket grantServiceTicket(<strong class="jxr_keyword">final</strong> String ticketGrantingTicketId, <strong class="jxr_keyword">final</strong> Service service)
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>              <strong class="jxr_keyword">throws</strong> TicketException {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>      }
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  
@@ -114,9 +114,9 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">     * @throws IllegalArgumentException if given invalid credentials</em>
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     @Override
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/ticket/ServiceTicket.html">ServiceTicket</a> grantServiceTicket(
-<a class="jxr_linenumber" name="L110" href="#L110">110</a>             <strong class="jxr_keyword">final</strong> String ticketGrantingTicketId, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service, <strong class="jxr_keyword">final</strong> Credential... credentials)
-<a class="jxr_linenumber" name="L111" href="#L111">111</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, <a href="../../../../../org/jasig/cas/ticket/TicketException.html">TicketException</a> {
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">public</strong> ServiceTicket grantServiceTicket(
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>             <strong class="jxr_keyword">final</strong> String ticketGrantingTicketId, <strong class="jxr_keyword">final</strong> Service service, <strong class="jxr_keyword">final</strong> Credential... credentials)
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException {
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> 
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>         checkForErrors(credentials);
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> 
@@ -128,7 +128,7 @@
 <a class="jxr_linenumber" name="L120" href="#L120">120</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>     @Override
 <a class="jxr_linenumber" name="L122" href="#L122">122</a>     <strong class="jxr_keyword">public</strong> &lt;T <strong class="jxr_keyword">extends</strong> Ticket&gt; T getTicket(<strong class="jxr_keyword">final</strong> String ticketId, <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> Ticket&gt; clazz)
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>             <strong class="jxr_keyword">throws</strong> <a href="../../../../../org/jasig/cas/ticket/InvalidTicketException.html">InvalidTicketException</a> {
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>             <strong class="jxr_keyword">throws</strong> InvalidTicketException {
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.centralAuthenticationService.getTicket(ticketId, clazz);
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     }
 <a class="jxr_linenumber" name="L126" href="#L126">126</a> 
@@ -136,7 +136,7 @@
 <a class="jxr_linenumber" name="L128" href="#L128">128</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
 <a class="jxr_linenumber" name="L129" href="#L129">129</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>     @Override
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/validation/Assertion.html">Assertion</a> validateServiceTicket(<strong class="jxr_keyword">final</strong> String serviceTicketId, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service) <strong class="jxr_keyword">throws</strong> TicketException {
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>     <strong class="jxr_keyword">public</strong> Assertion validateServiceTicket(<strong class="jxr_keyword">final</strong> String serviceTicketId, <strong class="jxr_keyword">final</strong> Service service) <strong class="jxr_keyword">throws</strong> TicketException {
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>     }
 <a class="jxr_linenumber" name="L134" href="#L134">134</a> 
@@ -159,8 +159,8 @@
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> <em class="jxr_javadoccomment">     * @throws IllegalArgumentException if the credentials are invalid.</em>
 <a class="jxr_linenumber" name="L152" href="#L152">152</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>     @Override
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> delegateTicketGrantingTicket(<strong class="jxr_keyword">final</strong> String serviceTicketId, <strong class="jxr_keyword">final</strong> Credential... credentials)
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, <a href="../../../../../org/jasig/cas/ticket/TicketException.html">TicketException</a> {
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">public</strong> TicketGrantingTicket delegateTicketGrantingTicket(<strong class="jxr_keyword">final</strong> String serviceTicketId, <strong class="jxr_keyword">final</strong> Credential... credentials)
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException {
 <a class="jxr_linenumber" name="L156" href="#L156">156</a> 
 <a class="jxr_linenumber" name="L157" href="#L157">157</a>         checkForErrors(credentials);
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> 
@@ -192,7 +192,7 @@
 <a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     * set.</em>
 <a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setCentralAuthenticationService(
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/CentralAuthenticationService.html">CentralAuthenticationService</a> centralAuthenticationService) {
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">final</strong> CentralAuthenticationService centralAuthenticationService) {
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>         <strong class="jxr_keyword">this</strong>.centralAuthenticationService = centralAuthenticationService;
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>     }
 <a class="jxr_linenumber" name="L190" href="#L190">190</a> 

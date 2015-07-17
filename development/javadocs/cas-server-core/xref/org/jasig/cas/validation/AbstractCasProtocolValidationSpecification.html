@@ -34,7 +34,7 @@
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment"> * @author Scott Battaglia</em>
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/validation/AbstractCasProtocolValidationSpecification.html">AbstractCasProtocolValidationSpecification</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../org/jasig/cas/validation/ValidationSpecification.html">ValidationSpecification</a> {
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/validation/AbstractCasProtocolValidationSpecification.html">AbstractCasProtocolValidationSpecification</a> <strong class="jxr_keyword">implements</strong> ValidationSpecification {
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>      <em class="jxr_javadoccomment">/** The default value for the renew attribute is false. */</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> DEFAULT_RENEW = false;
@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_comment">     * @see org.jasig.cas.validation.ValidationSpecification#isSatisfiedBy(org.jasig.cas.validation.Assertion)</em>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_comment">     */</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      @Override
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isSatisfiedBy(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/validation/Assertion.html">Assertion</a> assertion) {
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isSatisfiedBy(<strong class="jxr_keyword">final</strong> Assertion assertion) {
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">return</strong> isSatisfiedByInternal(assertion)
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>              &amp;&amp; (!<strong class="jxr_keyword">this</strong>.renew || assertion.isFromNewLogin());
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      }
@@ -91,7 +91,7 @@
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">     * @param assertion the assertion</em>
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">     * @return true, if the subclass implementation is satisfied by the assertion</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">boolean</strong> isSatisfiedByInternal(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/validation/Assertion.html">Assertion</a> assertion);
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">boolean</strong> isSatisfiedByInternal(<strong class="jxr_keyword">final</strong> Assertion assertion);
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  }
 </pre>
 <hr/>

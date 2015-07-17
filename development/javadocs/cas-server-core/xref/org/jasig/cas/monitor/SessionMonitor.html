@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/monitor/SessionMonitor.html">SessionMonitor</a> <strong class="jxr_keyword">implements</strong> Monitor&lt;SessionStatus&gt; {
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>      <em class="jxr_javadoccomment">/** Ticket registry instance that exposes state info. */</em>
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>      @NotNull
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../org/jasig/cas/monitor/TicketRegistryState.html">TicketRegistryState</a> registryState;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">private</strong> TicketRegistryState registryState;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      <em class="jxr_javadoccomment">/** Threshold above which warnings are issued for session count. */</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> sessionCountWarnThreshold = -1;
@@ -52,7 +52,7 @@
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">     * Sets the ticket registry that exposes state information that may be queried by this monitor.</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     * @param state the ticket registry state instance</em>
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTicketRegistry(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/monitor/TicketRegistryState.html">TicketRegistryState</a> state) {
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTicketRegistry(<strong class="jxr_keyword">final</strong> TicketRegistryState state) {
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">this</strong>.registryState = state;
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      }
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  
@@ -103,7 +103,7 @@
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>              }
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>              <strong class="jxr_keyword">final</strong> StringBuilder msg = <strong class="jxr_keyword">new</strong> StringBuilder();
-<a class="jxr_linenumber" name="L98" href="#L98">98</a>              <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> code = StatusCode.OK;
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>              StatusCode code = StatusCode.OK;
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>              <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.sessionCountWarnThreshold &gt; -1 &amp;&amp; sessionCount &gt; <strong class="jxr_keyword">this</strong>.sessionCountWarnThreshold) {
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>                 code = StatusCode.WARN;
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>                 msg.append(String.format(

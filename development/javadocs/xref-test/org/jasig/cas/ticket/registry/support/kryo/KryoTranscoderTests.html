@@ -47,12 +47,12 @@
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.collections4.map.ListOrderedMap;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.builder.HashCodeBuilder;
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Authentication;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AuthenticationBuilder;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AuthenticationHandler;
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.BasicCredentialMetaData;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Credential;
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.CredentialMetaData;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.HandlerResult;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.DefaultHandlerResult;
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.HttpBasedServiceCredential;
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.PreventedException;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.RememberMeCredential;
@@ -289,7 +289,7 @@
 <a class="jxr_linenumber" name="L281" href="#L281">281</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockTicketGrantingTicket</a>(<strong class="jxr_keyword">final</strong> String id, <strong class="jxr_keyword">final</strong> Credential credential, <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; principalAttributes) {
 <a class="jxr_linenumber" name="L282" href="#L282">282</a>             <strong class="jxr_keyword">this</strong>.id = id;
 <a class="jxr_linenumber" name="L283" href="#L283">283</a>             <strong class="jxr_keyword">final</strong> CredentialMetaData credentialMetaData = <strong class="jxr_keyword">new</strong> BasicCredentialMetaData(credential);
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>             <strong class="jxr_keyword">final</strong> AuthenticationBuilder builder = <strong class="jxr_keyword">new</strong> AuthenticationBuilder();
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>             <strong class="jxr_keyword">final</strong> DefaultAuthenticationBuilder builder = <strong class="jxr_keyword">new</strong> DefaultAuthenticationBuilder();
 <a class="jxr_linenumber" name="L285" href="#L285">285</a>             builder.setPrincipal(<strong class="jxr_keyword">this</strong>.principalFactory.createPrincipal(USERNAME, principalAttributes));
 <a class="jxr_linenumber" name="L286" href="#L286">286</a>             builder.setAuthenticationDate(<strong class="jxr_keyword">new</strong> Date());
 <a class="jxr_linenumber" name="L287" href="#L287">287</a>             builder.addCredential(credentialMetaData);
@@ -402,11 +402,11 @@
 <a class="jxr_linenumber" name="L394" href="#L394">394</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockAuthenticationHandler</a> <strong class="jxr_keyword">implements</strong> AuthenticationHandler {
 <a class="jxr_linenumber" name="L395" href="#L395">395</a> 
 <a class="jxr_linenumber" name="L396" href="#L396">396</a>         @Override
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>         <strong class="jxr_keyword">public</strong> HandlerResult authenticate(<strong class="jxr_keyword">final</strong> Credential credential) <strong class="jxr_keyword">throws</strong> GeneralSecurityException, PreventedException {
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>         <strong class="jxr_keyword">public</strong> DefaultHandlerResult authenticate(<strong class="jxr_keyword">final</strong> Credential credential) <strong class="jxr_keyword">throws</strong> GeneralSecurityException, PreventedException {
 <a class="jxr_linenumber" name="L398" href="#L398">398</a>             <strong class="jxr_keyword">if</strong> (credential instanceof HttpBasedServiceCredential) {
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> HandlerResult(<strong class="jxr_keyword">this</strong>, (HttpBasedServiceCredential) credential);
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> DefaultHandlerResult(<strong class="jxr_keyword">this</strong>, (HttpBasedServiceCredential) credential);
 <a class="jxr_linenumber" name="L400" href="#L400">400</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> HandlerResult(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">new</strong> BasicCredentialMetaData(credential));
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> DefaultHandlerResult(<strong class="jxr_keyword">this</strong>, <strong class="jxr_keyword">new</strong> BasicCredentialMetaData(credential));
 <a class="jxr_linenumber" name="L402" href="#L402">402</a>             }
 <a class="jxr_linenumber" name="L403" href="#L403">403</a>         }
 <a class="jxr_linenumber" name="L404" href="#L404">404</a> 

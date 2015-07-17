@@ -75,7 +75,7 @@
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      @Override
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isExpired(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/TicketState.html">TicketState</a> ticketState) {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isExpired(<strong class="jxr_keyword">final</strong> TicketState ticketState) {
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">return</strong> (ticketState == <strong class="jxr_keyword">null</strong>)
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>              || (System.currentTimeMillis() - ticketState.getLastTimeUsed() &gt;= <strong class="jxr_keyword">this</strong>.timeToKillInMilliSeconds);
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      }

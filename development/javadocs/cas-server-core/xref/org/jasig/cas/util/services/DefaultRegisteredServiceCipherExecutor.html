@@ -41,7 +41,7 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> * @since 4.1</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/util/services/DefaultRegisteredServiceCipherExecutor.html">DefaultRegisteredServiceCipherExecutor</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../org/jasig/cas/util/services/RegisteredServiceCipherExecutor.html">RegisteredServiceCipherExecutor</a> {
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/util/services/DefaultRegisteredServiceCipherExecutor.html">DefaultRegisteredServiceCipherExecutor</a> <strong class="jxr_keyword">implements</strong> RegisteredServiceCipherExecutor {
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String UTF8_ENCODING = <span class="jxr_string">"UTF-8"</span>;
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>  
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      <em class="jxr_javadoccomment">/** Logger instance. **/</em>
@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment">     * @return the encoded piece of data in base64</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>      @Override
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> String encode(<strong class="jxr_keyword">final</strong> String data, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> service) {
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> String encode(<strong class="jxr_keyword">final</strong> String data, <strong class="jxr_keyword">final</strong> RegisteredService service) {
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>              <strong class="jxr_keyword">final</strong> PublicKey publicKey = createRegisteredServicePublicKey(service);
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>              <strong class="jxr_keyword">final</strong> byte[] result = encodeInternal(data, publicKey, service);
@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>  <em class="jxr_javadoccomment">     * @return a byte[] that contains the encrypted result</em>
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">protected</strong> byte[] encodeInternal(<strong class="jxr_keyword">final</strong> String data, <strong class="jxr_keyword">final</strong> PublicKey publicKey,
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>                                      <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>                                      <strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>              <strong class="jxr_keyword">final</strong> Cipher cipher = initializeCipherBasedOnServicePublicKey(publicKey, registeredService);
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>              <strong class="jxr_keyword">if</strong> (cipher != <strong class="jxr_keyword">null</strong>) {
@@ -99,7 +99,7 @@
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  <em class="jxr_javadoccomment">     * @return the public key</em>
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     * @throws Exception the exception, if key cant be created</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">private</strong> PublicKey createRegisteredServicePublicKey(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>      <strong class="jxr_keyword">private</strong> PublicKey createRegisteredServicePublicKey(<strong class="jxr_keyword">final</strong> RegisteredService registeredService) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>          <strong class="jxr_keyword">if</strong> (registeredService.getPublicKey() == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>              logger.debug(<span class="jxr_string">"No public key is defined for service [{}]. No encoding will take place."</span>,
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>                      registeredService);
@@ -123,7 +123,7 @@
 <a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     * or if cipher cannot be initialized, etc.</em>
 <a class="jxr_linenumber" name="L116" href="#L116">116</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">private</strong> Cipher initializeCipherBasedOnServicePublicKey(<strong class="jxr_keyword">final</strong> PublicKey publicKey,
-<a class="jxr_linenumber" name="L118" href="#L118">118</a>                                                            <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService) {
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>                                                            <strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>             logger.debug(<span class="jxr_string">"Using public key [{}] to initialize the cipher"</span>,
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>                     registeredService.getPublicKey());

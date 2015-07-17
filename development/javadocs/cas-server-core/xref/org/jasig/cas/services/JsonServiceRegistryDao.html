@@ -158,7 +158,7 @@
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>     }
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> 
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>     @Override
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> save(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> service) {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> RegisteredService save(<strong class="jxr_keyword">final</strong> RegisteredService service) {
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">if</strong> (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE &amp;&amp; service instanceof AbstractRegisteredService) {
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>             LOGGER.debug(<span class="jxr_string">"Service id not set. Calculating id based on system time..."</span>);
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>             ((<a href="../../../../org/jasig/cas/services/AbstractRegisteredService.html">AbstractRegisteredService</a>) service).setId(System.nanoTime());
@@ -179,7 +179,7 @@
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>     }
 <a class="jxr_linenumber" name="L172" href="#L172">172</a> 
 <a class="jxr_linenumber" name="L173" href="#L173">173</a>     @Override
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">boolean</strong> delete(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> service) {
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">boolean</strong> delete(<strong class="jxr_keyword">final</strong> RegisteredService service) {
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">final</strong> File f = makeFile(service);
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> result = f.delete();
@@ -202,7 +202,7 @@
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>         <strong class="jxr_keyword">final</strong> Collection&lt;File&gt; c = FileUtils.listFiles(<strong class="jxr_keyword">this</strong>.serviceRegistryDirectory.toFile(), <strong class="jxr_keyword">new</strong> String[] {FILE_EXTENSION}, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> File file : c) {
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>             <strong class="jxr_keyword">if</strong> (file.length() &gt; 0) {
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>                 <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> service = loadRegisteredServiceFromFile(file);
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>                 <strong class="jxr_keyword">final</strong> RegisteredService service = loadRegisteredServiceFromFile(file);
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>                 <strong class="jxr_keyword">if</strong> (service == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>                     errorCount++;
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>                 } <strong class="jxr_keyword">else</strong> {
@@ -223,7 +223,7 @@
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>     }
 <a class="jxr_linenumber" name="L216" href="#L216">216</a> 
 <a class="jxr_linenumber" name="L217" href="#L217">217</a>     @Override
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> findServiceById(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> id) {
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> RegisteredService findServiceById(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> id) {
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>         <strong class="jxr_keyword">return</strong> serviceMap.get(id);
 <a class="jxr_linenumber" name="L220" href="#L220">220</a>     }
 <a class="jxr_linenumber" name="L221" href="#L221">221</a> 
@@ -233,7 +233,7 @@
 <a class="jxr_linenumber" name="L225" href="#L225">225</a> <em class="jxr_javadoccomment">     * @param file the file</em>
 <a class="jxr_linenumber" name="L226" href="#L226">226</a> <em class="jxr_javadoccomment">     * @return the registered service</em>
 <a class="jxr_linenumber" name="L227" href="#L227">227</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>     <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> loadRegisteredServiceFromFile(<strong class="jxr_keyword">final</strong> File file) {
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>     RegisteredService loadRegisteredServiceFromFile(<strong class="jxr_keyword">final</strong> File file) {
 <a class="jxr_linenumber" name="L229" href="#L229">229</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> BufferedInputStream in = <strong class="jxr_keyword">new</strong> BufferedInputStream(<strong class="jxr_keyword">new</strong> FileInputStream(file))) {
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.registeredServiceJsonSerializer.fromJson(in);
 <a class="jxr_linenumber" name="L231" href="#L231">231</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
@@ -247,7 +247,7 @@
 <a class="jxr_linenumber" name="L239" href="#L239">239</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L240" href="#L240">240</a> <em class="jxr_javadoccomment">     * @param service the service</em>
 <a class="jxr_linenumber" name="L241" href="#L241">241</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>     <strong class="jxr_keyword">void</strong> updateRegisteredService(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> service) {
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>     <strong class="jxr_keyword">void</strong> updateRegisteredService(<strong class="jxr_keyword">final</strong> RegisteredService service) {
 <a class="jxr_linenumber" name="L243" href="#L243">243</a>         <strong class="jxr_keyword">this</strong>.serviceMap.put(service.getId(), service);
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>     }
 <a class="jxr_linenumber" name="L245" href="#L245">245</a> 
@@ -263,7 +263,7 @@
 <a class="jxr_linenumber" name="L255" href="#L255">255</a> <em class="jxr_javadoccomment">     * @return JSON file in service registry directory.</em>
 <a class="jxr_linenumber" name="L256" href="#L256">256</a> <em class="jxr_javadoccomment">     * @throws IllegalArgumentException if file name is invalid</em>
 <a class="jxr_linenumber" name="L257" href="#L257">257</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>     <strong class="jxr_keyword">protected</strong> File makeFile(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> service) {
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>     <strong class="jxr_keyword">protected</strong> File makeFile(<strong class="jxr_keyword">final</strong> RegisteredService service) {
 <a class="jxr_linenumber" name="L259" href="#L259">259</a>         <strong class="jxr_keyword">final</strong> String fileName = service.getName() + '-' + service.getId() + '.' + FILE_EXTENSION;
 <a class="jxr_linenumber" name="L260" href="#L260">260</a>         <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L261" href="#L261">261</a>             <strong class="jxr_keyword">final</strong> File svcFile = <strong class="jxr_keyword">new</strong> File(serviceRegistryDirectory.toFile(), fileName);
@@ -287,7 +287,7 @@
 <a class="jxr_linenumber" name="L279" href="#L279">279</a> <em class="jxr_javadoccomment">     * Refreshes the services manager, forcing it to reload.</em>
 <a class="jxr_linenumber" name="L280" href="#L280">280</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L281" href="#L281">281</a>     <strong class="jxr_keyword">void</strong> refreshServicesManager() {
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/services/ReloadableServicesManager.html">ReloadableServicesManager</a> manager = <strong class="jxr_keyword">this</strong>.applicationContext.getBean(ReloadableServicesManager.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>         <strong class="jxr_keyword">final</strong> ReloadableServicesManager manager = <strong class="jxr_keyword">this</strong>.applicationContext.getBean(ReloadableServicesManager.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L283" href="#L283">283</a>         manager.reload();
 <a class="jxr_linenumber" name="L284" href="#L284">284</a>     }
 <a class="jxr_linenumber" name="L285" href="#L285">285</a> 

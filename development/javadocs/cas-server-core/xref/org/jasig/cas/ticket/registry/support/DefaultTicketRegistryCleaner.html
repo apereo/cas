@@ -71,20 +71,20 @@
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment"> * @see NoOpLockingStrategy</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/DefaultTicketRegistryCleaner.html">DefaultTicketRegistryCleaner</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/RegistryCleaner.html">RegistryCleaner</a> {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/DefaultTicketRegistryCleaner.html">DefaultTicketRegistryCleaner</a> <strong class="jxr_keyword">implements</strong> RegistryCleaner {
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>      <em class="jxr_javadoccomment">/** The Commons Logging instance. */</em>
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(getClass());
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      @NotNull
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/CentralAuthenticationService.html">CentralAuthenticationService</a> centralAuthenticationService;
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> CentralAuthenticationService centralAuthenticationService;
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>      <em class="jxr_javadoccomment">/** Execution locking strategy. */</em>
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>      @NotNull
-<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/LockingStrategy.html">LockingStrategy</a> lock = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/NoOpLockingStrategy.html">NoOpLockingStrategy</a>();
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> LockingStrategy lock = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/NoOpLockingStrategy.html">NoOpLockingStrategy</a>();
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      @NotNull
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/TicketRegistry.html">TicketRegistry</a> ticketRegistry;
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">private</strong> TicketRegistry ticketRegistry;
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">     * Instantiates a new Default ticket registry cleaner.</em>
@@ -92,8 +92,8 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">     * @param centralAuthenticationService the CAS interface acting as the service layer</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  <em class="jxr_javadoccomment">     * @param ticketRegistry the ticket registry</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/DefaultTicketRegistryCleaner.html">DefaultTicketRegistryCleaner</a>(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/CentralAuthenticationService.html">CentralAuthenticationService</a> centralAuthenticationService,
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>                                          <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/TicketRegistry.html">TicketRegistry</a> ticketRegistry) {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/DefaultTicketRegistryCleaner.html">DefaultTicketRegistryCleaner</a>(<strong class="jxr_keyword">final</strong> CentralAuthenticationService centralAuthenticationService,
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>                                          <strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry) {
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          <strong class="jxr_keyword">this</strong>.centralAuthenticationService = centralAuthenticationService;
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">this</strong>.ticketRegistry = ticketRegistry;
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      }
@@ -112,7 +112,7 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>             <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; ticketsToRemove = <strong class="jxr_keyword">this</strong>.centralAuthenticationService.getTickets(<strong class="jxr_keyword">new</strong> Predicate() {
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>                 @Override
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>                 <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> evaluate(<strong class="jxr_keyword">final</strong> Object o) {
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>                     <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/Ticket.html">Ticket</a> ticket = (Ticket) o;
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>                     <strong class="jxr_keyword">final</strong> Ticket ticket = (Ticket) o;
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>                     <strong class="jxr_keyword">return</strong> ticket.isExpired();
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>                 }
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>             });
@@ -148,7 +148,7 @@
 <a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">     * @deprecated As of 4.1. Consider using constructors instead.</em>
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>     @Deprecated
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTicketRegistry(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/TicketRegistry.html">TicketRegistry</a> ticketRegistry) {
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTicketRegistry(<strong class="jxr_keyword">final</strong> TicketRegistry ticketRegistry) {
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>         logger.warn(<span class="jxr_string">"Invoking setTicketRegistry() is deprecated and has no impact."</span>);
 <a class="jxr_linenumber" name="L145" href="#L145">145</a>     }
 <a class="jxr_linenumber" name="L146" href="#L146">146</a> 
@@ -162,7 +162,7 @@
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> <em class="jxr_javadoccomment">     * @deprecated As of 4.1. Consider using constructors instead.</em>
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>     @Deprecated
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLock(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/LockingStrategy.html">LockingStrategy</a> strategy) {
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLock(<strong class="jxr_keyword">final</strong> LockingStrategy strategy) {
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         <strong class="jxr_keyword">this</strong>.lock = strategy;
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>     }
 <a class="jxr_linenumber" name="L160" href="#L160">160</a> 
@@ -182,7 +182,7 @@
 <a class="jxr_linenumber" name="L174" href="#L174">174</a> <em class="jxr_javadoccomment">     * @deprecated As of 4.1. Consider using constructors instead.</em>
 <a class="jxr_linenumber" name="L175" href="#L175">175</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>     @Deprecated
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLogoutManager(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/logout/LogoutManager.html">LogoutManager</a> logoutManager) {
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLogoutManager(<strong class="jxr_keyword">final</strong> LogoutManager logoutManager) {
 <a class="jxr_linenumber" name="L178" href="#L178">178</a>         logger.warn(<span class="jxr_string">"Invoking setLogoutManager() is deprecated and has no impact."</span>);
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>     }
 <a class="jxr_linenumber" name="L180" href="#L180">180</a> }

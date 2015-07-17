@@ -29,7 +29,7 @@
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.StringUtils;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CasProtocolConstants;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.CentralAuthenticationService;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.Message;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.MessageDescriptor;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AuthenticationException;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Credential;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.HandlerResult;
@@ -232,7 +232,7 @@
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">boolean</strong> addWarningMessagesToMessageContextIfNeeded(<strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/TicketGrantingTicket.html">TicketGrantingTicket</a> tgtId, <strong class="jxr_keyword">final</strong> MessageContext messageContext) {
 <a class="jxr_linenumber" name="L225" href="#L225">225</a>         <strong class="jxr_keyword">boolean</strong> foundAndAddedWarnings = false;
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Map.Entry&lt;String, HandlerResult&gt; entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Message message : entry.getValue().getWarnings()) {
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> MessageDescriptor message : entry.getValue().getWarnings()) {
 <a class="jxr_linenumber" name="L228" href="#L228">228</a>                 addWarningToContext(messageContext, message);
 <a class="jxr_linenumber" name="L229" href="#L229">229</a>                 foundAndAddedWarnings = <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>             }
@@ -314,7 +314,7 @@
 <a class="jxr_linenumber" name="L306" href="#L306">306</a> <em class="jxr_javadoccomment">     * @param context Message context.</em>
 <a class="jxr_linenumber" name="L307" href="#L307">307</a> <em class="jxr_javadoccomment">     * @param warning Warning message.</em>
 <a class="jxr_linenumber" name="L308" href="#L308">308</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addWarningToContext(<strong class="jxr_keyword">final</strong> MessageContext context, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/Message.html">Message</a> warning) {
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> addWarningToContext(<strong class="jxr_keyword">final</strong> MessageContext context, <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/MessageDescriptor.html">MessageDescriptor</a> warning) {
 <a class="jxr_linenumber" name="L310" href="#L310">310</a>         <strong class="jxr_keyword">final</strong> MessageBuilder builder = <strong class="jxr_keyword">new</strong> MessageBuilder()
 <a class="jxr_linenumber" name="L311" href="#L311">311</a>                 .warning()
 <a class="jxr_linenumber" name="L312" href="#L312">312</a>                 .code(warning.getCode())

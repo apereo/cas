@@ -79,7 +79,7 @@
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>      @Override
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/PoolStatus.html">PoolStatus</a> observe() {
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">final</strong> Future&lt;StatusCode&gt; result = <strong class="jxr_keyword">this</strong>.executor.submit(<strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/monitor/AbstractPoolMonitor.html">Validator</a>(<strong class="jxr_keyword">this</strong>));
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>          <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> code;
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          StatusCode code;
 <a class="jxr_linenumber" name="L75" href="#L75">75</a>          String description = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>          <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>              code = result.get(<strong class="jxr_keyword">this</strong>.maxWait, TimeUnit.MILLISECONDS);
@@ -105,7 +105,7 @@
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">     * @throws Exception Thrown to indicate a serious problem with pool validation.</em>
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> checkPool() <strong class="jxr_keyword">throws</strong> Exception;
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> StatusCode checkPool() <strong class="jxr_keyword">throws</strong> Exception;
 <a class="jxr_linenumber" name="L101" href="#L101">101</a> 
 <a class="jxr_linenumber" name="L102" href="#L102">102</a> 
 <a class="jxr_linenumber" name="L103" href="#L103">103</a>     <em class="jxr_javadoccomment">/**</em>
@@ -136,7 +136,7 @@
 <a class="jxr_linenumber" name="L128" href="#L128">128</a>         }
 <a class="jxr_linenumber" name="L129" href="#L129">129</a> 
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>         @Override
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/monitor/StatusCode.html">StatusCode</a> call() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         <strong class="jxr_keyword">public</strong> StatusCode call() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.monitor.checkPool();
 <a class="jxr_linenumber" name="L133" href="#L133">133</a>         }
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>     }

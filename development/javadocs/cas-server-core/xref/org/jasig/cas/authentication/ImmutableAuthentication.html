@@ -47,7 +47,7 @@
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableAuthentication</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> {
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableAuthentication</a> <strong class="jxr_keyword">implements</strong> Authentication {
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      <em class="jxr_javadoccomment">/** UID for serializing. */</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 3206127526058061391L;
@@ -59,7 +59,7 @@
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> List&lt;CredentialMetaData&gt; credentials;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      <em class="jxr_javadoccomment">/** Authenticated principal. */</em>
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Principal principal;
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      <em class="jxr_javadoccomment">/** Authentication metadata attributes. */</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes;
@@ -93,7 +93,7 @@
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/authentication/ImmutableAuthentication.html">ImmutableAuthentication</a>(
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>              <strong class="jxr_keyword">final</strong> DateTime date,
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>              <strong class="jxr_keyword">final</strong> List&lt;CredentialMetaData&gt; credentials,
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>              <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> principal,
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>              <strong class="jxr_keyword">final</strong> Principal principal,
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>              <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributes,
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>              <strong class="jxr_keyword">final</strong> Map&lt;String, HandlerResult&gt; successes,
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>              <strong class="jxr_keyword">final</strong> Map&lt;String, Class&lt;? <strong class="jxr_keyword">extends</strong> Exception&gt;&gt; failures) {
@@ -114,7 +114,7 @@
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>     }
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> 
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>     @Override
-<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> getPrincipal() {
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">public</strong> Principal getPrincipal() {
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.principal;
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>     }
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> 
@@ -162,7 +162,7 @@
 <a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">this</strong>) {
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         }
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> other = (Authentication) obj;
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">final</strong> Authentication other = (Authentication) obj;
 <a class="jxr_linenumber" name="L158" href="#L158">158</a>         <strong class="jxr_keyword">final</strong> EqualsBuilder builder = <strong class="jxr_keyword">new</strong> EqualsBuilder();
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>         builder.append(<strong class="jxr_keyword">this</strong>.principal, other.getPrincipal());
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>         builder.append(<strong class="jxr_keyword">this</strong>.credentials, other.getCredentials());

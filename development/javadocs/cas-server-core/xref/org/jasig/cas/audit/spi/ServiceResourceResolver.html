@@ -43,7 +43,7 @@
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      @Override
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">public</strong> String[] resolveFrom(<strong class="jxr_keyword">final</strong> JoinPoint joinPoint, <strong class="jxr_keyword">final</strong> Object retval) {
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>          <strong class="jxr_keyword">final</strong> Service service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>          <strong class="jxr_keyword">final</strong> StringBuilder builder = <strong class="jxr_keyword">new</strong> StringBuilder(retval.toString());
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>          builder.append(<span class="jxr_string">" for "</span>);
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>          builder.append(service.getId());
@@ -53,7 +53,7 @@
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      @Override
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> String[] resolveFrom(<strong class="jxr_keyword">final</strong> JoinPoint joinPoint, <strong class="jxr_keyword">final</strong> Exception ex) {
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">final</strong> Service service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String[] {service.getId()};
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      }
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  }

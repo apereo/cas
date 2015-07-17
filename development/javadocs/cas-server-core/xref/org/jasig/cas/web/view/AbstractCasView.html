@@ -69,7 +69,7 @@
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * @param model the model</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     * @return the assertion from</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/validation/Assertion.html">Assertion</a> getAssertionFrom(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Assertion getAssertionFrom(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">return</strong> (Assertion) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      }
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>  
@@ -90,7 +90,7 @@
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">     * @return the assertion from</em>
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">     * @since 4.1.0</em>
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> getPrimaryAuthenticationFrom(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Authentication getPrimaryAuthenticationFrom(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          <strong class="jxr_keyword">return</strong> getAssertionFrom(model).getPrimaryAuthentication();
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>      }
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>  
@@ -102,7 +102,7 @@
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     * @return the authentication attribute</em>
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> String getAuthenticationAttribute(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model, <strong class="jxr_keyword">final</strong> String attributeName) {
-<a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/Authentication.html">Authentication</a> authn = getPrimaryAuthenticationFrom(model);
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>          <strong class="jxr_keyword">final</strong> Authentication authn = getPrimaryAuthenticationFrom(model);
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>          <strong class="jxr_keyword">return</strong> (String) authn.getAttributes().get(attributeName);
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>      }
 <a class="jxr_linenumber" name="L100" href="#L100">100</a>     <em class="jxr_javadoccomment">/**</em>
@@ -112,7 +112,7 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a> <em class="jxr_javadoccomment">     * @return the assertion from</em>
 <a class="jxr_linenumber" name="L105" href="#L105">105</a> <em class="jxr_javadoccomment">     * @since 4.1.0</em>
 <a class="jxr_linenumber" name="L106" href="#L106">106</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Principal.html">Principal</a> getPrincipal(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Principal getPrincipal(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         <strong class="jxr_keyword">return</strong> getPrimaryAuthenticationFrom(model).getPrincipal();
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>     }
 <a class="jxr_linenumber" name="L110" href="#L110">110</a> 
@@ -204,7 +204,7 @@
 <a class="jxr_linenumber" name="L196" href="#L196">196</a> <em class="jxr_javadoccomment">     * @param model the model</em>
 <a class="jxr_linenumber" name="L197" href="#L197">197</a> <em class="jxr_javadoccomment">     * @return the validated service from</em>
 <a class="jxr_linenumber" name="L198" href="#L198">198</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/Service.html">Service</a> getServiceFrom(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Service getServiceFrom(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>         <strong class="jxr_keyword">return</strong> (Service) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE);
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>     }
 <a class="jxr_linenumber" name="L202" href="#L202">202</a> 
@@ -217,7 +217,7 @@
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Collection&lt;Authentication&gt; getChainedAuthentications(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
 <a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; chainedAuthenticationsToReturn = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L211" href="#L211">211</a> 
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/validation/Assertion.html">Assertion</a> assertion = getAssertionFrom(model);
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getAssertionFrom(model);
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; chainedAuthentications = assertion.getChainedAuthentications();
 <a class="jxr_linenumber" name="L214" href="#L214">214</a> 
 <a class="jxr_linenumber" name="L215" href="#L215">215</a>         <em class="jxr_javadoccomment">/**</em>

@@ -12,7 +12,6 @@ org.jasig.cas.services
 org.jasig.cas.services.jmx
 org.jasig.cas.services.support
 org.jasig.cas.ticket
-org.jasig.cas.ticket.proxy
 org.jasig.cas.ticket.proxy.support
 org.jasig.cas.ticket.registry
 org.jasig.cas.ticket.registry.support

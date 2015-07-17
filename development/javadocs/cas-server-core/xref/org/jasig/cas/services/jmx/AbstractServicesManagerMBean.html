@@ -92,7 +92,7 @@
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>      @ManagedOperation(description = <span class="jxr_string">"Can remove a service based on its identifier."</span>)
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>      @ManagedOperationParameter(name=<span class="jxr_string">"id"</span>, description = <span class="jxr_string">"the identifier to remove"</span>)
-<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> removeService(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> id) {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> RegisteredService removeService(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> id) {
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.servicesManager.delete(id);
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      }
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
@@ -125,7 +125,7 @@
 <a class="jxr_linenumber" name="L117" href="#L117">117</a> <em class="jxr_javadoccomment">     * @param newState the new state</em>
 <a class="jxr_linenumber" name="L118" href="#L118">118</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L119" href="#L119">119</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> changeEnabledState(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> id, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> newState) {
-<a class="jxr_linenumber" name="L120" href="#L120">120</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> r = <strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(id);
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>         <strong class="jxr_keyword">final</strong> RegisteredService r = <strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(id);
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         Assert.notNull(r, <span class="jxr_string">"invalid RegisteredService id"</span>);
 <a class="jxr_linenumber" name="L122" href="#L122">122</a> 
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>         <em class="jxr_comment">// we screwed up our APIs in older versions of CAS, so we need to CAST this to do anything useful.</em>

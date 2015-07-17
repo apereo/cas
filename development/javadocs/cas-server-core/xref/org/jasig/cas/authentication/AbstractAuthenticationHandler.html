@@ -37,11 +37,11 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * @author Marvin S. Addison</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> * @since 4.0.0</em>
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/authentication/AbstractAuthenticationHandler.html">AbstractAuthenticationHandler</a> <strong class="jxr_keyword">implements</strong> <a href="../../../../org/jasig/cas/authentication/AuthenticationHandler.html">AuthenticationHandler</a> {
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/authentication/AbstractAuthenticationHandler.html">AbstractAuthenticationHandler</a> <strong class="jxr_keyword">implements</strong> AuthenticationHandler {
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>      <em class="jxr_javadoccomment">/** Factory to create the principal type. **/</em>
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>      @NotNull
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../org/jasig/cas/authentication/principal/PrincipalFactory.html">PrincipalFactory</a> principalFactory = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/authentication/principal/DefaultPrincipalFactory.html">DefaultPrincipalFactory</a>();
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">protected</strong> PrincipalFactory principalFactory = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/authentication/principal/DefaultPrincipalFactory.html">DefaultPrincipalFactory</a>();
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <em class="jxr_javadoccomment">/** Configurable handler name. */</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">private</strong> String name;
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     * @param principalFactory the principal factory</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipalFactory(<strong class="jxr_keyword">final</strong> <a href="../../../../org/jasig/cas/authentication/principal/PrincipalFactory.html">PrincipalFactory</a> principalFactory) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipalFactory(<strong class="jxr_keyword">final</strong> PrincipalFactory principalFactory) {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">this</strong>.principalFactory = principalFactory;
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>      }
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>  }

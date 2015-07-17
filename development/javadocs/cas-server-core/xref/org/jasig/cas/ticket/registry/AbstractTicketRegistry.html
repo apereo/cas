@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * This is a published and supported CAS Server 3 API.</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> * &lt;/p&gt;</em>
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/ticket/registry/AbstractTicketRegistry.html">AbstractTicketRegistry</a> <strong class="jxr_keyword">implements</strong> TicketRegistry, <a href="../../../../../org/jasig/cas/monitor/TicketRegistryState.html">TicketRegistryState</a> {
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/ticket/registry/AbstractTicketRegistry.html">AbstractTicketRegistry</a> <strong class="jxr_keyword">implements</strong> TicketRegistry, TicketRegistryState {
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>      <em class="jxr_javadoccomment">/** The Commons Logging logger instance. */</em>
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(getClass());
@@ -55,7 +55,7 @@
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> &lt;T <strong class="jxr_keyword">extends</strong> Ticket&gt; T getTicket(<strong class="jxr_keyword">final</strong> String ticketId, <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> Ticket&gt; clazz) {
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>          Assert.notNull(clazz, <span class="jxr_string">"clazz cannot be null"</span>);
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/ticket/Ticket.html">Ticket</a> ticket = <strong class="jxr_keyword">this</strong>.getTicket(ticketId);
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>          <strong class="jxr_keyword">final</strong> Ticket ticket = <strong class="jxr_keyword">this</strong>.getTicket(ticketId);
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>          <strong class="jxr_keyword">if</strong> (ticket == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
