@@ -62,13 +62,15 @@
                         <td class="col-sm-3">{{ item.serviceId }}</td>
                         <td class="col-sm-4">{{ item.description | wordCharTrunc:60 }}</td>
                         <td class="col-sm-1">
-                            <button class="btn btn-success" ng-click="action.selectAction('add')">
-                                <i class="fa fa-lg fa-pencil"></i> <spring:message code="management.services.table.button.edit" />
+                            <button class="btn btn-success" ng-click="action.selectAction('edit')">
+                                <i class="fa fa-lg fa-pencil"></i>
+                                <spring:message code="management.services.table.button.edit" />
                             </button>
                         </td>
                         <td class="col-sm-1">
-                            <button class="btn btn-danger" onclick="javascript:;">
-                                <i class="fa fa-lg fa-trash"></i> <spring:message code="management.services.table.button.delete" />
+                            <button class="btn btn-danger" ng-click="serviceTableCtrl.openModalDelete(item)">
+                                <i class="fa fa-lg fa-trash"></i>
+                                <spring:message code="management.services.table.button.delete" />
                             </button>
                         </td>
                     </tr>
@@ -111,4 +113,24 @@
             </table><%-- end .services-table table --%>
         </div><%-- end .col-sm-12 div --%>
     </div><%-- end .row div --%>
+
+    <div class="modal" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true"
+        ng-class="{ 'show': serviceTableCtrl.modalItem, 'fade': !serviceTableCtrl.modalItem }">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div id="deleteModalLabel" class="modal-header">
+                    <h3><spring:message code="management.services.table.modal.delete.header" /></h3>
+                </div>
+                <div class="modal-body">
+                    <spring:message code="management.services.table.modal.delete.msgPt1" /> {{ serviceTableCtrl.modalItem.name }}.<br />
+                    <spring:message code="management.services.table.modal.delete.msgPt2" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="serviceTableCtrl.closeModalDelete();">Cancel</button>
+                    <button type="button" class="btn btn-danger btn-ok" ng-click="serviceTableCtrl.deleteService( serviceTableCtrl.modalItem )">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div><%-- end .services-table-container div --%>
