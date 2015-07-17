@@ -68,7 +68,7 @@
                             </button>
                         </td>
                         <td class="col-sm-1">
-                            <button class="btn btn-danger" ng-click="serviceTableCtrl.modalItem = item;">
+                            <button class="btn btn-danger" ng-click="serviceTableCtrl.openModalDelete(item)">
                                 <i class="fa fa-lg fa-trash"></i>
                                 <spring:message code="management.services.table.button.delete" />
                             </button>
@@ -126,7 +126,7 @@
                     <spring:message code="management.services.table.modal.delete.msgPt2" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="serviceTableCtrl.modalItem = null;">Cancel</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="serviceTableCtrl.closeModalDelete();">Cancel</button>
                     <button type="button" class="btn btn-danger btn-ok" ng-click="serviceTableCtrl.deleteService( serviceTableCtrl.modalItem )">Delete</a>
                 </div>
             </div>
