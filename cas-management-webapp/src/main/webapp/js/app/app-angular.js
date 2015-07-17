@@ -18,7 +18,9 @@
  */
 
 (function () {
-    var app = angular.module('casmgmt', ['ui.sortable']);
+    var app = angular.module('casmgmt', [
+            'ui.sortable',
+        ]);
 
     app.filter('checkmark', function() {
             return function(input) {
@@ -31,7 +33,7 @@
                 if(!limit || str.length <= limit) { return str; }
 
                 var newStr = str.substring(0, limit).replace(/\w+$/, '');
-                return (newStr ? newStr : str.substring(0, limit)) + '...';
+                return (newStr || str.substring(0, limit)) + '...';
             };
         })
         .filter('serviceTableFilter', function() {
@@ -104,7 +106,8 @@
     app.controller('ServicesTableController', [
         '$http',
         '$log',
-        function ($http, $log) {
+        '$timeout',
+        function ($http, $log, $timeout) {
             var servicesData = this;
 
             this.dataTable = [];
@@ -130,19 +133,52 @@
             };
 
             this.getServices = function() {
-                $http.get('js/app/data/services.json').success(function (data) { // TODO: fix URL
-                    servicesData.dataTable = data;
+                $http.get('js/app/data/services.json') // TODO: fix URL
+                    .success(function (data) {
+                        servicesData.dataTable = data;
+                    });
+            };
+
+            this.openModalDelete = function(item) {
+                servicesData.modalItem = item;
+                $timeout(function() {
+                    $('#confirm-delete .btn-default').focus();
+                }, 100);
+            };
+            this.closeModalDelete = function() {
+                servicesData.modalItem = null;
+            };
+            this.deleteService = function(item) {
+                $log.log('Deleting entry ' + item.name + ' (' + item.assignedId + ')...');
+                servicesData.closeModalDelete();
+
+                // TODO: Remove this visual placeholder, or move it into the post.success at least
+                angular.forEach(this.dataTable, function(row, idx) {
+                    if(row === item) {
+                        servicesData.dataTable.splice(idx, 1);
+                    }
                 });
+/**
+                $http.post('/rest/service/delete', {'assignedId': item.assignedId})
+                    .success(function() {
+                        servicesData.getServices(); // TODO: Same Q as for update, or we can remove from JS object.
+                    })
+                    .error(function(data, status) {
+                        // TODO: how do we want to show an error, like server down or etc?
+                    });
+**/
             };
 
             this.clearFilter = function() {
-                this.serviceTableQuery = "";
+                servicesData.serviceTableQuery = "";
             };
 
             this.toggleDetail = function(rowId) {
-                this.detailRow = this.detailRow == rowId ? 0 : rowId;
+                servicesData.detailRow = servicesData.detailRow == rowId ? 0 : rowId;
             };
 
+
+            // Final action
             this.getServices();
         }
     ]);
@@ -191,19 +227,12 @@
             ];
             this.reqHandler = this.reqHandlerList[0];
 
-            this.loadForm = function() {
-                // TODO: Needed?
-            };
-
             this.saveForm = function() {
-                $log.log('saveForm()');
                 serviceForm.validateForm();
-
-                //if(this.formErrors) {}
+                //if(this.formErrors) { ... }
             };
 
             this.validateForm = function() {
-                $log.log('validateForm()');
                 serviceForm.formErrors = null;
             };
 
@@ -213,10 +242,9 @@
             };
 
 /**
-            if($routeParams.assignedId) {
+            if($routeParams.assignedId) { // TODO: replace conditional with $routeParams.assignedId
                 $http.get('js/app/data/service-' + $routeParams.assignedId + '.json').success(function (data) { // TODO: fix URL
                     serviceForm.formData = data[0];
-                    serviceForm.loadForm();
                 });
             }
 **/
