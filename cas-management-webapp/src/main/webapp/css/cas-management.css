@@ -6795,7 +6795,7 @@ html {
   text-decoration: none;
 }
 .casmgmt-app .casmgmt-content .services-table .detail-row {
-  border: 1px solid #e6e6e6;
+  border-top: 1px solid #e6e6e6;
 }
 .casmgmt-app .casmgmt-content .services-table .detail-row tbody {
   border: none;
@@ -6818,18 +6818,12 @@ html {
 .casmgmt-app .casmgmt-content .services-table .tr-placeholder {
   display: table-row;
   height: 53px;
-  background-color: #aeffa6;
+  background-color: #c4e5c0;
 }
-.casmgmt-app .casmgmt-content .service-editor {
-  display: block;
-}
-.casmgmt-app .casmgmt-content .service-editor > .col-sm-12 {
-  display: block;
-}
-.casmgmt-app .casmgmt-content .service-editor > .col-sm-12 > .col-sm-6:nth-of-type(1) {
+.casmgmt-app .casmgmt-content .service-editor > .col-sm-12 > .col-sm-6:eq(0) {
   padding-left: 0;
 }
-.casmgmt-app .casmgmt-content .service-editor > .col-sm-12 > .col-sm-6:nth-of-type(2) {
+.casmgmt-app .casmgmt-content .service-editor > .col-sm-12 > .col-sm-6:eq(1) {
   padding-right: 0;
 }
 .casmgmt-app .casmgmt-content .services-summary-table td {
@@ -6847,6 +6841,21 @@ html {
 .casmgmt-app .casmgmt-content h1 {
   color: #50ac47;
   margin-bottom: 20px;
+}
+.casmgmt-app .modal {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.casmgmt-app .modal .modal-header {
+  color: #ffffff;
+  background-color: #333333;
+  border-bottom: none;
+}
+.casmgmt-app .modal .modal-header h3 {
+  margin: 0;
+}
+.casmgmt-app .modal .modal-footer {
+  padding: 0 15px 15px;
+  border-top: none;
 }
 .casmgmt-app #casmgmt-footer {
   background-color: #e6e6e6;
