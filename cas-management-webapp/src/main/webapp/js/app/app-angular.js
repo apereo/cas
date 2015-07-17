@@ -106,7 +106,8 @@
     app.controller('ServicesTableController', [
         '$http',
         '$log',
-        function ($http, $log) {
+        '$timeout',
+        function ($http, $log, $timeout) {
             var servicesData = this;
 
             this.dataTable = [];
@@ -138,9 +139,25 @@
                     });
             };
 
+            this.openModalDelete = function(item) {
+                servicesData.modalItem = item;
+                $timeout(function() {
+                    $('#confirm-delete .btn-default').focus();
+                }, 100);
+            };
+            this.closeModalDelete = function() {
+                servicesData.modalItem = null;
+            };
             this.deleteService = function(item) {
                 $log.log('Deleting entry ' + item.name + ' (' + item.assignedId + ')...');
-                servicesData.modalItem = null;
+                servicesData.closeModalDelete();
+
+                // TODO: Remove this visual placeholder, or move it into the post.success at least
+                angular.forEach(this.dataTable, function(row, idx) {
+                    if(row === item) {
+                        servicesData.dataTable.splice(idx, 1);
+                    }
+                });
 /**
                 $http.post('/rest/service/delete', {'assignedId': item.assignedId})
                     .success(function() {
@@ -153,11 +170,11 @@
             };
 
             this.clearFilter = function() {
-                this.serviceTableQuery = "";
+                servicesData.serviceTableQuery = "";
             };
 
             this.toggleDetail = function(rowId) {
-                this.detailRow = this.detailRow == rowId ? 0 : rowId;
+                servicesData.detailRow = servicesData.detailRow == rowId ? 0 : rowId;
             };
 
 
