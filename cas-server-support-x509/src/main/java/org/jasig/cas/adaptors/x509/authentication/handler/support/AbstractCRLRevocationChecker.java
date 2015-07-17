@@ -104,7 +104,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
                 }
             }
 
-            if (revokedCrls.size() == crls.size() && !revokedCrls.isEmpty()) {
+            if (revokedCrls.size() == crls.size()) {
                 final X509CRLEntry entry = revokedCrls.get(0);
                 logger.warn("All CRL entries have been revoked. Rejecting the first entry [{}]", entry);
                 throw new RevokedCertificateException(entry);
