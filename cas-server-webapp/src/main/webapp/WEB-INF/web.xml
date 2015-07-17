@@ -35,9 +35,9 @@
         <param-value>
             /WEB-INF/spring-configuration/*.xml
             /WEB-INF/deployerConfigContext.xml
-            <!-- this enables extensions and addons to contribute to overall CAS' application context
-                 by loading spring context files from classpath i.e. found in classpath jars, etc. -->
-            classpath*:/META-INF/spring/*.xml
+            <!-- this enables REST module extension to contribute to overall CAS' application context
+                 by loading its spring context file from classpath i.e. found in classpath jar if that module is included -->
+            classpath*:/META-INF/spring/rest-context.xml
         </param-value>
     </context-param>
 

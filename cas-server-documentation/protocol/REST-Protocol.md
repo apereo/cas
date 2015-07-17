@@ -41,7 +41,8 @@ To turn on the protocol, add the following to the `web.xml`:
 
 ...or delete the `web.xml` in the overlay altogether if there are no other customizations there as this mapping is provided by CAS' webapp module's `web.xml` out of the box.
 
-Please note that if there are local customizations in overlay's `web.xml`, the following `contextConfigLocation` `<context-param>` must also be added in order to enable the new REST module: `classpath*:/META-INF/spring/*.xml`. So the entire context-param block would look like this:
+Please note that if there are local customizations in overlay's `web.xml`, the following `contextConfigLocation` `<context-param>` must also be 
+added in order to enable the new REST module: `classpath*:/META-INF/spring/rest-context.xml`. So the entire context-param block would look like this:
 
 {% highlight xml %}
 <context-param>
@@ -49,7 +50,7 @@ Please note that if there are local customizations in overlay's `web.xml`, the f
     <param-value>
       /WEB-INF/spring-configuration/*.xml
       /WEB-INF/deployerConfigContext.xml
-      classpath*:/META-INF/spring/*.xml
+      classpath*:/META-INF/spring/rest-context.xml
     </param-value>
 </context-param>
 {% endhighlight %}
