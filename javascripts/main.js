@@ -139,7 +139,7 @@ function generateTableOfContentsForPage() {
       }
       
       $('#tableOfContents').append("<li><a href='#" + this.id + "'>" + alignment +
-          this.innerText + "</a></li>");
+          this.textContent + "</a></li>");
     }
   });
   $('#tableOfContents').append("</ul>");
