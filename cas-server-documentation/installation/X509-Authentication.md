@@ -166,6 +166,7 @@ Configuration properties:
 | `cache`               | Ehcache `Cache` component.
 | `fetcher`             | Component responsible for fetching of the CRL resource. (default=`ResourceCRLFetcher`)
 | `throwOnFetchFailure` | Throws errors if fetching of the CRL resource fails.
+| `checkAll`   | Flag to indicate whether all CRLs should be checked for the certificate resource. 
 
 `CRLDistributionPointRevocationChecker` Example:
 
@@ -193,6 +194,7 @@ Configuration properties:
 <bean id="revocationChecker"
       class="org.jasig.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationChecker"
       c:cache-ref="crlCache"
+      p:checkAll="false"
       p:unavailableCRLPolicy-ref="denyPolicy"
       p:thresholdPolicy-ref="thresholdPolicy" />
 {% endhighlight %}
