@@ -114,21 +114,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     }
 
     /**
-     * Helper method to construct a handler result
-     * on successful authentication events.
-     *
-     * @param credential the credential on which the authentication was successfully performed.
-     * Note that this credential instance may be different from what was originally provided
-     * as transformation of the username may have occurred, if one is in fact defined.
-     * @param principal the resolved principal
-     * @param warnings the warnings
-     * @return the constructed handler result
-     */
-    protected final HandlerResult createHandlerResult(final Credential credential, final Principal principal,
-            final List<MessageDescriptor> warnings) {
-        return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
-    }
-    /**
      * Sets the PasswordEncoder to be used with this class.
      *
      * @param passwordEncoder the PasswordEncoder to use when encoding
