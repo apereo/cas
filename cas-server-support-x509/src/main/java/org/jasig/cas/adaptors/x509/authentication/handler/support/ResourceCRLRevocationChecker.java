@@ -28,6 +28,7 @@ import javax.security.auth.x500.X500Principal;
 import javax.validation.constraints.Min;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -174,13 +175,9 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
         return this.crlIssuerMap.containsKey(issuer);
     }
 
-    /**
-     * {@inheritDoc}
-     * @see AbstractCRLRevocationChecker#getCRL(X509Certificate)
-     */
     @Override
-    protected X509CRL getCRL(final X509Certificate cert) {
-        return this.crlIssuerMap.get(cert.getIssuerX500Principal());
+    protected Collection<X509CRL> getCRLs(final X509Certificate cert) {
+        return Collections.singleton(this.crlIssuerMap.get(cert.getIssuerX500Principal()));
     }
 
     @Override
