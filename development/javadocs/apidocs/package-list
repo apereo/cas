@@ -48,6 +48,7 @@ org.jasig.cas.support.saml
 org.jasig.cas.support.saml.authentication
 org.jasig.cas.support.saml.authentication.principal
 org.jasig.cas.support.saml.util
+org.jasig.cas.support.saml.web.flow.mdui
 org.jasig.cas.support.saml.web.support
 org.jasig.cas.support.saml.web.view
 org.jasig.cas.support.spnego.authentication.handler.support
