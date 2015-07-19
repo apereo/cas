@@ -36,7 +36,7 @@
         <property name="parametersToCheck">
             <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
                 <constructor-arg type="java.lang.String"
-                                 value="${cas.http.check.params:ticket,service,renew,gateway,warn,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService}"/>
+                                 value="${cas.http.check.params:ticket,service,renew,gateway,warn,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId}"/>
             </bean>
         </property>
         <property name="charactersToForbid">
