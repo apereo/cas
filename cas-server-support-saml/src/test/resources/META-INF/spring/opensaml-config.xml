@@ -78,7 +78,7 @@
     <!-- Dynamic metadata retrieval -->
     <bean id="samlDynamicMetadataUIParserAction" class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
           c:entityIdParameterName="entityId"
-          c:metadataAdapter-ref="staticMetadataResolverAdapter"/>
+          c:metadataAdapter-ref="dynamicMetadataResolverAdapter"/>
 
     <bean id="dynamicMetadataResolverAdapter" class="org.jasig.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
           c:metadataResources-ref="dynaMetadataResources"
