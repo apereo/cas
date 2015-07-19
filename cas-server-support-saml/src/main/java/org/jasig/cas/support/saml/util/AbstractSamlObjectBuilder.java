@@ -124,8 +124,7 @@ public abstract class AbstractSamlObjectBuilder {
     public QName getSamlObjectQName(final Class objectType) throws RuntimeException {
         try {
             final Field f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
-            final QName qName = (QName) f.get(null);
-            return qName;
+            return (QName) f.get(null);
         } catch (final NoSuchFieldException e) {
             throw new IllegalStateException("Cannot find field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD);
         } catch (final IllegalAccessException e) {
@@ -195,7 +194,7 @@ public abstract class AbstractSamlObjectBuilder {
             final MarshallerFactory marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
             final Marshaller marshaller = marshallerFactory.getMarshaller(object);
             if (marshaller == null) {
-                throw new IllegalArgumentException("Could not obtain marshaller for object " + object);
+                throw new IllegalArgumentException("Cannot obtain marshaller for object " + object.getElementQName());
             }
             final Element element = marshaller.marshall(object);
             element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", SAMLConstants.SAML20_NS);

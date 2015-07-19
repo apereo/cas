@@ -32,8 +32,8 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:component-scan base-package="org.jasig.cas.support.saml"/>
-    <context:annotation-config/>
+    <context:component-scan base-package="org.jasig.cas.support.saml" annotation-config="true" />
+    <context:annotation-config />
 
     <bean id="shibboleth.OpenSAMLConfig" class="org.jasig.cas.support.saml.OpenSamlConfigBean"
           depends-on="shibboleth.ParserPool"/>
@@ -74,6 +74,87 @@
           class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
     <bean id="shibboleth.UnmarshallerFactory" factory-method="getUnmarshallerFactory"
           class="org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport" depends-on="shibboleth.OpenSAMLConfig"/>
+
+    <!-- Dynamic metadata retrieval -->
+    <bean id="samlDynamicMetadataUIParserAction" class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
+          c:entityIdParameterName="entityId"
+          c:metadataAdapter-ref="staticMetadataResolverAdapter"/>
+
+    <bean id="dynamicMetadataResolverAdapter" class="org.jasig.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
+          c:metadataResources-ref="dynaMetadataResources"
+          p:requireValidMetadata="true" />
+
+    <util:map id="dynaMetadataResources">
+        <entry key="http://mdq-beta.incommon.org/global/entities/">
+            <bean class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
+                <property name="filters">
+                    <list />
+                </property>
+            </bean>
+        </entry>
+    </util:map>
+
+
+    <bean id="samlMetadataUIParserAction" class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
+          c:entityIdParameterName="entityId"
+          c:metadataAdapter-ref="staticMetadataResolverAdapter"/>
+
+    <bean id="staticMetadataResolverAdapter" class="org.jasig.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter"
+          c:metadataResources-ref="metadataResources"
+          p:refreshIntervalInMinutes="300"
+          p:requireValidMetadata="true" />
+
+    <util:map id="metadataResources">
+        <!-- http://md.incommon.org/InCommon/InCommon-metadata.xml -->
+        <entry key="classpath:/sample-metadata.xml"
+               value-ref="inCommonMetadataFilters" />
+    </util:map>
+
+    <bean id="inCommonMetadataFilters" class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
+        <property name="filters">
+            <list>
+                <!--
+                <bean class="org.opensaml.saml.metadata.resolver.filter.impl.RequiredValidUntilFilter"
+                      c:maxValidity="0"  />
+                -->
+                <bean class="org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter"
+                      c:engine-ref="inCommonTrustEngine" p:requireSignature="false"  />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="inCommonTrustEngine" class="org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine"
+            c:keyInfoResolver-ref="keyInfoResolver"
+            c:resolver-ref="credentialResolver" />
+
+    <bean id="keyInfoResolver" class="org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver">
+        <constructor-arg name="keyInfoProviders">
+            <list>
+                <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider" />
+                <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider" />
+                <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider" />
+                <bean class="org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="credentialResolver" class="org.opensaml.security.credential.impl.StaticCredentialResolver"
+          c:credential-ref="credentialFactoryBean" />
+
+    <bean id="credentialFactoryBean"
+          class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialFactoryBean"
+          p:publicKeyInfo="classpath:inc-md-pub.pem" >
+    </bean>
+
+    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+            c:serviceRegistryDao-ref="serviceRegistryDao" />
+
+    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+        <property name="registeredServices">
+            <bean class="org.jasig.cas.services.RegexRegisteredService"
+                    p:id="0" p:serviceId="^.+" p:name="Test" p:description="Description" />
+        </property>
+    </bean>
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
