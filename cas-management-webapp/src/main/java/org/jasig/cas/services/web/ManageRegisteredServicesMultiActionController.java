@@ -101,13 +101,11 @@ public final class ManageRegisteredServicesMultiActionController {
     @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.GET})
     public ModelAndView deleteRegisteredService(
             @RequestParam("id") final long idAsLong) {
-        
-        final ModelAndView modelAndView = new ModelAndView(new RedirectView(
-                "manage.html", true), "status", "deleted");
-
         final RegisteredService r = this.servicesManager.delete(idAsLong);
+        final String status = r != null ? "deleted" : "failed";
+        final ModelAndView modelAndView = new ModelAndView(new RedirectView(
+                "manage.html", true), "status", status);
         modelAndView.addObject("serviceName", r != null ? r.getName() : "");
-
         return modelAndView;
     }
 
