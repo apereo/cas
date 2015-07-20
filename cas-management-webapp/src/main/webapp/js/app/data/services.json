@@ -1,6 +1,7 @@
 [
     {
         "assignedId": 11234,
+        "sasCASEnabled": true,
         "serviceId": "https://hello.+",
         "name": "Apereo",
         "description": "The Apereo service for authentication.",
@@ -19,6 +20,7 @@
     },
     {
         "assignedId": 43021,
+        "sasCASEnabled": false,
         "serviceId": "http?://batman**",
         "name": "HTTPS and IMAPS",
         "description": "The HTTP and IMAPS service for authentication.",
@@ -38,6 +40,7 @@
     },
     {
         "assignedId": 90432,
+        "sasCASEnabled": true,
         "serviceId": "http?://*.shield.net+",
         "name": "Another Service",
         "description": "Another service you can use for authentication. But if you really want, then you can pick something pre-made. Maybe?",
