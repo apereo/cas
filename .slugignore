@@ -1,4 +1,7 @@
 *.psd
 *.pdf
-/test
-/spec
+**/src/test/
+.m2
+test
+**/*.md
+cas-server-documentation/
