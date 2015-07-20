@@ -30,7 +30,13 @@
   <description>CAS core</description>
   <dependencies>
         <dependency>
-            <groupId>com.github.inspektr</groupId>
+          <groupId>org.jasig.cas</groupId>
+          <artifactId>cas-server-core-api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>
         </dependency>
@@ -58,9 +64,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>compile</scope>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
         </dependency>
       
         <dependency>
@@ -180,7 +185,7 @@
         </dependency>
 
         <dependency>
-          <groupId>com.github.inspektr</groupId>
+          <groupId>org.jasig.inspektr</groupId>
           <artifactId>inspektr-support-spring</artifactId>
           <scope>test</scope>
           <exclusions>
@@ -220,29 +225,11 @@
             <groupId>org.bitbucket.b_c</groupId>
             <artifactId>jose4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
   </dependencies>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-            <configuration>
-              <classifier>client</classifier>
-              <excludes>
-                <exclude>**/persistence.xml</exclude>
-              </excludes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
   <properties>
     <cs.dir>${project.parent.basedir}</cs.dir>

@@ -19,7 +19,7 @@
 
 --%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<%@ page language="java"  session="false" %>
+<%@ page language="java" session="false" %>
 <%@ page pageEncoding="UTF-8" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
@@ -29,38 +29,46 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title><spring:message code="management.services.title" /></title>
-  <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
-  <link rel="icon" href="<c:url value="../favicon.ico" />" type="image/x-icon" />
-  <link rel="stylesheet" href="<c:url value="/css/management.css" />" type="text/css" />
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-  
-  <script type="text/javascript" src="<c:url value="/js/management.js" />"></script>
+    <title><spring:message code="management.services.title"/></title>
+    <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>"/>
+    <link rel="icon" href="<c:url value="../favicon.ico" />" type="image/x-icon"/>
+    <link rel="stylesheet" href="<c:url value="/css/management.css" />" type="text/css"/>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 
-  <style type="text/css">
-  #nav-main #${pageTitle} span {
-      background:#fff;
-      color: #000;
-  }
-  </style>
+    <script type="text/javascript" src="<c:url value="/js/management.js" />"></script>
+
+    <style type="text/css">
+        #nav-main
+
+        #
+        ${pageTitle}
+        span {
+            background: #fff;
+            color: #000;
+        }
+    </style>
 </head>
 
 <body>
 <div id="header">
-  <div id="nav-system">
-    <ul>
-    	<li><a href="logout.html" title="logout of current session"><spring:message code="management.services.link.logout" /></a></li>
-    </ul>
-  </div>
-  <p id="tagline"><spring:message code="application.title" /></p>
-  <h1 id="app-name"><spring:message code="management.services.title" /></h1>
+    <div id="nav-system">
+        <ul>
+            <li><a href="logout.html" title="logout of current session"><spring:message
+                    code="management.services.link.logout"/></a></li>
+        </ul>
+    </div>
+    <p id="tagline"><spring:message code="application.title"/></p>
+
+    <h1 id="app-name"><spring:message code="management.services.title"/></h1>
 </div>
 <div id="nav-main">
-  <ul>
-  	<li><a id="addServiceView" href="add.html"><span><spring:message code="addServiceView" /></span></a></li>
-  	<li><a id="manageServiceView" href="manage.html"><span><spring:message code="manageServiceView" /></span></a></li>
-  </ul>
+    <ul>
+        <li><a id="addServiceView" href="add.html"><span><spring:message code="addServiceView"/></span></a></li>
+        <li><a id="manageServiceView" href="manage.html"><span><spring:message code="manageServiceView"/></span></a>
+        </li>
+    </ul>
 </div>
 <!-- CONTENT -->
 <div id="content">

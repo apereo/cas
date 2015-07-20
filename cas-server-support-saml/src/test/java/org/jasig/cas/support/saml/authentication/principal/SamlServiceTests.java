@@ -19,8 +19,8 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.authentication.principal.Response.ResponseType;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -28,11 +28,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import static org.junit.Assert.*;
 
 /**
+ * Test cases for {@link SamlService}.
  * @author Scott Battaglia
  * @since 3.1
- *
  */
-public class SamlServiceTests {
+public class SamlServiceTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponse() {
@@ -42,7 +42,7 @@ public class SamlServiceTests {
 
         final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertTrue(response.getUrl().contains("SAMLart="));
     }
 
@@ -63,7 +63,7 @@ public class SamlServiceTests {
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
-        assertEquals(ResponseType.REDIRECT, response.getResponseType());
+        assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("SAMLart="));
     }
 

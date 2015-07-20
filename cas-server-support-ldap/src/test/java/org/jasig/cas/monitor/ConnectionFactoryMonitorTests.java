@@ -19,6 +19,7 @@
 package org.jasig.cas.monitor;
 
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +36,14 @@ import static org.junit.Assert.*;
 @ContextConfiguration({"/ldap-context.xml", "/ldap-monitor-test.xml"})
 public class ConnectionFactoryMonitorTests extends AbstractLdapTests {
 
+
     @Autowired
     private ConnectionFactoryMonitor monitor;
+
+    @BeforeClass
+    public static void bootstrap() throws Exception {
+        initDirectoryServer();
+    }
 
     @Test
     public void verifyObserve() throws Exception {

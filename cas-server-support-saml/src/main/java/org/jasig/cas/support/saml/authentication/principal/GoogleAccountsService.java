@@ -20,6 +20,7 @@ package org.jasig.cas.support.saml.authentication.principal;
 
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -30,13 +31,13 @@ import org.springframework.util.StringUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.joda.time.DateTime;
-import org.opensaml.saml2.core.Assertion;
-import org.opensaml.saml2.core.AuthnContext;
-import org.opensaml.saml2.core.AuthnStatement;
-import org.opensaml.saml2.core.Conditions;
-import org.opensaml.saml2.core.NameID;
-import org.opensaml.saml2.core.StatusCode;
-import org.opensaml.saml2.core.Subject;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.AuthnContext;
+import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.Conditions;
+import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.StatusCode;
+import org.opensaml.saml.saml2.core.Subject;
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
 import java.security.PrivateKey;
@@ -159,7 +160,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, this.relayState);
 
-        return Response.getPostResponse(getOriginalUrl(), parameters);
+        return DefaultResponse.getPostResponse(getOriginalUrl(), parameters);
     }
 
     /**
@@ -184,11 +185,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final RegisteredService svc = this.servicesManager.findServiceBy(this);
         final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal(), this);
 
-        final org.opensaml.saml2.core.Response response = BUILDER.newResponse(
+        final org.opensaml.saml.saml2.core.Response response = BUILDER.newResponse(
                 BUILDER.generateSecureRandomId(),
                 currentDateTime,
                 getId(), this);
-        response.setStatus(BUILDER.newStatus(StatusCode.SUCCESS_URI, null));
+        response.setStatus(BUILDER.newStatus(StatusCode.SUCCESS, null));
 
         final AuthnStatement authnStatement = BUILDER.newAuthnStatement(
                 AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
@@ -209,7 +210,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final StringWriter writer = new StringWriter();
         BUILDER.marshalSamlXmlObject(response, writer);
 
-        logger.debug("Generated Google SAML response: {}", writer.toString());
-        return writer.toString();
+        final String result = writer.toString();
+        logger.debug("Generated Google SAML response: {}", result);
+        return result;
     }
 }

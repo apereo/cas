@@ -50,7 +50,7 @@ public class SamlCompliantLogoutMessageCreatorTests {
         final SingleLogoutService service = mock(SingleLogoutService.class);
         when(service.getOriginalUrl()).thenReturn(TestUtils.CONST_TEST_URL);
         final URL logoutUrl = new URL(service.getOriginalUrl());
-        final LogoutRequest request = new LogoutRequest("TICKET-ID", service, logoutUrl);
+        final DefaultLogoutRequest request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl);
 
         final String msg = builder.create(request);
 

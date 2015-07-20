@@ -32,19 +32,32 @@
     <p><spring:message code="screen.cookies.disabled.message" /></p>
 </div>
 
+
 <c:if test="${not empty registeredService}">
     <c:set var="registeredServiceLogo" value="images/webapp.png"/>
-    <c:if test="${not empty registeredService.logo}">
-        <c:set var="registeredServiceLogo" value="${registeredService.logo}"/>
-    </c:if>
+    <c:set var="registeredServiceName" value="${registeredService.name}"/>
+    <c:set var="registeredServiceDescription" value="${registeredService.description}"/>
+
+    <c:choose>
+        <c:when test="${not empty mduiContext}">
+            <c:if test="${not empty mduiContext.logoUrl}">
+                <c:set var="registeredServiceLogo" value="${mduiContext.logoUrl}"/>
+            </c:if>
+            <c:set var="registeredServiceName" value="${mduiContext.displayName}"/>
+            <c:set var="registeredServiceDescription" value="${mduiContext.description}"/>
+        </c:when>
+        <c:when test="${not empty registeredService.logo}">
+            <c:set var="registeredServiceLogo" value="${registeredService.logo}"/>
+        </c:when>
+    </c:choose>
 
     <div id="serviceui" class="serviceinfo">
         <table>
             <tr>
                 <td><img src="${registeredServiceLogo}"></td>
                 <td id="servicedesc">
-                    <h1>${fn:escapeXml(registeredService.name)}</h1>
-                    <p>${fn:escapeXml(registeredService.description)}</p>
+                    <h1>${fn:escapeXml(registeredServiceName)}</h1>
+                    <p>${fn:escapeXml(registeredServiceDescription)}</p>
                 </td>
             </tr>
         </table>
@@ -140,6 +153,7 @@
                             <option value="de">Deutsch</option>
                             <option value="ja">Japanese</option>
                             <option value="hr">Croatian</option>
+                            <option value="uk">Ukranian</option>
                             <option value="cs">Czech</option>
                             <option value="sl">Slovenian</option>
                             <option value="pl">Polish</option>
@@ -169,6 +183,7 @@
                         <li><a href="${loginUrl}de">Deutsch</a></li>
                         <li><a href="${loginUrl}ja">Japanese</a></li>
                         <li><a href="${loginUrl}hr">Croatian</a></li>
+                        <li><a href="${loginUrl}uk">Ukranian</a></li>
                         <li><a href="${loginUrl}cs">Czech</a></li>
                         <li><a href="${loginUrl}sl">Slovenian</a></li>
                         <li><a href="${loginUrl}ca">Catalan</a></li>

@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.web.support;
 
-import com.github.inspektr.audit.AuditActionContext;
-import com.github.inspektr.audit.AuditPointRuntimeInfo;
-import com.github.inspektr.audit.AuditTrailManager;
-import com.github.inspektr.common.web.ClientInfo;
-import com.github.inspektr.common.web.ClientInfoHolder;
+import org.jasig.inspektr.audit.AuditActionContext;
+import org.jasig.inspektr.audit.AuditPointRuntimeInfo;
+import org.jasig.inspektr.audit.AuditTrailManager;
+import org.jasig.inspektr.common.web.ClientInfo;
+import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -148,6 +148,6 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      */
     protected String constructUsername(final HttpServletRequest request, final String usernameParameter) {
         final String username = request.getParameter(usernameParameter);
-        return "[username: " + (username != null ? username : "") + "]";
+        return "[username: " + (username != null ? username : "") + ']';
     }
 }

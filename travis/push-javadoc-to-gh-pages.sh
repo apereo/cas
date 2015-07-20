@@ -28,9 +28,9 @@ invokeDoc=false
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1) 
-  		echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
-  		invokeJavadoc=true;
-  		invokeDoc=true;;
+        echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
+        invokeJavadoc=true;
+        invokeDoc=true;;
   esac
 fi
 
@@ -52,7 +52,7 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Started to publish latest Javadoc to gh-pages...\n"
 
   echo -e "Invoking Maven to generate the project site...\n"
-  mvn site site:stage -q -ff -B -P nocheck -Dversions.skip=false
+  mvn -T 20 site site:stage -q -ff -B -P nocheck -Dversions.skip=false
   
   echo -e "Copying the generated docs over...\n"
   cp -R target/staging $HOME/javadoc-latest

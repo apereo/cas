@@ -20,6 +20,13 @@ CAS user interface should properly and comfortably lend itself to all major brow
 
 Note that certain older version of IE, particularly IE 9 and below may impose additional difficulty in getting the right UI configuration in place.
 
+## Internet Explorer
+To instruct CAS to render UI in compatibility mode, add the following to relevant UI components:
+
+{% highlight jsp %}
+<meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+{% endhighlight %}
+
 #Getting Started
 
 ##CSS
@@ -100,7 +107,7 @@ head.ready(document, function() {
 });
 
 function resourceLoadedSuccessfully() {
-	...
+    ...
 }
 {% endhighlight %}
 
@@ -113,7 +120,7 @@ functions that depend on JQuery inside the actual page.
 
 {% highlight javascript %}
 function jqueryReady() {
-	//Custom Javascript tasks can be carried out now via JQuery...
+    //Custom Javascript tasks can be carried out now via JQuery...
 }
 {% endhighlight %}
 
@@ -136,7 +143,7 @@ $('#password').keypress(function(e) {
 
 ###Browser Cookie Support
 For CAS to honor a single sign-on session, the browser MUST support and accept cookies. CAS will notify the
-user if the browser has turned off its support via cookies. This behavior is controlled via the `cas.js` file.
+user if the browser has turned off its support for cookies. This behavior is controlled via the `cas.js` file.
 
 {% highlight javascript %}
 function areCookiesEnabled() {
@@ -327,11 +334,13 @@ In the event that the code is not found in the activated resource bundle, the co
 ##Themes
 With the introduction of [Service Management application](Service-Management.html), deployers are now able to switch the themes based on different services. For example, you may want to have different login screens (different styles) for staff applications and student applications. Or, you want to show two layouts for day time and night time. This document could help you go through the basic settings to achieve this.
 
-Note that support for themes comes two flavors:
+Note that support for themes comes with the following components:
 
-1. A `ServiceThemeResolver` can be configured to decorate CAS views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default JSP views for CAS but will simply apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
+| Component                      | Description 
+|--------------------------------+--------------------------------------------------------------------------------+
+| `ServiceThemeResolver`  | can be configured to decorate CAS views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default JSP views for CAS but will simply apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
+| `RegisteredServiceThemeBasedViewResolver` | If there is a need to present an entirely new set of views for a given service, such that the structure and layout of the page needs an overhaul with additional icons, images, text, etc then this component` needs to be configured. This component will have the ability to resolve a new set of views that may entirely be different from the default JSPs. The `theme` property of a given registered service in the Service Registry will still need to be configured to note the set of views that are to be loaded.
 
-2. If there is a need to present an entirely new set of views for a given service, such that the structure and layout of the page needs a overhaul with additional icons, images, text, etc then a `RegisteredServiceThemeBasedViewResolver` needs to be configured. This component will have the ability to resolve a new set of views that may entirely be different from the default JSPs. The `theme` property of a given registered service in the Service Registry will still need to be configured to note the set of views that are to be loaded.
 
 ###`ServiceThemeResolver`
 Configuration of service-specific themes is backed by the Spring framework and provided by the following component:
@@ -361,7 +370,7 @@ Views associated with a particular theme by default are expected to be found at:
 <bean id="themeResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
     c:defaultThemeName="${cas.themeResolver.defaultThemeName}"
     c:servicesManager-ref="servicesManager"
-	p:pathPrefix="/WEB-INF/view/jsp" />
+    p:pathPrefix="/WEB-INF/view/jsp" />
 {% endhighlight %}
 
 ####Configuration

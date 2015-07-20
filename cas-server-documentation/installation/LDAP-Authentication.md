@@ -221,6 +221,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 <bean id="abstractConnectionPool" abstract="true"
       class="org.ldaptive.pool.BlockingConnectionPool"
       init-method="initialize"
+      destroy-method="close"
       p:poolConfig-ref="ldapPoolConfig"
       p:blockWaitTime="${ldap.pool.blockWaitTime}"
       p:validator-ref="searchValidator"
@@ -314,6 +315,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 <bean id="abstractConnectionPool" abstract="true"
       class="org.ldaptive.pool.BlockingConnectionPool"
       init-method="initialize"
+      destroy-method="close"
       p:poolConfig-ref="ldapPoolConfig"
       p:blockWaitTime="${ldap.pool.blockWaitTime}"
       p:validator-ref="searchValidator"
@@ -446,6 +448,26 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
 <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 {% endhighlight %}
 
+## LDAP Provider Configuration
+In certain cases, it may be desirable to use a specific provider implementation when
+attempting to establish connections to LDAP. In order to do this, the `connectionFactory`
+configuration must be modified to include a reference to the selected provider.
+
+Here's an example for configuring an UnboundID provider for a given connection factory:
+
+{% highlight xml %}
+...
+<bean id="unboundidLdapProvider"
+      class="org.ldaptive.provider.unboundid.UnboundIDProvider" />
+
+<bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+      p:connectionConfig-ref="connectionConfig"
+      p:provider-ref="unboundidLdapProvider"  />
+...
+{% endhighlight %}
+
+Note that additional dependencies must be available to CAS at runtime, so it's able to locate
+the provider implementation and supply that to connections. 
 
 ## LDAP Properties Starter
 The following LDAP configuration properties provide a reasonable starting point for configuring the LDAP
@@ -566,9 +588,9 @@ Next, you have to explicitly define an LDAP-specific response handler in your `A
 
 {% highlight xml %}
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
-	c:resolver-ref="dnResolver"
-	c:handler-ref="authHandler">
-	<property name="authenticationResponseHandlers">
+    c:resolver-ref="dnResolver"
+    c:handler-ref="authHandler">
+    <property name="authenticationResponseHandlers">
         <util:list>
             <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" />
         </util:list>
@@ -582,12 +604,12 @@ Last, for OpenLDAP, you have to handle the `PasswordPolicy` controls in the `Bin
 
 {% highlight xml %}
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
-	p:connectionFactory-ref="bindPooledLdapConnectionFactory">
-	<property name="authenticationControls">
+    p:connectionFactory-ref="bindPooledLdapConnectionFactory">
+    <property name="authenticationControls">
         <util:list>
                 <bean class="org.ldaptive.control.PasswordPolicyControl" />
         </util:list>
-	</property>
+    </property>
 </bean>
 {% endhighlight %}  
 

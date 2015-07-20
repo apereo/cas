@@ -21,8 +21,9 @@ package org.jasig.cas.authentication.handler.support;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
-import org.jasig.cas.Message;
+import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -124,8 +125,8 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * @return the constructed handler result
      */
     protected final HandlerResult createHandlerResult(final Credential credential, final Principal principal,
-            final List<Message> warnings) {
-        return new HandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+            final List<MessageDescriptor> warnings) {
+        return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }
     /**
      * Sets the PasswordEncoder to be used with this class.

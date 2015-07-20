@@ -8,19 +8,19 @@ The CAS server implements the CAS protocol on server side and may even behave li
 
 But the CAS server can also act as a client using the [pac4j library](https://github.com/leleuj/pac4j) and delegate the authentication to:
 
-* another CAS server
-* an OAuth provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
-* an OpenID provider: myopenid.com
-* a SAML identity provider
-* an OpenID Connect identity provider.
+* Another CAS server
+* An OAuth provider: Facebook, Twitter, Google, LinkedIn, Yahoo and several other providers
+* An OpenID provider: myopenid.com
+* A SAML identity provider
+* An OpenID Connect identity provider.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
 <dependency>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-support-pac4j</artifactId>
-	<version>${cas.version}</version>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-pac4j</artifactId>
+    <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
 
@@ -35,13 +35,13 @@ In the CAS server, after this kind of delegated authentication, users have speci
 
 The `Authentication` object has:
 
-* the attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
-* the attribute *clientName* set to the type of the provider used during authentication process.
+* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
+* The attribute *`clientName`* set to the type of the provider used during authentication process.
 
 The `Principal` object of the `Authentication` object has:
 
-* an identifier which is the profile type + # + the identifier of the user for this provider (example : FacebookProfile#0000000001)
-* attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
+* An identifier which is the profile type + `#` + the identifier of the user for this provider (i.e `FacebookProfile#0000000001`)
+* Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
 
 ###How to send profile attributes to CAS client applications?
 
@@ -70,7 +70,7 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 ...
 {% endhighlight %}
 
-On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is `/p3/serviceValidate` url.
+On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is the `/p3/serviceValidate` url.
 
 ###How to recreate user profiles in CAS applications?
 
@@ -89,7 +89,8 @@ final Map<String, Object> attributes = principal.getAttributes();
 As the identifier stores the kind of profile in its own definition (`*clientName#idAtProvider*`), you can use the `org.pac4j.core.profile.ProfileHelper.buildProfile(id, attributes)` method to recreate the original profile:
 
 {% highlight java %}
-final FacebookProfile rebuiltProfileOnCasClientSide = (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
+final FacebookProfile rebuiltProfileOnCasClientSide =
+    (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
 {% endhighlight %}
 
 and then use it in your application!
@@ -100,43 +101,53 @@ and then use it in your application!
 
 To add CAS client support, add the following dependency:
 
-    <dependency>
-      <groupId>org.pac4j</groupId>
-      <artifactId>pac4j-cas</artifactId>
-      <version>${pac4j.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-cas</artifactId>
+    <version>${pac4j.version}</version>
+</dependency>
+{% endhighlight %}
 
 To add OAuth client support, add the following dependency:
 
-    <dependency>
-      <groupId>org.pac4j</groupId>
-      <artifactId>pac4j-oauth</artifactId>
-      <version>${pac4j.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-oauth</artifactId>
+    <version>${pac4j.version}</version>
+</dependency>
+{% endhighlight %}
 
 To add OpenID client support, add the following dependency:
 
-    <dependency>
-      <groupId>org.pac4j</groupId>
-      <artifactId>pac4j-openid</artifactId>
-      <version>${pac4j.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-openid</artifactId>
+    <version>${pac4j.version}</version>
+</dependency>
+{% endhighlight %}
 
 To add OpenID Connect client support, add the following dependency:
 
-    <dependency>
-      <groupId>org.pac4j</groupId>
-      <artifactId>pac4j-oidc</artifactId>
-      <version>${pac4j.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-oidc</artifactId>
+    <version>${pac4j.version}</version>
+</dependency>
+{% endhighlight %}
 
 To add SAML support, add the following dependency:
 
-    <dependency>
-      <groupId>org.pac4j</groupId>
-      <artifactId>pac4j-saml</artifactId>
-      <version>${pac4j.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+    <groupId>org.pac4j</groupId>
+    <artifactId>pac4j-saml</artifactId>
+    <version>${pac4j.version}</version>
+</dependency>
+{% endhighlight %}
 
 ###Add the needed clients
 
@@ -148,8 +159,10 @@ All the needed clients to authenticate against providers must be declared in the
 <bean id="facebook1" class="org.pac4j.oauth.client.FacebookClient">
   <property name="key" value="fbkey" />
   <property name="secret" value="fbsecret" />
-  <property name="scope" value="email,user_likes,user_about_me,user_birthday,user_education_history,user_hometown" />
-  <property name="fields" value="id,name,first_name,middle_name,last_name,gender,locale,languages,link,username,third_party_id,timezone,updated_time" />
+  <property name="scope" 
+    value="email,user_likes,user_about_me,user_birthday,user_education_history,user_hometown" />
+  <property name="fields" 
+    value="id,name,first_name,middle_name,last_name,gender,locale,languages,link,username,third_party_id,timezone,updated_time" />
 </bean>
  
 <bean id="twitter1" class="org.pac4j.oauth.client.TwitterClient">
@@ -209,10 +222,9 @@ In the `login-webflow.xml` file, the `ClientAction` must be added at the beginni
 This `ClientAction` has to be defined in the `cas-servlet.xml` file with all the needed clients:
 
 {% highlight xml %}
-<bean id="clientAction" class="org.jasig.cas.support.pac4j.web.flow.ClientAction">
-  <constructor-arg index="0" ref="centralAuthenticationService"/>
-  <constructor-arg index="1" ref="clients"/>
-</bean>
+<bean id="clientAction" class="org.jasig.cas.support.pac4j.web.flow.ClientAction"
+    c:theCentralAuthenticationService-ref="centralAuthenticationService"
+    c:theClients-ref="clients"/>
 {% endhighlight %}
 
 This `ClientAction` uses the *centralAuthenticationService* bean to finish the CAS authentication and references all the clients.
@@ -224,7 +236,9 @@ To be able to finish authenticating users in the CAS server after a remote authe
 {% highlight xml %}
 <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
     <constructor-arg>
-        <map>
+    <map>
+           <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
+           <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
         </map>
     </constructor-arg>
     <property name="authenticationMetaDataPopulators">
@@ -236,18 +250,19 @@ To be able to finish authenticating users in the CAS server after a remote authe
         <bean class="org.jasig.cas.authentication.AnyAuthenticationPolicy" />
     </property>
 </bean>
-<bean id="primaryAuthenticationHandler" class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler">
-    <constructor-arg index="0" ref="clients"/>
-</bean>
+
+<bean id="primaryAuthenticationHandler" 		
+    class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler"
+    c:clients-ref="clients">
 {% endhighlight %}
 
 By default, the identifier returned by a delegated authentication is composed of the profile name and the technical identifier of the provider, like `FacebookProfile#1234`, to ensure the identifier uniqueness. Though, you can remove this behaviour and only return the technical identifier by using:
 
 {% highlight xml %}
-<bean id="primaryAuthenticationHandler" class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler">
-    <constructor-arg index="0" ref="clients"/>
-    <property name="typedIdUsed" value="false" />
-</bean>
+<bean id="primaryAuthenticationHandler"
+    class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler"
+    c:clients-ref="clients"
+    p:typeIdUsed="false" />
 {% endhighlight %}
 
 
@@ -255,7 +270,7 @@ By default, the identifier returned by a delegated authentication is composed of
 
 To start authentication on a remote provider, these links must be added on the login page `casLoginView.jsp` (*ClientNameUrl* attributes are automatically created by the `ClientAction`):
 
-{% highlight xml %}
+{% highlight html %}
 <a href="${FacebookClientUrl}">Authenticate with Facebook</a> <br />
 <br />
 <a href="${TwitterClientUrl}">Authenticate with Twitter</a><br />
@@ -264,12 +279,13 @@ To start authentication on a remote provider, these links must be added on the l
 <br />
 <a href="${CasClientUrl}">Authenticate with another CAS server using CAS protocol</a><br />
 <br />
+
+<p>Authenticate with MyOpenId.com</p>
 <form action="${MyOpenIdClientUrl}" method="POST">
   <input type="text" name="openIdUser" value="http://xxx.myopenid.com/" />
   <input type="submit" value="Authenticate with myopenid.com" />
 </form>
 {% endhighlight %}
-
 
 ##Demo
 

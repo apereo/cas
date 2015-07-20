@@ -75,7 +75,7 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
         }
 
         final String urlToRedirectTo = request.getRequestURI()
-                + (request.getQueryString() != null ? "?"
+                + (request.getQueryString() != null ? '?'
                 + request.getQueryString() : "");
 
         logger.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);

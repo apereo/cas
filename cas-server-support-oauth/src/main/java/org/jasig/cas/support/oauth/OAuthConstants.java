@@ -54,7 +54,7 @@ public interface OAuthConstants {
     String ACCESS_TOKEN = "access_token";
 
     /** The bearer token. */
-    String BEARER_TOKEN = "bearer";
+    String BEARER_TOKEN = "Bearer";
     
     /** The OAUT h20_ callbackurl. */
     String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
@@ -65,7 +65,9 @@ public interface OAuthConstants {
     /** The OAUT h20_ state. */
     String OAUTH20_STATE = "oauth20_state";
 
-    /** The missing access token. */
+    /**
+     * The missing access token.
+     **/
     String MISSING_ACCESS_TOKEN = "missing_accessToken";
 
     /** The expired access token. */

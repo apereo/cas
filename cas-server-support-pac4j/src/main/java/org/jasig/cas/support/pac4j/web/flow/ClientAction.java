@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.support.pac4j.web.flow;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
@@ -53,12 +53,12 @@ import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
 /**
- * This class represents an action to put at the beginning of the webflow.<br>
+ * This class represents an action to put at the beginning of the webflow.
+ * <p>
  * Before any authentication, redirection urls are computed for the different clients defined as well as the theme,
- * locale, method and service are saved into the web session.<br>
+ * locale, method and service are saved into the web session.</p>
  * After authentication, appropriate information are expected on this callback url to finish the authentication
  * process with the provider.
- *
  * @author Jerome Leleu
  * @since 3.5.0
  */
@@ -83,7 +83,7 @@ public final class ClientAction extends AbstractAction {
     /**
      * Supported protocols.
      */
-    private static final List<Mechanism> SUPPORTED_PROTOCOLS = Arrays.asList(Mechanism.CAS_PROTOCOL, Mechanism.OAUTH_PROTOCOL,
+    private static final Set<Mechanism> SUPPORTED_PROTOCOLS = ImmutableSet.of(Mechanism.CAS_PROTOCOL, Mechanism.OAUTH_PROTOCOL,
             Mechanism.OPENID_PROTOCOL, Mechanism.SAML_PROTOCOL, Mechanism.OPENID_CONNECT_PROTOCOL);
 
     /**

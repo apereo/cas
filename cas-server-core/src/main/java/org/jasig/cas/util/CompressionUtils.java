@@ -19,6 +19,7 @@
 package org.jasig.cas.util;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +27,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+import java.util.zip.InflaterOutputStream;
 
 /**
  * This is {@link CompressionUtils}
@@ -60,25 +60,13 @@ public final class CompressionUtils {
      * @return the array as a string with <code>UTF-8</code> encoding
      */
     public static String inflate(final byte[] bytes) {
-        final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
-        final byte[] extendedBytes = new byte[bytes.length + 1];
-        System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
-        extendedBytes[bytes.length] = 0;
-        inflater.setInput(extendedBytes);
-        try {
-            final int resultLength = inflater.inflate(xmlMessageBytes);
-            inflater.end();
-            if (!inflater.finished()) {
-                throw new RuntimeException("Buffer not large enough.");
-            }
-            inflater.end();
-            return new String(xmlMessageBytes, 0, resultLength, UTF8_ENCODING);
-        } catch (final DataFormatException e) {
-            LOGGER.error("Data format is not supported", e);
-            return null;
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException("Cannot find encoding:" + UTF8_ENCODING, e);
+        try (final ByteArrayInputStream inb = new ByteArrayInputStream(bytes);
+             final ByteArrayOutputStream out = new ByteArrayOutputStream();
+             final InflaterOutputStream ios = new InflaterOutputStream(out);) {
+            IOUtils.copy(inb, ios);
+            return new String(out.toByteArray(), UTF8_ENCODING);
+        } catch (final Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -124,6 +112,16 @@ public final class CompressionUtils {
      */
     public static String encodeBase64(final byte[] data) {
         return Base64.encodeBase64String(data);
+    }
+
+    /**
+     * Base64-encode the given byte[] as a byte[].
+     *
+     * @param data the byte array to encode
+     * @return the byte[] in base64
+     */
+    public static byte[] encodeBase64ToByteArray(final byte[] data) {
+        return Base64.encodeBase64(data);
     }
 
     /**
@@ -181,4 +179,6 @@ public final class CompressionUtils {
             return null;
         }
     }
+
+
 }
