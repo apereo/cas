@@ -18,15 +18,20 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 /**
  * Abstract authentication handler that allows deployers to utilize the bundled
@@ -93,4 +98,20 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      */
     protected abstract HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException;
+
+    /**
+     * Helper method to construct a handler result
+     * on successful authentication events.
+     *
+     * @param credential the credential on which the authentication was successfully performed.
+     * Note that this credential instance may be different from what was originally provided
+     * as transformation of the username may have occurred, if one is in fact defined.
+     * @param principal the resolved principal
+     * @param warnings the warnings
+     * @return the constructed handler result
+     */
+    protected final HandlerResult createHandlerResult(final Credential credential, final Principal principal,
+                                                      final List<MessageDescriptor> warnings) {
+        return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+    }
 }
