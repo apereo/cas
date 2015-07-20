@@ -39,7 +39,56 @@
                 <div class="alert alert-danger" role="alert">
                     <p><i class="fa fa-lg fa-exclamation-triangle"></i> <spring:message code="services.form.requiredText" /></p>
                 </div> <!-- end .alert div -->
+<%-- IN PROGRESS
+                <!-- Principle Attribute Repository Options -->
+                <div class="panel panel-default">
+                    <div class="panel-heading"><spring:message code="services.form.header.principleAttRepo" /></div>
+                    <div class="panel-body">
+                        <div class="radio-group">
+                            <!-- Principle Repository Radio Button - Default -->
+                            <label class="radio-inline">
+                                <input type="radio" name="prinFilterDefault" id="prinFilterDefault" value="default" ng-model="serviceFormCtrl.prinFilterRadio.type" ng-checked="true">
+                                <spring:message code="services.form.label.attrRelease.principleAttRepo.default" />
+                            </label>
+                            <!-- Principle Filter Radio Button - Cached -->
+                            <label class="radio-inline">
+                                <input type="radio" name="prinFilterCached" id="prinFilterCached" value="cached" ng-model="serviceFormCtrl.prinFilterRadio.type" >
+                                <spring:message code="services.form.label.attrRelease.principleAttRepo.cached" />
+                            </label>
+                        </div> <!-- end .radio-group div -->
 
+                        <!-- Principle Attribute Repo Default Options -->
+                        <div class="well well-sm" ng-show="serviceFormCtrl.prinFilterRadio.type === 'default'">
+                            <spring:message code="management.services.service.noAction" />
+                        </div>
+
+                        <!-- Principle Attribute Repo Cached Options -->
+                        <div class="principle-attribute-cached-container" ng-show="serviceFormCtrl.prinFilterRadio.type === 'cached'">
+                            <!-- Principle Attribute Repo Cached Time -->
+                            <div class="form-group">
+                                <label class="col-sm-4" for="cachedTime">
+                                    <spring:message code="services.form.label.attrRelease.principleAttRepo.cached.timeUnit" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit" />"></i>
+                                </label>
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <select class="form-control" id="cachedTime" ng-model="serviceFormCtrl.cachedTime" ng-options="item for item in serviceFormCtrl.timeUnits"></select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Principle Attribute Repo Cached Expiration -->
+                            <div class="form-group">
+                                <label class="col-sm-4" for="cachedExp">
+                                    <spring:message code="services.form.label.attrRelease.principleAttRepo.cached.expiration" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration" />"></i>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="cachedExp" ng-model="serviceFormCtrl.cachedExp">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+--%>
                 <!-- Service ID -->
                 <div class="form-group">
                     <label class="col-sm-3" for="serviceId">
@@ -424,8 +473,7 @@
                                             </label>
                                             <div class="col-sm-8">
                                                 <div class="input-group">
-                                                    <input type="text" class="form-control" id="uapSaltSetting" ng-model="serviceFormCtrl.cachedTime">
-                                                    <div class="input-group-addon">MM:SS:HH:DD</div>
+                                                    <select class="form-control" id="cachedTime" ng-model="serviceFormCtrl.cachedTime" ng-options="item for item in serviceFormCtrl.timeUnits"></select>
                                                 </div>
                                             </div>
                                         </div>
