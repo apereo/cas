@@ -107,6 +107,7 @@
         <property name="users">
             <map>
                 <entry key="casuser" value="Mellon"/>
+                <entry key="admin" value="admin"/>
             </map>
         </property>
     </bean>
