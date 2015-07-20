@@ -18,40 +18,8 @@
     under the License.
 
 --%>
-<!doctype html>
-<%@ page language="java" session="false" %>
-<%@ page pageEncoding="UTF-8" %>
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<html xml:lang="en" lang="en" ng-app="casmgmt">
-
-    <head>
-        <title><spring:message code="management.services.header.apptitle" /></title>
-        <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
-        <link rel="icon" href="<c:url value="/images/favicon.ico" />" type="image/x-icon" />
-        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="<c:url value="/css/cas-management.css" />" type="text/css" />
-
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.16/angular.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.16/angular-route.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-sortable/0.13.4/sortable.min.js"></script>
-        <script type="text/javascript" src="<c:url value="/js/app/app-angular.js"/>"></script>
-        <script type="text/javascript" src="<c:url value="/js/app-jquery.js"/>"></script>
-    </head>
-
-    <body class="casmgmt-app" ng-controller="actionsController as action">
-
-        <!-- Header -->
-        <%@include file="includes/header.jsp" %>
+<%@include file="includes/header.jsp" %>
 
         <!-- Content -->
         <div class="container-fluid casmgmt-content">
@@ -143,7 +111,4 @@
         </div> <!-- end .casmgmt-content div -->
 
         <!-- Footer -->
-        <%@include file="includes/footer.jsp" %>
-
-    </body>
-</html>
+<%@include file="includes/footer.jsp" %>

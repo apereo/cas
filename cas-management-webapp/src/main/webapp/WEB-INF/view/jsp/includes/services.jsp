@@ -33,6 +33,26 @@
 
     <div class="row">
         <div class="col-sm-12">
+
+            <div class="alert alert-{{ serviceTableCtrl.alert.type }}" role="alert" ng-show="serviceTableCtrl.alert">
+                <p>
+                    <i class="fa fa-lg fa-{{ serviceTableCtrl.alert.type === 'danger' ? 'exclamation-triangle' : 'question-circle' }}"></i>
+                    <span ng-if="serviceTableCtrl.alert.name === 'deleted'">
+                        <i>{{ serviceTableCtrl.alert.data.name }}</i>
+                        <spring:message code="management.services.status.deleted" />
+                    </span>
+                    <span ng-if="serviceTableCtrl.alert.name === 'notdeleted'">
+                        <spring:message code="management.services.status.notdeleted" />
+                    </span>
+                    <span ng-if="serviceTableCtrl.alert.name === 'notupdated'">
+                        <spring:message code="management.services.status.evaluationOrder.notupdated" />
+                    </span>
+                    <a href="javascript://" class="fa fa-lg fa-times-circle-o close-link" ng-click="serviceTableCtrl.alert = null;">
+<%-- TODO: Needs accessibility text for screen readers --%>
+                    </a>
+                </p>
+            </div>
+
             <table class="table table-hover table-striped services-table" ng-model="serviceTableCtrl.dataTable">
                 <thead>
                     <tr>
@@ -45,7 +65,8 @@
                 </thead>
                 <tbody ui-sortable="serviceTableCtrl.sortableOptions" ng-model="serviceTableCtrl.dataTable">
                     <tr id="assignedId_{{ item.assignedId }}"
-                        ng-repeat="item in serviceTableCtrl.dataTable | serviceTableFilter:['name','serviceId','description']:serviceTableCtrl.serviceTableQuery">
+                        ng-repeat="item in serviceTableCtrl.dataTable | serviceTableFilter:['name','serviceId','description']:serviceTableCtrl.serviceTableQuery"
+                        ng-class="{ 'row-disabled': !item.sasCASEnabled }">
                         <td colspan="6">
 
                 <table class="table-service">
