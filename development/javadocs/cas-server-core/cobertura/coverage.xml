@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
 
-<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6388" branches-covered="0" branches-valid="1076" complexity="1.7259395050412465" version="2.1.1" timestamp="1437322110118">
+<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6388" branches-covered="0" branches-valid="1076" complexity="1.7259395050412465" version="2.1.1" timestamp="1437403957356">
 	<sources>
 		<source>--source</source>
 		<source>/home/travis/build/Jasig/cas/cas-server-core/target/generated-sources/annotations</source>
@@ -17100,7 +17100,7 @@
 		</package>
 		<package name="org.jasig.cas.authentication.handler.support" line-rate="0.0" branch-rate="0.0" complexity="1.72">
 			<classes>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="0.0" complexity="1.5">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="0.0" complexity="1.4">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17108,8 +17108,8 @@
 						</method>
 						<method name="&lt;init&gt;" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="41" hits="0" branch="false"/>
-								<line number="44" hits="0" branch="false"/>
+								<line number="46" hits="0" branch="false"/>
+								<line number="49" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="ajc$preClinit" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
@@ -17123,42 +17123,48 @@
 						</method>
 						<method name="authenticate_aroundBody0" signature="(Lorg/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler;Lorg/jasig/cas/authentication/Credential;Lorg/aspectj/lang/JoinPoint;)Lorg/jasig/cas/authentication/HandlerResult;" line-rate="0.0" branch-rate="0.0" complexity="0">
 							<lines>
-								<line number="75" hits="0" branch="true" condition-coverage="0% (0/2)">
+								<line number="80" hits="0" branch="true" condition-coverage="0% (0/2)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="76" hits="0" branch="false"/>
-								<line number="79" hits="0" branch="false"/>
+								<line number="81" hits="0" branch="false"/>
+								<line number="84" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="createHandlerResult" signature="(Lorg/jasig/cas/authentication/Credential;Lorg/jasig/cas/authentication/principal/Principal;Ljava/util/List;)Lorg/jasig/cas/authentication/HandlerResult;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="115" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="postAuthenticate" signature="(Lorg/jasig/cas/authentication/Credential;Lorg/jasig/cas/authentication/HandlerResult;)Lorg/jasig/cas/authentication/HandlerResult;" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="65" hits="0" branch="false"/>
+								<line number="70" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="preAuthenticate" signature="(Lorg/jasig/cas/authentication/Credential;)Z" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="53" hits="0" branch="false"/>
+								<line number="58" hits="0" branch="false"/>
 							</lines>
 						</method>
 					</methods>
 					<lines>
 						<line number="1" hits="0" branch="false"/>
-						<line number="41" hits="0" branch="false"/>
-						<line number="44" hits="0" branch="false"/>
-						<line number="53" hits="0" branch="false"/>
-						<line number="65" hits="0" branch="false"/>
-						<line number="75" hits="0" branch="true" condition-coverage="0% (0/2)">
+						<line number="46" hits="0" branch="false"/>
+						<line number="49" hits="0" branch="false"/>
+						<line number="58" hits="0" branch="false"/>
+						<line number="70" hits="0" branch="false"/>
+						<line number="80" hits="0" branch="true" condition-coverage="0% (0/2)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="76" hits="0" branch="false"/>
-						<line number="79" hits="0" branch="false"/>
+						<line number="81" hits="0" branch="false"/>
+						<line number="84" hits="0" branch="false"/>
+						<line number="115" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17174,7 +17180,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17202,7 +17208,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17218,7 +17224,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17234,7 +17240,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractPreAndPostProcessingAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17250,7 +17256,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="0.0" complexity="1.4">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="0.0" complexity="1.4444444444444444">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17258,9 +17264,9 @@
 						</method>
 						<method name="&lt;init&gt;" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="50" hits="0" branch="false"/>
-								<line number="57" hits="0" branch="false"/>
-								<line number="60" hits="0" branch="false"/>
+								<line number="44" hits="0" branch="false"/>
+								<line number="51" hits="0" branch="false"/>
+								<line number="54" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="ajc$preClinit" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
@@ -17268,62 +17274,57 @@
 								<line number="1" hits="0" branch="false"/>
 							</lines>
 						</method>
-						<method name="createHandlerResult" signature="(Lorg/jasig/cas/authentication/Credential;Lorg/jasig/cas/authentication/principal/Principal;Ljava/util/List;)Lorg/jasig/cas/authentication/HandlerResult;" line-rate="0.0" branch-rate="1.0" complexity="0">
-							<lines>
-								<line number="129" hits="0" branch="false"/>
-							</lines>
-						</method>
 						<method name="doAuthentication" signature="(Lorg/jasig/cas/authentication/Credential;)Lorg/jasig/cas/authentication/HandlerResult;" line-rate="0.0" branch-rate="0.0" complexity="0">
 							<lines>
-								<line number="72" hits="0" branch="false"/>
-								<line number="73" hits="0" branch="true" condition-coverage="0% (0/2)">
+								<line number="66" hits="0" branch="false"/>
+								<line number="67" hits="0" branch="true" condition-coverage="0% (0/2)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="74" hits="0" branch="false"/>
-								<line number="77" hits="0" branch="false"/>
-								<line number="78" hits="0" branch="true" condition-coverage="0% (0/2)">
+								<line number="68" hits="0" branch="false"/>
+								<line number="71" hits="0" branch="false"/>
+								<line number="72" hits="0" branch="true" condition-coverage="0% (0/2)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="79" hits="0" branch="false"/>
-								<line number="81" hits="0" branch="false"/>
-								<line number="82" hits="0" branch="false"/>
+								<line number="73" hits="0" branch="false"/>
+								<line number="75" hits="0" branch="false"/>
+								<line number="76" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="getPasswordEncoder" signature="()Lorg/jasig/cas/authentication/handler/PasswordEncoder;" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="105" hits="0" branch="false"/>
+								<line number="99" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="getPasswordPolicyConfiguration" signature="()Lorg/jasig/cas/authentication/support/PasswordPolicyConfiguration;" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="113" hits="0" branch="false"/>
+								<line number="107" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="getPrincipalNameTransformer" signature="()Lorg/jasig/cas/authentication/handler/PrincipalNameTransformer;" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="109" hits="0" branch="false"/>
+								<line number="103" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="setPasswordEncoder" signature="(Lorg/jasig/cas/authentication/handler/PasswordEncoder;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="138" hits="0" branch="false"/>
-								<line number="139" hits="0" branch="false"/>
+								<line number="117" hits="0" branch="false"/>
+								<line number="118" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="setPasswordPolicyConfiguration" signature="(Lorg/jasig/cas/authentication/support/PasswordPolicyConfiguration;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="146" hits="0" branch="false"/>
-								<line number="147" hits="0" branch="false"/>
+								<line number="125" hits="0" branch="false"/>
+								<line number="126" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="setPrincipalNameTransformer" signature="(Lorg/jasig/cas/authentication/handler/PrincipalNameTransformer;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="142" hits="0" branch="false"/>
-								<line number="143" hits="0" branch="false"/>
+								<line number="121" hits="0" branch="false"/>
+								<line number="122" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="supports" signature="(Lorg/jasig/cas/authentication/Credential;)Z" line-rate="1.0" branch-rate="1.0" complexity="0">
@@ -17332,45 +17333,44 @@
 						</method>
 						<method name="supports_aroundBody0" signature="(Lorg/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler;Lorg/jasig/cas/authentication/Credential;Lorg/aspectj/lang/JoinPoint;)Z" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="155" hits="0" branch="false"/>
+								<line number="134" hits="0" branch="false"/>
 							</lines>
 						</method>
 					</methods>
 					<lines>
 						<line number="1" hits="0" branch="false"/>
-						<line number="50" hits="0" branch="false"/>
-						<line number="57" hits="0" branch="false"/>
-						<line number="60" hits="0" branch="false"/>
-						<line number="72" hits="0" branch="false"/>
-						<line number="73" hits="0" branch="true" condition-coverage="0% (0/2)">
+						<line number="44" hits="0" branch="false"/>
+						<line number="51" hits="0" branch="false"/>
+						<line number="54" hits="0" branch="false"/>
+						<line number="66" hits="0" branch="false"/>
+						<line number="67" hits="0" branch="true" condition-coverage="0% (0/2)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="74" hits="0" branch="false"/>
-						<line number="77" hits="0" branch="false"/>
-						<line number="78" hits="0" branch="true" condition-coverage="0% (0/2)">
+						<line number="68" hits="0" branch="false"/>
+						<line number="71" hits="0" branch="false"/>
+						<line number="72" hits="0" branch="true" condition-coverage="0% (0/2)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="79" hits="0" branch="false"/>
-						<line number="81" hits="0" branch="false"/>
-						<line number="82" hits="0" branch="false"/>
-						<line number="105" hits="0" branch="false"/>
-						<line number="109" hits="0" branch="false"/>
-						<line number="113" hits="0" branch="false"/>
-						<line number="129" hits="0" branch="false"/>
-						<line number="138" hits="0" branch="false"/>
-						<line number="139" hits="0" branch="false"/>
-						<line number="142" hits="0" branch="false"/>
-						<line number="143" hits="0" branch="false"/>
-						<line number="146" hits="0" branch="false"/>
-						<line number="147" hits="0" branch="false"/>
-						<line number="155" hits="0" branch="false"/>
+						<line number="73" hits="0" branch="false"/>
+						<line number="75" hits="0" branch="false"/>
+						<line number="76" hits="0" branch="false"/>
+						<line number="99" hits="0" branch="false"/>
+						<line number="103" hits="0" branch="false"/>
+						<line number="107" hits="0" branch="false"/>
+						<line number="117" hits="0" branch="false"/>
+						<line number="118" hits="0" branch="false"/>
+						<line number="121" hits="0" branch="false"/>
+						<line number="122" hits="0" branch="false"/>
+						<line number="125" hits="0" branch="false"/>
+						<line number="126" hits="0" branch="false"/>
+						<line number="134" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4444444444444444">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17386,7 +17386,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4444444444444444">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17402,7 +17402,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4444444444444444">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17430,7 +17430,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4444444444444444">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -17446,7 +17446,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4">
+				<class name="org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/handler/support/AbstractUsernamePasswordAuthenticationHandler.java" line-rate="0.0" branch-rate="1.0" complexity="1.4444444444444444">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
