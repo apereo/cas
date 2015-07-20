@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.services.RegisteredService;
@@ -79,10 +81,13 @@ public final class ManageRegisteredServicesMultiActionController {
     /**
      * Logout handling. Simply returns the view name.
      *
+     * @param request the request
+     * @param session the session
      * @return the view name.
      */
-    @RequestMapping(value="loggedOut.html", method={RequestMethod.GET})
-    public String logoutView() {
+    @RequestMapping(value="logout.html", method={RequestMethod.GET})
+    public String logoutView(final HttpServletRequest request, final HttpSession session) {
+        session.invalidate();
         return "logout";
     }
 
