@@ -6838,6 +6838,15 @@ html {
 .casmgmt-app .casmgmt-content .service-editor > .col-sm-12 > .col-sm-6:eq(1) {
   padding-right: 0;
 }
+.casmgmt-app .casmgmt-content .service-editor .panel-sas-options {
+  padding: 0;
+}
+.casmgmt-app .casmgmt-content .service-editor .panel-sas-options label {
+  font-weight: normal;
+}
+.casmgmt-app .casmgmt-content .service-editor .panel-sas-options .panel.panel-default {
+  margin: 0;
+}
 .casmgmt-app .casmgmt-content .services-summary-table td {
   border-top: none;
 }
@@ -6852,6 +6861,7 @@ html {
 }
 .casmgmt-app .casmgmt-content .alert .close-link {
   float: right;
+  padding: 0;
   color: #999999;
   text-decoration: none;
 }
