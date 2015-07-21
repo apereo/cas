@@ -29,7 +29,7 @@
     <property name="cas.management.webapp" value="cas-management" />
     <property name="catalina.home" value="${env.CATALINA_HOME}" />
     <property name="tomcat.log.patterns" value="**/*.log" />
-    <property name="cas.build.modules" value="cas-server-core,cas-server-webapp-support,cas-server-webapp" />
+    <property name="cas.build.modules" value="cas-server-webapp" />
     <property name="includeManagementWebapp" value="true"/>
 
     <if>
