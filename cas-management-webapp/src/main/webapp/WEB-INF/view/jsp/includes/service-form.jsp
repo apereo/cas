@@ -33,62 +33,13 @@
                 <!-- Service Form Instructions -->
                 <div class="alert alert-info" role="alert">
                     <p><i class="fa fa-lg fa-question-circle"></i> <spring:message code="services.form.instructions" /></p>
-                </div> <!-- end .alert div -->
+                </div><%-- end .alert div --%>
 
                 <!-- Service Form Instructions -->
                 <div class="alert alert-danger" role="alert">
                     <p><i class="fa fa-lg fa-exclamation-triangle"></i> <spring:message code="services.form.requiredText" /></p>
-                </div> <!-- end .alert div -->
-<%-- IN PROGRESS
-                <!-- Principle Attribute Repository Options -->
-                <div class="panel panel-default">
-                    <div class="panel-heading"><spring:message code="services.form.header.principleAttRepo" /></div>
-                    <div class="panel-body">
-                        <div class="radio-group">
-                            <!-- Principle Repository Radio Button - Default -->
-                            <label class="radio-inline">
-                                <input type="radio" name="prinFilterDefault" id="prinFilterDefault" value="default" ng-model="serviceFormCtrl.prinFilterRadio.type" ng-checked="true">
-                                <spring:message code="services.form.label.attrRelease.principleAttRepo.default" />
-                            </label>
-                            <!-- Principle Filter Radio Button - Cached -->
-                            <label class="radio-inline">
-                                <input type="radio" name="prinFilterCached" id="prinFilterCached" value="cached" ng-model="serviceFormCtrl.prinFilterRadio.type" >
-                                <spring:message code="services.form.label.attrRelease.principleAttRepo.cached" />
-                            </label>
-                        </div> <!-- end .radio-group div -->
+                </div><%-- end .alert div --%>
 
-                        <!-- Principle Attribute Repo Default Options -->
-                        <div class="well well-sm" ng-show="serviceFormCtrl.prinFilterRadio.type === 'default'">
-                            <spring:message code="management.services.service.noAction" />
-                        </div>
-
-                        <!-- Principle Attribute Repo Cached Options -->
-                        <div class="principle-attribute-cached-container" ng-show="serviceFormCtrl.prinFilterRadio.type === 'cached'">
-                            <!-- Principle Attribute Repo Cached Time -->
-                            <div class="form-group">
-                                <label class="col-sm-4" for="cachedTime">
-                                    <spring:message code="services.form.label.attrRelease.principleAttRepo.cached.timeUnit" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit" />"></i>
-                                </label>
-                                <div class="col-sm-8">
-                                    <div class="input-group">
-                                        <select class="form-control" id="cachedTime" ng-model="serviceFormCtrl.cachedTime" ng-options="item for item in serviceFormCtrl.timeUnits"></select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Principle Attribute Repo Cached Expiration -->
-                            <div class="form-group">
-                                <label class="col-sm-4" for="cachedExp">
-                                    <spring:message code="services.form.label.attrRelease.principleAttRepo.cached.expiration" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration" />"></i>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="cachedExp" ng-model="serviceFormCtrl.cachedExp">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
---%>
                 <!-- Service ID -->
                 <div class="form-group">
                     <label class="col-sm-3" for="serviceId">
@@ -174,7 +125,7 @@
                                     <!-- OAuth Bypass Approval Prompt -->
                                     <div class="checkbox">
                                         <label for="oauthBypass">
-                                            <input type="checkbox" id="oauthBypass" ng-model="serviceFormCtrl.oauthBypass"> <spring:message code="services.form.label.oauthBypass" />&nbsp;<i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthBypass" />"></i>
+                                            <input type="checkbox" id="oauthBypass" ng-model="serviceFormCtrl.oauthBypass" /> <spring:message code="services.form.label.oauthBypass" />&nbsp;<i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthBypass" />"></i>
                                         </label>
                                     </div>
                                 </div>
@@ -208,13 +159,29 @@
                     </div>
                 </div>
 
-                <!-- Service Required Handlers -->
-                <div class="form-group">
-                    <label class="col-sm-3" for="reqHandler">
-                        <spring:message code="services.form.label.requiredHandlers" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.requiredHandlers" />"></i>
-                    </label>
-                    <div class="col-sm-9">
-                        <select multiple class="form-control" id="reqHandler" ng-model="serviceFormCtrl.reqHandler" ng-options="type.name for type in serviceFormCtrl.reqHandlerList"></select>
+                <div class="row">
+                    <!-- Logout Type -->
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-6" for="logoutType">
+                                <spring:message code="services.form.label.logoutType" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.logoutType" />"></i>
+                            </label>
+                            <div class="col-sm-6">
+                                <select class="form-control" id="logoutType" ng-model="serviceFormCtrl.logoutType" ng-options="type.name for type in serviceFormCtrl.logoutTypeList"></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Required Handlers -->
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-5" for="reqHandler">
+                                <spring:message code="services.form.label.requiredHandlers" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.requiredHandlers" />"></i>
+                            </label>
+                            <div class="col-sm-7">
+                                <select multiple class="form-control" id="reqHandler" ng-model="serviceFormCtrl.reqHandler" ng-options="type.name for type in serviceFormCtrl.reqHandlerList"></select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -237,34 +204,84 @@
                         <input type="text" class="form-control" id="logoUrl" ng-model="serviceFormCtrl.logoUrl">
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-6">
 
-                        <!-- Logout Type -->
-                        <div class="form-group">
-                            <label class="col-sm-6" for="logoutType">
-                                <spring:message code="services.form.label.logoutType" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.logoutType" />"></i>
-                            </label>
-                            <div class="col-sm-6">
-                                <select class="form-control" id="logoutType" ng-model="serviceFormCtrl.logoutType" ng-options="type.name for type in serviceFormCtrl.logoutTypeList"></select>
+                <!-- Service Access Strategy -->
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                        <div class="panel-title"><spring:message code="services.form.header.sas" /></div>
+                    </div>
+                    <div class="panel-body panel-sas-options">
+
+                        <div class="col-sm-4 form-group">
+                            <div class="col-sm-12 checkbox">
+                                <label class="col-sm-12" for="casEnabled">
+                                    <input type="checkbox" id="casEnabled" ng-model="serviceFormCtrl.sas.casEnabled" />
+                                    <spring:message code="services.form.label.sas.casEnabled" />
+                                    <i class="fa fa-lg fa-info-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top"
+                                        title="<spring:message code="services.form.tooltip.sas.casEnabled" />"></i>
+                                </label>
+                            </div>
+
+                            <div class="col-sm-12 checkbox">
+                                <label class="col-sm-12" for="ssoEnabled">
+                                    <input type="checkbox" id="ssoEnabled" ng-model="serviceFormCtrl.sas.ssoEnabled" />
+                                    <spring:message code="services.form.label.sas.ssoEnabled" />
+                                    <i class="fa fa-lg fa-info-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top"
+                                        title="<spring:message code="services.form.tooltip.sas.ssoEnabled" />"></i>
+                                </label>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-sm-6">
-<%--
-                        <!-- Evaulation Order -->
-                        <div class="form-group">
-                            <label class="col-sm-6" for="evalOrder">
-                                <spring:message code="services.form.label.evalOrder" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.evalOrder" />"></i>
-                            </label>
-                            <div class="col-sm-6">
-                                <input type="number" min="0" max="100" class="form-control" id="evalOrder" ng-model="serviceFormCtrl.evalOrder">
+
+                        <div class="col-sm-8 form-group">
+                            <div class="col-sm-12 checkbox">
+                                <label class="col-sm-12" for="sasRequireAll">
+                                    <input type="checkbox" id="sasRequireAll" ng-model="serviceFormCtrl.sas.requireAll" />
+                                    <spring:message code="services.form.label.sas.requireAll" />
+                                    <i class="fa fa-lg fa-info-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top"
+                                        title="<spring:message code="services.form.tooltip.sas.requireAll" />"></i>
+                                </label>
                             </div>
-                        </div>
---%>
+
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="sasRequiredAttr">
+                                    <spring:message code="services.form.label.sas.requiredAttr" />
+                                    <i class="fa fa-lg fa-info-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top"
+                                        title="<spring:message code="services.form.tooltip.sas.requiredAttr" />"></i>
+                                </label>
+                                <div class="col-sm-12">
+                                    <div class="panel panel-default">
+<%-- TODO: Make this work with the form. --%>
+                                        <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed">
+                                            <thead>
+                                                <tr>
+<%-- TODO: Change these table header labels. --%>
+                                                    <th class="col-md-6"><spring:message code="services.form.label.attrRelease.policies.sourceAttribute" /></th>
+                                                    <th class="col-md-6"><spring:message code="services.form.label.attrRelease.policies.casAttribute" /></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Attribute 1</td>
+                                                    <td><input class="form-control input-sm"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Attribute 2</td>
+                                                    <td><input class="form-control input-sm"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Attribute 3</td>
+                                                    <td><input class="form-control input-sm"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><%-- end .col-sm-8 form-group --%>
                     </div>
-                </div>
+                </div><%-- end Service Access Strategy --%>
             </div>
+
             <div class="col-sm-6">
                 <!-- Username Attribute Provider Options -->
                 <div class="username-attribute-provider-container">
@@ -529,6 +546,7 @@
                                         </label>
                                         <div class="col-sm-9">
                                             <select multiple class="form-control" id="returnedAllowedMultiselect" ng-model="serviceFormCtrl.returnedAllowed">
+<%-- TODO: Make this work with the form. --%>
                                                 <option>Option 1</option>
                                                 <option>Option 2</option>
                                                 <option>Option 3</option>
@@ -540,6 +558,7 @@
 
                                     <!-- Attribute Release Policies Return Mapped Option -->
                                     <div class="panel panel-default" ng-show="serviceFormCtrl.policiesRadio.type === 'returnMapped'">
+<%-- TODO: Make this work with the form. --%>
                                         <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed">
                                             <thead>
                                                 <tr>
