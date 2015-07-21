@@ -21,7 +21,7 @@
 
 
     <!-- Add/Manage Service Form -->
-    <form class="service-editor form-horizontal" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.addService(service)" novalidate>
+    <form class="service-editor form-horizontal" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.validateAndSave()" novalidate>
         <h1>
             <i class="fa fa-plus-circle"></i>
             <span ng-if="action.isSelected('edit')"><spring:message code="services.form.header.page.editService" /></span>
@@ -196,14 +196,13 @@
                         </div>
                     </div>
                     <div class="col-sm-6">
-
-                        <!-- Evaulation Order -->
+                        <!-- Assigned ID -->
                         <div class="form-group">
-                            <label class="col-sm-6" for="evalOrder">
-                                <spring:message code="services.form.label.evalOrder" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.evalOrder" />"></i>
+                            <label class="col-sm-5" for="assignedId">
+                                <spring:message code="services.form.label.assignedId" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.assignedId" />"></i>
                             </label>
-                            <div class="col-sm-6">
-                                <input type="number" min="0" max="100" class="form-control" id="evalOrder" ng-model="serviceFormCtrl.evalOrder">
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.serviceForm.assignedId" readonly>
                             </div>
                         </div>
                     </div>
@@ -252,15 +251,17 @@
                         </div>
                     </div>
                     <div class="col-sm-6">
-                        <!-- Assigned ID -->
+<%--
+                        <!-- Evaulation Order -->
                         <div class="form-group">
-                            <label class="col-sm-5" for="assignedId">
-                                <spring:message code="services.form.label.assignedId" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.assignedId" />"></i>
+                            <label class="col-sm-6" for="evalOrder">
+                                <spring:message code="services.form.label.evalOrder" /> <i class="fa fa-lg fa-info-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.evalOrder" />"></i>
                             </label>
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.serviceForm.assignedId" readonly>
+                            <div class="col-sm-6">
+                                <input type="number" min="0" max="100" class="form-control" id="evalOrder" ng-model="serviceFormCtrl.evalOrder">
                             </div>
                         </div>
+--%>
                     </div>
                 </div>
             </div>
@@ -580,10 +581,10 @@
                         </button>
                         &nbsp;&nbsp;&nbsp;
 <%-- TODO: Make the link below a button, and add css padding to remvoe above spaces. --%>
-                        <a href ng-click="action.selectAction('manage')" class="btn btn-default">
+                        <button ng-click="action.selectAction('manage')" class="btn btn-default">
                             <i class="fa fa-times"></i>
                             <spring:message code="services.form.button.cancel" />
-                        </a>
+                        </button>
                     </div> <!-- end services-button-group div -->
                 </div>
             </div>
