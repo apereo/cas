@@ -125,13 +125,13 @@
                 },
                 stop: function(e, ui) {
                     if(ui.item.data('data_changed')) {
-                        $log.log($(this).sortable('serialize'));
-/**
-                        ?id=&evaluationOrder=
+                        var idStr = $(this).sortable('serialize', {key: 'id'});
+                        idStr = idStr.replace('[]', '');
+                        //$log.debug(idStr);
 
-                        $http.post('/cas-management/updateRegisteredServiceEvaluationOrder.html', $(this).sortable('serialize')) // TODO: fix URL
+                        $http.get('/cas-management/updateRegisteredServiceEvaluationOrder.html', {data: idStr})
                             .success(function() {
-                                servicesData.getServices(); // TODO: Need/want? Helpful if multiple instances/users.
+                                servicesData.getServices();
                             })
                             .error(function(data, status) {
                                 servicesData.alert = {
@@ -140,7 +140,6 @@
                                     data:   null
                                 };
                             });
-**/
                     }
                 }
             };
@@ -164,7 +163,7 @@
             this.deleteService = function(item) {
                 servicesData.closeModalDelete();
 
-                $http.get('/cas-management/deleteRegisteredService.html?id=' + item.assignedId)
+                $http.get('/cas-management/deleteRegisteredService.html', {data: 'id='+item.assignedId})
                     .success(function() {
                         servicesData.getServices();
                         servicesData.alert = {

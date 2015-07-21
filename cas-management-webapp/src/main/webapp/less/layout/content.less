@@ -35,10 +35,17 @@
         .tr-placeholder {display: table-row; height: 53px; background-color: @color2-lighter;}
     }
 
-    .service-editor > .col-sm-12 {
-        > .col-sm-6 {
-            &:eq(0) {padding-left: 0;}
-            &:eq(1) {padding-right: 0;}
+    .service-editor {
+        > .col-sm-12 {
+            > .col-sm-6 {
+                &:eq(0) {padding-left: 0;}
+                &:eq(1) {padding-right: 0;}
+            }
+        }
+
+        .panel-sas-options {padding: 0;
+            label {font-weight: normal;}
+            .panel.panel-default {margin: 0;}
         }
     }
 
@@ -51,7 +58,7 @@
     .alert {padding: 10px 20px;
         p {margin-bottom: 0;}
         .fa {padding-top: 7px;}
-        .close-link {float: right; color: @gray4; text-decoration: none;}
+        .close-link {float: right; padding: 0; color: @gray4; text-decoration: none;}
     }
 
     h1 {

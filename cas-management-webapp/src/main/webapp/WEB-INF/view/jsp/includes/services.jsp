@@ -47,7 +47,7 @@
                     <span ng-if="serviceTableCtrl.alert.name === 'notupdated'">
                         <spring:message code="management.services.status.evaluationOrder.notupdated" />
                     </span>
-                    <a href="javascript://" class="fa fa-lg fa-times-circle-o close-link" ng-click="serviceTableCtrl.alert = null;">
+                    <a href="javascript://" class="fa fa-2x fa-times-circle-o close-link" ng-click="serviceTableCtrl.alert = null;">
 <%-- TODO: Needs accessibility text for screen readers --%>
                     </a>
                 </p>
