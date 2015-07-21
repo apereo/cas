@@ -257,9 +257,11 @@
                 serviceForm.formErrors = null;
             };
 
-            this.addService = function (service) {
+            this.newService = function (service) {
                 // service.services.push(this.service);
-                serviceForm.formData = {};
+                serviceForm.formData = {
+                    evalOrder: 100
+                };
             };
 
 /**
