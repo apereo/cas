@@ -40,7 +40,7 @@
         <Logger name="org.springframework.web" level="warn" />
         <Logger name="org.springframework.security" level="warn" />
 
-        <Logger name="org.jasig" level="info" additivity="false">
+        <Logger name="org.jasig" level="debug" additivity="false">
             <AppenderRef ref="cas-management"/>
             <AppenderRef ref="console"/>
         </Logger>
