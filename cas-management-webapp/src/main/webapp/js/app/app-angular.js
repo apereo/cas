@@ -89,15 +89,33 @@
 
 // View Swapper
     app.controller('actionsController', [
-        function () {
+        '$location',
+        function ($location) {
             this.actionPanel = 'manage';
+            this.activeSession = true;
 
             this.selectAction = function (setAction) {
                 this.actionPanel = setAction;
+                this.activeSession = setAction != 'logout';
             };
 
             this.isSelected = function (checkAction) {
                 return this.actionPanel === checkAction;
+            };
+
+            this.homepage = function() {
+                if(this.activeSession) {
+                    this.selectAction('manage');
+                } else {
+                    $location.url('./manage.html');
+                }
+            };
+
+            this.logout = function() {
+                if(this.activeSession) {
+                    this.selectAction('logout');
+                }
+                $location.url('./logout.html');
             };
         }
     ]);
@@ -126,10 +144,10 @@
                 stop: function(e, ui) {
                     if(ui.item.data('data_changed')) {
                         var idStr = $(this).sortable('serialize', {key: 'id'});
-                        idStr = idStr.replace('[]', '');
+                        //idStr = idStr.replace('[]', '');
                         //$log.debug(idStr);
 
-                        $http.get('/cas-management/updateRegisteredServiceEvaluationOrder.html', {data: idStr})
+                        $http.post('/cas-management/updateRegisteredServiceEvaluationOrder.html', $(this).sortable('serialize', {key: 'id'}))
                             .success(function() {
                                 servicesData.getServices();
                             })
@@ -163,7 +181,7 @@
             this.deleteService = function(item) {
                 servicesData.closeModalDelete();
 
-                $http.get('/cas-management/deleteRegisteredService.html', {data: 'id='+item.assignedId})
+                $http.post('/cas-management/deleteRegisteredService.html', {id: item.assignedId})
                     .success(function() {
                         servicesData.getServices();
                         servicesData.alert = {
@@ -200,10 +218,19 @@
         //'$routeParams',
         '$log',
         function ($log) { //$routeParams, 
-            var serviceForm = this;
+            var serviceForm = this,
+                showInstructions = function() {
+                    serviceForm.alert = {
+                        name:   'instructions',
+                        type:   'info',
+                        data:   null
+                    };
+                };
 
             this.formData = {};
             this.formErrors = null;
+
+            // TODO: this.keyMaps // should hold all of the "this.* = [ {} {} {} ];"" below
 
             this.serviceTypeList = [
                 {name: 'CAS Client',    value: 'cas'},
@@ -249,27 +276,75 @@
 
             this.saveForm = function() {
                 serviceForm.validateForm();
-                //if(this.formErrors) { ... }
+
+                if(serviceForm.formErrors) {
+                    serviceForm.alert = {
+                        name:   'notvalid',
+                        type:   'danger',
+                        data:   serviceForm.formErrors // .length?
+                    };
+                    return;
+                }
+
+                $http.get('js/app/data/service-' + id + '.json')
+                    .success(function(data) { // TODO: fix URL
+                        serviceForm.formData = data[0];
+                        serviceForm.alert = {
+                            name:   'saved',
+                            type:   'info',
+                            data:   null
+                        };
+                    })
+                    .error(function(data, status) {
+                        serviceForm.alert = {
+                            name:   'notsaved',
+                            type:   'danger',
+                            data:   data
+                        };
+                    });
             };
 
             this.validateForm = function() {
                 serviceForm.formErrors = null;
+
+                // TODO: actual testing goes here
+                serviceForm.formErrors = ['form not yet working'];
             };
 
-            this.newService = function (service) {
-                // service.services.push(this.service);
+            this.newService = function () {
                 serviceForm.formData = {
-                    evalOrder: 100
+                    evalOrder: 100,
+                    sas: {casEnabled: true},
+                    userAttrProvider: {type: 'default'},
+                    proxyPolicy: {type: 'refuse'},
+                    attrRelease: {
+                        attrOption: 'default',
+                        attrPolicy: {type: 'all'}
+                    }
                 };
+                showInstructions();
             };
 
-/**
-            if($routeParams.assignedId) { // TODO: replace conditional with $routeParams.assignedId
-                $http.get('js/app/data/service-' + $routeParams.assignedId + '.json').success(function (data) { // TODO: fix URL
-                    serviceForm.formData = data[0];
-                });
+            this.loadService = function (id) {
+                $http.get('js/app/data/service-' + id + '.json')
+                    .success(function(data) { // TODO: fix URL
+                        serviceForm.formData = data[0];
+                    })
+                    .error(function(data, status) {
+                        serviceForm.alert = {
+                            name:   'notloaded',
+                            type:   'danger',
+                            data:   data
+                        };
+                    });
+                showInstructions();
+            };
+
+            if(false) { // TODO: throw in a real boolean test
+                this.loadService('11234'); // TODO: param should be tested above
+            } else {
+                this.newService();
             }
-**/
         }
     ]);
 

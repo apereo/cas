@@ -56,26 +56,46 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#casmgt-navbar-collapse">
+<%-- TODO: Figure out what ththe button below is for and remove the ng-if=false --%>
+<!--            
+                <button ng-if="false" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#casmgt-navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <div class="navbar-brand">
-                    <img src="<c:url value="/images/logo_cas.png"/>" alt="Jasig CAS logo" />
-                </div>
-                <h4><spring:message code="management.services.header.apptitle" /></h4>
+-->
+                <a href="javascript://" ng-click="action.homepage()">
+                    <div class="navbar-brand">
+                        <img src="<c:url value="/images/logo_cas.png"/>" alt="Jasig CAS logo" />
+                    </div>
+                    <h4><spring:message code="management.services.header.apptitle" /></h4>
+                </a>
             </div> <!-- end .navbar-header div -->
 
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="casmgt-navbar-collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href ng-click="action.selectAction('manage')"><i class="fa fa-gears"></i> <spring:message code="management.services.header.navbar.navitem.manageService" /></a></li>
-                    <li><a href ng-click="action.selectAction('add')"><i class="fa fa-plus-circle"></i> <spring:message code="management.services.header.navbar.navitem.addNewService" /></a></li>
-                    <li><a href="logout.html"><i class="fa fa-sign-out"></i> <spring:message code="management.services.header.navbar.navitem.logout" /></a></li>
+            <div class="collapse navbar-collapse" id="casmgt-navbar-collapse" ng-if="action.activeSession">
+                <ul class="nav navbar-nav navbar-right quicklinks">
+                    <li>
+                        <a href="javascript://" ng-click="action.selectAction('manage')">
+                            <i class="fa fa-gears"></i>
+                            <spring:message code="management.services.header.navbar.navitem.manageService" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript://" ng-click="action.selectAction('add')">
+                            <i class="fa fa-plus-circle"></i>
+                            <spring:message code="management.services.header.navbar.navitem.addNewService" />
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript://" ng-click="action.logout()">
+                            <i class="fa fa-sign-out"></i>
+                            <spring:message code="management.services.header.navbar.navitem.logout" />
+                        </a>
+                    </li>
                 </ul>
-            </div><!-- end .navbar-collapse div -->
-        </div> <!-- end .container-fluid div -->
-    </nav> <!-- end .navbar div -->
-</header> <!-- end .casmgmt-header header -->
+            </div><%-- end .navbar-collapse div --%>
+        </div><%-- end .container-fluid div --%>
+    </nav><%-- end .navbar div --%>
+</header><%-- end .casmgmt-header header --%>

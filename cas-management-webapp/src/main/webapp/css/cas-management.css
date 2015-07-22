@@ -6695,6 +6695,9 @@ html {
 .casmgmt-app .casmgmt-form label {
   padding-top: 7px;
 }
+.casmgmt-app .casmgmt-form label.required {
+  color: #a32436;
+}
 .casmgmt-app .casmgmt-form .form-padding {
   margin-top: 10px;
 }
@@ -6709,6 +6712,10 @@ html {
 .casmgmt-app .casmgmt-form .form-tooltip-icon.no-float {
   float: none;
 }
+.casmgmt-app .casmgmt-form .form-group .alert {
+  margin: 0;
+  padding: 4px 12px;
+}
 .casmgmt-app .casmgmt-form .input-group-required {
   color: #641621;
 }
@@ -6721,6 +6728,9 @@ html {
   padding: 20px;
   border-top: 1px solid #cccccc;
   text-align: center;
+}
+.casmgmt-app .casmgmt-form .services-button-group button + button {
+  margin-left: 20px;
 }
 .casmgmt-app .search-form .search-clear {
   pointer-events: auto;
@@ -6744,24 +6754,23 @@ html {
   border-radius: 0;
   margin-bottom: 0;
 }
-.casmgmt-app #casmgmt-header nav .navbar-header .navbar-brand {
-  padding-top: 13px;
-}
-.casmgmt-app #casmgmt-header nav .navbar-header .navbar-brand img {
-  height: 25px;
+.casmgmt-app #casmgmt-header nav a {
+  font-size: 90%;
+  color: #ffffff;
 }
 .casmgmt-app #casmgmt-header nav .navbar-header h4 {
   display: inline-block;
   margin-top: 16px;
   font-weight: normal;
 }
-.casmgmt-app #casmgmt-header nav a {
-  font-size: 90%;
-  color: #ffffff;
-  background-color: #153e50;
+.casmgmt-app #casmgmt-header nav .navbar-header .navbar-brand {
+  padding-top: 13px;
 }
-.casmgmt-app #casmgmt-header nav a:hover,
-.casmgmt-app #casmgmt-header nav a:focus {
+.casmgmt-app #casmgmt-header nav .navbar-header .navbar-brand img {
+  height: 25px;
+}
+.casmgmt-app #casmgmt-header nav .quicklinks a:hover,
+.casmgmt-app #casmgmt-header nav .quicklinks a:focus {
   color: #256d8d;
   background-color: #ffffff;
 }
@@ -6843,9 +6852,6 @@ html {
 }
 .casmgmt-app .casmgmt-content .service-editor .panel-sas-options label {
   font-weight: normal;
-}
-.casmgmt-app .casmgmt-content .service-editor .panel-sas-options .panel.panel-default {
-  margin: 0;
 }
 .casmgmt-app .casmgmt-content .services-summary-table td {
   border-top: none;
