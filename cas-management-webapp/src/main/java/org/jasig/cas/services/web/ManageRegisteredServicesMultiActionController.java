@@ -122,7 +122,7 @@ public final class ManageRegisteredServicesMultiActionController {
      * @param idAsLong the id
      * @return the Model and View to go to after the service is deleted.
      */
-    @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.GET})
+    @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.POST})
     public ModelAndView deleteRegisteredService(@RequestParam("id") final long idAsLong) {
         final RegisteredService defaultRegSvc = this.servicesManager.findServiceBy(
                 new SimpleWebApplicationServiceImpl(this.defaultServiceUrl));
@@ -158,7 +158,7 @@ public final class ManageRegisteredServicesMultiActionController {
      * @param id the service ids, whose order also determines the service evaluation order
      * @return {@link ModelAndView} object that redirects to a <code>jsonView</code>.
      */
-    @RequestMapping(value="updateRegisteredServiceEvaluationOrder.html", method={RequestMethod.GET})
+    @RequestMapping(value="updateRegisteredServiceEvaluationOrder.html", method={RequestMethod.POST})
     public ModelAndView updateRegisteredServiceEvaluationOrder(@RequestParam("id") final long... id) {
         if (id == null || id.length == 0) {
             throw new IllegalArgumentException("No service id was received. Re-examine the request");
