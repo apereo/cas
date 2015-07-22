@@ -118,17 +118,29 @@
                 placeholder: 'tr-placeholder',
                 start: function(e, ui) {
                     servicesData.detailRow = 0;
+                    ui.item.data('data_changed', false);
                 },
                 update: function(e, ui) {
-/**
-                    $http.post('/rest/services/reorder', $(this).sortable('serialize')) // TODO: fix URL
-                        .success(function() {
-                            //servicesData.getServices(); // TODO: Need/want? Helpful if multiple instances/users.
-                        })
-                        .error(function(data, status) {
-                            // TODO: If an error does occur, what happens?
-                        });
-**/
+                    ui.item.data('data_changed', true);
+                },
+                stop: function(e, ui) {
+                    if(ui.item.data('data_changed')) {
+                        var idStr = $(this).sortable('serialize', {key: 'id'});
+                        idStr = idStr.replace('[]', '');
+                        //$log.debug(idStr);
+
+                        $http.get('/cas-management/updateRegisteredServiceEvaluationOrder.html', {data: idStr})
+                            .success(function() {
+                                servicesData.getServices();
+                            })
+                            .error(function(data, status) {
+                                servicesData.alert = {
+                                    name:   'notupdated',
+                                    type:   'danger',
+                                    data:   null
+                                };
+                            });
+                    }
                 }
             };
 
@@ -149,24 +161,24 @@
                 servicesData.modalItem = null;
             };
             this.deleteService = function(item) {
-                $log.log('Deleting entry ' + item.name + ' (' + item.assignedId + ')...');
                 servicesData.closeModalDelete();
 
-                // TODO: Remove this visual placeholder, or move it into the post.success at least
-                angular.forEach(this.dataTable, function(row, idx) {
-                    if(row === item) {
-                        servicesData.dataTable.splice(idx, 1);
-                    }
-                });
-/**
-                $http.post('/rest/service/delete', {'assignedId': item.assignedId})
+                $http.get('/cas-management/deleteRegisteredService.html', {data: 'id='+item.assignedId})
                     .success(function() {
-                        servicesData.getServices(); // TODO: Same Q as for update, or we can remove from JS object.
+                        servicesData.getServices();
+                        servicesData.alert = {
+                            name:   'deleted',
+                            type:   'info',
+                            data:   item
+                        };
                     })
                     .error(function(data, status) {
-                        // TODO: how do we want to show an error, like server down or etc?
+                        servicesData.alert = {
+                            name:   'notdeleted',
+                            type:   'danger',
+                            data:   null
+                        };
                     });
-**/
             };
 
             this.clearFilter = function() {
@@ -218,7 +230,7 @@
             ];
             this.themeType = this.themeList[0];
 
-            this.reqHandlerList=[
+            this.reqHandlerList = [
                 {name: 'Required Handler 1', value: 'reqHandler01'},
                 {name: 'Required Handler 2', value: 'reqHandler02'},
                 {name: 'Required Handler 3', value: 'reqHandler03'},
@@ -226,6 +238,14 @@
                 {name: 'Required Handler 5', value: 'reqHandler05'}
             ];
             this.reqHandler = this.reqHandlerList[0];
+
+            this.timeUnits = [
+                'MILLISECONDS',
+                'SECONDS',
+                'MINUTES',
+                'HOURS',
+                'DAYS'
+            ];
 
             this.saveForm = function() {
                 serviceForm.validateForm();
@@ -236,9 +256,11 @@
                 serviceForm.formErrors = null;
             };
 
-            this.addService = function (service) {
+            this.newService = function (service) {
                 // service.services.push(this.service);
-                serviceForm.formData = {};
+                serviceForm.formData = {
+                    evalOrder: 100
+                };
             };
 
 /**

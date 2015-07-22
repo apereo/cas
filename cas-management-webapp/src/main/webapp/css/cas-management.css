@@ -6776,8 +6776,20 @@ html {
 .casmgmt-app .casmgmt-content .services-table tbody {
   border: 1px solid #e6e6e6;
 }
+.casmgmt-app .casmgmt-content .services-table .table-service > tbody {
+  border-width: 0 0 1px 0;
+}
 .casmgmt-app .casmgmt-content .services-table > tbody > tr.ui-sortable-helper {
   opacity: 0.7;
+}
+.casmgmt-app .casmgmt-content .services-table > tbody > tr.row-disabled {
+  background-color: #c9c9c9;
+}
+.casmgmt-app .casmgmt-content .services-table > tbody > tr.row-disabled:hover {
+  background-color: #c9c9c9;
+}
+.casmgmt-app .casmgmt-content .services-table > tbody > tr.row-disabled .main-row > td:not(.col-sm-1) {
+  font-style: italic;
 }
 .casmgmt-app .casmgmt-content .services-table > tbody > tr > td {
   width: 100%;
@@ -6826,17 +6838,32 @@ html {
 .casmgmt-app .casmgmt-content .service-editor > .col-sm-12 > .col-sm-6:eq(1) {
   padding-right: 0;
 }
+.casmgmt-app .casmgmt-content .service-editor .panel-sas-options {
+  padding: 0;
+}
+.casmgmt-app .casmgmt-content .service-editor .panel-sas-options label {
+  font-weight: normal;
+}
+.casmgmt-app .casmgmt-content .service-editor .panel-sas-options .panel.panel-default {
+  margin: 0;
+}
 .casmgmt-app .casmgmt-content .services-summary-table td {
   border-top: none;
 }
 .casmgmt-app .casmgmt-content .alert {
   padding: 10px 20px;
 }
+.casmgmt-app .casmgmt-content .alert p {
+  margin-bottom: 0;
+}
 .casmgmt-app .casmgmt-content .alert .fa {
   padding-top: 7px;
 }
-.casmgmt-app .casmgmt-content .alert p {
-  margin-bottom: 0;
+.casmgmt-app .casmgmt-content .alert .close-link {
+  float: right;
+  padding: 0;
+  color: #999999;
+  text-decoration: none;
 }
 .casmgmt-app .casmgmt-content h1 {
   color: #50ac47;
