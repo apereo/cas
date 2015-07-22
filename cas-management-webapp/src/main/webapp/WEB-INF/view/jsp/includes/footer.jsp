@@ -43,4 +43,7 @@
             </div>
         </div>
     </div>
-</footer>  <!-- end .casmgmt-footer footer -->
+</footer><%-- end .casmgmt-footer footer --%>
+
+    </body>
+</html>
