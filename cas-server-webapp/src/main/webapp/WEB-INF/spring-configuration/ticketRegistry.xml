@@ -48,4 +48,14 @@
           p:jobDetail-ref="jobDetailTicketRegistryCleaner"
           p:startDelay="20000"
           p:repeatInterval="5000000"/>
+
+    <bean id="ticketEncodingAspect"
+          class="org.jasig.cas.ticket.registry.enc.TicketEncodingAspect"
+          c:cipherExecutor-ref="ticketCipherExecutor"
+          p:enabled="${enable.ticket.encoding:true}"
+          factory-method="aspectOf"/>
+
+    <bean id="ticketCipherExecutor" class="org.jasig.cas.util.DefaultCipherExecutor"
+          c:secretKeyEncryption="${tgc.encryption.key}"
+          c:secretKeySigning="${tgc.signing.key}"/>
 </beans>
