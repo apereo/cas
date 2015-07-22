@@ -1,6 +1,7 @@
 [
     {
         "assignedId": 11234,
+        "sasCASEnabled": true,
         "serviceId": "https://hello.+",
         "name": "Apereo",
         "description": "The Aperep service for authentication.",
