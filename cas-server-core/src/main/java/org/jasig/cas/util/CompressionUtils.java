@@ -25,6 +25,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.zip.Deflater;
@@ -180,5 +184,67 @@ public final class CompressionUtils {
         }
     }
 
+    /**
+     * Encode object.
+     *
+     * @param object the object
+     * @param cipherExecutor the cipher executor
+     * @return the result string
+     */
+    public static String encodeObject(final Serializable object, final CipherExecutor cipherExecutor) {
+        final ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+        try (final ObjectOutputStream out = new ObjectOutputStream(outBytes)) {
+            out.writeObject(object);
+        } catch (final IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
 
+        return encodeObject(outBytes.toByteArray(), cipherExecutor);
+    }
+
+    /**
+     * Encode object.
+     *
+     * @param object the object
+     * @param cipherExecutor the cipher executor
+     * @return the result string
+     */
+    public static String encodeObject(final byte[] object, final CipherExecutor cipherExecutor) {
+        final String result = decodeByteArrayToString(object);
+        return cipherExecutor.encode(result);
+    }
+
+    /**
+     * Decode object.
+     *
+     * @param <T>   the type parameter
+     * @param encodedObject the encoded object
+     * @param cipherExecutor the cipher executor
+     * @param clazz the clazz
+     * @return the ticket
+     */
+    public static <T extends Serializable> T decodeObject(final Serializable encodedObject,
+                                                          final CipherExecutor cipherExecutor,
+                                                          final Class<? extends Serializable> clazz) {
+        final String decoded = cipherExecutor.decode(encodedObject.toString());
+
+        try (final ByteArrayInputStream in = new ByteArrayInputStream(decoded.getBytes(Charset.forName(UTF8_ENCODING)));
+             final ObjectInputStream inStream = new ObjectInputStream(in)) {
+
+            final Object obj = inStream.readObject();
+
+            if (obj == null) {
+                throw new RuntimeException("Can not decode encoded object " + encodedObject);
+            }
+
+            if (!clazz.isAssignableFrom(obj.getClass())) {
+                throw new ClassCastException("Decoded object is of type " + obj.getClass()
+                        + " when we were expecting " + clazz);
+            }
+
+            return (T) obj;
+        } catch (final Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
 }
