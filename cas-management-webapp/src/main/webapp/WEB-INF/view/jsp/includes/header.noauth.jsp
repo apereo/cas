@@ -36,23 +36,12 @@
         <link rel="icon" href="<c:url value="/images/favicon.ico" />" type="image/x-icon" />
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="<c:url value="/css/cas-management.css" />" type="text/css" />
-
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.16/angular.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.16/angular-route.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-sortable/0.13.4/sortable.min.js"></script>
-        <script type="text/javascript" src="<c:url value="/js/app/app-angular.js"/>"></script>
-        <script type="text/javascript" src="<c:url value="/js/app-jquery.js"/>"></script>
     </head>
     <body class="casmgmt-app" ng-controller="actionsController as action">
 
 <header id="casmgmt-header">
     <nav class="navbar navbar-default">
         <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
                 <a href="manage.html">
                     <div class="navbar-brand">
@@ -61,30 +50,6 @@
                     <h4><spring:message code="management.services.header.apptitle" /></h4>
                 </a>
             </div><%-- end .navbar-header div --%>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="casmgt-navbar-collapse" ng-if="action.activeSession">
-                <ul class="nav navbar-nav navbar-right quicklinks">
-                    <li>
-                        <a href="manage.html" ng-click="action.homepage($event)">
-                            <i class="fa fa-gears"></i>
-                            <spring:message code="management.services.header.navbar.navitem.manageService" />
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript://" ng-click="action.serviceAdd()">
-                            <i class="fa fa-plus-circle"></i>
-                            <spring:message code="management.services.header.navbar.navitem.addNewService" />
-                        </a>
-                    </li>
-                    <li>
-                        <a href="logout.html">
-                            <i class="fa fa-sign-out"></i>
-                            <spring:message code="management.services.header.navbar.navitem.logout" />
-                        </a>
-                    </li>
-                </ul>
-            </div><%-- end .navbar-collapse div --%>
         </div><%-- end .container-fluid div --%>
     </nav><%-- end .navbar div --%>
 </header><%-- end .casmgmt-header header --%>
