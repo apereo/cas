@@ -6729,7 +6729,7 @@ html {
   border-top: 1px solid #cccccc;
   text-align: center;
 }
-.casmgmt-app .casmgmt-form .services-button-group button + button {
+.casmgmt-app .casmgmt-form .services-button-group .btn + .btn {
   margin-left: 20px;
 }
 .casmgmt-app .search-form .search-clear {

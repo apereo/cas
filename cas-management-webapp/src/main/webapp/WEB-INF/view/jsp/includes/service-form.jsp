@@ -45,9 +45,6 @@
                 <span ng-if="serviceFormCtrl.alert.name === 'instructions'">
                     <spring:message code="services.form.instructions" />
                 </span>
-                <a href="javascript://" class="fa fa-2x fa-times-circle-o close-link" ng-click="serviceFormCtrl.alert = null;">
-<%-- TODO: Needs accessibility text for screen readers --%>
-                </a>
             </p>
         </div>
 
@@ -625,14 +622,14 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="form-group services-button-group">
-                        <button ng-click="serviceFormCtrl.saveForm()" class="btn btn-primary">
+                        <button href="javascript://" ng-click="serviceFormCtrl.saveForm()" class="btn btn-primary">
                             <i class="fa fa-floppy-o"></i>
                             <spring:message code="services.form.button.save" />
                         </button>
-                        <button ng-click="action.selectAction('manage')" class="btn btn-default">
+                        <a href="manage.html" ng-click="action.homepage($event)" class="btn btn-default">
                             <i class="fa fa-times"></i>
                             <spring:message code="services.form.button.cancel" />
-                        </button>
+                        </a>
                     </div> <!-- end services-button-group div -->
                 </div>
             </div>
