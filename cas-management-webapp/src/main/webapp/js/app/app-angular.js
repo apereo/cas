@@ -59,34 +59,6 @@
             };
         });
 
-/** // Routes not working yet, so commented out
-    app.config([
-        '$routeProvider',
-        function($routeProvider) {
-            $routeProvider.
-                when('/manage', {
-                    templateUrl: '',
-                    controller: 'ServicesTableController'
-                }).
-                when('/service/', {
-                    templateUrl: '',
-                    controller: 'ServiceFormController'
-                }).
-                when('/service/:assignedId', {
-                    templateUrl: '',
-                    controller: 'ServiceFormController'
-                }).
-                when('/logout', {
-                    templateUrl: '/jsp/includes',
-                    controller: ''
-                }).
-                otherwise({
-                    redirectTo: '/manage'
-                });
-        }
-    ]);
-**/
-
 // View Swapper
     app.controller('actionsController', [
         '$location',
@@ -103,19 +75,21 @@
                 return this.actionPanel === checkAction;
             };
 
-            this.homepage = function() {
+            this.homepage = function(e) {
                 if(this.activeSession) {
                     this.selectAction('manage');
-                } else {
-                    $location.url('./manage.html');
+                    e.preventDefault();
                 }
             };
 
-            this.logout = function() {
-                if(this.activeSession) {
-                    this.selectAction('logout');
-                }
-                $location.url('./logout.html');
+            this.serviceAdd = function() {
+                this.selectAction('add');
+                // cause form data to clear/reset to default obj
+            };
+
+            this.serviceEdit = function(id) {
+                this.selectAction('edit');
+                // pass id so it loads the form data
             };
         }
     ]);
@@ -143,11 +117,9 @@
                 },
                 stop: function(e, ui) {
                     if(ui.item.data('data_changed')) {
-                        var idStr = $(this).sortable('serialize', {key: 'id'});
-                        //idStr = idStr.replace('[]', '');
-                        //$log.debug(idStr);
+                        var data = $(this).sortable('serialize', {key: 'id'});
 
-                        $http.post('/cas-management/updateRegisteredServiceEvaluationOrder.html', $(this).sortable('serialize', {key: 'id'}))
+                        $http.post('/cas-management/updateRegisteredServiceEvaluationOrder.html', data)
                             .success(function() {
                                 servicesData.getServices();
                             })
@@ -207,17 +179,14 @@
                 servicesData.detailRow = servicesData.detailRow == rowId ? 0 : rowId;
             };
 
-
-            // Final action
             this.getServices();
         }
     ]);
 
 // Service Form: Add/Edit Service View
     app.controller('ServiceFormController', [
-        //'$routeParams',
         '$log',
-        function ($log) { //$routeParams, 
+        function ($log) {
             var serviceForm = this,
                 showInstructions = function() {
                     serviceForm.alert = {
@@ -286,8 +255,8 @@
                     return;
                 }
 
-                $http.get('js/app/data/service-' + id + '.json')
-                    .success(function(data) { // TODO: fix URL
+                $http.post('/cas-management/forcedError', serviceForm.formData)  // TODO: fix this call
+                    .success(function(data) {
                         serviceForm.formData = data[0];
                         serviceForm.alert = {
                             name:   'saved',
@@ -326,8 +295,8 @@
             };
 
             this.loadService = function (id) {
-                $http.get('js/app/data/service-' + id + '.json')
-                    .success(function(data) { // TODO: fix URL
+                $http.get('js/app/data/service-' + id + '.json') // TODO: fix URL
+                    .success(function(data) {
                         serviceForm.formData = data[0];
                     })
                     .error(function(data, status) {
