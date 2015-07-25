@@ -64,7 +64,9 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     /** Default setting to check keyUsage extension. */
     private static final boolean DEFAULT_CHECK_KEYUSAGE = false;
 
-    /** Default setting to force require "KeyUsage" extension. */
+    /**
+     * Default setting to force require "KeyUsage" extension.
+     */
     private static final boolean DEFAULT_REQUIRE_KEYUSAGE = false;
 
     /** Default subject pattern match. */
