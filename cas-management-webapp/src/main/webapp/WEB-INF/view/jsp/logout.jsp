@@ -18,10 +18,13 @@
     under the License.
 
 --%>
-<jsp:directive.include file="includes/top.jsp" />
-<p />
-<div id="msg" class="success">
-	<h2><spring:message code="screen.logout.header" /></h2>
-	<p><spring:message code="screen.logout.success" /></p>
+<%@include file="includes/header.jsp" %>
+
+<div class="col-sm-12">
+    <div id="msg" class="success">
+        <h2><spring:message code="screen.logout.header"/></h2>
+        <p><spring:message code="screen.logout.success"/></p>
+    </div>
 </div>
-<jsp:directive.include file="includes/bottom.jsp" />
+
+<%@include file="includes/footer.jsp" %>

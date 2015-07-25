@@ -120,6 +120,6 @@ public final class ImmutableAssertion implements Assertion, Serializable {
 
     @Override
     public String toString() {
-        return this.primaryAuthentication + ":" + this.service;
+        return this.primaryAuthentication.toString() + ':' + this.service.toString();
     }
 }

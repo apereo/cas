@@ -122,7 +122,7 @@ public final class OAuthUtils {
             sb.append('?');
         }
         sb.append(name);
-        sb.append("=");
+        sb.append('=');
         if (value != null) {
             try {
                 sb.append(URLEncoder.encode(value, "UTF-8"));

@@ -27,6 +27,11 @@
     </div>
 </c:if>
 
+<div id="cookiesDisabled" class="errors" style="display:none;">
+    <h2><spring:message code="screen.cookies.disabled.title" /></h2>
+    <p><spring:message code="screen.cookies.disabled.message" /></p>
+</div>
+
 <c:if test="${not empty registeredService}">
     <c:set var="registeredServiceLogo" value="images/webapp.png"/>
     <c:if test="${not empty registeredService.logo}">
@@ -81,18 +86,28 @@
             <span id="capslock-on" style="display:none;"><p><img src="images/warning.png" valign="top"> <spring:message code="screen.capslock.on" /></p></span>
         </section>
 
+        <!--
         <section class="row check">
-            <input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
-            <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
+            <p>
+                <input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
+                <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
+                <br/>
+                <input id="publicWorkstation" name="publicWorkstation" value="false" tabindex="4" type="checkbox" />
+                <label for="publicWorkstation"><spring:message code="screen.welcome.label.publicstation" /></label>
+                <br/>
+                <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"  />
+                <label for="rememberMe"><spring:message code="screen.rememberme.checkbox.title" /></label>
+            </p>
         </section>
+        -->
 
         <section class="row btn-row">
             <input type="hidden" name="lt" value="${loginTicket}" />
             <input type="hidden" name="execution" value="${flowExecutionKey}" />
             <input type="hidden" name="_eventId" value="submit" />
 
-            <input class="btn-submit" name="submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="4" type="submit" />
-            <input class="btn-reset" name="reset" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="5" type="reset" />
+            <input class="btn-submit" name="submit" accesskey="l" value="<spring:message code="screen.welcome.button.login" />" tabindex="6" type="submit" />
+            <input class="btn-reset" name="reset" accesskey="c" value="<spring:message code="screen.welcome.button.clear" />" tabindex="7" type="reset" />
         </section>
     </form:form>
 </div>
@@ -125,6 +140,7 @@
                             <option value="de">Deutsch</option>
                             <option value="ja">Japanese</option>
                             <option value="hr">Croatian</option>
+                            <option value="uk">Ukranian</option>
                             <option value="cs">Czech</option>
                             <option value="sl">Slovenian</option>
                             <option value="pl">Polish</option>
@@ -154,6 +170,7 @@
                         <li><a href="${loginUrl}de">Deutsch</a></li>
                         <li><a href="${loginUrl}ja">Japanese</a></li>
                         <li><a href="${loginUrl}hr">Croatian</a></li>
+                        <li><a href="${loginUrl}uk">Ukranian</a></li>
                         <li><a href="${loginUrl}cs">Czech</a></li>
                         <li><a href="${loginUrl}sl">Slovenian</a></li>
                         <li><a href="${loginUrl}ca">Catalan</a></li>

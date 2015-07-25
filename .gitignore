@@ -14,7 +14,11 @@ bin/
 .idea
 overlays/
 pom.xml.versionsBackup
+build.xml
 *.log
 rebel.xml
 **/.checkstyle
 *.log.gz
+node_modules/
+package.json
+gruntfile.js

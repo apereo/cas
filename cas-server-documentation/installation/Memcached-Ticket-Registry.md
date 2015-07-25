@@ -6,12 +6,13 @@ title: CAS - Memcached Ticket Registry
 # Memcached Ticket Registry
 Memcached integration is enabled by including the following dependency in the Maven WAR overlay:
 
-    <dependency>
-        <groupId>org.jasig.cas</groupId>
-        <artifactId>cas-server-integration-memcached</artifactId>
-        <version>${cas.version}</version>
-    </dependency>
-
+{% highlight xml %}
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-integration-memcached</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
 `MemCacheTicketRegistry` stores tickets in one or more [memcached](http://memcached.org/) instances. The
 [spymemcached](https://code.google.com/p/spymemcached/) library used by this component presents memcached as a
 key/value store that accepts `String` keys and Java `Object` values.
@@ -109,13 +110,14 @@ The following configuration is a template for `ticketRegistry.xml` Spring config
 
 `MemCacheTicketRegistry` properties reference:
 
-    # It is common to run memcached on every CAS node
-    memcached.servers=cas-1.example.org:11211,cas-2.example.org:11211,cas-3.example.org:11211
-    memcached.hashAlgorithm=FNV1_64_HASH
-    memcached.protocol=BINARY
-    memcached.locatorType=ARRAY_MOD
-    memcached.failureMode=Redistribute
-
+{% highlight properties %}
+# It is common to run memcached on every CAS node
+memcached.servers=cas-1.example.org:11211,cas-2.example.org:11211,cas-3.example.org:11211
+memcached.hashAlgorithm=FNV1_64_HASH
+memcached.protocol=BINARY
+memcached.locatorType=ARRAY_MOD
+memcached.failureMode=Redistribute
+{% endhighlight %}
 
 ## High Availability Considerations
 Memcached does not provide for replication by design, but the client is tolerant to node failures with

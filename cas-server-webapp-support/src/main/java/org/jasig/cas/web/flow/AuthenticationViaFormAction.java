@@ -21,7 +21,7 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.Message;
+import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
@@ -70,6 +70,9 @@ public class AuthenticationViaFormAction {
     /** Error result. */
     public static final String ERROR = "error";
 
+    /** Flow scope attribute that determines if authn is happening at a public workstation. */
+    public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
+
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -79,6 +82,7 @@ public class AuthenticationViaFormAction {
 
     @NotNull
     private CookieGenerator warnCookieGenerator;
+
 
     /**
      * Handle the submission of credentials from the post.
@@ -131,7 +135,7 @@ public class AuthenticationViaFormAction {
     protected Event returnInvalidLoginTicketEvent(final RequestContext context, final MessageContext messageContext) {
         final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
         logger.warn("Invalid login ticket [{}]", loginTicketFromRequest);
-        messageContext.addMessage(new MessageBuilder().code("error.invalid.loginticket").build());
+        messageContext.addMessage(new MessageBuilder().error().code("error.invalid.loginticket").build());
         return newEvent(ERROR);
     }
 
@@ -197,6 +201,7 @@ public class AuthenticationViaFormAction {
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
+            putPublicWorkstationToFlowIfRequestParameterPresent(context);
             if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
@@ -219,7 +224,7 @@ public class AuthenticationViaFormAction {
     protected boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
         for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
-            for (final Message message : entry.getValue().getWarnings()) {
+            for (final MessageDescriptor message : entry.getValue().getWarnings()) {
                 addWarningToContext(messageContext, message);
                 foundAndAddedWarnings = true;
             }
@@ -239,6 +244,18 @@ public class AuthenticationViaFormAction {
             this.warnCookieGenerator.addCookie(response, "true");
         } else {
             this.warnCookieGenerator.removeCookie(response);
+        }
+    }
+
+    /**
+     * Put public workstation into the flow if request parameter present.
+     *
+     * @param context the context
+     */
+    private void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
+        if (StringUtils.isNotBlank(context.getExternalContext()
+                .getRequestParameterMap().get(PUBLIC_WORKSTATION_ATTRIBUTE))) {
+            context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
         }
     }
 
@@ -271,7 +288,7 @@ public class AuthenticationViaFormAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-     /**
+    /**
      * Sets ticket registry.
      *
      * @param ticketRegistry the ticket registry. No longer needed as the core service layer
@@ -289,7 +306,7 @@ public class AuthenticationViaFormAction {
      * @param context Message context.
      * @param warning Warning message.
      */
-    private void addWarningToContext(final MessageContext context, final Message warning) {
+    private void addWarningToContext(final MessageContext context, final MessageDescriptor warning) {
         final MessageBuilder builder = new MessageBuilder()
                 .warning()
                 .code(warning.getCode())
