@@ -18,7 +18,7 @@
     under the License.
 
 --%>
-<%@include file="includes/header.jsp" %>
+<%@include file="includes/header.noauth.jsp" %>
 
 <div class="col-sm-12">
     <div id="msg" class="success">

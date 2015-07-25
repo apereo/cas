@@ -1,7 +1,14 @@
 [
     {
         "assignedId": 11234,
-        "sasCASEnabled": true,
+        "supportAccess": {
+            "casEnabled": true,
+            "ssoEnabled": true,
+            "requireAll": false,
+            "requiredAttr": {
+                "uid": "Apereo"
+            }
+        },
         "serviceId": "https://hello.+",
         "name": "Apereo",
         "description": "The Aperep service for authentication.",
