@@ -19,11 +19,13 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
@@ -46,7 +48,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class GoogleAccountsServiceTests {
+public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -97,7 +99,7 @@ public class GoogleAccountsServiceTests {
     @Test
     public void verifyResponse() {
         final Response resp = this.googleAccountsService.getResponse("ticketId");
-        assertEquals(resp.getResponseType(), Response.ResponseType.POST);
+        assertEquals(resp.getResponseType(), DefaultResponse.ResponseType.POST);
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RESPONSE));
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
     }

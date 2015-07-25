@@ -49,7 +49,7 @@ public class JsonServiceRegistryDaoTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private ServiceRegistryDao dao;
+    private final ServiceRegistryDao dao;
 
     public JsonServiceRegistryDaoTests() throws Exception {
         this.dao = new JsonServiceRegistryDao(RESOURCE.getFile());
@@ -330,6 +330,6 @@ public class JsonServiceRegistryDaoTests {
 
         this.dao.save(r);
         final List<RegisteredService> list = this.dao.load();
-        assertEquals(list.size(), 1);
+        assertNotNull(this.dao.findServiceById(r.getId()));
     }
 }

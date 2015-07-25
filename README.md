@@ -24,7 +24,7 @@ This approach does not require the adopter to *explicitly* download any version 
 rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local 
 customizations to further ease future upgrades and maintenance.
 
-## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server)
+## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Jasig/cas/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 - Binary releases may be downloaded from [here][downloadcas].
 - CAS artifacts are published through the [Maven Central Repository][casmavencentral].
 - A snapshot of the codebase's `master` branch may be downloaded from [here][downloadcasgithub].
@@ -37,7 +37,7 @@ git clone git@github.com:Jasig/cas.git
 **Note:** If building CAS from the source, running the test cases currently requires an active Internet connection.
 Please [see the maven docs][skip] on how to disable the tests.
 
-## Documentation 
+## Documentation [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
 - [Official Documentation][wiki]
 - [Release Notes][releasenotes]
 - [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Jasig/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

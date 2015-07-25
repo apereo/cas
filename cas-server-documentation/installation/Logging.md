@@ -51,7 +51,7 @@ The `log4j2.xml` itself controls the refresh interval of the logging configurati
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="60">
     <Appenders>
-		...
+        ...
 {% endhighlight %}
 
 ###Appenders
@@ -87,7 +87,7 @@ Additional loggers are available to specify the logging level for component cate
 <Logger name="org.jasig.cas.web.flow" level="info" additivity="true">
     <AppenderRef ref="file"/>
 </Logger>
-<Logger name="com.github.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+<Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
     <AppenderRef ref="file"/>
 </Logger>
 <Root level="error">
@@ -123,7 +123,7 @@ Certain number of characters are left at the trailing end of the ticket id to as
  
 
 #Audits
-CAS uses the [Inspektr framework](https://github.com/dima767/inspektr) for auditing purposes and statistics. The Inspektr project allows for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
+CAS uses the [Inspektr framework](https://github.com/Jasig/inspektr) for auditing purposes and statistics. The Inspektr project allows for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
 
 ##Components
 
@@ -153,19 +153,86 @@ Audit functionality is specifically controlled by the `WEB-INF/spring-configurat
 ###Database Audits
 By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager`. If you intend to use a database for auditing functionality, adjust the audit manager to match the sample configuration below:
 {% highlight xml %}
-<bean id="auditManager" class="com.github.inspektr.audit.support.JdbcAuditTrailManager">
-  <constructor-arg index="0" ref="inspektrTransactionTemplate" />
-  <property name="dataSource" ref="dataSource" />
-  <property name="cleanupCriteria" ref="auditCleanupCriteria" />
-</bean>
 <bean id="auditCleanupCriteria"
-  class="com.github.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
-  <constructor-arg index="0" value="180" />
+    class="org.jasig.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
+    <constructor-arg index="0" value="180" />
 </bean>
+
+<bean id="auditTrailManager"
+      class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
+      c:transactionTemplate-ref="inspektrTransactionTemplate"
+      p:dataSource-ref="dataSource"
+      p:cleanupCriteria-ref="auditCleanupCriteria" />
+
+<bean id="inspektrTransactionManager"
+      class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+      p:dataSource-ref="dataSource" />
+
+<bean id="inspektrTransactionTemplate"
+      class="org.springframework.transaction.support.TransactionTemplate"
+      p:transactionManager-ref="inspektrTransactionManager"
+      p:isolationLevelName="ISOLATION_READ_COMMITTED"
+      p:propagationBehaviorName="PROPAGATION_REQUIRED" />
 {% endhighlight %}
 
-Refer to [Inspektr documentation](https://github.com/dima767/inspektr/wiki/Inspektr-Auditing) on how to create the database schema.
+You'll need to have a `dataSource` that defines a connection to your database. The following snippet
+demonstrates a data source that connects to HSQLDB v1.8:
 
+{% highlight xml %}
+<bean id="dataSource" 
+      class="org.apache.commons.dbcp.BasicDataSource" 
+      destroy-method="close" lazy-init="true"
+      p:poolPreparedStatements="true"
+      p:url="jdbc:hsqldb:hsql://localhost:9001/misagh"
+      p:username="SA"
+      p:password=""
+      p:driverClassName="org.hsqldb.jdbcDriver"
+      p:validationQuery="SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS;" />
+{% endhighlight %}
+
+In order to configure the `dataSource` you will furthermore need additional dependencies
+in the `pom.xml` file that deal with creating connections. 
+
+{% highlight xml %}
+<dependency>
+    <groupId>commons-dbcp</groupId>
+    <artifactId>commons-dbcp</artifactId>
+    <version>${dbcp.version}</version>
+    <scope>runtime</scope>
+</dependency>
+<dependency>
+    <groupId>commons-pool</groupId>
+    <artifactId>commons-pool</artifactId>
+    <version>${commons.pool.version}</version>
+    <scope>runtime</scope>
+</dependency>
+<!-- Replace with your specific database of choice. -->
+<dependency>
+    <groupId>org.hsqldb</groupId>
+    <artifactId>hsqldb</artifactId>
+    <version>${hsqldb.version}</version>
+    <scope>runtime</scope>
+</dependency>
+{% endhighlight %}
+
+You will also need the dependency for the database driver that you have chosen. 
+
+Finally, the following database table needs to be created beforehand:
+
+{% highlight sql %}
+CREATE TABLE COM_AUDIT_TRAIL
+(
+    AUD_USER      VARCHAR(100) NOT NULL,
+    AUD_CLIENT_IP VARCHAR(15)   NOT NULL,
+    AUD_SERVER_IP VARCHAR(15)   NOT NULL,
+    AUD_RESOURCE  VARCHAR(100) NOT NULL,
+    AUD_ACTION    VARCHAR(100) NOT NULL,
+    APPLIC_CD     VARCHAR(15)   NOT NULL,
+    AUD_DATE      TIMESTAMP     NOT NULL
+);
+{% endhighlight %}
+
+You may need to augment the syntax and column types per your specific database implementation.
 
 ##Sample Log Output
 {% highlight bash %}

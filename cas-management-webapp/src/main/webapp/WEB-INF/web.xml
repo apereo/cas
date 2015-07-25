@@ -19,11 +19,11 @@
     under the License.
 
 -->
-<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_5.xsd"
-         version="2.5">
-  <display-name>CAS Management ${project.version}</display-name>
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+  <display-name>CAS Management 4.1.0-SNAPSHOT</display-name>
 
   <context-param>
     <param-name>contextConfigLocation</param-name>
@@ -35,7 +35,7 @@
 
   <filter>
     <filter-name>CAS Client Info Logging Filter</filter-name>
-    <filter-class>com.github.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
+    <filter-class>org.jasig.inspektr.common.web.ClientInfoThreadLocalFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>CAS Client Info Logging Filter</filter-name>
@@ -67,20 +67,20 @@
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
 
-  <!--
-    - This is the Spring dispatcher servlet which delegates all requests to the
-    - Spring WebMVC controllers as configured in cas-servlet.xml.
-  -->
   <servlet>
     <servlet-name>cas-management</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/cas-management-servlet.xml, /WEB-INF/cas-management-servlet-*.xml</param-value>
+    </init-param>
     <init-param>
       <param-name>publishContext</param-name>
       <param-value>false</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
-	
+
   <servlet-mapping>
     <servlet-name>cas-management</servlet-name>
     <url-pattern>*.html</url-pattern>
@@ -93,11 +93,6 @@
 
   <error-page>
     <error-code>401</error-code>
-    <location>/authorizationFailure.html</location>
-  </error-page>
-
-  <error-page>
-    <error-code>403</error-code>
     <location>/authorizationFailure.html</location>
   </error-page>
 

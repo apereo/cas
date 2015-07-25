@@ -26,9 +26,16 @@ cas.securityContext.status.access=hasIpAddress('127.0.0.1')
 {% highlight bash %}
 Health: OK
 
-	1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
+    1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 {% endhighlight %}
 
+
+## Internal Configuration Report
+
+CAS also provides a `/status/config` endpoint that produces a report of the runtime CAS configuration, which includes all components that are under the `org.jasig`
+package as well as settings defined in the `cas.properties` file. The output of this endpoint is a JSON representation of the runtime that is rendered into a modest visualization:
+
+![](https://cloud.githubusercontent.com/assets/1205228/7085296/35819ff0-df2a-11e4-9818-9119fd30588e.jpg)
 
 #Statistics
 Furthermore, the CAS web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance.
@@ -115,7 +122,7 @@ All performance data and metrics are routed to a log file via the Log4j configur
 ...
 
 <Logger name="perfStatsLogger" level="info" additivity="false">
-	<AppenderRef ref="perfFileAppender"/>
+    <AppenderRef ref="perfFileAppender"/>
 </Logger>
 
 {% endhighlight %}
@@ -225,3 +232,4 @@ By default, ticket-granting ticket ids are not shown. This behavior can be contr
 # sso.sessions.include.tgt=false
 
 {% endhighlight %}
+

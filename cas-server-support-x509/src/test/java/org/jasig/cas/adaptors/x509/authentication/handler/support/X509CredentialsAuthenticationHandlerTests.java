@@ -21,6 +21,7 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import edu.vt.middleware.crypt.util.CryptReader;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
@@ -105,7 +106,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern(".*");
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
-        params.add(new Object[] {handler, credential, true, new HandlerResult(handler, credential,
+        params.add(new Object[] {handler, credential, true, new DefaultHandlerResult(handler, credential,
                 new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
@@ -148,7 +149,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 credential,
                 true,
-                new HandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+                new DefaultHandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #7: Require key usage on a cert without keyUsage extension
@@ -172,7 +173,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 credential,
                 true,
-                new HandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+                new DefaultHandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #9: Require key usage on a cert with unacceptable keyUsage extension values
@@ -203,7 +204,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),
                 true,
-                new HandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+                new DefaultHandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #11: Revoked end user certificate
@@ -246,7 +247,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         try {
             if (this.handler.supports(this.credential)) {
                 final HandlerResult result = this.handler.authenticate(this.credential);
-                if (this.expectedResult instanceof HandlerResult) {
+                if (this.expectedResult instanceof DefaultHandlerResult) {
                     assertEquals(this.expectedResult, result);
                 } else {
                     fail("Authentication succeeded when it should have failed with " + this.expectedResult);
@@ -273,7 +274,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         final X509Certificate[] certs = new X509Certificate[files.length];
 
         int i = 0;
-        for (String file : files) {
+        for (final String file : files) {
             try {
                 certs[i++] = (X509Certificate) CryptReader.readCertificate(
                         new ClassPathResource(file).getInputStream());

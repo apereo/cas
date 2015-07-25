@@ -19,22 +19,23 @@
 
 package org.jasig.cas.support.saml.util;
 
+import org.bouncycastle.util.encoders.Hex;
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
-import org.opensaml.Configuration;
-import org.opensaml.DefaultBootstrap;
-import org.opensaml.common.SAMLObject;
-import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.xml.ConfigurationException;
-import org.opensaml.xml.XMLObject;
-import org.opensaml.xml.io.Marshaller;
-import org.opensaml.xml.io.MarshallerFactory;
-import org.opensaml.xml.schema.XSString;
-import org.opensaml.xml.schema.impl.XSStringBuilder;
+import org.opensaml.core.config.InitializationException;
+import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.core.xml.io.MarshallerFactory;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.core.xml.schema.impl.XSStringBuilder;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -68,6 +69,7 @@ import java.nio.charset.Charset;
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Collections;
@@ -90,23 +92,12 @@ public abstract class AbstractSamlObjectBuilder {
      */
     protected static final String DEFAULT_ELEMENT_LOCAL_NAME_FIELD = "DEFAULT_ELEMENT_LOCAL_NAME";
 
+    private static final int RANDOM_ID_SIZE = 16;
+
+    private  static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
+
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    /**
-     * Initialize and bootstrap opensaml.
-     * Check for prior OpenSAML initialization to prevent double init
-     * that would overwrite existing OpenSAML configuration.
-     */
-    static {
-        try {
-            if (Configuration.getParserPool() == null) {
-                DefaultBootstrap.bootstrap();
-            }
-        } catch (final ConfigurationException e) {
-            throw new IllegalStateException("Error initializing OpenSAML library.", e);
-        }
-    }
 
     /**
      * Create a new SAML object.
@@ -117,7 +108,8 @@ public abstract class AbstractSamlObjectBuilder {
      */
     public final <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
         final QName qName = getSamlObjectQName(objectType);
-        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) Configuration.getBuilderFactory().getBuilder(qName);
+        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
+                XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
             throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
         }
@@ -137,9 +129,9 @@ public abstract class AbstractSamlObjectBuilder {
             final QName qName = (QName) f.get(null);
             return qName;
         } catch (final NoSuchFieldException e) {
-            throw new IllegalStateException("Cannot find field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
+            throw new IllegalStateException("Cannot find field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD);
         } catch (final IllegalAccessException e) {
-            throw new IllegalStateException("Cannot access field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
+            throw new IllegalStateException("Cannot access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD);
         }
     }
 
@@ -152,7 +144,7 @@ public abstract class AbstractSamlObjectBuilder {
      * @return the saml object
      */
     private <T extends SAMLObject> T newSamlObject(final Class<T> objectType, final QName qName) {
-        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) Configuration.getBuilderFactory().getBuilder(qName);
+        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
         if (builder == null) {
             throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
         }
@@ -184,8 +176,10 @@ public abstract class AbstractSamlObjectBuilder {
      */
     public String generateSecureRandomId() {
         try {
-            final SecureRandomIdentifierGenerator idGenerator = new SecureRandomIdentifierGenerator();
-            return idGenerator.generateIdentifier();
+            final SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+            final byte[] buf = new byte[RANDOM_ID_SIZE];
+            random.nextBytes(buf);
+            return "_".concat(new String(Hex.encode(buf)));
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.", e);
         }
@@ -200,8 +194,11 @@ public abstract class AbstractSamlObjectBuilder {
      */
     public String marshalSamlXmlObject(final XMLObject object, final StringWriter writer)  {
         try {
-            final MarshallerFactory marshallerFactory = Configuration.getMarshallerFactory();
+            final MarshallerFactory marshallerFactory = XMLObjectProviderRegistrySupport.getMarshallerFactory();
             final Marshaller marshaller = marshallerFactory.getMarshaller(object);
+            if (marshaller == null) {
+                throw new IllegalArgumentException("Could not obtain marshaller for object " + object);
+            }
             final Element element = marshaller.marshall(object);
             element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns", SAMLConstants.SAML20_NS);
             element.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xenc", "http://www.w3.org/2001/04/xmlenc#");
@@ -264,11 +261,11 @@ public abstract class AbstractSamlObjectBuilder {
      * @param pubKey the pub key
      * @return the element
      */
-    private static org.jdom.Element signSamlElement(final org.jdom.Element element, final PrivateKey privKey,
+    private org.jdom.Element signSamlElement(final org.jdom.Element element, final PrivateKey privKey,
                                                     final PublicKey pubKey) {
         try {
             final String providerName = System.getProperty("jsr105Provider",
-                    "org.jcp.xml.dsig.internal.dom.XMLDSigRI");
+                    SIGNATURE_FACTORY_PROVIDER_CLASS);
 
             final XMLSignatureFactory sigFactory = XMLSignatureFactory
                     .getInstance("DOM", (Provider) Class.forName(providerName)
@@ -283,7 +280,7 @@ public abstract class AbstractSamlObjectBuilder {
                     null, null);
 
             // Create the SignatureMethod based on the type of key
-            SignatureMethod signatureMethod;
+            final SignatureMethod signatureMethod;
             if (pubKey instanceof DSAPublicKey) {
                 signatureMethod = sigFactory.newSignatureMethod(
                         SignatureMethod.DSA_SHA1, null);
@@ -313,8 +310,7 @@ public abstract class AbstractSamlObjectBuilder {
             final KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections
                     .singletonList(keyValuePair));
             // Convert the JDOM document to w3c (Java XML signature API requires
-            // w3c
-            // representation)
+            // w3c representation)
             final org.w3c.dom.Element w3cElement = toDom(element);
 
             // Create a DOMSignContext and specify the DSA/RSA PrivateKey and
@@ -362,7 +358,7 @@ public abstract class AbstractSamlObjectBuilder {
      * @param element the element
      * @return the org.w3c.dom. element
      */
-    private static org.w3c.dom.Element toDom(final org.jdom.Element element) {
+    private org.w3c.dom.Element toDom(final org.jdom.Element element) {
         return toDom(element.getDocument()).getDocumentElement();
     }
 
@@ -372,7 +368,7 @@ public abstract class AbstractSamlObjectBuilder {
      * @param doc the doc
      * @return the org.w3c.dom. document
      */
-    private static org.w3c.dom.Document toDom(final Document doc) {
+    private org.w3c.dom.Document toDom(final Document doc) {
         try {
             final XMLOutputter xmlOutputter = new XMLOutputter();
             final StringWriter elemStrWriter = new StringWriter();
@@ -384,6 +380,7 @@ public abstract class AbstractSamlObjectBuilder {
             return dbf.newDocumentBuilder().parse(
                     new ByteArrayInputStream(xmlBytes));
         } catch (final Exception e) {
+            logger.trace(e.getMessage(), e);
             return null;
         }
     }

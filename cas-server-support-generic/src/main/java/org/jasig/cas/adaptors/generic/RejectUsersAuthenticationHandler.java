@@ -27,6 +27,7 @@ import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * AuthenticationHandler which fails to authenticate a user purporting to be one
@@ -45,7 +46,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     /** The collection of users to reject. */
     @NotNull
-    private List<String> users;
+    private Set<String> users;
 
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
@@ -60,11 +61,23 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     /**
+     * @deprecated As of 4.1. Use {@link #setUsers(Set)} instead.
      * Set the Collection of usernames which we will fail to authenticate.
      *
      * @param users The Collection of usernames we should not authenticate.
      */
+    @Deprecated
     public final void setUsers(final List<String> users) {
+        logger.warn("setUsers(List) is deprecated and has no effect. Consider defining a set instead");
+    }
+
+    /**
+     * Set the Collection of usernames which we will fail to authenticate.
+     *
+     * @param users The Collection of usernames we should not authenticate.
+     */
+    public final void setUsers(final Set<String> users) {
         this.users = users;
     }
+
 }

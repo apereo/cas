@@ -54,4 +54,8 @@
   <bean id="serialTranscoder" class="net.spy.memcached.transcoders.SerializingTranscoder"
       p:compressionThreshold="2048" />
 
+  <bean id="kryoTranscover" class="org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder" />
+
+  <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
+          p:afterInitialization="true"/>
 </beans>
