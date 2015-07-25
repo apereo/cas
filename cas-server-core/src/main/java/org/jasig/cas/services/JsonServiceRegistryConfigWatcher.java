@@ -175,6 +175,10 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
     private void handleCreateEvent(final File file) {
         //load the entry and add it to the map
         final RegisteredService service = this.serviceRegistryDao.loadRegisteredServiceFromFile(file);
+        if (service == null) {
+            LOGGER.warn("No service definition was loaded from [{}]", file);
+            return;
+        }
         if (this.serviceRegistryDao.findServiceById(service.getId()) != null) {
             LOGGER.warn("Found a service definition [{}] with a duplicate id [{}] in [{}]. "
                             + "This will overwrite previous service definitions and is likely a "
