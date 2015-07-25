@@ -30,6 +30,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
@@ -55,7 +56,7 @@ import static org.junit.Assert.*;
  * @since 3.1
  *
  */
-public class Saml10SuccessResponseViewTests {
+public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private Saml10SuccessResponseView response;
 

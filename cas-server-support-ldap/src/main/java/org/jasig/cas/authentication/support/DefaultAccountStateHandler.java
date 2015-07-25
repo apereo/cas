@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.authentication.support;
 
-import org.jasig.cas.Message;
+import org.jasig.cas.DefaultMessageDescriptor;
+import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
@@ -40,6 +41,7 @@ import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +54,7 @@ import java.util.Map;
  */
 public class DefaultAccountStateHandler implements AccountStateHandler {
     /** Map of account state error to CAS authentication exception. */
-    protected static final Map<AccountState.Error, LoginException> ERROR_MAP;
+    protected final Map<AccountState.Error, LoginException> errorMap;
 
     /** Logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -61,42 +63,37 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
      * Instantiates a new account state handler, that populates
      * the error map with LDAP error codes and corresponding exceptions.
      */
-    static {
-        ERROR_MAP = new HashMap<>();
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, new AccountLockedException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, new InvalidLoginTimeException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.INVALID_WORKSTATION, new InvalidLoginLocationException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE, new AccountPasswordMustChangeException());
-        ERROR_MAP.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
-        ERROR_MAP.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
-        ERROR_MAP.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
-        ERROR_MAP.put(EDirectoryAccountState.Error.LOGIN_TIME_LIMITED, new InvalidLoginTimeException());
-        ERROR_MAP.put(EDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
-        ERROR_MAP.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
-        ERROR_MAP.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
-        ERROR_MAP.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
-        ERROR_MAP.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new CredentialExpiredException());
+    public DefaultAccountStateHandler() {
+        this.errorMap = new HashMap<>();
+        this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, new AccountLockedException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS, new InvalidLoginTimeException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.INVALID_WORKSTATION, new InvalidLoginLocationException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE, new AccountPasswordMustChangeException());
+        this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
+        this.errorMap.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
+        this.errorMap.put(EDirectoryAccountState.Error.LOGIN_TIME_LIMITED, new InvalidLoginTimeException());
+        this.errorMap.put(EDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(PasswordExpirationAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(PasswordPolicyControl.Error.ACCOUNT_LOCKED, new AccountLockedException());
+        this.errorMap.put(PasswordPolicyControl.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
+        this.errorMap.put(PasswordPolicyControl.Error.CHANGE_AFTER_RESET, new CredentialExpiredException());
     }
 
     @Override
-    public List<Message> handle(final AuthenticationResponse response, final LdapPasswordPolicyConfiguration configuration)
+    public List<MessageDescriptor> handle(final AuthenticationResponse response, final LdapPasswordPolicyConfiguration configuration)
             throws LoginException {
 
         final AccountState state = response.getAccountState();
-        final AccountState.Error error;
-        final AccountState.Warning warning;
-        if (state != null) {
-            error = state.getError();
-            warning = state.getWarning();
-        } else {
-            logger.debug("Account state not defined");
-            error = null;
-            warning = null;
+        if (state == null) {
+            logger.debug("Account state not defined. Returning empty list of messages.");
+            return Collections.emptyList();
         }
-        final List<Message> messages = new ArrayList<>();
-        handleError(error, response, configuration, messages);
-        handleWarning(warning, response, configuration, messages);
+        final List<MessageDescriptor> messages = new ArrayList<>();
+        handleError(state.getError(), response, configuration, messages);
+        handleWarning(state.getWarning(), response, configuration, messages);
+
         return messages;
     }
 
@@ -116,11 +113,11 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final AccountState.Error error,
             final AuthenticationResponse response,
             final LdapPasswordPolicyConfiguration configuration,
-            final List<Message> messages)
+            final List<MessageDescriptor> messages)
             throws LoginException {
 
-        logger.debug("Handling {}", error);
-        final LoginException ex = ERROR_MAP.get(error);
+        logger.debug("Handling error {}", error);
+        final LoginException ex = this.errorMap.get(error);
         if (ex != null) {
             throw ex;
         }
@@ -142,8 +139,9 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final AccountState.Warning warning,
             final AuthenticationResponse response,
             final LdapPasswordPolicyConfiguration configuration,
-            final List<Message> messages) {
+            final List<MessageDescriptor> messages) {
 
+        logger.debug("Handling warning {}", warning);
         if (warning == null) {
             logger.debug("Account state warning not defined");
             return;
@@ -157,13 +155,13 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
                 configuration.getPasswordWarningNumberOfDays());
         if (configuration.isAlwaysDisplayPasswordExpirationWarning()
                 || ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
-            messages.add(new PasswordExpiringWarningMessage(
+            messages.add(new PasswordExpiringWarningMessageDescriptor(
                     "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
                     ttl.getDays(),
                     configuration.getPasswordPolicyUrl()));
         }
         if (warning.getLoginsRemaining() > 0) {
-            messages.add(new Message(
+            messages.add(new DefaultMessageDescriptor(
                     "password.expiration.loginsRemaining",
                     "You have {0} logins remaining before you MUST change your password.",
                     warning.getLoginsRemaining()));

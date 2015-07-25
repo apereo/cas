@@ -33,10 +33,11 @@ import java.nio.charset.Charset;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
- * {@link org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential}.<br>
+ * {@link org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential}.
+ * <p>
  * Once AbstractNonInteractiveCredentialsAction has executed the authentication
  * procedure, this action check whether a principal is present in Credential and
- * add corresponding response headers.
+ * add corresponding response headers.</p>
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
@@ -51,7 +52,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
     private String messageBeginPrefix = constructMessagePrefix();
 
     /**
-     * Behavior in case of SPNEGO authentication failure :<br>
+     * Behavior in case of SPNEGO authentication failure :
      * <ul><li>True : if SPNEGO is the last authentication method with no fallback.</li>
      * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
      * </ul>
@@ -61,8 +62,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
     @Override
     protected Credential constructCredentialsFromRequest(
             final RequestContext context) {
-        final HttpServletRequest request = WebUtils
-                .getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
         final String authorizationHeader = request
                 .getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
@@ -75,6 +75,10 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
                     authorizationHeader.length() - this.messageBeginPrefix.length());
 
             final byte[] token = CompressionUtils.decodeBase64ToByteArray(authorizationHeader.substring(this.messageBeginPrefix.length()));
+            if (token == null) {
+                logger.warn("Could not compress authorization header in base64");
+                return null;
+            }
             logger.debug("Obtained token: {}", new String(token, Charset.defaultCharset()));
             return new SpnegoCredential(token);
         }
@@ -89,7 +93,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
      */
     protected String constructMessagePrefix() {
         return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                + " ";
+                + ' ';
     }
 
     @Override
@@ -124,7 +128,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
             logger.debug("Obtained output token: {}", new String(nextToken, Charset.defaultCharset()));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
                     ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                    + " " + CompressionUtils.encodeBase64(nextToken));
+                    + ' ' + CompressionUtils.encodeBase64(nextToken));
         } else {
             logger.debug("Unable to obtain the output token required.");
         }

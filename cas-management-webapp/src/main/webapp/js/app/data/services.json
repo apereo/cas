@@ -1,0 +1,60 @@
+[
+    {
+        "assignedId": 11234,
+        "sasCASEnabled": true,
+        "serviceId": "https://hello.+",
+        "name": "Apereo",
+        "description": "The Apereo service for authentication.",
+        "logoUrl": "http://cdn2-b.examiner.com/sites/default/files/styles/image_content_width/hash/66/4f/664f6ba9444d349a914428750cb5187e.jpg",
+        "proxyPolicy": {
+            "type": "refuse",
+            "value": null
+        },
+        "attrRelease": {
+            "releasePassword": true,
+            "releaseTicket": true,
+            "attrPolicy": {
+                "type": "all"
+            }
+        }
+    },
+    {
+        "assignedId": 43021,
+        "sasCASEnabled": false,
+        "serviceId": "http?://batman**",
+        "name": "HTTPS and IMAPS",
+        "description": "The HTTP and IMAPS service for authentication.",
+        "logoUrl": null,
+        "proxyPolicy": {
+            "type": "regex",
+            "value": "(.*)"
+        },
+        "attrRelease": {
+            "releasePassword": true,
+            "releaseTicket": false,
+            "attrPolicy": {
+                "type": "allowed"
+            }
+        }
+
+    },
+    {
+        "assignedId": 90432,
+        "sasCASEnabled": true,
+        "serviceId": "http?://*.shield.net+",
+        "name": "Another Service",
+        "description": "Another service you can use for authentication. But if you really want, then you can pick something pre-made. Maybe?",
+        "logoUrl": "http://aggressivecomix.com/wp-content/uploads/2012/08/SHIELD_Logo.png",
+        "proxyPolicy": {
+            "type": "regex",
+            "value": "{h((.*)a)(.*)}"
+        },
+        "attrRelease": {
+            "releasePassword": false,
+            "releaseTicket": false,
+            "attrPolicy": {
+                "type": "mapped"
+            }
+        }
+    }
+]

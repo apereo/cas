@@ -18,14 +18,16 @@
  */
 package org.jasig.cas.support.saml.util;
 
-import org.opensaml.Configuration;
-import org.opensaml.common.SAMLObject;
-import org.opensaml.saml1.binding.encoding.HTTPSOAP11Encoder;
-import org.opensaml.ws.soap.common.SOAPObjectBuilder;
-import org.opensaml.ws.soap.soap11.Body;
-import org.opensaml.ws.soap.soap11.Envelope;
-import org.opensaml.ws.soap.util.SOAPConstants;
-import org.opensaml.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder;
+import org.opensaml.soap.common.SOAPObjectBuilder;
+import org.opensaml.soap.soap11.Body;
+import org.opensaml.soap.soap11.Envelope;
+import org.opensaml.soap.util.SOAPConstants;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Override OpenSAML {@link HTTPSOAP11Encoder} such that SOAP-ENV XML namespace prefix is used for SOAP envelope
@@ -33,15 +35,25 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
  *
  * @author Marvin S. Addison
  * @since 3.5.1
- * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing
+ * standards and will be renamed in the future.
  */
 @Deprecated
 public final class CasHTTPSOAP11Encoder extends HTTPSOAP11Encoder {
     private static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasHTTPSOAP11Encoder.class);
+
+    /**
+     * Instantiates a new encoder.
+     */
+    public CasHTTPSOAP11Encoder() {
+        super();
+    }
+
     @Override
-    protected Envelope buildSOAPMessage(final SAMLObject samlMessage) {
-        final XMLObjectBuilderFactory builderFactory = Configuration.getBuilderFactory();
+    protected void buildAndStoreSOAPMessage(final XMLObject payload) {
+        final XMLObjectBuilderFactory builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
         final SOAPObjectBuilder<Envelope> envBuilder =
                 (SOAPObjectBuilder<Envelope>) builderFactory.getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
@@ -53,9 +65,13 @@ public final class CasHTTPSOAP11Encoder extends HTTPSOAP11Encoder {
         final Body body = bodyBuilder.buildObject(
                 SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
 
-        body.getUnknownXMLObjects().add(samlMessage);
-        envelope.setBody(body);
+        if(!body.getUnknownXMLObjects().isEmpty()) {
+            LOGGER.warn("Existing SOAP Envelope Body already contained children");
+        }
 
-        return envelope;
+        body.getUnknownXMLObjects().add(payload);
+        envelope.setBody(body);
+        this.storeSOAPEnvelope(envelope);
     }
+
 }

@@ -20,23 +20,23 @@
 
 -->
 <project name="cas">
-	
-  <path id="bundle.path">
-    <fileset dir="${project.build.directory}">
-      <include name="*.tar.gz" />
-      <include name="*.zip" />
-    </fileset>
-  </path>
 
-  <target name="bundle_check">
-    <pathconvert property="bundles" pathsep="," setonempty="false"
-      refid="bundle.path" />
-  </target>
+    <path id="bundle.path">
+        <fileset dir="${project.build.directory}">
+            <include name="*.tar.gz"/>
+            <include name="*.zip"/>
+        </fileset>
+    </path>
 
-  <target name="genhash" if="bundles" depends="bundle_check">
-  	<echo message="Generating hashes for assembly artifacts" />
-    <checksum algorithm="SHA1">
-      <path refid="bundle.path" />
-    </checksum>
-  </target>
+    <target name="bundle_check">
+        <pathconvert property="bundles" pathsep="," setonempty="false"
+                     refid="bundle.path"/>
+    </target>
+
+    <target name="genhash" if="bundles" depends="bundle_check">
+        <echo message="Generating hashes for assembly artifacts"/>
+        <checksum algorithm="SHA1">
+            <path refid="bundle.path"/>
+        </checksum>
+    </target>
 </project>

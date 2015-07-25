@@ -1,0 +1,48 @@
+[
+    {
+        "assignedId": 11234,
+        "sasCASEnabled": true,
+        "serviceId": "https://hello.+",
+        "name": "Apereo",
+        "description": "The Aperep service for authentication.",
+        "type": 0,
+        "oauth": {
+            "clientSecret": "",
+            "clientId": "",
+            "bypass": 0
+        },
+        "theme": "theme01",
+        "evalOrder": 1,
+        "requiredHandlers": [
+            "reqHandler02"
+        ],
+        "logoUrl": "http://www.everythingisawesome.com/images/captain-awesome.jpg",
+        "logoutUrl": null,
+        "logoutType": "none",
+        "userAttrProvider": {
+            "type": "default",
+            "value": null
+        },
+        "publicKey": {
+            "location": "myLocation",
+            "algorithm": "RSA"
+        },
+        "proxyPolicy": {
+            "type": "refuse",
+            "value": null
+        },
+        "attrRelease": {
+            "releasePassword": true,
+            "releaseTicket": true,
+            "attrFilter": "*",
+            "attrOption": "default",
+            "cachedTimeUnit": null,
+            "cachedExpiration": null,
+            "attrPolicy": {
+                "type": "all",
+                "attributes": {}
+            }
+
+        }
+    }
+]

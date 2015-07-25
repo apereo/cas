@@ -28,9 +28,9 @@ invokeDoc=false
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1) 
-  		echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
-  		invokeJavadoc=true;
-  		invokeDoc=true;;
+        echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
+        invokeJavadoc=true;
+        invokeDoc=true;;
   esac
 fi
 
@@ -38,7 +38,7 @@ echo -e "Starting with project documentation...\n"
 
 if [ "$invokeDoc" == true ]; then
 
-  echo -e "Copying project documentation over...\n"
+  echo -e "Copying project documentation over to $HOME/docs-latest...\n"
   cp -R cas-server-documentation $HOME/docs-latest
 
 fi
@@ -52,7 +52,7 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Started to publish latest Javadoc to gh-pages...\n"
 
   echo -e "Invoking Maven to generate the project site...\n"
-  mvn site site:stage -q -ff -B -P nocheck -Dversions.skip=false
+  mvn -T 20 site site:stage -q -ff -B -P nocheck -Dversions.skip=false
   
   echo -e "Copying the generated docs over...\n"
   cp -R target/staging $HOME/javadoc-latest
@@ -74,13 +74,13 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   echo -e "Staring to move project documentation over...\n"
 
   if [ "$invokeDoc" == true ]; then
-    echo -e "Removing previous documentation...\n"
+    echo -e "Removing previous documentation from development...\n"
     git rm -rf ./development > /dev/null
 
     echo -e "Creating development directory...\n"
     test -d "./development" || mkdir -m777 -v ./development
 
-    echo -e "Copying new docs...\n"
+    echo -e "Copying new docs from $HOME/docs-latest over to development...\n"
     cp -Rf $HOME/docs-latest/* ./development
     echo -e "Copied project documentation...\n"
   fi
@@ -88,17 +88,17 @@ if [[ "$invokeJavadoc" == true || "$invokeDoc" == true ]]; then
   echo -e "Staring to move project Javadocs over...\n"
 
   if [ "$invokeJavadoc" == true ]; then
-    echo -e "Removing previous Javadocs...\n"
+    echo -e "Removing previous Javadocs from /development/javadocs...\n"
     git rm -rf ./development/javadocs > /dev/null
 
     echo -e "Creating development directory...\n"
     test -d "./development" || mkdir -m777 -v ./development
 
-    echo -e "Creating javadocs directory...\n"
+    echo -e "Creating Javadocs directory at /development/javadocs...\n"
     test -d "./development/javadocs" || mkdir -m777 -v ./development/javadocs
 
     echo -e "Copying new Javadocs...\n"
-    cp -Rf $HOME/javadoc-latest ./development/javadocs
+    cp -Rf $HOME/javadoc-latest/* ./development/javadocs
     echo -e "Copied project Javadocs...\n"
 
   fi

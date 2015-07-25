@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 import org.aspectj.lang.JoinPoint;
 
-import com.github.inspektr.audit.spi.AuditResourceResolver;
+import org.jasig.inspektr.audit.spi.AuditResourceResolver;
 
 import org.jasig.cas.util.AopUtils;
 

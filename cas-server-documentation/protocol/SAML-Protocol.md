@@ -129,9 +129,7 @@ In `cas-servlet.xml`:
   p:argumentExtractor-ref="samlArgumentExtractor"
   p:successView="casSamlServiceSuccessView"
   p:failureView="casSamlServiceFailureView"/>
-{% endhighlight %}
 
-{% highlight xml %}
 <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
   <property name="mappings">
     <props>
@@ -192,5 +190,7 @@ In `cas-servlet.xml`, uncomment the following:
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
 {% endhighlight %}
 
+#SAML 2
 
+CAS support for SAML 2 at this point is mostly limited to [Google Apps Integration](../integration/Google-Apps-Integration.html). Full SAML 2 support can also be achieved via Shibboleth with CAS handling the authentication and SSO. [See this guide](../integration/Shibboleth.html) for more info.
 
