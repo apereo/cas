@@ -1,5 +1,7 @@
 .casmgmt-form {
-    label {padding-top: 7px;}
+    label {padding-top: 7px;
+        &.required {color: @brand-danger;}
+    }
 
     .form-padding {margin-top: 10px;}
 
@@ -8,10 +10,16 @@
         &.no-float {float: none;}
     }
 
+    .form-group {
+        .alert {margin: 0; padding: 4px 12px;}
+    }
+
     .input-group-required {color: @state-danger-text;}
 
     .radio-group,
     .checkbox-group {margin-bottom: 10px;}
 
-    .services-button-group {margin: 20px; padding: 20px; border-top: 1px solid @gray2; text-align: center;}
+    .services-button-group {margin: 20px; padding: 20px; border-top: 1px solid @gray2; text-align: center;
+        .btn + .btn {margin-left: 20px;}
+    }
 }
