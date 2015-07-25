@@ -98,7 +98,10 @@
 
                 <div class="row">
                     <div class="col-sm-12">
-                        <button class="btn btn-info" ng-click="action.selectAction('add')"><i class="fa fa-plus-circle"></i> <spring:message code="management.services.header.navbar.navitem.addNewService" /></button>
+                        <button class="btn btn-info" ng-click="action.serviceAdd()">
+                            <i class="fa fa-plus-circle"></i>
+                            <spring:message code="management.services.header.navbar.navitem.addNewService" />
+                        </button>
                     </div>
                 </div>
             </div> <!-- end .casmgmt-manage div -->

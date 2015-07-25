@@ -74,16 +74,16 @@
                         <td class="col-sm-3">
                             <div class="grabber-icon"><i class="fa fa-lg fa-ellipsis-v"></i></div>
 <%-- TODO: How does uiSortable deal with keyboard accessibility requirements for drag-and-drop? --%>
-                            {{ item.name }}
+                            <span ng-bind="item.name"></span>
                             <a href="javascript://" class="more" ng-click="serviceTableCtrl.toggleDetail(item.assignedId)">
                                 <i class="fa fa-chevron-{{ serviceTableCtrl.detailRow === item.assignedId ? 'up' : 'down' }}"></i>
 <%-- TODO: Needs accessibility text for screen readers --%>
                             </a>
                         </td>
-                        <td class="col-sm-3">{{ item.serviceId }}</td>
-                        <td class="col-sm-4">{{ item.description | wordCharTrunc:60 }}</td>
+                        <td class="col-sm-3" ng-bind="item.serviceId"></td>
+                        <td class="col-sm-4" ng-bind="item.description | wordCharTrunc:60"></td>
                         <td class="col-sm-1">
-                            <button class="btn btn-success" ng-click="action.selectAction('edit')">
+                            <button class="btn btn-success" ng-click="action.serviceEdit( item.assignedId )">
                                 <i class="fa fa-lg fa-pencil"></i>
                                 <spring:message code="management.services.table.button.edit" />
                             </button>
@@ -99,29 +99,29 @@
                         <td colspan="6">
                             <table class="table-details">
                                 <tr>
-                                    <td class="col-sm-2 detail-label">Full Description:</td>
-                                    <td class="col-sm-8">{{ item.description }}</td>
-                                    <td class="col-sm-2 detail-logo" colspan="2" rowspan="5" ng-if="item.logoUrl"><img src="{{ item.logoUrl }}" alt="{{ item.name }}" /></td>
+                                    <td class="col-sm-2 detail-label"><spring:message code="management.services.table.details.description" />:</td>
+                                    <td class="col-sm-8" ng-bind="item.description"></td>
+                                    <td class="col-sm-2 detail-logo" colspan="2" rowspan="5" ng-if="item.logoUrl"><img ng-attr-src="{{ item.logoUrl }}" alt="{{ item.name }}" /></td>
 <%-- TODO: Confirm security of the item.logoUrl and item.name values so that they won't break the code/layout. --%>
                                 </tr>
                                 <tr>
-                                    <td class="col-sm-2 detail-label">Proxy Policy:</td>
+                                    <td class="col-sm-2 detail-label"><spring:message code="management.services.table.details.proxyPolicy" />:</td>
                                     <td class="col-sm-8">
-                                        <span ng-if="!item.proxyPolicy.value">{{ item.proxyPolicy.type | uppercase }}</span>
-                                        <span nf-if="item.proxyPolicy.value">{{ item.proxyPolicy.value }}</span>
+                                        <span ng-if="!item.proxyPolicy.value" ng-bind="item.proxyPolicy.type | uppercase"></span>
+                                        <span nf-if="item.proxyPolicy.value" ng-bind="item.proxyPolicy.value"></span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="col-sm-2 detail-label">Attribute Policy Option:</td>
-                                    <td class="col-sm-8">{{ item.attrRelease.attrPolicy.type | uppercase }}</td>
+                                    <td class="col-sm-2 detail-label"><spring:message code="management.services.table.details.attrPolicy" />:</td>
+                                    <td class="col-sm-8" ng-bind="item.attrRelease.attrPolicy.type | uppercase"></td>
                                 </tr>
                                 <tr>
-                                    <td class="col-sm-2 detail-label">Release Credential:</td>
-                                    <td class="col-sm-8">{{ item.attrRelease.releasePassword | checkmark }}</td>
+                                    <td class="col-sm-2 detail-label"><spring:message code="management.services.table.details.releaseCred" />:</td>
+                                    <td class="col-sm-8" ng-bind="item.attrRelease.releasePassword | checkmark"></td>
                                 </tr>
                                 <tr>
-                                    <td class="col-sm-2 detail-label">Release Proxy ID:</td>
-                                    <td class="col-sm-8">{{ item.attrRelease.releaseTicket | checkmark }}</td>
+                                    <td class="col-sm-2 detail-label"><spring:message code="management.services.table.details.releaseProxy" />:</td>
+                                    <td class="col-sm-8" ng-bind="item.attrRelease.releaseTicket | checkmark"></td>
                                 </tr>
                             </table>
                         </td>
