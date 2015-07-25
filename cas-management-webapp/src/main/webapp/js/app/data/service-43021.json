@@ -1,7 +1,14 @@
 [
     {
         "assignedId": 43021,
-        "sasCASEnabled": false,
+        "supportAccess": {
+            "casEnabled": false,
+            "ssoEnabled": true,
+            "requireAll": true,
+            "requiredAttr": {
+                "uid": "Apereo_4"
+            }
+        },
         "serviceId": "http?://batman**",
         "name": "HTTPS and IMAPS",
         "description": "The HTTP and IMAPS service for authentication.",

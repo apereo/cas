@@ -1,7 +1,14 @@
 [
     {
         "assignedId": 90432,
-        "sasCASEnabled": true,
+        "supportAccess": {
+            "casEnabled": true,
+            "ssoEnabled": false,
+            "requireAll": true,
+            "requiredAttr": {
+                "uid": "Apereo_9"
+            }
+        },
         "serviceId": "http?://*.shield.net+",
         "name": "Another Service",
         "description": "Another service you can use for authentication. But if you really want, then you can pick something pre-made. Maybe?",
