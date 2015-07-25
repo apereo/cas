@@ -152,23 +152,36 @@
             };
             this.deleteService = function(item) {
                 servicesData.closeModalDelete();
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
 
-                $http.post('/cas-management/deleteRegisteredService.html', {id: item.assignedId})
-                    .success(function() {
+                $.ajax({
+                    url: '/cas-management/deleteRegisteredService.html',
+                    type: 'post',
+                    data: {
+                        id: item.assignedId
+                    },
+                    headers: {
+                        //This will need to be replaced with the header variable
+                        "X-CSRF-Token": token
+                    },
+                    dataType: 'json',
+                    success: function (data) {
                         servicesData.getServices();
                         servicesData.alert = {
                             name:   'deleted',
                             type:   'info',
                             data:   item
-                        };
-                    })
-                    .error(function(data, status) {
+                        }
+                    },
+                    error: function(data, status) {
                         servicesData.alert = {
                             name:   'notdeleted',
                             type:   'danger',
                             data:   null
-                        };
-                    });
+                        }
+                    }
+                });
             };
 
             this.clearFilter = function() {
