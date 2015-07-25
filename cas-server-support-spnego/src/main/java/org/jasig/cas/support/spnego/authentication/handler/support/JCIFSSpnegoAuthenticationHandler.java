@@ -21,6 +21,7 @@ package org.jasig.cas.support.spnego.authentication.handler.support;
 import jcifs.spnego.Authentication;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -100,7 +101,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
         if (!success) {
             throw new FailedLoginException("Principal is null, the processing of the SPNEGO Token failed");
         }
-        return new HandlerResult(this, new BasicCredentialMetaData(credential), spnegoCredential.getPrincipal());
+        return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), spnegoCredential.getPrincipal());
     }
 
     @Override

@@ -57,7 +57,7 @@ The default configuration which need not explicitly be defined, simply returns t
   <property name="serviceId" value="https://**" />
   <property name="evaluationOrder" value="0" />
   <property name="usernameAttributeProvider">
-  	<bean class="org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider" />
+    <bean class="org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider" />
   </property>    
 </bean>
 {% endhighlight %}
@@ -74,7 +74,7 @@ is not available, the default principal id will be used.
   <property name="serviceId" value="https://**" />
   <property name="evaluationOrder" value="0" />
   <property name="usernameAttributeProvider">
-  	<bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
+    <bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider"
             c:usernameAttribute="eduPersonAffiliation" />
   </property>    
 </bean>
@@ -92,7 +92,7 @@ of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary
   <property name="serviceId" value="https://**" />
   <property name="evaluationOrder" value="0" />
   <property name="usernameAttributeProvider">
-  	<bean class="org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" />
+    <bean class="org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" />
   </property>    
 </bean>
 {% endhighlight %}
@@ -196,7 +196,7 @@ The following configuration for instance considers the initial list of `uid`, `g
             </property>
             <property name="attributeFilter">
                 <bean class="org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter"
-					c:regex="^\w{3}$" /> 
+                    c:regex="^\w{3}$" /> 
             </property>
         </bean>
     </property>
@@ -229,16 +229,16 @@ Sample configuration follows:
       p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
     <property name="attributeReleasePolicy">
         <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
-		<property name="allowedAttributes">
-	        	<list>
-	                    <value>mail</value>
-	                </list>
-            	</property>
-		<property name="principalAttributesRepository">
-                	<bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-	                      	c:attributeRepository-ref="attributeRepository"
-        	              	c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
-            	</property>
+        <property name="allowedAttributes">
+                <list>
+                        <value>mail</value>
+                    </list>
+                </property>
+        <property name="principalAttributesRepository">
+                    <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+                            c:attributeRepository-ref="attributeRepository"
+                            c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
+                </property>
         </bean>
     </property>
 </bean>
@@ -261,15 +261,15 @@ For example:
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegexRegisteredService">
 ...
-	<property name="principalAttributesRepository">
-	    <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-	          c:attributeRepository-ref="attributeRepository"
-	          c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
-			<property name="mergingStrategy">
-				<bean class="org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger" />
-			</property>
-		</bean>
-	</property>
+    <property name="principalAttributesRepository">
+        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+              c:attributeRepository-ref="attributeRepository"
+              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
+            <property name="mergingStrategy">
+                <bean class="org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger" />
+            </property>
+        </bean>
+    </property>
 ...
 </bean>
 {% endhighlight %}
@@ -286,15 +286,15 @@ For example:
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegexRegisteredService">
 ...
-	<property name="principalAttributesRepository">
-	    <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-	          c:attributeRepository-ref="attributeRepository"
-	          c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
-			<property name="mergingStrategy">
-				<bean class="org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder" />
-			</property>
-		</bean>
-	</property>
+    <property name="principalAttributesRepository">
+        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+              c:attributeRepository-ref="attributeRepository"
+              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
+            <property name="mergingStrategy">
+                <bean class="org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder" />
+            </property>
+        </bean>
+    </property>
 ...
 </bean>
 {% endhighlight %}
@@ -312,15 +312,15 @@ For example:
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegexRegisteredService">
 ...
-	<property name="principalAttributesRepository">
-	    <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-	          c:attributeRepository-ref="attributeRepository"
-	          c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
-			<property name="mergingStrategy">
-				<bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
-			</property>
-		</bean>
-	</property>
+    <property name="principalAttributesRepository">
+        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+              c:attributeRepository-ref="attributeRepository"
+              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
+            <property name="mergingStrategy">
+                <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
+            </property>
+        </bean>
+    </property>
 ...
 </bean>
 {% endhighlight %}
@@ -337,17 +337,17 @@ which attributes can be encoded. Attributes will be encoded via a `RegisteredSer
 
 {% highlight xml %}
 <bean id="cas3ServiceSuccessView" 
-	class="org.jasig.cas.web.view.Cas30ResponseView"
+    class="org.jasig.cas.web.view.Cas30ResponseView"
     c:view-ref="cas3JstlSuccessView"
     p:successResponse="true"
     p:servicesManager-ref="servicesManager"
     p:casAttributeEncoder-ref="casAttributeEncoder"  />
 
 <bean id="casRegisteredServiceCipherExecutor" 
-	class="org.jasig.cas.services.DefaultRegisteredServiceCipherExecutor" />
+    class="org.jasig.cas.services.DefaultRegisteredServiceCipherExecutor" />
 
 <bean id="casAttributeEncoder" 
-	class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
+    class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
     c:servicesManager-ref="servicesManager"
-	c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
+    c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
 {% endhighlight %} 

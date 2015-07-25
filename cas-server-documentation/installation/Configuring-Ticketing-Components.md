@@ -62,14 +62,14 @@ CAS presents a pluggable architecture for generating unique ticket ids for each 
 
 <bean id="loginTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
     c:maxLength="30" c:suffix="${host.name}" />
-	
+    
 <bean id="proxy20TicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
     c:maxLength="20" c:suffix="${host.name}" />
  
 <util:map id="uniqueIdGeneratorsMap">
-	<entry
-		key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-		value-ref="serviceTicketUniqueIdGenerator" />
+    <entry
+        key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+        value-ref="serviceTicketUniqueIdGenerator" />
 </util:map>
 
 {% endhighlight %}

@@ -17,80 +17,80 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>cas-server</artifactId>
-		<groupId>org.jasig.cas</groupId>
-		<version>4.1.0-SNAPSHOT</version>
-	</parent>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-extension-clearpass</artifactId>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>cas-server</artifactId>
+        <groupId>org.jasig.cas</groupId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>cas-server-extension-clearpass</artifactId>
 
-	<name>Apereo CAS ClearPass Extension - DEPRECATED</name>
-	<description>CAS ClearPass Extension</description>
-	<packaging>jar</packaging>
+    <name>Apereo CAS ClearPass Extension - DEPRECATED</name>
+    <description>CAS ClearPass Extension</description>
+    <packaging>jar</packaging>
 
-	<properties>
+    <properties>
         <cs.dir>${project.parent.basedir}</cs.dir>
-	</properties>
+    </properties>
 
-	<build>
-		<plugins>
-			<!-- 
-			<plugin>
-				<groupId>com.atlassian.maven.plugins</groupId>
-				<artifactId>maven-clover2-plugin</artifactId>
-				<version>${clover.version}</version>
-				<configuration>
-					<license><![CDATA[oPpoNpLipDQKHHXaIXJPCIsoqRpdAfeXwIImkDIRoTnriq
+    <build>
+        <plugins>
+            <!--
+            <plugin>
+                <groupId>com.atlassian.maven.plugins</groupId>
+                <artifactId>maven-clover2-plugin</artifactId>
+                <version>${clover.version}</version>
+                <configuration>
+                    <license><![CDATA[oPpoNpLipDQKHHXaIXJPCIsoqRpdAfeXwIImkDIRoTnriq
 mi2KuXZFGad>>Lz0ULLXhqIo2KPjARsdren1aP3vzebzkM
 qNNNUvQNpqopPoOQRqmTvqoPnOnMopRPqpSUtxrWTxOxTu
 pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
 97W9kZkUUnmm]]></license>
-					<jdk>${jdk.version}</jdk>
-					<generateXml>true</generateXml>
-					<generateHtml>true</generateHtml>
-					<includes>
-						<include>**/*.java</include>
-					</includes>
-					<excludes>
-						<exclude>**/Mock*.java</exclude>
-					</excludes>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>instrument</goal>
-							<goal>clover</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			-->
-		</plugins>
-	</build>
-	
-	<dependencies>
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
-			<version>${project.version}</version>
+                    <jdk>${jdk.version}</jdk>
+                    <generateXml>true</generateXml>
+                    <generateHtml>true</generateHtml>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/Mock*.java</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>instrument</goal>
+                            <goal>clover</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            -->
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
             <scope>compile</scope>
-		</dependency>
-		
-		<dependency>
+        </dependency>
+
+        <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <scope>compile</scope>
-	   </dependency>  
-    
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-integration-ehcache</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-integration-ehcache</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
@@ -100,10 +100,10 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
             <scope>test</scope>
         </dependency>
 
-		<dependency>
-			<groupId>org.jasig.cas.client</groupId>
-			<artifactId>cas-client-core</artifactId>
-			<scope>compile</scope>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>

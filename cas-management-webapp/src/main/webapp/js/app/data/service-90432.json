@@ -1,0 +1,51 @@
+[
+    {
+        "assignedId": 90432,
+        "sasCASEnabled": true,
+        "serviceId": "http?://*.shield.net+",
+        "name": "Another Service",
+        "description": "Another service you can use for authentication. But if you really want, then you can pick something pre-made. Maybe?",
+        "type": 1,
+        "oauth": {
+            "clientSecret": "Hail Hydra",
+            "clientId": "Fury, Nicholas D.",
+            "bypass": 1
+        },
+        "theme": "theme02",
+        "evalOrder": 3,
+        "requiredHandlers": [
+            "reqHandler01"
+        ],
+        "logoUrl": "http://www.shield.net/images/logoCrest.png",
+        "logoutUrl": "http://www.shield.net/logout",
+        "logoutType": "back",
+        "userAttrProvider": {
+            "type": "attr",
+            "value": "usernameAttrField"
+        },
+        "publicKey": {
+            "location": "myLocation",
+            "algorithm": "RSA"
+        },
+        "proxyPolicy": {
+            "type": "regex",
+            "value": "{h((.*)a)(.*)}"
+        },
+        "attrRelease": {
+            "releasePassword": false,
+            "releaseTicket": false,
+            "attrFilter": "{h((.*)a)(.*)}",
+            "attrOption": "cached",
+            "cachedTimeUnit": "DAYS",
+            "cachedExpiration": 1,
+            "attrPolicy": {
+                "type": "mapped",
+                "attributes": {
+                    "uid": "AgentCodename",
+                    "cn": "AgentAlias",
+                    "sn": "AgentName"
+                }
+            }
+        }
+    }
+]

@@ -50,7 +50,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
 /**
- * The type Simple http client.
+ * Implementationn of CAS {@link HttpClient}
+ * which delegates requests to a {@link #httpClient} instance.
  *
  * @author Jerome Leleu
  * @author Scott Battaglia

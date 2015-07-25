@@ -19,6 +19,7 @@
 package org.jasig.cas.util;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.PrettyPrinter;
@@ -113,7 +114,6 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
     @Override
     public T fromJson(final InputStream json) {
         try {
-
             return this.objectMapper.readValue(json, getTypeToSerialize());
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -155,6 +155,7 @@ public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSeri
     protected ObjectMapper initializeObjectMapper() {
         final ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
         mapper.setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
