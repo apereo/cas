@@ -18,7 +18,7 @@
     under the License.
 
 --%>
-<%@include file="includes/header.jsp" %>
+<%@include file="includes/header.nooauth.jsp" %>
 
 <%@ page isErrorPage="true" %>
 <div class="col-sm-12">
