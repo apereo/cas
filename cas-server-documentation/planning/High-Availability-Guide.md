@@ -132,9 +132,10 @@ desirable periods for node failover. A [reverse proxy](http://httpd.apache.org/d
 The following cache-based ticket storage components provide the best tradeoff among ease of use, scalability, and
 fault tolerance and are suitable for both active/passive and active/active setups:
 
-* [EhCacheTicketRegistry](../installation/Ehcache-Ticket-Registry.html)
-* [JBossTicketRegistry](../installation/JBoss-Cache-Ticket-Registry.html)
-* [MemCacheTicketRegistry](../installation/Memcached-Ticket-Registry.html)
+* [Hazelcast](../installation/Hazelcast-Ticket-Registry.html)
+* [EhCache](../installation/Ehcache-Ticket-Registry.html)
+* [JBoss](../installation/JBoss-Cache-Ticket-Registry.html)
+* [MemCached](../installation/Memcached-Ticket-Registry.html)
 
 The particular choice of caching technology should be driven by infrastructure and expertise as much as performance
 and availability considerations. It's hardly valuable to have a high-performance cache for which you lack the
@@ -164,7 +165,7 @@ leverage connection pooling where possible. It makes the best use of computation
 
 
 ###Monitoring
-CAS adopters typically implement monitoring of the availability of the CAS service using the tools already in use in operational practice for monitoring other enterprise web applications. CAS introduces a new modest monitoring page with authentication by default by the remote_address of the requestor. 
+CAS adopters typically implement monitoring of the availability of the CAS service using the tools already in use in operational practice for monitoring other enterprise web applications. CAS introduces a new modest monitoring page with authentication by default by the remote_address of the requestor.
 
 
 ###Channel Confidentiality
