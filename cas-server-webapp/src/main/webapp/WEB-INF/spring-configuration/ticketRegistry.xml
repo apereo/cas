@@ -36,7 +36,7 @@
     <!-- TICKET REGISTRY CLEANER -->
     <bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
           c:centralAuthenticationService-ref="centralAuthenticationService"
-          c:ticketRegistry-ref="ticketRegistry"/>
+          c:ticketRegistry-ref="crypticTicketRegistry"/>
 
     <bean id="jobDetailTicketRegistryCleaner"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
@@ -49,11 +49,10 @@
           p:startDelay="20000"
           p:repeatInterval="5000000"/>
 
-    <bean id="ticketEncodingAspect"
-          class="org.jasig.cas.ticket.registry.enc.TicketEncodingAspect"
-          c:cipherExecutor-ref="ticketCipherExecutor"
-          p:enabled="${enable.ticket.encoding:true}"
-          factory-method="aspectOf"/>
+    <bean id="crypticTicketRegistry"
+          class="org.jasig.cas.ticket.registry.encrypt.CrypticTicketRegistry"
+          c:actualTicketRegistry-ref="ticketRegistry"
+          c:cipherExecutor-ref="ticketCipherExecutor"/>
 
     <bean id="ticketCipherExecutor" class="org.jasig.cas.util.DefaultCipherExecutor"
           c:secretKeyEncryption="${tgc.encryption.key}"
