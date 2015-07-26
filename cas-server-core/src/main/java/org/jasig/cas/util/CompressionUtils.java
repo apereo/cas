@@ -199,18 +199,7 @@ public final class CompressionUtils {
             throw new RuntimeException(e.getMessage(), e);
         }
 
-        return encodeObject(outBytes.toByteArray(), cipherExecutor);
-    }
-
-    /**
-     * Encode object.
-     *
-     * @param object the object
-     * @param cipherExecutor the cipher executor
-     * @return the result string
-     */
-    public static String encodeObject(final byte[] object, final CipherExecutor cipherExecutor) {
-        final String result = decodeByteArrayToString(object);
+        final String result = new String(outBytes.toByteArray(), Charset.forName(UTF8_ENCODING));
         return cipherExecutor.encode(result);
     }
 
