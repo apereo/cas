@@ -22,21 +22,24 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.web.view.JsonViewUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +55,9 @@ import java.util.Map;
 @Controller
 public final class ManageRegisteredServicesMultiActionController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManageRegisteredServicesMultiActionController.class);
+
+    private final String AJAX_REQUEST_HEADER_NAME = "x-requested-with";
+    private final String AJAX_REQUEST_HEADER_VALUE = "XMLHttpRequest";
 
     /** Instance of ServicesManager. */
     @NotNull
@@ -78,7 +84,7 @@ public final class ManageRegisteredServicesMultiActionController {
      */
     private void ensureDefaultServiceExists() {
         final Collection<RegisteredService> c = this.servicesManager.getAllServices();
-        if (c.isEmpty()) {
+        if (c == null) {
             throw new IllegalStateException("Services cannot be empty");
         }
 
@@ -120,26 +126,41 @@ public final class ManageRegisteredServicesMultiActionController {
      * or the user will be locked out.
      *
      * @param idAsLong the id
+     * @param response the response
      * @return the Model and View to go to after the service is deleted.
      */
     @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.POST})
-    public ModelAndView deleteRegisteredService(@RequestParam("id") final long idAsLong) {
+    public void deleteRegisteredService(@RequestParam("id") final long idAsLong,
+                                        final HttpServletResponse response) {
         final RegisteredService r = this.servicesManager.delete(idAsLong);
         if (r == null) {
             throw new IllegalArgumentException("Service id " + idAsLong + " cannot be found.");
         }
         ensureDefaultServiceExists();
-        final ModelAndView modelAndView = new ModelAndView(new RedirectView("manage.html", true));
-        modelAndView.addObject("serviceName", r.getName());
-        return modelAndView;
+        final Map<String, Object> model = new HashMap<>();
+        model.put("serviceName", r.getName());
+        JsonViewUtils.render(model, response);
     }
 
     /**
      * Method to show the RegisteredServices.
+     * @param response the response
      * @return the Model and View to go to after the services are loaded.
      */
     @RequestMapping(value="manage.html", method={RequestMethod.GET})
-    public ModelAndView manage() {
+    public ModelAndView manage(final HttpServletResponse response) {
+        ensureDefaultServiceExists();
+        final Map<String, Object> model = new HashMap<>();
+        return new ModelAndView("manage", model);
+    }
+
+    /**
+     * Gets services.
+     *
+     * @param response the response
+     */
+    @RequestMapping(value="getServices.html", method={RequestMethod.GET})
+    public void getServices(final HttpServletResponse response) {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
         final List<RegisteredServiceBean> serviceBeans = new ArrayList<>();
@@ -148,7 +169,7 @@ public final class ManageRegisteredServicesMultiActionController {
             serviceBeans.add(RegisteredServiceBean.fromRegisteredService(svc));
         }
         model.put("services", serviceBeans);
-        return new ModelAndView("jsonView", model);
+        JsonViewUtils.render(model, response);
     }
 
     /**
@@ -158,7 +179,7 @@ public final class ManageRegisteredServicesMultiActionController {
      * @return {@link ModelAndView} object that redirects to a <code>jsonView</code>.
      */
     @RequestMapping(value="updateRegisteredServiceEvaluationOrder.html", method={RequestMethod.POST})
-    public ModelAndView updateRegisteredServiceEvaluationOrder(@RequestParam("id") final long... id) {
+    public void updateRegisteredServiceEvaluationOrder(@RequestParam("id") final long... id) {
         if (id == null || id.length == 0) {
             throw new IllegalArgumentException("No service id was received. Re-examine the request");
         }
@@ -171,6 +192,31 @@ public final class ManageRegisteredServicesMultiActionController {
             svc.setEvaluationOrder(i);
             this.servicesManager.save(svc);
         }
-        return new ModelAndView("jsonView");
+    }
+
+    /**
+     * Resolve exception.
+     *
+     * @param request the request
+     * @param response the response
+     * @param ex the ex
+     */
+    @ExceptionHandler
+    public void resolveException(final HttpServletRequest request, final HttpServletResponse response,
+                                 final Exception ex) {
+
+        LOGGER.error(ex.getMessage(), ex);
+        final String contentType = request.getHeader(this.AJAX_REQUEST_HEADER_NAME);
+        if (contentType != null && contentType.equals(this.AJAX_REQUEST_HEADER_VALUE)) {
+            LOGGER.debug("Handling exception {} for ajax request indicated by header {}",
+                    ex.getClass().getName(), this.AJAX_REQUEST_HEADER_NAME);
+            final Map<String, String> map = new HashMap<>();
+            map.put("error", ex.getMessage());
+            map.put("stacktrace", Arrays.deepToString(ex.getStackTrace()));
+            JsonViewUtils.render(map, response);
+        } else {
+            LOGGER.trace("Unable to resolve exception {} for request. Ajax request header {} not found.",
+                    ex.getClass().getName(), this.AJAX_REQUEST_HEADER_NAME);
+        }
     }
 }
