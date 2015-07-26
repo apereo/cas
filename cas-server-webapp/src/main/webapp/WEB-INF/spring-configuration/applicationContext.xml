@@ -111,7 +111,7 @@
 
     <!-- CentralAuthenticationService -->
     <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
-          c:ticketRegistry-ref="ticketRegistry"
+          c:ticketRegistry-ref="crypticTicketRegistry"
           c:serviceTicketRegistry="#{null}"
           c:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"
           c:authenticationManager-ref="authenticationManager"
