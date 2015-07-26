@@ -124,16 +124,11 @@ public final class ManageRegisteredServicesMultiActionController {
      */
     @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.POST})
     public ModelAndView deleteRegisteredService(@RequestParam("id") final long idAsLong) {
-        final RegisteredService defaultRegSvc = this.servicesManager.findServiceBy(
-                new SimpleWebApplicationServiceImpl(this.defaultServiceUrl));
-        if (defaultRegSvc.getId() == idAsLong) {
-            throw new IllegalArgumentException("Default service" + idAsLong + " cannot be deleted.");
-        }
-
         final RegisteredService r = this.servicesManager.delete(idAsLong);
         if (r == null) {
             throw new IllegalArgumentException("Service id " + idAsLong + " cannot be found.");
         }
+        ensureDefaultServiceExists();
         final ModelAndView modelAndView = new ModelAndView(new RedirectView("manage.html", true));
         modelAndView.addObject("serviceName", r.getName());
         return modelAndView;
@@ -147,6 +142,7 @@ public final class ManageRegisteredServicesMultiActionController {
     public ModelAndView manage() {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
+        final List<RegisteredServiceBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
         for (final RegisteredService svc : services) {
             serviceBeans.add(RegisteredServiceBean.fromRegisteredService(svc));
