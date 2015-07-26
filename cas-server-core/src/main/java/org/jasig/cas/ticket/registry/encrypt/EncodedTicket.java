@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.ticket.registry.enc;
+package org.jasig.cas.ticket.registry.encrypt;
 
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
