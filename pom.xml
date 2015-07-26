@@ -387,7 +387,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
                     <source>${project.build.sourceVersion}</source>
-                    <target>${project.build.targetVersion}</target>          
+                    <target>${project.build.targetVersion}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -1357,6 +1357,13 @@
                 <version>${log4j.version}</version>
                 <scope>runtime</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.hazelcast</groupId>
+                <artifactId>hazelcast</artifactId>
+                <version>${hazelcast.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -1385,6 +1392,7 @@
         <module>cas-server-extension-clearpass</module>
         <module>cas-management-webapp</module>
         <module>cas-server-support-rest</module>
+        <module>cas-server-integration-hazelcast</module>
     </modules>
 
     <reporting>
@@ -1582,6 +1590,7 @@
         <pac4j.version>1.7.1</pac4j.version>
         <bouncycastle.version>1.51</bouncycastle.version>
         <dbcp.version>2.1</dbcp.version>
+        <hazelcast.version>3.5</hazelcast.version>
 
         <!-- Plugin Versions -->
         <coveralls-maven-plugin.version>3.1.0</coveralls-maven-plugin.version>
