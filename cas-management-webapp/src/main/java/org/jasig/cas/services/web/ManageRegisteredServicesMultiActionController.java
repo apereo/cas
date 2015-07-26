@@ -148,8 +148,11 @@ public final class ManageRegisteredServicesMultiActionController {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
-        model.put("services", services);
-        return new ModelAndView("manage", model);
+        for (final RegisteredService svc : services) {
+            serviceBeans.add(RegisteredServiceBean.fromRegisteredService(svc));
+        }
+        model.put("services", serviceBeans);
+        return new ModelAndView("jsonView", model);
     }
 
     /**
