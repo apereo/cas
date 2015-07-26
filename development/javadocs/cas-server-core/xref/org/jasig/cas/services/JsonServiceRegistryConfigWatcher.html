@@ -183,17 +183,21 @@
 <a class="jxr_linenumber" name="L175" href="#L175">175</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> handleCreateEvent(<strong class="jxr_keyword">final</strong> File file) {
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>         <em class="jxr_comment">//load the entry and add it to the map</em>
 <a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">final</strong> RegisteredService service = <strong class="jxr_keyword">this</strong>.serviceRegistryDao.loadRegisteredServiceFromFile(file);
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.serviceRegistryDao.findServiceById(service.getId()) != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>             LOGGER.warn(<span class="jxr_string">"Found a service definition [{}] with a duplicate id [{}] in [{}]. "</span>
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>                             + <span class="jxr_string">"This will overwrite previous service definitions and is likely a "</span>
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>                             + <span class="jxr_string">"configuration problem. Make sure all services have a unique id and try again."</span>,
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>                     service.getServiceId(), service.getId(), file.getAbsolutePath());
-<a class="jxr_linenumber" name="L183" href="#L183">183</a> 
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>         }
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">this</strong>.serviceRegistryDao.updateRegisteredService(service);
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>         <strong class="jxr_keyword">this</strong>.serviceRegistryDao.refreshServicesManager();
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>     }
-<a class="jxr_linenumber" name="L188" href="#L188">188</a> }
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>         <strong class="jxr_keyword">if</strong> (service == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>             LOGGER.warn(<span class="jxr_string">"No service definition was loaded from [{}]"</span>, file);
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>         }
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.serviceRegistryDao.findServiceById(service.getId()) != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>             LOGGER.warn(<span class="jxr_string">"Found a service definition [{}] with a duplicate id [{}] in [{}]. "</span>
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>                             + <span class="jxr_string">"This will overwrite previous service definitions and is likely a "</span>
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>                             + <span class="jxr_string">"configuration problem. Make sure all services have a unique id and try again."</span>,
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>                     service.getServiceId(), service.getId(), file.getAbsolutePath());
+<a class="jxr_linenumber" name="L187" href="#L187">187</a> 
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>         }
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>         <strong class="jxr_keyword">this</strong>.serviceRegistryDao.updateRegisteredService(service);
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>         <strong class="jxr_keyword">this</strong>.serviceRegistryDao.refreshServicesManager();
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>     }
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

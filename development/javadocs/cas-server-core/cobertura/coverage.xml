@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
 
-<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6388" branches-covered="0" branches-valid="1076" complexity="1.7259395050412465" version="2.1.1" timestamp="1437434246720">
+<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6400" branches-covered="0" branches-valid="1084" complexity="1.7332722273143906" version="2.1.1" timestamp="1437930772476">
 	<sources>
 		<source>--source</source>
 		<source>/home/travis/build/Jasig/cas/cas-server-core/target/generated-sources/annotations</source>
@@ -31652,7 +31652,7 @@
 				</class>
 			</classes>
 		</package>
-		<package name="org.jasig.cas.services" line-rate="0.0" branch-rate="0.0" complexity="1.861271676300578">
+		<package name="org.jasig.cas.services" line-rate="0.0" branch-rate="0.0" complexity="1.907514450867052">
 			<classes>
 				<class name="org.jasig.cas.services.AbstractAttributeReleasePolicy" filename="org/jasig/cas/services/AbstractAttributeReleasePolicy.java" line-rate="0.0" branch-rate="0.0" complexity="1.6666666666666667">
 					<methods>
@@ -38838,7 +38838,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="0.0" complexity="4.0">
+				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="0.0" complexity="4.333333333333333">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -38875,9 +38875,16 @@
 									</conditions>
 								</line>
 								<line number="179" hits="0" branch="false"/>
-								<line number="185" hits="0" branch="false"/>
-								<line number="186" hits="0" branch="false"/>
-								<line number="187" hits="0" branch="false"/>
+								<line number="180" hits="0" branch="false"/>
+								<line number="182" hits="0" branch="true" condition-coverage="0% (0/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="0%"/>
+									</conditions>
+								</line>
+								<line number="183" hits="0" branch="false"/>
+								<line number="189" hits="0" branch="false"/>
+								<line number="190" hits="0" branch="false"/>
+								<line number="191" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="handleDeleteEvent" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
@@ -39105,12 +39112,19 @@
 							</conditions>
 						</line>
 						<line number="179" hits="0" branch="false"/>
-						<line number="185" hits="0" branch="false"/>
-						<line number="186" hits="0" branch="false"/>
-						<line number="187" hits="0" branch="false"/>
+						<line number="180" hits="0" branch="false"/>
+						<line number="182" hits="0" branch="true" condition-coverage="0% (0/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="0%"/>
+							</conditions>
+						</line>
+						<line number="183" hits="0" branch="false"/>
+						<line number="189" hits="0" branch="false"/>
+						<line number="190" hits="0" branch="false"/>
+						<line number="191" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.0">
+				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.333333333333333">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39126,7 +39140,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.0">
+				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.333333333333333">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39142,7 +39156,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.0">
+				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.333333333333333">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39170,7 +39184,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.0">
+				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.333333333333333">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39198,7 +39212,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.0">
+				<class name="org.jasig.cas.services.JsonServiceRegistryConfigWatcher$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryConfigWatcher.java" line-rate="0.0" branch-rate="1.0" complexity="4.333333333333333">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39214,35 +39228,35 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="0.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="0.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="91" hits="0" branch="false"/>
+								<line number="92" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="&lt;init&gt;" signature="(Ljava/io/File;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="149" hits="0" branch="false"/>
 								<line number="150" hits="0" branch="false"/>
+								<line number="151" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="&lt;init&gt;" signature="(Ljava/nio/file/Path;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="137" hits="0" branch="false"/>
 								<line number="138" hits="0" branch="false"/>
+								<line number="139" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="&lt;init&gt;" signature="(Ljava/nio/file/Path;Lorg/jasig/cas/util/JsonSerializer;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="101" hits="0" branch="false"/>
-								<line number="121" hits="0" branch="false"/>
+								<line number="102" hits="0" branch="false"/>
 								<line number="122" hits="0" branch="false"/>
 								<line number="123" hits="0" branch="false"/>
 								<line number="124" hits="0" branch="false"/>
 								<line number="125" hits="0" branch="false"/>
 								<line number="126" hits="0" branch="false"/>
 								<line number="127" hits="0" branch="false"/>
+								<line number="128" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="ajc$preClinit" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
@@ -39256,19 +39270,19 @@
 						</method>
 						<method name="delete_aroundBody2" signature="(Lorg/jasig/cas/services/JsonServiceRegistryDao;Lorg/jasig/cas/services/RegisteredService;Lorg/aspectj/lang/JoinPoint;)Z" line-rate="0.0" branch-rate="0.0" complexity="0">
 							<lines>
-								<line number="176" hits="0" branch="false"/>
 								<line number="177" hits="0" branch="false"/>
-								<line number="178" hits="0" branch="true" condition-coverage="0% (0/2)">
+								<line number="178" hits="0" branch="false"/>
+								<line number="179" hits="0" branch="true" condition-coverage="0% (0/2)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="179" hits="0" branch="false"/>
-								<line number="181" hits="0" branch="false"/>
+								<line number="180" hits="0" branch="false"/>
 								<line number="182" hits="0" branch="false"/>
-								<line number="184" hits="0" branch="false"/>
+								<line number="183" hits="0" branch="false"/>
 								<line number="185" hits="0" branch="false"/>
 								<line number="186" hits="0" branch="false"/>
+								<line number="187" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="findServiceById" signature="(J)Lorg/jasig/cas/services/RegisteredService;" line-rate="1.0" branch-rate="1.0" complexity="0">
@@ -39277,19 +39291,19 @@
 						</method>
 						<method name="findServiceById_aroundBody6" signature="(Lorg/jasig/cas/services/JsonServiceRegistryDao;JLorg/aspectj/lang/JoinPoint;)Lorg/jasig/cas/services/RegisteredService;" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="219" hits="0" branch="false"/>
+								<line number="220" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="getServiceRegistryDirectory" signature="()Ljava/nio/file/Path;" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="247" hits="0" branch="false"/>
+								<line number="263" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="initializeWatchServiceThread" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="274" hits="0" branch="false"/>
-								<line number="275" hits="0" branch="false"/>
-								<line number="276" hits="0" branch="false"/>
+								<line number="290" hits="0" branch="false"/>
+								<line number="291" hits="0" branch="false"/>
+								<line number="292" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="load" signature="()Ljava/util/List;" line-rate="1.0" branch-rate="1.0" complexity="0">
@@ -39298,9 +39312,30 @@
 						</method>
 						<method name="loadRegisteredServiceFromFile" signature="(Ljava/io/File;)Lorg/jasig/cas/services/RegisteredService;" line-rate="0.0" branch-rate="0.0" complexity="0">
 							<lines>
-								<line number="229" hits="0" branch="false"/>
-								<line number="230" hits="0" branch="false"/>
-								<line number="231" hits="0" branch="true" condition-coverage="0% (0/8)">
+								<line number="230" hits="0" branch="true" condition-coverage="0% (0/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="0%"/>
+									</conditions>
+								</line>
+								<line number="231" hits="0" branch="false"/>
+								<line number="232" hits="0" branch="false"/>
+								<line number="235" hits="0" branch="true" condition-coverage="0% (0/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="0%"/>
+									</conditions>
+								</line>
+								<line number="236" hits="0" branch="false"/>
+								<line number="237" hits="0" branch="false"/>
+								<line number="240" hits="0" branch="true" condition-coverage="0% (0/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="0%"/>
+									</conditions>
+								</line>
+								<line number="241" hits="0" branch="false"/>
+								<line number="242" hits="0" branch="false"/>
+								<line number="245" hits="0" branch="false"/>
+								<line number="246" hits="0" branch="false"/>
+								<line number="247" hits="0" branch="true" condition-coverage="0% (0/8)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 										<condition number="1" type="jump" coverage="0%"/>
@@ -39308,65 +39343,65 @@
 										<condition number="3" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="232" hits="0" branch="false"/>
-								<line number="234" hits="0" branch="false"/>
+								<line number="248" hits="0" branch="false"/>
+								<line number="250" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="load_aroundBody4" signature="(Lorg/jasig/cas/services/JsonServiceRegistryDao;Lorg/aspectj/lang/JoinPoint;)Ljava/util/List;" line-rate="0.0" branch-rate="0.0" complexity="0">
 							<lines>
-								<line number="192" hits="0" branch="false"/>
 								<line number="193" hits="0" branch="false"/>
 								<line number="194" hits="0" branch="false"/>
-								<line number="195" hits="0" branch="true" condition-coverage="0% (0/2)">
-									<conditions>
-										<condition number="0" type="jump" coverage="0%"/>
-									</conditions>
-								</line>
+								<line number="195" hits="0" branch="false"/>
 								<line number="196" hits="0" branch="true" condition-coverage="0% (0/2)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="197" hits="0" branch="false"/>
-								<line number="198" hits="0" branch="true" condition-coverage="0% (0/2)">
+								<line number="197" hits="0" branch="true" condition-coverage="0% (0/2)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="199" hits="0" branch="false"/>
-								<line number="201" hits="0" branch="true" condition-coverage="0% (0/2)">
+								<line number="198" hits="0" branch="false"/>
+								<line number="199" hits="0" branch="true" condition-coverage="0% (0/2)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="202" hits="0" branch="false"/>
-								<line number="207" hits="0" branch="false"/>
-								<line number="210" hits="0" branch="false"/>
-								<line number="211" hits="0" branch="true" condition-coverage="0% (0/2)">
+								<line number="200" hits="0" branch="false"/>
+								<line number="202" hits="0" branch="true" condition-coverage="0% (0/2)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="212" hits="0" branch="false"/>
-								<line number="214" hits="0" branch="false"/>
+								<line number="203" hits="0" branch="false"/>
+								<line number="208" hits="0" branch="false"/>
+								<line number="211" hits="0" branch="false"/>
+								<line number="212" hits="0" branch="true" condition-coverage="0% (0/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="0%"/>
+									</conditions>
+								</line>
+								<line number="213" hits="0" branch="false"/>
+								<line number="215" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="makeFile" signature="(Lorg/jasig/cas/services/RegisteredService;)Ljava/io/File;" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="259" hits="0" branch="false"/>
-								<line number="261" hits="0" branch="false"/>
-								<line number="262" hits="0" branch="false"/>
-								<line number="263" hits="0" branch="false"/>
-								<line number="264" hits="0" branch="false"/>
-								<line number="265" hits="0" branch="false"/>
-								<line number="266" hits="0" branch="false"/>
+								<line number="275" hits="0" branch="false"/>
+								<line number="277" hits="0" branch="false"/>
+								<line number="278" hits="0" branch="false"/>
+								<line number="279" hits="0" branch="false"/>
+								<line number="280" hits="0" branch="false"/>
+								<line number="281" hits="0" branch="false"/>
+								<line number="282" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="refreshServicesManager" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="282" hits="0" branch="false"/>
-								<line number="283" hits="0" branch="false"/>
-								<line number="284" hits="0" branch="false"/>
+								<line number="298" hits="0" branch="false"/>
+								<line number="299" hits="0" branch="false"/>
+								<line number="300" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="save" signature="(Lorg/jasig/cas/services/RegisteredService;)Lorg/jasig/cas/services/RegisteredService;" line-rate="1.0" branch-rate="1.0" complexity="0">
@@ -39375,144 +39410,165 @@
 						</method>
 						<method name="save_aroundBody0" signature="(Lorg/jasig/cas/services/JsonServiceRegistryDao;Lorg/jasig/cas/services/RegisteredService;Lorg/aspectj/lang/JoinPoint;)Lorg/jasig/cas/services/RegisteredService;" line-rate="0.0" branch-rate="0.0" complexity="0">
 							<lines>
-								<line number="154" hits="0" branch="true" condition-coverage="0% (0/4)">
+								<line number="155" hits="0" branch="true" condition-coverage="0% (0/4)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 										<condition number="1" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="155" hits="0" branch="false"/>
 								<line number="156" hits="0" branch="false"/>
-								<line number="158" hits="0" branch="false"/>
+								<line number="157" hits="0" branch="false"/>
 								<line number="159" hits="0" branch="false"/>
 								<line number="160" hits="0" branch="false"/>
-								<line number="162" hits="0" branch="true" condition-coverage="0% (0/2)">
+								<line number="161" hits="0" branch="false"/>
+								<line number="163" hits="0" branch="true" condition-coverage="0% (0/2)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="163" hits="0" branch="false"/>
-								<line number="165" hits="0" branch="false"/>
+								<line number="164" hits="0" branch="false"/>
 								<line number="166" hits="0" branch="false"/>
-								<line number="167" hits="0" branch="true" condition-coverage="0% (0/4)">
+								<line number="167" hits="0" branch="false"/>
+								<line number="168" hits="0" branch="true" condition-coverage="0% (0/4)">
 									<conditions>
 										<condition number="0" type="jump" coverage="0%"/>
 										<condition number="1" type="jump" coverage="0%"/>
 									</conditions>
 								</line>
-								<line number="168" hits="0" branch="false"/>
 								<line number="169" hits="0" branch="false"/>
 								<line number="170" hits="0" branch="false"/>
+								<line number="171" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="setApplicationContext" signature="(Lorg/springframework/context/ApplicationContext;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="288" hits="0" branch="false"/>
-								<line number="289" hits="0" branch="false"/>
+								<line number="304" hits="0" branch="false"/>
+								<line number="305" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="updateRegisteredService" signature="(Lorg/jasig/cas/services/RegisteredService;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="243" hits="0" branch="false"/>
-								<line number="244" hits="0" branch="false"/>
+								<line number="259" hits="0" branch="false"/>
+								<line number="260" hits="0" branch="false"/>
 							</lines>
 						</method>
 					</methods>
 					<lines>
 						<line number="1" hits="0" branch="false"/>
-						<line number="91" hits="0" branch="false"/>
-						<line number="101" hits="0" branch="false"/>
-						<line number="121" hits="0" branch="false"/>
+						<line number="92" hits="0" branch="false"/>
+						<line number="102" hits="0" branch="false"/>
 						<line number="122" hits="0" branch="false"/>
 						<line number="123" hits="0" branch="false"/>
 						<line number="124" hits="0" branch="false"/>
 						<line number="125" hits="0" branch="false"/>
 						<line number="126" hits="0" branch="false"/>
 						<line number="127" hits="0" branch="false"/>
-						<line number="137" hits="0" branch="false"/>
+						<line number="128" hits="0" branch="false"/>
 						<line number="138" hits="0" branch="false"/>
-						<line number="149" hits="0" branch="false"/>
+						<line number="139" hits="0" branch="false"/>
 						<line number="150" hits="0" branch="false"/>
-						<line number="154" hits="0" branch="true" condition-coverage="0% (0/4)">
+						<line number="151" hits="0" branch="false"/>
+						<line number="155" hits="0" branch="true" condition-coverage="0% (0/4)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 								<condition number="1" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="155" hits="0" branch="false"/>
 						<line number="156" hits="0" branch="false"/>
-						<line number="158" hits="0" branch="false"/>
+						<line number="157" hits="0" branch="false"/>
 						<line number="159" hits="0" branch="false"/>
 						<line number="160" hits="0" branch="false"/>
-						<line number="162" hits="0" branch="true" condition-coverage="0% (0/2)">
+						<line number="161" hits="0" branch="false"/>
+						<line number="163" hits="0" branch="true" condition-coverage="0% (0/2)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="163" hits="0" branch="false"/>
-						<line number="165" hits="0" branch="false"/>
+						<line number="164" hits="0" branch="false"/>
 						<line number="166" hits="0" branch="false"/>
-						<line number="167" hits="0" branch="true" condition-coverage="0% (0/4)">
+						<line number="167" hits="0" branch="false"/>
+						<line number="168" hits="0" branch="true" condition-coverage="0% (0/4)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 								<condition number="1" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="168" hits="0" branch="false"/>
 						<line number="169" hits="0" branch="false"/>
 						<line number="170" hits="0" branch="false"/>
-						<line number="176" hits="0" branch="false"/>
+						<line number="171" hits="0" branch="false"/>
 						<line number="177" hits="0" branch="false"/>
-						<line number="178" hits="0" branch="true" condition-coverage="0% (0/2)">
+						<line number="178" hits="0" branch="false"/>
+						<line number="179" hits="0" branch="true" condition-coverage="0% (0/2)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="179" hits="0" branch="false"/>
-						<line number="181" hits="0" branch="false"/>
+						<line number="180" hits="0" branch="false"/>
 						<line number="182" hits="0" branch="false"/>
-						<line number="184" hits="0" branch="false"/>
+						<line number="183" hits="0" branch="false"/>
 						<line number="185" hits="0" branch="false"/>
 						<line number="186" hits="0" branch="false"/>
-						<line number="192" hits="0" branch="false"/>
+						<line number="187" hits="0" branch="false"/>
 						<line number="193" hits="0" branch="false"/>
 						<line number="194" hits="0" branch="false"/>
-						<line number="195" hits="0" branch="true" condition-coverage="0% (0/2)">
-							<conditions>
-								<condition number="0" type="jump" coverage="0%"/>
-							</conditions>
-						</line>
+						<line number="195" hits="0" branch="false"/>
 						<line number="196" hits="0" branch="true" condition-coverage="0% (0/2)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="197" hits="0" branch="false"/>
-						<line number="198" hits="0" branch="true" condition-coverage="0% (0/2)">
+						<line number="197" hits="0" branch="true" condition-coverage="0% (0/2)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="199" hits="0" branch="false"/>
-						<line number="201" hits="0" branch="true" condition-coverage="0% (0/2)">
+						<line number="198" hits="0" branch="false"/>
+						<line number="199" hits="0" branch="true" condition-coverage="0% (0/2)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="202" hits="0" branch="false"/>
-						<line number="207" hits="0" branch="false"/>
-						<line number="210" hits="0" branch="false"/>
-						<line number="211" hits="0" branch="true" condition-coverage="0% (0/2)">
+						<line number="200" hits="0" branch="false"/>
+						<line number="202" hits="0" branch="true" condition-coverage="0% (0/2)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="212" hits="0" branch="false"/>
-						<line number="214" hits="0" branch="false"/>
-						<line number="219" hits="0" branch="false"/>
-						<line number="229" hits="0" branch="false"/>
-						<line number="230" hits="0" branch="false"/>
-						<line number="231" hits="0" branch="true" condition-coverage="0% (0/8)">
+						<line number="203" hits="0" branch="false"/>
+						<line number="208" hits="0" branch="false"/>
+						<line number="211" hits="0" branch="false"/>
+						<line number="212" hits="0" branch="true" condition-coverage="0% (0/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="0%"/>
+							</conditions>
+						</line>
+						<line number="213" hits="0" branch="false"/>
+						<line number="215" hits="0" branch="false"/>
+						<line number="220" hits="0" branch="false"/>
+						<line number="230" hits="0" branch="true" condition-coverage="0% (0/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="0%"/>
+							</conditions>
+						</line>
+						<line number="231" hits="0" branch="false"/>
+						<line number="232" hits="0" branch="false"/>
+						<line number="235" hits="0" branch="true" condition-coverage="0% (0/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="0%"/>
+							</conditions>
+						</line>
+						<line number="236" hits="0" branch="false"/>
+						<line number="237" hits="0" branch="false"/>
+						<line number="240" hits="0" branch="true" condition-coverage="0% (0/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="0%"/>
+							</conditions>
+						</line>
+						<line number="241" hits="0" branch="false"/>
+						<line number="242" hits="0" branch="false"/>
+						<line number="245" hits="0" branch="false"/>
+						<line number="246" hits="0" branch="false"/>
+						<line number="247" hits="0" branch="true" condition-coverage="0% (0/8)">
 							<conditions>
 								<condition number="0" type="jump" coverage="0%"/>
 								<condition number="1" type="jump" coverage="0%"/>
@@ -39520,29 +39576,29 @@
 								<condition number="3" type="jump" coverage="0%"/>
 							</conditions>
 						</line>
-						<line number="232" hits="0" branch="false"/>
-						<line number="234" hits="0" branch="false"/>
-						<line number="243" hits="0" branch="false"/>
-						<line number="244" hits="0" branch="false"/>
-						<line number="247" hits="0" branch="false"/>
+						<line number="248" hits="0" branch="false"/>
+						<line number="250" hits="0" branch="false"/>
 						<line number="259" hits="0" branch="false"/>
-						<line number="261" hits="0" branch="false"/>
-						<line number="262" hits="0" branch="false"/>
+						<line number="260" hits="0" branch="false"/>
 						<line number="263" hits="0" branch="false"/>
-						<line number="264" hits="0" branch="false"/>
-						<line number="265" hits="0" branch="false"/>
-						<line number="266" hits="0" branch="false"/>
-						<line number="274" hits="0" branch="false"/>
 						<line number="275" hits="0" branch="false"/>
-						<line number="276" hits="0" branch="false"/>
+						<line number="277" hits="0" branch="false"/>
+						<line number="278" hits="0" branch="false"/>
+						<line number="279" hits="0" branch="false"/>
+						<line number="280" hits="0" branch="false"/>
+						<line number="281" hits="0" branch="false"/>
 						<line number="282" hits="0" branch="false"/>
-						<line number="283" hits="0" branch="false"/>
-						<line number="284" hits="0" branch="false"/>
-						<line number="288" hits="0" branch="false"/>
-						<line number="289" hits="0" branch="false"/>
+						<line number="290" hits="0" branch="false"/>
+						<line number="291" hits="0" branch="false"/>
+						<line number="292" hits="0" branch="false"/>
+						<line number="298" hits="0" branch="false"/>
+						<line number="299" hits="0" branch="false"/>
+						<line number="300" hits="0" branch="false"/>
+						<line number="304" hits="0" branch="false"/>
+						<line number="305" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39558,7 +39614,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39586,7 +39642,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39602,7 +39658,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39630,7 +39686,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39646,7 +39702,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39674,7 +39730,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39690,7 +39746,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39706,7 +39762,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39722,7 +39778,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure3$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39738,7 +39794,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39766,7 +39822,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39782,7 +39838,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39810,7 +39866,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39826,7 +39882,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure5$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39842,7 +39898,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39870,7 +39926,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39898,7 +39954,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39914,7 +39970,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -39942,7 +39998,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.357142857142857">
+				<class name="org.jasig.cas.services.JsonServiceRegistryDao$AjcClosure7$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/services/JsonServiceRegistryDao.java" line-rate="0.0" branch-rate="1.0" complexity="2.7857142857142856">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
