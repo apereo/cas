@@ -20,6 +20,7 @@ package org.jasig.cas.services;
 
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.LockedOutputStream;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
@@ -223,9 +224,24 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
      * Load registered service from file.
      *
      * @param file the file
-     * @return the registered service
+     * @return the registered service, or null if file cannot be read, is not found, is empty or parsing error occurs.
      */
     RegisteredService loadRegisteredServiceFromFile(final File file) {
+        if (!file.canRead()) {
+            LOGGER.warn("[{}] is not readable. Check file permissions", file.getName());
+            return null;
+        }
+
+        if (!file.exists()) {
+            LOGGER.warn("[{}] is not found at the path specified", file.getName());
+            return null;
+        }
+
+        if (file.length() == 0) {
+            LOGGER.warn("[{}] appears to be empty so no service definition will be loaded", file.getName());
+            return null;
+        }
+
         try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceJsonSerializer.fromJson(in);
         } catch (final Exception e) {
@@ -256,7 +272,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
      * @throws IllegalArgumentException if file name is invalid
      */
     protected File makeFile(final RegisteredService service) {
-        final String fileName = service.getName() + '-' + service.getId() + '.' + FILE_EXTENSION;
+        final String fileName = StringUtils.remove(service.getName() + '-' + service.getId() + '.' + FILE_EXTENSION, " ");
         try {
             final File svcFile = new File(serviceRegistryDirectory.toFile(), fileName);
             LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
