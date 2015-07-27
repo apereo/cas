@@ -113,13 +113,22 @@ public class RegisteredServiceBean implements Serializable {
         this.attrRelease = attrRelease;
     }
 
+    /**
+     * The type Attribute release policy.
+     */
     public static class AttributeReleasePolicy {
         private boolean releasePassword;
         private boolean releaseTicket;
         private ReleasePolicyStrategy attrPolicy = new ReleasePolicyStrategy();
 
+        /**
+         * The type Release policy strategy.
+         */
         public static class ReleasePolicyStrategy {
 
+            /**
+             * The enum Types.
+             */
             public enum Types {
                 /** Refuse type. */
                 ALL("all"),
@@ -178,8 +187,14 @@ public class RegisteredServiceBean implements Serializable {
         }
     }
 
+    /**
+     * The type Proxy policy.
+     */
     public static class ProxyPolicy {
 
+        /**
+         * The enum Types.
+         */
         public enum Types {
             /** Refuse type. */
             REFUSE("refuse"),
