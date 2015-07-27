@@ -204,6 +204,14 @@ public final class CompressionUtils {
         }
     }
 
+    /**
+     * Serialize and encode object.
+     *
+     * @param cipher the cipher
+     * @param object the object
+     * @return the byte []
+     * @since 4.2
+     */
     public static byte[] serializeAndEncodeObject(final CipherExecutor<byte[], byte[]> cipher,
                                                   final Serializable object) {
         final ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
@@ -211,6 +219,16 @@ public final class CompressionUtils {
         return cipher.encode(outBytes.toByteArray());
     }
 
+    /**
+     * Decode and serialize object.
+     *
+     * @param <T>  the type parameter
+     * @param object the object
+     * @param cipher the cipher
+     * @param type the type
+     * @return the t
+     * @since 4.2
+     */
     public static <T> T decodeAndSerializeObject(final byte[] object,
                                                  final CipherExecutor<byte[], byte[]> cipher,
                                                  final Class<? extends Serializable> type) {
@@ -228,6 +246,7 @@ public final class CompressionUtils {
      *
      * @param input the input
      * @return the value as hex
+     * @since 4.2
      */
     public static String sha512Hex(final String input) {
         return DigestUtils.sha512Hex(input);

@@ -20,7 +20,6 @@
 package org.jasig.cas.ticket.registry.encrypt;
 
 
-import com.google.common.io.ByteSource;
 import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
@@ -36,8 +35,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * A wrapper around an inner ticket registry that is able to encode
+ * tickets before they are persisted. This should be used, particularly
+ * in clustered deployments where replication of tickets is carried out
+ * over an insecure network connection. By default, encryption is turned off.
+ *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.2
  */
 public final class CrypticTicketRegistry extends AbstractTicketRegistry {
 
@@ -165,7 +169,6 @@ public final class CrypticTicketRegistry extends AbstractTicketRegistry {
 
         final Ticket ticket = CompressionUtils.decodeAndSerializeObject(
                 encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
-                this.cipherExecutor, Ticket.class);
         logger.info("Decoded [{}]",  ticket);
         return ticket;
     }
