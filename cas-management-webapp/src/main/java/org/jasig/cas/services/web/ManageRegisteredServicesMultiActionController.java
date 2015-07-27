@@ -56,8 +56,11 @@ import java.util.Map;
 public final class ManageRegisteredServicesMultiActionController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManageRegisteredServicesMultiActionController.class);
 
-    private final String AJAX_REQUEST_HEADER_NAME = "x-requested-with";
-    private final String AJAX_REQUEST_HEADER_VALUE = "XMLHttpRequest";
+    /** Ajax request header name to examine for exceptions. */
+    private static final String AJAX_REQUEST_HEADER_NAME = "x-requested-with";
+
+    /** Ajax request header value to examine for exceptions. */
+    private static final String AJAX_REQUEST_HEADER_VALUE = "XMLHttpRequest";
 
     /** Instance of ServicesManager. */
     @NotNull
@@ -127,7 +130,6 @@ public final class ManageRegisteredServicesMultiActionController {
      *
      * @param idAsLong the id
      * @param response the response
-     * @return the Model and View to go to after the service is deleted.
      */
     @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.POST})
     public void deleteRegisteredService(@RequestParam("id") final long idAsLong,
@@ -176,7 +178,6 @@ public final class ManageRegisteredServicesMultiActionController {
      * Updates the {@link RegisteredService#getEvaluationOrder()}.
      *
      * @param id the service ids, whose order also determines the service evaluation order
-     * @return {@link ModelAndView} object that redirects to a <code>jsonView</code>.
      */
     @RequestMapping(value="updateRegisteredServiceEvaluationOrder.html", method={RequestMethod.POST})
     public void updateRegisteredServiceEvaluationOrder(@RequestParam("id") final long... id) {
