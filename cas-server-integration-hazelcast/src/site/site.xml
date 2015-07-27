@@ -19,9 +19,10 @@
     under the License.
 
 -->
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns="http://www.springframework.org/schema/beans"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
-    <bean id="jsonView" class="org.springframework.web.servlet.view.json.JsonView"/>
-</beans>
+<project name="Apereo CAS ${project.version}">
+    <body>
+        <menu ref="parent"/>
+        <menu ref="reports" name="Reports" inherit="top"/>
+        <menu ref="modules" name="Modules" inherit="top"/>
+    </body>
+</project>
