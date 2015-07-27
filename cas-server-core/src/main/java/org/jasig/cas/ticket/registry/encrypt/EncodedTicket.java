@@ -29,7 +29,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  * representation internally.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.2
  */
 public final class EncodedTicket implements Ticket {
 
