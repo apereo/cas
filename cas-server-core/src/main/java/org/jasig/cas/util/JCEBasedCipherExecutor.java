@@ -1,4 +1,4 @@
-package org.jasig.cas.util;/*
+/*
  * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
@@ -17,8 +17,7 @@ package org.jasig.cas.util;/*
  * under the License.
  */
 
-
-import com.google.common.io.ByteSource;
+package org.jasig.cas.util;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -30,7 +29,7 @@ import javax.validation.constraints.NotNull;
  * provided by the default platform's JCE. By default AES encryption is
  * used which requires both the secret key and the IV length to be of size 16.
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.2
  */
 public class JCEBasedCipherExecutor implements CipherExecutor<byte[], byte[]> {
     private static final String UTF8_ENCODING = "UTF-8";
