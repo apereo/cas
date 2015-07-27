@@ -249,27 +249,31 @@ public class RegisteredServiceBean implements Serializable {
         }
 
         final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
+        final ProxyPolicy proxyPolicyBean = bean.getProxyPolicy();
+
         if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
             final RefuseRegisteredServiceProxyPolicy refuse = (RefuseRegisteredServiceProxyPolicy) policy;
-            bean.getProxyPolicy().setType(ProxyPolicy.Types.REFUSE.toString());
+            proxyPolicyBean.setType(ProxyPolicy.Types.REFUSE.toString());
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            bean.getProxyPolicy().setType(ProxyPolicy.Types.ALLOW.toString());
-            bean.getProxyPolicy().setValue(option.getPattern().toString());
+            proxyPolicyBean.setType(ProxyPolicy.Types.ALLOW.toString());
+            proxyPolicyBean.setValue(option.getPattern().toString());
         }
 
         final AbstractAttributeReleasePolicy attrPolicy = (AbstractAttributeReleasePolicy) svc.getAttributeReleasePolicy();
-        bean.getAttrRelease().setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
-        bean.getAttrRelease().setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
+        final AttributeReleasePolicy attrPolicyBean = bean.getAttrRelease();
+
+        attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
+        attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
 
         if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
-            bean.getAttrRelease().getAttrPolicy().setType(
+            attrPolicyBean.getAttrPolicy().setType(
                     AttributeReleasePolicy.ReleasePolicyStrategy.Types.ALL.toString());
         } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
-            bean.getAttrRelease().getAttrPolicy().setType(
+            attrPolicyBean.getAttrPolicy().setType(
                     AttributeReleasePolicy.ReleasePolicyStrategy.Types.ALLOWED.toString());
         } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
-            bean.getAttrRelease().getAttrPolicy().setType(
+            attrPolicyBean.getAttrPolicy().setType(
                     AttributeReleasePolicy.ReleasePolicyStrategy.Types.MAPPED.toString());
         }
         bean.setSasCASEnabled(svc.getAccessStrategy().isServiceAccessAllowed());
