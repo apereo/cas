@@ -18,8 +18,26 @@
  */
 package org.jasig.cas.util;
 
+import com.google.common.io.ByteSource;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SerializationUtils;
+import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.TicketState;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.joda.time.DateTime;
+import org.ldaptive.handler.HandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +49,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.InflaterOutputStream;
@@ -184,56 +204,32 @@ public final class CompressionUtils {
         }
     }
 
-    /**
-     * Encode object.
-     *
-     * @param object the object
-     * @param cipherExecutor the cipher executor
-     * @return the result string
-     */
-    public static String encodeObject(final Serializable object, final CipherExecutor cipherExecutor) {
+    public static byte[] serializeAndEncodeObject(final CipherExecutor<byte[], byte[]> cipher,
+                                                  final Serializable object) {
         final ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
-        try (final ObjectOutputStream out = new ObjectOutputStream(outBytes)) {
-            out.writeObject(object);
-        } catch (final IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        SerializationUtils.serialize(object, outBytes);
+        return cipher.encode(outBytes.toByteArray());
+    }
 
-        final String result = new String(outBytes.toByteArray(), Charset.forName(UTF8_ENCODING));
-        return cipherExecutor.encode(result);
+    public static <T> T decodeAndSerializeObject(final byte[] object,
+                                                 final CipherExecutor<byte[], byte[]> cipher,
+                                                 final Class<? extends Serializable> type) {
+        final byte[] decoded = cipher.decode(object);
+        final Object result = SerializationUtils.deserialize(decoded);
+        if (!type.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Decoded object is of type " + result.getClass()
+                    + " when we were expecting " + type);
+        }
+        return (T) result;
     }
 
     /**
-     * Decode object.
+     * Calculates the SHA-512 digest and returns the value as a hex string.
      *
-     * @param <T>   the type parameter
-     * @param encodedObject the encoded object
-     * @param cipherExecutor the cipher executor
-     * @param clazz the clazz
-     * @return the ticket
+     * @param input the input
+     * @return the value as hex
      */
-    public static <T extends Serializable> T decodeObject(final Serializable encodedObject,
-                                                          final CipherExecutor cipherExecutor,
-                                                          final Class<? extends Serializable> clazz) {
-        final String decoded = cipherExecutor.decode(encodedObject.toString());
-
-        try (final ByteArrayInputStream in = new ByteArrayInputStream(decoded.getBytes(Charset.forName(UTF8_ENCODING)));
-             final ObjectInputStream inStream = new ObjectInputStream(in)) {
-
-            final Object obj = inStream.readObject();
-
-            if (obj == null) {
-                throw new RuntimeException("Can not decode encoded object " + encodedObject);
-            }
-
-            if (!clazz.isAssignableFrom(obj.getClass())) {
-                throw new ClassCastException("Decoded object is of type " + obj.getClass()
-                        + " when we were expecting " + clazz);
-            }
-
-            return (T) obj;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+    public static String sha512Hex(final String input) {
+        return DigestUtils.sha512Hex(input);
     }
 }
