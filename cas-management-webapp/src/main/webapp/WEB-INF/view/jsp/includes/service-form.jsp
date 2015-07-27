@@ -626,7 +626,7 @@
                             <i class="fa fa-floppy-o"></i>
                             <spring:message code="services.form.button.save" />
                         </button>
-                        <a href="manage.html" ng-click="action.homepage($event)" class="btn btn-default">
+                        <a href="javascript://" ng-click="action.homepage()" class="btn btn-default">
                             <i class="fa fa-times"></i>
                             <spring:message code="services.form.button.cancel" />
                         </a>
