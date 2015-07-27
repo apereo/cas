@@ -18,11 +18,8 @@
  */
 package org.jasig.cas.services.web;
 
-import java.util.Collection;
-
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.junit.Before;
@@ -30,7 +27,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.web.servlet.ModelAndView;
 
 import static org.junit.Assert.*;
 
