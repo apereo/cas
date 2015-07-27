@@ -153,6 +153,7 @@ public final class ManageRegisteredServicesMultiActionController {
     public ModelAndView manage(final HttpServletResponse response) {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
+        model.put("defaultServiceUrl", this.defaultServiceUrl);
         return new ModelAndView("manage", model);
     }
 
@@ -211,10 +212,7 @@ public final class ManageRegisteredServicesMultiActionController {
         if (contentType != null && contentType.equals(this.AJAX_REQUEST_HEADER_VALUE)) {
             LOGGER.debug("Handling exception {} for ajax request indicated by header {}",
                     ex.getClass().getName(), this.AJAX_REQUEST_HEADER_NAME);
-            final Map<String, String> map = new HashMap<>();
-            map.put("error", ex.getMessage());
-            map.put("stacktrace", Arrays.deepToString(ex.getStackTrace()));
-            JsonViewUtils.render(map, response);
+            JsonViewUtils.renderException(ex, response);
         } else {
             LOGGER.trace("Unable to resolve exception {} for request. Ajax request header {} not found.",
                     ex.getClass().getName(), this.AJAX_REQUEST_HEADER_NAME);

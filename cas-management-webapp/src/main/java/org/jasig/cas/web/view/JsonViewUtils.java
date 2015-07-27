@@ -24,6 +24,9 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.server.ServletServerHttpResponse;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Misagh Moayyed
@@ -48,6 +51,22 @@ public final class JsonViewUtils {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+
+    }
+
+    /**
+     * Render exceptions. Adds error messages and the stack trace to the json model
+     * and sets the response status accordingly to note bad requests.
+     *
+     * @param ex the ex
+     * @param response the response
+     */
+    public static void renderException(final Exception ex, final HttpServletResponse response) {
+        final Map<String, String> map = new HashMap<>();
+        map.put("error", ex.getMessage());
+        map.put("stacktrace", Arrays.deepToString(ex.getStackTrace()));
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        render(map, response);
 
     }
 }
