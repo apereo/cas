@@ -20,6 +20,7 @@
 package org.jasig.cas.ticket.registry.encrypt;
 
 
+import com.google.common.io.ByteSource;
 import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
@@ -44,11 +45,14 @@ public final class CrypticTicketRegistry extends AbstractTicketRegistry {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @NotNull
-    private final CipherExecutor cipherExecutor;
+    private final CipherExecutor<byte[], byte[]> cipherExecutor;
 
     /** The real instance of the ticket registry that is to be decorated. */
     @NotNull
     private final TicketRegistry ticketRegistry;
+
+    /** Defines whether encryption should be enabled; default is false. */
+    private boolean enabled;
 
     /**
      * Instantiates a new Cryptic ticket registry.
@@ -56,33 +60,61 @@ public final class CrypticTicketRegistry extends AbstractTicketRegistry {
      * @param actualTicketRegistry the actual ticket registry
      * @param cipherExecutor the cipher executor
      */
-    public CrypticTicketRegistry(final TicketRegistry actualTicketRegistry, final CipherExecutor cipherExecutor) {
+    public CrypticTicketRegistry(final TicketRegistry actualTicketRegistry,
+                                 final CipherExecutor<byte[], byte[]> cipherExecutor) {
         this.ticketRegistry = actualTicketRegistry;
         this.cipherExecutor = cipherExecutor;
     }
 
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public void addTicket(final Ticket ticket) {
-        final Ticket encodedTicket = encodeTicket(ticket);
-        this.ticketRegistry.addTicket(encodedTicket);
+        if (!this.enabled) {
+            logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
+            this.ticketRegistry.addTicket(ticket);
+        } else {
+            final Ticket encodedTicket = encodeTicket(ticket);
+            this.ticketRegistry.addTicket(encodedTicket);
+        }
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        final String encodedId = CompressionUtils.encodeObject(ticketId.getBytes(), cipherExecutor);
-        final Ticket ticket = this.ticketRegistry.getTicket(ticketId);
+        if (!this.enabled) {
+            logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
+            return this.ticketRegistry.getTicket(ticketId);
+        }
+
+        final String encodedId = CompressionUtils.sha512Hex(ticketId);
+        final Ticket ticket = this.ticketRegistry.getTicket(encodedId);
+        if (ticket == null) {
+            return null;
+        }
+
         return decodeTicket(ticket);
     }
 
     @Override
     public boolean deleteTicket(final String ticketId) {
-        final String encodedId = CompressionUtils.encodeObject(ticketId.getBytes(), cipherExecutor);
+        if (!this.enabled) {
+            logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
+            return this.ticketRegistry.deleteTicket(ticketId);
+        }
+
+        final String encodedId = CompressionUtils.sha512Hex(ticketId);
         return this.ticketRegistry.deleteTicket(encodedId);
     }
 
     @Override
     public Collection<Ticket> getTickets() {
         final Collection<Ticket> col = this.ticketRegistry.getTickets();
+        if (!this.enabled) {
+            logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
+            return col;
+        }
         return decodeTickets(col);
     }
 
@@ -108,10 +140,12 @@ public final class CrypticTicketRegistry extends AbstractTicketRegistry {
         }
 
         logger.info("Encoding [{}]", ticket);
-        final String encodedTicketObject = CompressionUtils.encodeObject(ticket, cipherExecutor);
-        final String encodedTicketId = CompressionUtils.encodeObject(ticket.getId().getBytes(), this.cipherExecutor);
-        final EncodedTicket encodedTicket = new EncodedTicket(ticket, encodedTicketObject, encodedTicketId);
-        logger.info("Created [{}]", ticket);
+        final byte[] encodedTicketObject = CompressionUtils.serializeAndEncodeObject(
+                this.cipherExecutor, ticket);
+        final String encodedTicketId = CompressionUtils.sha512Hex(ticket.getId());
+        final EncodedTicket encodedTicket = new EncodedTicket(
+                ticket, encodedTicketObject, encodedTicketId);
+        logger.info("Created [{}]", encodedTicket);
         return encodedTicket;
     }
 
@@ -129,7 +163,8 @@ public final class CrypticTicketRegistry extends AbstractTicketRegistry {
         logger.info("Attempting to decode [{}]",  result);
         final EncodedTicket encodedTicket = (EncodedTicket) result;
 
-        final Ticket ticket = CompressionUtils.decodeObject(encodedTicket.getEncoded(),
+        final Ticket ticket = CompressionUtils.decodeAndSerializeObject(
+                encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
                 this.cipherExecutor, Ticket.class);
         logger.info("Decoded [{}]",  ticket);
         return ticket;
@@ -148,12 +183,10 @@ public final class CrypticTicketRegistry extends AbstractTicketRegistry {
 
         final Set<Ticket> tickets = new HashSet<>(items.size());
         for (final Ticket item : items) {
-            final EncodedTicket encodedTicket = (EncodedTicket) item;
-            final Ticket ticket = CompressionUtils.decodeObject(encodedTicket.getEncoded(),
-                    this.cipherExecutor, Ticket.class);
-            logger.info("Decoded [{}]",  ticket);
+            final Ticket ticket = decodeTicket(item);
             tickets.add(ticket);
         }
         return tickets;
     }
+
 }
