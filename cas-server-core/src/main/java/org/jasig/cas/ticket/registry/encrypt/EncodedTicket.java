@@ -32,13 +32,13 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
  * @since 4.1
  */
 public final class EncodedTicket implements Ticket {
-    private static final long serialVersionUID = 1L;
 
+    private static final long serialVersionUID = -7078771807487764116L;
     private final String id;
 
     private final Ticket source;
 
-    private final String encodedTicket;
+    private final byte[] encodedTicket;
 
     /**
      * Creates a new encoded ticket using the given encoder to encode the given
@@ -48,7 +48,7 @@ public final class EncodedTicket implements Ticket {
      * @param encodedTicket the encoded ticket
      * @param encodedTicketId the encoded ticket id
      */
-    public EncodedTicket(final Ticket source, final String encodedTicket, final String encodedTicketId) {
+    public EncodedTicket(final Ticket source, final byte[] encodedTicket, final String encodedTicketId) {
         this.id = encodedTicketId;
         this.encodedTicket = encodedTicket;
         this.source = source;
@@ -81,7 +81,7 @@ public final class EncodedTicket implements Ticket {
         return this.id;
     }
 
-    public String getEncoded() {
+    public byte[] getEncoded() {
         return this.encodedTicket;
     }
 
