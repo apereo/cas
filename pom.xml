@@ -162,7 +162,7 @@
     <system>Jira</system>
     <url>https://issues.jasig.org/browse/CAS</url>
   </issueManagement>
-  
+
   <mailingLists>
     <mailingList>
       <name>cas-user</name>
@@ -193,7 +193,7 @@
     <url>https://github.com/Jasig/cas</url>
     <tag>HEAD</tag>
   </scm>
-	
+
   <distributionManagement>
     <site>
       <id>cas-site</id>
@@ -201,14 +201,14 @@
       <url>file:${project.site.deployDirectory}</url>
     </site>
   </distributionManagement>
-	
+
   <build>
     <testResources>
       <testResource>
         <directory>${basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
-    
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -228,10 +228,10 @@
             </additionalClasspathElements>
           </configuration>
         </plugin>
-        
+
       </plugins>
     </pluginManagement>
-    
+
     <plugins>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
@@ -550,12 +550,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <artifactId>commons-lang3</artifactId>
         <version>${commons.lang.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
-      </dependency>  
+      </dependency>
 
       <!-- Inspektr Dependencies -->
       <dependency>
@@ -962,12 +962,12 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
       </build>
     </profile>
   </profiles>
-  
+
   <properties>
     <cs.dir>${project.basedir}</cs.dir>
     <issues.projectKey>CAS</issues.projectKey>
     <spring.webflow.version>2.3.2.RELEASE</spring.webflow.version>
-    <spring.version>3.2.6.RELEASE</spring.version>
+    <spring.version>3.2.9.RELEASE</spring.version>
     <ldaptive.version>1.0.6</ldaptive.version>
     <spring.security.version>3.2.0.RELEASE</spring.security.version>
     <clover.version>2.6.3</clover.version>
@@ -993,7 +993,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
     <hsqldb.version>2.0.0</hsqldb.version>
     <joda-time.version>2.2</joda-time.version>
     <cas-server-security-filter.version>2.0.3</cas-server-security-filter.version>
-	
+
     <project.build.sourceVersion>1.6</project.build.sourceVersion>
     <project.build.targetVersion>1.6</project.build.targetVersion>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
