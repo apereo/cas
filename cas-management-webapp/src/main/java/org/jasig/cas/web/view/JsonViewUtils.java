@@ -19,7 +19,6 @@
 
 package org.jasig.cas.web.view;
 
-import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -40,7 +39,6 @@ public final class JsonViewUtils {
      *
      * @param model the model
      * @param response the response
-     * @return the model and view
      */
     public static void render(final Object model, final HttpServletResponse response) {
         try {
