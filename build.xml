@@ -29,7 +29,7 @@
     <property name="cas.management.webapp" value="cas-management" />
     <property name="catalina.home" value="${env.CATALINA_HOME}" />
     <property name="tomcat.log.patterns" value="**/*.log" />
-    <property name="cas.build.modules" value="cas-server-webapp" />
+    <property name="cas.build.modules" value="cas-server-core,cas-server-webapp" />
     <property name="includeManagementWebapp" value="true"/>
 
     <if>
@@ -44,86 +44,86 @@
 
     <!-- ******************* MAVEN PROPERTIES******************** -->
     <condition property="mavenExecutableFile" value="mvn.cmd" else="mvn">
-		<os family="windows" />
-	</condition>
-	<var name="mavenExecutable" value="${env.M2_HOME}\bin\${mavenExecutableFile}"/>
-	<available file="${mavenExecutable}"  property="maven.exec.exists" />
+        <os family="windows" />
+    </condition>
+    <var name="mavenExecutable" value="${env.M2_HOME}\bin\${mavenExecutableFile}"/>
+    <available file="${mavenExecutable}"  property="maven.exec.exists" />
 
-	<if>
-		<not>
-			<isset property="${maven.exec.exists}" />
-		</not>
-		<then>
-			<var name="mavenExecutable" value="${env.MAVEN_HOME}\bin\${mavenExecutableFile}"/>
-			<available file="${mavenExecutable}"  property="maven.exec.exists" />
-		</then>
-	</if>
-	<fail unless="${maven.exec.exists}" message="Cannot determine the maven installation location through M2_HOME or MAVEN_HOME environment variables."/>
-		
-	<!-- ***************** TOMCAT PROPERTIES ******************** -->
-	<condition property="tomcatStartupFile" value="startup.bat" else="startup">
-		<os family="windows" />
-	</condition>
-	<property name="tomcatStartup" value="${catalina.home}\bin\${tomcatStartupFile}" />
+    <if>
+        <not>
+            <isset property="${maven.exec.exists}" />
+        </not>
+        <then>
+            <var name="mavenExecutable" value="${env.MAVEN_HOME}\bin\${mavenExecutableFile}"/>
+            <available file="${mavenExecutable}"  property="maven.exec.exists" />
+        </then>
+    </if>
+    <fail unless="${maven.exec.exists}" message="Cannot determine the maven installation location through M2_HOME or MAVEN_HOME environment variables."/>
 
-	<condition property="tomcatShutDownFile" value="shutdown.bat" else="shutdown">
-		<os family="windows" />
-	</condition>
-	<property name="tomcatShutDown" value="${catalina.home}\bin\${tomcatShutDownFile}" />
-	
-	<!-- ********************* TARGETS *************************** -->
-	<target name="cleanTomcatLogs" description="Clean tomcat log files">
-		<delete failonerror="false">
-			<fileset dir="${catalina.home}/logs" includes="${tomcat.log.patterns}" />
-			<fileset dir="${catalina.home}/bin" includes="${tomcat.log.patterns}" />
-			<fileset dir="${catalina.home}" includes="${tomcat.log.patterns}" />
+    <!-- ***************** TOMCAT PROPERTIES ******************** -->
+    <condition property="tomcatStartupFile" value="startup.bat" else="startup">
+        <os family="windows" />
+    </condition>
+    <property name="tomcatStartup" value="${catalina.home}\bin\${tomcatStartupFile}" />
+
+    <condition property="tomcatShutDownFile" value="shutdown.bat" else="shutdown">
+        <os family="windows" />
+    </condition>
+    <property name="tomcatShutDown" value="${catalina.home}\bin\${tomcatShutDownFile}" />
+
+    <!-- ********************* TARGETS *************************** -->
+    <target name="cleanTomcatLogs" description="Clean tomcat log files">
+        <delete failonerror="false">
+            <fileset dir="${catalina.home}/logs" includes="${tomcat.log.patterns}" />
+            <fileset dir="${catalina.home}/bin" includes="${tomcat.log.patterns}" />
+            <fileset dir="${catalina.home}" includes="${tomcat.log.patterns}" />
             <fileset dir="${basedir}" includes="${tomcat.log.patterns}" />
-		</delete>
-	</target>
+        </delete>
+    </target>
 
-	<target name="clean" description="Clean deployed artifacts and logs">
-		<delete file="${catalina.home}/webapps/${ant.project.name}.war" verbose="false" failonerror="true" />
-		<delete file="${catalina.home}/webapps/${cas.management.webapp}.war" verbose="false" failonerror="true" />
-		
-		<delete file="${catalina.home}/bin/${ant.project.name}.log" verbose="false" failonerror="true" />
-		
-		<delete dir="${catalina.home}/webapps/${cas.management.webapp}" verbose="false" includeemptydirs="true" failonerror="true" />
-		<delete dir="${catalina.home}/webapps/${ant.project.name}" verbose="false" includeemptydirs="true" failonerror="true" />
+    <target name="clean" description="Clean deployed artifacts and logs">
+        <delete file="${catalina.home}/webapps/${ant.project.name}.war" verbose="false" failonerror="true" />
+        <delete file="${catalina.home}/webapps/${cas.management.webapp}.war" verbose="false" failonerror="true" />
 
-		<delete dir="${catalina.home}/work/Catalina" verbose="false" includeemptydirs="true"  failonerror="true"/>
-		
-		<exec dir="${basedir}" executable="${mavenExecutable}">
-      		<arg value="--projects" />
-      		<arg value="${cas.build.modules}"/>
-			<arg value="clean" />
-			<arg value="-Dmaven.test.skip=true" />
-		</exec>
-		<antcall target="cleanTomcatLogs" />
-	</target>
+        <delete file="${catalina.home}/bin/${ant.project.name}.log" verbose="false" failonerror="true" />
 
-	<target name="compile" description="Compile artifacts" depends="clean">
-		<exec dir="${basedir}" executable="${mavenExecutable}">
-			<arg value="--projects" />
-      		<arg value="${cas.build.modules}"/>
-      		<arg value="compile" />
-			<arg value="-Dmaven.test.skip=true" />
-		</exec>
-	</target>
+        <delete dir="${catalina.home}/webapps/${cas.management.webapp}" verbose="false" includeemptydirs="true" failonerror="true" />
+        <delete dir="${catalina.home}/webapps/${ant.project.name}" verbose="false" includeemptydirs="true" failonerror="true" />
 
-	<target name="test" description="Compile artifacts and run tests" depends="clean">
-		<exec dir="${basedir}" executable="${mavenExecutable}">
+        <delete dir="${catalina.home}/work/Catalina" verbose="false" includeemptydirs="true"  failonerror="true"/>
+
+        <exec dir="${basedir}" executable="${mavenExecutable}">
+            <arg value="--projects" />
+            <arg value="${cas.build.modules}"/>
+            <arg value="clean" />
+            <arg value="-Dmaven.test.skip=true" />
+        </exec>
+        <antcall target="cleanTomcatLogs" />
+    </target>
+
+    <target name="compile" description="Compile artifacts" depends="clean">
+        <exec dir="${basedir}" executable="${mavenExecutable}">
+            <arg value="--projects" />
+            <arg value="${cas.build.modules}"/>
+            <arg value="compile" />
+            <arg value="-Dmaven.test.skip=true" />
+        </exec>
+    </target>
+
+    <target name="test" description="Compile artifacts and run tests" depends="clean">
+        <exec dir="${basedir}" executable="${mavenExecutable}">
       <arg value="--projects" />
       <arg value="${cas.build.modules}"/>
-			<arg value="test" />
-		</exec>
-	</target>
+            <arg value="test" />
+        </exec>
+    </target>
 
-	<target name="copy" description="Copy artifacts over to tomcat" depends="package">
-		<copy overwrite="true"
-		      todir="${catalina.home}\webapps"
-		      file="cas-server-webapp/target/${ant.project.name}.war"
-			  verbose="true"
-		/>
+    <target name="copy" description="Copy artifacts over to tomcat" depends="package">
+        <copy overwrite="true"
+              todir="${catalina.home}\webapps"
+              file="cas-server-webapp/target/${ant.project.name}.war"
+              verbose="true"
+        />
 
         <if>
             <equals arg1="${includeManagementWebapp}" arg2="true" />
@@ -135,22 +135,22 @@
                         />
             </then>
         </if>
-	</target>
+    </target>
 
-	<target name="package" description="Package src artifacts and prepare for deployment" depends="clean">
-		<exec dir="${basedir}" executable="${mavenExecutable}">
-			<arg value="--projects" />
-     		 <arg value="${cas.build.modules}"/>
-			<arg value="install" />
-			<arg value="-Dmaven.test.skip=true" />
-		</exec>
-	</target>
+    <target name="package" description="Package src artifacts and prepare for deployment" depends="clean">
+        <exec dir="${basedir}" executable="${mavenExecutable}">
+            <arg value="--projects" />
+             <arg value="${cas.build.modules}"/>
+            <arg value="install" />
+            <arg value="-Dmaven.test.skip=true" />
+        </exec>
+    </target>
 
-	<target name="deploy" depends="copy" description="Clean, package and deploy artifacts" />
+    <target name="deploy" depends="copy" description="Clean, package and deploy artifacts" />
 
-	<target name="help" description="Prints instructions on how to run the build.">
-		<echo message="Use 'ant -projecthelp' to see all available commands" />
-	</target>
+    <target name="help" description="Prints instructions on how to run the build.">
+        <echo message="Use 'ant -projecthelp' to see all available commands" />
+    </target>
 
 </project>
 

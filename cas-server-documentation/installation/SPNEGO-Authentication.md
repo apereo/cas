@@ -145,10 +145,7 @@ Define two new action states in `login-webflow.xml` before the `viewLoginForm` s
 </action-state>
 {% endhighlight %}
 
-Additionally, two existing states need to be modified:
-1. `gatewayRequestCheck` - replace `viewLoginForm` with `startAuthenticate`
-2. `renewRequestCheck` - replace `viewLoginForm` with `startAuthenticate`
-
+Additionally, find action `generateLoginTicket` - replace `viewLoginForm` with `startAuthenticate`.
 
 Add two bean definitions in `cas-servlet.xml`:
 

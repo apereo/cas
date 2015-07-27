@@ -169,24 +169,37 @@
                 servicesData.modalItem = null;
             };
             this.deleteService = function (item) {
+                var csrfParam = $("meta[name='_csrf_header']").attr("content"),
+                    csrfToken = $("meta[name='_csrf']").attr("content"),
+                    csrfHeader = [];
+
+                csrfHeader[csrfParam] = csrfToken;
                 servicesData.closeModalDelete();
 
-                $http.post('/cas-management/deleteRegisteredService.html', {id: item.assignedId})
-                    .success(function () {
+                $.ajax({
+                    url: '/cas-management/deleteRegisteredService.html',
+                    type: 'post',
+                    data: {
+                        id: item.assignedId
+                    },
+                    headers: csrfHeader,
+                    dataType: 'json',
+                    success: function (data) {
                         servicesData.getServices();
                         servicesData.alert = {
                             name:   'deleted',
                             type:   'info',
                             data:   item
                         };
-                    })
-                    .error(function (data, status) {
+                    },
+                    error: function(data, status) {
                         servicesData.alert = {
                             name:   'notdeleted',
                             type:   'danger',
                             data:   null
                         };
-                    });
+                    }
+                });
             };
 
             this.clearFilter = function () {
