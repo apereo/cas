@@ -22,13 +22,13 @@
             'ui.sortable',
         ]);
 
-    app.filter('checkmark', function() {
-            return function(input) {
+    app.filter('checkmark', function () {
+            return function (input) {
                 return input ? '\u2713' : '\u2718';
             };
         })
-        .filter('wordCharTrunc', function() {
-            return function(str, limit) {
+        .filter('wordCharTrunc', function () {
+            return function (str, limit) {
                 if(typeof str != 'string') { return ''; }
                 if(!limit || str.length <= limit) { return str; }
 
@@ -36,8 +36,8 @@
                 return (newStr || str.substring(0, limit)) + '...';
             };
         })
-        .filter('serviceTableFilter', function() {
-            return function(services, fields, regex) {
+        .filter('serviceTableFilter', function () {
+            return function (services, fields, regex) {
                 if(typeof fields == 'string') { fields = [fields]; }
                 try {
                     regex = regex ? new RegExp(regex, 'i') : false;
@@ -48,8 +48,8 @@
                 if(!services || !fields || !regex) { return services; }
 
                 var matches = [];
-                angular.forEach(services, function(service, i) {
-                    angular.forEach(fields, function(field, j) {
+                angular.forEach(services, function (service, i) {
+                    angular.forEach(fields, function (field, j) {
                         if(regex.test(service[field]) && matches.indexOf(service) == -1) {
                             matches.push(service);
                         }
@@ -59,47 +59,65 @@
             };
         });
 
+    app.factory('sharedFactoryCtrl', [
+        '$log',
+        function ($log) {
+            var factory = {serviceId: 0};
+
+            factory.setItem = function (id) {
+                factory.serviceId = id;
+            };
+            factory.clearItem = function () {
+                factory.serviceId = 0;
+            };
+            factory.getItem = function () {
+                return factory.serviceId;            
+            };
+
+            return factory;
+        }
+    ]);
+
 // View Swapper
     app.controller('actionsController', [
-        '$location',
-        function ($location) {
+        '$scope',
+        'sharedFactoryCtrl',
+        function ($scope, sharedFactory) {
             this.actionPanel = 'manage';
-            this.activeSession = true;
 
             this.selectAction = function (setAction) {
                 this.actionPanel = setAction;
-                this.activeSession = setAction != 'logout';
             };
 
             this.isSelected = function (checkAction) {
                 return this.actionPanel === checkAction;
             };
 
-            this.homepage = function(e) {
-                if(this.activeSession) {
-                    this.selectAction('manage');
-                    e.preventDefault();
-                }
+            this.homepage = function () {
+                this.selectAction('manage');
+                sharedFactory.clearItem();
             };
 
-            this.serviceAdd = function() {
+            this.serviceAdd = function () {
+                sharedFactory.clearItem();
                 this.selectAction('add');
-                // cause form data to clear/reset to default obj
             };
 
-            this.serviceEdit = function(id) {
+            this.serviceEdit = function (id) {
+                sharedFactory.setItem(id);
                 this.selectAction('edit');
-                // pass id so it loads the form data
             };
         }
     ]);
 
 // Services Table: Manage View
     app.controller('ServicesTableController', [
+        '$scope',
         '$http',
         '$log',
         '$timeout',
-        function ($http, $log, $timeout) {
+        'sharedFactoryCtrl',
+        function ($scope, $http, $log, $timeout, sharedFactory) {
             var servicesData = this;
 
             this.dataTable = [];
@@ -108,22 +126,22 @@
                 items: '> tr',
                 handle: '.grabber-icon',
                 placeholder: 'tr-placeholder',
-                start: function(e, ui) {
+                start: function (e, ui) {
                     servicesData.detailRow = 0;
                     ui.item.data('data_changed', false);
                 },
-                update: function(e, ui) {
+                update: function (e, ui) {
                     ui.item.data('data_changed', true);
                 },
-                stop: function(e, ui) {
+                stop: function (e, ui) {
                     if(ui.item.data('data_changed')) {
                         var data = $(this).sortable('serialize', {key: 'id'});
 
                         $http.post('/cas-management/updateRegisteredServiceEvaluationOrder.html', data)
-                            .success(function() {
+                            .success(function () {
                                 servicesData.getServices();
                             })
-                            .error(function(data, status) {
+                            .error(function (data, status) {
                                 servicesData.alert = {
                                     name:   'notupdated',
                                     type:   'danger',
@@ -134,27 +152,27 @@
                 }
             };
 
-            this.getServices = function() {
+            this.getServices = function () {
                 $http.get('js/app/data/services.json') // TODO: fix URL
                     .success(function (data) {
                         servicesData.dataTable = data;
                     });
             };
 
-            this.openModalDelete = function(item) {
+            this.openModalDelete = function (item) {
                 servicesData.modalItem = item;
-                $timeout(function() {
+                $timeout(function () {
                     $('#confirm-delete .btn-default').focus();
                 }, 100);
             };
-            this.closeModalDelete = function() {
+            this.closeModalDelete = function () {
                 servicesData.modalItem = null;
             };
-            this.deleteService = function(item) {
+            this.deleteService = function (item) {
                 servicesData.closeModalDelete();
 
                 $http.post('/cas-management/deleteRegisteredService.html', {id: item.assignedId})
-                    .success(function() {
+                    .success(function () {
                         servicesData.getServices();
                         servicesData.alert = {
                             name:   'deleted',
@@ -162,7 +180,7 @@
                             data:   item
                         };
                     })
-                    .error(function(data, status) {
+                    .error(function (data, status) {
                         servicesData.alert = {
                             name:   'notdeleted',
                             type:   'danger',
@@ -171,11 +189,11 @@
                     });
             };
 
-            this.clearFilter = function() {
+            this.clearFilter = function () {
                 servicesData.serviceTableQuery = "";
             };
 
-            this.toggleDetail = function(rowId) {
+            this.toggleDetail = function (rowId) {
                 servicesData.detailRow = servicesData.detailRow == rowId ? 0 : rowId;
             };
 
@@ -185,10 +203,13 @@
 
 // Service Form: Add/Edit Service View
     app.controller('ServiceFormController', [
+        '$scope',
+        '$http',
         '$log',
-        function ($log) {
+        'sharedFactoryCtrl',
+        function ($scope, $http, $log, sharedFactory) {
             var serviceForm = this,
-                showInstructions = function() {
+                showInstructions = function () {
                     serviceForm.alert = {
                         name:   'instructions',
                         type:   'info',
@@ -243,7 +264,7 @@
                 'DAYS'
             ];
 
-            this.saveForm = function() {
+            this.saveForm = function () {
                 serviceForm.validateForm();
 
                 if(serviceForm.formErrors) {
@@ -256,7 +277,7 @@
                 }
 
                 $http.post('/cas-management/forcedError', serviceForm.formData)  // TODO: fix this call
-                    .success(function(data) {
+                    .success(function (data) {
                         serviceForm.formData = data[0];
                         serviceForm.alert = {
                             name:   'saved',
@@ -264,7 +285,7 @@
                             data:   null
                         };
                     })
-                    .error(function(data, status) {
+                    .error(function (data, status) {
                         serviceForm.alert = {
                             name:   'notsaved',
                             type:   'danger',
@@ -273,7 +294,7 @@
                     });
             };
 
-            this.validateForm = function() {
+            this.validateForm = function () {
                 serviceForm.formErrors = null;
 
                 // TODO: actual testing goes here
@@ -296,10 +317,10 @@
 
             this.loadService = function (id) {
                 $http.get('js/app/data/service-' + id + '.json') // TODO: fix URL
-                    .success(function(data) {
+                    .success(function (data) {
                         serviceForm.formData = data[0];
                     })
-                    .error(function(data, status) {
+                    .error(function (data, status) {
                         serviceForm.alert = {
                             name:   'notloaded',
                             type:   'danger',
@@ -309,11 +330,13 @@
                 showInstructions();
             };
 
-            if(false) { // TODO: throw in a real boolean test
-                this.loadService('11234'); // TODO: param should be tested above
-            } else {
-                this.newService();
-            }
+            $scope.$watch(
+                function() { return sharedFactory.serviceId; },
+                function (serviceId) {
+                    if(!serviceId) serviceForm.newService();
+                    else serviceForm.loadService(serviceId);
+                }
+            );
         }
     ]);
 

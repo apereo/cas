@@ -63,10 +63,10 @@
             </div><%-- end .navbar-header div --%>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="casmgt-navbar-collapse" ng-if="action.activeSession">
+            <div class="collapse navbar-collapse" id="casmgt-navbar-collapse">
                 <ul class="nav navbar-nav navbar-right quicklinks">
                     <li>
-                        <a href="manage.html" ng-click="action.homepage($event)">
+                        <a href="javascript://" ng-click="action.homepage()">
                             <i class="fa fa-gears"></i>
                             <spring:message code="management.services.header.navbar.navitem.manageService" />
                         </a>
