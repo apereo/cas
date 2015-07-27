@@ -33,6 +33,8 @@
     <head>
         <title><spring:message code="management.services.header.apptitle" /></title>
         <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
+        <meta name="_csrf" content="${_csrf.token}"/>
+        <meta name="_csrf_header" content="${_csrf.headerName}"/>
         <link rel="icon" href="<c:url value="/images/favicon.ico" />" type="image/x-icon" />
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="<c:url value="/css/cas-management.css" />" type="text/css" />
