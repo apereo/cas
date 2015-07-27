@@ -43,7 +43,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class DefaultCipherExecutor implements CipherExecutor {
+public final class DefaultCipherExecutor implements CipherExecutor<String, String> {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final String contentEncryptionAlgorithmIdentifier;
@@ -98,13 +98,13 @@ public final class DefaultCipherExecutor implements CipherExecutor {
 
     @Override
     public String encode(final String value) {
-        final String encoded = encryptValue(value);
+        final String encoded = encryptValue(value.toString());
         return signValue(encoded);
     }
 
     @Override
     public String decode(final String value) {
-        final String encoded = verifySignature(value);
+        final String encoded = verifySignature(value.toString());
         if (StringUtils.isNotBlank(encoded)) {
             return decryptValue(encoded);
         }
@@ -136,7 +136,7 @@ public final class DefaultCipherExecutor implements CipherExecutor {
      * @param value the value
      * @return the encoded value
      */
-    private String encryptValue(@NotNull final String value) {
+    public String encryptValue(@NotNull final String value) {
         try {
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setPayload(value);
@@ -157,7 +157,7 @@ public final class DefaultCipherExecutor implements CipherExecutor {
      * @param value the value
      * @return the decrypted value
      */
-    private String decryptValue(@NotNull final String value) {
+    public String decryptValue(@NotNull final String value) {
         try {
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setKey(this.secretKeyEncryptionKey);
@@ -175,7 +175,7 @@ public final class DefaultCipherExecutor implements CipherExecutor {
      * @param value the value
      * @return the signed value
      */
-    private String signValue(@NotNull final String value) {
+    public String signValue(@NotNull final String value) {
         try {
             final JsonWebSignature jws = new JsonWebSignature();
             jws.setPayload(value);
@@ -194,7 +194,7 @@ public final class DefaultCipherExecutor implements CipherExecutor {
      * @return the value associated with the signature, which may have to
      * be decoded, or null.
      */
-    private String verifySignature(@NotNull final String value) {
+    public String verifySignature(@NotNull final String value) {
         try {
             final JsonWebSignature jws = new JsonWebSignature();
             jws.setCompactSerialization(value);

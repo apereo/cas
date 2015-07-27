@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class NoOpCipherExecutor implements CipherExecutor {
+public final class NoOpCipherExecutor implements CipherExecutor<String, String> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoOpCipherExecutor.class);
 
