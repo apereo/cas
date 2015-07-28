@@ -32,8 +32,6 @@ import java.util.Map;
  */
 public final class Cas10ResponseView extends AbstractCasView {
 
-
-
     @Override
     protected void renderMergedOutputModel(final Map model,
             final HttpServletRequest request, final HttpServletResponse response)
@@ -41,7 +39,7 @@ public final class Cas10ResponseView extends AbstractCasView {
 
         if (this.successResponse) {
             response.getWriter().print(
-                    "yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + "\n");
+                    "yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
         } else {
             response.getWriter().print("no\n\n");
         }

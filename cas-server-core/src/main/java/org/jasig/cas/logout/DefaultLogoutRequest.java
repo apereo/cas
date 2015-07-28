@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.logout;
 
-import java.io.Serializable;
 import java.net.URL;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -30,7 +29,7 @@ import org.jasig.cas.authentication.principal.SingleLogoutService;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class LogoutRequest implements Serializable {
+public final class DefaultLogoutRequest implements LogoutRequest {
 
     /** Generated serialVersionUID. */
     private static final long serialVersionUID = -6411421298859045022L;
@@ -44,7 +43,7 @@ public final class LogoutRequest implements Serializable {
     /** The status of the logout request. */
     private LogoutRequestStatus status = LogoutRequestStatus.NOT_ATTEMPTED;
 
-    private URL logoutUrl;
+    private final URL logoutUrl;
 
     /**
      * Build a logout request from ticket identifier and service.
@@ -54,29 +53,33 @@ public final class LogoutRequest implements Serializable {
      * @param service the service.
      * @param logoutUrl the logout url
      */
-    public LogoutRequest(final String ticketId, final SingleLogoutService service, final URL logoutUrl) {
+    public DefaultLogoutRequest(final String ticketId, final SingleLogoutService service, final URL logoutUrl) {
         this.ticketId = ticketId;
         this.service = service;
         this.logoutUrl = logoutUrl;
     }
 
+    @Override
     public LogoutRequestStatus getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(final LogoutRequestStatus status) {
         this.status = status;
     }
 
+    @Override
     public String getTicketId() {
         return ticketId;
     }
 
+    @Override
     public SingleLogoutService getService() {
         return service;
     }
 
-
+    @Override
     public URL getLogoutUrl() {
         return logoutUrl;
     }

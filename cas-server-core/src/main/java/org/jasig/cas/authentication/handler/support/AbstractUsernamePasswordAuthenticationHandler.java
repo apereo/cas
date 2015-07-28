@@ -18,11 +18,7 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import java.util.List;
-
-import org.jasig.cas.Message;
-import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -30,12 +26,11 @@ import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.support.PasswordPolicyConfiguration;
-import org.jasig.cas.authentication.Credential;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -112,21 +107,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         return this.passwordPolicyConfiguration;
     }
 
-    /**
-     * Helper method to construct a handler result
-     * on successful authentication events.
-     *
-     * @param credential the credential on which the authentication was successfully performed.
-     * Note that this credential instance may be different from what was originally provided
-     * as transformation of the username may have occurred, if one is in fact defined.
-     * @param principal the resolved principal
-     * @param warnings the warnings
-     * @return the constructed handler result
-     */
-    protected final HandlerResult createHandlerResult(final Credential credential, final Principal principal,
-            final List<Message> warnings) {
-        return new HandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
-    }
     /**
      * Sets the PasswordEncoder to be used with this class.
      *

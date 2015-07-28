@@ -29,6 +29,7 @@ import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbSession;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -125,7 +126,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         if (!success) {
             throw new FailedLoginException();
         }
-        return new HandlerResult(this, new BasicCredentialMetaData(ntlmCredential), ntlmCredential.getPrincipal());
+        return new DefaultHandlerResult(this, new BasicCredentialMetaData(ntlmCredential), ntlmCredential.getPrincipal());
     }
 
     @Override

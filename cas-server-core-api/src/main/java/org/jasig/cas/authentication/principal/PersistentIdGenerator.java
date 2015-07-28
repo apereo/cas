@@ -16,25 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.validation;
+package org.jasig.cas.authentication.principal;
+
+import java.io.Serializable;
 
 /**
- * An interface to impose restrictions and requirements on validations (e.g.
- * renew=true).
+ * Generates a unique consistent Id based on the principal.
  *
- * @author William G. Thompson, Jr.
-
- * @since 3.0.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
+ * @author Scott Battaglia
+ * @since 3.1
  */
-public interface ValidationSpecification {
+public interface PersistentIdGenerator extends Serializable {
 
     /**
-     * @param assertion The assertion we want to confirm is satisfied by this
-     * spec.
-     * @return true if it is, false otherwise.
+     * Generates a PersistentId based on some algorithm plus the principal.
+     *
+     * @param principal the principal to generate the id for.
+     * @param service the service for which the id may be generated.
+     * @return the generated persistent id.
      */
-    boolean isSatisfiedBy(Assertion assertion);
+    String generate(Principal principal, Service service);
 }
