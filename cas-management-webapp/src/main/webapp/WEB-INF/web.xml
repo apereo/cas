@@ -26,6 +26,11 @@
   <display-name>CAS Management 4.1.0-SNAPSHOT</display-name>
 
   <context-param>
+    <param-name>isLog4jAutoInitializationDisabled</param-name>
+    <param-value>true</param-value>
+  </context-param>y
+
+  <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>
       /WEB-INF/spring-configuration/*.xml
