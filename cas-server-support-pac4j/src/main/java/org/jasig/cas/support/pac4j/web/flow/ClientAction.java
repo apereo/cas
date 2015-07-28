@@ -18,9 +18,9 @@
  */
 package org.jasig.cas.support.pac4j.web.flow;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
@@ -83,7 +83,7 @@ public final class ClientAction extends AbstractAction {
     /**
      * Supported protocols.
      */
-    private static final List<Mechanism> SUPPORTED_PROTOCOLS = Arrays.asList(Mechanism.CAS_PROTOCOL, Mechanism.OAUTH_PROTOCOL,
+    private static final Set<Mechanism> SUPPORTED_PROTOCOLS = ImmutableSet.of(Mechanism.CAS_PROTOCOL, Mechanism.OAUTH_PROTOCOL,
             Mechanism.OPENID_PROTOCOL, Mechanism.SAML_PROTOCOL, Mechanism.OPENID_CONNECT_PROTOCOL);
 
     /**

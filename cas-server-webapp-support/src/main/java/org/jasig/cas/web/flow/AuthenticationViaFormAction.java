@@ -21,7 +21,7 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.Message;
+import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
@@ -224,7 +224,7 @@ public class AuthenticationViaFormAction {
     protected boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
         for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
-            for (final Message message : entry.getValue().getWarnings()) {
+            for (final MessageDescriptor message : entry.getValue().getWarnings()) {
                 addWarningToContext(messageContext, message);
                 foundAndAddedWarnings = true;
             }
@@ -306,7 +306,7 @@ public class AuthenticationViaFormAction {
      * @param context Message context.
      * @param warning Warning message.
      */
-    private void addWarningToContext(final MessageContext context, final Message warning) {
+    private void addWarningToContext(final MessageContext context, final MessageDescriptor warning) {
         final MessageBuilder builder = new MessageBuilder()
                 .warning()
                 .code(warning.getCode())

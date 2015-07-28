@@ -16,27 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.ticket.Ticket;
+package org.jasig.cas.support.saml.web.flow.mdui;
 
-import java.util.Collection;
+import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 /**
- * Strategy interface to denote the start of cleaning the registry.
+ * {@link MetadataResolverAdapter} is a facade on top of the existing
+ * metadata resolution machinery that defines how metadata may be resolved.
  *
- * @author Scott Battaglia
-
- * @since 3.0.0
- * <p>
- * This is a published and supported CAS Server 3 API.
- * </p>
+ * @author Misagh Moayyed
+ * @since 4.1.0
  */
-public interface RegistryCleaner {
-
+public interface MetadataResolverAdapter {
     /**
-     * Method to kick-off the cleaning of a registry.
-     * @return the collection of removed/cleaned tickets
+     * Gets entity descriptor for entity id.
+     *
+     * @param entityId the entity id
+     * @return the entity descriptor for entity id
      */
-    Collection<Ticket> clean();
+    EntityDescriptor getEntityDescriptorForEntityId(final String entityId);
 }

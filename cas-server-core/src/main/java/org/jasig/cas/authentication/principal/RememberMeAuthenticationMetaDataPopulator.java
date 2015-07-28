@@ -29,10 +29,8 @@ import org.jasig.cas.authentication.RememberMeCredential;
  *
  * @author Scott Battaglia
  * @since 3.2.1
- *
  */
-public final class RememberMeAuthenticationMetaDataPopulator implements
-    AuthenticationMetaDataPopulator {
+public final class RememberMeAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
