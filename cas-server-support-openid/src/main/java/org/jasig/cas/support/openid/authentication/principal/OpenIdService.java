@@ -21,6 +21,7 @@ package org.jasig.cas.support.openid.authentication.principal;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.util.ApplicationContextProvider;
@@ -146,7 +147,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
         } else {
             parameters.put("openid.mode", "cancel");
         }
-        return Response.getRedirectResponse(getOriginalUrl(), parameters);
+        return DefaultResponse.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
     /**

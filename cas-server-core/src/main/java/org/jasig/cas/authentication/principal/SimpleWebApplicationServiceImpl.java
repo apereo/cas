@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.authentication.principal.Response.ResponseType;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +42,7 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
 
     private static final String CONST_PARAM_METHOD = "method";
 
-    private final ResponseType responseType;
+    private final Response.ResponseType responseType;
 
     /**
      * Instantiates a new simple web application service impl.
@@ -64,7 +63,7 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
      */
     private SimpleWebApplicationServiceImpl(final String id,
         final String originalUrl, final String artifactId,
-        final ResponseType responseType) {
+        final Response.ResponseType responseType) {
         super(id, originalUrl, artifactId);
         this.responseType = responseType;
     }
@@ -98,8 +97,8 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
         final String artifactId = request.getParameter(CONST_PARAM_TICKET);
 
         return new SimpleWebApplicationServiceImpl(id, serviceToUse,
-            artifactId, "POST".equals(method) ? ResponseType.POST
-                : ResponseType.REDIRECT);
+            artifactId, "POST".equals(method) ? Response.ResponseType.POST
+                : Response.ResponseType.REDIRECT);
     }
 
     @Override
@@ -110,9 +109,9 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
             parameters.put(CONST_PARAM_TICKET, ticketId);
         }
 
-        if (ResponseType.POST == this.responseType) {
-            return Response.getPostResponse(getOriginalUrl(), parameters);
+        if (Response.ResponseType.POST == this.responseType) {
+            return DefaultResponse.getPostResponse(getOriginalUrl(), parameters);
         }
-        return Response.getRedirectResponse(getOriginalUrl(), parameters);
+        return DefaultResponse.getRedirectResponse(getOriginalUrl(), parameters);
     }
 }
