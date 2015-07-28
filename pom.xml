@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
-        <version>39</version>
+        <version>40</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.cas</groupId>
@@ -212,6 +212,21 @@
 
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-maven-plugin</artifactId>
+                    <version>${maven-jetty-plugin.version}</version>
+                    <configuration>
+                        <systemProperties>
+                            <systemProperty>
+                                <name>org.eclipse.jetty.annotations.maxWait</name>
+                                <value>240</value>
+                            </systemProperty>
+                        </systemProperties>
+                        <!-- Works with remote debugging and mvn jetty:run-forked -->
+                        <jvmArgs>-Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n</jvmArgs>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -488,8 +503,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <header>${cs.dir}/src/licensing/header.txt</header>
                     <skipExistingHeaders>true</skipExistingHeaders>
@@ -676,6 +691,12 @@
             <artifactId>inspektr-aspects</artifactId>
             <version>${inspektr.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -710,6 +731,13 @@
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons.collections.version}</version>
                 <scope>compile</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-dbcp2</artifactId>
+                <version>${dbcp.version}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>
@@ -1333,6 +1361,7 @@
     </dependencyManagement>
 
     <modules>
+        <module>cas-server-core-api</module>
         <module>cas-server-core</module>
         <module>cas-server-webapp</module>
         <module>cas-server-webapp-support</module>
@@ -1521,7 +1550,7 @@
         <metrics.spring.version>3.1.0</metrics.spring.version>
         <log4j.version>2.3</log4j.version>
         <junit.version>4.12</junit.version>
-        <checkstyle.version>6.5</checkstyle.version>
+        <checkstyle.version>6.7</checkstyle.version>
         <commons.lang.version>3.4</commons.lang.version>
         <commons.collections.version>4.0</commons.collections.version>
         <inspektr.version>1.2.GA</inspektr.version>
@@ -1541,7 +1570,7 @@
         <xml.apis.version>1.4.01</xml.apis.version>
         <jstl.version>1.2</jstl.version>
         <openid4java.version>0.9.8</openid4java.version>
-        <cas-server-security-filter.version>2.0.2</cas-server-security-filter.version>
+        <cas-server-security-filter.version>2.0.3</cas-server-security-filter.version>
         <google.guava.version>18.0</google.guava.version>
         <jcache.version>1.0.0</jcache.version>
         <jcache.ri.version>1.0.0</jcache.ri.version>
@@ -1550,13 +1579,15 @@
         <jersey.version>1.19</jersey.version>
         <jose.version>0.4.1</jose.version>
         <woodstox.version>4.4.1</woodstox.version>
-        <pac4j.version>1.7.0</pac4j.version>
+        <pac4j.version>1.7.1</pac4j.version>
+        <bouncycastle.version>1.51</bouncycastle.version>
+        <dbcp.version>2.1</dbcp.version>
 
         <!-- Plugin Versions -->
         <coveralls-maven-plugin.version>3.1.0</coveralls-maven-plugin.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
-        <maven-javadoc-plugin.version>2.10.2</maven-javadoc-plugin.version>
-        <maven-versions-plugin.version>2.1</maven-versions-plugin.version>
+        <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+        <maven-versions-plugin.version>2.2</maven-versions-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <maven-pmd-plugin.version>3.4</maven-pmd-plugin.version>
         <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
@@ -1565,14 +1596,15 @@
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
         <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
         <maven-enforcer-plugin.version>1.4</maven-enforcer-plugin.version>
-        <maven-assembly-plugin.version>2.5.3</maven-assembly-plugin.version>
+        <maven-assembly-plugin.version>2.5.5</maven-assembly-plugin.version>
         <maven-aspectj-plugin.version>1.7</maven-aspectj-plugin.version>
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
         <maven-findbugs-plugin.version>3.0.1</maven-findbugs-plugin.version>
-        <maven-findbugs-contrib-plugin.version>6.0.0</maven-findbugs-contrib-plugin.version>
-        <maven-findbugs-security-plugin.version>1.4.0</maven-findbugs-security-plugin.version>
+        <maven-findbugs-contrib-plugin.version>6.2.1</maven-findbugs-contrib-plugin.version>
+        <maven-findbugs-security-plugin.version>1.4.1</maven-findbugs-security-plugin.version>
         <maven-buildnumber-plugin-version>1.3</maven-buildnumber-plugin-version>
         <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
+        <maven-jetty-plugin.version>9.3.0.v20150612</maven-jetty-plugin.version>
 
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>

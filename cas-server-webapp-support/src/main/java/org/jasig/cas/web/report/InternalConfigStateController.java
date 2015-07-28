@@ -99,7 +99,7 @@ public final class InternalConfigStateController {
 
         final JsonSerializer<Object> serializer = new BeanObjectJsonSerializer();
         final StringBuilder builder = new StringBuilder();
-        builder.append("[");
+        builder.append('[');
 
         final Set<Map.Entry<String, Object>> entries = list.entrySet();
         final Iterator<Map.Entry<String, Object>> it = entries.iterator();
@@ -109,17 +109,17 @@ public final class InternalConfigStateController {
             final Object obj = entry.getValue();
 
             final StringWriter writer = new StringWriter();
-            writer.append("{");
-            writer.append("\"" + entry.getKey() + "\":");
+            writer.append('{');
+            writer.append('\"' + entry.getKey() + "\":");
             serializer.toJson(writer, obj);
-            writer.append("}");
+            writer.append('}');
             builder.append(writer);
 
             if (it.hasNext()) {
-                builder.append(",");
+                builder.append(',');
             }
         }
-        builder.append("]");
+        builder.append(']');
         final ModelAndView mv = new ModelAndView(VIEW_CONFIG);
         final String jsonData = StringEscapeUtils.escapeJson(builder.toString());
 
