@@ -62,16 +62,25 @@
     app.factory('sharedFactoryCtrl', [
         '$log',
         function ($log) {
-            var factory = {serviceId: 0};
+            var factory = {assignedId: 0};
+
+            factory.httpHeaders = {};
+            factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
+
+            factory.httpConfig = { // In case we can get $http.post to work
+                headers: factory.httpHeaders,
+                responseType: 'json'
+            };
+
 
             factory.setItem = function (id) {
-                factory.serviceId = id;
+                factory.assignedId = id;
             };
             factory.clearItem = function () {
-                factory.serviceId = 0;
+                factory.assignedId = null;
             };
             factory.getItem = function () {
-                return factory.serviceId;            
+                return factory.assignedId;            
             };
 
             return factory;
@@ -80,9 +89,8 @@
 
 // View Swapper
     app.controller('actionsController', [
-        '$scope',
         'sharedFactoryCtrl',
-        function ($scope, sharedFactory) {
+        function (sharedFactory) {
             this.actionPanel = 'manage';
 
             this.selectAction = function (setAction) {
@@ -112,13 +120,13 @@
 
 // Services Table: Manage View
     app.controller('ServicesTableController', [
-        '$scope',
         '$http',
         '$log',
         '$timeout',
         'sharedFactoryCtrl',
-        function ($scope, $http, $log, $timeout, sharedFactory) {
-            var servicesData = this;
+        function ($http, $log, $timeout, sharedFactory) {
+            var servicesData = this,
+                httpHeaders = sharedFactory.httpHeaders;
 
             this.dataTable = [];
             this.sortableOptions = {
@@ -127,7 +135,7 @@
                 handle: '.grabber-icon',
                 placeholder: 'tr-placeholder',
                 start: function (e, ui) {
-                    servicesData.detailRow = 0;
+                    servicesData.detailRow = -1;
                     ui.item.data('data_changed', false);
                 },
                 update: function (e, ui) {
@@ -135,27 +143,40 @@
                 },
                 stop: function (e, ui) {
                     if(ui.item.data('data_changed')) {
-                        var data = $(this).sortable('serialize', {key: 'id'});
+                        var myData = $(this).sortable('serialize', {key: 'id'});
 
-                        $http.post('/cas-management/updateRegisteredServiceEvaluationOrder.html', data)
-                            .success(function () {
-                                servicesData.getServices();
-                            })
-                            .error(function (data, status) {
-                                servicesData.alert = {
-                                    name:   'notupdated',
-                                    type:   'danger',
-                                    data:   null
-                                };
-                            });
+                       $.ajax({
+                            type: 'post',
+                            url: '/cas-management/updateRegisteredServiceEvaluationOrder.html',
+                            data: myData,
+                            headers: httpHeaders,
+                            dataType: 'json',
+                            success: function (data) {
+                                 servicesData.getServices();
+                            },
+                            error: function(data, status) {
+                                 servicesData.alert = {
+                                     name:   'notupdated',
+                                     type:   'danger',
+                                     data:   null
+                                 };
+                            }
+                        });
                     }
                 }
             };
 
             this.getServices = function () {
-                $http.get('getServices.html')
+                $http.get('/cas-management/getServices.html')
                     .success(function (data) {
-                        servicesData.dataTable = data.services;
+                        servicesData.dataTable = data.services || [];
+                    })
+                    .error(function (data, status) {
+                        servicesData.alert = {
+                            name:   'listfail',
+                            type:   'danger',
+                            data:   null
+                        };
                     });
             };
 
@@ -169,21 +190,14 @@
                 servicesData.modalItem = null;
             };
             this.deleteService = function (item) {
-                var csrfParam = $("meta[name='_csrf_header']").attr("content"),
-                    csrfToken = $("meta[name='_csrf']").attr("content"),
-                    csrfHeader = [];
+                var myData = {id: item.assignedId};
 
-                csrfHeader[csrfParam] = csrfToken;
                 servicesData.closeModalDelete();
-
                 $.ajax({
-                    url: '/cas-management/deleteRegisteredService.html',
                     type: 'post',
-                    data: {
-                        id: item.assignedId
-                    },
-                    headers: csrfHeader,
-                    dataType: 'json',
+                    url: '/cas-management/deleteRegisteredService.html',
+                    data: myData,
+                    headers: httpHeaders,
                     success: function (data) {
                         servicesData.getServices();
                         servicesData.alert = {
@@ -207,7 +221,7 @@
             };
 
             this.toggleDetail = function (rowId) {
-                servicesData.detailRow = servicesData.detailRow == rowId ? 0 : rowId;
+                servicesData.detailRow = servicesData.detailRow == rowId ? -1 : rowId;
             };
 
             this.getServices();
@@ -346,8 +360,9 @@
             $scope.$watch(
                 function() { return sharedFactory.serviceId; },
                 function (serviceId) {
-                    if(!serviceId) serviceForm.newService();
-                    else serviceForm.loadService(serviceId);
+                    serviceForm.alert = null;
+                    if(!serviceId) { serviceForm.newService(); }
+                    else { serviceForm.loadService(serviceId); }
                 }
             );
         }
