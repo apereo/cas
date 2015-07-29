@@ -139,6 +139,16 @@ public final class CompressionUtils {
     }
 
     /**
+     * Base64-decode the given string as byte[].
+     *
+     * @param data the base64 string
+     * @return the encoded array
+     */
+    public static byte[] decodeBase64(final String data) {
+        return Base64.decodeBase64(data);
+    }
+
+    /**
      * Base64-encode the given byte[] as a byte[].
      *
      * @param data the byte array to encode
