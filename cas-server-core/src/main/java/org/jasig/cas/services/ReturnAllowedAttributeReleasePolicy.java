@@ -49,7 +49,7 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttribute
      *
      * @return the allowed attributes
      */
-    protected List<String> getAllowedAttributes() {
+    public List<String> getAllowedAttributes() {
         return Collections.unmodifiableList(this.allowedAttributes);
     }
     

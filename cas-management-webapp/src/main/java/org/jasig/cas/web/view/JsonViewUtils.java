@@ -55,6 +55,22 @@ public final class JsonViewUtils {
     }
 
     /**
+     * Render model and view.
+     *
+     * @param response the response
+     */
+    public static void render(final HttpServletResponse response) {
+        try {
+            final Map<String, String> map = new HashMap<>();
+            response.setStatus(HttpServletResponse.SC_OK);
+            render(map, response);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    /**
      * Render exceptions. Adds error messages and the stack trace to the json model
      * and sets the response status accordingly to note bad requests.
      *

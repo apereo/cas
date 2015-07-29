@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services.web;
 
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
@@ -66,7 +67,7 @@ public final class ManageRegisteredServicesMultiActionController {
     private final ServicesManager servicesManager;
 
     @NotNull
-    private final String defaultServiceUrl;
+    private final Service defaultService;
 
     /**
      * Instantiates a new manage registered services multi action controller.
@@ -78,7 +79,7 @@ public final class ManageRegisteredServicesMultiActionController {
     public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager,
             @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
         this.servicesManager = servicesManager;
-        this.defaultServiceUrl = defaultServiceUrl;
+        this.defaultService = new SimpleWebApplicationServiceImpl(defaultServiceUrl);
     }
 
     /**
@@ -90,11 +91,11 @@ public final class ManageRegisteredServicesMultiActionController {
             throw new IllegalStateException("Services cannot be empty");
         }
 
-        if (!this.servicesManager.matchesExistingService(
-                new SimpleWebApplicationServiceImpl(this.defaultServiceUrl))) {
+        if (!this.servicesManager.matchesExistingService(defaultService)) {
             final RegexRegisteredService svc = new RegexRegisteredService();
-            svc.setServiceId(defaultServiceUrl);
+            svc.setServiceId("^" + defaultService.getId());
             svc.setName("Services Management Web Application");
+            svc.setDescription(svc.getName());
             this.servicesManager.save(svc);
         }
     }
@@ -133,11 +134,16 @@ public final class ManageRegisteredServicesMultiActionController {
     @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.POST})
     public void deleteRegisteredService(@RequestParam("id") final long idAsLong,
                                         final HttpServletResponse response) {
+        final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
+        if (svc == null || svc.getId() == idAsLong) {
+            throw new IllegalArgumentException("The default service " + defaultService.getId() + " cannot be deleted. "
+                                       + "The definition is required for accessing the application.");
+        }
+
         final RegisteredService r = this.servicesManager.delete(idAsLong);
         if (r == null) {
             throw new IllegalArgumentException("Service id " + idAsLong + " cannot be found.");
         }
-        ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
         model.put("serviceName", r.getName());
         JsonViewUtils.render(model, response);
@@ -152,7 +158,7 @@ public final class ManageRegisteredServicesMultiActionController {
     public ModelAndView manage(final HttpServletResponse response) {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
-        model.put("defaultServiceUrl", this.defaultServiceUrl);
+        model.put("defaultServiceUrl", this.defaultService.getId());
         return new ModelAndView("manage", model);
     }
 
@@ -177,10 +183,12 @@ public final class ManageRegisteredServicesMultiActionController {
     /**
      * Updates the {@link RegisteredService#getEvaluationOrder()}.
      *
+     * @param response the response
      * @param id the service ids, whose order also determines the service evaluation order
      */
     @RequestMapping(value="updateRegisteredServiceEvaluationOrder.html", method={RequestMethod.POST})
-    public void updateRegisteredServiceEvaluationOrder(@RequestParam("id") final long... id) {
+    public void updateRegisteredServiceEvaluationOrder(final HttpServletResponse response,
+                                                       @RequestParam("id") final long... id) {
         if (id == null || id.length == 0) {
             throw new IllegalArgumentException("No service id was received. Re-examine the request");
         }
@@ -193,6 +201,7 @@ public final class ManageRegisteredServicesMultiActionController {
             svc.setEvaluationOrder(i);
             this.servicesManager.save(svc);
         }
+        JsonViewUtils.render(response);
     }
 
     /**
@@ -207,14 +216,14 @@ public final class ManageRegisteredServicesMultiActionController {
                                  final Exception ex) {
 
         LOGGER.error(ex.getMessage(), ex);
-        final String contentType = request.getHeader(this.AJAX_REQUEST_HEADER_NAME);
-        if (contentType != null && contentType.equals(this.AJAX_REQUEST_HEADER_VALUE)) {
+        final String contentType = request.getHeader(AJAX_REQUEST_HEADER_NAME);
+        if (contentType != null && contentType.equals(AJAX_REQUEST_HEADER_VALUE)) {
             LOGGER.debug("Handling exception {} for ajax request indicated by header {}",
-                    ex.getClass().getName(), this.AJAX_REQUEST_HEADER_NAME);
+                    ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
             JsonViewUtils.renderException(ex, response);
         } else {
             LOGGER.trace("Unable to resolve exception {} for request. Ajax request header {} not found.",
-                    ex.getClass().getName(), this.AJAX_REQUEST_HEADER_NAME);
+                    ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
         }
     }
 }
