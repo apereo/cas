@@ -20,6 +20,7 @@
 package org.jasig.cas.ticket.registry.encrypt;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
 import org.jasig.cas.util.CipherExecutor;
@@ -57,7 +58,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
     }
 
     /**
-     * Encode ticket id.
+     * Encode ticket id into a SHA-512.
      *
      * @param ticketId the ticket id
      * @return the ticket
@@ -67,6 +68,10 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
             logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
             return ticketId;
         }
+        if (StringUtils.isBlank(ticketId)) {
+            return ticketId;
+        }
+
         return CompressionUtils.sha512Hex(ticketId);
     }
 
@@ -83,7 +88,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
         }
 
         if (ticket == null) {
-            return null;
+            return ticket;
         }
 
         logger.info("Encoding [{}]", ticket);
@@ -109,7 +114,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
         }
 
         if (result == null) {
-            return null;
+            return result;
         }
 
         logger.info("Attempting to decode [{}]",  result);
