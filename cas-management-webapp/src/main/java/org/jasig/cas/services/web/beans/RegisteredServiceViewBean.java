@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.services.web;
+package org.jasig.cas.services.web.beans;
 
 import org.jasig.cas.services.AbstractAttributeReleasePolicy;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
@@ -36,7 +36,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class RegisteredServiceBean implements Serializable {
+public class RegisteredServiceViewBean implements Serializable {
 
     private static final long serialVersionUID = 4882440567964605644L;
 
@@ -46,8 +46,8 @@ public class RegisteredServiceBean implements Serializable {
     private String name;
     private String description;
     private String logoUrl;
-    private ProxyPolicy proxyPolicy = new ProxyPolicy();
-    private AttributeReleasePolicy attrRelease = new AttributeReleasePolicy();
+    private ProxyPolicyViewBean proxyPolicy = new ProxyPolicyViewBean();
+    private AttributeReleasePolicyViewBean attrRelease = new AttributeReleasePolicyViewBean();
 
     public long getAssignedId() {
         return assignedId;
@@ -97,143 +97,20 @@ public class RegisteredServiceBean implements Serializable {
         this.logoUrl = logoUrl;
     }
 
-    public ProxyPolicy getProxyPolicy() {
+    public ProxyPolicyViewBean getProxyPolicy() {
         return proxyPolicy;
     }
 
-    public void setProxyPolicy(final ProxyPolicy proxyPolicy) {
+    public void setProxyPolicy(final ProxyPolicyViewBean proxyPolicy) {
         this.proxyPolicy = proxyPolicy;
     }
 
-    public AttributeReleasePolicy getAttrRelease() {
+    public AttributeReleasePolicyViewBean getAttrRelease() {
         return attrRelease;
     }
 
-    public void setAttrRelease(final AttributeReleasePolicy attrRelease) {
+    public void setAttrRelease(final AttributeReleasePolicyViewBean attrRelease) {
         this.attrRelease = attrRelease;
-    }
-
-    /**
-     * The type Attribute release policy.
-     */
-    public static class AttributeReleasePolicy {
-        private boolean releasePassword;
-        private boolean releaseTicket;
-        private ReleasePolicyStrategy attrPolicy = new ReleasePolicyStrategy();
-
-        /**
-         * The type Release policy strategy.
-         */
-        public static class ReleasePolicyStrategy {
-
-            /**
-             * The enum Types.
-             */
-            public enum Types {
-                /** Refuse type. */
-                ALL("all"),
-
-                /** Mapped type. */
-                MAPPED("mapped"),
-
-                /** None type. */
-                NONE("none"),
-
-                /** Allow type. */
-                ALLOWED("allowed");
-
-                private final String value;
-
-                /**
-                 * Instantiates a new Types.
-                 *
-                 * @param value the value
-                 */
-                Types(final String value) {
-                    this.value = value;
-                }
-            }
-
-            private String type;
-
-            public String getType() {
-                return type;
-            }
-
-            public void setType(final String type) {
-                this.type = type;
-            }
-        }
-
-        public boolean isReleasePassword() {
-            return releasePassword;
-        }
-
-        public void setReleasePassword(final boolean releasePassword) {
-            this.releasePassword = releasePassword;
-        }
-
-        public boolean isReleaseTicket() {
-            return releaseTicket;
-        }
-
-        public void setReleaseTicket(final boolean releaseTicket) {
-            this.releaseTicket = releaseTicket;
-        }
-
-        public ReleasePolicyStrategy getAttrPolicy() {
-            return attrPolicy;
-        }
-
-        public void setAttrPolicy(final ReleasePolicyStrategy attrPolicy) {
-            this.attrPolicy = attrPolicy;
-        }
-    }
-
-    /**
-     * The type Proxy policy.
-     */
-    public static class ProxyPolicy {
-
-        /**
-         * The enum Types.
-         */
-        public enum Types {
-            /** Refuse type. */
-            REFUSE("refuse"),
-
-            /** Allow type. */
-            ALLOW("allow");
-
-            private final String value;
-
-            /**
-             * Instantiates a new Types.
-             *
-             * @param value the value
-             */
-            Types(final String value) {
-                this.value = value;
-            }
-        }
-        private String type;
-        private String value;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(final String type) {
-            this.type = type;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(final String value) {
-            this.value = value;
-        }
     }
 
     /**
@@ -242,8 +119,8 @@ public class RegisteredServiceBean implements Serializable {
      * @param svc the svc
      * @return the registered service bean
      */
-    public static RegisteredServiceBean fromRegisteredService(final RegisteredService svc) {
-        final RegisteredServiceBean bean = new RegisteredServiceBean();
+    public static RegisteredServiceViewBean fromRegisteredService(final RegisteredService svc) {
+        final RegisteredServiceViewBean bean = new RegisteredServiceViewBean();
         bean.setAssignedId(svc.getId());
         bean.setServiceId(svc.getServiceId());
         bean.setName(svc.getName());
@@ -253,43 +130,39 @@ public class RegisteredServiceBean implements Serializable {
         }
 
         final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
-        final ProxyPolicy proxyPolicyBean = bean.getProxyPolicy();
+        final ProxyPolicyViewBean proxyPolicyBean = bean.getProxyPolicy();
 
         if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
             final RefuseRegisteredServiceProxyPolicy refuse = (RefuseRegisteredServiceProxyPolicy) policy;
-            proxyPolicyBean.setType(ProxyPolicy.Types.REFUSE.toString());
+            proxyPolicyBean.setType(ProxyPolicyViewBean.Types.REFUSE.toString());
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            proxyPolicyBean.setType(ProxyPolicy.Types.ALLOW.toString());
+            proxyPolicyBean.setType(ProxyPolicyViewBean.Types.ALLOW.toString());
             proxyPolicyBean.setValue(option.getPattern().toString());
         }
 
         final AbstractAttributeReleasePolicy attrPolicy = (AbstractAttributeReleasePolicy) svc.getAttributeReleasePolicy();
-        final AttributeReleasePolicy attrPolicyBean = bean.getAttrRelease();
+        final AttributeReleasePolicyViewBean attrPolicyBean = bean.getAttrRelease();
 
         attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
         attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
 
         if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
-            attrPolicyBean.getAttrPolicy().setType(
-                    AttributeReleasePolicy.ReleasePolicyStrategy.Types.ALL.toString());
+            attrPolicyBean.setAttrPolicy(AttributeReleasePolicyStrategyViewBean.Types.ALL.toString());
         } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
             final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
             if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                attrPolicyBean.getAttrPolicy().setType(
-                        AttributeReleasePolicy.ReleasePolicyStrategy.Types.NONE.toString());
+                attrPolicyBean.setAttrPolicy(AttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
             } else {
-                attrPolicyBean.getAttrPolicy().setType(
-                        AttributeReleasePolicy.ReleasePolicyStrategy.Types.ALLOWED.toString());
+                attrPolicyBean.setAttrPolicy(AttributeReleasePolicyStrategyViewBean.Types.ALLOWED.toString());
             }
         } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
             final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
             if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                attrPolicyBean.getAttrPolicy().setType(
-                        AttributeReleasePolicy.ReleasePolicyStrategy.Types.NONE.toString());
+                attrPolicyBean.setAttrPolicy(
+                        AttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
             } else {
-                attrPolicyBean.getAttrPolicy().setType(
-                        AttributeReleasePolicy.ReleasePolicyStrategy.Types.MAPPED.toString());
+                attrPolicyBean.setAttrPolicy(AttributeReleasePolicyStrategyViewBean.Types.MAPPED.toString());
             }
         }
         bean.setSasCASEnabled(svc.getAccessStrategy().isServiceAccessAllowed());
