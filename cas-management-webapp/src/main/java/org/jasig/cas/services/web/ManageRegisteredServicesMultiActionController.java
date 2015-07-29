@@ -23,6 +23,7 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.jasig.cas.web.view.JsonViewUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,10 +172,10 @@ public final class ManageRegisteredServicesMultiActionController {
     public void getServices(final HttpServletResponse response) {
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
-        final List<RegisteredServiceBean> serviceBeans = new ArrayList<>();
+        final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
         for (final RegisteredService svc : services) {
-            serviceBeans.add(RegisteredServiceBean.fromRegisteredService(svc));
+            serviceBeans.add(RegisteredServiceViewBean.fromRegisteredService(svc));
         }
         model.put("services", serviceBeans);
         JsonViewUtils.render(model, response);
