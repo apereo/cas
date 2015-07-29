@@ -28,7 +28,7 @@
   <context-param>
     <param-name>isLog4jAutoInitializationDisabled</param-name>
     <param-value>true</param-value>
-  </context-param>y
+  </context-param>
 
   <context-param>
     <param-name>contextConfigLocation</param-name>
