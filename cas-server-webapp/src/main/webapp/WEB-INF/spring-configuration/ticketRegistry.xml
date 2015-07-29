@@ -36,7 +36,7 @@
     <!-- TICKET REGISTRY CLEANER -->
     <bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
           c:centralAuthenticationService-ref="centralAuthenticationService"
-          c:ticketRegistry-ref="crypticTicketRegistry"/>
+          c:ticketRegistry-ref="ticketRegistry"/>
 
     <bean id="jobDetailTicketRegistryCleaner"
           class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
@@ -49,13 +49,15 @@
           p:startDelay="20000"
           p:repeatInterval="5000000"/>
 
-    <bean id="crypticTicketRegistry"
-          class="org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry"
-          c:actualTicketRegistry-ref="ticketRegistry"
-          c:cipherExecutor-ref="ticketCipherExecutor"
-          p:enabled="true"/>
-
+    <!--
+    Uncomment this element to enable ticket encryption in the registry.
+    A number of distributed ticket registries support this operation. Check docs
+    for more info.
+    -->
+    <!--
     <bean id="ticketCipherExecutor" class="org.jasig.cas.util.JCEBasedCipherExecutor"
-          c:encryptionSecretKey="C@$W3bSecretKey!"
-          c:encryptionSeed="S!ngl3$ign0n4W3b"/>
+          c:encryptionSecretKey="${ticket.encryption.secretkey}"
+          c:encryptionSeed="${ticket.encryption.seed}"
+          c:signingSecretKey-ref="${ticket.signing.secretkey}"/>
+    -->
 </beans>
