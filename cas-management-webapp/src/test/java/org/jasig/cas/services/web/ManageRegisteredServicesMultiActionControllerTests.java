@@ -82,7 +82,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         r.setEvaluationOrder(2);
 
         this.servicesManager.save(r);
-        this.controller.updateRegisteredServiceEvaluationOrder(5000, 1000);
+        this.controller.updateRegisteredServiceEvaluationOrder(new MockHttpServletResponse(), 5000, 1000);
     }
 
     @Test
