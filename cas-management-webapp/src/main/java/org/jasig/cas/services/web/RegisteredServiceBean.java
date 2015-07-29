@@ -136,6 +136,9 @@ public class RegisteredServiceBean implements Serializable {
                 /** Mapped type. */
                 MAPPED("mapped"),
 
+                /** None type. */
+                NONE("none"),
+
                 /** Allow type. */
                 ALLOWED("allowed");
 
@@ -271,11 +274,23 @@ public class RegisteredServiceBean implements Serializable {
             attrPolicyBean.getAttrPolicy().setType(
                     AttributeReleasePolicy.ReleasePolicyStrategy.Types.ALL.toString());
         } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
-            attrPolicyBean.getAttrPolicy().setType(
-                    AttributeReleasePolicy.ReleasePolicyStrategy.Types.ALLOWED.toString());
+            final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
+            if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
+                attrPolicyBean.getAttrPolicy().setType(
+                        AttributeReleasePolicy.ReleasePolicyStrategy.Types.NONE.toString());
+            } else {
+                attrPolicyBean.getAttrPolicy().setType(
+                        AttributeReleasePolicy.ReleasePolicyStrategy.Types.ALLOWED.toString());
+            }
         } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
-            attrPolicyBean.getAttrPolicy().setType(
-                    AttributeReleasePolicy.ReleasePolicyStrategy.Types.MAPPED.toString());
+            final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
+            if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
+                attrPolicyBean.getAttrPolicy().setType(
+                        AttributeReleasePolicy.ReleasePolicyStrategy.Types.NONE.toString());
+            } else {
+                attrPolicyBean.getAttrPolicy().setType(
+                        AttributeReleasePolicy.ReleasePolicyStrategy.Types.MAPPED.toString());
+            }
         }
         bean.setSasCASEnabled(svc.getAccessStrategy().isServiceAccessAllowed());
         return bean;
