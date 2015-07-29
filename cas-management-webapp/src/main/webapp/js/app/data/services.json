@@ -13,9 +13,7 @@
         "attrRelease": {
             "releasePassword": true,
             "releaseTicket": true,
-            "attrPolicy": {
-                "type": "all"
-            }
+            "attrPolicy": "all"
         }
     },
     {
@@ -32,9 +30,7 @@
         "attrRelease": {
             "releasePassword": true,
             "releaseTicket": false,
-            "attrPolicy": {
-                "type": "allowed"
-            }
+            "attrPolicy": "allowed"
         }
 
     },
@@ -52,9 +48,7 @@
         "attrRelease": {
             "releasePassword": false,
             "releaseTicket": false,
-            "attrPolicy": {
-                "type": "mapped"
-            }
+            "attrPolicy": "mapped"
         }
     }
 ]
