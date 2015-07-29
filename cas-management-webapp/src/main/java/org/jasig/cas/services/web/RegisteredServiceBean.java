@@ -243,7 +243,8 @@ public class RegisteredServiceBean implements Serializable {
         final RegisteredServiceBean bean = new RegisteredServiceBean();
         bean.setAssignedId(svc.getId());
         bean.setServiceId(svc.getServiceId());
-        bean.setName(bean.getName());
+        bean.setName(svc.getName());
+        bean.setDescription(svc.getDescription());
         if (svc.getLogo() != null) {
             bean.setLogoUrl(svc.getLogo().toExternalForm());
         }

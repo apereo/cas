@@ -153,9 +153,9 @@
             };
 
             this.getServices = function () {
-                $http.get('js/app/data/services.json') // TODO: fix URL
+                $http.get('getServices.html')
                     .success(function (data) {
-                        servicesData.dataTable = data;
+                        servicesData.dataTable = data.services;
                     });
             };
 
