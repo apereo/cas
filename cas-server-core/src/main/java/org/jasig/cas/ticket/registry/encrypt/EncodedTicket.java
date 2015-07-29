@@ -21,6 +21,7 @@ package org.jasig.cas.ticket.registry.encrypt;
 
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
@@ -34,47 +35,44 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 public final class EncodedTicket implements Ticket {
 
     private static final long serialVersionUID = -7078771807487764116L;
-    private final String id;
+    private String id;
 
-    private final Ticket source;
+    private byte[] encodedTicket;
 
-    private final byte[] encodedTicket;
+    /** Private ctor used for serialization only. **/
+    private EncodedTicket() {}
 
     /**
      * Creates a new encoded ticket using the given encoder to encode the given
      * source ticket.
      *
-     * @param source Source ticket.
      * @param encodedTicket the encoded ticket
      * @param encodedTicketId the encoded ticket id
      */
-    public EncodedTicket(final Ticket source, final byte[] encodedTicket, final String encodedTicketId) {
+    public EncodedTicket(final byte[] encodedTicket, final String encodedTicketId) {
         this.id = encodedTicketId;
         this.encodedTicket = encodedTicket;
-        this.source = source;
     }
 
     @Override
     public int getCountOfUses() {
-        return source.getCountOfUses();
+        throw new RuntimeException("Operation not supported");
     }
 
     @Override
     public long getCreationTime() {
-        return source.getCreationTime();
+        throw new RuntimeException("Operation not supported");
     }
 
     @Override
     public TicketGrantingTicket getGrantingTicket() {
-        return source.getGrantingTicket();
+        throw new RuntimeException("Operation not supported");
     }
 
     /**
      * Gets an encoded version of ID of the source ticket.
      *
      * @return Encoded ticket ID.
-     *
-     * @see org.jasig.cas.ticket.Ticket#getId()
      */
     @Override
     public String getId() {
@@ -87,11 +85,12 @@ public final class EncodedTicket implements Ticket {
 
     @Override
     public boolean isExpired() {
-        return source.isExpired();
+        throw new RuntimeException("Operation not supported");
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append(this.id).build();
+        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
+                .append(this.id).build();
     }
 }
