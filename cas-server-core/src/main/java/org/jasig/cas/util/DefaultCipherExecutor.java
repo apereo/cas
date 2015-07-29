@@ -136,7 +136,7 @@ public final class DefaultCipherExecutor implements CipherExecutor<String, Strin
      * @param value the value
      * @return the encoded value
      */
-    public String encryptValue(@NotNull final String value) {
+    private String encryptValue(@NotNull final String value) {
         try {
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setPayload(value);
@@ -157,7 +157,7 @@ public final class DefaultCipherExecutor implements CipherExecutor<String, Strin
      * @param value the value
      * @return the decrypted value
      */
-    public String decryptValue(@NotNull final String value) {
+    private String decryptValue(@NotNull final String value) {
         try {
             final JsonWebEncryption jwe = new JsonWebEncryption();
             jwe.setKey(this.secretKeyEncryptionKey);
@@ -175,7 +175,7 @@ public final class DefaultCipherExecutor implements CipherExecutor<String, Strin
      * @param value the value
      * @return the signed value
      */
-    public String signValue(@NotNull final String value) {
+    private String signValue(@NotNull final String value) {
         try {
             final JsonWebSignature jws = new JsonWebSignature();
             jws.setPayload(value);
@@ -194,7 +194,7 @@ public final class DefaultCipherExecutor implements CipherExecutor<String, Strin
      * @return the value associated with the signature, which may have to
      * be decoded, or null.
      */
-    public String verifySignature(@NotNull final String value) {
+    private String verifySignature(@NotNull final String value) {
         try {
             final JsonWebSignature jws = new JsonWebSignature();
             jws.setCompactSerialization(value);

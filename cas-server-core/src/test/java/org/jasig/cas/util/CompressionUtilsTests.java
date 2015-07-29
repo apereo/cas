@@ -25,6 +25,8 @@ import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 /**
  * Test cases for {@link CompressionUtils}.
  * @author Misagh Moayyed
@@ -33,12 +35,14 @@ import org.junit.Test;
 public class CompressionUtilsTests {
 
     private final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");
-    private final JCEBasedCipherExecutor cipher = new JCEBasedCipherExecutor("1234567890123456", "1234567890123456");
+    private final JCEBasedCipherExecutor cipher = new JCEBasedCipherExecutor("1234567890123456",
+            "1234567890123456", "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w");
 
     @Test
     public void testSerializationOfTgt() {
         final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, tgt);
         final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
+        assertNotNull(obj);
     }
 
     @Test
@@ -46,5 +50,18 @@ public class CompressionUtilsTests {
         final MockServiceTicket st = new MockServiceTicket("serviceid", TestUtils.getService(), tgt);
         final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, st);
         final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
+        assertNotNull(obj);
+    }
+
+    @Test
+    public void testSerializationOfStBase64Encode() {
+        final MockServiceTicket st = new MockServiceTicket("serviceid", TestUtils.getService(), tgt);
+        final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, st);
+        final String string = CompressionUtils.encodeBase64(bytes);
+        assertNotNull(string);
+
+        final byte[] result = CompressionUtils.decodeBase64(string);
+        final Ticket obj = CompressionUtils.decodeAndSerializeObject(result, cipher, Ticket.class);
+        assertNotNull(obj);
     }
 }

@@ -33,7 +33,9 @@ public class JCEBasedCipherExecutorTests {
     @Test
     public void testEncodingDecoding() {
         final String value = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
-        final CipherExecutor<byte[], byte[]> cc = new JCEBasedCipherExecutor("1234567890123456", "1234567890123456");
+        final CipherExecutor<byte[], byte[]> cc = new JCEBasedCipherExecutor("1234567890123456",
+                "1234567890123456",
+                "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w");
         final byte[] bytes = cc.encode(value.getBytes());
         final byte[] decoded = cc.decode(bytes);
         assertEquals(new String(decoded), value);
@@ -42,7 +44,7 @@ public class JCEBasedCipherExecutorTests {
     @Test(expected=RuntimeException.class)
     public void testEncodingDecodingBadKeys() {
         final String value = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
-        final CipherExecutor<byte[], byte[]> cc = new JCEBasedCipherExecutor("0000", "9999");
+        final CipherExecutor<byte[], byte[]> cc = new JCEBasedCipherExecutor("0000", "9999", "1234");
         cc.encode(value.getBytes());
     }
 }
