@@ -24,7 +24,7 @@ package org.jasig.cas.services.web.beans;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class ProxyPolicyBean {
+public class ProxyPolicyViewBean {
 
     /**
      * The enum Types.
