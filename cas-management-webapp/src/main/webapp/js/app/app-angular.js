@@ -64,6 +64,15 @@
         function ($log) {
             var factory = {assignedId: 0};
 
+            factory.httpHeaders = {};
+            factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
+
+            factory.httpConfig = { // In case we can get $http.post to work
+                headers: factory.httpHeaders,
+                responseType: 'json'
+            };
+
+
             factory.setItem = function (id) {
                 factory.assignedId = id;
             };
@@ -117,9 +126,7 @@
         'sharedFactoryCtrl',
         function ($http, $log, $timeout, sharedFactory) {
             var servicesData = this,
-                csrfHeader = {};
-
-            csrfHeader[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
+                httpHeaders = sharedFactory.httpHeaders;
 
             this.dataTable = [];
             this.sortableOptions = {
@@ -138,18 +145,23 @@
                     if(ui.item.data('data_changed')) {
                         var myData = $(this).sortable('serialize', {key: 'id'});
 
-                        $http.post('/cas-management/updateRegisteredServiceEvaluationOrder.html', myData, {headers: csrfHeader})
-                            .success(function (data) {
-                                servicesData.getServices();
-                            })
-                            .error(function(data, status) {
-                                $log.log('err');
-                                servicesData.alert = {
-                                    name:   'notupdated',
-                                    type:   'danger',
-                                    data:   null
-                                };
-                            });
+                       $.ajax({
+                            type: 'post',
+                            url: '/cas-management/updateRegisteredServiceEvaluationOrder.html',
+                            data: myData,
+                            headers: httpHeaders,
+                            dataType: 'json',
+                            success: function (data) {
+                                 servicesData.getServices();
+                            },
+                            error: function(data, status) {
+                                 servicesData.alert = {
+                                     name:   'notupdated',
+                                     type:   'danger',
+                                     data:   null
+                                 };
+                            }
+                        });
                     }
                 }
             };
@@ -178,23 +190,30 @@
                 servicesData.modalItem = null;
             };
             this.deleteService = function (item) {
+                var myData = {id: item.assignedId};
+
                 servicesData.closeModalDelete();
-                $http.post('/cas-management/deleteRegisteredService.html', {id: item.assignedId}, {headers: csrfHeader})
-                    .success(function (data) {
+                $.ajax({
+                    type: 'post',
+                    url: '/cas-management/deleteRegisteredService.html',
+                    data: myData,
+                    headers: httpHeaders,
+                    success: function (data) {
                         servicesData.getServices();
                         servicesData.alert = {
                             name:   'deleted',
                             type:   'info',
                             data:   item
                         };
-                    })
-                    .error(function(data, status) {
+                    },
+                    error: function(data, status) {
                         servicesData.alert = {
                             name:   'notdeleted',
                             type:   'danger',
                             data:   null
                         };
-                    });
+                    }
+                });
             };
 
             this.clearFilter = function () {
