@@ -118,7 +118,12 @@
         '$timeout',
         'sharedFactoryCtrl',
         function ($scope, $http, $log, $timeout, sharedFactory) {
-            var servicesData = this;
+            var servicesData = this,
+                csrfParam = $("meta[name='_csrf_header']").attr("content"),
+                csrfToken = $("meta[name='_csrf']").attr("content"),
+                csrfHeader = {};
+
+            csrfHeader[csrfParam] = csrfToken;
 
             this.dataTable = [];
             this.sortableOptions = {
@@ -135,28 +140,49 @@
                 },
                 stop: function (e, ui) {
                     if(ui.item.data('data_changed')) {
-                        var data = $(this).sortable('serialize', {key: 'id'});
+                        var myData = $(this).sortable('serialize', {key: 'id'});
 
-                        $http.post('/cas-management/updateRegisteredServiceEvaluationOrder.html', data)
-                            .success(function () {
+                        $.ajax({
+                            type: 'post',
+                            url: '/cas-management/updateRegisteredServiceEvaluationOrder.html',
+                            data: myData,
+                            headers: csrfHeader,
+                            dataType: 'json',
+                            success: function (data) {
                                 servicesData.getServices();
-                            })
-                            .error(function (data, status) {
+                            },
+                            error: function(data, status) {
+                                $log.log('err');
                                 servicesData.alert = {
                                     name:   'notupdated',
                                     type:   'danger',
                                     data:   null
                                 };
-                            });
+                            }
+                        });
                     }
                 }
             };
 
             this.getServices = function () {
-                $http.get('js/app/data/services.json') // TODO: fix URL
+                $http.get('/cas-management/getServices.html')
+                    .success(function (data) {
+                        var services = data.services || [];
+                        servicesData.dataTable = services;
+                    })
+                    .error(function (data, status) {
+                        $log.error('getServices: ', status, ', ', data);
+                        servicesData.alert = {
+                            name:   'listfail',
+                            type:   'danger',
+                            data:   null
+                        };
+                    });
+
+                /**$http.get('js/app/data/services.json')
                     .success(function (data) {
                         servicesData.dataTable = data;
-                    });
+                    });**/
             };
 
             this.openModalDelete = function (item) {
@@ -169,16 +195,10 @@
                 servicesData.modalItem = null;
             };
             this.deleteService = function (item) {
-                var csrfParam = $("meta[name='_csrf_header']").attr("content"),
-                    csrfToken = $("meta[name='_csrf']").attr("content"),
-                    csrfHeader = [];
-
-                csrfHeader[csrfParam] = csrfToken;
                 servicesData.closeModalDelete();
-
                 $.ajax({
-                    url: '/cas-management/deleteRegisteredService.html',
                     type: 'post',
+                    url: '/cas-management/deleteRegisteredService.html',
                     data: {
                         id: item.assignedId
                     },
@@ -346,8 +366,9 @@
             $scope.$watch(
                 function() { return sharedFactory.serviceId; },
                 function (serviceId) {
-                    if(!serviceId) serviceForm.newService();
-                    else serviceForm.loadService(serviceId);
+                    serviceForm.alert = null;
+                    if(!serviceId) { serviceForm.newService(); }
+                    else { serviceForm.loadService(serviceId); }
                 }
             );
         }
