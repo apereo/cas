@@ -56,17 +56,17 @@ public final class EncodedTicket implements Ticket {
 
     @Override
     public int getCountOfUses() {
-        throw new RuntimeException("Operation not supported");
+        throw new UnsupportedOperationException("getCountOfUses() operation not supported");
     }
 
     @Override
     public long getCreationTime() {
-        throw new RuntimeException("Operation not supported");
+        throw new UnsupportedOperationException("getCreationTime() operation not supported");
     }
 
     @Override
     public TicketGrantingTicket getGrantingTicket() {
-        throw new RuntimeException("Operation not supported");
+        throw new UnsupportedOperationException("getGrantingTicket() operation not supported");
     }
 
     /**
@@ -85,7 +85,7 @@ public final class EncodedTicket implements Ticket {
 
     @Override
     public boolean isExpired() {
-        throw new RuntimeException("Operation not supported");
+        throw new UnsupportedOperationException("isExpired() operation not supported");
     }
 
     @Override
