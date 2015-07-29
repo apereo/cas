@@ -93,7 +93,7 @@ public final class ManageRegisteredServicesMultiActionController {
 
         if (!this.servicesManager.matchesExistingService(defaultService)) {
             final RegexRegisteredService svc = new RegexRegisteredService();
-            svc.setServiceId("^" + defaultService.getId());
+            svc.setServiceId('^' + defaultService.getId());
             svc.setName("Services Management Web Application");
             svc.setDescription(svc.getName());
             this.servicesManager.save(svc);
