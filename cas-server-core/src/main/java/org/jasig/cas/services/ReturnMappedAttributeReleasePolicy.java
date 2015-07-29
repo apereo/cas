@@ -48,7 +48,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
      *
      * @return the allowed attributes
      */
-    protected Map<String, String> getAllowedAttributes() {
+    public Map<String, String> getAllowedAttributes() {
         return new TreeMap<String, String>(this.allowedAttributes);
     }
     
