@@ -24,54 +24,10 @@ package org.jasig.cas.services.web.beans;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class AttributeReleasePolicyBean {
+public class AttributeReleasePolicyViewBean {
     private boolean releasePassword;
     private boolean releaseTicket;
-    private ReleasePolicyStrategy attrPolicy = new ReleasePolicyStrategy();
-
-    /**
-     * The type Release policy strategy.
-     */
-    public static class ReleasePolicyStrategy {
-
-        /**
-         * The enum Types.
-         */
-        public enum Types {
-            /** Refuse type. */
-            ALL("all"),
-
-            /** Mapped type. */
-            MAPPED("mapped"),
-
-            /** None type. */
-            NONE("none"),
-
-            /** Allow type. */
-            ALLOWED("allowed");
-
-            private final String value;
-
-            /**
-             * Instantiates a new Types.
-             *
-             * @param value the value
-             */
-            Types(final String value) {
-                this.value = value;
-            }
-        }
-
-        private String type;
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(final String type) {
-            this.type = type;
-        }
-    }
+    private String attrPolicy;
 
     public boolean isReleasePassword() {
         return releasePassword;
@@ -89,11 +45,11 @@ public class AttributeReleasePolicyBean {
         this.releaseTicket = releaseTicket;
     }
 
-    public ReleasePolicyStrategy getAttrPolicy() {
+    public String getAttrPolicy() {
         return attrPolicy;
     }
 
-    public void setAttrPolicy(final ReleasePolicyStrategy attrPolicy) {
+    public void setAttrPolicy(final String attrPolicy) {
         this.attrPolicy = attrPolicy;
     }
 }
