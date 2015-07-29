@@ -74,7 +74,7 @@ public class WebAppContextConfigurationTests {
     public void verifyUpdateNonExistingService() throws Exception {
         this.mvc.perform(get("/updateRegisteredServiceEvaluationOrder.html")
                 .param("id", "100").param("evaluationOrder", "200"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isMethodNotAllowed());
     }
     
     @Test
@@ -89,24 +89,20 @@ public class WebAppContextConfigurationTests {
     
     @Test
     public void verifyDeleteNonExistingService() throws Exception {
-        final ModelAndView mv = this.mvc.perform(get("/deleteRegisteredService.html").param("id", "100"))
-                .andExpect(status().isFound())
-                .andReturn().getModelAndView();
-        assertNotNull(mv);
-        assertNotNull(mv.getModel().get("serviceName"));    
-        assertTrue(mv.getModel().get("serviceName").toString().length() == 0);        
+        this.mvc.perform(get("/deleteRegisteredService.html").param("id", "100"))
+                .andExpect(status().isMethodNotAllowed());
     }
     
     @Test
     public void verifyDeleteServiceByInvalidId() throws Exception {
         this.mvc.perform(get("/deleteRegisteredService.html").param("id", "invalid"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isMethodNotAllowed());
     }
     
     @Test
     public void verifyDeleteServiceByLargeId() throws Exception {
         this.mvc.perform(get("/deleteRegisteredService.html").param("id", String.valueOf(Double.MAX_VALUE)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isMethodNotAllowed());
     }
     
     @Test
