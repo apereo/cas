@@ -20,7 +20,7 @@
 --%>
 
 <div class="services-table-container" ng-controller="ServicesTableController as serviceTableCtrl">
-    <div class="row" ng-if="serviceTableCtrl.dataTable.length == 0">
+    <div class="row" ng-if="serviceTableCtrl.dataTable && serviceTableCtrl.dataTable.length == 0">
         <div class="col-sm-8 col-sm-offset-2">
             <div id="msg" class="alert alert-warning no-services" role="alert">
                 <div class="row">
@@ -52,9 +52,9 @@
         <div class="row">
             <div class="col-sm-12">
 
-                <div class="alert alert-{{ serviceTableCtrl.alert.type }}" role="alert" ng-show="serviceTableCtrl.alert">
+                <div class="alert alert-{{ serviceTableCtrl.alert.type }}" role="alert" ng-if="serviceTableCtrl.alert">
                     <p>
-                        <i class="fa fa-lg fa-{{ serviceTableCtrl.alert.type === 'danger' ? 'exclamation-triangle' : 'question-circle' }}"></i>
+                        <i class="fa fa-lg fa-{{ serviceTableCtrl.alert.type === 'danger' ? 'exclamation-triangle' : 'info-circle' }}"></i>
                         <span ng-if="serviceTableCtrl.alert.name === 'deleted'">
                             <i>{{ serviceTableCtrl.alert.data.name }}</i>
                             <spring:message code="management.services.status.deleted" />
@@ -134,7 +134,7 @@
                                     </tr>
                                     <tr>
                                         <td class="col-sm-2 detail-label"><spring:message code="management.services.table.details.attrPolicy" />:</td>
-                                        <td class="col-sm-8" ng-bind="item.attrRelease.attrPolicy.type | uppercase"></td>
+                                        <td class="col-sm-8" ng-bind="item.attrRelease.attrPolicy | uppercase"></td>
                                     </tr>
                                     <tr>
                                         <td class="col-sm-2 detail-label"><spring:message code="management.services.table.details.releaseCred" />:</td>
