@@ -20,6 +20,23 @@
 --%>
 
 <div class="services-table-container" ng-controller="ServicesTableController as serviceTableCtrl">
+    <div class="row" ng-if="serviceTableCtrl.dataTable.length == 0">
+        <div class="col-sm-8 col-sm-offset-2">
+            <div id="msg" class="alert alert-warning no-services" role="alert">
+                <div class="row">
+                    <div class="col-xs-2">
+                        <p class="fa fa-5x fa-exclamation-circle pull-right"></p>
+                    </div>
+                    <div class="col-xs-9">
+                        <p><spring:message code="management.services.service.warn" arguments="${defaultServiceUrl}" /></p>
+                    </div>
+                    <div class="col-xs-1">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true"><i class="fa fa-times"></i></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12">
             <div class="form-group has-feedback search-form">
@@ -44,10 +61,13 @@
                     <span ng-if="serviceTableCtrl.alert.name === 'notdeleted'">
                         <spring:message code="management.services.status.notdeleted" />
                     </span>
+                    <span ng-if="serviceTableCtrl.alert.name === 'listfailed'">
+                        <spring:message code="management.services.status.listfail" />
+                    </span>
                     <span ng-if="serviceTableCtrl.alert.name === 'notupdated'">
                         <spring:message code="management.services.status.evaluationOrder.notupdated" />
                     </span>
-                    <a href="javascript://" class="fa fa-2x fa-times-circle-o close-link" ng-click="serviceTableCtrl.alert = null;">
+                    <a href="javascript://" class="fa fa-2x fa-times close-link" ng-click="serviceTableCtrl.alert = null;">
 <%-- TODO: Needs accessibility text for screen readers --%>
                     </a>
                 </p>
