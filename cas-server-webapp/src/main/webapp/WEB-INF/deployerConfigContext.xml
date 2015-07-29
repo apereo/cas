@@ -162,7 +162,7 @@
           Remove this monitor if you use an unsupported registry.
         -->
         <bean class="org.jasig.cas.monitor.SessionMonitor"
-              p:ticketRegistry-ref="crypticTicketRegistry"
+              p:ticketRegistry-ref="ticketRegistry"
               p:serviceTicketCountWarnThreshold="5000"
               p:sessionCountWarnThreshold="100000" />
     </util:list>
