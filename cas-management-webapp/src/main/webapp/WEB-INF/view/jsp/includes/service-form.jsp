@@ -67,7 +67,7 @@
                             <div class="col-sm-8">
                                 <div class="alert alert-danger" role="alert" ng-if="!serviceFormCtrl.sas.casEnabled">
                                     <p>
-                                        <i class="fa fa-lg fa-question-circle"></i>
+                                        <i class="fa fa-lg fa-info-circle"></i>
                                         <spring:message code="services.form.warning.casDisabled" />
                                     </p>
                                 </div>
