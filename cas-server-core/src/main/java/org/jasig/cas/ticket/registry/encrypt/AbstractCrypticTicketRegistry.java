@@ -46,26 +46,18 @@ import java.util.Set;
  */
 public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedTicketRegistry {
 
-    /** Logger instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
     @NotNull
-    private final CipherExecutor<byte[], byte[]> cipherExecutor;
-
-    /** Defines whether encryption should be enabled; default is false. */
-    private boolean enabled;
+    private CipherExecutor<byte[], byte[]> cipherExecutor;
 
     /**
      * Instantiates a new Cryptic ticket registry.
-     *
-     * @param cipherExecutor the cipher executor
      */
-    public AbstractCrypticTicketRegistry(final CipherExecutor<byte[], byte[]> cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
+    public AbstractCrypticTicketRegistry() {
     }
 
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
+
+    public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
+        this.cipherExecutor = cipherExecutor;
     }
 
     /**
@@ -75,7 +67,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
      * @return the ticket
      */
     protected String encodeTicketId(final String ticketId)  {
-        if (!this.enabled) {
+        if (this.cipherExecutor == null) {
             logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
             return ticketId;
         }
@@ -89,7 +81,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
      * @return the ticket
      */
     protected Ticket encodeTicket(final Ticket ticket)  {
-        if (!this.enabled) {
+        if (this.cipherExecutor == null) {
             logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
             return ticket;
         }
@@ -115,7 +107,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
      * @return the ticket
      */
     protected Ticket decodeTicket(final Ticket result) {
-        if (!this.enabled) {
+        if (this.cipherExecutor == null) {
             logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
             return result;
         }
@@ -140,7 +132,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
      * @return the set
      */
     protected Collection<Ticket>  decodeTickets(final Collection<Ticket> items) {
-        if (!this.enabled) {
+        if (this.cipherExecutor == null) {
             logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
             return items;
         }
