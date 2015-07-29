@@ -62,16 +62,16 @@
     app.factory('sharedFactoryCtrl', [
         '$log',
         function ($log) {
-            var factory = {serviceId: 0};
+            var factory = {assignedId: 0};
 
             factory.setItem = function (id) {
-                factory.serviceId = id;
+                factory.assignedId = id;
             };
             factory.clearItem = function () {
-                factory.serviceId = 0;
+                factory.assignedId = null;
             };
             factory.getItem = function () {
-                return factory.serviceId;            
+                return factory.assignedId;            
             };
 
             return factory;
@@ -80,9 +80,8 @@
 
 // View Swapper
     app.controller('actionsController', [
-        '$scope',
         'sharedFactoryCtrl',
-        function ($scope, sharedFactory) {
+        function (sharedFactory) {
             this.actionPanel = 'manage';
 
             this.selectAction = function (setAction) {
@@ -112,18 +111,15 @@
 
 // Services Table: Manage View
     app.controller('ServicesTableController', [
-        '$scope',
         '$http',
         '$log',
         '$timeout',
         'sharedFactoryCtrl',
-        function ($scope, $http, $log, $timeout, sharedFactory) {
+        function ($http, $log, $timeout, sharedFactory) {
             var servicesData = this,
-                csrfParam = $("meta[name='_csrf_header']").attr("content"),
-                csrfToken = $("meta[name='_csrf']").attr("content"),
                 csrfHeader = {};
 
-            csrfHeader[csrfParam] = csrfToken;
+            csrfHeader[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
 
             this.dataTable = [];
             this.sortableOptions = {
@@ -132,7 +128,7 @@
                 handle: '.grabber-icon',
                 placeholder: 'tr-placeholder',
                 start: function (e, ui) {
-                    servicesData.detailRow = 0;
+                    servicesData.detailRow = -1;
                     ui.item.data('data_changed', false);
                 },
                 update: function (e, ui) {
@@ -142,24 +138,18 @@
                     if(ui.item.data('data_changed')) {
                         var myData = $(this).sortable('serialize', {key: 'id'});
 
-                        $.ajax({
-                            type: 'post',
-                            url: '/cas-management/updateRegisteredServiceEvaluationOrder.html',
-                            data: myData,
-                            headers: csrfHeader,
-                            dataType: 'json',
-                            success: function (data) {
+                        $http.post('/cas-management/updateRegisteredServiceEvaluationOrder.html', myData, {headers: csrfHeader})
+                            .success(function (data) {
                                 servicesData.getServices();
-                            },
-                            error: function(data, status) {
+                            })
+                            .error(function(data, status) {
                                 $log.log('err');
                                 servicesData.alert = {
                                     name:   'notupdated',
                                     type:   'danger',
                                     data:   null
                                 };
-                            }
-                        });
+                            });
                     }
                 }
             };
@@ -167,22 +157,15 @@
             this.getServices = function () {
                 $http.get('/cas-management/getServices.html')
                     .success(function (data) {
-                        var services = data.services || [];
-                        servicesData.dataTable = services;
+                        servicesData.dataTable = data.services || [];
                     })
                     .error(function (data, status) {
-                        $log.error('getServices: ', status, ', ', data);
                         servicesData.alert = {
                             name:   'listfail',
                             type:   'danger',
                             data:   null
                         };
                     });
-
-                /**$http.get('js/app/data/services.json')
-                    .success(function (data) {
-                        servicesData.dataTable = data;
-                    });**/
             };
 
             this.openModalDelete = function (item) {
@@ -196,30 +179,22 @@
             };
             this.deleteService = function (item) {
                 servicesData.closeModalDelete();
-                $.ajax({
-                    type: 'post',
-                    url: '/cas-management/deleteRegisteredService.html',
-                    data: {
-                        id: item.assignedId
-                    },
-                    headers: csrfHeader,
-                    dataType: 'json',
-                    success: function (data) {
+                $http.post('/cas-management/deleteRegisteredService.html', {id: item.assignedId}, {headers: csrfHeader})
+                    .success(function (data) {
                         servicesData.getServices();
                         servicesData.alert = {
                             name:   'deleted',
                             type:   'info',
                             data:   item
                         };
-                    },
-                    error: function(data, status) {
+                    })
+                    .error(function(data, status) {
                         servicesData.alert = {
                             name:   'notdeleted',
                             type:   'danger',
                             data:   null
                         };
-                    }
-                });
+                    });
             };
 
             this.clearFilter = function () {
@@ -227,7 +202,7 @@
             };
 
             this.toggleDetail = function (rowId) {
-                servicesData.detailRow = servicesData.detailRow == rowId ? 0 : rowId;
+                servicesData.detailRow = servicesData.detailRow == rowId ? -1 : rowId;
             };
 
             this.getServices();
