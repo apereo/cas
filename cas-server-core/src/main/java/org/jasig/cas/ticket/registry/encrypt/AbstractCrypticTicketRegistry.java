@@ -20,15 +20,10 @@
 package org.jasig.cas.ticket.registry.encrypt;
 
 
-import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
-import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.CipherExecutor;
 import org.jasig.cas.util.CompressionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -36,13 +31,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A wrapper around an inner ticket registry that is able to encode
- * tickets before they are persisted. This should be used, particularly
+ * A distributed ticket registry that is able to encode
+ * tickets before they are persisted and decoded back. This should be used, particularly
  * in clustered deployments where replication of tickets is carried out
- * over an insecure network connection. By default, encryption is turned off.
+ * over an insecure network connection. By default, encryption is turned off
+ * unless {@link #setCipherExecutor(CipherExecutor)} is configured.
  *
  * @author Misagh Moayyed
  * @since 4.2
+ * @see org.jasig.cas.util.JCEBasedCipherExecutor
  */
 public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedTicketRegistry {
 
@@ -54,7 +51,6 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
      */
     public AbstractCrypticTicketRegistry() {
     }
-
 
     public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
