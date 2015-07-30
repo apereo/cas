@@ -38,7 +38,7 @@
 
     <action-state id="terminateSession">
         <evaluate expression="terminateSessionAction.terminate(flowRequestContext)"/>
-        <transition to="generateLoginTicket"/>
+        <transition to="gatewayRequestCheck"/>
     </action-state>
     
 	<decision-state id="gatewayRequestCheck">
