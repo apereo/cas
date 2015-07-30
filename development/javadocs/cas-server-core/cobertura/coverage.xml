@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
 
-<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6400" branches-covered="0" branches-valid="1084" complexity="1.7332722273143906" version="2.1.1" timestamp="1438266371505">
+<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6403" branches-covered="0" branches-valid="1086" complexity="1.7341888175985334" version="2.1.1" timestamp="1438267346549">
 	<sources>
 		<source>--source</source>
 		<source>/home/travis/build/Jasig/cas/cas-server-core/target/generated-sources/annotations</source>
@@ -4520,7 +4520,7 @@
 				</class>
 			</classes>
 		</package>
-		<package name="org.jasig.cas.authentication" line-rate="0.0" branch-rate="0.0" complexity="1.917808219178082">
+		<package name="org.jasig.cas.authentication" line-rate="0.0" branch-rate="0.0" complexity="1.9246575342465753">
 			<classes>
 				<class name="org.jasig.cas.authentication.AbstractAuthenticationHandler" filename="org/jasig/cas/authentication/AbstractAuthenticationHandler.java" line-rate="0.0" branch-rate="0.0" complexity="1.3333333333333333">
 					<methods>
@@ -14728,7 +14728,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="0.0" complexity="1.5">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14736,7 +14736,7 @@
 						</method>
 						<method name="&lt;init&gt;" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="33" hits="0" branch="false"/>
+								<line number="34" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="ajc$preClinit" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
@@ -14748,10 +14748,17 @@
 							<lines>
 							</lines>
 						</method>
-						<method name="populateAttributes_aroundBody0" signature="(Lorg/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator;Lorg/jasig/cas/authentication/AuthenticationBuilder;Lorg/jasig/cas/authentication/Credential;Lorg/aspectj/lang/JoinPoint;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
+						<method name="populateAttributes_aroundBody0" signature="(Lorg/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator;Lorg/jasig/cas/authentication/AuthenticationBuilder;Lorg/jasig/cas/authentication/Credential;Lorg/aspectj/lang/JoinPoint;)V" line-rate="0.0" branch-rate="0.0" complexity="0">
 							<lines>
-								<line number="39" hits="0" branch="false"/>
 								<line number="40" hits="0" branch="false"/>
+								<line number="41" hits="0" branch="true" condition-coverage="0% (0/2)">
+									<conditions>
+										<condition number="0" type="jump" coverage="0%"/>
+									</conditions>
+								</line>
+								<line number="42" hits="0" branch="false"/>
+								<line number="45" hits="0" branch="false"/>
+								<line number="46" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="supports" signature="(Lorg/jasig/cas/authentication/Credential;)Z" line-rate="1.0" branch-rate="1.0" complexity="0">
@@ -14760,19 +14767,26 @@
 						</method>
 						<method name="supports_aroundBody2" signature="(Lorg/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator;Lorg/jasig/cas/authentication/Credential;Lorg/aspectj/lang/JoinPoint;)Z" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="44" hits="0" branch="false"/>
+								<line number="50" hits="0" branch="false"/>
 							</lines>
 						</method>
 					</methods>
 					<lines>
 						<line number="1" hits="0" branch="false"/>
-						<line number="33" hits="0" branch="false"/>
-						<line number="39" hits="0" branch="false"/>
+						<line number="34" hits="0" branch="false"/>
 						<line number="40" hits="0" branch="false"/>
-						<line number="44" hits="0" branch="false"/>
+						<line number="41" hits="0" branch="true" condition-coverage="0% (0/2)">
+							<conditions>
+								<condition number="0" type="jump" coverage="0%"/>
+							</conditions>
+						</line>
+						<line number="42" hits="0" branch="false"/>
+						<line number="45" hits="0" branch="false"/>
+						<line number="46" hits="0" branch="false"/>
+						<line number="50" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14788,7 +14802,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14816,7 +14830,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14832,7 +14846,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14860,7 +14874,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14876,7 +14890,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14892,7 +14906,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14920,7 +14934,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14936,7 +14950,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
@@ -14964,7 +14978,7 @@
 						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
-				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.0">
+				<class name="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator$AjcClosure3$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/authentication/SuccessfulHandlerMetaDataPopulator.java" line-rate="0.0" branch-rate="1.0" complexity="1.5">
 					<methods>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
