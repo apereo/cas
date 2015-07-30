@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
+import java.util.HashSet;
 import java.util.Set;
 /**
  * Sets an authentication attribute containing the collection of authentication handlers (by name) that successfully
@@ -36,7 +37,7 @@ public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDat
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         Set<String> successes = builder.getSuccesses().keySet();
         if (successes != null) {
-            successes = new HashSet(successes);
+            successes = new HashSet<String>(successes);
         }
         
         builder.addAttribute(SUCCESSFUL_AUTHENTICATION_HANDLERS, successes);
