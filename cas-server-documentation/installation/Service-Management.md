@@ -312,7 +312,7 @@ Based on the above formula, for example the above JSON snippet shall be named: `
 <div class="alert alert-warning"><strong>Duplicate Services</strong><p>
 As you add more files to the directory, you need to be absolutely sure that no two service definitions
 will have the same id. If this happens, loading one definition will stop loading the other. While service ids
-can be chosen arbitrarily, Make sure all service numeric identifiers are unique. CAS will also output warnings
+can be chosen arbitrarily, make sure all service numeric identifiers are unique. CAS will also output warnings
 if duplicate data is found.
 </p></div>
 
