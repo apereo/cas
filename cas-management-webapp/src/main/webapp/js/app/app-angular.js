@@ -126,9 +126,18 @@
         'sharedFactoryCtrl',
         function ($http, $log, $timeout, sharedFactory) {
             var servicesData = this,
-                httpHeaders = sharedFactory.httpHeaders;
+                httpHeaders = sharedFactory.httpHeaders,
+                delayedAlert = function(n, t, d) {
+                    $timeout(function () {
+                        servicesData.alert = {
+                            name:   n,
+                            type:   t,
+                            data:   d
+                        };
+                    }, 100);
+                };
 
-            this.dataTable = [];
+            this.dataTable = null; // Prevents 'flashing' on load
             this.sortableOptions = {
                 axis: 'y',
                 items: '> tr',
@@ -152,14 +161,11 @@
                             headers: httpHeaders,
                             dataType: 'json',
                             success: function (data) {
-                                 servicesData.getServices();
+                                servicesData.alert = null;
+                                servicesData.getServices();
                             },
-                            error: function(data, status) {
-                                 servicesData.alert = {
-                                     name:   'notupdated',
-                                     type:   'danger',
-                                     data:   null
-                                 };
+                            error: function(xhr, status) {
+                                delayedAlert('notupdated', 'danger', xhr);
                             }
                         });
                     }
@@ -169,14 +175,11 @@
             this.getServices = function () {
                 $http.get('/cas-management/getServices.html')
                     .success(function (data) {
+                        servicesData.alert = null;
                         servicesData.dataTable = data.services || [];
                     })
-                    .error(function (data, status) {
-                        servicesData.alert = {
-                            name:   'listfail',
-                            type:   'danger',
-                            data:   null
-                        };
+                    .error(function (xhr, status) {
+                        delayedAlert('listfail', 'danger', xhr);
                     });
             };
 
@@ -200,18 +203,10 @@
                     headers: httpHeaders,
                     success: function (data) {
                         servicesData.getServices();
-                        servicesData.alert = {
-                            name:   'deleted',
-                            type:   'info',
-                            data:   item
-                        };
+                        delayedAlert('deleted', 'info', item);
                     },
-                    error: function(data, status) {
-                        servicesData.alert = {
-                            name:   'notdeleted',
-                            type:   'danger',
-                            data:   null
-                        };
+                    error: function(xhr, status) {
+                        delayedAlert('notdeleted', 'danger', xhr);
                     }
                 });
             };
@@ -233,15 +228,21 @@
         '$scope',
         '$http',
         '$log',
+        '$timeout',
         'sharedFactoryCtrl',
-        function ($scope, $http, $log, sharedFactory) {
+        function ($scope, $http, $log, $timeout, sharedFactory) {
             var serviceForm = this,
-                showInstructions = function () {
-                    serviceForm.alert = {
-                        name:   'instructions',
-                        type:   'info',
-                        data:   null
-                    };
+                delayedAlert = function(n, t, d) {
+                    $timeout(function () {
+                        serviceForm.alert = {
+                            name:   n,
+                            type:   t,
+                            data:   d
+                        };
+                    }, 100);
+                },
+                showInstructions = function () { // Just an alias.
+                    delayedAlert('instructions', 'info', null);
                 };
 
             this.formData = {};
@@ -295,29 +296,17 @@
                 serviceForm.validateForm();
 
                 if(serviceForm.formErrors) {
-                    serviceForm.alert = {
-                        name:   'notvalid',
-                        type:   'danger',
-                        data:   serviceForm.formErrors // .length?
-                    };
+                    delayedAlert('notvalid', 'danger', serviceForm.formErrors);
                     return;
                 }
 
                 $http.post('/cas-management/forcedError', serviceForm.formData)  // TODO: fix this call
                     .success(function (data) {
                         serviceForm.formData = data[0];
-                        serviceForm.alert = {
-                            name:   'saved',
-                            type:   'info',
-                            data:   null
-                        };
+                        delayedAlert('saved', 'info', null);
                     })
-                    .error(function (data, status) {
-                        serviceForm.alert = {
-                            name:   'notsaved',
-                            type:   'danger',
-                            data:   data
-                        };
+                    .error(function (xhr, status) {
+                        delayedAlert('notsaved','danger', xhr);
                     });
             };
 
@@ -346,15 +335,11 @@
                 $http.get('js/app/data/service-' + id + '.json') // TODO: fix URL
                     .success(function (data) {
                         serviceForm.formData = data[0];
+                        showInstructions();
                     })
-                    .error(function (data, status) {
-                        serviceForm.alert = {
-                            name:   'notloaded',
-                            type:   'danger',
-                            data:   data
-                        };
+                    .error(function (xhr, status) {
+                        delayedAlert('notloaded', 'danger', xhr);
                     });
-                showInstructions();
             };
 
             $scope.$watch(
