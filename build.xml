@@ -27,20 +27,14 @@
 	<property name="cas.management.webapp" value="cas-management" />
 	<property name="catalina.home" value="c:/portal/apache-tomcat" />
 	<property name="tomcat.log.patterns" value="**/*.log, **/*.txt" />
-	
-	
-	
-		<property name="cas.build.modules" value="cas-management-webapp" />
-	
-	
-    <!--
-	<property name="cas.build.modules" value="cas-server-core,cas-server-webapp-support,cas-server-webapp,cas-management-webapp" />
-	-->
+
+	<property name="cas.build.modules" value="cas-server-core,cas-server-webapp-support,cas-server-webapp" />
+
     
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
 	
 	<!-- ******************* MAVEN PROPERTIES******************** -->
-	<condition property="mavenExecutableFile" value="mvn.bat" else="mvn">
+	<condition property="mavenExecutableFile" value="mvn.cmd" else="mvn">
 		<os family="windows" />
 	</condition>
 	<var name="mavenExecutable" value="${env.M2_HOME}\bin\${mavenExecutableFile}"/>

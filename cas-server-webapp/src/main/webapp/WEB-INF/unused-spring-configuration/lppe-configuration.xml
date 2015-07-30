@@ -37,6 +37,6 @@
         p:accountStateHandler-ref="accountStateHandler" />
 
   <!-- This component is suitable for most cases but can be replaced with a custom component for special cases. -->
-  <bean id="accountStateHandler" class="org.jasig.cas.authentication.support.DefaultAccountStateHander" />
+  <bean id="accountStateHandler" class="org.jasig.cas.authentication.support.DefaultAccountStateHandler" />
 
 </beans>
