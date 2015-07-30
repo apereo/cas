@@ -172,7 +172,7 @@ number of iterations as well as private salt.
 
 {% highlight xml %}
 
-<util:constant id="ALG" static-field="org.apache.commons.codec.digest.SHA_512"/>
+<util:constant id="ALG" static-field="org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_512"/>
 
 <bean id="dbAuthHandler"
       class="org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler"
