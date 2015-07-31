@@ -46,13 +46,8 @@ import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
-import org.opensaml.xml.util.SingletonFactory;
 
-import javax.cache.configuration.Factory;
-import javax.cache.configuration.FactoryBuilder;
-import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
-import javax.cache.expiry.ExpiryPolicy;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.Charset;
