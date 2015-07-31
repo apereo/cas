@@ -22,38 +22,51 @@ package org.jasig.cas.services.web.beans;
 import java.io.Serializable;
 
 /**
- * Attribute release policy defined per JSON feed.
+ * Proxy policy bean defined per JSON feed.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class AttributeReleasePolicyViewBean implements Serializable {
-    private static final long serialVersionUID = -7567470297544895709L;
+public class RegisteredServiceProxyPolicyBean implements Serializable {
 
-    private boolean releasePassword;
-    private boolean releaseTicket;
-    private String attrPolicy;
+    private static final long serialVersionUID = 5990879744144480587L;
 
-    public boolean isReleasePassword() {
-        return releasePassword;
+    /**
+     * The enum AlgorithmTypes.
+     */
+    public enum Types {
+        /** Refuse type. */
+        REFUSE("refuse"),
+
+        /** Allow type. */
+        ALLOW("allow");
+
+        private final String value;
+
+        /**
+         * Instantiates a new AlgorithmTypes.
+         *
+         * @param value the value
+         */
+        Types(final String value) {
+            this.value = value;
+        }
+    }
+    private String type;
+    private String value;
+
+    public String getType() {
+        return type;
     }
 
-    public void setReleasePassword(final boolean releasePassword) {
-        this.releasePassword = releasePassword;
+    public void setType(final String type) {
+        this.type = type;
     }
 
-    public boolean isReleaseTicket() {
-        return releaseTicket;
+    public String getValue() {
+        return value;
     }
 
-    public void setReleaseTicket(final boolean releaseTicket) {
-        this.releaseTicket = releaseTicket;
-    }
-
-    public String getAttrPolicy() {
-        return attrPolicy;
-    }
-
-    public void setAttrPolicy(final String attrPolicy) {
-        this.attrPolicy = attrPolicy;
+    public void setValue(final String value) {
+        this.value = value;
     }
 }

@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class SupportAccessEditBean implements Serializable {
+public class RegisteredServiceSupportAccessEditBean implements Serializable {
 
     private static final long serialVersionUID = 2995938566845586064L;
 

@@ -19,33 +19,24 @@
 
 package org.jasig.cas.services.web.beans;
 
+import java.io.Serializable;
 
 /**
- * Defines service types. CAS, OAuth, etc.
+ * Attribute release policy defined per JSON feed.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public enum RegisteredServiceTypeEditBean {
+public class RegisteredServiceAttributeReleasePolicyViewBean extends AbstractRegisteredServiceAttributeReleasePolicyBean
+        implements Serializable {
+    private static final long serialVersionUID = -7567470297544895709L;
 
-    /**
-     * CAS type.
-     */
-    CAS("cas"),
+    private String attrPolicy;
 
-    /**
-     * oauth type.
-     */
-    OAUTH("oauth");
-
-    private final String value;
-
-    /**
-     * Instantiates a new AlgorithmTypes.
-     *
-     * @param value the value
-     */
-    RegisteredServiceTypeEditBean(final String value) {
-        this.value = value;
+    public String getAttrPolicy() {
+        return attrPolicy;
     }
 
+    public void setAttrPolicy(final String attrPolicy) {
+        this.attrPolicy = attrPolicy;
+    }
 }
