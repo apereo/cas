@@ -59,6 +59,7 @@ import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 
 import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
 import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
+import org.slf4j.impl.CasDelegatingLogger;
 
 /**
  * {@link net.spy.memcached.MemcachedClient} transcoder implementation based on Kryo fast serialization framework
@@ -136,6 +137,8 @@ public class KryoTranscoder implements Transcoder<Object> {
 
         // new serializers to manage Joda dates and immutable collections
         kryo.register(DateTime.class, new JodaDateTimeSerializer());
+        kryo.register(CasDelegatingLogger.class, new DefaultSerializers.VoidSerializer());
+
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
         UnmodifiableCollectionsSerializer.registerSerializers(kryo);
 
