@@ -26,8 +26,12 @@ import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
+import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAccessStrategy;
+import org.jasig.cas.services.RegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegisteredServicePublicKey;
 import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
@@ -61,7 +65,7 @@ public class RegisteredServiceEditBean implements Serializable {
     private RegisteredServiceTypeEditBean type = RegisteredServiceTypeEditBean.CAS;
     private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
     private RegisteredServiceLogoutTypeEditBean logoutType = RegisteredServiceLogoutTypeEditBean.BACK;
-    private UsernameAttributeProviderEditBean userAttrProvider = new UsernameAttributeProviderEditBean();
+    private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider = new RegisteredServiceUsernameAttributeProviderEditBean();
     private RegisteredServicePublicKeyEditBean publicKey = new RegisteredServicePublicKeyEditBean();
     private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
     private RegisteredServiceAttributeReleasePolicyEditBean attrPolicy
@@ -139,11 +143,11 @@ public class RegisteredServiceEditBean implements Serializable {
         this.logoutType = logoutType;
     }
 
-    public UsernameAttributeProviderEditBean getUserAttrProvider() {
+    public RegisteredServiceUsernameAttributeProviderEditBean getUserAttrProvider() {
         return userAttrProvider;
     }
 
-    public void setUserAttrProvider(final UsernameAttributeProviderEditBean userAttrProvider) {
+    public void setUserAttrProvider(final RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider) {
         this.userAttrProvider = userAttrProvider;
     }
 
@@ -262,14 +266,14 @@ public class RegisteredServiceEditBean implements Serializable {
             bean.setLogoUrl(url.toExternalForm());
         }
         final RegisteredServiceUsernameAttributeProvider provider = svc.getUsernameAttributeProvider();
-        final UsernameAttributeProviderEditBean uBean = bean.getUserAttrProvider();
+        final RegisteredServiceUsernameAttributeProviderEditBean uBean = bean.getUserAttrProvider();
 
         if (provider instanceof DefaultRegisteredServiceUsernameProvider) {
-            uBean.setType(UsernameAttributeProviderEditBean.Types.DEFAULT);
+            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT);
         } else if (provider instanceof AnonymousRegisteredServiceUsernameAttributeProvider) {
             final AnonymousRegisteredServiceUsernameAttributeProvider anonymous =
                     (AnonymousRegisteredServiceUsernameAttributeProvider) provider;
-            uBean.setType(UsernameAttributeProviderEditBean.Types.ANONYMOUS);
+            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS);
             final PersistentIdGenerator generator = anonymous.getPersistentIdGenerator();
             if (generator instanceof ShibbolethCompatiblePersistentIdGenerator) {
                 final ShibbolethCompatiblePersistentIdGenerator sh =
@@ -282,8 +286,23 @@ public class RegisteredServiceEditBean implements Serializable {
             uBean.setValue(p.getUsernameAttribute());
         }
 
+        final RegisteredServicePublicKey key = svc.getPublicKey();
+        final RegisteredServicePublicKeyEditBean pBean = bean.getPublicKey();
+        pBean.setAlgorithm(key.getAlgorithm());
+        pBean.setLocation(key.getLocation());
 
+        final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
+        final RegisteredServiceProxyPolicyBean cBean = bean.getProxyPolicy();
+        if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
+            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
+        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
+            final RegexMatchingRegisteredServiceProxyPolicy regex =
+                    (RegexMatchingRegisteredServiceProxyPolicy) policy;
+            cBean.setType(RegisteredServiceProxyPolicyBean.Types.ALLOW.toString());
+            cBean.setValue(regex.getPattern().toString());
+        }
 
+        
         return bean;
     }
 }
