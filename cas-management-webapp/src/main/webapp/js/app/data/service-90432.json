@@ -6,7 +6,8 @@
             "ssoEnabled": false,
             "requireAll": true,
             "requiredAttr": {
-                "uid": "Apereo_9"
+                "uid": "Apereo_9",
+                "xname": "Apereo_1"
             }
         },
         "serviceId": "http?://*.shield.net+",

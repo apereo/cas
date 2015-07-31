@@ -6,7 +6,8 @@
             "ssoEnabled": true,
             "requireAll": true,
             "requiredAttr": {
-                "uid": "Apereo_4"
+                "uid": ["Apereo_4", "Apereo_5"],
+                "xname": "Robin Cakes"
             }
         },
         "serviceId": "http?://batman**",
@@ -14,7 +15,7 @@
         "description": "The HTTP and IMAPS service for authentication.",
         "type": "cas",
         "oauth": {
-            "clientSecret": "Because I'm Batman",
+            "clientSecret": "Because I'm Batman!",
             "clientId": "Wayne, Bruce",
             "bypass": false
         },
