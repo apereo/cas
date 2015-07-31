@@ -12,16 +12,18 @@
         "serviceId": "http?://*.shield.net+",
         "name": "Another Service",
         "description": "Another service you can use for authentication. But if you really want, then you can pick something pre-made. Maybe?",
-        "type": 1,
+        "type": "oauth",
         "oauth": {
             "clientSecret": "Hail Hydra",
             "clientId": "Fury, Nicholas D.",
-            "bypass": 1
+            "bypass": true
         },
         "theme": "theme02",
         "evalOrder": 3,
         "requiredHandlers": [
-            "reqHandler01"
+            "reqHandler01",
+            "reqHandler02",
+            "reqHandler03"
         ],
         "logoUrl": "http://www.shield.net/images/logoCrest.png",
         "logoutUrl": "http://www.shield.net/logout",
