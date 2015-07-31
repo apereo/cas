@@ -83,6 +83,13 @@
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-oauth</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-webapp-support</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
