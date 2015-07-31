@@ -250,23 +250,19 @@
 
             this.formData = {};
             this.formErrors = null;
+            this.radioWatchBypass = false;
+            this.showOAuthSecret = false;
 
-            // TODO: this.keyMaps // should hold all of the "this.* = [ {} {} {} ];"" below
             this.selectOptions = {
                 serviceTypeList: [
-                    {name: 'CAS Client',    value: 'cas'},
-                    {name: 'OAuth Client',  value: 'oauth'}
+                    {name: 'CAS Client',                value: 'cas'},
+                    {name: 'OAuth Client',              value: 'oauth'},
+                    {name: 'OAuth Callback Authorize',  value: 'oauth_callback_authz'}
                 ],
                 logoutTypeList: [
+                    {name: 'None',              value: ''},
                     {name: '1 - BACK_CHANNEL',  value: 'back'},
                     {name: '2 - FRONT_CHANNEL', value: 'front'}
-                ],
-                publicKeyAlgorithmList: [
-                    {name: 'RSA', value: 'rsa'}
-                ],
-                themeList: [
-                    {name: 'Theme 01',      value: 'theme01'},
-                    {name: 'Theme 02',      value: 'theme02'}
                 ],
                 reqHandlerList: [
                     {name: 'Required Handler 1', value: 'reqHandler01'},
@@ -276,11 +272,17 @@
                     {name: 'Required Handler 5', value: 'reqHandler05'}
                 ],
                 timeUnitsList: [
-                    {name: 'MILLISECONDS',  value: 'MILLISECONDS'},
-                    {name: 'SECONDS',       value: 'SECONDS'},
-                    {name: 'MINUTES',       value: 'MINUTES'},
-                    {name: 'HOURS',         value: 'HOURS'},
-                    {name: 'DAYS',          value: 'DAYS'}
+                    {name: 'Milliseconds',  value: 'MILLISECONDS'},
+                    {name: 'Seconds',       value: 'SECONDS'},
+                    {name: 'Minutes',       value: 'MINUTES'},
+                    {name: 'Hours',         value: 'HOURS'},
+                    {name: 'Days',          value: 'DAYS'}
+                ],
+                mergeStrategyList: [
+                    {name: 'None',          value: ''},
+                    {name: 'Add',           value: 'ADD'},
+                    {name: 'Multi-Valued',  value: 'MULTI-VALUED'},
+                    {name: 'Replace',       value: 'REPLACE'}
                 ]
             };
 
@@ -322,6 +324,9 @@ $log.debug('formData: ', serviceForm.formData);
             };
 
             this.newService = function () {
+                serviceForm.radioWatchBypass = true;
+
+                serviceForm.showOAuthSecret = false;
                 serviceForm.formData = {
                     assignedId: null,
                     evalOrder: 100,
@@ -334,12 +339,15 @@ $log.debug('formData: ', serviceForm.formData);
                     }
                 };
                 showInstructions();
+
+                serviceForm.radioWatchBypass = false;
             };
 
             this.loadService = function (id) {
                 var ids = [11234, 43021, 90432];
                 id = ids[Math.floor( Math.random() * 3 )];
 
+                serviceForm.radioWatchBypass = true;
                 $http.get('js/app/data/service-' + id + '.json') // TODO: fix URL
                     .success(function (data, status) {
                         // TODO: Check if needed once switched to actual URL...
@@ -348,14 +356,15 @@ $log.debug('formData: ', serviceForm.formData);
                             serviceForm.newService();
                         }
                         else {
+                            serviceForm.showOAuthSecret = false;
                             serviceForm.formData = data[0];
                             showInstructions();
                         }
                     })
                     .error(function (xhr, status) {
-                        $log.error('failed to load service-' + id + '.json');
                         delayedAlert('notloaded', 'danger', xhr);
                     });
+                serviceForm.radioWatchBypass = false;
             };
 
             $scope.$watch(
@@ -364,6 +373,15 @@ $log.debug('formData: ', serviceForm.formData);
                     serviceForm.alert = null;
                     if(!assignedId) { serviceForm.newService(); }
                     else { serviceForm.loadService(assignedId); }
+                }
+            );
+
+            $scope.$watch(
+                function() { return serviceForm.formData.userAttrProvider.type; },
+                function () {
+                    if(serviceForm.radioWatchBypass) return;
+                    $log.debug('userAttrProvider.type changed, so .value cleared');
+                    serviceForm.formData.userAttrProvider.value = '';
                 }
             );
         }
