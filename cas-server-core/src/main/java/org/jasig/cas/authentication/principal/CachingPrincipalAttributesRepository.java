@@ -60,6 +60,8 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
 
     private final String cacheName = this.getClass().getSimpleName().concat(UUID.randomUUID().toString());
 
+    private transient Duration duration;
+
     /**
      * The merging strategy that deals with existing principal attributes
      * and those that are retrieved from the source. By default, existing attributes
@@ -74,6 +76,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     private CachingPrincipalAttributesRepository() {
         this.attributeRepository = null;
         this.cache = null;
+        this.duration = null;
     }
 
     /**
@@ -83,9 +86,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param attributeRepository the attribute repository
      */
     public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository) {
-        this(attributeRepository, createCacheConfiguration(
-                new Duration(DEFAULT_CACHE_EXPIRATION_UNIT, DEFAULT_CACHE_EXPIRATION_DURATION)));
-
+        this(attributeRepository, DEFAULT_CACHE_EXPIRATION_DURATION);
     }
 
     /**
@@ -96,9 +97,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param expiryDuration the expiry duration based on the unit of {@link #DEFAULT_CACHE_EXPIRATION_DURATION}
      */
     public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository, final long expiryDuration) {
-        this(attributeRepository, createCacheConfiguration(
-                new Duration(DEFAULT_CACHE_EXPIRATION_UNIT, expiryDuration)));
-
+        this(attributeRepository, DEFAULT_CACHE_EXPIRATION_UNIT, expiryDuration);
     }
 
     /**
@@ -111,7 +110,19 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
                                                 final TimeUnit timeUnit,
                                                 final long expiryDuration) {
-        this(attributeRepository, createCacheConfiguration(new Duration(timeUnit, expiryDuration)));
+        this(attributeRepository, new Duration(timeUnit, expiryDuration));
+    }
+
+    /**
+     * Instantiates a new caching attributes principal factory.
+     *
+     * @param attributeRepository the attribute repository
+     * @param duration the duration
+     */
+    private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
+                                                final Duration duration) {
+        this(attributeRepository, createCacheConfiguration(duration));
+        this.duration = duration;
     }
 
     /**
@@ -120,7 +131,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param attributeRepository the attribute repository
      * @param config the config
      */
-    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
+    private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
                                                 final MutableConfiguration<String, Map<String, Object>> config) {
         this(attributeRepository, config, Caching.getCachingProvider().getCacheManager());
     }
@@ -132,7 +143,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param config the config
      * @param cacheProviderFullClassName the cache provider full class name
      */
-    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
+    private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
                                                 final MutableConfiguration<String, Map<String, Object>> config,
                                                 final String cacheProviderFullClassName) {
         this(attributeRepository, config,
@@ -146,7 +157,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param config the config
      * @param manager the manager
      */
-    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
+    private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
                                                 final MutableConfiguration<String, Map<String, Object>> config,
                                                 final CacheManager manager) {
         this.attributeRepository = attributeRepository;
@@ -159,7 +170,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param attributeRepository the attribute repository
      * @param cache the cache
      */
-    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
+    private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
                                                 final Cache<String, Map<String, Object>> cache) {
         this.attributeRepository = attributeRepository;
         this.cache = cache;
@@ -172,6 +183,10 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      */
     public IPersonAttributeDao getAttributeRepository() {
         return this.attributeRepository;
+    }
+
+    public Duration getDuration() {
+        return this.duration;
     }
 
     /**
