@@ -22,51 +22,39 @@ package org.jasig.cas.services.web.beans;
 import java.io.Serializable;
 
 /**
- * Proxy policy bean defined per JSON feed.
+ * Attribute release policy defined per JSON feed.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class ProxyPolicyViewBean implements Serializable {
+public class RegisteredServiceAttributeReleasePolicyEditBean extends RegisteredServiceAttributeReleasePolicyViewBean
+        implements Serializable {
+    private static final long serialVersionUID = -7567470297544895709L;
 
-    private static final long serialVersionUID = 5990879744144480587L;
+    private String attrFilter;
+    private String cachedTimeUnit;
+    private long cachedExpiration;
 
-    /**
-     * The enum Types.
-     */
-    public enum Types {
-        /** Refuse type. */
-        REFUSE("refuse"),
-
-        /** Allow type. */
-        ALLOW("allow");
-
-        private final String value;
-
-        /**
-         * Instantiates a new Types.
-         *
-         * @param value the value
-         */
-        Types(final String value) {
-            this.value = value;
-        }
-    }
-    private String type;
-    private String value;
-
-    public String getType() {
-        return type;
+    public String getAttrFilter() {
+        return attrFilter;
     }
 
-    public void setType(final String type) {
-        this.type = type;
+    public void setAttrFilter(final String attrFilter) {
+        this.attrFilter = attrFilter;
     }
 
-    public String getValue() {
-        return value;
+    public String getCachedTimeUnit() {
+        return cachedTimeUnit;
     }
 
-    public void setValue(final String value) {
-        this.value = value;
+    public void setCachedTimeUnit(final String cachedTimeUnit) {
+        this.cachedTimeUnit = cachedTimeUnit;
+    }
+
+    public long getCachedExpiration() {
+        return cachedExpiration;
+    }
+
+    public void setCachedExpiration(final long cachedExpiration) {
+        this.cachedExpiration = cachedExpiration;
     }
 }

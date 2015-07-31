@@ -26,37 +26,10 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class AttributeReleasePolicyStrategyViewBean implements Serializable {
+public class RegisteredServiceAttributeReleasePolicyStrategyViewBean
+        extends AbstractRegisteredServiceAttributeReleasePolicyStrategyBean implements Serializable {
 
     private static final long serialVersionUID = 6295156552393546070L;
-
-    /**
-     * The enum Types.
-     */
-    public enum Types {
-        /** Refuse type. */
-        ALL("all"),
-
-        /** Mapped type. */
-        MAPPED("mapped"),
-
-        /** None type. */
-        NONE("none"),
-
-        /** Allow type. */
-        ALLOWED("allowed");
-
-        private final String value;
-
-        /**
-         * Instantiates a new Types.
-         *
-         * @param value the value
-         */
-        Types(final String value) {
-            this.value = value;
-        }
-    }
 
     private String type;
 

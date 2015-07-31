@@ -44,11 +44,13 @@ public class RegisteredServiceEditBean implements Serializable {
     private int evalOrder;
     private List<String> requiredHandlers = new ArrayList<>();
     private String logoutUrl;
-    private SupportAccessEditBean supportAccess = new SupportAccessEditBean();
+    private RegisteredServiceSupportAccessEditBean supportAccess = new RegisteredServiceSupportAccessEditBean();
     private RegisteredServiceTypeEditBean type = RegisteredServiceTypeEditBean.CAS;
     private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
     private RegisteredServiceLogoutTypeEditBean logoutType = RegisteredServiceLogoutTypeEditBean.BACK;
     private UsernameAttributeProviderEditBean userAttrProvider = new UsernameAttributeProviderEditBean();
+    private RegisteredServicePublicKeyEditBean publicKey = new RegisteredServicePublicKeyEditBean();
+    private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
 
     public String getTheme() {
         return theme;
@@ -114,11 +116,11 @@ public class RegisteredServiceEditBean implements Serializable {
         this.type = type;
     }
 
-    public SupportAccessEditBean getSupportAccess() {
+    public RegisteredServiceSupportAccessEditBean getSupportAccess() {
         return supportAccess;
     }
 
-    public void setSupportAccess(final SupportAccessEditBean supportAccess) {
+    public void setSupportAccess(final RegisteredServiceSupportAccessEditBean supportAccess) {
         this.supportAccess = supportAccess;
     }
 
