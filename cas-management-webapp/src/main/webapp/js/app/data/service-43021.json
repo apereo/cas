@@ -12,11 +12,11 @@
         "serviceId": "http?://batman**",
         "name": "HTTPS and IMAPS",
         "description": "The HTTP and IMAPS service for authentication.",
-        "type": 1,
+        "type": "cas",
         "oauth": {
             "clientSecret": "Because I'm Batman",
             "clientId": "Wayne, Bruce",
-            "bypass": 0
+            "bypass": false
         },
         "theme": "theme01",
         "evalOrder": 2,
