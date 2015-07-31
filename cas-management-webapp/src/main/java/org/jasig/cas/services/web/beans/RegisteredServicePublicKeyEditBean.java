@@ -29,6 +29,9 @@ import java.io.Serializable;
 public class RegisteredServicePublicKeyEditBean implements Serializable {
     private static final long serialVersionUID = 2553270792452015226L;
 
+    /**
+     * The enum Algorithm types.
+     */
     public enum AlgorithmTypes {
         /**
          * rsa type.
