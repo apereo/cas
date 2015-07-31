@@ -29,29 +29,8 @@ import java.io.Serializable;
 public class RegisteredServicePublicKeyEditBean implements Serializable {
     private static final long serialVersionUID = 2553270792452015226L;
 
-    /**
-     * The enum Algorithm types.
-     */
-    public enum AlgorithmTypes {
-        /**
-         * rsa type.
-         */
-        RSA("RSA");
-
-        private final String value;
-
-        /**
-         * Instantiates a new AlgorithmTypes.
-         *
-         * @param value the value
-         */
-        AlgorithmTypes(final String value) {
-            this.value = value;
-        }
-    }
-
     private String location;
-    private AlgorithmTypes algorithm = AlgorithmTypes.RSA;
+    private String algorithm;
 
     public String getLocation() {
         return location;
@@ -61,11 +40,11 @@ public class RegisteredServicePublicKeyEditBean implements Serializable {
         this.location = location;
     }
 
-    public AlgorithmTypes getAlgorithm() {
+    public String getAlgorithm() {
         return algorithm;
     }
 
-    public void setAlgorithm(final AlgorithmTypes algorithm) {
+    public void setAlgorithm(final String algorithm) {
         this.algorithm = algorithm;
     }
 }
