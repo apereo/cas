@@ -45,7 +45,7 @@ public enum RegisteredServiceLogoutTypeEditBean {
     private final String value;
 
     /**
-     * Instantiates a new Types.
+     * Instantiates a new AlgorithmTypes.
      *
      * @param value the value
      */

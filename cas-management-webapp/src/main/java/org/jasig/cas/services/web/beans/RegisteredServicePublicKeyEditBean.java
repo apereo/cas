@@ -22,28 +22,18 @@ package org.jasig.cas.services.web.beans;
 import java.io.Serializable;
 
 /**
- * Bean that defines user-name attribute providers.
+ * Registered service public key options.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class UsernameAttributeProviderEditBean implements Serializable {
-    private static final long serialVersionUID = 3912289299527532705L;
+public class RegisteredServicePublicKeyEditBean implements Serializable {
+    private static final long serialVersionUID = 2553270792452015226L;
 
-    public enum Types {
+    public enum AlgorithmTypes {
         /**
-         * default type.
+         * rsa type.
          */
-        DEFAULT("default"),
-
-        /**
-         * Attr type.
-         */
-        ATTRIBUTE("attr"),
-
-        /**
-         * anonymous type.
-         */
-        ANONYMOUS("anon");
+        RSA("RSA");
 
         private final String value;
 
@@ -52,27 +42,27 @@ public class UsernameAttributeProviderEditBean implements Serializable {
          *
          * @param value the value
          */
-        Types(final String value) {
+        AlgorithmTypes(final String value) {
             this.value = value;
         }
     }
 
-    private String value;
-    private Types type = Types.DEFAULT;
+    private String location;
+    private AlgorithmTypes algorithm = AlgorithmTypes.RSA;
 
-    public String getValue() {
-        return value;
+    public String getLocation() {
+        return location;
     }
 
-    public void setValue(final String value) {
-        this.value = value;
+    public void setLocation(final String location) {
+        this.location = location;
     }
 
-    public Types getType() {
-        return type;
+    public AlgorithmTypes getAlgorithm() {
+        return algorithm;
     }
 
-    public void setType(final Types type) {
-        this.type = type;
+    public void setAlgorithm(final AlgorithmTypes algorithm) {
+        this.algorithm = algorithm;
     }
 }
