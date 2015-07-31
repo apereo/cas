@@ -29,6 +29,9 @@ import java.io.Serializable;
 public class UsernameAttributeProviderEditBean implements Serializable {
     private static final long serialVersionUID = 3912289299527532705L;
 
+    /**
+     * The enum Types.
+     */
     public enum Types {
         /**
          * default type.
