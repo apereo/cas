@@ -78,6 +78,14 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <scope>test</scope>
@@ -88,7 +96,7 @@
         <cs.dir>${project.parent.basedir}</cs.dir>
         <spy.memcached.version>2.11.7</spy.memcached.version>
         <kryo.version>3.0.2</kryo.version>
-        <kryo.serializers.version>0.33</kryo.serializers.version>
+        <kryo.serializers.version>0.35</kryo.serializers.version>
         <embedded.memcached.version>1.06.2</embedded.memcached.version>
     </properties>
 
