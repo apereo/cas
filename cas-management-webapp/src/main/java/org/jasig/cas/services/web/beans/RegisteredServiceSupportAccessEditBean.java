@@ -22,6 +22,7 @@ package org.jasig.cas.services.web.beans;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Defines a JSON bean that is mapped
@@ -36,7 +37,7 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
     private boolean casEnabled;
     private boolean ssoEnabled;
     private boolean requireAll;
-    private Map<String, String> requiredAttr = new HashMap<>();
+    private Map<String, Set<String>> requiredAttr = new HashMap<>();
 
     public boolean isCasEnabled() {
         return casEnabled;
@@ -62,11 +63,11 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
         this.requireAll = requireAll;
     }
 
-    public Map<String, String> getRequiredAttr() {
+    public Map<String, Set<String>> getRequiredAttr() {
         return requiredAttr;
     }
 
-    public void setRequiredAttr(final Map<String, String> requiredAttr) {
+    public void setRequiredAttr(final Map<String, Set<String>> requiredAttr) {
         this.requiredAttr = requiredAttr;
     }
 }
