@@ -51,6 +51,8 @@ public class RegisteredServiceEditBean implements Serializable {
     private UsernameAttributeProviderEditBean userAttrProvider = new UsernameAttributeProviderEditBean();
     private RegisteredServicePublicKeyEditBean publicKey = new RegisteredServicePublicKeyEditBean();
     private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
+    private RegisteredServiceAttributeReleasePolicyEditBean attrPolicy
+            = new RegisteredServiceAttributeReleasePolicyEditBean();
 
     public String getTheme() {
         return theme;
