@@ -1,6 +1,6 @@
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "^(https|imaps)://.*",
+  "serviceId" : "^http://.*",
   "name" : "HTTPS and IMAPS",
   "id" : 10000001,
   "description" : "This service definition authorized all application urls that support HTTPS and IMAPS protocols.",
