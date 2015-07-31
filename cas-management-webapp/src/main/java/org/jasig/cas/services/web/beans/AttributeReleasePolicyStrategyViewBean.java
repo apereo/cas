@@ -19,12 +19,16 @@
 
 package org.jasig.cas.services.web.beans;
 
+import java.io.Serializable;
+
 /**
  * The attribute release strategy used for views.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class AttributeReleasePolicyStrategyViewBean {
+public class AttributeReleasePolicyStrategyViewBean implements Serializable {
+
+    private static final long serialVersionUID = 6295156552393546070L;
 
     /**
      * The enum Types.
