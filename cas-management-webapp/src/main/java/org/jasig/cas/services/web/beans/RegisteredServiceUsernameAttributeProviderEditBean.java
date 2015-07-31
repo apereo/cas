@@ -19,27 +19,39 @@
 
 package org.jasig.cas.services.web.beans;
 
+import java.io.Serializable;
+
 /**
- * Proxy policy bean defined per JSON feed.
+ * Bean that defines user-name attribute providers.
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class ProxyPolicyViewBean {
+public class RegisteredServiceUsernameAttributeProviderEditBean implements Serializable {
+    private static final long serialVersionUID = 3912289299527532705L;
 
     /**
      * The enum Types.
      */
     public enum Types {
-        /** Refuse type. */
-        REFUSE("refuse"),
+        /**
+         * default type.
+         */
+        DEFAULT("default"),
 
-        /** Allow type. */
-        ALLOW("allow");
+        /**
+         * Attr type.
+         */
+        ATTRIBUTE("attr"),
+
+        /**
+         * anonymous type.
+         */
+        ANONYMOUS("anon");
 
         private final String value;
 
         /**
-         * Instantiates a new Types.
+         * Instantiates a new AlgorithmTypes.
          *
          * @param value the value
          */
@@ -47,16 +59,9 @@ public class ProxyPolicyViewBean {
             this.value = value;
         }
     }
-    private String type;
+
     private String value;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(final String type) {
-        this.type = type;
-    }
+    private Types type = Types.DEFAULT;
 
     public String getValue() {
         return value;
@@ -64,5 +69,13 @@ public class ProxyPolicyViewBean {
 
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    public Types getType() {
+        return type;
+    }
+
+    public void setType(final Types type) {
+        this.type = type;
     }
 }
