@@ -62,7 +62,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
         this.principalAttributesRepository = repository;
     }
 
-    protected PrincipalAttributesRepository getPrincipalAttributesRepository() {
+    public PrincipalAttributesRepository getPrincipalAttributesRepository() {
         return principalAttributesRepository;
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
      *
      * @return the attribute filter
      */
-    protected final AttributeFilter getAttributeFilter() {
+    public final AttributeFilter getAttributeFilter() {
         return this.attributeFilter;
     }
 
