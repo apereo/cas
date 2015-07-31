@@ -26,7 +26,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class UsernameAttributeProviderEditBean implements Serializable {
+public class RegisteredServiceUsernameAttributeProviderEditBean implements Serializable {
     private static final long serialVersionUID = 3912289299527532705L;
 
     /**
