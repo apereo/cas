@@ -19,9 +19,16 @@
 
 package org.jasig.cas.services.web.beans;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
+import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.jasig.cas.services.AbstractAttributeReleasePolicy;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
+import org.jasig.cas.services.AttributeFilter;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.LogoutType;
@@ -33,9 +40,19 @@ import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServicePublicKey;
 import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
+import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
+import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
+import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.opensaml.xml.util.SingletonFactory;
 
+import javax.cache.configuration.Factory;
+import javax.cache.configuration.FactoryBuilder;
+import javax.cache.expiry.CreatedExpiryPolicy;
+import javax.cache.expiry.Duration;
+import javax.cache.expiry.ExpiryPolicy;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -68,8 +85,16 @@ public class RegisteredServiceEditBean implements Serializable {
     private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider = new RegisteredServiceUsernameAttributeProviderEditBean();
     private RegisteredServicePublicKeyEditBean publicKey = new RegisteredServicePublicKeyEditBean();
     private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
-    private RegisteredServiceAttributeReleasePolicyEditBean attrPolicy
+    private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
             = new RegisteredServiceAttributeReleasePolicyEditBean();
+
+    public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
+        return attrRelease;
+    }
+
+    public void setAttrRelease(final RegisteredServiceAttributeReleasePolicyEditBean attrRelease) {
+        this.attrRelease = attrRelease;
+    }
 
     public RegisteredServicePublicKeyEditBean getPublicKey() {
         return publicKey;
@@ -85,14 +110,6 @@ public class RegisteredServiceEditBean implements Serializable {
 
     public void setProxyPolicy(final RegisteredServiceProxyPolicyBean proxyPolicy) {
         this.proxyPolicy = proxyPolicy;
-    }
-
-    public RegisteredServiceAttributeReleasePolicyEditBean getAttrPolicy() {
-        return attrPolicy;
-    }
-
-    public void setAttrPolicy(final RegisteredServiceAttributeReleasePolicyEditBean attrPolicy) {
-        this.attrPolicy = attrPolicy;
     }
 
     public String getTheme() {
@@ -302,7 +319,47 @@ public class RegisteredServiceEditBean implements Serializable {
             cBean.setValue(regex.getPattern().toString());
         }
 
-        
+        final AbstractAttributeReleasePolicy attrPolicy = (AbstractAttributeReleasePolicy) svc.getAttributeReleasePolicy();
+        final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();
+
+        attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
+        attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
+
+        final AttributeFilter filter = attrPolicy.getAttributeFilter();
+        if (filter != null) {
+            if (filter instanceof RegisteredServiceRegexAttributeFilter) {
+                final RegisteredServiceRegexAttributeFilter regex =
+                        (RegisteredServiceRegexAttributeFilter) filter;
+                attrPolicyBean.setAttrFilter(regex.getPattern().pattern());
+            }
+        }
+
+        final PrincipalAttributesRepository pr = attrPolicy.getPrincipalAttributesRepository();
+        if (pr instanceof DefaultPrincipalAttributesRepository) {
+            attrPolicyBean.setAttrOption(
+                    RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
+        } else if (pr instanceof CachingPrincipalAttributesRepository) {
+            attrPolicyBean.setAttrOption(
+                    RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
+            final CachingPrincipalAttributesRepository cc = (CachingPrincipalAttributesRepository) pr;
+            final Duration duration = cc.getDuration();
+            attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
+            attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
+        }
+
+        final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
+
+        if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
+            sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
+        } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
+            final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
+            sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString());
+            sBean.setAttributes(ImmutableList.of(attrPolicyAllowed.getAllowedAttributes()));
+        } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
+            final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
+            sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString());
+            sBean.setAttributes(ImmutableMap.copyOf(attrPolicyAllowed.getAllowedAttributes()));
+        }
         return bean;
     }
 }

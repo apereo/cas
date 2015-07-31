@@ -30,10 +30,10 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicyStrategyBea
     private static final long serialVersionUID = 8856759294453881982L;
 
     /**
-     * The enum AlgorithmTypes.
+     * The enum Types.
      */
     public enum Types {
-        /** Refuse type. */
+        /** all type. */
         ALL("all"),
 
         /** Mapped type. */

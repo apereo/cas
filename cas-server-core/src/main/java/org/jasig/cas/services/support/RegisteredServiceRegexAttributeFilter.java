@@ -70,7 +70,7 @@ public final class RegisteredServiceRegexAttributeFilter implements AttributeFil
      *
      * @return the pattern
      */
-    protected Pattern getPattern() {
+    public Pattern getPattern() {
         return this.pattern;
     }
     
