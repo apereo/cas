@@ -33,6 +33,11 @@ public enum RegisteredServiceTypeEditBean {
     CAS("cas"),
 
     /**
+     * CAS type.
+     */
+    OAUTH_CALLBACK_AUTHZ("oauth_callback_authz"),
+
+    /**
      * oauth type.
      */
     OAUTH("oauth");
