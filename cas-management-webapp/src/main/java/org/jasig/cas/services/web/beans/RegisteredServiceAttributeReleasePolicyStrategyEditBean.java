@@ -19,8 +19,6 @@
 
 package org.jasig.cas.services.web.beans;
 
-import com.google.common.collect.ImmutableCollection;
-
 import java.io.Serializable;
 
 /**
@@ -28,13 +26,13 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class RegisteredServiceAttributeReleasePolicyStrategEditBean
+public class RegisteredServiceAttributeReleasePolicyStrategyEditBean
         extends AbstractRegisteredServiceAttributeReleasePolicyStrategyBean implements Serializable {
 
     private static final long serialVersionUID = 6295156552393546070L;
 
     private String type;
-    private ImmutableCollection attributes;
+    private Object attributes;
 
     public String getType() {
         return type;
@@ -44,11 +42,11 @@ public class RegisteredServiceAttributeReleasePolicyStrategEditBean
         this.type = type;
     }
 
-    public ImmutableCollection getAttributes() {
+    public Object getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(final ImmutableCollection attributes) {
+    public void setAttributes(final Object attributes) {
         this.attributes = attributes;
     }
 }
