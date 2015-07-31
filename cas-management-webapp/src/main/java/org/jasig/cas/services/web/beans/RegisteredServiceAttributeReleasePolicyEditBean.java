@@ -26,13 +26,14 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class RegisteredServiceAttributeReleasePolicyEditBean extends RegisteredServiceAttributeReleasePolicyViewBean
+public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractRegisteredServiceAttributeReleasePolicyBean
         implements Serializable {
     private static final long serialVersionUID = -7567470297544895709L;
 
     private String attrFilter;
     private String cachedTimeUnit;
     private long cachedExpiration;
+    private RegisteredServiceAttributeReleasePolicyStrategEditBean attrPolicy;
 
     public String getAttrFilter() {
         return attrFilter;
@@ -56,5 +57,13 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends RegisteredS
 
     public void setCachedExpiration(final long cachedExpiration) {
         this.cachedExpiration = cachedExpiration;
+    }
+
+    public RegisteredServiceAttributeReleasePolicyStrategEditBean getAttrPolicy() {
+        return attrPolicy;
+    }
+
+    public void setAttrPolicy(final RegisteredServiceAttributeReleasePolicyStrategEditBean attrPolicy) {
+        this.attrPolicy = attrPolicy;
     }
 }
