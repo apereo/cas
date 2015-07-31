@@ -30,10 +30,34 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         implements Serializable {
     private static final long serialVersionUID = -7567470297544895709L;
 
+
+    /**
+     * The enum Types.
+     */
+    public enum Types {
+        /** default type. */
+        DEFAULT("default"),
+
+        /** Mapped type. */
+        CACHED("cached");
+
+        private final String value;
+
+        /**
+         * Instantiates a new AlgorithmTypes.
+         *
+         * @param value the value
+         */
+        Types(final String value) {
+            this.value = value;
+        }
+    }
+
     private String attrFilter;
     private String cachedTimeUnit;
     private long cachedExpiration;
-    private RegisteredServiceAttributeReleasePolicyStrategEditBean attrPolicy;
+    private RegisteredServiceAttributeReleasePolicyStrategyEditBean attrPolicy;
+    private String attrOption;
 
     public String getAttrFilter() {
         return attrFilter;
@@ -59,11 +83,19 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         this.cachedExpiration = cachedExpiration;
     }
 
-    public RegisteredServiceAttributeReleasePolicyStrategEditBean getAttrPolicy() {
+    public RegisteredServiceAttributeReleasePolicyStrategyEditBean getAttrPolicy() {
         return attrPolicy;
     }
 
-    public void setAttrPolicy(final RegisteredServiceAttributeReleasePolicyStrategEditBean attrPolicy) {
+    public void setAttrPolicy(final RegisteredServiceAttributeReleasePolicyStrategyEditBean attrPolicy) {
         this.attrPolicy = attrPolicy;
+    }
+
+    public String getAttrOption() {
+        return attrOption;
+    }
+
+    public void setAttrOption(final String attrOption) {
+        this.attrOption = attrOption;
     }
 }
