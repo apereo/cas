@@ -40,12 +40,12 @@ import java.util.List;
  * It also presents the ability to drop an existing collection and start afresh
  * through the use of {@link #setDropCollection(boolean)}.</p>
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.1
  */
 @Repository
 public final class MongoServiceRegistryDao implements ServiceRegistryDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
 
     private static final String MONGODB_COLLECTION_NAME = RegisteredService.class.getSimpleName();
 
