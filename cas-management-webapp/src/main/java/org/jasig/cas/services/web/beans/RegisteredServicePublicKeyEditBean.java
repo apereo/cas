@@ -30,7 +30,7 @@ public class RegisteredServicePublicKeyEditBean implements Serializable {
     private static final long serialVersionUID = 2553270792452015226L;
 
     private String location;
-    private String algorithm;
+    private String algorithm = "RSA";
 
     public String getLocation() {
         return location;

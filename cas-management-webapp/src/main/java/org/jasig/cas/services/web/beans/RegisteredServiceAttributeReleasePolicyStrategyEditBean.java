@@ -31,7 +31,7 @@ public class RegisteredServiceAttributeReleasePolicyStrategyEditBean
 
     private static final long serialVersionUID = 6295156552393546070L;
 
-    private String type;
+    private String type = Types.ALLOWED.toString();
     private Object attributes;
 
     public String getType() {
