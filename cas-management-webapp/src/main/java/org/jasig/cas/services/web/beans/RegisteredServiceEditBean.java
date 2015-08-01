@@ -77,13 +77,13 @@ public class RegisteredServiceEditBean implements Serializable {
     private String description;
     private String logoUrl;
     private String theme;
-    private int evalOrder;
+    private int evalOrder = Integer.MIN_VALUE;
     private List<String> requiredHandlers = new ArrayList<>();
     private String logoutUrl;
     private RegisteredServiceSupportAccessEditBean supportAccess = new RegisteredServiceSupportAccessEditBean();
-    private RegisteredServiceTypeEditBean type = RegisteredServiceTypeEditBean.CAS;
+    private String type = RegisteredServiceTypeEditBean.CAS.toString();
     private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
-    private RegisteredServiceLogoutTypeEditBean logoutType = RegisteredServiceLogoutTypeEditBean.BACK;
+    private String logoutType = RegisteredServiceLogoutTypeEditBean.BACK.toString();
     private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider = new RegisteredServiceUsernameAttributeProviderEditBean();
     private RegisteredServicePublicKeyEditBean publicKey = new RegisteredServicePublicKeyEditBean();
     private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
@@ -170,11 +170,11 @@ public class RegisteredServiceEditBean implements Serializable {
         this.oauth = oauth;
     }
 
-    public RegisteredServiceLogoutTypeEditBean getLogoutType() {
+    public String getLogoutType() {
         return logoutType;
     }
 
-    public void setLogoutType(final RegisteredServiceLogoutTypeEditBean logoutType) {
+    public void setLogoutType(final String logoutType) {
         this.logoutType = logoutType;
     }
 
@@ -186,11 +186,11 @@ public class RegisteredServiceEditBean implements Serializable {
         this.userAttrProvider = userAttrProvider;
     }
 
-    public RegisteredServiceTypeEditBean getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(final RegisteredServiceTypeEditBean type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -270,11 +270,11 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         if (svc instanceof OAuthRegisteredCallbackAuthorizeService) {
-            bean.setType(RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ);
+            bean.setType(RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString());
         }
 
         if (svc instanceof OAuthRegisteredService) {
-            bean.setType(RegisteredServiceTypeEditBean.OAUTH);
+            bean.setType(RegisteredServiceTypeEditBean.OAUTH.toString());
             final OAuthRegisteredService oauth = (OAuthRegisteredService) svc;
             final RegisteredServiceOAuthTypeEditBean oauthBean = bean.getOauth();
             oauthBean.setBypass(oauth.isBypassApprovalPrompt());
@@ -287,13 +287,13 @@ public class RegisteredServiceEditBean implements Serializable {
         final LogoutType logoutType = svc.getLogoutType();
         switch (logoutType) {
             case BACK_CHANNEL:
-                bean.setLogoutType(RegisteredServiceLogoutTypeEditBean.BACK);
+                bean.setLogoutType(RegisteredServiceLogoutTypeEditBean.BACK.toString());
                 break;
             case FRONT_CHANNEL:
-                bean.setLogoutType(RegisteredServiceLogoutTypeEditBean.FRONT);
+                bean.setLogoutType(RegisteredServiceLogoutTypeEditBean.FRONT.toString());
                 break;
             default:
-                bean.setLogoutType(RegisteredServiceLogoutTypeEditBean.NONE);
+                bean.setLogoutType(RegisteredServiceLogoutTypeEditBean.NONE.toString());
                 break;
         }
         final URL url = svc.getLogoutUrl();
@@ -304,11 +304,11 @@ public class RegisteredServiceEditBean implements Serializable {
         final RegisteredServiceUsernameAttributeProviderEditBean uBean = bean.getUserAttrProvider();
 
         if (provider instanceof DefaultRegisteredServiceUsernameProvider) {
-            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT);
+            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString());
         } else if (provider instanceof AnonymousRegisteredServiceUsernameAttributeProvider) {
             final AnonymousRegisteredServiceUsernameAttributeProvider anonymous =
                     (AnonymousRegisteredServiceUsernameAttributeProvider) provider;
-            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS);
+            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString());
             final PersistentIdGenerator generator = anonymous.getPersistentIdGenerator();
             if (generator instanceof ShibbolethCompatiblePersistentIdGenerator) {
                 final ShibbolethCompatiblePersistentIdGenerator sh =
@@ -382,7 +382,6 @@ public class RegisteredServiceEditBean implements Serializable {
                 }
             }
             final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
-
             if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
             } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {

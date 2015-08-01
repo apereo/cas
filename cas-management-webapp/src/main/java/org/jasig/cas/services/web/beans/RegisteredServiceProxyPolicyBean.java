@@ -50,6 +50,11 @@ public class RegisteredServiceProxyPolicyBean implements Serializable {
         Types(final String value) {
             this.value = value;
         }
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
     }
     private String type;
     private String value;
