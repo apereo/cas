@@ -25,12 +25,9 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.jasig.cas.web.view.JsonViewUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,19 +51,7 @@ import java.util.Map;
  * @since 3.1
  */
 @Controller
-public final class ManageRegisteredServicesMultiActionController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManageRegisteredServicesMultiActionController.class);
-
-    /** Ajax request header name to examine for exceptions. */
-    private static final String AJAX_REQUEST_HEADER_NAME = "x-requested-with";
-
-    /** Ajax request header value to examine for exceptions. */
-    private static final String AJAX_REQUEST_HEADER_VALUE = "XMLHttpRequest";
-
-    /** Instance of ServicesManager. */
-    @NotNull
-    private final ServicesManager servicesManager;
-
+public final class ManageRegisteredServicesMultiActionController extends AbstractManagementController{
     @NotNull
     private final Service defaultService;
 
@@ -79,7 +64,7 @@ public final class ManageRegisteredServicesMultiActionController {
     @Autowired
     public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager,
             @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
-        this.servicesManager = servicesManager;
+        super(servicesManager);
         this.defaultService = new SimpleWebApplicationServiceImpl(defaultServiceUrl);
     }
 
@@ -119,7 +104,7 @@ public final class ManageRegisteredServicesMultiActionController {
      */
     @RequestMapping(value="logout.html", method={RequestMethod.GET})
     public String logoutView(final HttpServletRequest request, final HttpSession session) {
-        LOGGER.debug("Invalidating application session...");
+        logger.debug("Invalidating application session...");
         session.invalidate();
         return "logout";
     }
@@ -205,26 +190,5 @@ public final class ManageRegisteredServicesMultiActionController {
         JsonViewUtils.render(response);
     }
 
-    /**
-     * Resolve exception.
-     *
-     * @param request the request
-     * @param response the response
-     * @param ex the ex
-     */
-    @ExceptionHandler
-    public void resolveException(final HttpServletRequest request, final HttpServletResponse response,
-                                 final Exception ex) {
 
-        LOGGER.error(ex.getMessage(), ex);
-        final String contentType = request.getHeader(AJAX_REQUEST_HEADER_NAME);
-        if (contentType != null && contentType.equals(AJAX_REQUEST_HEADER_VALUE)) {
-            LOGGER.debug("Handling exception {} for ajax request indicated by header {}",
-                    ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
-            JsonViewUtils.renderException(ex, response);
-        } else {
-            LOGGER.trace("Unable to resolve exception {} for request. Ajax request header {} not found.",
-                    ex.getClass().getName(), AJAX_REQUEST_HEADER_NAME);
-        }
-    }
 }

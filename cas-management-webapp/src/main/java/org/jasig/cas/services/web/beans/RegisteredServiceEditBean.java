@@ -46,6 +46,10 @@ import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.jasig.services.persondir.support.merger.IAttributeMerger;
+import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
+import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
+import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 
 import javax.cache.expiry.Duration;
 import java.io.Serializable;
@@ -57,6 +61,7 @@ import java.util.List;
 /**
  * Defines the service bean that is produced by the webapp
  * and passed down for edit views.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -64,6 +69,8 @@ public class RegisteredServiceEditBean implements Serializable {
 
     private static final long serialVersionUID = 4882440567964605644L;
 
+    private List<String> availableAttributes = new ArrayList<>();
+    private List<String> availableUsernameAttributes = new ArrayList<>();
     private long assignedId;
     private String serviceId;
     private String name;
@@ -82,6 +89,22 @@ public class RegisteredServiceEditBean implements Serializable {
     private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
     private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
             = new RegisteredServiceAttributeReleasePolicyEditBean();
+
+    public List<String> getAvailableAttributes() {
+        return availableAttributes;
+    }
+
+    public void setAvailableAttributes(final List<String> availableAttributes) {
+        this.availableAttributes = availableAttributes;
+    }
+
+    public List<String> getAvailableUsernameAttributes() {
+        return availableUsernameAttributes;
+    }
+
+    public void setAvailableUsernameAttributes(final List<String> availableUsernameAttributes) {
+        this.availableUsernameAttributes = availableUsernameAttributes;
+    }
 
     public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
         return attrRelease;
@@ -292,7 +315,7 @@ public class RegisteredServiceEditBean implements Serializable {
                         (ShibbolethCompatiblePersistentIdGenerator) generator;
                 uBean.setValue(new String(sh.getSalt(), Charset.defaultCharset()));
             }
-        }  else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
+        } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
             final PrincipalAttributeRegisteredServiceUsernameProvider p =
                     (PrincipalAttributeRegisteredServiceUsernameProvider) provider;
             uBean.setValue(p.getUsernameAttribute());
@@ -300,12 +323,13 @@ public class RegisteredServiceEditBean implements Serializable {
 
         final RegisteredServicePublicKey key = svc.getPublicKey();
         final RegisteredServicePublicKeyEditBean pBean = bean.getPublicKey();
-        pBean.setAlgorithm(key.getAlgorithm());
-        pBean.setLocation(key.getLocation());
-
+        if (key != null) {
+            pBean.setAlgorithm(key.getAlgorithm());
+            pBean.setLocation(key.getLocation());
+        }
         final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
         final RegisteredServiceProxyPolicyBean cBean = bean.getProxyPolicy();
-        if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
+        if (policy == null || policy instanceof RefuseRegisteredServiceProxyPolicy) {
             cBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy regex =
@@ -315,45 +339,61 @@ public class RegisteredServiceEditBean implements Serializable {
         }
 
         final AbstractAttributeReleasePolicy attrPolicy = (AbstractAttributeReleasePolicy) svc.getAttributeReleasePolicy();
-        final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();
+        if (attrPolicy != null) {
+            final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();
 
-        attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
-        attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
+            attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
+            attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
 
-        final AttributeFilter filter = attrPolicy.getAttributeFilter();
-        if (filter != null) {
-            if (filter instanceof RegisteredServiceRegexAttributeFilter) {
-                final RegisteredServiceRegexAttributeFilter regex =
-                        (RegisteredServiceRegexAttributeFilter) filter;
-                attrPolicyBean.setAttrFilter(regex.getPattern().pattern());
+            final AttributeFilter filter = attrPolicy.getAttributeFilter();
+            if (filter != null) {
+                if (filter instanceof RegisteredServiceRegexAttributeFilter) {
+                    final RegisteredServiceRegexAttributeFilter regex =
+                            (RegisteredServiceRegexAttributeFilter) filter;
+                    attrPolicyBean.setAttrFilter(regex.getPattern().pattern());
+                }
             }
-        }
 
-        final PrincipalAttributesRepository pr = attrPolicy.getPrincipalAttributesRepository();
-        if (pr instanceof DefaultPrincipalAttributesRepository) {
-            attrPolicyBean.setAttrOption(
-                    RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
-        } else if (pr instanceof CachingPrincipalAttributesRepository) {
-            attrPolicyBean.setAttrOption(
-                    RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
-            final CachingPrincipalAttributesRepository cc = (CachingPrincipalAttributesRepository) pr;
-            final Duration duration = cc.getDuration();
-            attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
-            attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
-        }
+            final PrincipalAttributesRepository pr = attrPolicy.getPrincipalAttributesRepository();
+            if (pr instanceof DefaultPrincipalAttributesRepository) {
+                attrPolicyBean.setAttrOption(
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
+            } else if (pr instanceof CachingPrincipalAttributesRepository) {
+                attrPolicyBean.setAttrOption(
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
+                final CachingPrincipalAttributesRepository cc = (CachingPrincipalAttributesRepository) pr;
+                final Duration duration = cc.getDuration();
+                attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
+                attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
 
-        final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
+                final IAttributeMerger merger = cc.getMergingStrategy();
 
-        if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
-            sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
-        } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
-            final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
-            sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString());
-            sBean.setAttributes(ImmutableList.of(attrPolicyAllowed.getAllowedAttributes()));
-        } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
-            final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
-            sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString());
-            sBean.setAttributes(ImmutableMap.copyOf(attrPolicyAllowed.getAllowedAttributes()));
+                if (merger != null) {
+                    if (merger instanceof NoncollidingAttributeAdder) {
+                        attrPolicyBean.setMergingStrategy(
+                                RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.ADD.toString());
+                    } else if (merger instanceof MultivaluedAttributeMerger) {
+                        attrPolicyBean.setMergingStrategy(
+                                RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.MULTIVALUED.toString());
+                    } else if (merger instanceof ReplacingAttributeAdder) {
+                        attrPolicyBean.setMergingStrategy(
+                                RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.REPLACE.toString());
+                    }
+                }
+            }
+            final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
+
+            if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
+                sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
+            } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
+                final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
+                sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString());
+                sBean.setAttributes(ImmutableList.of(attrPolicyAllowed.getAllowedAttributes()));
+            } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
+                final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
+                sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString());
+                sBean.setAttributes(ImmutableMap.copyOf(attrPolicyAllowed.getAllowedAttributes()));
+            }
         }
         return bean;
     }

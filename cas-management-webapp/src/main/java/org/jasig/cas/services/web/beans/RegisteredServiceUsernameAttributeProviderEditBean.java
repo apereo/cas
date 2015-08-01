@@ -58,6 +58,11 @@ public class RegisteredServiceUsernameAttributeProviderEditBean implements Seria
         Types(final String value) {
             this.value = value;
         }
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
     }
 
     private String value;
