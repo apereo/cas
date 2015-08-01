@@ -39,11 +39,45 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
             <version>${spring.data.mongo.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.0.3</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Runtime Dependency -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.fakemongo</groupId>
+            <artifactId>fongo</artifactId>
+            <version>2.0.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <properties>
-        <spring.data.mongo.version>1.6.2.RELEASE</spring.data.mongo.version>
+        <spring.data.mongo.version>1.7.2.RELEASE</spring.data.mongo.version>
         <cs.dir>${project.parent.basedir}</cs.dir>
     </properties>
 
