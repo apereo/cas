@@ -19,8 +19,6 @@
 
 package org.jasig.cas.services.web.beans;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.io.Serializable;
 
 /**
