@@ -45,7 +45,7 @@ import java.util.List;
 @Repository
 public final class MongoServiceRegistryDao implements ServiceRegistryDao {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
 
     private static final String MONGODB_COLLECTION_NAME = RegisteredService.class.getSimpleName();
 

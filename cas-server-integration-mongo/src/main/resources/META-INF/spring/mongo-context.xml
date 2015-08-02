@@ -54,7 +54,7 @@
         </mongo:custom-converters>
     </mongo:mapping-converter>
 
-    <bean id="loggerConverter" class="org.jasig.cas.services.MongoLoggerConverter"/>
+    <bean id="loggerConverter" class="org.jasig.cas.services.convert.CASRegisteredServiceMongoConverters"/>
 
     <bean id="mappingContext"
           class="org.springframework.data.mongodb.core.mapping.MongoMappingContext"/>
