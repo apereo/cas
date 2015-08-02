@@ -44,7 +44,7 @@
     </dependencies>
 
     <properties>
-        <yubikey.client.version>2.0.1</yubikey.client.version>
+        <yubikey.client.version>3.0.1</yubikey.client.version>
         <cs.dir>${project.parent.basedir}</cs.dir>
     </properties>
 </project>
