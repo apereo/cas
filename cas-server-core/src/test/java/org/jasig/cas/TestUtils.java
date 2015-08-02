@@ -40,7 +40,6 @@ import org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvide
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
