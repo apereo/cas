@@ -20,10 +20,6 @@
 package org.jasig.cas.adaptors.yubikey;
 
 /**
- * @author Misagh Moayyed
- * @since 4.1
- */
-/**
  * General contract that allows one to determine whether
  * a particular YubiKey account
  * is allowed to participate in the authentication.
