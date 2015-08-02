@@ -163,6 +163,7 @@ public final class TestUtils {
             s.setLogoutType(LogoutType.BACK_CHANNEL);
             s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
             s.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
+
             s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:pub.key", "RSA"));
 
             final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
@@ -173,6 +174,7 @@ public final class TestUtils {
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
             policy.setAllowedAttributes(new ArrayList(getTestAttributes().keySet()));
             s.setAttributeReleasePolicy(policy);
+
             return s;
         } catch (final Exception e) {
             throw new RuntimeException(e);
