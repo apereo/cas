@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services;
 
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -173,5 +174,12 @@ public class AbstractRegisteredServiceTests {
         final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p);
         assertEquals(attr.size(), 1);
         assertTrue(attr.containsKey("newAttr1"));
+    }
+
+    @Test
+    public void verifyServiceEquality() {
+        final RegisteredService svc1 = TestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc2 = TestUtils.getRegisteredService(SERVICEID);
+        assertEquals(svc1, svc2);
     }
 }
