@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
-import java.nio.ByteBuffer;
-
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 
@@ -31,31 +31,44 @@ import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
  * @author Marvin S. Addison
  */
 public abstract class AbstractWebApplicationServiceSerializer<T extends AbstractWebApplicationService>
-        extends SimpleSerializer<T> {
-    /** Kryo instance. **/
-    protected final Kryo kryo;
+        extends Serializer<T> {
     /** FieldHelper instance. **/
     protected final FieldHelper fieldHelper;
 
-    public AbstractWebApplicationServiceSerializer(final Kryo kryo, final FieldHelper helper) {
-        this.kryo = kryo;
+    /**
+     * Instantiates a new abstract web application service serializer.
+     *
+     * @param helper the helper
+     */
+    public AbstractWebApplicationServiceSerializer(final FieldHelper helper) {
         this.fieldHelper = helper;
     }
 
-    public void write(final ByteBuffer buffer, final T service) {
-        kryo.writeObjectData(buffer, service.getId());
-        kryo.writeObject(buffer, fieldHelper.getFieldValue(service, "originalUrl"));
-        kryo.writeObject(buffer, service.getArtifactId());
+    @Override
+    public void write(final Kryo kryo, final Output output, final T service) {
+        kryo.writeObject(output, service.getId());
+        kryo.writeObject(output, fieldHelper.getFieldValue(service, "originalUrl"));
+        kryo.writeObject(output, service.getArtifactId());
     }
 
-    public T read(final ByteBuffer buffer) {
-        return createService(
-                buffer,
-                kryo.readObjectData(buffer, String.class),
-                kryo.readObject(buffer, String.class),
-                kryo.readObject(buffer, String.class));
+    @Override
+    public T read(final Kryo kryo, final Input input, final Class<T> type) {
+        return createService(kryo, input,
+                kryo.readObject(input, String.class),
+                kryo.readObject(input, String.class),
+                kryo.readObject(input, String.class));
     }
 
-    protected abstract T createService(
-            final ByteBuffer buffer, final String id, final String originalUrl, final String artifactId);
+    /**
+     * Creates the service.
+     *
+     * @param kryo the Kryo instance
+     * @param input the input stream representing the serialized object
+     * @param id the id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     * @return the created service instance.
+     */
+    protected abstract T createService(final Kryo kryo, final Input input, final String id,
+                                       final String originalUrl, final String artifactId);
 }
