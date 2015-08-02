@@ -41,13 +41,6 @@
 
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
-    <bean name="fongo" class="com.github.fakemongo.Fongo"
-          c:name="InMemoryMongo" />
-
-    <bean id="mongo" factory-bean="fongo" factory-method="getMongo" />
-
-    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" />
-
     <mongo:mapping-converter>
         <mongo:custom-converters>
             <mongo:converter>
@@ -102,12 +95,14 @@
 
     <bean id="serviceRegistryDao" class="org.jasig.cas.services.MongoServiceRegistryDao" />
 
-    <util:set id="typesToIgnore">
-        <value>org.slf4j.Logger</value>
-        <value>org.apache.commons.logging.Log</value>
-        <value>java.lang.Class</value>
-    </util:set>
-
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
+
+    <!-- Fake inmemory mongo instance -->
+    <bean name="fongo" class="com.github.fakemongo.Fongo"
+          c:name="InMemoryMongo" />
+
+    <bean id="mongo" factory-bean="fongo" factory-method="getMongo" />
+    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" />
+
 </beans>
