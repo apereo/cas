@@ -26,8 +26,8 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="file" fileName="target/rest.log" append="true"
-                     filePattern="rest-%d{yyyy-MM-dd-HH}-%i.log.gz">
+        <RollingFile name="file" fileName="target/mongo.log" append="true"
+                     filePattern="mongo-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -37,10 +37,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="info" additivity="false">
+        <Logger name="org.jasig" level="debug" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.springframework.data" level="info" additivity="false">
+        <Logger name="org.springframework.data" level="debug" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="warn">
