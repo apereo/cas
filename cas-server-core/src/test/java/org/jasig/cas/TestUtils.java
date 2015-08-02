@@ -162,7 +162,7 @@ public final class TestUtils {
             s.setLogo(new URL("https://logo.example.org/logo.png"));
             s.setLogoutType(LogoutType.BACK_CHANNEL);
             s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
-            s.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
+            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
             s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:pub.key", "RSA"));
 
