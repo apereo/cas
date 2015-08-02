@@ -19,6 +19,7 @@
 
 package org.jasig.cas.adaptors.yubikey;
 
+import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
 import com.yubico.client.v2.exceptions.YubicoValidationFailure;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.InitializingBean;
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
 /**
@@ -64,7 +66,8 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
      * @param clientId the client id
      * @param secretKey the secret key
      */
-    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey) {
+    public YubiKeyAuthenticationHandler(@NotNull final Integer clientId,
+                                        @NotNull final String secretKey) {
         this.client = YubicoClient.getClient(clientId, secretKey);
     }
 
@@ -78,8 +81,8 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
      * @param secretKey the secret key
      * @param registry the registry
      */
-    public YubiKeyAuthenticationHandler(final Integer clientId, final String secretKey,
-                                        final YubiKeyAccountRegistry registry) {
+    public YubiKeyAuthenticationHandler(@NotNull final Integer clientId, final String secretKey,
+                                        @NotNull final YubiKeyAccountRegistry registry) {
         this(clientId, secretKey);
         this.registry = registry;
     }
@@ -88,8 +91,8 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
     @PostConstruct
     public void afterPropertiesSet() throws Exception {
         if (this.registry == null) {
-            logger.warn("No YubiKey account registry is defined. All credentials are considered" +
-                    "eligible for YubiKey authentication. Consider providing an account registry via [{}]",
+            logger.warn("No YubiKey account registry is defined. All credentials are considered"
+                    + "eligible for YubiKey authentication. Consider providing an account registry via [{}]",
                     YubiKeyAccountRegistry.class.getName());
         }
     }
@@ -102,9 +105,7 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
      * is mapped to the <code>uid</code> which will be used by the plugged-in instance of the
      * {@link YubiKeyAccountRegistry}
      * and the {@link UsernamePasswordCredential#getPassword()} is the received
-     * one-time password token issued sby the YubiKey device.
-     *
-     * @return true if the authentication succeeds. False, otherwise.
+     * one-time password token issued by the YubiKey device.
      */
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
@@ -119,16 +120,16 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
         }
 
         final String publicId = YubicoClient.getPublicId(otp);
-        if (!this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
+        if (this.registry != null
+              &&!this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
             logger.debug("YubiKey public id [{}] is not registered for user [{}]", publicId, uid);
             throw new AccountNotFoundException("YubiKey id is not recognized in registry");
         }
 
         try {
             final VerificationResponse response = this.client.verify(otp);
-            logger.debug("YubiKey response status {} at {}", response.getStatus(), response.getTimestamp());
-
-            if (response.getStatus().isError()) {
+            if (response.getStatus().compareTo(ResponseStatus.OK) == 0) {
+                logger.debug("YubiKey response status {} at {}", response.getStatus(), response.getTimestamp());
                 return createHandlerResult(transformedCredential,
                         this.principalFactory.createPrincipal(uid), null);
             }
@@ -137,5 +138,9 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
             logger.error(e.getMessage(), e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
+    }
+
+    public YubiKeyAccountRegistry getRegistry() {
+        return registry;
     }
 }
