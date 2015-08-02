@@ -53,7 +53,7 @@ public class MongoServiceRegistryDaoTests {
         final List<RegisteredService> results = this.serviceRegistryDao.load();
         assertEquals(results.size(), list.size());
         for (int i = 0; i < 5; i++) {
-            assertEquals(results.get(i), list.get(i));
+            assertEquals(list.get(i), results.get(i));
         }
         for (int i = 0; i < 5; i++) {
             this.serviceRegistryDao.delete(results.get(i));
