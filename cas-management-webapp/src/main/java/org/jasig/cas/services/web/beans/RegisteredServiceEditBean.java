@@ -387,11 +387,11 @@ public class RegisteredServiceEditBean implements Serializable {
             } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
                 final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString());
-                sBean.setAttributes(ImmutableList.of(attrPolicyAllowed.getAllowedAttributes()));
+                sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
             } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
                 final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString());
-                sBean.setAttributes(ImmutableMap.copyOf(attrPolicyAllowed.getAllowedAttributes()));
+                sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
             }
         }
         return bean;
