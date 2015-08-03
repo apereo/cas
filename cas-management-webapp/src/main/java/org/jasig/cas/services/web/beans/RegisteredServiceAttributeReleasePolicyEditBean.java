@@ -51,7 +51,6 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
             this.value = value;
         }
 
-
         @Override
         public String toString() {
             return this.value;
@@ -59,7 +58,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
     }
 
     /**
-     * The enum Types.
+     * The enum AttributeMergerTypes.
      */
     public enum AttributeMergerTypes {
         /** default type. */
@@ -77,7 +76,7 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         private final String value;
 
         /**
-         * Instantiates a new AlgorithmTypes.
+         * Instantiates a new AttributeMergerTypes.
          *
          * @param value the value
          */
@@ -91,14 +90,13 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         }
     }
 
-
     private String attrFilter;
     private String cachedTimeUnit;
     private long cachedExpiration;
     private RegisteredServiceAttributeReleasePolicyStrategyEditBean attrPolicy =
             new RegisteredServiceAttributeReleasePolicyStrategyEditBean();
-    private String attrOption = Types.DEFAULT.toString();
-    private String mergingStrategy = AttributeMergerTypes.DEFAULT.toString();
+    private String attrOption = Types.DEFAULT.value;
+    private String mergingStrategy = AttributeMergerTypes.DEFAULT.value;
 
     public String getAttrFilter() {
         return attrFilter;
