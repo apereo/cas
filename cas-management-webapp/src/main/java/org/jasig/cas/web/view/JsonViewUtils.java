@@ -46,6 +46,7 @@ public final class JsonViewUtils {
     public static void render(final Object model, final HttpServletResponse response) {
         try {
             final MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+            jsonConverter.setPrettyPrint(true);
             final MediaType jsonMimeType = MediaType.APPLICATION_JSON;
             jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
         } catch (final Exception e) {
