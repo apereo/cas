@@ -64,7 +64,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
 
     private final String cacheName = this.getClass().getSimpleName().concat(UUID.randomUUID().toString());
 
-    private transient Duration duration;
+    private Duration duration;
 
     /**
      * The merging strategy that deals with existing principal attributes
