@@ -30,7 +30,6 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         implements Serializable {
     private static final long serialVersionUID = -7567470297544895709L;
 
-
     /**
      * The enum Types.
      */
@@ -51,13 +50,55 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         Types(final String value) {
             this.value = value;
         }
+
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
     }
+
+    /**
+     * The enum Types.
+     */
+    public enum AttributeMergerTypes {
+        /** default type. */
+        DEFAULT("default"),
+
+        /** replace type. */
+        REPLACE("replace"),
+
+        /** multivalued type. */
+        MULTIVALUED("multivalued"),
+
+        /** add type. */
+        ADD("add");
+
+        private final String value;
+
+        /**
+         * Instantiates a new AlgorithmTypes.
+         *
+         * @param value the value
+         */
+        AttributeMergerTypes(final String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
+    }
+
 
     private String attrFilter;
     private String cachedTimeUnit;
     private long cachedExpiration;
-    private RegisteredServiceAttributeReleasePolicyStrategyEditBean attrPolicy;
-    private String attrOption;
+    private RegisteredServiceAttributeReleasePolicyStrategyEditBean attrPolicy =
+            new RegisteredServiceAttributeReleasePolicyStrategyEditBean();
+    private String attrOption = Types.DEFAULT.toString();
+    private String mergingStrategy = AttributeMergerTypes.DEFAULT.toString();
 
     public String getAttrFilter() {
         return attrFilter;
@@ -97,5 +138,13 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
 
     public void setAttrOption(final String attrOption) {
         this.attrOption = attrOption;
+    }
+
+    public String getMergingStrategy() {
+        return mergingStrategy;
+    }
+
+    public void setMergingStrategy(final String mergingStrategy) {
+        this.mergingStrategy = mergingStrategy;
     }
 }
