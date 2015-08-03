@@ -296,7 +296,12 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
      */
     void refreshServicesManager() {
         final ReloadableServicesManager manager = this.applicationContext.getBean(ReloadableServicesManager.class);
-        manager.reload();
+        if (manager != null) {
+            manager.reload();
+        } else {
+            LOGGER.warn("Services manger could not be obtained from the application context. "
+                + "Service definition may not take immediate effect, which suggests a configuration problem");
+        }
     }
 
     @Override
