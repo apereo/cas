@@ -58,10 +58,15 @@ public class RegisteredServiceUsernameAttributeProviderEditBean implements Seria
         Types(final String value) {
             this.value = value;
         }
+
+        @Override
+        public String toString() {
+            return this.value;
+        }
     }
 
     private String value;
-    private Types type = Types.DEFAULT;
+    private String type = Types.DEFAULT.toString();
 
     public String getValue() {
         return value;
@@ -71,11 +76,11 @@ public class RegisteredServiceUsernameAttributeProviderEditBean implements Seria
         this.value = value;
     }
 
-    public Types getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(final Types type) {
+    public void setType(final String type) {
         this.type = type;
     }
 }
