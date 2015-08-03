@@ -8,7 +8,7 @@ OpenID is an open, decentralized, free framework for user-centric digital identi
 
 CAS supports both the "dumb" and "smart" modes of the OpenID protocol. Dumb mode acts in a similar fashion to the existing CAS protocol. The smart mode differs in that it establishes an association between the client and the openId provider (OP) at the begining. Thanks to that association and the key exchange done during association, information exchanged between the client and the provider are signed and verified using this key. There is no need for the final request (which is equivalent in CAS protocol to the ticket validation).
 
-OpenID identifiers are URIs. The default mechanism in CAS support is an uri ending with the actual user login (ie. http://my.cas.server/openid/*myusername* where the actual user login is *myusername*). This is not recommended and you should think of a more elaborated way of providing URIs to your users.
+OpenID identifiers are URIs. The default mechanism in CAS support is an uri ending with the actual user login (ie. `http://my.cas.server/openid/myusername` where the actual user login id is `myusername`). This is not recommended and you should think of a more elaborated way of providing URIs to your users.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -24,7 +24,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ###Declare the OpenID endpoint
 
-The OpenID discovery endpoint should be enabled during the configuration process. In the *`web.xml`* file, the following mapping must be added:
+The OpenID discovery endpoint should be enabled during the configuration process. In the `web.xml` file, the following mapping must be added:
 
 {% highlight xml %}
 <servlet-mapping>
@@ -33,7 +33,7 @@ The OpenID discovery endpoint should be enabled during the configuration process
 </servlet-mapping>
 {% endhighlight %}
 
-In the *cas-servlet.xml* file, the following mapping and bean must be also added:
+In the `cas-servlet.xml` file, the following mapping and bean must be also added:
 
 {% highlight xml %}
 <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
@@ -53,7 +53,7 @@ In the *cas-servlet.xml* file, the following mapping and bean must be also added
 
 ###Add the OpenID entry in the unique id generator map
 
-The OpenID entry should be added to the *`uniqueIdGenerators.xml`* file:
+The OpenID entry should be added to the `uniqueIdGenerators.xml` file:
 
 {% highlight xml %}
 <util:map id="uniqueIdGeneratorsMap">
@@ -67,7 +67,7 @@ The OpenID entry should be added to the *`uniqueIdGenerators.xml`* file:
 
 ###Update the webflow
 
-CAS uses a spring webflow to describe the the authentication process. We need to change it a little bit to allow CAS to switch to OpenID authentication if it recognizes one. This is done in the *`login-webflow.xml`* file. After the on-start element just add these two blocks:
+CAS uses a spring webflow to describe the authentication process. We need to change it to switch to OpenID authentication if it recognizes one. This is done in the `login-webflow.xml` file. After the on-start element just add these two blocks:
 
 {% highlight xml %}
 <!-- If the request contains a parameter called openid.mode and is not an association request, switch to openId. Otherwise, continue normal webflow. -->
@@ -88,7 +88,7 @@ CAS uses a spring webflow to describe the the authentication process. We need to
 </action-state>
 {% endhighlight %}
 
-The `openIdSingleSignOnAction` is itself defined in the *cas-servlet.xml* file:
+The `openIdSingleSignOnAction` is itself defined in the `cas-servlet.xml` file:
 
 {% highlight xml %}
 <bean id="openIdSingleSignOnAction" 
@@ -99,9 +99,9 @@ The `openIdSingleSignOnAction` is itself defined in the *cas-servlet.xml* file:
 
 ###Enable OpenID in the AuthenticationManager
 
-The authentication manager is the place where authentication takes place. We must provide it two elements needed for a successful OpenId authentication. The first thing to do is to detect the user name from the OpenID identifier. When your CAS server will work as an OP, users will authenticate with an OpenID identifier, looking like this : `http://localhost:8080/cas/openid/*myusername*`. Actually, in your users database, this users login is probably `myusername`. We must provide the CAS server with a way to extract the user principal from the credentials he provides us. This is the first thing we'll do in this section: add an `OpenIdCredentialsToPrincipalResolver` to the authentication manager. The next thing to give CAS is a specialized authentication handler. 
+The authentication manager is the place where authentication takes place. We must provide it two elements needed for a successful OpenId authentication. The first thing to do is to detect the user name from the OpenID identifier. When your CAS server will work as an OP, users will authenticate with an OpenID identifier, looking like this: `http://localhost:8080/cas/openid/myusername`. We must provide the CAS server with a way to extract the user principal from the credentials provided. So add an `OpenIdCredentialsToPrincipalResolver` to the authentication manager. The next thing to give CAS is a specialized authentication handler. 
 
-Open the *`deployerConfigContext.xml`* file, and locate the `authenticationManager` bean definition. It has two properties containing beans. In the credentials to principal property, add this bean definition:
+Open the `deployerConfigContext.xml` file, and locate the `authenticationManager` bean definition. It has two properties containing beans. In the credentials to principal property, add this bean definition:
 
 {% highlight xml %}
 <!-- The openid credentials to principal resolver -->
@@ -112,7 +112,8 @@ Then, in the authentication handler property, add this bean definition:
 
 {% highlight xml %}
 <!-- The open id authentication handler -->
-<bean class="org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler" p:ticketRegistry-ref="ticketRegistry" />
+<bean class="org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler"
+      p:ticketRegistry-ref="ticketRegistry" />
 {% endhighlight %}
 
 
@@ -136,28 +137,7 @@ We now have to make CAS handle the OpenID request that is presented. First, we'l
 </bean>
 {% endhighlight %}
 
-As we gave the order of 2 to the `OpenIdPostUrlHandlerMapping`, we must modify the `FlowHandlerMapping` objects orders to give it an incremented value. The `loginFlowHandlerMapping` order is incremented from 2 to 3:
-
-{% highlight xml %}
-<bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
-   p:flowRegistry-ref="loginFlowRegistry" p:order="3">
-   <property name="interceptors">
-      <ref local="localeChangeInterceptor" />
-   </property>
-</bean>
-{% endhighlight %}
-
-And the `logoutFlowHandlerMapping` order is moved from 3 to 4:
-
-{% highlight xml %}
-<bean id="logoutFlowHandlerMapping" 
-    class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
-    p:flowRegistry-ref="logoutFlowRegistry" p:order="4">
-    <property name="interceptors">
-      <ref local="localeChangeInterceptor" />
-    </property>
-</bean>
-{% endhighlight %}
+The ordering value is important here. You MUST make sure the order of all other handler mappings are incremented.
 
 In the `handlerMappingOpenId`, we referenced a bean called `delegatingController`. This bean delegates the processing of a request to the first controller of its delegates which says it can handle it. So now we'll provide two delegate controllers. The first one is handling the Smart OpenId association, and the second process the authentication and ticket validation. Add this two beans in the file.
 
@@ -192,8 +172,7 @@ We are done with the delegates. Now we must create the Delegating controller its
 
 {% endhighlight %}
 
-Don't forget to include the *`util`* namespace if you don't have it already.
-
+Don't forget to include the `util` Spring namespace if you don't have it already.
 
 ###Add an argument extractor
 
@@ -214,7 +193,7 @@ We must tell cas how to extract the OpenID information from the authentication r
 
 ###Add the server manager
 
-Next we must provide a ServerManager, which is a class from the [`openid4java` library](https://code.google.com/p/openid4java/), which allows us to handle the Diffie-Hellman algorithm used by the association process. In the *`spring-configuration/applicationContext.xml`* file, add this bean definition:
+Next we must provide a `ServerManager`, which is a class from the [`openid4java` library](https://code.google.com/p/openid4java/), which allows us to handle the Diffie-Hellman algorithm used by the association process. In the `spring-configuration/applicationContext.xml` file, add this bean definition:
 
 {% highlight xml %}
 <bean id="serverManager" 
@@ -223,7 +202,7 @@ Next we must provide a ServerManager, which is a class from the [`openid4java` l
    p:enforceRpId="false" />
 {% endhighlight %}
 
-And finally, we need an applicationContext provider in the *`spring-configuration/applicationContext.xml`* file again:
+And finally, we need an applicationContext provider in the `spring-configuration/applicationContext.xml` file again:
 
 {% highlight xml %}
 <bean id="applicationContextProvider" 
@@ -232,7 +211,7 @@ And finally, we need an applicationContext provider in the *`spring-configuratio
 
 ***
 
-#Delegate To an OpenID Provider
+# Delegate To an OpenID Provider
 
 Using the OpenID protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to an OpenID provider.
 
