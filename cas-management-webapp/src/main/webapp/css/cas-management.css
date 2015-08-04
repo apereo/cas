@@ -2279,6 +2279,14 @@ th {
   vertical-align: top;
   border-top: 1px solid #dddddd;
 }
+.table > thead > tr > th.va-middle,
+.table > tbody > tr > th.va-middle,
+.table > tfoot > tr > th.va-middle,
+.table > thead > tr > td.va-middle,
+.table > tbody > tr > td.va-middle,
+.table > tfoot > tr > td.va-middle {
+  vertical-align: middle;
+}
 .table > thead > tr > th {
   vertical-align: bottom;
   border-bottom: 2px solid #dddddd;
