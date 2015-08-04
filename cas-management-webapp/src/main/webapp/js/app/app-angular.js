@@ -62,7 +62,7 @@
     app.factory('sharedFactoryCtrl', [
         '$log',
         function ($log) {
-            var factory = {assignedId: 0};
+            var factory = {assignedId: null};
 
             factory.httpHeaders = {};
             factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
@@ -83,37 +83,44 @@
                 return factory.assignedId;            
             };
 
+            factory.forceReload = function() {
+                $('#homepageUrlAnchor').click();
+            };
+
             return factory;
         }
     ]);
 
 // View Swapper
     app.controller('actionsController', [
+        '$timeout',
         'sharedFactoryCtrl',
-        function (sharedFactory) {
+        function ($timeout, sharedFactory) {
+            var action = this;
+
             this.actionPanel = 'manage';
 
             this.selectAction = function (setAction) {
-                this.actionPanel = setAction;
+                action.actionPanel = setAction;
             };
 
             this.isSelected = function (checkAction) {
-                return this.actionPanel === checkAction;
+                return action.actionPanel === checkAction;
             };
 
             this.homepage = function () {
-                this.selectAction('manage');
+                action.selectAction('manage');
                 sharedFactory.clearItem();
             };
 
             this.serviceAdd = function () {
                 sharedFactory.clearItem();
-                this.selectAction('add');
+                $timeout(function(){ action.selectAction('add'); }, 100);
             };
 
             this.serviceEdit = function (id) {
                 sharedFactory.setItem(id);
-                this.selectAction('edit');
+                $timeout(function(){ action.selectAction('edit'); }, 100);
             };
         }
     ]);
@@ -247,50 +254,52 @@
 
             this.formData = {};
             this.formErrors = null;
+            this.radioWatchBypass = false;
+            this.showOAuthSecret = false;
 
-            // TODO: this.keyMaps // should hold all of the "this.* = [ {} {} {} ];"" below
+            this.selectOptions = {
+                serviceTypeList: [
+                    {name: 'CAS Client',                value: 'cas'},
+                    {name: 'OAuth Client',              value: 'oauth'},
+                    {name: 'OAuth Callback Authorize',  value: 'oauth_callback_authz'}
+                ],
+                logoutTypeList: [
+                    {name: 'None',              value: ''},
+                    {name: '1 - BACK_CHANNEL',  value: 'back'},
+                    {name: '2 - FRONT_CHANNEL', value: 'front'}
+                ],
+                reqHandlerList: [
+                    {name: 'Required Handler 1', value: 'reqHandler01'},
+                    {name: 'Required Handler 2', value: 'reqHandler02'},
+                    {name: 'Required Handler 3', value: 'reqHandler03'},
+                    {name: 'Required Handler 4', value: 'reqHandler04'},
+                    {name: 'Required Handler 5', value: 'reqHandler05'}
+                ],
+                timeUnitsList: [
+                    {name: 'Milliseconds',  value: 'MILLISECONDS'},
+                    {name: 'Seconds',       value: 'SECONDS'},
+                    {name: 'Minutes',       value: 'MINUTES'},
+                    {name: 'Hours',         value: 'HOURS'},
+                    {name: 'Days',          value: 'DAYS'}
+                ],
+                mergeStrategyList: [
+                    {name: 'None',          value: ''},
+                    {name: 'Add',           value: 'ADD'},
+                    {name: 'Multi-Valued',  value: 'MULTI-VALUED'},
+                    {name: 'Replace',       value: 'REPLACE'}
+                ]
+            };
 
-            this.serviceTypeList = [
-                {name: 'CAS Client',    value: 'cas'},
-                {name: 'OAuth Client',  value: 'oauth'}
-            ];
-            this.serviceType = this.serviceTypeList[0];
+            this.isSelected = function(option, selected) {
+                if(!angular.isArray(selected)) {
+                    return option == selected;
+                }
 
-            this.logoutTypeList = [
-                {name: '0 - None',          value: 'none'},
-                {name: '1 - BACK_CHANNEL',  value: 'back'},
-                {name: '2 - FRONT_CHANNEL', value: 'front'}
-            ];
-            this.logoutType = this.logoutTypeList[0];
-
-            this.publicKeyAlgorithmList = [
-                {name: 'RSA', value: 'rsa'}
-            ];
-            this.publicKeyAlgorithm = this.publicKeyAlgorithmList[0];
-
-            this.themeList=[
-                {name: '(No Theme)',    value: ''},
-                {name: 'Theme 01',      value: 'theme01'},
-                {name: 'Theme 02',      value: 'theme02'}
-            ];
-            this.themeType = this.themeList[0];
-
-            this.reqHandlerList = [
-                {name: 'Required Handler 1', value: 'reqHandler01'},
-                {name: 'Required Handler 2', value: 'reqHandler02'},
-                {name: 'Required Handler 3', value: 'reqHandler03'},
-                {name: 'Required Handler 4', value: 'reqHandler04'},
-                {name: 'Required Handler 5', value: 'reqHandler05'}
-            ];
-            this.reqHandler = this.reqHandlerList[0];
-
-            this.timeUnits = [
-                'MILLISECONDS',
-                'SECONDS',
-                'MINUTES',
-                'HOURS',
-                'DAYS'
-            ];
+                angular.forEach(selected, function(opt) {
+                    if(option == opt) return true;
+                });
+                return false;
+            };
 
             this.saveForm = function () {
                 serviceForm.validateForm();
@@ -318,9 +327,13 @@
             };
 
             this.newService = function () {
+                serviceForm.radioWatchBypass = true;
+
+                serviceForm.showOAuthSecret = false;
                 serviceForm.formData = {
+                    assignedId: null,
                     evalOrder: 100,
-                    sas: {casEnabled: true},
+                    supportAccess: {casEnabled: true},
                     userAttrProvider: {type: 'default'},
                     proxyPolicy: {type: 'refuse'},
                     attrRelease: {
@@ -329,25 +342,81 @@
                     }
                 };
                 showInstructions();
+
+                serviceForm.radioWatchBypass = false;
             };
 
-            this.loadService = function (id) {
-                $http.get('js/app/data/service-' + id + '.json') // TODO: fix URL
-                    .success(function (data) {
-                        serviceForm.formData = data[0];
-                        showInstructions();
-                    })
-                    .error(function (xhr, status) {
-                        delayedAlert('notloaded', 'danger', xhr);
+            this.loadService = function (serviceId) {
+                serviceForm.radioWatchBypass = true;
+
+                $http.get('/cas-management/getService.html?id=' + serviceId)
+                    .then(function (response) {
+                        if(response.status != 200) {
+                            delayedAlert('notloaded', 'danger', data);
+                            serviceForm.newService();
+                        }
+                        else if(angular.isString(response.data)) {
+                            sharedFactoryCtrl.forceReload();
+                        }
+                        else {
+                            serviceForm.showOAuthSecret = false;
+                            serviceForm.formData = response.data;
+                            formDataTransformation('load');
+                            showInstructions();
+                        }
                     });
+
+                serviceForm.radioWatchBypass = false;
+            };
+
+            this.isEmpty = function(thing) {
+                if(angular.isArray(thing)) { return  thing.length === 0; }
+                if(angular.isObject(thing)) { return jQuery.isEmptyObject(thing); }
+                return !!thing;
+            };
+
+            // Transform the data so it is ready from/to the form to/from the server.
+            var formDataTransformation = function(dir) {
+                var data = serviceForm.formData;
+
+                switch(data.attrRelease.attrPolicy.type) {
+                    case 'mapped':
+                        if(dir == 'load')
+                            data.attrRelease.attrPolicy.mapped = data.attrRelease.attrPolicy.value;
+                        else
+                            data.attrRelease.attrPolicy.value = data.attrRelease.attrPolicy.mapped;
+                        break;
+                    case 'allowed':
+                        if(dir == 'load')
+                            data.attrRelease.attrPolicy.allowed = data.attrRelease.attrPolicy.value;
+                        else
+                            data.attrRelease.attrPolicy.value = data.attrRelease.attrPolicy.allowed;
+                        break;
+                    default: 
+                        data.attrRelease.attrPolicy.value = null;
+                        break;
+                }
+
+                serviceForm.formData = data;
             };
 
             $scope.$watch(
-                function() { return sharedFactory.serviceId; },
-                function (serviceId) {
+                function() { return sharedFactory.assignedId; },
+                function (assignedId) {
                     serviceForm.alert = null;
-                    if(!serviceId) { serviceForm.newService(); }
-                    else { serviceForm.loadService(serviceId); }
+                    if(!assignedId) { serviceForm.newService(); }
+                    else { serviceForm.loadService(assignedId); }
+                }
+            );
+
+            $scope.$watch(
+                function() {
+                    return serviceForm.formData.userAttrProvider.type;
+                },
+                function () {
+                    if(serviceForm.radioWatchBypass) return;
+                    //$log.debug('userAttrProvider.type changed, so .value cleared');
+                    serviceForm.formData.userAttrProvider.value = '';
                 }
             );
         }
