@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.Map;
 
 /**
@@ -32,5 +36,33 @@ public final class DefaultPrincipalAttributesRepository implements PrincipalAttr
     @Override
     public Map<String, Object> getAttributes(final Principal p) {
         return p.getAttributes();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final DefaultPrincipalAttributesRepository rhs = (DefaultPrincipalAttributesRepository) obj;
+        return new EqualsBuilder()
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 133)
+                .toHashCode();
     }
 }
