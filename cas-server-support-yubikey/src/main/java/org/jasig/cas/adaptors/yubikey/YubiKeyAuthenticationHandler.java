@@ -128,12 +128,13 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
         try {
             final VerificationResponse response = this.client.verify(otp);
-            if (response.getStatus().compareTo(ResponseStatus.OK) == 0) {
-                logger.debug("YubiKey response status {} at {}", response.getStatus(), response.getTimestamp());
+            final ResponseStatus status = response.getStatus();
+            if (status.compareTo(ResponseStatus.OK) == 0) {
+                logger.debug("YubiKey response status {} at {}", status, response.getTimestamp());
                 return createHandlerResult(transformedCredential,
                         this.principalFactory.createPrincipal(uid), null);
             }
-            throw new FailedLoginException("Authentication failed with status: " + response.getStatus());
+            throw new FailedLoginException("Authentication failed with status: " + status);
         } catch (final YubicoVerificationException | YubicoValidationFailure e) {
             logger.error(e.getMessage(), e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
