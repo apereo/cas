@@ -20,6 +20,7 @@ package org.jasig.cas.services;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
@@ -114,7 +115,12 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 133).append(this.attributeFilter).toHashCode();
+        return new HashCodeBuilder(13, 133)
+                .append(this.attributeFilter)
+                .append(this.authorizedToReleaseCredentialPassword)
+                .append(this.authorizedToReleaseProxyGrantingTicket)
+                .append(this.principalAttributesRepository)
+                .toHashCode();
     }
 
     @Override
@@ -132,6 +138,25 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
         }
 
         final AbstractAttributeReleasePolicy that = (AbstractAttributeReleasePolicy) o;
-        return new EqualsBuilder().append(this.attributeFilter, that.attributeFilter).isEquals();
+        final EqualsBuilder builder = new EqualsBuilder();
+        return builder
+                .append(this.attributeFilter, that.attributeFilter)
+                .append(this.authorizedToReleaseCredentialPassword, that.authorizedToReleaseCredentialPassword)
+                .append(this.authorizedToReleaseProxyGrantingTicket, that.authorizedToReleaseProxyGrantingTicket)
+                .append(this.principalAttributesRepository, that.principalAttributesRepository)
+                .isEquals();
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("attributeFilter", attributeFilter)
+                .append("principalAttributesRepository", principalAttributesRepository)
+                .append("authorizedToReleaseCredentialPassword", authorizedToReleaseCredentialPassword)
+                .append("authorizedToReleaseProxyGrantingTicket", authorizedToReleaseProxyGrantingTicket)
+                .toString();
     }
 }
+
+
