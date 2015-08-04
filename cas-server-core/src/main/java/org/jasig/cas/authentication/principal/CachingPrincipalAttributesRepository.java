@@ -19,12 +19,16 @@
 package org.jasig.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
@@ -60,7 +64,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
 
     private final String cacheName = this.getClass().getSimpleName().concat(UUID.randomUUID().toString());
 
-    private transient Duration duration;
+    private Duration duration;
 
     /**
      * The merging strategy that deals with existing principal attributes
@@ -120,7 +124,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param duration the duration
      */
     private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                final Duration duration) {
+                                                 final Duration duration) {
         this(attributeRepository, createCacheConfiguration(duration));
         this.duration = duration;
     }
@@ -132,7 +136,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param config the config
      */
     private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                final MutableConfiguration<String, Map<String, Object>> config) {
+                                                 final MutableConfiguration<String, Map<String, Object>> config) {
         this(attributeRepository, config, Caching.getCachingProvider().getCacheManager());
     }
 
@@ -144,8 +148,8 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param cacheProviderFullClassName the cache provider full class name
      */
     private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                final MutableConfiguration<String, Map<String, Object>> config,
-                                                final String cacheProviderFullClassName) {
+                                                 final MutableConfiguration<String, Map<String, Object>> config,
+                                                 final String cacheProviderFullClassName) {
         this(attributeRepository, config,
                 Caching.getCachingProvider(cacheProviderFullClassName).getCacheManager());
     }
@@ -158,8 +162,8 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param manager the manager
      */
     private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                final MutableConfiguration<String, Map<String, Object>> config,
-                                                final CacheManager manager) {
+                                                 final MutableConfiguration<String, Map<String, Object>> config,
+                                                 final CacheManager manager) {
         this.attributeRepository = attributeRepository;
         this.cache = manager.createCache(this.cacheName, config);
     }
@@ -171,7 +175,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param cache the cache
      */
     private CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                final Cache<String, Map<String, Object>> cache) {
+                                                 final Cache<String, Map<String, Object>> cache) {
         this.attributeRepository = attributeRepository;
         this.cache = cache;
     }
@@ -183,6 +187,10 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      */
     public IPersonAttributeDao getAttributeRepository() {
         return this.attributeRepository;
+    }
+
+    public Duration getDuration() {
+        return this.duration;
     }
 
     public Duration getDuration() {
@@ -233,7 +241,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
      * @param id the principal id that controls the grouping of the attributes in the cache.
      * @param attributes principal attributes to add to the cache
      */
-   private void addPrincipalAttributesIntoCache(final String id, final Map<String, Object> attributes) {
+    private void addPrincipalAttributesIntoCache(final String id, final Map<String, Object> attributes) {
         synchronized (this.cache) {
             if (attributes.isEmpty()) {
 
@@ -337,6 +345,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     @Override
+    @PreDestroy
     public void close() throws IOException {
         this.cache.close();
         this.cache.getCacheManager().close();
@@ -347,4 +356,44 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
         close();
         super.finalize();
     }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("attributeRepository", attributeRepository)
+                .append("cache", cache)
+                .append("cacheName", cacheName)
+                .append("durationTimeUnit", duration.getTimeUnit())
+                .append("durationAmount", duration.getDurationAmount())
+                .append("mergingStrategy", mergingStrategy)
+                .toString();
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final CachingPrincipalAttributesRepository rhs = (CachingPrincipalAttributesRepository) obj;
+        final EqualsBuilder builder = new EqualsBuilder();
+        return builder
+                .append(this.duration, rhs.duration)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 133)
+                .append(duration)
+                .toHashCode();
+    }
+
 }
