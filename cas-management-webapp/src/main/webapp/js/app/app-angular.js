@@ -83,6 +83,10 @@
                 return factory.assignedId;            
             };
 
+            factory.forceReload = function() {
+                $('#homepageUrlAnchor').click();
+            };
+
             return factory;
         }
     ]);
@@ -298,7 +302,6 @@
             };
 
             this.saveForm = function () {
-$log.debug('formData: ', serviceForm.formData);
                 serviceForm.validateForm();
 
                 if(serviceForm.formErrors) {
@@ -343,28 +346,58 @@ $log.debug('formData: ', serviceForm.formData);
                 serviceForm.radioWatchBypass = false;
             };
 
-            this.loadService = function (id) {
-                var ids = [11234, 43021, 90432];
-                id = ids[Math.floor( Math.random() * 3 )];
-
+            this.loadService = function (serviceId) {
                 serviceForm.radioWatchBypass = true;
-                $http.get('js/app/data/service-' + id + '.json') // TODO: fix URL
-                    .success(function (data, status) {
-                        // TODO: Check if needed once switched to actual URL...
-                        if(status != 200) {
+
+                $http.get('/cas-management/getService.html?id=' + serviceId)
+                    .then(function (response) {
+                        if(response.status != 200) {
                             delayedAlert('notloaded', 'danger', data);
                             serviceForm.newService();
                         }
+                        else if(angular.isString(response.data)) {
+                            sharedFactoryCtrl.forceReload();
+                        }
                         else {
                             serviceForm.showOAuthSecret = false;
-                            serviceForm.formData = data[0];
+                            serviceForm.formData = response.data;
+                            formDataTransformation('load');
                             showInstructions();
                         }
-                    })
-                    .error(function (xhr, status) {
-                        delayedAlert('notloaded', 'danger', xhr);
                     });
+
                 serviceForm.radioWatchBypass = false;
+            };
+
+            this.isEmpty = function(thing) {
+                if(angular.isArray(thing)) { return  thing.length === 0; }
+                if(angular.isObject(thing)) { return jQuery.isEmptyObject(thing); }
+                return !!thing;
+            };
+
+            // Transform the data so it is ready from/to the form to/from the server.
+            var formDataTransformation = function(dir) {
+                var data = serviceForm.formData;
+
+                switch(data.attrRelease.attrPolicy.type) {
+                    case 'mapped':
+                        if(dir == 'load')
+                            data.attrRelease.attrPolicy.mapped = data.attrRelease.attrPolicy.value;
+                        else
+                            data.attrRelease.attrPolicy.value = data.attrRelease.attrPolicy.mapped;
+                        break;
+                    case 'allowed':
+                        if(dir == 'load')
+                            data.attrRelease.attrPolicy.allowed = data.attrRelease.attrPolicy.value;
+                        else
+                            data.attrRelease.attrPolicy.value = data.attrRelease.attrPolicy.allowed;
+                        break;
+                    default: 
+                        data.attrRelease.attrPolicy.value = null;
+                        break;
+                }
+
+                serviceForm.formData = data;
             };
 
             $scope.$watch(
@@ -377,10 +410,12 @@ $log.debug('formData: ', serviceForm.formData);
             );
 
             $scope.$watch(
-                function() { return serviceForm.formData.userAttrProvider.type; },
+                function() {
+                    return serviceForm.formData.userAttrProvider.type;
+                },
                 function () {
                     if(serviceForm.radioWatchBypass) return;
-                    $log.debug('userAttrProvider.type changed, so .value cleared');
+                    //$log.debug('userAttrProvider.type changed, so .value cleared');
                     serviceForm.formData.userAttrProvider.value = '';
                 }
             );

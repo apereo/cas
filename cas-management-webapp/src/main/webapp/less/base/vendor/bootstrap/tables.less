@@ -29,11 +29,8 @@ th {
   > tfoot {
     > tr {
       > th,
-      > td {
-        padding: @table-cell-padding;
-        line-height: @line-height-base;
-        vertical-align: top;
-        border-top: 1px solid @table-border-color;
+      > td {padding: @table-cell-padding; line-height: @line-height-base; vertical-align: top; border-top: 1px solid @table-border-color;
+        &.va-middle {vertical-align: middle;}
       }
     }
   }

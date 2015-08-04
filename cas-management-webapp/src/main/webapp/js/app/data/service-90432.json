@@ -1,5 +1,15 @@
 [
     {
+        "availableAttributes" : [
+            "eduPersonAffiliation",
+            "groupMembership",
+            "uid"
+        ],
+        "availableUsernameAttributes" : [
+            "eduPersonAffiliation",
+            "groupMembership",
+            "uid"
+        ],
         "assignedId": 90432,
         "supportAccess": {
             "casEnabled": true,

@@ -387,17 +387,10 @@
                                     <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.uap.usernameAttribute" />"></i>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="uapUsernameAttribute" ng-model="serviceFormCtrl.formData.userAttrProvider.value">
-<!--                                
                                     <select class="form-control" id="uapUsernameAttribute" ng-model="serviceFormCtrl.formData.userAttrProvider.value">
-<%-- TODO: Make this work. --%>
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
+                                        <option ng-repeat="opt in serviceFormCtrl.formData.availableUsernameAttribute" value="{{ opt }}"
+                                            ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.formData.userAttrProvider.value)">{{ opt }}</option>
                                     </select>
--->
                                 </div>
                             </div>
                         </div><%-- end .panel-body div --%>
@@ -477,7 +470,6 @@
                                     <div class="input-group">
                                         <div class="input-group-addon input-group-required"><i class="fa fa-lg fa-exclamation-triangle"></i></div>
                                         <input type="text" class="form-control" id="proxyPolicyRegex" ng-model="serviceFormCtrl.formData.proxyPolicy.value">
-                                        <div class="input-group-addon">(.*)</div>
                                     </div>
                                 </div>
                             </div><%-- end .form-group div --%>
@@ -522,7 +514,6 @@
                                 <div class="col-sm-8">
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="attFilter" ng-model="serviceFormCtrl.formData.attrRelease.attrFilter">
-                                        <div class="input-group-addon">(.*)</div>
                                     </div>
                                 </div>
                             </div>
@@ -590,7 +581,7 @@
                                             </label>
                                             <div class="col-sm-8">
                                                 <div class="input-group">
-                                                    <select class="form-control" id="mergeStrategy" ng-model="serviceFormCtrl.formData.attrRelease.mergeStrategy">
+                                                    <select class="form-control" id="mergeStrategy" ng-model="serviceFormCtrl.formData.attrRelease.mergingStrategy">
                                                         <option ng-repeat="opt in serviceFormCtrl.selectOptions.mergeStrategyList" value="{{ opt.value }}"
                                                             ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.formData.attrRelease.mergeStrategy)">{{ opt.name }}</option>
                                                     </select>
@@ -633,29 +624,27 @@
                                     </div><%-- end .radio-group div --%>
 
                                     <!-- Attribute Release Policies Return All Option -->
-                                    <div class="well well-sm" ng-show="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'all'">
+                                    <div class="well well-sm" ng-show="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'all' || serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
                                         <spring:message code="management.services.service.noAction" />
                                     </div>
 
                                     <!-- Attribute Release Policies Return Allowed Option -->
-                                    <div class="form-group" ng-show="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'allowed'">
+                                    <div class="form-group" ng-show="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'allowed' && !serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
                                         <label class="col-sm-3" for="returnAllowed">
                                             <spring:message code="services.form.label.attrRelease.policies.returnAllowed" />
                                             <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.policies.returnAllowed" />"></i>
                                         </label>
                                         <div class="col-sm-9">
-                                            <select multiple class="form-control" id="returnedAllowedMultiselect"
-                                                ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.value"
-                                                ng-options="">
-<%-- TODO: Make this work. --%>
+                                            <select multiple class="form-control" id="returnedAllowed" ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.allowed">
+                                                <option ng-repeat="opt in serviceFormCtrl.formData.availableAttributes" value="{{ opt }}"
+                                                    ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.formData.attrRelease.attrPolicy.allowed)">{{ opt }}</option>
                                             </select>
                                         </div>
                                     </div>
 
                                     <!-- Attribute Release Policies Return Mapped Option -->
-                                    <div class="panel panel-default" ng-show="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'mapped'">
-                                        <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed">
-<%-- TODO: Make this work. --%>
+                                    <div class="panel panel-default" ng-show="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'mapped' && !serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
+                                        <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed" >
                                             <thead>
                                                 <tr>
                                                     <th class="col-md-4"><spring:message code="services.form.label.attrRelease.policies.sourceAttribute" /></th>
@@ -666,17 +655,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>Attribute 1</td>
-                                                    <td><input class="form-control input-sm"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Attribute 2</td>
-                                                    <td><input class="form-control input-sm"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Attribute 3</td>
-                                                    <td><input class="form-control input-sm"></td>
+                                                <tr ng-repeat="mappedValue in serviceFormCtrl.formData.availableAttributes">
+                                                    <td class="va-middle">{{ mappedValue }}</td>
+                                                    <td><input ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.mapped[ mappedValue ]" type="text" class="form-control input-sm" /></td>
                                                 </tr>
                                             </tbody>
                                         </table>
