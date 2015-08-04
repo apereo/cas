@@ -37,7 +37,6 @@ import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
-import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
