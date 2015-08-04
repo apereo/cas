@@ -268,13 +268,6 @@
                     {name: '1 - BACK_CHANNEL',  value: 'back'},
                     {name: '2 - FRONT_CHANNEL', value: 'front'}
                 ],
-                reqHandlerList: [
-                    {name: 'Required Handler 1', value: 'reqHandler01'},
-                    {name: 'Required Handler 2', value: 'reqHandler02'},
-                    {name: 'Required Handler 3', value: 'reqHandler03'},
-                    {name: 'Required Handler 4', value: 'reqHandler04'},
-                    {name: 'Required Handler 5', value: 'reqHandler05'}
-                ],
                 timeUnitsList: [
                     {name: 'Milliseconds',  value: 'MILLISECONDS'},
                     {name: 'Seconds',       value: 'SECONDS'},
@@ -283,7 +276,7 @@
                     {name: 'Days',          value: 'DAYS'}
                 ],
                 mergeStrategyList: [
-                    {name: 'None',          value: ''},
+                    {name: 'Default',       value: 'DEFAULT'},
                     {name: 'Add',           value: 'ADD'},
                     {name: 'Multi-Valued',  value: 'MULTI-VALUED'},
                     {name: 'Replace',       value: 'REPLACE'}
@@ -301,12 +294,24 @@
                 return false;
             };
 
+            this.isEmpty = function(thing) {
+                if(angular.isArray(thing)) { return  thing.length === 0; }
+                if(angular.isObject(thing)) { return jQuery.isEmptyObject(thing); }
+                return !thing;
+            };
+
+
             this.saveForm = function () {
                 serviceForm.validateForm();
 
-                if(serviceForm.formErrors) {
+                if(serviceForm.formErrors.length !== 0) {
                     delayedAlert('notvalid', 'danger', serviceForm.formErrors);
+                    angular.forEach(serviceForm.formErrors, function(fieldId) {
+                        $('#'+fieldId).addClass('required-missing');
+                    });
                     return;
+                } else {
+                    $('.service-editor input, .service-editor select, .service-editor textarea').removeClass('required-missing');
                 }
 
                 $http.post('/cas-management/forcedError', serviceForm.formData)  // TODO: fix this call
@@ -320,10 +325,27 @@
             };
 
             this.validateForm = function () {
-                serviceForm.formErrors = null;
+                serviceForm.formErrors = [];
 
-                // TODO: actual testing goes here
-                serviceForm.formErrors = ['form not yet working'];
+                // Service Basics
+                if(!serviceForm.formData.serviceId)
+                    serviceForm.formErrors.push('serviceId');
+                if(!serviceForm.formData.name)
+                    serviceForm.formErrors.push('serviceName');
+                if(!serviceForm.formData.description)
+                    serviceForm.formErrors.push('serviceDesc');
+                if(!serviceForm.formData.type)
+                    serviceForm.formErrors.push('serviceType');
+                // Principle Attribute Repository Options
+                if(serviceForm.formData.attrRelease.attrOption == 'cached' && !serviceForm.formData.attrRelease.cachedTimeUnit)
+                    serviceForm.formErrors.push('cachedTime');
+                if(serviceForm.formData.attrRelease.attrOption == 'cached' && !serviceForm.formData.attrRelease.mergingStrategy)
+                    serviceForm.formErrors.push('mergeStrategy');
+                // Attribute Policy Options
+                if(serviceForm.formData.userAttrProvider.value == 'anon' && !serviceForm.formData.userAttrProvider.value)
+                    serviceForm.formErrors.push('uapSaltSetting');
+                if(serviceForm.formData.proxyPolicy.type == 'regex' && !serviceForm.formData.proxyPolicy.value)
+                    serviceForm.formErrors.push('proxyPolicyRegex');
             };
 
             this.newService = function () {
@@ -333,6 +355,8 @@
                 serviceForm.formData = {
                     assignedId: null,
                     evalOrder: 100,
+                    logoutType: '',
+                    publicKey: {algorithm: 'RSA'},
                     supportAccess: {casEnabled: true},
                     userAttrProvider: {type: 'default'},
                     proxyPolicy: {type: 'refuse'},
@@ -367,12 +391,6 @@
                     });
 
                 serviceForm.radioWatchBypass = false;
-            };
-
-            this.isEmpty = function(thing) {
-                if(angular.isArray(thing)) { return  thing.length === 0; }
-                if(angular.isObject(thing)) { return jQuery.isEmptyObject(thing); }
-                return !!thing;
             };
 
             // Transform the data so it is ready from/to the form to/from the server.

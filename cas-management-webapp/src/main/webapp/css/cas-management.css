@@ -6740,6 +6740,11 @@ html {
 .casmgmt-app .casmgmt-form .services-button-group .btn + .btn {
   margin-left: 20px;
 }
+.casmgmt-app #serviceForm input.required-missing,
+.casmgmt-app #serviceForm textarea.required-missing,
+.casmgmt-app #serviceForm select.required-missing {
+  background-color: #ff9999;
+}
 .casmgmt-app .search-form .search-clear {
   pointer-events: auto;
   text-decoration: none;
