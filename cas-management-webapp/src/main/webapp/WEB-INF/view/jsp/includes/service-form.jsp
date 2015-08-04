@@ -259,10 +259,7 @@
                                 <spring:message code="services.form.label.requiredHandlers" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.requiredHandlers" />"></i>
                             </label>
                             <div class="col-sm-7">
-                                <select multiple class="form-control" id="reqHandler" ng-model="serviceFormCtrl.formData.requiredHandlers">
-                                    <option ng-repeat="opt in serviceFormCtrl.selectOptions.reqHandlerList" value="{{ opt.value }}"
-                                        ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.formData.requiredHandlers)">{{ opt.name }}</option>
-                                </select>
+                                <textarea ng-model="serviceFormCtrl.formData.requiredHandlers"></textarea>
                             </div>
                         </div>
                     </div>
@@ -300,27 +297,19 @@
                                     title="<spring:message code="services.form.tooltip.sas.requiredAttr" />"></i>
                             </label>
                             <div class="panel panel-default">
-<%-- TODO: Make this work with the form. --%>
                                 <table id="sasMapTable" class="table table-striped table-hover table-responsive table-condensed">
                                     <thead>
                                         <tr>
-<%-- TODO: Change these table header labels. --%>
+<%-- TODO: Do these headers need changing? --%>
                                             <th class="col-md-6"><spring:message code="services.form.label.attrRelease.policies.sourceAttribute" /></th>
                                             <th class="col-md-6"><spring:message code="services.form.label.attrRelease.policies.casAttribute" /></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>Attribute 1</td>
-                                            <td><input class="form-control input-sm"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Attribute 2</td>
-                                            <td><input class="form-control input-sm"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Attribute 3</td>
-                                            <td><input class="form-control input-sm"></td>
+<%-- TODO: Fix this to the proper variable. --%>
+                                        <tr ng-repeat="mappedValue in serviceFormCtrl.formData.availableAttributes">
+                                            <td class="va-middle">{{ mappedValue }}</td>
+                                            <td><input ng-model="serviceFormCtrl.formData.supportAccess.requiredAttr[ mappedValue ]" type="text" class="form-control input-sm" /></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -388,7 +377,7 @@
                                 </label>
                                 <div class="col-sm-8">
                                     <select class="form-control" id="uapUsernameAttribute" ng-model="serviceFormCtrl.formData.userAttrProvider.value">
-                                        <option ng-repeat="opt in serviceFormCtrl.formData.availableUsernameAttribute" value="{{ opt }}"
+                                        <option ng-repeat="opt in serviceFormCtrl.formData.availableUsernameAttributes" value="{{ opt }}"
                                             ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.formData.userAttrProvider.value)">{{ opt }}</option>
                                     </select>
                                 </div>
@@ -610,7 +599,8 @@
                                         <label class="radio-inline">
                                             <input type="radio" name="policiesReturnAllowed" id="policiesReturnAllowed" value="allowed"
                                                 ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.type"
-                                                ng-checked="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'allowed'" />
+                                                ng-checked="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'allowed'"
+                                                ng-dsiabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
                                             <spring:message code="services.form.label.attrRelease.policies.returnAllowed" />
                                         </label>
 
@@ -618,7 +608,8 @@
                                         <label class="radio-inline">
                                             <input type="radio" name="policiesReturnMapped" id="policiesReturnMapped" value="mapped"
                                                 ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.type"
-                                                ng-checked="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'mapped'" />
+                                                ng-checked="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'mapped'"
+                                                ng-dsiabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
                                             <spring:message code="services.form.label.attrRelease.policies.returnMapped" />
                                         </label>
                                     </div><%-- end .radio-group div --%>
