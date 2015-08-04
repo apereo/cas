@@ -50,10 +50,10 @@
                 <bean class="org.jasig.cas.services.convert.Converters.ClassConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.jasig.cas.services.convert.Converters.CommonsLogConveter"/>
+                <bean class="org.jasig.cas.services.convert.Converters.CommonsLogConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.jasig.cas.services.convert.Converters$PersonAttributesConveter"/>
+                <bean class="org.jasig.cas.services.convert.Converters.PersonAttributesConverter"/>
             </mongo:converter>
             <mongo:converter>
                 <bean class="org.jasig.cas.services.convert.Converters.MutableConfigurationConverter"/>
