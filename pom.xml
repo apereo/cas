@@ -1393,6 +1393,7 @@
         <module>cas-management-webapp</module>
         <module>cas-server-support-rest</module>
         <module>cas-server-integration-hazelcast</module>
+        <module>cas-server-integration-mongo</module>
     </modules>
 
     <reporting>
