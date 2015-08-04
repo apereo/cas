@@ -64,7 +64,7 @@ This project includes:
   Inspektr - Spring Framework Support under Apache 2.0 License
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
-  jackson-databind under The Apache Software License, Version 2.0 or Lesser Gnu Public License (LGPL), Version 2.1
+  jackson-databind under The Apache Software License, Version 2.0
   Jasig CAS - Uber WAR under Apache 2
   Jasig CAS ClearPass Extension under Apache 2
   Jasig CAS Client for Java - Core under Apache License Version 2.0
@@ -113,15 +113,16 @@ This project includes:
   jstl under Commons Development and Distribution License, Version 1.0
   JUL to SLF4J bridge under MIT License
   JUnit under Common Public License Version 1.0
-  kryo under BSD style
+  Kryo under New BSD License
+  kryo serializers under The Apache Software License, Version 2.0
   Lang under The Apache Software License, Version 2.0
   LDAPTIVE under Apache 2 or GNU Lesser General Public License
   Logging under The Apache Software License, Version 2.0
-  minlog under BSD style
+  MinLog under New BSD License
   Mockito under The MIT License
   MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
   Not Yet Commons SSL under Apache License v2
-  Objenesis under MIT License
+  Objenesis under Apache 2
   OpenID4Java no dependencies under Apache 2
   OpenSAML-J under Apache 2
   OpenWS under Apache 2
@@ -131,8 +132,9 @@ This project includes:
   Perf4J under Apache 2
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
+  Protocol Buffer Java API under New BSD license
   quartz under The Apache Software License, Version 2.0
-  reflectasm under BSD style
+  ReflectASM under New BSD License
   Restlet Core - API and Engine under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
   Restlet Extension - Servlet under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
   Restlet Extension - SLF4J under Apache 2.0 license or LGPL 3.0 license or LGPL 2.1 license or CDDL 1.0 license or EPL 1.0 license
