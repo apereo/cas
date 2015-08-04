@@ -54,22 +54,28 @@
 		<dependency>
 			<groupId>net.spy</groupId>
 			<artifactId>spymemcached</artifactId>
-			<version>2.9.1</version>
+			<version>2.11.7</version>
 		</dependency>
 
-    <dependency>
-      <groupId>com.googlecode</groupId>
-      <artifactId>kryo</artifactId>
-      <version>1.04</version>
-    </dependency>
+        <dependency>
+            <groupId>de.javakaffee</groupId>
+            <artifactId>kryo-serializers</artifactId>
+            <version>0.33</version>
+        </dependency>
 
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>1.9.0</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-core</artifactId>
+          <version>1.9.0</version>
+          <scope>test</scope>
+        </dependency>
 
 	</dependencies>
 
