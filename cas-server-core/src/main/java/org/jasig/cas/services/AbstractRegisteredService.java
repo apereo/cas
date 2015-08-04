@@ -215,7 +215,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
         final AbstractRegisteredService that = (AbstractRegisteredService) o;
 
-        return new EqualsBuilder()
+        final EqualsBuilder builder = new EqualsBuilder();
+        return builder
                 .append(this.proxyPolicy, that.proxyPolicy)
                 .append(this.evaluationOrder, that.evaluationOrder)
                 .append(this.description, that.description)
@@ -228,6 +229,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.accessStrategy, that.accessStrategy)
                 .append(this.logo, that.logo)
                 .append(this.publicKey, that.publicKey)
+                .append(this.logoutUrl, that.logoutUrl)
+                .append(this.requiredHandlers, that.requiredHandlers)
                 .isEquals();
     }
 
@@ -246,6 +249,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.accessStrategy)
                 .append(this.logo)
                 .append(this.publicKey)
+                .append(this.logoutUrl)
+                .append(this.requiredHandlers)
                 .toHashCode();
     }
 
@@ -349,6 +354,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setAccessStrategy(source.getAccessStrategy());
         this.setLogo(source.getLogo());
         this.setPublicKey(source.getPublicKey());
+        this.setLogoutUrl(source.getLogoutUrl());
+        this.setPublicKey(source.getPublicKey());
+        this.setRequiredHandlers(source.getRequiredHandlers());
+
     }
 
     /**
@@ -383,6 +392,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("publicKey", this.publicKey);
         toStringBuilder.append("proxyPolicy", this.proxyPolicy);
         toStringBuilder.append("logo", this.logo);
+        toStringBuilder.append("logoutUrl", this.logoutUrl);
+        toStringBuilder.append("requiredHandlers", this.requiredHandlers);
 
         return toStringBuilder.toString();
     }
