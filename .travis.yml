@@ -25,6 +25,7 @@
 #
 
 language: java
+sudo: false
 branches:
   only:
   - 4.0.x
@@ -33,10 +34,13 @@ cache:
   - $HOME/.m2
 jdk:
 - openjdk7
+cache:
+  directories:
+    - '$HOME/.m2/repository'
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
-script: mvn package site site:stage -q -ff -B -DskipTests=true -Dcheckstyle.skip=true
+script: mvn -T 10 package site site:stage -q -ff -B -DskipTests=true -Dcheckstyle.skip=true
 before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
