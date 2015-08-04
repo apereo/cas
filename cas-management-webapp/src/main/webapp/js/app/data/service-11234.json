@@ -45,6 +45,7 @@
             "attrOption": "default",
             "cachedTimeUnit": null,
             "cachedExpiration": null,
+            "mergingStrategy" : null,
             "attrPolicy": {
                 "type": "all",
                 "attributes": {}
