@@ -12,11 +12,11 @@
         "serviceId": "https://hello.+",
         "name": "Apereo",
         "description": "The Aperep service for authentication.",
-        "type": 0,
+        "type": null,
         "oauth": {
             "clientSecret": "",
             "clientId": "",
-            "bypass": 0
+            "bypass": false
         },
         "theme": "theme01",
         "evalOrder": 1,
@@ -45,6 +45,7 @@
             "attrOption": "default",
             "cachedTimeUnit": null,
             "cachedExpiration": null,
+            "mergingStrategy" : null,
             "attrPolicy": {
                 "type": "all",
                 "attributes": {}
