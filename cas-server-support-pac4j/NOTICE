@@ -35,7 +35,7 @@ This project includes:
   Inspektr - Common API under Apache 2.0 License
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
-  jackson-databind under The Apache Software License, Version 2.0 or Lesser Gnu Public License (LGPL), Version 2.1
+  jackson-databind under The Apache Software License, Version 2.0
   Jasig CAS Client Protocols Support using pac4j under Apache 2
   Jasig CAS Core under Apache 2
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
