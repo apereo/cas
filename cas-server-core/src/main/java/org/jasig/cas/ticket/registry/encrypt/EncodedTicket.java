@@ -20,10 +20,13 @@
 package org.jasig.cas.ticket.registry.encrypt;
 
 
+import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+
+import java.io.IOException;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -49,9 +52,13 @@ public final class EncodedTicket implements Ticket {
      * @param encodedTicket the encoded ticket
      * @param encodedTicketId the encoded ticket id
      */
-    public EncodedTicket(final byte[] encodedTicket, final String encodedTicketId) {
-        this.id = encodedTicketId;
-        this.encodedTicket = encodedTicket;
+    public EncodedTicket(final ByteSource encodedTicket, final String encodedTicketId) {
+        try {
+            this.id = encodedTicketId;
+            this.encodedTicket = encodedTicket.read();
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
