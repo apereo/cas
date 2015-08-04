@@ -27,7 +27,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cas-server-integration-hazelcast</artifactId>
     <packaging>jar</packaging>
-    <name>Apereo CAS Hazelcast Ticket Registry implementation</name>
+    <name>Apereo CAS Hazelcast Integration</name>
 
     <dependencies>
         <dependency>
