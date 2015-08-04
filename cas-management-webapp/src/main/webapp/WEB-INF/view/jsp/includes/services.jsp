@@ -170,7 +170,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="serviceTableCtrl.closeModalDelete();">Cancel</button>
-                    <button type="button" class="btn btn-danger btn-ok" ng-click="serviceTableCtrl.deleteService( serviceTableCtrl.modalItem )">Delete</a>
+                    <button type="button" class="btn btn-danger btn-ok" ng-click="serviceTableCtrl.deleteService( serviceTableCtrl.modalItem )">Delete</button>
                 </div>
             </div>
         </div>

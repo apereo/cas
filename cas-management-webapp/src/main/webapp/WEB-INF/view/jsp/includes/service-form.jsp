@@ -61,11 +61,11 @@
                             </label>
                             <div class="col-sm-1">
                                 <div class="checkbox checkbox-inline">
-                                    <input type="checkbox" id="casEnabled" ng-model="serviceFormCtrl.sas.casEnabled" />
+                                    <input type="checkbox" id="casEnabled" ng-model="serviceFormCtrl.formData.supportAccess.casEnabled" />
                                 </div>
                             </div>
                             <div class="col-sm-8">
-                                <div class="alert alert-danger" role="alert" ng-if="!serviceFormCtrl.sas.casEnabled">
+                                <div class="alert alert-danger" role="alert" ng-if="!serviceFormCtrl.formData.supportAccess.casEnabled">
                                     <p>
                                         <i class="fa fa-lg fa-info-circle"></i>
                                         <spring:message code="services.form.warning.casDisabled" />
@@ -85,7 +85,7 @@
                     <div class="col-sm-9">
                         <div class="input-group">
                             <div class="input-group-addon input-group-required" title="<spring:message code="services.form.required" />"><i class="fa fa-exclamation-triangle"></i></div>
-                            <input type="text" class="form-control" id="serviceId" ng-model="serviceFormCtrl.serviceId">
+                            <input type="text" class="form-control" id="serviceId" ng-model="serviceFormCtrl.formData.serviceId">
                         </div>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                     <div class="col-sm-9">
                         <div class="input-group">
                             <div class="input-group-addon input-group-required" title="<spring:message code="services.form.required" />"><i class="fa fa-exclamation-triangle"></i></div>
-                            <input type="text" class="form-control" id="serviceName" ng-model="serviceFormCtrl.serviceName">
+                            <input type="text" class="form-control" id="serviceName" ng-model="serviceFormCtrl.formData.name">
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
                     <div class="col-sm-9">
                         <div class="input-group">
                             <div class="input-group-addon input-group-required" title="<spring:message code="services.form.required" />"><i class="fa fa-exclamation-triangle"></i></div>
-                            <textarea class="form-control" rows="5" id="serviceDesc" ng-model="serviceFormCtrl.serviceDesc"></textarea>
+                            <textarea class="form-control" rows="5" id="serviceDesc" ng-model="serviceFormCtrl.formData.description"></textarea>
                         </div>
                     </div>
                 </div>
@@ -127,13 +127,16 @@
                     <div class="col-sm-9">
                         <div class="input-group">
                             <div class="input-group-addon input-group-required" title="<spring:message code="services.form.required" />"><i class="fa fa-exclamation-triangle"></i></div>
-                            <select class="form-control" id="serviceType" ng-model="serviceFormCtrl.serviceType" ng-options="type.name for type in serviceFormCtrl.serviceTypeList"></select>
+                            <select class="form-control" id="serviceType" ng-model="serviceFormCtrl.formData.type">
+                                <option ng-repeat="opt in serviceFormCtrl.selectOptions.serviceTypeList" value="{{ opt.value }}"
+                                    ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.formData.type)">{{ opt.name }}</option>
+                            </select>
                         </div>
                     </div>
                 </div>
 
                 <!-- OAuth Options Only -->
-                <div class="oauth-only-options-container" ng-show="serviceFormCtrl.serviceType.value=='oauth'">
+                <div class="oauth-only-options-container" ng-show="serviceFormCtrl.formData.type=='oauth'">
                     <div class="panel panel-warning">
                         <div class="panel-heading">
                             <h3 class="panel-title">
@@ -141,17 +144,6 @@
                             </h3>
                         </div>
                             <div class="panel-body">
-                                <!-- OAuth Client Secret -->
-                                <div class="form-group">
-                                    <label class="col-sm-4" for="oauthClientSecret">
-                                        <spring:message code="services.form.label.oauthClientSecret" />
-                                        <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthClientSecret" />"></i>
-                                    </label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="oauthClientSecret" ng-model="serviceFormCtrl.oauthClientSecret">
-                                    </div>
-                                </div>
-
                                 <!-- OAuth Client ID -->
                                 <div class="form-group">
                                     <label class="col-sm-4" for="oauthClientId">
@@ -159,23 +151,45 @@
                                         <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthClientId" />"></i>
                                     </label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="oauthClientId" ng-model="serviceFormCtrl.oauthClientId">
+                                        <input type="text" class="form-control" id="oauthClientId" ng-model="serviceFormCtrl.formData.oauth.clientId" />
                                     </div>
                                 </div>
-                                <div class="col-md-8 col-md-offset-4">
 
+                                <!-- OAuth Client Secret -->
+                                <div class="form-group">
+                                    <label class="col-sm-4" for="oauthClientSecret">
+                                        <spring:message code="services.form.label.oauthClientSecret" />
+                                        <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthClientSecret" />"></i>
+                                    </label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" id="oauthClientSecret" type="text"
+                                            ng-model="serviceFormCtrl.formData.oauth.clientSecret" ng-if="serviceFormCtrl.showOAuthSecret" />
+                                        <input class="form-control" id="oauthClientSecret" type="password"
+                                            ng-model="serviceFormCtrl.formData.oauth.clientSecret" ng-if="!serviceFormCtrl.showOAuthSecret" />
+                                    </div>
+                                </div>
+
+                                <div class="col-md-8 col-md-offset-4">
+                                    <!-- OAuth Show/Hide Client Secret -->
+                                    <div class="checkbox">
+                                        <label for="oauthShowSecret">
+                                            <input type="checkbox" id="oauthShowSecret" ng-model="serviceFormCtrl.showOAuthSecret" />
+                                            <spring:message code="services.form.label.oauthShowSecret" />
+                                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthShowSecret" />"></i>
+                                        </label>
+                                    </div>
                                     <!-- OAuth Bypass Approval Prompt -->
                                     <div class="checkbox">
                                         <label for="oauthBypass">
-                                            <input type="checkbox" id="oauthBypass" ng-model="serviceFormCtrl.oauthBypass" />
+                                            <input type="checkbox" id="oauthBypass" ng-model="serviceFormCtrl.formData.oauthBypass" />
                                             <spring:message code="services.form.label.oauthBypass" />
-                                            <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthBypass" />"></i>
+                                            <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthBypass" />"></i>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                </div> <!-- end .oauth-only-options-container div -->
+                </div><%-- end .oauth-only-options-container div --%>
 
                 <div class="row">
                     <div class="col-sm-6">
@@ -185,7 +199,7 @@
                                 <spring:message code="services.form.label.theme" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.theme" />"></i>
                             </label>
                             <div class="col-sm-6">
-                                <select class="form-control" id="themeType" ng-model="serviceFormCtrl.themeType" ng-options="type.name for type in serviceFormCtrl.themeList"></select>
+                                <input type="text" class="form-control" id="serviceTheme" ng-model="serviceFormCtrl.formData.theme" />
                             </div>
                         </div>
                     </div>
@@ -196,7 +210,7 @@
                                 <spring:message code="services.form.label.assignedId" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.assignedId" />"></i>
                             </label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.serviceForm.assignedId" readonly>
+                                <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.formData.assignedId" readonly />
                             </div>
                         </div>
                     </div>
@@ -208,7 +222,7 @@
                         <spring:message code="services.form.label.logoUrl" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.logoUrl" />"></i>
                     </label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="logoUrl" ng-model="serviceFormCtrl.logoUrl">
+                        <input type="text" class="form-control" id="logoUrl" ng-model="serviceFormCtrl.formData.logoUrl">
                     </div>
                 </div>
 
@@ -218,7 +232,7 @@
                         <spring:message code="services.form.label.logoutUrl" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.logoutUrl" />"></i>
                     </label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="logoutUrl" ng-model="serviceFormCtrl.logoutUrl">
+                        <input type="text" class="form-control" id="logoutUrl" ng-model="serviceFormCtrl.formData.logoutUrl">
                     </div>
                 </div>
 
@@ -230,7 +244,10 @@
                                 <spring:message code="services.form.label.logoutType" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.logoutType" />"></i>
                             </label>
                             <div class="col-sm-6">
-                                <select class="form-control" id="logoutType" ng-model="serviceFormCtrl.logoutType" ng-options="type.name for type in serviceFormCtrl.logoutTypeList"></select>
+                                <select class="form-control" id="logoutType" ng-model="serviceFormCtrl.formData.logoutType">
+                                    <option ng-repeat="opt in serviceFormCtrl.selectOptions.logoutTypeList" value="{{ opt.value }}"
+                                        ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.formData.logoutType)">{{ opt.name }}</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -242,7 +259,10 @@
                                 <spring:message code="services.form.label.requiredHandlers" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.requiredHandlers" />"></i>
                             </label>
                             <div class="col-sm-7">
-                                <select multiple class="form-control" id="reqHandler" ng-model="serviceFormCtrl.reqHandler" ng-options="type.name for type in serviceFormCtrl.reqHandlerList"></select>
+                                <select multiple class="form-control" id="reqHandler" ng-model="serviceFormCtrl.formData.requiredHandlers">
+                                    <option ng-repeat="opt in serviceFormCtrl.selectOptions.reqHandlerList" value="{{ opt.value }}"
+                                        ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.formData.requiredHandlers)">{{ opt.name }}</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -318,60 +338,64 @@
                             <h3 class="panel-title">
                                 <spring:message code="services.form.header.usernameAttProvider" />
                             </h3>
-                        </div> <!-- end .panel-header div -->
+                        </div><%-- end .panel-header div --%>
                         <div class="panel-body">
                             <div class="radio-group">
                                 <!-- Username Attribute Provider Radio Button - Default -->
                                 <label class="radio-inline">
-                                    <input type="radio" name="uapRadio" id="uapDefault" value="default" ng-model="serviceFormCtrl.uapRadio.type" ng-checked="true">
+                                    <input type="radio" name="uapRadio" id="uapDefault" value="default"
+                                        ng-model="serviceFormCtrl.formData.userAttrProvider.type"
+                                        ng-checked="serviceFormCtrl.formData.userAttrProvider.type === 'default'" />
                                     <spring:message code="services.form.label.uap.default" />
                                 </label>
                                 <!-- Username Attribute Provider Radio Button - Anonymous -->
                                 <label class="radio-inline">
-                                    <input type="radio" name="uapRadio" id="uapAnon" value="anonymous" ng-model="serviceFormCtrl.uapRadio.type" >
+                                    <input type="radio" name="uapRadio" id="uapAnon" value="anon"
+                                        ng-model="serviceFormCtrl.formData.userAttrProvider.type"
+                                        ng-checked="serviceFormCtrl.formData.userAttrProvider.type === 'anon'" />
                                     <spring:message code="services.form.label.uap.anon" />
                                 </label>
                                 <!-- Username Attribute Provider Radio Button - Principle Attribute -->
                                 <label class="radio-inline">
-                                    <input type="radio" name="uapRadio" id="uapAtt" value="attribute" ng-model="serviceFormCtrl.uapRadio.type" >
+                                    <input type="radio" name="uapRadio" id="uapAtt" value="attr"
+                                        ng-model="serviceFormCtrl.formData.userAttrProvider.type"
+                                        ng-checked="serviceFormCtrl.formData.userAttrProvider.type === 'attr'" />
                                     <spring:message code="services.form.label.uap.principleAtt" />
                                 </label>
-                            </div> <!-- end .radio-group div -->
+                            </div><%-- end .radio-group div --%>
 
                             <!-- Username Attribute Provider Default Options -->
-                            <div class="well well-sm" ng-show="serviceFormCtrl.uapRadio.type === 'default'">
+                            <div class="well well-sm" ng-show="serviceFormCtrl.formData.userAttrProvider.type === 'default'">
                                 <spring:message code="management.services.service.noAction" />
                             </div>
                             <!-- Username Attribute Provider Anonymous Options -->
-                            <div class="form-group" ng-show="serviceFormCtrl.uapRadio.type === 'anonymous'">
+                            <div class="form-group" ng-show="serviceFormCtrl.formData.userAttrProvider.type === 'anon'">
                                 <label class="col-sm-4 required" for="uapSaltSetting">
                                     <spring:message code="services.form.label.uap.saltSetting" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.uap.saltSetting" />"></i>
                                 </label>
                                 <div class="col-sm-8">
                                     <div class="input-group">
                                         <div class="input-group-addon input-group-required"><i class="fa fa-lg fa-exclamation-triangle"></i></div>
-                                        <input type="text" class="form-control" id="uapSaltSetting" ng-model="serviceFormCtrl.uapSaltSetting">
+                                        <input type="text" class="form-control" id="uapSaltSetting" ng-model="serviceFormCtrl.formData.userAttrProvider.value">
                                     </div>
                                 </div>
                             </div>
                             <!-- Username Attribute Provider Principle Attribute Options -->
-                            <div class="form-group" ng-show="serviceFormCtrl.uapRadio.type === 'attribute'">
+                            <div class="form-group" ng-show="serviceFormCtrl.formData.userAttrProvider.type === 'attr'">
                                 <label class="col-sm-4" for="uapUsernameAttribute">
-                                    <spring:message code="services.form.label.uap.usernameAttribute" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.uap.usernameAttribute" />"></i>
+                                    <spring:message code="services.form.label.uap.usernameAttribute" />
+                                    <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.uap.usernameAttribute" />"></i>
                                 </label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" id="uapUsernameAttribute" ng-model="serviceFormCtrl.uapUsernameAttribute">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
+                                    <select class="form-control" id="uapUsernameAttribute" ng-model="serviceFormCtrl.formData.userAttrProvider.value">
+                                        <option ng-repeat="opt in serviceFormCtrl.formData.availableUsernameAttribute" value="{{ opt }}"
+                                            ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.formData.userAttrProvider.value)">{{ opt }}</option>
                                     </select>
                                 </div>
                             </div>
-                        </div> <!-- end .panel-body div -->
-                    </div> <!-- end .panel div -->
-                </div> <!-- end .username-attribute-provider-container div -->
+                        </div><%-- end .panel-body div --%>
+                    </div><%-- end .panel div --%>
+                </div><%-- end .username-attribute-provider-container div --%>
 
                 <!-- Public Key Options -->
                 <div class="public-key-container">
@@ -389,7 +413,7 @@
                                     <spring:message code="services.form.label.pubKey.location" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.location" />"></i>
                                 </label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.publicKeyLocation">
+                                    <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.formData.publicKey.location">
                                 </div>
                             </div>
                             <!-- Public Key Algorithm -->
@@ -398,12 +422,14 @@
                                     <spring:message code="services.form.label.pubKey.algorithm" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.algorithm" />"></i>
                                 </label>
                                 <div class="col-sm-8">
-                                    <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.publicKeyAlgorithm" ng-options="type.name for type in serviceFormCtrl.publicKeyAlgorithmList" disabled></select>
+                                    <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.formData.publicKey.algorithm" disabled>
+                                        <option value="RSA" ng-selected="true">RSA</option>
+                                    </select>
                                 </div>
                             </div>
-                        </div> <!-- end .panel-body div -->
-                    </div> <!-- end .panel div -->
-                </div> <!-- end .pub-key-container div -->
+                        </div><%-- end .panel-body div --%>
+                    </div><%-- end .panel div --%>
+                </div><%-- end .pub-key-container div --%>
 
                 <!-- Proxy Policy Options -->
                 <div class="proxy-policy-container">
@@ -412,44 +438,44 @@
                             <h3 class="panel-title">
                                 <spring:message code="services.form.header.proxyPolicy" />
                             </h3>
-                        </div> <!-- end .panel-header div -->
+                        </div><%-- end .panel-header div --%>
                         <div class="panel-body">
                             <div class="radio-group">
 
                                 <!-- Proxy Policy Radio Button - Refuse -->
                                 <label class="radio-inline">
-                                    <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="refuse" ng-model="serviceFormCtrl.proxyPolicyRadio.type" ng-checked="true">
+                                    <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="refuse" ng-model="serviceFormCtrl.formData.proxyPolicy.type" ng-checked="true">
                                     <spring:message code="services.form.label.proxyPolicy.refuse" />
                                 </label>
 
                                 <!-- Proxy Policy Radio Button - Regex -->
                                 <label class="radio-inline">
-                                    <input type="radio" name="proxyPolicyRadio" id="proxyRegex" value="regex" ng-model="serviceFormCtrl.proxyPolicyRadio.type" >
+                                    <input type="radio" name="proxyPolicyRadio" id="proxyRegex" value="regex" ng-model="serviceFormCtrl.formData.proxyPolicy.type" >
                                     <spring:message code="services.form.label.proxyPolicy.regex" />
                                 </label>
-                            </div> <!-- end .radio-group div -->
+                            </div><%-- end .radio-group div --%>
 
                             <!-- Proxy Policy Refuse Options -->
-                            <div class="well well-sm" ng-show="serviceFormCtrl.proxyPolicyRadio.type === 'refuse'">
+                            <div class="well well-sm" ng-show="serviceFormCtrl.formData.proxyPolicy.type === 'refuse'">
                                 <spring:message code="management.services.service.noAction" />
                             </div>
 
                             <!-- Proxy Policy Regex Options -->
-                            <div class="form-group" ng-show="serviceFormCtrl.proxyPolicyRadio.type === 'regex'">
+                            <div class="form-group" ng-show="serviceFormCtrl.formData.proxyPolicy.type === 'regex'">
                                 <label class="col-sm-3 required" for="proxyPolicyRegex">
-                                    <spring:message code="services.form.label.proxyPolicy.regex" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.proxyPolicy.regex" />"></i>
+                                    <spring:message code="services.form.label.proxyPolicy.regex" />
+                                    <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.proxyPolicy.regex" />"></i>
                                 </label>
                                 <div class="col-sm-9">
                                     <div class="input-group">
                                         <div class="input-group-addon input-group-required"><i class="fa fa-lg fa-exclamation-triangle"></i></div>
-                                        <input type="text" class="form-control" id="proxyPolicyRegex" ng-model="serviceFormCtrl.proxyPolicyRegex">
-                                        <div class="input-group-addon">(.*)</div>
+                                        <input type="text" class="form-control" id="proxyPolicyRegex" ng-model="serviceFormCtrl.formData.proxyPolicy.value">
                                     </div>
                                 </div>
-                            </div> <!-- end .form-group div -->
-                        </div> <!-- end .panel-body div -->
-                    </div> <!-- end .panel div -->
-                </div> <!-- end .proxy-policy-container div -->
+                            </div><%-- end .form-group div --%>
+                        </div><%-- end .panel-body div --%>
+                    </div><%-- end .panel div --%>
+                </div><%-- end .proxy-policy-container div --%>
 
                 <!-- Attribute Release Policy Options -->
                 <div class="attribute-release-policy-container">
@@ -461,29 +487,33 @@
                             <div class="checkbox-group">
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="relPassword">
+                                        <input type="checkbox" value="1"
+                                            ng-model="serviceFormCtrl.formData.attrRelease.releasePassword"
+                                            ng-checked="serviceFormCtrl.formData.attrRelease.releasePassword" />
                                         <spring:message code="services.form.label.attrRelease.releaseCredPassword" />
                                         <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.releaseCredPassword" />"></i>
                                     </label>
                                 </div>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" value="releasePgt">
+                                        <input type="checkbox" value="1"
+                                            ng-model="serviceFormCtrl.formData.attrRelease.releaseTicket"
+                                            ng-checked="serviceFormCtrl.formData.attrRelease.releaseTicket" />
                                         <spring:message code="services.form.label.attrRelease.releaseProxyTicket" />
                                         <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.releaseProxyTicket" />"></i>
                                     </label>
                                 </div>
-                            </div> <!-- end .checkbox-group div -->
+                            </div><%-- end .checkbox-group div --%>
 
                             <!-- Attribute Filter -->
                             <div class="form-group">
                                 <label class="col-sm-4" for="attFilter">
-                                    <spring:message code="services.form.label.attrRelease.attrFilter" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.attrFilter" />"></i>
+                                    <spring:message code="services.form.label.attrRelease.attrFilter" />
+                                    <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.attrFilter" />"></i>
                                 </label>
                                 <div class="col-sm-8">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="attFilter" ng-model="serviceFormCtrl.attrFilter">
-                                        <div class="input-group-addon">(.*)</div>
+                                        <input type="text" class="form-control" id="attFilter" ng-model="serviceFormCtrl.formData.attrRelease.attrFilter">
                                     </div>
                                 </div>
                             </div>
@@ -495,31 +525,39 @@
                                     <div class="radio-group">
                                         <!-- Principle Repository Radio Button - Default -->
                                         <label class="radio-inline">
-                                            <input type="radio" name="prinFilterDefault" id="prinFilterDefault" value="default" ng-model="serviceFormCtrl.prinFilterRadio.type" ng-checked="true">
+                                            <input type="radio" name="prinFilterDefault" id="prinFilterDefault" value="default"
+                                                ng-model="serviceFormCtrl.formData.attrRelease.attrOption"
+                                                ng-checked="serviceFormCtrl.formData.attrRelease.attrOption == 'default'" />
                                             <spring:message code="services.form.label.attrRelease.principleAttRepo.default" />
                                         </label>
                                         <!-- Principle Filter Radio Button - Cached -->
                                         <label class="radio-inline">
-                                            <input type="radio" name="prinFilterCached" id="prinFilterCached" value="cached" ng-model="serviceFormCtrl.prinFilterRadio.type" >
+                                            <input type="radio" name="prinFilterCached" id="prinFilterCached" value="cached"
+                                                ng-model="serviceFormCtrl.formData.attrRelease.attrOption"
+                                                ng-checked="serviceFormCtrl.formData.attrRelease.attrOption == 'cached'" />
                                             <spring:message code="services.form.label.attrRelease.principleAttRepo.cached" />
                                         </label>
-                                    </div> <!-- end .radio-group div -->
+                                    </div><%-- end .radio-group div --%>
 
                                     <!-- Principle Attribute Repo Default Options -->
-                                    <div class="well well-sm" ng-show="serviceFormCtrl.prinFilterRadio.type === 'default'">
+                                    <div class="well well-sm" ng-show="serviceFormCtrl.formData.attrRelease.attrOption == 'default'">
                                         <spring:message code="management.services.service.noAction" />
                                     </div>
 
                                     <!-- Principle Attribute Repo Cached Options -->
-                                    <div class="principle-attribute-cached-container" ng-show="serviceFormCtrl.prinFilterRadio.type === 'cached'">
+                                    <div class="principle-attribute-cached-container" ng-show="serviceFormCtrl.formData.attrRelease.attrOption == 'cached'">
                                         <!-- Principle Attribute Repo Cached Time -->
                                         <div class="form-group">
                                             <label class="col-sm-4" for="cachedTime">
-                                                <spring:message code="services.form.label.attrRelease.principleAttRepo.cached.timeUnit" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit" />"></i>
+                                                <spring:message code="services.form.label.attrRelease.principleAttRepo.cached.timeUnit" />
+                                                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit" />"></i>
                                             </label>
                                             <div class="col-sm-8">
                                                 <div class="input-group">
-                                                    <select class="form-control" id="cachedTime" ng-model="serviceFormCtrl.cachedTime" ng-options="item for item in serviceFormCtrl.timeUnits"></select>
+                                                    <select class="form-control" id="cachedTime" ng-model="serviceFormCtrl.formData.attrRelease.cachedTimeUnit">
+                                                        <option ng-repeat="opt in serviceFormCtrl.selectOptions.timeUnitsList" value="{{ opt.value }}"
+                                                            ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.formData.attrRelease.cachedTimeUnit)">{{ opt.name }}</option>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -527,10 +565,27 @@
                                         <!-- Principle Attribute Repo Cached Expiration -->
                                         <div class="form-group">
                                             <label class="col-sm-4" for="cachedExp">
-                                                <spring:message code="services.form.label.attrRelease.principleAttRepo.cached.expiration" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration" />"></i>
+                                                <spring:message code="services.form.label.attrRelease.principleAttRepo.cached.expiration" />
+                                                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration" />"></i>
                                             </label>
                                             <div class="col-sm-8">
-                                                <input type="text" class="form-control" id="cachedExp" ng-model="serviceFormCtrl.cachedExp">
+                                                <input type="text" class="form-control" id="cachedExp" ng-model="serviceFormCtrl.formData.attrRelease.cachedExpiration" />
+                                            </div>
+                                        </div>
+
+                                        <!-- Principle Attribute Repo Merging Strategy -->
+                                        <div class="form-group">
+                                            <label class="col-sm-4" for="mergeStrategy">
+                                                <spring:message code="services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy" />
+                                                <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy" />"></i>
+                                            </label>
+                                            <div class="col-sm-8">
+                                                <div class="input-group">
+                                                    <select class="form-control" id="mergeStrategy" ng-model="serviceFormCtrl.formData.attrRelease.mergingStrategy">
+                                                        <option ng-repeat="opt in serviceFormCtrl.selectOptions.mergeStrategyList" value="{{ opt.value }}"
+                                                            ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.formData.attrRelease.mergeStrategy)">{{ opt.name }}</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -545,49 +600,51 @@
 
                                         <!-- Filter Policies Radio Button - Return All -->
                                         <label class="radio-inline">
-                                            <input type="radio" name="policiesReturnAll" id="policiesRadio" value="returnAll" ng-model="serviceFormCtrl.policiesRadio.type" ng-checked="true">
+                                            <input type="radio" name="policiesReturnAll" id="policiesRadio" value="all"
+                                                ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.type"
+                                                ng-checked="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'all'" />
                                             <spring:message code="services.form.label.attrRelease.policies.returnAll" />
                                         </label>
 
                                         <!-- Filter Policies Radio Button - Return Allowed -->
                                         <label class="radio-inline">
-                                            <input type="radio" name="policiesReturnAllowed" id="policiesReturnAllowed" value="returnAllowed" ng-model="serviceFormCtrl.policiesRadio.type" >
+                                            <input type="radio" name="policiesReturnAllowed" id="policiesReturnAllowed" value="allowed"
+                                                ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.type"
+                                                ng-checked="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'allowed'" />
                                             <spring:message code="services.form.label.attrRelease.policies.returnAllowed" />
                                         </label>
 
                                         <!-- Filter Policies Radio Button - Return Allowed -->
                                         <label class="radio-inline">
-                                            <input type="radio" name="policiesReturnMapped" id="policiesReturnMapped" value="returnMapped" ng-model="serviceFormCtrl.policiesRadio.type" >
+                                            <input type="radio" name="policiesReturnMapped" id="policiesReturnMapped" value="mapped"
+                                                ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.type"
+                                                ng-checked="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'mapped'" />
                                             <spring:message code="services.form.label.attrRelease.policies.returnMapped" />
                                         </label>
-                                    </div> <!-- end .radio-group div -->
+                                    </div><%-- end .radio-group div --%>
 
                                     <!-- Attribute Release Policies Return All Option -->
-                                    <div class="well well-sm" ng-show="serviceFormCtrl.policiesRadio.type === 'returnAll'">
+                                    <div class="well well-sm" ng-show="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'all' || serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
                                         <spring:message code="management.services.service.noAction" />
                                     </div>
 
                                     <!-- Attribute Release Policies Return Allowed Option -->
-                                    <div class="form-group" ng-show="serviceFormCtrl.policiesRadio.type === 'returnAllowed'">
+                                    <div class="form-group" ng-show="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'allowed' && !serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
                                         <label class="col-sm-3" for="returnAllowed">
-                                            <spring:message code="services.form.label.attrRelease.policies.returnAllowed" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.policies.returnAllowed" />"></i>
+                                            <spring:message code="services.form.label.attrRelease.policies.returnAllowed" />
+                                            <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.policies.returnAllowed" />"></i>
                                         </label>
                                         <div class="col-sm-9">
-                                            <select multiple class="form-control" id="returnedAllowedMultiselect" ng-model="serviceFormCtrl.returnedAllowed">
-<%-- TODO: Make this work with the form. --%>
-                                                <option>Option 1</option>
-                                                <option>Option 2</option>
-                                                <option>Option 3</option>
-                                                <option>Option 4</option>
-                                                <option>Option 5</option>
+                                            <select multiple class="form-control" id="returnedAllowed" ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.allowed">
+                                                <option ng-repeat="opt in serviceFormCtrl.formData.availableAttributes" value="{{ opt }}"
+                                                    ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.formData.attrRelease.attrPolicy.allowed)">{{ opt }}</option>
                                             </select>
                                         </div>
                                     </div>
 
                                     <!-- Attribute Release Policies Return Mapped Option -->
-                                    <div class="panel panel-default" ng-show="serviceFormCtrl.policiesRadio.type === 'returnMapped'">
-<%-- TODO: Make this work with the form. --%>
-                                        <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed">
+                                    <div class="panel panel-default" ng-show="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'mapped' && !serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )">
+                                        <table id="returnMapTable" class="table table-striped table-hover table-responsive table-condensed" >
                                             <thead>
                                                 <tr>
                                                     <th class="col-md-4"><spring:message code="services.form.label.attrRelease.policies.sourceAttribute" /></th>
@@ -598,17 +655,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    <td>Attribute 1</td>
-                                                    <td><input class="form-control input-sm"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Attribute 2</td>
-                                                    <td><input class="form-control input-sm"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Attribute 3</td>
-                                                    <td><input class="form-control input-sm"></td>
+                                                <tr ng-repeat="mappedValue in serviceFormCtrl.formData.availableAttributes">
+                                                    <td class="va-middle">{{ mappedValue }}</td>
+                                                    <td><input ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.mapped[ mappedValue ]" type="text" class="form-control input-sm" /></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -617,7 +666,7 @@
                             </div>
                         </div>
                     </div>
-                </div> <!-- end .attribute-release-policy-container div -->
+                </div><%-- end .attribute-release-policy-container div --%>
             </div>
             <div class="row">
                 <div class="col-sm-12">
@@ -630,8 +679,8 @@
                             <i class="fa fa-times"></i>
                             <spring:message code="services.form.button.cancel" />
                         </a>
-                    </div> <!-- end services-button-group div -->
+                    </div><%-- end services-button-group div --%>
                 </div>
             </div>
-        </div> <!-- end .row div -->
-    </form> <!-- end #serviceForm form -->
+        </div><%-- end .row div --%>
+    </form><%-- end #serviceForm form --%>
