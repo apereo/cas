@@ -20,10 +20,10 @@ package org.jasig.cas;
 
 import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -46,6 +46,7 @@ import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -161,15 +162,18 @@ public final class TestUtils {
             s.setLogo(new URL("https://logo.example.org/logo.png"));
             s.setLogoutType(LogoutType.BACK_CHANNEL);
             s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
-            s.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
+            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
             s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:pub.key", "RSA"));
 
             final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
             policy.setAuthorizedToReleaseCredentialPassword(true);
             policy.setAuthorizedToReleaseProxyGrantingTicket(true);
-            policy.setPrincipalAttributesRepository(
-                    new CachingPrincipalAttributesRepository(new StubPersonAttributeDao(), 10));
+
+            final CachingPrincipalAttributesRepository repo =
+                    new CachingPrincipalAttributesRepository(new StubPersonAttributeDao(), 10);
+            repo.setMergingStrategy(new NoncollidingAttributeAdder());
+            policy.setPrincipalAttributesRepository(repo);
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
             policy.setAllowedAttributes(new ArrayList(getTestAttributes().keySet()));
             s.setAttributeReleasePolicy(policy);
@@ -267,7 +271,7 @@ public final class TestUtils {
         return context;
     }
 
-    public static  Map<String, Set<String>> getTestAttributes() {
+    public static Map<String, Set<String>> getTestAttributes() {
         final Map<String, Set<String>>  attributes = new HashMap<>();
         attributes.put("uid", ImmutableSet.of("uid"));
         attributes.put("givenName", ImmutableSet.of("CASUser"));
