@@ -51,11 +51,7 @@ public final class RefuseRegisteredServiceProxyPolicy implements RegisteredServi
             return true;
         }
 
-        if (!(o instanceof RegisteredServiceProxyPolicy)) {
-            return false;
-        }
-
-        return true;
+        return o instanceof RefuseRegisteredServiceProxyPolicy;
     }
 
     @Override
