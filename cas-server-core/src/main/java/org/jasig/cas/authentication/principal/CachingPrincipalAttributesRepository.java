@@ -193,10 +193,6 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
         return this.duration;
     }
 
-    public Duration getDuration() {
-        return this.duration;
-    }
-
     /**
      * Gets cache configuration.
      *
