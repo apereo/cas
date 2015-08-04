@@ -20,6 +20,7 @@
 package org.jasig.cas.ticket.registry.encrypt;
 
 
+import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
@@ -96,7 +97,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
                 this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
         final EncodedTicket encodedTicket = new EncodedTicket(
-                encodedTicketObject, encodedTicketId);
+                ByteSource.wrap(encodedTicketObject), encodedTicketId);
         logger.info("Created [{}]", encodedTicket);
         return encodedTicket;
     }

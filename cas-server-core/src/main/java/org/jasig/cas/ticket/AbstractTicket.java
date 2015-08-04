@@ -126,29 +126,36 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         this.countOfUses++;
     }
 
+    @Override
     public final int getCountOfUses() {
         return this.countOfUses;
     }
 
+    @Override
     public final long getCreationTime() {
         return this.creationTime;
     }
 
+    @Override
     public final TicketGrantingTicket getGrantingTicket() {
         return this.ticketGrantingTicket;
     }
 
+    @Override
     public final long getLastTimeUsed() {
         return this.lastTimeUsed;
     }
 
+    @Override
     public final long getPreviousTimeUsed() {
         return this.previousLastTimeUsed;
     }
 
+    @Override
     public final boolean isExpired() {
+        final TicketGrantingTicket tgt = getGrantingTicket();
         return this.expirationPolicy.isExpired(this)
-                || (getGrantingTicket() != null && getGrantingTicket().isExpired())
+                || (tgt != null && tgt.isExpired())
                 || isExpiredInternal();
     }
 
@@ -158,7 +165,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public final int hashCode() {
-        return new HashCodeBuilder().append(this.getId()).toHashCode();
+        return new HashCodeBuilder(13, 133).append(this.getId()).toHashCode();
     }
 
     @Override
