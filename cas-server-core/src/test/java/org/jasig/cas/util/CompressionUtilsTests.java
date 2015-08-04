@@ -19,6 +19,7 @@
 
 package org.jasig.cas.util;
 
+import com.google.common.io.ByteSource;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockServiceTicket;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
@@ -59,9 +60,16 @@ public class CompressionUtilsTests {
         final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, st);
         final String string = CompressionUtils.encodeBase64(bytes);
         assertNotNull(string);
-
         final byte[] result = CompressionUtils.decodeBase64(string);
         final Ticket obj = CompressionUtils.decodeAndSerializeObject(result, cipher, Ticket.class);
         assertNotNull(obj);
     }
+
+    @Test
+    public void testSerializationOfTgtByteSource() throws Exception {
+        final ByteSource bytes = ByteSource.wrap(CompressionUtils.serializeAndEncodeObject(cipher, tgt));
+        final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes.read(), cipher, Ticket.class);
+        assertNotNull(obj);
+    }
+
 }
