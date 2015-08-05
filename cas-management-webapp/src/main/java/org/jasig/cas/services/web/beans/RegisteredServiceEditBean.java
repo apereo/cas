@@ -322,6 +322,9 @@ public class RegisteredServiceEditBean implements Serializable {
         }
     }
 
+    /**
+     * The type Form data.
+     */
     public static class FormData {
         private List<String> availableAttributes = new ArrayList<>();
         private List<String> availableUsernameAttributes = new ArrayList<>();
@@ -343,6 +346,9 @@ public class RegisteredServiceEditBean implements Serializable {
         }
     }
 
+    /**
+     * The type Service data.
+     */
     public static class ServiceData {
         private long assignedId;
         private String serviceId;
@@ -357,7 +363,8 @@ public class RegisteredServiceEditBean implements Serializable {
         private String type = RegisteredServiceTypeEditBean.CAS.toString();
         private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
         private String logoutType = RegisteredServiceLogoutTypeEditBean.BACK.toString();
-        private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider = new RegisteredServiceUsernameAttributeProviderEditBean();
+        private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider =
+                new RegisteredServiceUsernameAttributeProviderEditBean();
         private RegisteredServicePublicKeyEditBean publicKey = new RegisteredServicePublicKeyEditBean();
         private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
         private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
