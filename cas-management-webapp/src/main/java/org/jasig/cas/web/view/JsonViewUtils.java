@@ -52,7 +52,6 @@ public final class JsonViewUtils {
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**
@@ -62,7 +61,7 @@ public final class JsonViewUtils {
      */
     public static void render(final HttpServletResponse response) {
         try {
-            final Map<String, String> map = new HashMap<>();
+            final Map<String, Object> map = new HashMap<>();
             response.setStatus(HttpServletResponse.SC_OK);
             render(map, response);
         } catch (final Exception e) {
@@ -79,12 +78,10 @@ public final class JsonViewUtils {
      * @param response the response
      */
     public static void renderException(final Exception ex, final HttpServletResponse response) {
-
         final Map<String, String> map = new HashMap<>();
         map.put("error", ex.getMessage());
         map.put("stacktrace", Arrays.deepToString(ex.getStackTrace()));
         renderException(map, response);
-
     }
 
     /**
@@ -93,8 +90,9 @@ public final class JsonViewUtils {
      * @param model the model
      * @param response the response
      */
-    public static void renderException(final Map model, final HttpServletResponse response) {
+    private static void renderException(final Map model, final HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        model.put("status", HttpServletResponse.SC_BAD_REQUEST);
         render(model, response);
     }
 
