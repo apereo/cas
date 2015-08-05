@@ -80,15 +80,17 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                             final HttpServletResponse response,
                             @RequestBody final RegisteredServiceEditBean service,
                             final BindingResult result) {
+        try {
+            final RegisteredService svcToUse = service.toRegisteredService();
+            this.servicesManager.save(svcToUse);
+            logger.info("Saved changes to service {}", svcToUse.getId());
 
-        final RegisteredService svcToUse = service.toRegisteredService();
-        this.servicesManager.save(svcToUse);
-        logger.info("Saved changes to service {}", svcToUse.getId());
-
-        final Map<String, Object> model = new HashMap<>();
-        model.put("id", svcToUse.getId());
-        JsonViewUtils.render(model, response);
-
+            final Map<String, Object> model = new HashMap<>();
+            model.put("id", svcToUse.getId());
+            JsonViewUtils.render(model, response);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
