@@ -40,6 +40,7 @@ public class RegisteredServiceViewBean implements Serializable {
 
     private static final long serialVersionUID = 4882440567964605644L;
 
+    private int evalOrder = Integer.MIN_VALUE;
     private long assignedId;
     private boolean sasCASEnabled;
     private String serviceId;
@@ -48,6 +49,14 @@ public class RegisteredServiceViewBean implements Serializable {
     private String logoUrl;
     private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
     private RegisteredServiceAttributeReleasePolicyViewBean attrRelease = new RegisteredServiceAttributeReleasePolicyViewBean();
+
+    public int getEvalOrder() {
+        return evalOrder;
+    }
+
+    public void setEvalOrder(final int evalOrder) {
+        this.evalOrder = evalOrder;
+    }
 
     public long getAssignedId() {
         return assignedId;
@@ -125,6 +134,8 @@ public class RegisteredServiceViewBean implements Serializable {
         bean.setServiceId(svc.getServiceId());
         bean.setName(svc.getName());
         bean.setDescription(svc.getDescription());
+        bean.setEvalOrder(svc.getEvaluationOrder());
+
         if (svc.getLogo() != null) {
             bean.setLogoUrl(svc.getLogo().toExternalForm());
         }
