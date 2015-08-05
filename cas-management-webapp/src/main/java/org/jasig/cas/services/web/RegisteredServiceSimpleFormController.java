@@ -25,18 +25,20 @@ import org.jasig.cas.web.view.JsonViewUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.Validator;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Handle adding/editing of RegisteredServices.
@@ -53,10 +55,6 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
     @NotNull
     private final IPersonAttributeDao personAttributeDao;
 
-    @NotNull
-    @Resource(name = "registeredServiceValidator")
-    private Validator validator;
-
     /**
      * Instantiates a new registered service simple form controller.
      *
@@ -71,56 +69,26 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
     }
 
     /**
-     * Instantiates a new registered service simple form controller.
-     *
-     * @param servicesManager    the services manager
-     * @param personAttributeDao the person attribute dao
-     * @param validator          the validator
-     */
-    RegisteredServiceSimpleFormController(final ServicesManager servicesManager,
-                                          final IPersonAttributeDao personAttributeDao, final Validator validator) {
-        this(servicesManager, personAttributeDao);
-        this.validator = validator;
-    }
-
-    /**
      * Adds the service to the Service Registry.
+     * @param request the request
+     * @param response the response
+     * @param result the result
+     * @param service the edit bean
      */
-    @RequestMapping(method = RequestMethod.POST)
-    protected void onSubmit() {
-        
-    /*
-        this.validator.validate(service, result);
-        if (result.hasErrors()) {
-            model.addAttribute("validationErrors", result.getAllErrors());
-            return render(request, model);
-        }
-       
-        RegisteredService svcToUse = service;
-        if (service.getServiceId().startsWith("^") && service instanceof RegisteredServiceImpl) {
-            LOGGER.debug("Detected regular expression starting with ^");
-            final RegexRegisteredService regexService = new RegexRegisteredService();
-            regexService.copyFrom(service);
-            svcToUse = regexService;
-        } else if (!service.getServiceId().startsWith("^") && service instanceof RegexRegisteredService) {
-            LOGGER.debug("Detected ant expression {}", service.getServiceId());
-            final RegisteredServiceImpl regexService = new RegisteredServiceImpl();
-            regexService.copyFrom(service);
-            svcToUse = regexService;
-        } 
+    @RequestMapping(method = RequestMethod.GET, value = {"saveService.html"})
+    public void saveService(final HttpServletRequest request,
+                            final HttpServletResponse response,
+                            @RequestBody final RegisteredServiceEditBean service,
+                            final BindingResult result) {
 
+        final RegisteredService svcToUse = service.toRegisteredService();
         this.servicesManager.save(svcToUse);
-        LOGGER.info("Saved changes to service {}", svcToUse.getId());
+        logger.info("Saved changes to service {}", svcToUse.getId());
 
-        final ModelAndView modelAndView = new ModelAndView(new RedirectView(
-                "manage.html#" + svcToUse.getId(), true));
-        modelAndView.addObject("action", "add");
-        modelAndView.addObject("id", svcToUse.getId());
+        final Map<String, Object> model = new HashMap<>();
+        model.put("id", svcToUse.getId());
+        JsonViewUtils.render(model, response);
 
-        
-        
-        return modelAndView;
-        */
     }
 
     /**
