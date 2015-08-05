@@ -19,12 +19,14 @@
 
 package org.jasig.cas.services.web.beans;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.AbstractAttributeReleasePolicy;
+import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.AttributeFilter;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -33,6 +35,7 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
@@ -393,5 +396,72 @@ public class RegisteredServiceEditBean implements Serializable {
             }
         }
         return bean;
+    }
+
+    /**
+     * To registered service.
+     *
+     * @return the registered service
+     */
+    public RegisteredService toRegisteredService() {
+        try {
+            final AbstractRegisteredService regSvc;
+
+            if (StringUtils.equalsIgnoreCase(getType(),
+                    RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString())) {
+                regSvc = new OAuthRegisteredCallbackAuthorizeService();
+            } else if  (StringUtils.equalsIgnoreCase(getType(),
+                    RegisteredServiceTypeEditBean.OAUTH.toString())) {
+                regSvc = new OAuthRegisteredService();
+
+                final RegisteredServiceOAuthTypeEditBean oauthBean = getOauth();
+                ((OAuthRegisteredService) regSvc).setClientId(oauthBean.getClientId());
+                ((OAuthRegisteredService) regSvc).setClientSecret(oauthBean.getClientSecret());
+                ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
+            } else {
+                regSvc = new RegexRegisteredService();
+            }
+
+            regSvc.setId(this.assignedId);
+            regSvc.setServiceId(this.serviceId);
+            regSvc.setName(this.name);
+            regSvc.setDescription(this.description);
+
+            if (StringUtils.isNotBlank(this.logoUrl)) {
+                regSvc.setLogo(new URL(this.logoUrl));
+            }
+            regSvc.setTheme(this.theme);
+            regSvc.setEvaluationOrder(this.evalOrder);
+
+
+            if (StringUtils.equalsIgnoreCase(this.logoutType,
+                    RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
+                regSvc.setLogoutType(LogoutType.BACK_CHANNEL);
+            } else if (StringUtils.equalsIgnoreCase(this.logoutType,
+                    RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
+                regSvc.setLogoutType(LogoutType.FRONT_CHANNEL);
+            } else {
+                regSvc.setLogoutType(LogoutType.NONE);
+            }
+
+            if (StringUtils.isNotBlank(this.logoutUrl)) {
+                regSvc.setLogoutUrl(new URL(this.logoutUrl));
+            }
+
+            final RegisteredServiceAccessStrategy accessStrategy = regSvc.getAccessStrategy();
+
+            ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
+                    .setEnabled(this.supportAccess.isCasEnabled());
+            ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
+                    .setSsoEnabled(this.supportAccess.isSsoEnabled());
+            ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
+                    .setRequireAllAttributes(this.supportAccess.isRequireAll());
+            ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
+                    .setRequiredAttributes(this.supportAccess.getRequiredAttr());
+
+            return regSvc;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
