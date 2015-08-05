@@ -6743,7 +6743,7 @@ html {
 .casmgmt-app #serviceForm input.required-missing,
 .casmgmt-app #serviceForm textarea.required-missing,
 .casmgmt-app #serviceForm select.required-missing {
-  background-color: #ff9999;
+  background-color: #ffcccc;
 }
 .casmgmt-app .search-form .search-clear {
   pointer-events: auto;
