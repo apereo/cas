@@ -600,7 +600,7 @@
                                             <input type="radio" name="policiesReturnAllowed" id="policiesReturnAllowed" value="allowed"
                                                 ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.type"
                                                 ng-checked="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'allowed'"
-                                                ng-dsiabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
+                                                ng-disabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
                                             <spring:message code="services.form.label.attrRelease.policies.returnAllowed" />
                                         </label>
 
@@ -609,7 +609,7 @@
                                             <input type="radio" name="policiesReturnMapped" id="policiesReturnMapped" value="mapped"
                                                 ng-model="serviceFormCtrl.formData.attrRelease.attrPolicy.type"
                                                 ng-checked="serviceFormCtrl.formData.attrRelease.attrPolicy.type == 'mapped'"
-                                                ng-dsiabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
+                                                ng-disabled="serviceFormCtrl.isEmpty( serviceFormCtrl.formData.availableAttributes )" />
                                             <spring:message code="services.form.label.attrRelease.policies.returnMapped" />
                                         </label>
                                     </div><%-- end .radio-group div --%>

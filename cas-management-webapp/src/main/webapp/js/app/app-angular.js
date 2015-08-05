@@ -72,6 +72,7 @@
                 responseType: 'json'
             };
 
+            factory.maxEvalOrder = 0;
 
             factory.setItem = function (id) {
                 factory.assignedId = id;
@@ -134,14 +135,22 @@
         function ($http, $log, $timeout, sharedFactory) {
             var servicesData = this,
                 httpHeaders = sharedFactory.httpHeaders,
-                delayedAlert = function(n, t, d) {
+                delayedAlert = function(n, t, d, skipScrollTop) {
+                    skipScrollTop = skipScrollTop || false;
                     $timeout(function () {
                         servicesData.alert = {
                             name:   n,
                             type:   t,
                             data:   d
                         };
-                    }, 100);
+                    }, 10);
+                    if(!skipScrollTop) {
+                        $timeout(function () {
+                            $('html, body').animate({
+                                scrollTop: $('.alert[role=alert]').offset().top
+                            }, 750);
+                        }, 100);
+                    }
                 };
 
             this.dataTable = null; // Prevents 'flashing' on load
@@ -167,12 +176,18 @@
                             data: myData,
                             headers: httpHeaders,
                             dataType: 'json',
-                            success: function (data) {
-                                servicesData.alert = null;
-                                servicesData.getServices();
+                            success: function (data, status) {
+                                if(status != 200)
+                                    delayedAlert('notupdated', 'danger', data);
+                                else if(angular.isString(data))
+                                    sharedFactory.forceReload();
+                                else {
+                                    servicesData.alert = null;
+                                    servicesData.getServices();
+                                }
                             },
                             error: function(xhr, status) {
-                                delayedAlert('notupdated', 'danger', xhr);
+                                delayedAlert('notupdated', 'danger', xhr.responseJSON);
                             }
                         });
                     }
@@ -181,12 +196,19 @@
 
             this.getServices = function () {
                 $http.get('/cas-management/getServices.html')
-                    .success(function (data) {
-                        servicesData.alert = null;
-                        servicesData.dataTable = data.services || [];
-                    })
-                    .error(function (xhr, status) {
-                        delayedAlert('listfail', 'danger', xhr);
+                    .then(function (response) {
+                        if(response.status != 200) {
+                            delayedAlert('listfail', 'danger', response.data);
+                        }
+                        else {
+                            servicesData.alert = null;
+                            servicesData.dataTable = response.data.services || [];
+                            angular.forEach(servicesData.dataTable, function(service) {
+                                if(service.evalOrder > sharedFactory.maxEvalOrder) {
+                                    sharedFactory.maxEvalOrder = service.evalOrder;
+                                }
+                            });
+                        }
                     });
             };
 
@@ -208,12 +230,18 @@
                     url: '/cas-management/deleteRegisteredService.html',
                     data: myData,
                     headers: httpHeaders,
-                    success: function (data) {
-                        servicesData.getServices();
-                        delayedAlert('deleted', 'info', item);
+                    success: function (data, status) {
+                        if(status != 200)
+                            delayedAlert('notdeleted', 'danger', data);
+                        else if(angular.isString(data))
+                            sharedFactory.forceReload();
+                        else {
+                            servicesData.getServices();
+                            delayedAlert('deleted', 'info', item, true);
+                        }
                     },
                     error: function(xhr, status) {
-                        delayedAlert('notdeleted', 'danger', xhr);
+                        delayedAlert('notdeleted', 'danger', xhr.responseJSON);
                     }
                 });
             };
@@ -239,20 +267,30 @@
         'sharedFactoryCtrl',
         function ($scope, $http, $log, $timeout, sharedFactory) {
             var serviceForm = this,
-                delayedAlert = function(n, t, d) {
+                httpheaders = sharedFactory.httpHeaders,
+                delayedAlert = function(n, t, d, skipScrollTop) {
+                    skipScrollTop = skipScrollTop || false;
                     $timeout(function () {
                         serviceForm.alert = {
                             name:   n,
                             type:   t,
                             data:   d
                         };
-                    }, 100);
+                    }, 10);
+                    if(!skipScrollTop) {
+                        $timeout(function () {
+                            $('html, body').animate({
+                                scrollTop: $('.alert[role=alert]').offset().top
+                            }, 750);
+                        }, 100);
+                    }
                 },
                 showInstructions = function () { // Just an alias.
-                    delayedAlert('instructions', 'info', null);
+                    delayedAlert('instructions', 'info', null, true);
                 };
 
             this.formData = {};
+            this.formOptions = {};
             this.formErrors = null;
             this.radioWatchBypass = false;
             this.showOAuthSecret = false;
@@ -310,41 +348,55 @@
                         $('#'+fieldId).addClass('required-missing');
                     });
                     return;
-                } else {
-                    $('.service-editor input, .service-editor select, .service-editor textarea').removeClass('required-missing');
                 }
 
-                $http.post('/cas-management/forcedError', serviceForm.formData)  // TODO: fix this call
-                    .success(function (data) {
-                        serviceForm.formData = data[0];
-                        delayedAlert('saved', 'info', null);
-                    })
-                    .error(function (xhr, status) {
-                        delayedAlert('notsaved','danger', xhr);
-                    });
+                $.ajax({
+                    type: 'post',
+                    url: '/cas-management/getService.html',
+                    data: serviceForm.formData,
+                    headers: httpHeaders,
+                    success: function (data, status) {
+                        if(status != 200) {
+                            delayedAlert('notsaved', 'danger', data);
+                            serviceForm.newService();
+                        }
+                        else if(angular.isString(data))
+                            sharedFactory.forceReload();
+                        else
+                            delayedAlert('saved', 'info', null, true);
+                    },
+                    error: function(xhr, status) {
+                        delayedAlert('notsaved','danger', xhr.responseJSON);
+                    }
+                });
             };
 
             this.validateForm = function () {
+                var data = serviceForm.formData;
+
                 serviceForm.formErrors = [];
+                $('.required-missing').removeClass('required-missing');
 
                 // Service Basics
-                if(!serviceForm.formData.serviceId)
+                if(!data.serviceId)
                     serviceForm.formErrors.push('serviceId');
-                if(!serviceForm.formData.name)
+                if(!data.name)
                     serviceForm.formErrors.push('serviceName');
-                if(!serviceForm.formData.description)
+                if(!data.description)
                     serviceForm.formErrors.push('serviceDesc');
-                if(!serviceForm.formData.type)
+                if(!data.type)
                     serviceForm.formErrors.push('serviceType');
                 // Principle Attribute Repository Options
-                if(serviceForm.formData.attrRelease.attrOption == 'cached' && !serviceForm.formData.attrRelease.cachedTimeUnit)
-                    serviceForm.formErrors.push('cachedTime');
-                if(serviceForm.formData.attrRelease.attrOption == 'cached' && !serviceForm.formData.attrRelease.mergingStrategy)
-                    serviceForm.formErrors.push('mergeStrategy');
+                if(data.attrRelease.attrOption == 'cached') {
+                    if(!data.attrRelease.cachedTimeUnit)
+                        serviceForm.formErrors.push('cachedTime');
+                    if(!data.attrRelease.mergingStrategy)
+                        serviceForm.formErrors.push('mergeStrategy');
+                }
                 // Attribute Policy Options
-                if(serviceForm.formData.userAttrProvider.value == 'anon' && !serviceForm.formData.userAttrProvider.value)
+                if(data.userAttrProvider.value == 'anon' && !data.userAttrProvider.value)
                     serviceForm.formErrors.push('uapSaltSetting');
-                if(serviceForm.formData.proxyPolicy.type == 'regex' && !serviceForm.formData.proxyPolicy.value)
+                if(data.proxyPolicy.type == 'regex' && !data.proxyPolicy.value)
                     serviceForm.formErrors.push('proxyPolicyRegex');
             };
 
@@ -354,7 +406,7 @@
                 serviceForm.showOAuthSecret = false;
                 serviceForm.formData = {
                     assignedId: null,
-                    evalOrder: 100,
+                    evalOrder: sharedFactory.maxEvalOrder + 1,
                     logoutType: '',
                     publicKey: {algorithm: 'RSA'},
                     supportAccess: {casEnabled: true},
@@ -366,6 +418,16 @@
                     }
                 };
                 showInstructions();
+
+                $http.get('/cas-management/getService.html?id=-1')
+                    .then(function (response) {
+                        if(response.status != 200)
+                            delayedAlert('notloaded', 'danger', data);
+                        else if(angular.isString(response.data))
+                            sharedFactory.forceReload();
+                        else
+                            serviceForm.formData = response.data;
+                    });
 
                 serviceForm.radioWatchBypass = false;
             };
@@ -379,9 +441,8 @@
                             delayedAlert('notloaded', 'danger', data);
                             serviceForm.newService();
                         }
-                        else if(angular.isString(response.data)) {
-                            sharedFactoryCtrl.forceReload();
-                        }
+                        else if(angular.isString(response.data))
+                            sharedFactory.forceReload();
                         else {
                             serviceForm.showOAuthSecret = false;
                             serviceForm.formData = response.data;
