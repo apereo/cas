@@ -132,6 +132,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
         }
         final Map<String, Object> model = new HashMap<>();
         model.put("serviceName", r.getName());
+        model.put("status", HttpServletResponse.SC_OK);
         JsonViewUtils.render(model, response);
     }
 
@@ -145,6 +146,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
         ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
         model.put("defaultServiceUrl", this.defaultService.getId());
+        model.put("status", HttpServletResponse.SC_OK);
         return new ModelAndView("manage", model);
     }
 
@@ -163,6 +165,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
             serviceBeans.add(RegisteredServiceViewBean.fromRegisteredService(svc));
         }
         model.put("services", serviceBeans);
+        model.put("status", HttpServletResponse.SC_OK);
         JsonViewUtils.render(model, response);
     }
 
@@ -187,7 +190,9 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
             svc.setEvaluationOrder(i);
             this.servicesManager.save(svc);
         }
-        JsonViewUtils.render(response);
+        final Map<String, Object> model = new HashMap<>();
+        model.put("status", HttpServletResponse.SC_OK);
+        JsonViewUtils.render(model, response);
     }
 
 

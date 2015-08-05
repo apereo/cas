@@ -105,23 +105,30 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                                final HttpServletRequest request, final HttpServletResponse response) {
 
         try {
-            final RegisteredService service = this.servicesManager.findServiceBy(id);
+            RegisteredServiceEditBean bean = null;
+            if (id == -1) {
+                bean = new RegisteredServiceEditBean();
+                bean.setServiceData(null);
+            } else {
+                final RegisteredService service = this.servicesManager.findServiceBy(id);
 
-            if (service == null) {
-                logger.warn("Invalid service id specified [{}]. Cannot find service in the registry", id);
-                throw new IllegalArgumentException("Service id cannot be found");
+                if (service == null) {
+                    logger.warn("Invalid service id specified [{}]. Cannot find service in the registry", id);
+                    throw new IllegalArgumentException("Service id cannot be found");
+                }
+                bean = RegisteredServiceEditBean.fromRegisteredService(service);
             }
-
-            final RegisteredServiceEditBean bean = RegisteredServiceEditBean.fromRegisteredService(service);
+            final RegisteredServiceEditBean.FormData formData = bean.getFormData();
             final List<String> possibleAttributeNames = new ArrayList<>();
             possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
             Collections.sort(possibleAttributeNames);
-            bean.setAvailableAttributes(possibleAttributeNames);
+            formData.setAvailableAttributes(possibleAttributeNames);
 
             final List<String> possibleUsernameAttributeNames = new ArrayList<>();
             possibleUsernameAttributeNames.addAll(possibleAttributeNames);
-            bean.setAvailableUsernameAttributes(possibleUsernameAttributeNames);
+            formData.setAvailableUsernameAttributes(possibleUsernameAttributeNames);
 
+            bean.setStatus(HttpServletResponse.SC_OK);
             JsonViewUtils.render(bean, response);
         } catch (final Exception e) {
             throw new RuntimeException(e);
