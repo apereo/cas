@@ -51,7 +51,7 @@ import java.util.Map;
  * @since 3.1
  */
 @Controller
-public final class ManageRegisteredServicesMultiActionController extends AbstractManagementController{
+public final class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
     @NotNull
     private final Service defaultService;
 
