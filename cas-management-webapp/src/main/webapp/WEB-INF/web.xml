@@ -92,8 +92,8 @@
   </servlet-mapping>
 
   <session-config>
-    <!-- Default to 5 minute session timeouts -->
-    <session-timeout>5</session-timeout>
+    <!-- Default to 30 minute session timeouts -->
+    <session-timeout>30</session-timeout>
   </session-config>
 
   <error-page>
