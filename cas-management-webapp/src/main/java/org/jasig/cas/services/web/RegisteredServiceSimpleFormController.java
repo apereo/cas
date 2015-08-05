@@ -75,7 +75,7 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
      * @param result the result
      * @param service the edit bean
      */
-    @RequestMapping(method = RequestMethod.GET, value = {"saveService.html"})
+    @RequestMapping(method = RequestMethod.POST, value = {"saveService.html"})
     public void saveService(final HttpServletRequest request,
                             final HttpServletResponse response,
                             @RequestBody final RegisteredServiceEditBean service,
