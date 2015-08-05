@@ -27,7 +27,6 @@ import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.web.support.RegisteredServiceValidator;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +45,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
+ * Test cases for {@link RegisteredServiceSimpleFormController}.
  * @author Scott Battaglia
  * @author Misagh Moayyed
  * @since 3.1
@@ -71,7 +71,7 @@ public class RegisteredServiceSimpleFormControllerTests {
                 new InMemoryServiceRegistryDaoImpl());
 
         this.controller = new RegisteredServiceSimpleFormController(
-                this.manager, this.repository, new RegisteredServiceValidator(this.manager, this.repository));
+                this.manager, this.repository);
     }
 
     @Test
