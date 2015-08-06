@@ -19,6 +19,7 @@
 
 package org.jasig.cas.services.web.beans;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
@@ -131,16 +132,8 @@ public final class RegisteredServiceEditBean implements Serializable {
             bean.setLogoUrl(svc.getLogo().toExternalForm());
         }
         bean.setRequiredHandlers(svc.getRequiredHandlers());
-        final RegisteredServiceAccessStrategy accessStrategy = svc.getAccessStrategy();
-        final RegisteredServiceSupportAccessEditBean accessBean = bean.getSupportAccess();
-        accessBean.setCasEnabled(accessStrategy.isServiceAccessAllowed());
-        accessBean.setSsoEnabled(accessStrategy.isServiceAccessAllowedForSso());
 
-        if (accessStrategy instanceof DefaultRegisteredServiceAccessStrategy) {
-            final DefaultRegisteredServiceAccessStrategy def = (DefaultRegisteredServiceAccessStrategy) accessStrategy;
-            accessBean.setRequireAll(def.isRequireAllAttributes());
-            accessBean.setRequiredAttr(def.getRequiredAttributes());
-        }
+        configureAccessStrategy(svc, bean);
 
         if (svc instanceof OAuthRegisteredCallbackAuthorizeService) {
             bean.setType(RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString());
@@ -176,24 +169,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         final RegisteredServiceUsernameAttributeProvider provider = svc.getUsernameAttributeProvider();
         final RegisteredServiceUsernameAttributeProviderEditBean uBean = bean.getUserAttrProvider();
 
-        if (provider instanceof DefaultRegisteredServiceUsernameProvider) {
-            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString());
-        } else if (provider instanceof AnonymousRegisteredServiceUsernameAttributeProvider) {
-            final AnonymousRegisteredServiceUsernameAttributeProvider anonymous =
-                    (AnonymousRegisteredServiceUsernameAttributeProvider) provider;
-            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString());
-            final PersistentIdGenerator generator = anonymous.getPersistentIdGenerator();
-            if (generator instanceof ShibbolethCompatiblePersistentIdGenerator) {
-                final ShibbolethCompatiblePersistentIdGenerator sh =
-                        (ShibbolethCompatiblePersistentIdGenerator) generator;
-                uBean.setValue(new String(sh.getSalt(), Charset.defaultCharset()));
-            }
-        } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
-            final PrincipalAttributeRegisteredServiceUsernameProvider p =
-                    (PrincipalAttributeRegisteredServiceUsernameProvider) provider;
-            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString());
-            uBean.setValue(p.getUsernameAttribute());
-        }
+        configureUsernameAttributeProvider(provider, uBean);
 
         final RegisteredServicePublicKey key = svc.getPublicKey();
         final RegisteredServicePublicKeyEditBean pBean = bean.getPublicKey();
@@ -201,17 +177,37 @@ public final class RegisteredServiceEditBean implements Serializable {
             pBean.setAlgorithm(key.getAlgorithm());
             pBean.setLocation(key.getLocation());
         }
-        final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
-        final RegisteredServiceProxyPolicyBean cBean = bean.getProxyPolicy();
-        if (policy == null || policy instanceof RefuseRegisteredServiceProxyPolicy) {
-            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
-        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
-            final RegexMatchingRegisteredServiceProxyPolicy regex =
-                    (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
-            cBean.setValue(regex.getPattern().toString());
-        }
+        configureProxyPolicy(svc, bean);
+        configureAttributeReleasePolicy(svc, bean);
+        return serviceBean;
+    }
 
+    /**
+     * Configure access strategy.
+     *
+     * @param svc the svc
+     * @param bean the bean
+     */
+    private static void configureAccessStrategy(final RegisteredService svc, final ServiceData bean) {
+        final RegisteredServiceAccessStrategy accessStrategy = svc.getAccessStrategy();
+        final RegisteredServiceSupportAccessEditBean accessBean = bean.getSupportAccess();
+        accessBean.setCasEnabled(accessStrategy.isServiceAccessAllowed());
+        accessBean.setSsoEnabled(accessStrategy.isServiceAccessAllowedForSso());
+
+        if (accessStrategy instanceof DefaultRegisteredServiceAccessStrategy) {
+            final DefaultRegisteredServiceAccessStrategy def = (DefaultRegisteredServiceAccessStrategy) accessStrategy;
+            accessBean.setRequireAll(def.isRequireAllAttributes());
+            accessBean.setRequiredAttr(def.getRequiredAttributes());
+        }
+    }
+
+    /**
+     * Configure attribute release policy.
+     *
+     * @param svc the svc
+     * @param bean the bean
+     */
+    private static void configureAttributeReleasePolicy(final RegisteredService svc, final ServiceData bean) {
         final AbstractAttributeReleasePolicy attrPolicy = (AbstractAttributeReleasePolicy) svc.getAttributeReleasePolicy();
         if (attrPolicy != null) {
             final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();
@@ -268,7 +264,59 @@ public final class RegisteredServiceEditBean implements Serializable {
                 sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
             }
         }
-        return serviceBean;
+    }
+
+    /**
+     * Configure proxy policy.
+     *
+     * @param svc the svc
+     * @param bean the bean
+     */
+    private static void configureProxyPolicy(final RegisteredService svc, final ServiceData bean) {
+        final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
+        final RegisteredServiceProxyPolicyBean cBean = bean.getProxyPolicy();
+        if (policy == null || policy instanceof RefuseRegisteredServiceProxyPolicy) {
+            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
+        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
+            final RegexMatchingRegisteredServiceProxyPolicy regex =
+                    (RegexMatchingRegisteredServiceProxyPolicy) policy;
+            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
+            cBean.setValue(regex.getPattern().toString());
+        }
+    }
+
+    /**
+     * Configure username attribute provider.
+     *
+     * @param provider the provider
+     * @param uBean the u bean
+     */
+    private static void configureUsernameAttributeProvider(final RegisteredServiceUsernameAttributeProvider provider,
+                                                           final RegisteredServiceUsernameAttributeProviderEditBean uBean) {
+        if (provider instanceof DefaultRegisteredServiceUsernameProvider) {
+            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString());
+        } else if (provider instanceof AnonymousRegisteredServiceUsernameAttributeProvider) {
+            final AnonymousRegisteredServiceUsernameAttributeProvider anonymous =
+                    (AnonymousRegisteredServiceUsernameAttributeProvider) provider;
+            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString());
+            final PersistentIdGenerator generator = anonymous.getPersistentIdGenerator();
+            if (generator instanceof ShibbolethCompatiblePersistentIdGenerator) {
+                final ShibbolethCompatiblePersistentIdGenerator sh =
+                        (ShibbolethCompatiblePersistentIdGenerator) generator;
+
+                String salt = new String(sh.getSalt(), Charset.defaultCharset());
+                if (Base64.isBase64(salt)) {
+                    salt = new String(Base64.decodeBase64(salt));
+                }
+
+                uBean.setValue(salt);
+            }
+        } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
+            final PrincipalAttributeRegisteredServiceUsernameProvider p =
+                    (PrincipalAttributeRegisteredServiceUsernameProvider) provider;
+            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString());
+            uBean.setValue(p.getUsernameAttribute());
+        }
     }
 
     /**
@@ -528,10 +576,16 @@ public final class RegisteredServiceEditBean implements Serializable {
                     regSvc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
                 } else if (StringUtils.equalsIgnoreCase(uidType,
                         RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString())) {
-                    final ShibbolethCompatiblePersistentIdGenerator generator =
-                            new ShibbolethCompatiblePersistentIdGenerator(this.userAttrProvider.getValue());
-                    regSvc.setUsernameAttributeProvider(
-                            new AnonymousRegisteredServiceUsernameAttributeProvider(generator));
+                    final String salt = this.userAttrProvider.getValue();
+                    if (StringUtils.isNotBlank(salt)) {
+
+                        final ShibbolethCompatiblePersistentIdGenerator generator =
+                                new ShibbolethCompatiblePersistentIdGenerator(salt);
+                        regSvc.setUsernameAttributeProvider(
+                                new AnonymousRegisteredServiceUsernameAttributeProvider(generator));
+                    } else {
+                        throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
+                    }
                 } else if (StringUtils.equalsIgnoreCase(uidType,
                         RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString())) {
                     regSvc.setUsernameAttributeProvider(
@@ -571,7 +625,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                 if (StringUtils.equalsIgnoreCase(attrType,
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
                     policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
-                            TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit()),
+                            TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
                             this.attrRelease.getCachedExpiration()));
                 } else if (StringUtils.equalsIgnoreCase(attrType,
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString())) {
