@@ -275,8 +275,6 @@ public final class RegisteredServiceEditBean implements Serializable {
      */
     public static class FormData {
         private List<String> availableAttributes = new ArrayList<>();
-        private List<String> availableUsernameAttributes = new ArrayList<>();
-
         public List<String> getAvailableAttributes() {
             return availableAttributes;
         }
@@ -285,13 +283,6 @@ public final class RegisteredServiceEditBean implements Serializable {
             this.availableAttributes = availableAttributes;
         }
 
-        public List<String> getAvailableUsernameAttributes() {
-            return availableUsernameAttributes;
-        }
-
-        public void setAvailableUsernameAttributes(final List<String> availableUsernameAttributes) {
-            this.availableUsernameAttributes = availableUsernameAttributes;
-        }
     }
 
     /**
