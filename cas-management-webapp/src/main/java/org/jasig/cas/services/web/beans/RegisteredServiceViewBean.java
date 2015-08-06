@@ -148,7 +148,7 @@ public class RegisteredServiceViewBean implements Serializable {
             proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.ALLOW.toString());
+            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
             proxyPolicyBean.setValue(option.getPattern().toString());
         }
 
