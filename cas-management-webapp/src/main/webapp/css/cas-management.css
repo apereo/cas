@@ -6745,6 +6745,12 @@ html {
 .casmgmt-app #serviceForm select.required-missing {
   background-color: #ffcccc;
 }
+.casmgmt-app #serviceForm textarea {
+  width: 100%;
+}
+.casmgmt-app #serviceForm textarea.noresize {
+  resize: none;
+}
 .casmgmt-app .search-form .search-clear {
   pointer-events: auto;
   text-decoration: none;
