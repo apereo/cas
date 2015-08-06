@@ -71,6 +71,12 @@
       <param-value>username password</param-value>
     </init-param>
   </filter>
+  <!--
+      Ignore Rest endpoint in the url patterns list. Once the security
+      filter reads and processes the request, restlet is unable to
+      proceed with extracting credentials because it sees the request
+      input stream as consumed even.
+  -->
   <filter-mapping>
       <filter-name>requestParameterSecurityFilter</filter-name>
       <url-pattern>/authorizationFailure.html</url-pattern>
