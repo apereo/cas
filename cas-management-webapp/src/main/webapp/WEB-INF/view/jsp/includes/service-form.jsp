@@ -36,11 +36,14 @@
                 <span ng-if="serviceFormCtrl.alert.name === 'notvalid'">
                     <spring:message code="services.form.alert.formHasErrors" />
                 </span>
+                <span ng-if="serviceFormCtrl.alert.name === 'updated'">
+                    <spring:message code="services.form.alert.serviceUpdated" />
+                </span>
+                <span ng-if="serviceFormCtrl.alert.name === 'added'">
+                    <spring:message code="services.form.alert.serviceAdded" />
+                </span>
                 <span ng-if="serviceFormCtrl.alert.name === 'notsaved'">
                     <spring:message code="services.form.alert.unableToSave" />
-                </span>
-                <span ng-if="serviceFormCtrl.alert.name === 'requiredText'">
-                    <spring:message code="services.form.requiredText" />
                 </span>
                 <span ng-if="serviceFormCtrl.alert.name === 'instructions'">
                     <spring:message code="services.form.instructions" />
@@ -181,7 +184,7 @@
                                     <!-- OAuth Bypass Approval Prompt -->
                                     <div class="checkbox">
                                         <label for="oauthBypass">
-                                            <input type="checkbox" id="oauthBypass" ng-model="serviceFormCtrl.serviceData.oauthBypass" />
+                                            <input type="checkbox" id="oauthBypass" ng-model="serviceFormCtrl.serviceData.oauth.bypass" />
                                             <spring:message code="services.form.label.oauthBypass" />
                                             <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthBypass" />"></i>
                                         </label>
@@ -343,31 +346,31 @@
                                 <label class="radio-inline">
                                     <input type="radio" name="uapRadio" id="uapDefault" value="default"
                                         ng-model="serviceFormCtrl.serviceData.userAttrProvider.type"
-                                        ng-checked="serviceFormCtrl.serviceData.userAttrProvider.type === 'default'" />
+                                        ng-checked="serviceFormCtrl.serviceData.userAttrProvider.type == 'default'" />
                                     <spring:message code="services.form.label.uap.default" />
                                 </label>
                                 <!-- Username Attribute Provider Radio Button - Anonymous -->
                                 <label class="radio-inline">
                                     <input type="radio" name="uapRadio" id="uapAnon" value="anon"
                                         ng-model="serviceFormCtrl.serviceData.userAttrProvider.type"
-                                        ng-checked="serviceFormCtrl.serviceData.userAttrProvider.type === 'anon'" />
+                                        ng-checked="serviceFormCtrl.serviceData.userAttrProvider.type == 'anon'" />
                                     <spring:message code="services.form.label.uap.anon" />
                                 </label>
                                 <!-- Username Attribute Provider Radio Button - Principle Attribute -->
                                 <label class="radio-inline">
                                     <input type="radio" name="uapRadio" id="uapAtt" value="attr"
                                         ng-model="serviceFormCtrl.serviceData.userAttrProvider.type"
-                                        ng-checked="serviceFormCtrl.serviceData.userAttrProvider.type === 'attr'" />
+                                        ng-checked="serviceFormCtrl.serviceData.userAttrProvider.type == 'attr'" />
                                     <spring:message code="services.form.label.uap.principleAtt" />
                                 </label>
                             </div><%-- end .radio-group div --%>
 
                             <!-- Username Attribute Provider Default Options -->
-                            <div class="well well-sm" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type === 'default'">
+                            <div class="well well-sm" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'default'">
                                 <spring:message code="management.services.service.noAction" />
                             </div>
                             <!-- Username Attribute Provider Anonymous Options -->
-                            <div class="form-group" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type === 'anon'">
+                            <div class="form-group" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'anon'">
                                 <label class="col-sm-4" for="uapSaltSetting">
                                     <spring:message code="services.form.label.uap.saltSetting" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.uap.saltSetting" />"></i>
                                 </label>
@@ -379,7 +382,7 @@
                                 </div>
                             </div>
                             <!-- Username Attribute Provider Principle Attribute Options -->
-                            <div class="form-group" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type === 'attr'">
+                            <div class="form-group" ng-show="serviceFormCtrl.serviceData.userAttrProvider.type == 'attr'">
                                 <label class="col-sm-4" for="uapUsernameAttribute">
                                     <spring:message code="services.form.label.uap.usernameAttribute" />
                                     <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.uap.usernameAttribute" />"></i>
@@ -388,7 +391,7 @@
                                     <div class="input-group">
                                         <div class="input-group-addon input-group-required" title="<spring:message code="services.form.required" />"><i class="fa fa-exclamation-triangle"></i></div>
                                         <select class="form-control" id="uapUsernameAttribute" ng-model="serviceFormCtrl.serviceData.userAttrProvider.valueAttr">
-                                            <option ng-repeat="opt in serviceFormCtrl.formData.availableUsernameAttributes" ng-attr-value="{{ opt }}"
+                                            <option ng-repeat="opt in serviceFormCtrl.formData.availableAttributes" ng-attr-value="{{ opt }}"
                                                 ng-selected="serviceFormCtrl.isSelected(opt, serviceFormCtrl.serviceData.userAttrProvider.value)">{{ opt }}</option>
                                         </select>
                                     </div>
