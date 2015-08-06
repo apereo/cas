@@ -6731,6 +6731,9 @@ html {
 .casmgmt-app .casmgmt-form .checkbox-group {
   margin-bottom: 10px;
 }
+.casmgmt-app .casmgmt-form .services-button-group-top {
+  float: right;
+}
 .casmgmt-app .casmgmt-form .services-button-group {
   margin: 20px;
   padding: 20px;
@@ -6738,6 +6741,10 @@ html {
   text-align: center;
 }
 .casmgmt-app .casmgmt-form .services-button-group .btn + .btn {
+  margin-left: 20px;
+}
+.casmgmt-app .casmgmt-form .services-button-group .btn + .btn,
+.casmgmt-app .casmgmt-form .services-button-group-top .btn + .btn {
   margin-left: 20px;
 }
 .casmgmt-app #serviceForm input.required-missing,
