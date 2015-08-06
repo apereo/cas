@@ -4,7 +4,7 @@
   "clientSecret": "secret",
   "serviceId" : "^(https|imaps)://hello.*",
   "name" : "HTTPS and IMAPS",
-  "id" : 100,
+  "id" : 10000001,
   "description" : "Description is here",
   "theme": "misagh",
   "logoutUrl" : "https://example.org/logout",

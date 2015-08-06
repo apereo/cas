@@ -25,6 +25,8 @@ import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGe
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -277,7 +279,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void verifyServiceRemovals() {
+    public void verifyServiceRemovals() throws Exception{
         final List<RegisteredService> list = new ArrayList<>(5);
         for (int i = 1; i < 5; i++) {
             final RegexRegisteredService r = new RegexRegisteredService();
@@ -291,6 +293,7 @@ public class JsonServiceRegistryDaoTests {
 
         for (final RegisteredService r2 : list) {
             this.dao.delete(r2);
+            Thread.sleep(1);
             assertNull(this.dao.findServiceById(r2.getId()));
         }
 
@@ -312,9 +315,9 @@ public class JsonServiceRegistryDaoTests {
         authz.setRequiredAttributes(attrs);
         r.setAccessStrategy(authz);
 
-        this.dao.save(r);
-        final List<RegisteredService> list = this.dao.load();
-        assertEquals(list.size(), 1);
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        assertEquals(r2, r3);
     }
 
     @Test
@@ -332,4 +335,5 @@ public class JsonServiceRegistryDaoTests {
         final List<RegisteredService> list = this.dao.load();
         assertNotNull(this.dao.findServiceById(r.getId()));
     }
+
 }
