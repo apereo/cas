@@ -56,7 +56,7 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <a href="manage.html" id="homepageUrlAnchor">
+                <a href="manage.html">
                     <div class="navbar-brand">
                         <img src="<c:url value="/images/logo_cas.png"/>" alt="Jasig CAS logo" />
                     </div>
