@@ -86,7 +86,7 @@
             };
 
             factory.forceReload = function() {
-                $location.url('/cas-management/logout/html');
+                $location.url('/cas-management/logout.html');
             };
 
             return factory;
