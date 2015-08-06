@@ -81,13 +81,20 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                             @RequestBody final RegisteredServiceEditBean.ServiceData service,
                             final BindingResult result) {
         try {
+
             final RegisteredService svcToUse = service.toRegisteredService(this.personAttributeDao);
-            this.servicesManager.save(svcToUse);
+            final RegisteredService curService = this.servicesManager.findServiceBy(svcToUse.getId());
+            if (this.servicesManager.delete(curService.getId()) == null) {
+                throw new IllegalArgumentException("Service " + curService.getId() + " cannot be updated");
+            }
+            final RegisteredService newSvc = this.servicesManager.save(svcToUse);
             logger.info("Saved changes to service {}", svcToUse.getId());
 
             final Map<String, Object> model = new HashMap<>();
-            model.put("id", svcToUse.getId());
+            model.put("id", newSvc.getId());
+            model.put("status", HttpServletResponse.SC_OK);
             JsonViewUtils.render(model, response);
+
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }

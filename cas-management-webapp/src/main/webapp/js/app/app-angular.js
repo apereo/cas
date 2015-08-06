@@ -361,7 +361,8 @@
                     type: 'post',
                     url: '/cas-management/saveService.html',
                     contentType: "application/json; charset=utf-8",
-                    data: serviceForm.serviceData,
+                    dataType: "json",
+                    data: JSON.stringify(serviceForm.serviceData),
                     headers: httpHeaders,
                     success: function (data, status) {
                         if(data.status != 200) {
