@@ -360,6 +360,7 @@
                 $.ajax({
                     type: 'post',
                     url: '/cas-management/saveService.html',
+                    contentType: "application/json; charset=utf-8",
                     data: serviceForm.serviceData,
                     headers: httpHeaders,
                     success: function (data, status) {
