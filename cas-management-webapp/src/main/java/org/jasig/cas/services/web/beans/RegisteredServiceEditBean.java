@@ -40,6 +40,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServicePublicKey;
+import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
 import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
@@ -47,6 +48,7 @@ import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
@@ -59,7 +61,9 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Defines the service bean that is produced by the webapp
@@ -258,73 +262,6 @@ public class RegisteredServiceEditBean implements Serializable {
     }
 
     /**
-     * To registered service.
-     *
-     * @return the registered service
-     */
-    public RegisteredService toRegisteredService() {
-        try {
-            final AbstractRegisteredService regSvc;
-
-            if (StringUtils.equalsIgnoreCase(this.serviceData.getType(),
-                    RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString())) {
-                regSvc = new OAuthRegisteredCallbackAuthorizeService();
-            } else if  (StringUtils.equalsIgnoreCase(this.serviceData.getType(),
-                    RegisteredServiceTypeEditBean.OAUTH.toString())) {
-                regSvc = new OAuthRegisteredService();
-
-                final RegisteredServiceOAuthTypeEditBean oauthBean = this.serviceData.getOauth();
-                ((OAuthRegisteredService) regSvc).setClientId(oauthBean.getClientId());
-                ((OAuthRegisteredService) regSvc).setClientSecret(oauthBean.getClientSecret());
-                ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
-            } else {
-                regSvc = new RegexRegisteredService();
-            }
-
-            regSvc.setId(this.serviceData.assignedId);
-            regSvc.setServiceId(this.serviceData.serviceId);
-            regSvc.setName(this.serviceData.name);
-            regSvc.setDescription(this.serviceData.description);
-
-            if (StringUtils.isNotBlank(this.serviceData.logoUrl)) {
-                regSvc.setLogo(new URL(this.serviceData.logoUrl));
-            }
-            regSvc.setTheme(this.serviceData.theme);
-            regSvc.setEvaluationOrder(this.serviceData.evalOrder);
-
-
-            if (StringUtils.equalsIgnoreCase(this.serviceData.logoutType,
-                    RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
-                regSvc.setLogoutType(LogoutType.BACK_CHANNEL);
-            } else if (StringUtils.equalsIgnoreCase(this.serviceData.logoutType,
-                    RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
-                regSvc.setLogoutType(LogoutType.FRONT_CHANNEL);
-            } else {
-                regSvc.setLogoutType(LogoutType.NONE);
-            }
-
-            if (StringUtils.isNotBlank(this.serviceData.logoutUrl)) {
-                regSvc.setLogoutUrl(new URL(this.serviceData.logoutUrl));
-            }
-
-            final RegisteredServiceAccessStrategy accessStrategy = regSvc.getAccessStrategy();
-
-            ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                    .setEnabled(this.serviceData.supportAccess.isCasEnabled());
-            ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                    .setSsoEnabled(this.serviceData.supportAccess.isSsoEnabled());
-            ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                    .setRequireAllAttributes(this.serviceData.supportAccess.isRequireAll());
-            ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                    .setRequiredAttributes(this.serviceData.supportAccess.getRequiredAttr());
-
-            return regSvc;
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
      * The type Form data.
      */
     public static class FormData {
@@ -508,5 +445,138 @@ public class RegisteredServiceEditBean implements Serializable {
             this.logoUrl = logoUrl;
         }
 
+        /**
+         * To registered service.
+         *
+         * @param dao the dao
+         * @return the registered service
+         */
+        public RegisteredService toRegisteredService(final IPersonAttributeDao dao) {
+            try {
+                final AbstractRegisteredService regSvc;
+
+                if (StringUtils.equalsIgnoreCase(this.type,
+                        RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString())) {
+                    regSvc = new OAuthRegisteredCallbackAuthorizeService();
+                } else if  (StringUtils.equalsIgnoreCase(this.type,
+                        RegisteredServiceTypeEditBean.OAUTH.toString())) {
+                    regSvc = new OAuthRegisteredService();
+
+                    final RegisteredServiceOAuthTypeEditBean oauthBean = this.oauth;
+                    ((OAuthRegisteredService) regSvc).setClientId(oauthBean.getClientId());
+                    ((OAuthRegisteredService) regSvc).setClientSecret(oauthBean.getClientSecret());
+                    ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
+                } else {
+                    regSvc = new RegexRegisteredService();
+                }
+
+                regSvc.setId(this.assignedId);
+                regSvc.setServiceId(this.serviceId);
+                regSvc.setName(this.name);
+                regSvc.setDescription(this.description);
+
+                if (StringUtils.isNotBlank(this.logoUrl)) {
+                    regSvc.setLogo(new URL(this.logoUrl));
+                }
+                regSvc.setTheme(this.theme);
+                regSvc.setEvaluationOrder(this.evalOrder);
+                regSvc.setRequiredHandlers(this.requiredHandlers);
+
+                if (StringUtils.equalsIgnoreCase(this.logoutType,
+                        RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
+                    regSvc.setLogoutType(LogoutType.BACK_CHANNEL);
+                } else if (StringUtils.equalsIgnoreCase(this.logoutType,
+                        RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
+                    regSvc.setLogoutType(LogoutType.FRONT_CHANNEL);
+                } else {
+                    regSvc.setLogoutType(LogoutType.NONE);
+                }
+
+                if (StringUtils.isNotBlank(this.logoutUrl)) {
+                    regSvc.setLogoutUrl(new URL(this.logoutUrl));
+                }
+
+                final RegisteredServiceAccessStrategy accessStrategy = regSvc.getAccessStrategy();
+
+                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
+                        .setEnabled(this.supportAccess.isCasEnabled());
+                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
+                        .setSsoEnabled(this.supportAccess.isSsoEnabled());
+                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
+                        .setRequireAllAttributes(this.supportAccess.isRequireAll());
+                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
+                        .setRequiredAttributes(this.supportAccess.getRequiredAttr());
+
+                final String proxyType = this.proxyPolicy.getType();
+                if (StringUtils.equalsIgnoreCase(proxyType,
+                        RegisteredServiceProxyPolicyBean.Types.REFUSE.toString())) {
+                    regSvc.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
+                } else if (StringUtils.equalsIgnoreCase(proxyType,
+                        RegisteredServiceProxyPolicyBean.Types.ALLOW.toString())) {
+                    regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(this.proxyPolicy.getValue()));
+                }
+
+                final String uidType = this.userAttrProvider.getType();
+                if (StringUtils.equalsIgnoreCase(uidType,
+                        RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString())) {
+                    regSvc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+                } else if (StringUtils.equalsIgnoreCase(uidType,
+                        RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString())) {
+                    final ShibbolethCompatiblePersistentIdGenerator generator =
+                            new ShibbolethCompatiblePersistentIdGenerator(this.userAttrProvider.getValue());
+                    regSvc.setUsernameAttributeProvider(
+                            new AnonymousRegisteredServiceUsernameAttributeProvider(generator));
+                } else if (StringUtils.equalsIgnoreCase(uidType,
+                        RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString())) {
+                    regSvc.setUsernameAttributeProvider(
+                            new PrincipalAttributeRegisteredServiceUsernameProvider(this.userAttrProvider.getValue()));
+                }
+
+                if (this.publicKey != null) {
+                    final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
+                            this.publicKey.getLocation(), this.publicKey.getAlgorithm());
+                    regSvc.setPublicKey(publicKey);
+                }
+
+                final RegisteredServiceAttributeReleasePolicyStrategyEditBean policyBean =
+                        this.attrRelease.getAttrPolicy();
+                final String policyType = policyBean.getType();
+
+                AbstractAttributeReleasePolicy policy = null;
+                if (StringUtils.equalsIgnoreCase(policyType,
+                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
+                    policy = new ReturnAllAttributeReleasePolicy();
+                } else if (StringUtils.equalsIgnoreCase(policyType,
+                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString())) {
+                    policy = new ReturnAllowedAttributeReleasePolicy((List) policyBean.getAttributes());
+                } else if (StringUtils.equalsIgnoreCase(policyType,
+                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString())) {
+                    policy = new ReturnMappedAttributeReleasePolicy((Map) policyBean.getAttributes());
+                } else {
+                    policy = new ReturnAllowedAttributeReleasePolicy();
+                }
+
+                final String filter = this.attrRelease.getAttrFilter();
+                if (StringUtils.isNotBlank(filter)) {
+                    policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter(filter));
+                }
+
+                final String attrType = this.attrRelease.getAttrOption();
+                if (StringUtils.equalsIgnoreCase(attrType,
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
+                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
+                            TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit()),
+                            this.attrRelease.getCachedExpiration()));
+                } else if (StringUtils.equalsIgnoreCase(attrType,
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString())) {
+                    policy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
+                }
+                regSvc.setAttributeReleasePolicy(policy);
+
+                return regSvc;
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

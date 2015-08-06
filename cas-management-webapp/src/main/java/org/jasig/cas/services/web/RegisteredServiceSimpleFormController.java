@@ -78,10 +78,10 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
     @RequestMapping(method = RequestMethod.POST, value = {"saveService.html"})
     public void saveService(final HttpServletRequest request,
                             final HttpServletResponse response,
-                            @RequestBody final RegisteredServiceEditBean service,
+                            @RequestBody final RegisteredServiceEditBean.ServiceData service,
                             final BindingResult result) {
         try {
-            final RegisteredService svcToUse = service.toRegisteredService();
+            final RegisteredService svcToUse = service.toRegisteredService(this.personAttributeDao);
             this.servicesManager.save(svcToUse);
             logger.info("Saved changes to service {}", svcToUse.getId());
 
