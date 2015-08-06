@@ -131,10 +131,6 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
             Collections.sort(possibleAttributeNames);
             formData.setAvailableAttributes(possibleAttributeNames);
 
-            final List<String> possibleUsernameAttributeNames = new ArrayList<>();
-            possibleUsernameAttributeNames.addAll(possibleAttributeNames);
-            formData.setAvailableUsernameAttributes(possibleUsernameAttributeNames);
-
             bean.setStatus(HttpServletResponse.SC_OK);
             JsonViewUtils.render(bean, response);
         } catch (final Exception e) {

@@ -191,6 +191,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
             final PrincipalAttributeRegisteredServiceUsernameProvider p =
                     (PrincipalAttributeRegisteredServiceUsernameProvider) provider;
+            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString());
             uBean.setValue(p.getUsernameAttribute());
         }
 
@@ -207,7 +208,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy regex =
                     (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            cBean.setType(RegisteredServiceProxyPolicyBean.Types.ALLOW.toString());
+            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
             cBean.setValue(regex.getPattern().toString());
         }
 
@@ -275,8 +276,6 @@ public final class RegisteredServiceEditBean implements Serializable {
      */
     public static class FormData {
         private List<String> availableAttributes = new ArrayList<>();
-        private List<String> availableUsernameAttributes = new ArrayList<>();
-
         public List<String> getAvailableAttributes() {
             return availableAttributes;
         }
@@ -285,13 +284,6 @@ public final class RegisteredServiceEditBean implements Serializable {
             this.availableAttributes = availableAttributes;
         }
 
-        public List<String> getAvailableUsernameAttributes() {
-            return availableUsernameAttributes;
-        }
-
-        public void setAvailableUsernameAttributes(final List<String> availableUsernameAttributes) {
-            this.availableUsernameAttributes = availableUsernameAttributes;
-        }
     }
 
     /**
@@ -521,8 +513,13 @@ public final class RegisteredServiceEditBean implements Serializable {
                         RegisteredServiceProxyPolicyBean.Types.REFUSE.toString())) {
                     regSvc.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
                 } else if (StringUtils.equalsIgnoreCase(proxyType,
-                        RegisteredServiceProxyPolicyBean.Types.ALLOW.toString())) {
-                    regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(this.proxyPolicy.getValue()));
+                        RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
+                    final String value = this.proxyPolicy.getValue();
+                    if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
+                        regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(value));
+                    } else {
+                        throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
+                    }
                 }
 
                 final String uidType = this.userAttrProvider.getType();
@@ -607,6 +604,22 @@ public final class RegisteredServiceEditBean implements Serializable {
                 }
             }
             throw new RuntimeException("Service id " + serviceId + " cannot be resolve to a service type");
+        }
+
+        /**
+         * Determine service type by pattern.
+         *
+         * @param pattern the pattern
+         * @return the abstract registered service
+         */
+        private boolean isValidRegex(final String pattern) {
+            try {
+                Pattern.compile(serviceId);
+                LOGGER.debug("Pattern is a valid regex.", pattern);
+                return true;
+            } catch (final PatternSyntaxException exception) {
+                return false;
+            }
         }
     }
 }
