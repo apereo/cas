@@ -19,9 +19,12 @@
 package org.jasig.cas.support.oauth.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredService;
 
 /**
  * An extension of the {@link RegexRegisteredService} that defines the
@@ -73,7 +76,47 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
     }
 
     @Override
+    public void copyFrom(final RegisteredService source) {
+        super.copyFrom(source);
+        final OAuthRegisteredService oAuthRegisteredService = (OAuthRegisteredService) source;
+        this.setClientId(oAuthRegisteredService.getClientId());
+        this.setClientSecret(oAuthRegisteredService.getClientSecret());
+        this.setBypassApprovalPrompt(oAuthRegisteredService.isBypassApprovalPrompt());
+    }
+
+    @Override
     protected AbstractRegisteredService newInstance() {
         return new OAuthRegisteredService();
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final OAuthRegisteredService rhs = (OAuthRegisteredService) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.clientSecret, rhs.clientSecret)
+                .append(this.clientId, rhs.clientId)
+                .append(this.bypassApprovalPrompt, rhs.bypassApprovalPrompt)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(clientSecret)
+                .append(clientId)
+                .append(bypassApprovalPrompt)
+                .toHashCode();
     }
 }
