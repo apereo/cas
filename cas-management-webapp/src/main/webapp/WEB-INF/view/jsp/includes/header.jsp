@@ -56,7 +56,7 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <a href="manage.html">
+                <a href="manage.html" target="_self" id="homepageUrlLink">
                     <div class="navbar-brand">
                         <img src="<c:url value="/images/logo_cas.png"/>" alt="Jasig CAS logo" />
                     </div>
@@ -80,7 +80,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="logout.html">
+                        <a href="logout.html" target="_self" id="logoutUrlLink">
                             <i class="fa fa-sign-out"></i>
                             <spring:message code="management.services.header.navbar.navitem.logout" />
                         </a>
