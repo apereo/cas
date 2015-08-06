@@ -191,6 +191,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
             final PrincipalAttributeRegisteredServiceUsernameProvider p =
                     (PrincipalAttributeRegisteredServiceUsernameProvider) provider;
+            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString());
             uBean.setValue(p.getUsernameAttribute());
         }
 
