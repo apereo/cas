@@ -60,18 +60,11 @@
         });
 
     app.factory('sharedFactoryCtrl', [
-        '$log',
-        '$location',
-        function ($log, $location) {
+        function () {
             var factory = {assignedId: null};
 
             factory.httpHeaders = {};
             factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
-
-            factory.httpConfig = { // In case we can get $http.post to work
-                headers: factory.httpHeaders,
-                responseType: 'json'
-            };
 
             factory.maxEvalOrder = 0;
 
@@ -86,7 +79,7 @@
             };
 
             factory.forceReload = function() {
-                $location.url('/cas-management/logout.html');
+                $('#logoutUrlLink')[0].click();
             };
 
             return factory;
@@ -131,10 +124,9 @@
     app.controller('ServicesTableController', [
         '$scope',
         '$http',
-        '$log',
         '$timeout',
         'sharedFactoryCtrl',
-        function ($scope, $http, $log, $timeout, sharedFactory) {
+        function ($scope, $http, $timeout, sharedFactory) {
             var serviceData = this,
                 httpHeaders = sharedFactory.httpHeaders,
                 delayedAlert = function(n, t, d, skipScrollTop) {
@@ -277,10 +269,9 @@
     app.controller('ServiceFormController', [
         '$scope',
         '$http',
-        '$log',
         '$timeout',
         'sharedFactoryCtrl',
-        function ($scope, $http, $log, $timeout, sharedFactory) {
+        function ($scope, $http, $timeout, sharedFactory) {
             var serviceForm = this,
                 httpHeaders = sharedFactory.httpHeaders,
                 delayedAlert = function(n, t, d, skipScrollTop) {
@@ -323,11 +314,11 @@
                     {name: '2 - FRONT_CHANNEL', value: 'front'}
                 ],
                 timeUnitsList: [
-                    {name: 'MILLISECONDS',  value: 'milliseconds'},
-                    {name: 'SECONDS',       value: 'seconds'},
-                    {name: 'MINUTES',       value: 'minutes'},
-                    {name: 'HOURS',         value: 'hours'},
-                    {name: 'DAYS',          value: 'days'}
+                    {name: 'MILLISECONDS',  value: 'MILLISECONDS'},
+                    {name: 'SECONDS',       value: 'SECONDS'},
+                    {name: 'MINUTES',       value: 'MINUTES'},
+                    {name: 'HOURS',         value: 'HOURS'},
+                    {name: 'DAYS',          value: 'DAYS'}
                 ],
                 mergeStrategyList: [
                     {name: 'DEFAULT',       value: 'default'},
@@ -381,8 +372,11 @@
                         }
                         else if(angular.isString(data))
                             sharedFactory.forceReload();
-                        else
+                        else {
                             delayedAlert(serviceForm.serviceData.assignedId ? 'updated' : 'added', 'info', null);
+                            if(!serviceForm.serviceData.assignedId)
+                                serviceForm.serviceData.assignedId = data.id;
+                        }
                     },
                     error: function(xhr, status) {
                         if(xhr.status == 403)
@@ -423,7 +417,6 @@
                         serviceForm.formErrors.push('cachedTime');
                     if(!data.attrRelease.mergingStrategy)
                         serviceForm.formErrors.push('mergingStrategy');
-                    $log.log(data.attrRelease);
                 }
             };
 
