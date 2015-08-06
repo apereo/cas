@@ -36,8 +36,24 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
 
     private static final long serialVersionUID = -6249488544306639050L;
     
-    private Map<String, String> allowedAttributes = new TreeMap<>();
-    
+    private Map<String, String> allowedAttributes;
+
+    /**
+     * Instantiates a new Return mapped attribute release policy.
+     */
+    public ReturnMappedAttributeReleasePolicy() {
+        this(new TreeMap<String, String>());
+    }
+
+    /**
+     * Instantiates a new Return mapped attribute release policy.
+     *
+     * @param allowedAttributes the allowed attributes
+     */
+    public ReturnMappedAttributeReleasePolicy(final Map<String, String> allowedAttributes) {
+        this.allowedAttributes = allowedAttributes;
+    }
+
     /**
      * Sets the allowed attributes.
      *
