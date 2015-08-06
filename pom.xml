@@ -398,7 +398,7 @@ pTSqrOnmqmUUnopqmvummmmmmUUnopqmvummmmmmUUA1jJ
         <configuration>
           <header>${cs.dir}/src/licensing/header.txt</header>
           <skipExistingHeaders>true</skipExistingHeaders>
-          <strictCheck>true</strictCheck>
+          <strictCheck>false</strictCheck>
           <headerDefinitions>
             <headerDefinition>${cs.dir}/src/licensing/header-definitions.xml</headerDefinition>
           </headerDefinitions>
