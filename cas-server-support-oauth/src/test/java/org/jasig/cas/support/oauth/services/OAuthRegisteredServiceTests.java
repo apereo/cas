@@ -23,18 +23,16 @@ import org.apache.commons.io.FileUtils;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.JsonServiceRegistryDao;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServiceRegistryDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import java.util.List;
-
 import static org.junit.Assert.*;
 
 /**
  * @author Misagh Moayyed
+ * @since 4.1
  */
 public class OAuthRegisteredServiceTests {
 
