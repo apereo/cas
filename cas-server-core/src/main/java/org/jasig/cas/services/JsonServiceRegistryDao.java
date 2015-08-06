@@ -27,6 +27,7 @@ import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
@@ -238,14 +239,14 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
         }
 
         if (file.length() == 0) {
-            LOGGER.warn("[{}] appears to be empty so no service definition will be loaded", file.getName());
+            LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", file.getName());
             return null;
         }
 
         try (final BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
             return this.registeredServiceJsonSerializer.fromJson(in);
         } catch (final Exception e) {
-            LOGGER.error("Error reading configuration file", e);
+            LOGGER.error("Error reading configuration file " + file.getName(), e);
         }
         return null;
     }
@@ -295,6 +296,11 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
      * Refreshes the services manager, forcing it to reload.
      */
     void refreshServicesManager() {
+        if (this.applicationContext == null) {
+            LOGGER.debug("Application context has failed to initialize"
+               + "Service definition may not take immediate effect, which suggests a configuration problem");
+            return;
+        }
         final ReloadableServicesManager manager = this.applicationContext.getBean(ReloadableServicesManager.class);
         if (manager != null) {
             manager.reload();

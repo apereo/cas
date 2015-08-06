@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.support.oauth.services;
 
+import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.support.oauth.OAuthConstants;
 
@@ -46,5 +47,10 @@ public final class OAuthRegisteredCallbackAuthorizeService extends RegexRegister
     @Override
     public void setServiceId(final String id) {
         this.setCallbackAuthorizeUrl(id);
+    }
+
+    @Override
+    protected AbstractRegisteredService newInstance() {
+        return new OAuthRegisteredCallbackAuthorizeService();
     }
 }
