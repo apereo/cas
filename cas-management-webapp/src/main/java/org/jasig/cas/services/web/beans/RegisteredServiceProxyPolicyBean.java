@@ -38,7 +38,7 @@ public class RegisteredServiceProxyPolicyBean implements Serializable {
         REFUSE("refuse"),
 
         /** Allow type. */
-        ALLOW("allow");
+        REGEX("regex");
 
         private final String value;
 
