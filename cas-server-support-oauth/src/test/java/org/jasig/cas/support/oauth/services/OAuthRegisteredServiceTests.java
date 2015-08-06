@@ -65,12 +65,14 @@ public class OAuthRegisteredServiceTests {
 
     @Test
     public void checkSaveMethod() {
-        final AbstractRegisteredService r = new OAuthRegisteredService();
+        final OAuthRegisteredService r = new OAuthRegisteredService();
         r.setName("checkSaveMethod");
         r.setServiceId("testId");
         r.setTheme("theme");
         r.setDescription("description");
-
+        r.setClientId("clientid");
+        r.setServiceId("secret");
+        r.setBypassApprovalPrompt(true);
         final RegisteredService r2 = this.dao.save(r);
         assertTrue(r2 instanceof OAuthRegisteredService);
         this.dao.load();

@@ -57,7 +57,9 @@ import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Defines the service bean that is produced by the webapp
@@ -115,7 +117,7 @@ public class RegisteredServiceEditBean implements Serializable {
         if (svc.getLogo() != null) {
             bean.setLogoUrl(svc.getLogo().toExternalForm());
         }
-
+        bean.setRequiredHandlers(svc.getRequiredHandlers());
         final RegisteredServiceAccessStrategy accessStrategy = svc.getAccessStrategy();
         final RegisteredServiceSupportAccessEditBean accessBean = bean.getSupportAccess();
         accessBean.setCasEnabled(accessStrategy.isServiceAccessAllowed());
@@ -357,7 +359,7 @@ public class RegisteredServiceEditBean implements Serializable {
         private String logoUrl;
         private String theme;
         private int evalOrder = Integer.MIN_VALUE;
-        private List<String> requiredHandlers = new ArrayList<>();
+        private Set<String> requiredHandlers = new HashSet<>();
         private String logoutUrl;
         private RegisteredServiceSupportAccessEditBean supportAccess = new RegisteredServiceSupportAccessEditBean();
         private String type = RegisteredServiceTypeEditBean.CAS.toString();
@@ -410,11 +412,11 @@ public class RegisteredServiceEditBean implements Serializable {
             this.evalOrder = evalOrder;
         }
 
-        public List<String> getRequiredHandlers() {
+        public Set<String> getRequiredHandlers() {
             return requiredHandlers;
         }
 
-        public void setRequiredHandlers(final List<String> requiredHandlers) {
+        public void setRequiredHandlers(final Set<String> requiredHandlers) {
             this.requiredHandlers = requiredHandlers;
         }
 
