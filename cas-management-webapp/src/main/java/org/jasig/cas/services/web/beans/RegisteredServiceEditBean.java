@@ -156,7 +156,7 @@ public class RegisteredServiceEditBean implements Serializable {
         }
         final URL url = svc.getLogoutUrl();
         if (url != null) {
-            bean.setLogoUrl(url.toExternalForm());
+            bean.setLogoutUrl(url.toExternalForm());
         }
         final RegisteredServiceUsernameAttributeProvider provider = svc.getUsernameAttributeProvider();
         final RegisteredServiceUsernameAttributeProviderEditBean uBean = bean.getUserAttrProvider();

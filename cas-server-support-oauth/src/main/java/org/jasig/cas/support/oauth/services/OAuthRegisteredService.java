@@ -18,7 +18,9 @@
  */
 package org.jasig.cas.support.oauth.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 
 /**
@@ -68,5 +70,10 @@ public final class OAuthRegisteredService extends RegexRegisteredService {
         builder.append("clientId", getClientId());
         builder.append("approvalPrompt", isBypassApprovalPrompt());
         return builder.toString();
+    }
+
+    @Override
+    protected AbstractRegisteredService newInstance() {
+        return new OAuthRegisteredService();
     }
 }

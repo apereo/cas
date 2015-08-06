@@ -49,8 +49,8 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
     @Override
     protected ObjectMapper initializeObjectMapper() {
         final ObjectMapper mapper = super.initializeObjectMapper();
-        mapper.addMixInAnnotations(RegisteredServiceProxyPolicy.class, RegisteredServiceProxyPolicyMixin.class);
-        mapper.addMixInAnnotations(RegisteredServiceAccessStrategy.class, RegisteredServiceAuthorizationStrategyMixin.class);
+        mapper.addMixIn(RegisteredServiceProxyPolicy.class, RegisteredServiceProxyPolicyMixin.class);
+        mapper.addMixIn(RegisteredServiceAccessStrategy.class, RegisteredServiceAuthorizationStrategyMixin.class);
         return mapper;
     }
 
