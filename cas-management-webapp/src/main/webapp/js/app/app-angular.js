@@ -141,7 +141,7 @@
                     if(!skipScrollTop) {
                         $timeout(function () {
                             $('html, body').animate({
-                                scrollTop: $('.alert[role=alert]').offset().top
+                                scrollTop: $('.service-editor').offset().top
                             }, 750);
                         }, 100);
                     }
@@ -286,7 +286,7 @@
                     if(!skipScrollTop) {
                         $timeout(function () {
                             $('html, body').animate({
-                                scrollTop: $('.alert[role=alert]').offset().top
+                                scrollTop: $('.service-editor').offset().top
                             }, 750);
                         }, 100);
                     }
@@ -374,8 +374,10 @@
                             sharedFactory.forceReload();
                         else {
                             delayedAlert(serviceForm.serviceData.assignedId ? 'updated' : 'added', 'info', null);
-                            if(!serviceForm.serviceData.assignedId)
+                            if(!serviceForm.serviceData.assignedId && data.id > 0) {
                                 serviceForm.serviceData.assignedId = data.id;
+                                sharedFactory.assignedId = data.id;
+                            }
                         }
                     },
                     error: function(xhr, status) {
@@ -424,19 +426,22 @@
                 serviceForm.radioWatchBypass = true;
 
                 serviceForm.showOAuthSecret = false;
-                serviceForm.serviceData = {
-                    assignedId: null,
+                serviceForm.serviceData = new Object({
+                    assignedId: 0,
                     evalOrder: sharedFactory.maxEvalOrder + 1,
-                    logoutType: '',
+                    type: serviceForm.selectOptions.serviceTypeList[0].value,
+                    logoutType: serviceForm.selectOptions.logoutTypeList[0].value,
                     publicKey: {algorithm: 'RSA'},
                     supportAccess: {casEnabled: true},
                     userAttrProvider: {type: 'default'},
                     proxyPolicy: {type: 'refuse'},
                     attrRelease: {
                         attrOption: 'default',
-                        attrPolicy: {type: 'all'}
+                        attrPolicy: {type: 'all'},
+                        cachedTimeUnit: serviceForm.selectOptions.timeUnitsList[0].value,
+                        mergingStrategy: serviceForm.selectOptions.mergeStrategyList[0].value
                     }
-                };
+                });
                 serviceDataTransformation('load');
                 showInstructions();
 
