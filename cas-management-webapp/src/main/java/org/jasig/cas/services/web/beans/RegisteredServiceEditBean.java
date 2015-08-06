@@ -208,7 +208,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
             final RegexMatchingRegisteredServiceProxyPolicy regex =
                     (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            cBean.setType(RegisteredServiceProxyPolicyBean.Types.ALLOW.toString());
+            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
             cBean.setValue(regex.getPattern().toString());
         }
 
@@ -513,8 +513,13 @@ public final class RegisteredServiceEditBean implements Serializable {
                         RegisteredServiceProxyPolicyBean.Types.REFUSE.toString())) {
                     regSvc.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
                 } else if (StringUtils.equalsIgnoreCase(proxyType,
-                        RegisteredServiceProxyPolicyBean.Types.ALLOW.toString())) {
-                    regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(this.proxyPolicy.getValue()));
+                        RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
+                    final String value = this.proxyPolicy.getValue();
+                    if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
+                        regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(value));
+                    } else {
+                        throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
+                    }
                 }
 
                 final String uidType = this.userAttrProvider.getType();
@@ -599,6 +604,22 @@ public final class RegisteredServiceEditBean implements Serializable {
                 }
             }
             throw new RuntimeException("Service id " + serviceId + " cannot be resolve to a service type");
+        }
+
+        /**
+         * Determine service type by pattern.
+         *
+         * @param pattern the pattern
+         * @return the abstract registered service
+         */
+        private boolean isValidRegex(final String pattern) {
+            try {
+                Pattern.compile(serviceId);
+                LOGGER.debug("Pattern is a valid regex.", pattern);
+                return true;
+            } catch (final PatternSyntaxException exception) {
+                return false;
+            }
         }
     }
 }
