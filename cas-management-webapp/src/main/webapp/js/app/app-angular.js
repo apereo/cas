@@ -129,17 +129,18 @@
 
 // Services Table: Manage View
     app.controller('ServicesTableController', [
+        '$scope',
         '$http',
         '$log',
         '$timeout',
         'sharedFactoryCtrl',
-        function ($http, $log, $timeout, sharedFactory) {
-            var servicesData = this,
+        function ($scope, $http, $log, $timeout, sharedFactory) {
+            var serviceData = this,
                 httpHeaders = sharedFactory.httpHeaders,
                 delayedAlert = function(n, t, d, skipScrollTop) {
                     skipScrollTop = skipScrollTop || false;
                     $timeout(function () {
-                        servicesData.alert = {
+                        serviceData.alert = {
                             name:   n,
                             type:   t,
                             data:   d
@@ -161,7 +162,7 @@
                 handle: '.grabber-icon',
                 placeholder: 'tr-placeholder',
                 start: function (e, ui) {
-                    servicesData.detailRow = -1;
+                    serviceData.detailRow = -1;
                     ui.item.data('data_changed', false);
                 },
                 update: function (e, ui) {
@@ -183,7 +184,7 @@
                                 else if(angular.isString(data))
                                     sharedFactory.forceReload();
                                 else
-                                    servicesData.getServices();
+                                    serviceData.getServices();
                             },
                             error: function(xhr, status) {
                                 if(xhr.status == 403)
@@ -203,10 +204,10 @@
                             delayedAlert('listfail', 'danger', response.data);
                         }
                         else {
-                            if(servicesData.alert && servicesData.alert.type != 'info') 
-                                servicesData.alert = null;
-                            servicesData.dataTable = response.data.services || [];
-                            angular.forEach(servicesData.dataTable, function(service) {
+                            if(serviceData.alert && serviceData.alert.type != 'info') 
+                                serviceData.alert = null;
+                            serviceData.dataTable = response.data.services || [];
+                            angular.forEach(serviceData.dataTable, function(service) {
                                 if(service.evalOrder > sharedFactory.maxEvalOrder) {
                                     sharedFactory.maxEvalOrder = service.evalOrder;
                                 }
@@ -216,18 +217,18 @@
             };
 
             this.openModalDelete = function (item) {
-                servicesData.modalItem = item;
+                serviceData.modalItem = item;
                 $timeout(function () {
                     $('#confirm-delete .btn-default').focus();
                 }, 100);
             };
             this.closeModalDelete = function () {
-                servicesData.modalItem = null;
+                serviceData.modalItem = null;
             };
             this.deleteService = function (item) {
                 var myData = {id: item.assignedId};
 
-                servicesData.closeModalDelete();
+                serviceData.closeModalDelete();
                 $.ajax({
                     type: 'post',
                     url: '/cas-management/deleteRegisteredService.html',
@@ -239,7 +240,7 @@
                         else if(angular.isString(data))
                             sharedFactory.forceReload();
                         else {
-                            servicesData.getServices();
+                            serviceData.getServices();
                             delayedAlert('deleted', 'info', item, true);
                         }
                     },
@@ -253,12 +254,20 @@
             };
 
             this.clearFilter = function () {
-                servicesData.serviceTableQuery = "";
+                serviceData.serviceTableQuery = "";
             };
 
             this.toggleDetail = function (rowId) {
-                servicesData.detailRow = servicesData.detailRow == rowId ? -1 : rowId;
+                serviceData.detailRow = serviceData.detailRow == rowId ? -1 : rowId;
             };
+
+            $scope.$watch(
+                function() { return sharedFactory.assignedId; },
+                function (newAssignedId, oldAssignedId) {
+                    if(oldAssignedId && !newAssignedId)
+                        serviceData.getServices();
+                }
+            );
 
             this.getServices();
         }
@@ -291,7 +300,8 @@
                         }, 100);
                     }
                 },
-                showInstructions = function () { // Just an alias.
+                showInstructions = function () {
+                    $('.required-missing').removeClass('required-missing');
                     delayedAlert('instructions', 'info', null, true);
                 };
 
@@ -372,7 +382,7 @@
                         else if(angular.isString(data))
                             sharedFactory.forceReload();
                         else
-                            delayedAlert('saved', 'info', null, true);
+                            delayedAlert(serviceForm.serviceData.assignedId ? 'updated' : 'added', 'info', null);
                     },
                     error: function(xhr, status) {
                         if(xhr.status == 403)
@@ -402,6 +412,11 @@
                 // Username Attribute Provider Options
                 if(data.userAttrProvider.type == 'attr' && !data.userAttrProvider.value)
                     serviceForm.formErrors.push('uapUsernameAttribute');
+                if(data.userAttrProvider.type == 'anon' && !data.userAttrProvider.value)
+                    serviceForm.formErrors.push('uapSaltSetting');
+                // Proxy Policy Options
+                if(data.proxyPolicy.type == 'regex' && !data.proxyPolicy.value)
+                    serviceForm.formErrors.push('proxyPolicyRegex');
                 // Principle Attribute Repository Options
                 if(data.attrRelease.attrOption == 'cached') {
                     if(!data.attrRelease.cachedTimeUnit)
@@ -410,9 +425,6 @@
                         serviceForm.formErrors.push('mergingStrategy');
                     $log.log(data.attrRelease);
                 }
-                // Attribute Policy Options
-                if(data.userAttrProvider.value == 'anon' && !data.userAttrProvider.value) { serviceForm.formErrors.push('uapSaltSetting'); }
-                if(data.proxyPolicy.type == 'regex' && !data.proxyPolicy.value) { serviceForm.formErrors.push('proxyPolicyRegex'); }
             };
 
             this.newService = function () {
@@ -473,21 +485,32 @@
                 serviceForm.radioWatchBypass = false;
             };
 
+            // Parse the data for textareas to/from a(n) string/array to a(n) array/string
+            var textareaArrParse = function(dir, value) {
+                var newValue;
+                if(dir == 'load') {
+                    newValue = value ? value.join("\n") : '';
+                }
+                else {
+                    newValue = value.split("\n");
+                    for (var i = newValue.length-1; i >= 0; i--) {
+                        newValue[i] = newValue[i].trim();
+                        if (!newValue[i]) newValue.splice(i, 1);
+                    }
+                }
+                return newValue;
+            };
+
             // Transform the data so it is ready from/to the form to/from the server.
             var serviceDataTransformation = function(dir) {
                 var data = serviceForm.serviceData;
 
                 if(dir == 'load') {
-                    data.reqHandlersStr = data.requiredHandlers ? data.requiredHandlers.join("\n") : '';
+                    data.reqHandlersStr = textareaArrParse(dir, data.requiredHandlers);
                     data.userAttrProvider.valueAnon = (data.userAttrProvider.type == 'anon') ? data.userAttrProvider.value : '';
                     data.userAttrProvider.valueAttr = (data.userAttrProvider.type == 'attr') ? data.userAttrProvider.value : '';
                 } else {
-                    data.requiredHandlers = data.reqHandlersStr.split("\n");
-                    for (var i = data.requiredHandlers.length-1; i >= 0; i--) {
-                        data.requiredHandlers[i] = data.requiredHandlers[i].trim();
-                        if (!data.requiredHandlers[i])
-                            data.requiredHandlers.splice(i, 1);
-                    }
+                    data.requiredHandlers = textareaArrParse(dir, data.reqHandlersStr);
 
                     if(data.userAttrProvider.type == 'anon')
                         data.userAttrProvider.value = data.userAttrProvider.valueAnon;
@@ -498,15 +521,15 @@
                 switch(data.attrRelease.attrPolicy.type) {
                     case 'mapped':
                         if(dir == 'load')
-                            data.attrRelease.attrPolicy.mapped = data.attrRelease.attrPolicy.value;
+                            data.attrRelease.attrPolicy.mapped = data.attrRelease.attrPolicy.attributes;
                         else
-                            data.attrRelease.attrPolicy.value = data.attrRelease.attrPolicy.mapped;
+                            data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.mapped || {};
                         break;
                     case 'allowed':
                         if(dir == 'load')
-                            data.attrRelease.attrPolicy.allowed = data.attrRelease.attrPolicy.value;
+                            data.attrRelease.attrPolicy.allowed = data.attrRelease.attrPolicy.attributes;
                         else
-                            data.attrRelease.attrPolicy.value = data.attrRelease.attrPolicy.allowed;
+                            data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.allowed || [];
                         break;
                     default: 
                         data.attrRelease.attrPolicy.value = null;
