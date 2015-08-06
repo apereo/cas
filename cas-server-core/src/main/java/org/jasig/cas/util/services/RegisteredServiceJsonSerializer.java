@@ -61,13 +61,15 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         private static final long serialVersionUID = 743505593336053306L;
         @JsonIgnore
         @Override
-        public boolean isEternal() { return false; };
+        public boolean isEternal() {
+            return false;
+        }
 
         @JsonIgnore
         @Override
         public boolean isZero() {
             return false;
-        };
+        }
 
     }
     private static class RegisteredServiceProxyPolicyMixin implements RegisteredServiceProxyPolicy {
@@ -78,13 +80,13 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         @Override
         public boolean isAllowedToProxy() {
             return false;
-        };
+        }
 
         @JsonIgnore
         @Override
         public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
             return false;
-        };
+        }
     }
 
     private static class RegisteredServiceAuthorizationStrategyMixin implements RegisteredServiceAccessStrategy {
@@ -95,7 +97,7 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         @Override
         public boolean isServiceAccessAllowed() {
             return false;
-        };
+        }
 
         @JsonIgnore
         @Override
@@ -107,7 +109,7 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         @Override
         public  boolean doPrincipalAttributesAllowServiceAccess(final Map<String, Object> principalAttributes) {
             return false;
-        };
+        }
     }
 
     @Override
