@@ -519,7 +519,12 @@ public final class RegisteredServiceEditBean implements Serializable {
                     regSvc = determineServiceTypeByPattern(this.serviceId);
                 }
 
-                regSvc.setId(this.assignedId);
+                if (this.assignedId <=0) {
+                    regSvc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
+                } else {
+                    regSvc.setId(this.assignedId);
+                }
+
                 regSvc.setServiceId(this.serviceId);
                 regSvc.setName(this.name);
                 regSvc.setDescription(this.description);
@@ -588,8 +593,15 @@ public final class RegisteredServiceEditBean implements Serializable {
                     }
                 } else if (StringUtils.equalsIgnoreCase(uidType,
                         RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString())) {
-                    regSvc.setUsernameAttributeProvider(
-                            new PrincipalAttributeRegisteredServiceUsernameProvider(this.userAttrProvider.getValue()));
+                    final String attr = this.userAttrProvider.getValue();
+
+                    if (StringUtils.isNotBlank(attr)) {
+                        regSvc.setUsernameAttributeProvider(
+                                new PrincipalAttributeRegisteredServiceUsernameProvider(
+                                        this.userAttrProvider.getValue()));
+                    } else {
+                        throw new IllegalArgumentException("Invalid attribute specified for username");
+                    }
                 }
 
                 if (this.publicKey != null && this.publicKey.isValid()) {
