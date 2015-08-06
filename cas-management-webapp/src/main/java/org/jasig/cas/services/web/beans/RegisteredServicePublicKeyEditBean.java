@@ -19,6 +19,8 @@
 
 package org.jasig.cas.services.web.beans;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 
 /**
@@ -46,5 +48,10 @@ public class RegisteredServicePublicKeyEditBean implements Serializable {
 
     public void setAlgorithm(final String algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public boolean isValid() {
+        return StringUtils.isNotBlank(this.algorithm)
+                && StringUtils.isNotBlank(this.location);
     }
 }

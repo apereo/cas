@@ -38,6 +38,7 @@ import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAccessStrategy;
+import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServicePublicKey;
 import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
@@ -53,6 +54,9 @@ import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.AntPathMatcher;
 
 import javax.cache.expiry.Duration;
 import java.io.Serializable;
@@ -64,6 +68,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Defines the service bean that is produced by the webapp
@@ -72,9 +80,11 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class RegisteredServiceEditBean implements Serializable {
-
+public final class RegisteredServiceEditBean implements Serializable {
     private static final long serialVersionUID = 4882440567964605644L;
+
+    private static final Logger LOGGER = getLogger(RegisteredServiceEditBean.class);
+
 
     private FormData formData = new FormData();
     private ServiceData serviceData = new ServiceData();
@@ -467,7 +477,7 @@ public class RegisteredServiceEditBean implements Serializable {
                     ((OAuthRegisteredService) regSvc).setClientSecret(oauthBean.getClientSecret());
                     ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
                 } else {
-                    regSvc = new RegexRegisteredService();
+                    regSvc = determineServiceTypeByPattern(this.serviceId);
                 }
 
                 regSvc.setId(this.assignedId);
@@ -532,7 +542,7 @@ public class RegisteredServiceEditBean implements Serializable {
                             new PrincipalAttributeRegisteredServiceUsernameProvider(this.userAttrProvider.getValue()));
                 }
 
-                if (this.publicKey != null) {
+                if (this.publicKey != null && this.publicKey.isValid()) {
                     final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
                             this.publicKey.getLocation(), this.publicKey.getAlgorithm());
                     regSvc.setPublicKey(publicKey);
@@ -577,6 +587,27 @@ public class RegisteredServiceEditBean implements Serializable {
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        /**
+         * Determine service type by pattern.
+         *
+         * @param serviceId the service id
+         * @return the abstract registered service
+         */
+        private AbstractRegisteredService determineServiceTypeByPattern(final String serviceId) {
+            try {
+                Pattern.compile(serviceId);
+                LOGGER.debug("Service id {} is a valid regex.", serviceId);
+                return new RegexRegisteredService();
+            } catch (final PatternSyntaxException exception) {
+                LOGGER.debug("Service id {} is not a valid regex. Checking ant patterns...", serviceId);
+                if (new AntPathMatcher().isPattern(serviceId)) {
+                    LOGGER.debug("Service id {} is a valid ant pattern.", serviceId);
+                    return new RegisteredServiceImpl();
+                }
+            }
+            throw new RuntimeException("Service id " + serviceId + " cannot be resolve to a service type");
         }
     }
 }
