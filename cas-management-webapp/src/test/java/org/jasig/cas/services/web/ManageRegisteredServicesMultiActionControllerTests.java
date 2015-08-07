@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.ModelAndView;
 
 import static org.junit.Assert.*;
 
@@ -58,6 +59,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         this.servicesManager.save(r);
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
+        this.controller.manage(response);
         this.controller.deleteRegisteredService(1200, response);
 
         assertNull(this.servicesManager.findServiceBy(1200));
@@ -96,7 +98,12 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         this.servicesManager.save(r);
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        this.controller.manage(response);
+        final ModelAndView mv = this.controller.manage(response);
+
+        assertTrue(mv.getModel().containsKey("defaultServiceUrl"));
+        assertTrue(mv.getModel().containsKey("status"));
+
+        this.controller.getServices(response);
         assertTrue(response.getContentAsString().contains("services"));
     }
 }
