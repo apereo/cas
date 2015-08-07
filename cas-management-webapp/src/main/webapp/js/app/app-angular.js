@@ -298,7 +298,6 @@
 
             this.serviceData = {};
             this.formData = {};
-            this.formErrors = null;
             this.radioWatchBypass = true;
             this.showOAuthSecret = false;
 
@@ -309,9 +308,9 @@
                     {name: 'OAuth Callback Authorize',  value: 'oauth_callback_authz'}
                 ],
                 logoutTypeList: [
-                    {name: 'None',              value: ''},
-                    {name: '1 - BACK_CHANNEL',  value: 'back'},
-                    {name: '2 - FRONT_CHANNEL', value: 'front'}
+                    {name: 'None',          value: ''},
+                    {name: 'Back Channel',  value: 'back'},
+                    {name: 'Front Channel', value: 'front'}
                 ],
                 timeUnitsList: [
                     {name: 'MILLISECONDS',  value: 'MILLISECONDS'},
@@ -347,16 +346,18 @@
 
 
             this.saveForm = function () {
-                serviceDataTransformation('save');                
-                serviceForm.validateForm();
+                var formErrors;
 
-                if(serviceForm.formErrors.length !== 0) {
-                    delayedAlert('notvalid', 'danger', serviceForm.formErrors);
-                    angular.forEach(serviceForm.formErrors, function(fieldId) {
+                serviceDataTransformation('save');
+                formErrors = serviceForm.validateForm();
+
+                if(formErrors.length !== 0) {
+                    delayedAlert('notvalid', 'danger', formErrors);
+                    angular.forEach(formErrors, function(fieldId) {
                         $('#'+fieldId).addClass('required-missing');
                     });
                     return;
-                }
+                } else $('.required-missing').removeClass('required-missing');
 
                 $.ajax({
                     type: 'post',
@@ -373,11 +374,13 @@
                         else if(angular.isString(data))
                             sharedFactory.forceReload();
                         else {
-                            delayedAlert(serviceForm.serviceData.assignedId ? 'updated' : 'added', 'info', null);
                             if(!serviceForm.serviceData.assignedId && data.id > 0) {
                                 serviceForm.serviceData.assignedId = data.id;
                                 sharedFactory.assignedId = data.id;
+                                delayedAlert('updated', 'info', null);
                             }
+                            else 
+                                delayedAlert('added', 'info', null);
                         }
                     },
                     error: function(xhr, status) {
@@ -390,36 +393,33 @@
             };
 
             this.validateForm = function () {
-                var data = serviceForm.serviceData,
-                    opts = serviceForm.selectOptions;
-
-                serviceForm.formErrors = [];
-                $('.required-missing').removeClass('required-missing');
+                var err = [],
+                    data = serviceForm.serviceData;
 
                 // Service Basics
-                if(!data.serviceId)
-                    serviceForm.formErrors.push('serviceId');
-                if(!data.name)
-                    serviceForm.formErrors.push('serviceName');
-                if(!data.description)
-                    serviceForm.formErrors.push('serviceDesc');
-                if(!data.type)
-                    serviceForm.formErrors.push('serviceType');
+                if(!data.serviceId) err.push('serviceId');
+                if(!data.name) err.push('serviceName');
+                if(!data.description) err.push('serviceDesc');
+                if(!data.type) err.push('serviceType');
+                // OAuth Client Options Only
+                if(data.type == 'oauth') {
+                    if(!data.oauth.clientId) err.push('oauthClientId');
+                    if(!data.oauth.clientSecret) err.push('oauthClientSecret');
+                }
                 // Username Attribute Provider Options
-                if(data.userAttrProvider.type == 'attr' && !data.userAttrProvider.value)
-                    serviceForm.formErrors.push('uapUsernameAttribute');
-                if(data.userAttrProvider.type == 'anon' && !data.userAttrProvider.value)
-                    serviceForm.formErrors.push('uapSaltSetting');
+                if(!data.userAttrProvider.value) {
+                    if(data.userAttrProvider.type == 'attr') err.push('uapUsernameAttribute');
+                    if(data.userAttrProvider.type == 'anon') err.push('uapSaltSetting');
+                }
                 // Proxy Policy Options
-                if(data.proxyPolicy.type == 'regex' && !data.proxyPolicy.value)
-                    serviceForm.formErrors.push('proxyPolicyRegex');
+                if(data.proxyPolicy.type == 'regex' && !data.proxyPolicy.value) err.push('proxyPolicyRegex');
                 // Principle Attribute Repository Options
                 if(data.attrRelease.attrOption == 'cached') {
-                    if(!data.attrRelease.cachedTimeUnit)
-                        serviceForm.formErrors.push('cachedTime');
-                    if(!data.attrRelease.mergingStrategy)
-                        serviceForm.formErrors.push('mergingStrategy');
+                    if(!data.attrRelease.cachedTimeUnit) err.push('cachedTime');
+                    if(!data.attrRelease.mergingStrategy) err.push('mergingStrategy');
                 }
+
+                return err;
             };
 
             this.newService = function () {
@@ -431,16 +431,16 @@
                     evalOrder: sharedFactory.maxEvalOrder + 1,
                     type: serviceForm.selectOptions.serviceTypeList[0].value,
                     logoutType: serviceForm.selectOptions.logoutTypeList[0].value,
-                    publicKey: {algorithm: 'RSA'},
-                    supportAccess: {casEnabled: true},
-                    userAttrProvider: {type: 'default'},
-                    proxyPolicy: {type: 'refuse'},
                     attrRelease: {
                         attrOption: 'default',
                         attrPolicy: {type: 'all'},
                         cachedTimeUnit: serviceForm.selectOptions.timeUnitsList[0].value,
                         mergingStrategy: serviceForm.selectOptions.mergeStrategyList[0].value
-                    }
+                    },
+                    supportAccess: {casEnabled: true},
+                    publicKey: {algorithm: 'RSA'},
+                    userAttrProvider: {type: 'default'},
+                    proxyPolicy: {type: 'refuse'}
                 });
                 serviceDataTransformation('load');
                 showInstructions();
@@ -483,7 +483,7 @@
                 serviceForm.radioWatchBypass = false;
             };
 
-            // Parse the data for textareas to/from a(n) string/array to a(n) array/string
+            // Parse the data for textareas to/from a(n) string/array from/to a(n) array/string
             var textareaArrParse = function(dir, value) {
                 var newValue;
                 if(dir == 'load') {
@@ -503,13 +503,25 @@
             var serviceDataTransformation = function(dir) {
                 var data = serviceForm.serviceData;
 
+                // Logic safeties
+                serviceForm.formData.availableAttributes = serviceForm.formData.availableAttributes || [];
+                data.supportAccess.requiredAttr = data.supportAccess.requiredAttr || {};
+                data.supportAccess.requiredAttrStr = data.supportAccess.requiredAttrStr || {};
+
                 if(dir == 'load') {
+                    angular.forEach(serviceForm.formData.availableAttributes, function(item) {
+                        data.supportAccess.requiredAttrStr[item] = textareaArrParse(dir, data.supportAccess.requiredAttr[item]);       
+                    });
+
                     data.reqHandlersStr = textareaArrParse(dir, data.requiredHandlers);
                     data.userAttrProvider.valueAnon = (data.userAttrProvider.type == 'anon') ? data.userAttrProvider.value : '';
                     data.userAttrProvider.valueAttr = (data.userAttrProvider.type == 'attr') ? data.userAttrProvider.value : '';
                 } else {
-                    data.requiredHandlers = textareaArrParse(dir, data.reqHandlersStr);
+                    angular.forEach(serviceForm.formData.availableAttributes, function(item) {
+                        data.supportAccess.requiredAttr[item] = textareaArrParse(dir, data.supportAccess.requiredAttrStr[item]);       
+                    });
 
+                    data.requiredHandlers = textareaArrParse(dir, data.reqHandlersStr);
                     if(data.userAttrProvider.type == 'anon')
                         data.userAttrProvider.value = data.userAttrProvider.valueAnon;
                     else if(data.userAttrProvider.type == 'attr')
