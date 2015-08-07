@@ -21,22 +21,41 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
-          c:resolver-ref="dnResolver"
-          c:handler-ref="authHandler"
-          p:entryResolver-ref="entryResolver" />
+    <ldaptive:bind-search-authenticator id="authenticator"
+            ldapUrl="${ldap.url}"
+            baseDn="${ldap.baseDn}"
+            userFilter="cn=%s,${ldap.baseDn}"
+            bindDn="${ldap.managerDn}"
+            bindCredential="${ldap.managerPassword}"
+            connectTimeout="${ldap.connectTimeout}"
+            useStartTLS="${ldap.useStartTLS:false}"
+            blockWaitTime="${ldap.pool.blockWaitTime}"
+            maxPoolSize="${ldap.pool.maxSize}"
+            minPoolSize="${ldap.pool.minSize}"
+            validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+            validatePeriodically="${ldap.pool.validatePeriodically}"
+            validatePeriod="${ldap.pool.validatePeriod}"
+            idleTime="${ldap.pool.idleTime}"
+            prunePeriod="${ldap.pool.prunePeriod}"
+            failFastInitialize="true"
+            subtreeSearch="true"
+            useSSL="false"
+    />
 
     <bean id="ldapAuthenticationHandler"
           class="org.jasig.cas.authentication.LdapAuthenticationHandler"
           p:principalIdAttribute-ref="usernameAttribute"
-
           c:authenticator-ref="authenticator">
         <property name="principalAttributeList">
             <list>

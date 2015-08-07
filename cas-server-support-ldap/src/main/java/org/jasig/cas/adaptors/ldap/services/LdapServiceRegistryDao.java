@@ -289,7 +289,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         sr.setDerefAliases(this.searchRequest.getDerefAliases());
         sr.setSearchEntryHandlers(this.searchRequest.getSearchEntryHandlers());
         sr.setSearchReferenceHandlers(this.searchRequest.getSearchReferenceHandlers());
-        sr.setFollowReferrals(this.searchRequest.getFollowReferrals());
+        sr.setReferralHandler(this.searchRequest.getReferralHandler());
         sr.setReturnAttributes(ReturnAttributes.ALL_USER.value());
         sr.setSearchScope(this.searchRequest.getSearchScope());
         sr.setSizeLimit(this.searchRequest.getSizeLimit());

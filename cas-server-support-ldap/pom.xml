@@ -68,6 +68,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive-beans</artifactId>
+      <version>${ldaptive.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
         <groupId>org.ldaptive</groupId>
         <artifactId>ldaptive-unboundid</artifactId>
         <version>${ldaptive.version}</version>
