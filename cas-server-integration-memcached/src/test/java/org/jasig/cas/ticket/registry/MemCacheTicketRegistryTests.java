@@ -163,6 +163,9 @@ public class MemCacheTicketRegistryTests {
         }
     }
 
+    /**
+     * Download an embedded memcached instance based on environment.
+     */
     private static class CasDownloadConfigBuilder extends DownloadConfigBuilder {
         @Override
         public DownloadConfigBuilder defaults() {
