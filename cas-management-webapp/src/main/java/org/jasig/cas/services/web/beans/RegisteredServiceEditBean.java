@@ -597,8 +597,7 @@ public final class RegisteredServiceEditBean implements Serializable {
 
                     if (StringUtils.isNotBlank(attr)) {
                         regSvc.setUsernameAttributeProvider(
-                                new PrincipalAttributeRegisteredServiceUsernameProvider(
-                                        this.userAttrProvider.getValue()));
+                                new PrincipalAttributeRegisteredServiceUsernameProvider(attr));
                     } else {
                         throw new IllegalArgumentException("Invalid attribute specified for username");
                     }
