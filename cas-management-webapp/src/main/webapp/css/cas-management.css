@@ -6700,6 +6700,10 @@ html {
  * when appropriate.
  */
 }
+.casmgmt-app .casmgmt-form .tooltip-inner {
+  width: 300px;
+  max-width: 300px;
+}
 .casmgmt-app .casmgmt-form label {
   padding-top: 7px;
 }
