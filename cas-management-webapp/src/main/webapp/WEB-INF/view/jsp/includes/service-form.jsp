@@ -21,6 +21,17 @@
 
     <!-- Add/Manage Service Form -->
     <form class="service-editor form-horizontal" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.validateAndSave()" novalidate>
+        <div class="services-button-group-top">
+            <button href="javascript://" ng-click="serviceFormCtrl.saveForm()" class="btn btn-primary">
+                <i class="fa fa-floppy-o"></i>
+                <spring:message code="services.form.button.save" />
+            </button>
+            <a href="javascript://" ng-click="action.homepage()" class="btn btn-default">
+                <i class="fa fa-times"></i>
+                <spring:message code="services.form.button.cancel" />
+            </a>
+        </div>
+
         <h1>
             <i class="fa fa-plus-circle"></i>
             <span ng-if="action.isSelected('edit')"><spring:message code="services.form.header.page.editService" /></span>
@@ -401,86 +412,6 @@
                     </div><%-- end .panel div --%>
                 </div><%-- end .username-attribute-provider-container div --%>
 
-                <!-- Public Key Options -->
-                <div class="public-key-container">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <spring:message code="services.form.header.pubKey" />
-                            </h3>
-                        </div> <!-- end .panel-header div -->
-                        <div class="panel-body">
-
-                            <!-- Public Key Location -->
-                            <div class="form-group">
-                                <label class="col-sm-4" for="publicKeyLocation">
-                                    <spring:message code="services.form.label.pubKey.location" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.location" />"></i>
-                                </label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.serviceData.publicKey.location">
-                                </div>
-                            </div>
-                            <!-- Public Key Algorithm -->
-                            <div class="form-group">
-                                <label class="col-sm-4" for="publicKeyAlgorithm">
-                                    <spring:message code="services.form.label.pubKey.algorithm" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.algorithm" />"></i>
-                                </label>
-                                <div class="col-sm-8">
-                                    <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.serviceData.publicKey.algorithm" disabled>
-                                        <option value="RSA" ng-selected="true">RSA</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div><%-- end .panel-body div --%>
-                    </div><%-- end .panel div --%>
-                </div><%-- end .pub-key-container div --%>
-
-                <!-- Proxy Policy Options -->
-                <div class="proxy-policy-container">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <spring:message code="services.form.header.proxyPolicy" />
-                            </h3>
-                        </div><%-- end .panel-header div --%>
-                        <div class="panel-body">
-                            <div class="radio-group">
-
-                                <!-- Proxy Policy Radio Button - Refuse -->
-                                <label class="radio-inline">
-                                    <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="refuse" ng-model="serviceFormCtrl.serviceData.proxyPolicy.type" ng-checked="true">
-                                    <spring:message code="services.form.label.proxyPolicy.refuse" />
-                                </label>
-
-                                <!-- Proxy Policy Radio Button - Regex -->
-                                <label class="radio-inline">
-                                    <input type="radio" name="proxyPolicyRadio" id="proxyRegex" value="regex" ng-model="serviceFormCtrl.serviceData.proxyPolicy.type" >
-                                    <spring:message code="services.form.label.proxyPolicy.regex" />
-                                </label>
-                            </div><%-- end .radio-group div --%>
-
-                            <!-- Proxy Policy Refuse Options -->
-                            <div class="well well-sm" ng-show="serviceFormCtrl.serviceData.proxyPolicy.type === 'refuse'">
-                                <spring:message code="management.services.service.noAction" />
-                            </div>
-
-                            <!-- Proxy Policy Regex Options -->
-                            <div class="form-group" ng-show="serviceFormCtrl.serviceData.proxyPolicy.type === 'regex'">
-                                <label class="col-sm-3" for="proxyPolicyRegex">
-                                    <spring:message code="services.form.label.proxyPolicy.regex" />
-                                    <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.proxyPolicy.regex" />"></i>
-                                </label>
-                                <div class="col-sm-9">
-                                    <div class="input-group">
-                                        <div class="input-group-addon input-group-required" title="<spring:message code="services.form.required" />"><i class="fa fa-exclamation-triangle"></i></div>
-                                        <input type="text" class="form-control" id="proxyPolicyRegex" ng-model="serviceFormCtrl.serviceData.proxyPolicy.value">
-                                    </div>
-                                </div>
-                            </div><%-- end .form-group div --%>
-                        </div><%-- end .panel-body div --%>
-                    </div><%-- end .panel div --%>
-                </div><%-- end .proxy-policy-container div --%>
-
                 <!-- Attribute Release Policy Options -->
                 <div class="attribute-release-policy-container">
                     <div class="panel panel-success">
@@ -676,6 +607,86 @@
                         </div>
                     </div>
                 </div><%-- end .attribute-release-policy-container div --%>
+
+                <!-- Public Key Options -->
+                <div class="public-key-container">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <spring:message code="services.form.header.pubKey" />
+                            </h3>
+                        </div> <!-- end .panel-header div -->
+                        <div class="panel-body">
+
+                            <!-- Public Key Location -->
+                            <div class="form-group">
+                                <label class="col-sm-4" for="publicKeyLocation">
+                                    <spring:message code="services.form.label.pubKey.location" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.location" />"></i>
+                                </label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control" id="publicKeyLocation" ng-model="serviceFormCtrl.serviceData.publicKey.location">
+                                </div>
+                            </div>
+                            <!-- Public Key Algorithm -->
+                            <div class="form-group">
+                                <label class="col-sm-4" for="publicKeyAlgorithm">
+                                    <spring:message code="services.form.label.pubKey.algorithm" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.pubKey.algorithm" />"></i>
+                                </label>
+                                <div class="col-sm-8">
+                                    <select class="form-control" id="publicKeyAlgorithm" ng-model="serviceFormCtrl.serviceData.publicKey.algorithm" disabled>
+                                        <option value="RSA" ng-selected="true">RSA</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div><%-- end .panel-body div --%>
+                    </div><%-- end .panel div --%>
+                </div><%-- end .pub-key-container div --%>
+
+                <!-- Proxy Policy Options -->
+                <div class="proxy-policy-container">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <spring:message code="services.form.header.proxyPolicy" />
+                            </h3>
+                        </div><%-- end .panel-header div --%>
+                        <div class="panel-body">
+                            <div class="radio-group">
+
+                                <!-- Proxy Policy Radio Button - Refuse -->
+                                <label class="radio-inline">
+                                    <input type="radio" name="proxyPolicyRadio" id="proxyRefuse" value="refuse" ng-model="serviceFormCtrl.serviceData.proxyPolicy.type" ng-checked="true">
+                                    <spring:message code="services.form.label.proxyPolicy.refuse" />
+                                </label>
+
+                                <!-- Proxy Policy Radio Button - Regex -->
+                                <label class="radio-inline">
+                                    <input type="radio" name="proxyPolicyRadio" id="proxyRegex" value="regex" ng-model="serviceFormCtrl.serviceData.proxyPolicy.type" >
+                                    <spring:message code="services.form.label.proxyPolicy.regex" />
+                                </label>
+                            </div><%-- end .radio-group div --%>
+
+                            <!-- Proxy Policy Refuse Options -->
+                            <div class="well well-sm" ng-show="serviceFormCtrl.serviceData.proxyPolicy.type === 'refuse'">
+                                <spring:message code="management.services.service.noAction" />
+                            </div>
+
+                            <!-- Proxy Policy Regex Options -->
+                            <div class="form-group" ng-show="serviceFormCtrl.serviceData.proxyPolicy.type === 'regex'">
+                                <label class="col-sm-3" for="proxyPolicyRegex">
+                                    <spring:message code="services.form.label.proxyPolicy.regex" />
+                                    <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.proxyPolicy.regex" />"></i>
+                                </label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="input-group-addon input-group-required" title="<spring:message code="services.form.required" />"><i class="fa fa-exclamation-triangle"></i></div>
+                                        <input type="text" class="form-control" id="proxyPolicyRegex" ng-model="serviceFormCtrl.serviceData.proxyPolicy.value">
+                                    </div>
+                                </div>
+                            </div><%-- end .form-group div --%>
+                        </div><%-- end .panel-body div --%>
+                    </div><%-- end .panel div --%>
+                </div><%-- end .proxy-policy-container div --%>
             </div>
             <div class="row">
                 <div class="col-sm-12">
