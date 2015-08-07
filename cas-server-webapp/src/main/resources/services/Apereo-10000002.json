@@ -24,7 +24,6 @@
   "accessStrategy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
-    "ssoEnabled" : true,
-    "requireAllAttributes" : true
+    "ssoEnabled" : true
   }
 }
