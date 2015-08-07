@@ -747,6 +747,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.ldaptive</groupId>
+                <artifactId>ldaptive-beans</artifactId>
+                <version>${ldaptive.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>${woodstox.version}</version>

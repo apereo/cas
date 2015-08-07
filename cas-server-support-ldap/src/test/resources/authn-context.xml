@@ -29,8 +29,12 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="org.jasig.cas" />
+    <context:annotation-config />
+    <context:property-placeholder location="classpath:/ldap.properties"/>
 
     <ldaptive:bind-search-authenticator id="authenticator"
             ldapUrl="${ldap.url}"
@@ -39,7 +43,7 @@
             bindDn="${ldap.managerDn}"
             bindCredential="${ldap.managerPassword}"
             connectTimeout="${ldap.connectTimeout}"
-            useStartTLS="${ldap.useStartTLS:false}"
+            useStartTLS="${ldap.useStartTLS}"
             blockWaitTime="${ldap.pool.blockWaitTime}"
             maxPoolSize="${ldap.pool.maxSize}"
             minPoolSize="${ldap.pool.minSize}"
@@ -55,7 +59,7 @@
 
     <bean id="ldapAuthenticationHandler"
           class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-          p:principalIdAttribute-ref="usernameAttribute"
+          p:principalIdAttribute="sAMAccountName"
           c:authenticator-ref="authenticator">
         <property name="principalAttributeList">
             <list>
@@ -65,10 +69,5 @@
             </list>
         </property>
     </bean>
-
-    <bean id="usernameAttribute" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="sAMAccountName" />
-    </bean>
-
 
 </beans>
