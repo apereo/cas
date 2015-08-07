@@ -303,7 +303,7 @@
                         <div class="col-sm-12 form-group">
                             <div class="col-sm-6 checkbox">
                                 <label class="col-sm-12" for="ssoEnabled">
-                                    <input type="checkbox" id="ssoEnabled" ng-model="serviceFormCtrl.sas.ssoEnabled" />
+                                    <input type="checkbox" id="ssoEnabled" ng-model="serviceFormCtrl.serviceData.supportAccess.ssoEnabled" />
                                     <spring:message code="services.form.label.sas.ssoEnabled" />
                                     <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top"
                                         title="<spring:message code="services.form.tooltip.sas.ssoEnabled" />"></i>
@@ -311,7 +311,7 @@
                             </div>
                             <div class="col-sm-6 checkbox">
                                 <label class="col-sm-12" for="sasRequireAll">
-                                    <input type="checkbox" id="sasRequireAll" ng-model="serviceFormCtrl.sas.requireAll" />
+                                    <input type="checkbox" id="sasRequireAll" ng-model="serviceFormCtrl.serviceData.supportAccess.requireAll" />
                                     <spring:message code="services.form.label.sas.requireAll" />
                                     <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top"
                                         title="<spring:message code="services.form.tooltip.sas.requireAll" />"></i>
