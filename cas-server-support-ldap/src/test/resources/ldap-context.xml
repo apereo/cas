@@ -32,10 +32,4 @@
        http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="org.jasig.cas" />
-    <context:annotation-config />
-
-    <context:property-placeholder location="classpath:/ldap.properties"/>
-
-
 </beans>
