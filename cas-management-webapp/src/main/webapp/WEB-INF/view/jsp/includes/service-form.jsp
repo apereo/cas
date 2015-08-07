@@ -20,7 +20,7 @@
 --%>
 
     <!-- Add/Manage Service Form -->
-    <form class="service-editor form-horizontal" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.validateAndSave()" novalidate>
+    <form class="service-editor form-horizontal" autocomplete="off" id="serviceForm" ng-controller="ServiceFormController as serviceFormCtrl" ng-submit="serviceFormCtrl.validateAndSave()" novalidate>
         <div class="services-button-group-top">
             <button href="javascript://" ng-click="serviceFormCtrl.saveForm()" class="btn btn-primary">
                 <i class="fa fa-floppy-o"></i>
@@ -165,7 +165,10 @@
                                         <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthClientId" />"></i>
                                     </label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" id="oauthClientId" ng-model="serviceFormCtrl.serviceData.oauth.clientId" />
+                                        <div class="input-group">
+                                            <div class="input-group-addon input-group-required" title="<spring:message code="services.form.required" />"><i class="fa fa-exclamation-triangle"></i></div>
+                                            <input type="text" autocomplete="off" class="form-control" id="oauthClientId" ng-model="serviceFormCtrl.serviceData.oauth.clientId" />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -176,10 +179,13 @@
                                         <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.oauthClientSecret" />"></i>
                                     </label>
                                     <div class="col-sm-8">
-                                        <input class="form-control" id="oauthClientSecret" type="text"
-                                            ng-model="serviceFormCtrl.serviceData.oauth.clientSecret" ng-if="serviceFormCtrl.showOAuthSecret" />
-                                        <input class="form-control" id="oauthClientSecret" type="password"
-                                            ng-model="serviceFormCtrl.serviceData.oauth.clientSecret" ng-if="!serviceFormCtrl.showOAuthSecret" />
+                                        <div class="input-group">
+                                            <div class="input-group-addon input-group-required" title="<spring:message code="services.form.required" />"><i class="fa fa-exclamation-triangle"></i></div>
+                                            <input class="form-control" autocomplete="off" id="oauthClientSecret" type="text"
+                                                ng-model="serviceFormCtrl.serviceData.oauth.clientSecret" ng-if="serviceFormCtrl.showOAuthSecret" />
+                                            <input class="form-control" autocomplete="off" id="oauthClientSecret" type="password"
+                                                ng-model="serviceFormCtrl.serviceData.oauth.clientSecret" ng-if="!serviceFormCtrl.showOAuthSecret" />
+                                        </div>
                                     </div>
                                 </div>
 
@@ -284,7 +290,7 @@
                     <spring:message code="services.form.label.requiredHandlers" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.requiredHandlers" />"></i>
                     </label>
                     <div class="col-sm-9">
-                        <textarea class="noresize" id="reqHandler" rows="4" ng-model="serviceFormCtrl.serviceData.reqHandlersStr"></textarea>
+                        <textarea class="form-control noresize" id="reqHandler" rows="4" ng-model="serviceFormCtrl.serviceData.reqHandlersStr"></textarea>
                     </div>
                 </div>
 
@@ -332,7 +338,7 @@
 <%-- TODO: Fix this to the proper variable. --%>
                                         <tr ng-repeat="mappedValue in serviceFormCtrl.formData.availableAttributes">
                                             <td class="va-middle">{{ mappedValue }}</td>
-                                            <td><input ng-model="serviceFormCtrl.serviceData.supportAccess.requiredAttr[ mappedValue ]" type="text" class="form-control input-sm" /></td>
+                                            <td><textarea class="form-control noresize" rows="2" ng-model="serviceFormCtrl.serviceData.supportAccess.requiredAttrStr[ mappedValue ]"></textarea></td>
                                         </tr>
                                     </tbody>
                                 </table>
