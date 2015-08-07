@@ -64,6 +64,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -558,8 +559,18 @@ public final class RegisteredServiceEditBean implements Serializable {
                         .setSsoEnabled(this.supportAccess.isSsoEnabled());
                 ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
                         .setRequireAllAttributes(this.supportAccess.isRequireAll());
+
+                final Map<String, Set<String>> requiredAttrs = this.supportAccess.getRequiredAttr();
+                final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
+                final Iterator<Map.Entry<String, Set<String>>> it = entries.iterator();
+                while (it.hasNext()) {
+                    final Map.Entry<String, Set<String>> entry = it.next();
+                    if (entry.getValue().isEmpty()) {
+                        it.remove();
+                    }
+                }
                 ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setRequiredAttributes(this.supportAccess.getRequiredAttr());
+                        .setRequiredAttributes(requiredAttrs);
 
                 final String proxyType = this.proxyPolicy.getType();
                 if (StringUtils.equalsIgnoreCase(proxyType,
