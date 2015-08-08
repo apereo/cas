@@ -20,6 +20,7 @@ package org.jasig.cas.support.pac4j.authentication.handler.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
@@ -65,7 +66,7 @@ public class ClientAuthenticationHandler extends AbstractClientAuthenticationHan
         }
         if (StringUtils.isNotBlank(id)) {
             credentials.setUserProfile(profile);
-            return new HandlerResult(
+            return new DefaultHandlerResult(
                 this,
                 new BasicCredentialMetaData(credentials),
                 this.principalFactory.createPrincipal(id, profile.getAttributes()));

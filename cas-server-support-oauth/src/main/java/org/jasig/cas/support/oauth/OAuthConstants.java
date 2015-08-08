@@ -65,7 +65,9 @@ public interface OAuthConstants {
     /** The OAUT h20_ state. */
     String OAUTH20_STATE = "oauth20_state";
 
-    /** The missing access token. */
+    /**
+     * The missing access token.
+     **/
     String MISSING_ACCESS_TOKEN = "missing_accessToken";
 
     /** The expired access token. */

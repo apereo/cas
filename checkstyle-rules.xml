@@ -61,9 +61,13 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="ConstantName">
       <property name="severity" value="error"/>
     </module>
+    <module name="ModifiedControlVariable">
+      <property name="severity" value="error"/>
+    </module>
     <module name="MagicNumber">
       <property name="ignoreAnnotation" value="true"/>
       <property name="ignoreHashCodeMethod" value="true"/>
+      <property name="ignoreFieldDeclaration" value="true" />
       <property name="severity" value="error"/>
     </module>
     <module name="LocalFinalVariableName">
@@ -101,7 +105,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
       <property name="allowStaticMemberImports" value="true"/>
     </module>
     <module name="SingleLineJavadoc">
-      <property name="severity" value="error"/>
+      <property name="severity" value="warning"/>
     </module>  
     <module name="IllegalImport">
       <property name="severity" value="error"/>

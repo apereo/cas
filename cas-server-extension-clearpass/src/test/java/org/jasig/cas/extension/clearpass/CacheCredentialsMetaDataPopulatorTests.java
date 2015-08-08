@@ -21,7 +21,7 @@ package org.jasig.cas.extension.clearpass;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class CacheCredentialsMetaDataPopulatorTests {
         final CacheCredentialsMetaDataPopulator populator = new CacheCredentialsMetaDataPopulator(map);
 
         final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        populator.populateAttributes(AuthenticationBuilder.newInstance(auth), c);
+        populator.populateAttributes(DefaultAuthenticationBuilder.newInstance(auth), c);
 
         assertTrue(map.containsKey(auth.getPrincipal().getId()));
         assertEquals(map.get(auth.getPrincipal().getId()), c.getPassword());
@@ -66,7 +66,7 @@ public class CacheCredentialsMetaDataPopulatorTests {
         };
 
         if (populator.supports(c)) {
-            populator.populateAttributes(AuthenticationBuilder.newInstance(auth), c);
+            populator.populateAttributes(DefaultAuthenticationBuilder.newInstance(auth), c);
         }
 
         assertEquals(map.size(), 0);

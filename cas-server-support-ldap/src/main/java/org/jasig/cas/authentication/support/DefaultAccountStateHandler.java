@@ -18,7 +18,8 @@
  */
 package org.jasig.cas.authentication.support;
 
-import org.jasig.cas.Message;
+import org.jasig.cas.DefaultMessageDescriptor;
+import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
@@ -40,6 +41,7 @@ import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,23 +82,18 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
     }
 
     @Override
-    public List<Message> handle(final AuthenticationResponse response, final LdapPasswordPolicyConfiguration configuration)
+    public List<MessageDescriptor> handle(final AuthenticationResponse response, final LdapPasswordPolicyConfiguration configuration)
             throws LoginException {
 
         final AccountState state = response.getAccountState();
-        final AccountState.Error error;
-        final AccountState.Warning warning;
-        if (state != null) {
-            error = state.getError();
-            warning = state.getWarning();
-        } else {
-            logger.debug("Account state not defined");
-            error = null;
-            warning = null;
+        if (state == null) {
+            logger.debug("Account state not defined. Returning empty list of messages.");
+            return Collections.emptyList();
         }
-        final List<Message> messages = new ArrayList<>();
-        handleError(error, response, configuration, messages);
-        handleWarning(warning, response, configuration, messages);
+        final List<MessageDescriptor> messages = new ArrayList<>();
+        handleError(state.getError(), response, configuration, messages);
+        handleWarning(state.getWarning(), response, configuration, messages);
+
         return messages;
     }
 
@@ -116,10 +113,10 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final AccountState.Error error,
             final AuthenticationResponse response,
             final LdapPasswordPolicyConfiguration configuration,
-            final List<Message> messages)
+            final List<MessageDescriptor> messages)
             throws LoginException {
 
-        logger.debug("Handling {}", error);
+        logger.debug("Handling error {}", error);
         final LoginException ex = this.errorMap.get(error);
         if (ex != null) {
             throw ex;
@@ -142,8 +139,9 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             final AccountState.Warning warning,
             final AuthenticationResponse response,
             final LdapPasswordPolicyConfiguration configuration,
-            final List<Message> messages) {
+            final List<MessageDescriptor> messages) {
 
+        logger.debug("Handling warning {}", warning);
         if (warning == null) {
             logger.debug("Account state warning not defined");
             return;
@@ -157,13 +155,13 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
                 configuration.getPasswordWarningNumberOfDays());
         if (configuration.isAlwaysDisplayPasswordExpirationWarning()
                 || ttl.getDays() < configuration.getPasswordWarningNumberOfDays()) {
-            messages.add(new PasswordExpiringWarningMessage(
+            messages.add(new PasswordExpiringWarningMessageDescriptor(
                     "Password expires in {0} days. Please change your password at <href=\"{1}\">{1}</a>",
                     ttl.getDays(),
                     configuration.getPasswordPolicyUrl()));
         }
         if (warning.getLoginsRemaining() > 0) {
-            messages.add(new Message(
+            messages.add(new DefaultMessageDescriptor(
                     "password.expiration.loginsRemaining",
                     "You have {0} logins remaining before you MUST change your password.",
                     warning.getLoginsRemaining()));

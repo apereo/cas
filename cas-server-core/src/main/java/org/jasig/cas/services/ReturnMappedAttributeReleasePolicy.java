@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.services;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -68,5 +72,40 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractAttributeRelease
             }
         }
         return attributesToRelease;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final ReturnMappedAttributeReleasePolicy rhs = (ReturnMappedAttributeReleasePolicy) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .append(this.allowedAttributes, rhs.allowedAttributes)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(allowedAttributes)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("allowedAttributes", allowedAttributes)
+                .toString();
     }
 }
