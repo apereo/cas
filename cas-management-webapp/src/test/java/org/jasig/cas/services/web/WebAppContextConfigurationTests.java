@@ -28,6 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,6 +39,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.NestedServletException;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Integration tests for the management webapp.
@@ -62,19 +65,18 @@ public class WebAppContextConfigurationTests {
     
     @Test
     public void verifyUpdateServiceSuccessfully() throws Exception {
-        final ModelAndView mv = this.mvc.perform(get("/updateRegisteredServiceEvaluationOrder.html")
-                .param("id", "0").param("evaluationOrder", "200"))
+        final MockHttpServletResponse response = this.mvc.perform(post("/updateRegisteredServiceEvaluationOrder.html")
+                .param("id", "0"))
                 .andExpect(status().isOk())
-                .andReturn().getModelAndView();
-        assertNotNull(mv);
-        assertEquals(mv.getViewName(), "jsonView"); 
+                .andReturn().getResponse();
+        assertTrue(response.getContentAsString().contains("\"status\" : " + HttpServletResponse.SC_OK));
     }
     
-    @Test(expected = NestedServletException.class)
+    @Test
     public void verifyUpdateNonExistingService() throws Exception {
-        this.mvc.perform(get("/updateRegisteredServiceEvaluationOrder.html")
-                .param("id", "100").param("evaluationOrder", "200"))
-                .andExpect(status().isMethodNotAllowed());
+        this.mvc.perform(post("/updateRegisteredServiceEvaluationOrder.html")
+                .param("id", "-1"))
+                .andExpect(status().isInternalServerError());
     }
     
     @Test
