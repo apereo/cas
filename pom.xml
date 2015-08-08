@@ -518,6 +518,7 @@
                         <ldif>SCRIPT_STYLE</ldif>
                         <yml>SCRIPT_STYLE</yml>
                         <conf>JAVADOC_STYLE</conf>
+                        <less>JAVADOC_STYLE</less>
                     </mapping>
                     <excludes>
                         <exclude>**/bin/**</exclude>
