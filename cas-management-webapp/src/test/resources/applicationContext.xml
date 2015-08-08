@@ -37,6 +37,7 @@
         modify this unless you know what you're doing!
     </description>
 
+    <context:property-placeholder location="classpath:cas-management.properties" />
     <context:component-scan base-package="org.jasig.cas.services.web" />
     <mvc:annotation-driven />
 
