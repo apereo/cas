@@ -24,7 +24,11 @@ import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.io.MarshallerFactory;
+import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +61,18 @@ public final class OpenSamlConfigBean {
      */
     public ParserPool getParserPool() {
         return parserPool;
+    }
+
+    public static XMLObjectBuilderFactory getBuilderFactory() {
+        return XMLObjectProviderRegistrySupport.getBuilderFactory();
+    }
+
+    public static MarshallerFactory getMarshallerFactory() {
+        return XMLObjectProviderRegistrySupport.getMarshallerFactory();
+    }
+
+    public static UnmarshallerFactory getUnmarshallerFactory() {
+        return XMLObjectProviderRegistrySupport.getUnmarshallerFactory();
     }
 
     /**
