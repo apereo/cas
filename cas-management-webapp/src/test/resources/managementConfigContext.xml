@@ -48,6 +48,9 @@
                     <bean class="org.jasig.cas.services.RegexRegisteredService"
                           p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
                           p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
+                    <bean class="org.jasig.cas.services.RegexRegisteredService"
+                          p:id="100" p:name="HTTP and IMAP" p:description="Another Test Service"
+                          p:serviceId="^(https?|imaps?)://testService" p:evaluationOrder="100" />
                 </util:list>
             </property>
         </bean>
