@@ -17,16 +17,12 @@
 package org.jasig.cas.support.wsfederation.authentication.principal;
 
 import org.jasig.cas.support.wsfederation.AbstractWsFederationTests;
-import org.jasig.cas.support.wsfederation.WsFederationHelper;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashMap;
 
@@ -44,9 +40,6 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     
     private WsFederationCredential standardCred;
 
-    /**
-     *
-     */
     @Before
     public void setUp() {
         standardCred = new WsFederationCredential();
@@ -59,11 +52,8 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         standardCred.setRetrievedOn(new DateTime().withZone(DateTimeZone.UTC).plusSeconds(1));
     }
 
-    /**
-     *
-     */
     @Test
-    public void testToString() {
+    public void verifyToString() {
         final String wresult = testTokens.get("goodToken");
         final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
         final WsFederationCredential instance = wsFederationHelper.createCredentialFromToken(assertion);
@@ -71,49 +61,34 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         "[ID=_6257b2bf-7361-4081-ae1f-ec58d4310f61,Issuer=http://adfs.example.com/adfs/services/trust,"
         + "Audience=urn:federation:cas,Authentication Method=urn:federation:authentication:windows,"
         + "Issued On=2014-02-26T22:51:16.504Z,Valid After=2014-02-26T22:51:16.474Z,Valid Before=2014-02-26T23:51:16.474Z,"
-        + "Attributes={Group=example.com\\Domain Users, upn=jgasper@example.com, surname=Gasper, givenname=John, emailaddress=jgasper@example.com}]";
+        + "Attributes={Group=example.com\\Domain Users, upn=jgasper@example.com, "
+        + "surname=Gasper, givenname=John, emailaddress=jgasper@example.com}]";
         final String result = instance.toString();
         assertEquals("toString() not equal", expResult, result);
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @Test
-    public void testIsValidAllGood() throws Exception {
+    public void verifyIsValidAllGood() throws Exception {
         final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
         assertTrue("testIsValidAllGood() - True", result);
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @Test
-    public void testIsValidBadAudience() throws Exception {
+    public void verifyIsValidBadAudience() throws Exception {
         standardCred.setAudience("urn:NotUs");
         final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
         assertFalse("testIsValidBadAudeience() - False", result);
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @Test
-    public void testIsValidBadIssuer() throws Exception {
+    public void verifyIsValidBadIssuer() throws Exception {
         standardCred.setIssuer("urn:NotThem");
         final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
         assertFalse("testIsValidBadIssuer() - False", result);
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @Test
-    public void testIsValidEarlyToken() throws Exception {
+    public void verifyIsValidEarlyToken() throws Exception {
         standardCred.setNotBefore(new DateTime().withZone(DateTimeZone.UTC).plusDays(1));
         standardCred.setNotOnOrAfter(new DateTime().withZone(DateTimeZone.UTC).plusHours(1).plusDays(1));
         standardCred.setIssuedOn(new DateTime().withZone(DateTimeZone.UTC).plusDays(1));
@@ -122,12 +97,8 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         assertFalse("testIsValidEarlyToken() - False", result);
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @Test
-    public void testIsValidOldToken() throws Exception {
+    public void verifyIsValidOldToken() throws Exception {
         standardCred.setNotBefore(new DateTime().withZone(DateTimeZone.UTC).minusDays(1));
         standardCred.setNotOnOrAfter(new DateTime().withZone(DateTimeZone.UTC).plusHours(1).minusDays(1));
         standardCred.setIssuedOn(new DateTime().withZone(DateTimeZone.UTC).minusDays(1));
@@ -136,22 +107,14 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         assertFalse("testIsValidOldToken() - False", result);
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     @Test
-    public void testIsValidExpiredIssuedOn() throws Exception {
+    public void verifyIsValidExpiredIssuedOn() throws Exception {
         standardCred.setIssuedOn(new DateTime().withZone(DateTimeZone.UTC).minusSeconds(3));
         
         final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
         assertFalse("testIsValidOldToken() - False", result);
     }
 
-    /**
-     * sets the Token
-     * @param testTokens the test tokens
-     */
     public void setTestTokens(final HashMap<String, String> testTokens) {
         this.testTokens = testTokens;
     }

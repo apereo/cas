@@ -37,16 +37,16 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="info">
+        <Logger name="org.jasig" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.jasig.cas.support.wsfederation" level="info">
+        <Logger name="org.jasig.cas.support.wsfederation" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.opensaml" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="PROTOCOL_MESSAGE" level="info">
+        <Logger name="PROTOCOL_MESSAGE" level="warn">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.apache.xml.security" level="off" />

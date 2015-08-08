@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
 
     @Test
-    public void testModifyAttributes() {
+    public void verifyModifyAttributes() {
         final Map<String, Object> attributes = new HashMap<String, Object>();
         attributes.put("upn", "test@example.com");
         
@@ -41,21 +41,19 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
         instance.modifyAttributes(attributes);
         assertTrue("testModifyAttributes() - true", attributes.containsKey("test"));
         assertTrue("testModifyAttributes() - true",
-                attributes.get("test").toString().equalsIgnoreCase("test"));
+                "newtest".equalsIgnoreCase(attributes.get("test").toString()));
+
         assertTrue("testModifyAttributes() - true",
                 attributes.containsKey("upn"));
         assertTrue("testModifyAttributes() - true",
-                attributes.get("upn").toString().equalsIgnoreCase("testing"));
+                "testing".equalsIgnoreCase(attributes.get("upn").toString()));
     }
 
     private static class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
         private static final long serialVersionUID = -1858140387002752668L;
 
-        /**
-         * @param attributes a map of attributes
-         */
         public void modifyAttributes(final Map<String, Object> attributes) {
-            attributes.put("test", "test");
+            attributes.put("test", "newtest");
             attributes.put("upn", "testing");
         }
     }
