@@ -57,6 +57,14 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     /**
      * Instantiates a new Cas delegating logger.
+     * Used for serialization purposes only.
+     */
+    private CasDelegatingLogger() {
+        this.delegate = null;
+    }
+
+    /**
+     * Instantiates a new Cas delegating logger.
      *
      * @param delegate the delegate
      */
@@ -100,7 +108,7 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
             final Matcher matcher = TICKET_ID_PATTERN.matcher(msg);
             while (matcher.find()) {
                 final String match = matcher.group();
-                final String newId = matcher.group(1) + "-"
+                final String newId = matcher.group(1) + '-'
                         + StringUtils.repeat("*", match.length() - VISIBLE_ID_TAIL_LENGTH)
                         + StringUtils.right(match, VISIBLE_ID_TAIL_LENGTH);
 

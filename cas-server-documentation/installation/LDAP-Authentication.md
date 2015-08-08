@@ -221,6 +221,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 <bean id="abstractConnectionPool" abstract="true"
       class="org.ldaptive.pool.BlockingConnectionPool"
       init-method="initialize"
+      destroy-method="close"
       p:poolConfig-ref="ldapPoolConfig"
       p:blockWaitTime="${ldap.pool.blockWaitTime}"
       p:validator-ref="searchValidator"
@@ -314,6 +315,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 <bean id="abstractConnectionPool" abstract="true"
       class="org.ldaptive.pool.BlockingConnectionPool"
       init-method="initialize"
+      destroy-method="close"
       p:poolConfig-ref="ldapPoolConfig"
       p:blockWaitTime="${ldap.pool.blockWaitTime}"
       p:validator-ref="searchValidator"
@@ -582,7 +584,9 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
 </bean>
 {% endhighlight %}  
  
-Next, you have to explicitly define an LDAP-specific response handler in your `Authenticator`. For instance, for an OpenLDAP directory:
+Next, you have to explicitly define an LDAP-specific response handler in your `Authenticator`. 
+
+### Generic 
 
 {% highlight xml %}
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
@@ -591,14 +595,13 @@ Next, you have to explicitly define an LDAP-specific response handler in your `A
     <property name="authenticationResponseHandlers">
         <util:list>
             <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" />
+            <bean class="org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler" />
         </util:list>
 </property>
 </bean>
 {% endhighlight %}  
 
-Use `ActiveDirectoryAuthenticationResponseHandler` instead for Microsoft Active Directory.
-
-Last, for OpenLDAP, you have to handle the `PasswordPolicy` controls in the `BindAuthenticationHandler`:
+Also, you have to handle the `PasswordPolicy` controls in the `BindAuthenticationHandler`:
 
 {% highlight xml %}
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
@@ -609,7 +612,21 @@ Last, for OpenLDAP, you have to handle the `PasswordPolicy` controls in the `Bin
         </util:list>
     </property>
 </bean>
-{% endhighlight %}  
+{% endhighlight %} 
+
+### Active Directory
+
+{% highlight xml %}
+<bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+    c:resolver-ref="dnResolver"
+    c:handler-ref="authHandler">
+    <property name="authenticationResponseHandlers">
+        <util:list>
+            <bean class="org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler" />
+        </util:list>
+</property>
+</bean>
+{% endhighlight %} 
 
 ### Components
 
@@ -630,3 +647,14 @@ The first two parameters define an attribute on the user entry to match on, and 
 whether password expiration warnings should be displayed on match.
 
 **Note:** Deployers MUST configure LDAP components to provide `warningAttributeName` in the set of attributes returned from the LDAP query for user details.
+
+## Troubleshooting
+To enable additional logging, modify the log4j configuration file to add the following:
+
+{% highlight xml %}
+<Logger name="org.ldaptive" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</Logger>
+{% endhighlight %} 
+

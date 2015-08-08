@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -63,7 +64,9 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     /** Default setting to check keyUsage extension. */
     private static final boolean DEFAULT_CHECK_KEYUSAGE = false;
 
-    /** Default setting to force require "KeyUsage" extension. */
+    /**
+     * Default setting to force require "KeyUsage" extension.
+     */
     private static final boolean DEFAULT_REQUIRE_KEYUSAGE = false;
 
     /** Default subject pattern match. */
@@ -149,7 +152,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
         if (hasTrustedIssuer && clientCert != null) {
             x509Credential.setCertificate(clientCert);
-            return new HandlerResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
+            return new DefaultHandlerResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
         }
         throw new FailedLoginException();
     }

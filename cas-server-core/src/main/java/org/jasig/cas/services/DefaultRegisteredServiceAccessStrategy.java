@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -174,10 +175,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
 
+        final Map<String, Set<String>> requiredAttrs = this.getRequiredAttributes();
         logger.debug("These required attributes [{}] are examined against [{}] before service can proceed.",
-                getRequiredAttributes(), principalAttributes);
+                requiredAttrs, principalAttributes);
 
-        final Sets.SetView<String> difference = Sets.intersection(getRequiredAttributes().keySet(), principalAttributes.keySet());
+        final Sets.SetView<String> difference = Sets.intersection(requiredAttrs.keySet(), principalAttributes.keySet());
         final Set<String> copy = difference.immutableCopy();
 
         if (this.requireAllAttributes && copy.size() < this.requiredAttributes.size()) {
@@ -187,7 +189,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
         for (final String key : copy) {
             final Set<?> requiredValues = this.requiredAttributes.get(key);
-            Set<?> availableValues;
+            final Set<?> availableValues;
 
             final Object objVal = principalAttributes.get(key);
             if (objVal instanceof Collection) {
@@ -252,5 +254,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.requireAllAttributes)
                 .append(this.requiredAttributes)
                 .toHashCode();
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("enabled", enabled)
+                .append("ssoEnabled", ssoEnabled)
+                .append("requireAllAttributes", requireAllAttributes)
+                .append("requiredAttributes", requiredAttributes)
+                .toString();
     }
 }

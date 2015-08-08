@@ -81,7 +81,7 @@ public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler
                 } else {
                     md = new BasicCredentialMetaData(credential);
                 }
-                return new HandlerResult(this, md);
+                return new DefaultHandlerResult(this, md);
             } else {
                 throw new FailedLoginException(
                         String.format("%s failed to authenticate %s", this.getName(), credential));

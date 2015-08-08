@@ -33,18 +33,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
+import net.spy.memcached.CachedData;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.RememberMeCredential;
@@ -56,6 +61,8 @@ import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
 
 import com.esotericsoftware.kryo.Serializer;
@@ -94,8 +101,44 @@ public class KryoTranscoderTests {
         transcoder.setSerializerMap(serializerMap);
         transcoder.initialize();
 
-        this.principalAttributes = new HashMap<String, Object>();
+        this.principalAttributes = new HashMap<>();
         this.principalAttributes.put(NICKNAME_KEY, NICKNAME_VALUE);
+    }
+
+    @Test
+    public void verifyEncodeDecodeTGTImpl() throws Exception {
+        final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
+        final AuthenticationBuilder bldr = new DefaultAuthenticationBuilder(
+                new DefaultPrincipalFactory()
+                        .createPrincipal("user", Collections.unmodifiableMap(this.principalAttributes)));
+        bldr.setAttributes(Collections.unmodifiableMap(this.principalAttributes));
+        bldr.setAuthenticationDate(new Date());
+        bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
+        bldr.addFailure("error", AccountNotFoundException.class);
+        bldr.addSuccess("authn", new DefaultHandlerResult(
+                new AcceptUsersAuthenticationHandler(),
+                new BasicCredentialMetaData(userPassCredential)));
+
+        final TicketGrantingTicket parent =
+                new TicketGrantingTicketImpl(TGT_ID, TestUtils.getService(), null, bldr.build(),
+                        new NeverExpiresExpirationPolicy());
+
+        final TicketGrantingTicket expectedTGT =
+                new TicketGrantingTicketImpl(TGT_ID, TestUtils.getService(),
+                        null, bldr.build(),
+                        new NeverExpiresExpirationPolicy());
+
+        final ServiceTicket ticket = expectedTGT.grantServiceTicket(ST_ID,
+                TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(), false);
+        CachedData result = transcoder.encode(expectedTGT);
+        final TicketGrantingTicket resultTicket = (TicketGrantingTicket) transcoder.decode(result);
+
+        assertEquals(expectedTGT, resultTicket);
+        result = transcoder.encode(ticket);
+        final ServiceTicket resultStTicket = (ServiceTicket) transcoder.decode(result);
+        assertEquals(ticket, resultStTicket);
+
     }
 
     @Test
@@ -281,7 +324,7 @@ public class KryoTranscoderTests {
         public MockTicketGrantingTicket(final String id, final Credential credential, final Map<String, Object> principalAttributes) {
             this.id = id;
             final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credential);
-            final AuthenticationBuilder builder = new AuthenticationBuilder();
+            final DefaultAuthenticationBuilder builder = new DefaultAuthenticationBuilder();
             builder.setPrincipal(this.principalFactory.createPrincipal(USERNAME, principalAttributes));
             builder.setAuthenticationDate(new Date());
             builder.addCredential(credentialMetaData);
@@ -394,11 +437,11 @@ public class KryoTranscoderTests {
     public static class MockAuthenticationHandler implements AuthenticationHandler {
 
         @Override
-        public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
+        public DefaultHandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
             if (credential instanceof HttpBasedServiceCredential) {
-                return new HandlerResult(this, (HttpBasedServiceCredential) credential);
+                return new DefaultHandlerResult(this, (HttpBasedServiceCredential) credential);
             } else {
-                return new HandlerResult(this, new BasicCredentialMetaData(credential));
+                return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential));
             }
         }
 
