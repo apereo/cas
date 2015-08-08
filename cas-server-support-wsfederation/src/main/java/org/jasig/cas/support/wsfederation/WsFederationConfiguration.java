@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -141,8 +142,8 @@ public final class WsFederationConfiguration implements Serializable {
      *
      * @param signingCertificateFiles a list of certificate files to read in.
      */
-    public void setSigningCertificateFiles(final List<Resource> signingCertificateFiles) {
-        this.signingCertificateFiles = signingCertificateFiles;
+    public void setSigningCertificateFiles(final Resource... signingCertificateFiles) {
+        this.signingCertificateFiles = Arrays.asList(signingCertificateFiles);
 
         final List<Credential> signingCerts = new ArrayList<>();
 
