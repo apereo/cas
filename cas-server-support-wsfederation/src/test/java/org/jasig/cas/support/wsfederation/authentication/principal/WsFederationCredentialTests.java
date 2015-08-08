@@ -16,6 +16,7 @@
 
 package org.jasig.cas.support.wsfederation.authentication.principal;
 
+import org.jasig.cas.support.wsfederation.AbstractWsFederationTests;
 import org.jasig.cas.support.wsfederation.WsFederationHelper;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -36,14 +37,12 @@ import static org.junit.Assert.*;
  * @author John Gasper
  * @since 4.2.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="classpath:/applicationContext.xml")
-public class WsFederationCredentialTests {
+public class WsFederationCredentialTests extends AbstractWsFederationTests {
 
     @Autowired
-    HashMap<String, String> testTokens;
+    private HashMap<String, String> testTokens;
     
-    WsFederationCredential standardCred;
+    private WsFederationCredential standardCred;
 
     /**
      *
@@ -66,8 +65,8 @@ public class WsFederationCredentialTests {
     @Test
     public void testToString() {
         final String wresult = testTokens.get("goodToken");
-        final Assertion assertion = WsFederationHelper.parseTokenFromString(wresult);
-        final WsFederationCredential instance = WsFederationHelper.createCredentialFromToken(assertion);
+        final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
+        final WsFederationCredential instance = wsFederationHelper.createCredentialFromToken(assertion);
         final String expResult =
         "[ID=_6257b2bf-7361-4081-ae1f-ec58d4310f61,Issuer=http://adfs.example.com/adfs/services/trust,"
         + "Audience=urn:federation:cas,Authentication Method=urn:federation:authentication:windows,"

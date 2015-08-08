@@ -29,13 +29,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author John Gasper
  * @since 4.2.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="classpath:/applicationContext.xml")
-public class WsFederationAttributeMutatorTests {
+public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
 
-    /**
-     * Test of modifyAttributes method, of class WsFederationAttributeMutator.
-     */
     @Test
     public void testModifyAttributes() {
         final Map<String, Object> attributes = new HashMap<String, Object>();
@@ -44,21 +39,21 @@ public class WsFederationAttributeMutatorTests {
         final WsFederationAttributeMutator instance = new WsFederationAttributeMutatorImpl();
         instance.modifyAttributes(attributes);
         assertTrue("testModifyAttributes() - true", attributes.containsKey("test"));
-        assertTrue("testModifyAttributes() - true", attributes.get("test").toString().equalsIgnoreCase("test"));
-        assertTrue("testModifyAttributes() - true", attributes.containsKey("upn"));
-        assertTrue("testModifyAttributes() - true", attributes.get("upn").toString().equalsIgnoreCase("testing"));
+        assertTrue("testModifyAttributes() - true",
+                attributes.get("test").toString().equalsIgnoreCase("test"));
+        assertTrue("testModifyAttributes() - true",
+                attributes.containsKey("upn"));
+        assertTrue("testModifyAttributes() - true",
+                attributes.get("upn").toString().equalsIgnoreCase("testing"));
     }
 
-    /**
-     *
-     */
-    public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
+    private static class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
+        private static final long serialVersionUID = -1858140387002752668L;
 
         /**
-         *
          * @param attributes a map of attributes
          */
-        public void modifyAttributes(Map<String, Object> attributes) {
+        public void modifyAttributes(final Map<String, Object> attributes) {
             attributes.put("test", "test");
             attributes.put("upn", "testing");
         }
