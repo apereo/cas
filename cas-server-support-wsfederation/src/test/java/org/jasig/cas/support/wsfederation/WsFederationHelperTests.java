@@ -51,14 +51,14 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     private ApplicationContext ctx;
 
     @Test
-    public void testParseTokenString() throws Exception {
+    public void verifyParseTokenString() throws Exception {
         final String wresult = testTokens.get("goodToken");
         final Assertion result = wsFederationHelper.parseTokenFromString(wresult);
         assertNotNull("testParseTokenString() - Not null", result);
     }
 
     @Test
-    public void testCreateCredentialFromToken() throws Exception {
+    public void verifyCreateCredentialFromToken() throws Exception {
         final String wresult = testTokens.get("goodToken");
         final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
         
@@ -82,7 +82,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void testGetSigningCredential() throws Exception {
+    public void verifyGetSigningCredential() throws Exception {
 
         final Credential result = wsFedConfig.getSigningCertificates().iterator().next();
         assertNotNull("testGetSigningCredential() - Not Null", result);        
@@ -90,7 +90,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
 
 
     @Test
-    public void testValidateSignatureGoodToken() throws Exception {
+    public void verifyValidateSignatureGoodToken() throws Exception {
         final String wresult = testTokens.get("goodToken");
         final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
         final boolean result = wsFederationHelper.validateSignature(assertion, wsFedConfig);
@@ -98,7 +98,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void testValidateSignatureModifiedAttribute() throws Exception {
+    public void verifyValidateSignatureModifiedAttribute() throws Exception {
         final String wresult = testTokens.get("badTokenModifiedAttribute");
         final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
         final boolean result = wsFederationHelper.validateSignature(assertion, wsFedConfig);
@@ -107,7 +107,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
 
     @Test
     @DirtiesContext
-    public void testValidateSignatureBadKey() throws Exception {
+    public void verifyValidateSignatureBadKey() throws Exception {
         final List<Credential> signingWallet = new ArrayList<>();
         final WsFederationConfiguration cfg = new WsFederationConfiguration();
         cfg.setSigningCertificateFiles(ctx.getResource("classpath:bad-signing.crt"));
@@ -122,7 +122,7 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void testValidateSignatureModifiedSignature() throws Exception {
+    public void verifyValidateSignatureModifiedSignature() throws Exception {
         final String wresult = testTokens.get("badTokenModifiedSignature");
         final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
         final boolean result = wsFederationHelper.validateSignature(assertion, wsFedConfig);
