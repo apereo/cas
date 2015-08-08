@@ -189,7 +189,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void verifyAddMockRegisteredService() throws Exception {
-        final MockRegisteredService svc = new MockRegisteredService();
+        final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("^serviceId");
         svc.setName("name");
@@ -211,7 +211,7 @@ public class RegisteredServiceSimpleFormControllerTests {
     
     @Test
     public void verifyEditMockRegisteredService() throws Exception {
-        final MockRegisteredService r = new MockRegisteredService();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
         r.setName("Test Service");
         r.setServiceId("test");
@@ -226,6 +226,6 @@ public class RegisteredServiceSimpleFormControllerTests {
         final RegisteredService r2 = this.manager.findServiceBy(1000);
 
         assertEquals("serviceId1", r2.getServiceId());
-        assertTrue(r2 instanceof MockRegisteredService);
+        assertTrue(r2 instanceof RegexRegisteredService);
     }
 }
