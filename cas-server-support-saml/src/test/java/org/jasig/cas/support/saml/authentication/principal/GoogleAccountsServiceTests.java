@@ -19,6 +19,7 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -98,7 +99,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     @Test
     public void verifyResponse() {
         final Response resp = this.googleAccountsService.getResponse("ticketId");
-        assertEquals(resp.getResponseType(), Response.ResponseType.POST);
+        assertEquals(resp.getResponseType(), DefaultResponse.ResponseType.POST);
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RESPONSE));
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
     }

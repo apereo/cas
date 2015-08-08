@@ -20,6 +20,7 @@ package org.jasig.cas.support.saml.authentication.principal;
 
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -159,7 +160,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
         parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, this.relayState);
 
-        return Response.getPostResponse(getOriginalUrl(), parameters);
+        return DefaultResponse.getPostResponse(getOriginalUrl(), parameters);
     }
 
     /**
@@ -209,7 +210,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final StringWriter writer = new StringWriter();
         BUILDER.marshalSamlXmlObject(response, writer);
 
-        logger.debug("Generated Google SAML response: {}", writer.toString());
-        return writer.toString();
+        final String result = writer.toString();
+        logger.debug("Generated Google SAML response: {}", result);
+        return result;
     }
 }

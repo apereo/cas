@@ -6,6 +6,16 @@ title: CAS - Google Apps Integration
 #Overview
 Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an integration point for external authentication services. SAML2 support for Google Apps integration is built via a special `ArgumentExtractor` and accompanying `Service` to provide process and understand SAML 2.0 requests from Google.
 
+Support is enabled by including the following dependency in the Maven WAR overlay:
+
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-saml</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
+
 ##Generate Public/Private Keys
 The first step is to generate DSA/RSA public and private keys. These are used to sign and read the Assertions. After keys are created, the public key needs to be registered with Google.
 
