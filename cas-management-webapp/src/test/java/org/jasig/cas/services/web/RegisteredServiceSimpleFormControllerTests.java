@@ -21,7 +21,6 @@ package org.jasig.cas.services.web;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.services.MockRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
