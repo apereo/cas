@@ -326,7 +326,7 @@ This DAO uses a [MongoDb](https://www.mongodb.org/) instance to load and persist
 </dependency>
 {% endhighlight %}
 
-####### Configuration
+###### Configuration
 
 This implementation auto-configures most of the internal details.
 The following configuration in `cas.properties` is required.
