@@ -55,7 +55,7 @@ userPassword: thePassw0rd
 unicodePwd: ignoredForTests
 userPrincipalName: castest@example.org
 userAccountControl: 66048
-host: localhost
+host: 127.0.0.1
 
 dn: cn=Administrators,ou=people,dc=example,dc=org
 cn: Administrators
