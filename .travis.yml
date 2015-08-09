@@ -26,7 +26,7 @@
 #
 
 language: java
-sudo: required
+sudo: false
 branches:
   only:
   - master
@@ -47,7 +47,7 @@ before_install:
 install:
 - mvn -T 10 install -P nocheck -Dmaven.javadoc.skip=true -B -V -q
 script:
-- mvn -T 10 clean package -Dlog4j.configurationFile=../travis/log4j2.xml -Dmaven.javadoc.skip=true -B -V -DskipTests=true
+- mvn clean package -Dlog4j.configurationFile=../travis/log4j2.xml -Dmaven.javadoc.skip=true -B -V -DskipTests=true
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
