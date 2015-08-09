@@ -37,7 +37,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="info">
+        <Logger name="com.hazelcast" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.jasig" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="warn">
