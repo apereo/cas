@@ -26,6 +26,7 @@ org.jasig.cas.monitor
 org.jasig.cas.persondir
 org.jasig.cas.remoting.server
 org.jasig.cas.services
+org.jasig.cas.services.convert
 org.jasig.cas.services.jmx
 org.jasig.cas.services.support
 org.jasig.cas.services.web
