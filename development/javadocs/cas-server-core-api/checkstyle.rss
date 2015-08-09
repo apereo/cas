@@ -214,7 +214,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.AuthenticationManager.java">org/jasig/cas/authentication/AuthenticationManager.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.ticket.TicketGrantingTicket.java">org/jasig/cas/ticket/TicketGrantingTicket.java</a>
                 </td>
                 <td>
                   0
@@ -228,7 +228,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.ticket.TicketGrantingTicket.java">org/jasig/cas/ticket/TicketGrantingTicket.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.AuthenticationManager.java">org/jasig/cas/authentication/AuthenticationManager.java</a>
                 </td>
                 <td>
                   0
@@ -340,7 +340,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.AuthenticationException.java">org/jasig/cas/authentication/AuthenticationException.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.ticket.Ticket.java">org/jasig/cas/ticket/Ticket.java</a>
                 </td>
                 <td>
                   0
@@ -354,7 +354,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.ticket.Ticket.java">org/jasig/cas/ticket/Ticket.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.AuthenticationException.java">org/jasig/cas/authentication/AuthenticationException.java</a>
                 </td>
                 <td>
                   0
@@ -382,7 +382,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory.java">org/jasig/cas/authentication/ContextualAuthenticationPolicyFactory.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.services.ServicesManager.java">org/jasig/cas/services/ServicesManager.java</a>
                 </td>
                 <td>
                   0
@@ -396,7 +396,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.services.ServicesManager.java">org/jasig/cas/services/ServicesManager.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory.java">org/jasig/cas/authentication/ContextualAuthenticationPolicyFactory.java</a>
                 </td>
                 <td>
                   0
@@ -438,20 +438,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.logout.LogoutRequest.java">org/jasig/cas/logout/LogoutRequest.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.principal.Response.java">org/jasig/cas/authentication/principal/Response.java</a>
                 </td>
                 <td>
@@ -466,7 +452,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.Authentication.java">org/jasig/cas/authentication/Authentication.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.logout.LogoutRequest.java">org/jasig/cas/logout/LogoutRequest.java</a>
                 </td>
                 <td>
                   0
@@ -481,6 +467,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.HandlerResult.java">org/jasig/cas/authentication/HandlerResult.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.Authentication.java">org/jasig/cas/authentication/Authentication.java</a>
                 </td>
                 <td>
                   0
@@ -550,6 +550,20 @@ under the License.
               </tr>
                           <tr>
                 <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.RememberMeCredential.java">org/jasig/cas/authentication/RememberMeCredential.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.CasProtocolConstants.java">org/jasig/cas/CasProtocolConstants.java</a>
                 </td>
                 <td>
@@ -565,20 +579,6 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.AuthenticationHandler.java">org/jasig/cas/authentication/AuthenticationHandler.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.RememberMeCredential.java">org/jasig/cas/authentication/RememberMeCredential.java</a>
                 </td>
                 <td>
                   0
@@ -620,7 +620,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.logout.LogoutRequestStatus.java">org/jasig/cas/logout/LogoutRequestStatus.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.principal.WebApplicationService.java">org/jasig/cas/authentication/principal/WebApplicationService.java</a>
                 </td>
                 <td>
                   0
@@ -634,7 +634,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.principal.WebApplicationService.java">org/jasig/cas/authentication/principal/WebApplicationService.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.logout.LogoutRequestStatus.java">org/jasig/cas/logout/LogoutRequestStatus.java</a>
                 </td>
                 <td>
                   0
@@ -690,7 +690,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.AuthenticationPolicy.java">org/jasig/cas/authentication/AuthenticationPolicy.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.ticket.proxy.ProxyHandler.java">org/jasig/cas/ticket/proxy/ProxyHandler.java</a>
                 </td>
                 <td>
                   0
@@ -718,7 +718,7 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.ticket.proxy.ProxyHandler.java">org/jasig/cas/ticket/proxy/ProxyHandler.java</a>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.AuthenticationPolicy.java">org/jasig/cas/authentication/AuthenticationPolicy.java</a>
                 </td>
                 <td>
                   0
@@ -816,34 +816,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.AuthenticationMetaDataPopulator.java">org/jasig/cas/authentication/AuthenticationMetaDataPopulator.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.services.RegisteredService.java">org/jasig/cas/services/RegisteredService.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.web.support.ArgumentExtractor.java">org/jasig/cas/web/support/ArgumentExtractor.java</a>
                 </td>
                 <td>
@@ -859,6 +831,34 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.ticket.TicketState.java">org/jasig/cas/ticket/TicketState.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.AuthenticationMetaDataPopulator.java">org/jasig/cas/authentication/AuthenticationMetaDataPopulator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.services.RegisteredService.java">org/jasig/cas/services/RegisteredService.java</a>
                 </td>
                 <td>
                   0
