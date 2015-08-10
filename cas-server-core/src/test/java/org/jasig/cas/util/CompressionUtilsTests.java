@@ -36,8 +36,8 @@ import static org.junit.Assert.*;
 public class CompressionUtilsTests {
 
     private final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");
-    private final JCEBasedCipherExecutor cipher = new JCEBasedCipherExecutor("1234567890123456",
-            "1234567890123456", "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w");
+    private final ShiroCipherExecutor cipher = new ShiroCipherExecutor("1234567890123456",
+            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w");
 
     @Test
     public void testSerializationOfTgt() {
