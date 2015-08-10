@@ -55,7 +55,7 @@
     for more info.
     -->
     <!--
-    <bean id="ticketCipherExecutor" class="org.jasig.cas.util.JCEBasedCipherExecutor"
+    <bean id="ticketCipherExecutor" class="org.jasig.cas.util.ShiroCipherExecutor
           c:encryptionSecretKey="${ticket.encryption.secretkey}"
           c:encryptionSeed="${ticket.encryption.seed}"
           c:signingSecretKey-ref="${ticket.signing.secretkey}"/>
