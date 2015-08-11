@@ -22,7 +22,9 @@
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/flick/jquery-ui.css">
     
-
+<!-- Custom UI styles -->
+<link href="/cas/css/customcas.css" rel="stylesheet"> 
+    
     
 <script type="text/javascript">
 
@@ -88,49 +90,49 @@
     }
 </script>
 
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4>SSO Sessions Report</h4>
-    </div>
-    <div class="panel-body">
-        <div>
-
-        <div class="btn-group btn-group-sm pull-right" data-toggle="buttons">
-          <label class="btn btn-primary active">
-            <input type="radio" name="options" id="option1" autocomplete="off" checked> All
-          </label>
-          <label class="btn btn-primary">
-            <input type="radio" name="options" id="option2" autocomplete="off"> Proxied
-          </label>
-          <label class="btn btn-primary">
-            <input type="radio" name="options" id="option3" autocomplete="off"> Non-Proxied
-          </label>
+<div id="cas-sessions">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>SSO Sessions Report</h4>
         </div>
-                
+        <div class="panel-body">
+            <div>
 
-        <button class="btn btn-sm btn-danger" type="button">Bulk Kill</button></div>
-        
-        <div id="container-stable">
-           <div id="table-monitor-hdr" class="row">
-                <div class="col-xs-1">&nbsp;</div>
-                <div class="col-xs-3">User</div>
-                <div class="col-xs-4">Authentication Date</div>
-                <div class="col-xs-2">Usage Count</div>
-                <div class="col-xs-2">Kill</div>
-           </div>
+            <div class="btn-group btn-group-sm pull-right" data-toggle="buttons">
+              <label class="btn btn-primary active">
+                <input type="radio" name="options" id="option1" autocomplete="off" checked> All
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" name="options" id="option2" autocomplete="off"> Proxied
+              </label>
+              <label class="btn btn-primary">
+                <input type="radio" name="options" id="option3" autocomplete="off"> Non-Proxied
+              </label>
+            </div>
 
-           <div id="msg" style="display:none"></div>
 
-           <div id="jsonContent"></div>
-        </div>
+            <button class="btn btn-sm btn-danger" type="button">Bulk Kill</button></div>
 
-        <div id="login">
-                <input class="btn btn-success btn-sm" type="button" onclick="location.reload();" value="Refresh">
+            <div id="container-stable">
+               <div id="table-monitor-hdr" class="row">
+                    <div class="col-xs-1">&nbsp;</div>
+                    <div class="col-xs-3">User</div>
+                    <div class="col-xs-4">Authentication Date</div>
+                    <div class="col-xs-2">Usage Count</div>
+                    <div class="col-xs-2">Kill</div>
+               </div>
+
+               <div id="msg" style="display:none"></div>
+
+               <div id="jsonContent"></div>
+            </div>
+
+            <div id="login">
+                    <input class="btn btn-success btn-sm" type="button" onclick="location.reload();" value="Refresh">
+            </div>
         </div>
     </div>
 </div>
-
 
 
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>
