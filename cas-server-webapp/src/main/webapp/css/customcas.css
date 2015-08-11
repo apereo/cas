@@ -2,11 +2,12 @@
 /* --------------- CUSTOM STYLES
 */
 
-body,html {
+/*body,html {
     background: #f3f3f4;
-}
+}*/
 
-body,html,
+/*body,html,*/
+#cas-sessions,
 #container-stable, 
 .ui-widget  {
     font-family: 'Lato', sans-serif !important;
