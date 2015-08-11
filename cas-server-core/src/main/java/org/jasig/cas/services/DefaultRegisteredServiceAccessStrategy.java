@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -253,5 +254,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.requireAllAttributes)
                 .append(this.requiredAttributes)
                 .toHashCode();
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("enabled", enabled)
+                .append("ssoEnabled", ssoEnabled)
+                .append("requireAllAttributes", requireAllAttributes)
+                .append("requiredAttributes", requiredAttributes)
+                .toString();
     }
 }
