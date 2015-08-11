@@ -209,6 +209,47 @@ And finally, we need an applicationContext provider in the `spring-configuration
     class="org.jasig.cas.util.ApplicationContextProvider" />
 {% endhighlight %}
 
+
+##OpenID v2.0 support
+
+By default, the CAS server is defined as an OpenID provider v1.0. This definition is held in the `user.jsp` file (in the `WEB-INF/view/jsp/protocol/openid` directory):
+ 
+{% highlight xml %}
+<html>
+<head>
+    <link rel="openid.server" href="${openid_server}"/>
+</head>
+</html>
+{% endhighlight %}
+
+To define the CAS server as an OpenID provider v2.0, the exposed endpoint must be changed accordingly. To do that, the first thing is to replace the content of the `user.jsp` file by a new file pointing to the appropriate Yadis definition:
+
+{% highlight xml %}
+<html>
+<head>
+    <meta http-equiv="X-XRDS-Location" content="http://mycasserver/yadispath/yadis.xml" />
+</head>
+</html>
+{% endhighlight %}
+
+And to add this Yadis definition on some publicly accessible url (in the above example, it is `htp://mycasserver/yadispath/yadis.xml`) as follows:
+
+{% highlight xml %}
+<?xml version="1.0" encoding="UTF-8"?>
+<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)"
+           xmlns:openid="http://openid.net/xmlns/1.0">
+<XRD>
+    <Service priority="1">
+        <Type>http://specs.openid.net/auth/2.0/signon</Type>
+        <URI>http://mycasserver/login</URI>
+    </Service>
+</XRD>
+</xrds:XRDS>
+{% endhighlight %}
+
+This XML content defines the CAS server available on `http://mycasserver/login` (to be changed for your server) as an OpenID provider v2.0 because of the type of service (`http://specs.openid.net/auth/2.0/signon`).
+
+
 ***
 
 # Delegate To an OpenID Provider
