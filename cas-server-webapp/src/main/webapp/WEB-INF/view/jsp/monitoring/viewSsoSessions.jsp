@@ -91,6 +91,16 @@
 </script>
 
 <div id="cas-sessions">
+    
+    
+        <!-- Main Header/Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" id="top-navbar" role="navigation">
+            <div class="container">
+                <a class="navbar-brand" href="#"><img src="/cas/images/6inchbrand-64.png" alt="USUHS Logo" />
+                    <span class="logo hidden-xs"><span class="heavy">CAS</span>Monitoring</span></a>
+            </div>
+        </nav>
+    
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4>SSO Sessions Report</h4>
