@@ -271,8 +271,9 @@
 
         <plugins>
             <plugin>
+              <groupId>org.apache.maven.plugins</groupId>	
               <artifactId>maven-clean-plugin</artifactId>
-              <version>2.5</version>
+              <version>2.6.1</version>
               <executions>
                 <execution>
                   <id>clean-jar-artifacts</id>
@@ -280,12 +281,14 @@
                   <goals><goal>clean</goal></goals>
                   <configuration>
                     <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                    <fileset>
-                      <directory>target</directory>
-                      <excludes>
-                        <exclude>*.war</exclude>
-                      </excludes>
-                    </fileset>
+                    <filesets>
+	                    <fileset>
+	                      <directory>target</directory>
+				          <excludes>
+				            <exclude>**/*.war</exclude>
+				          </excludes>
+	                    </fileset>
+                	</filesets>
                   </configuration>
                 </execution>
               </executions>
