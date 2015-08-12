@@ -213,6 +213,11 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                  <groupId>com.heroku.sdk</groupId>
+                  <artifactId>heroku-maven-plugin</artifactId>
+                  <version>0.4.4</version>
+                </plugin>
+                <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>${maven-jetty-plugin.version}</version>
@@ -265,6 +270,26 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+              <artifactId>maven-clean-plugin</artifactId>
+              <version>2.5</version>
+              <executions>
+                <execution>
+                  <id>clean-jar-artifacts</id>
+                  <phase>install</phase>
+                  <goals><goal>clean</goal></goals>
+                  <configuration>
+                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                    <fileset>
+                      <directory>target</directory>
+                      <excludes>
+                        <exclude>*.war</exclude>
+                      </excludes>
+                    </fileset>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>

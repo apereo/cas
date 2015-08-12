@@ -74,6 +74,14 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>com.heroku.sdk</groupId>
+        <artifactId>heroku-maven-plugin</artifactId>
+        <configuration>
+          <appName>jasigcas</appName>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
@@ -107,6 +115,7 @@
         <version>2.10</version>
         <executions>
           <execution>
+            <id>copy-dependencies</id>
             <phase>package</phase>
             <goals>
               <goal>copy</goal>
@@ -120,6 +129,7 @@
                   <destFileName>webapp-runner.jar</destFileName>
                 </artifactItem>
               </artifactItems>
+              <includeScope>compile</includeScope>
             </configuration>
           </execution>
         </executions>
