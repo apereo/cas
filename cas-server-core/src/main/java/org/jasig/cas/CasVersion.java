@@ -60,7 +60,7 @@ public final class CasVersion {
                 return new DateTime(new File(resource.toURI()).lastModified());
             } else if ("jar".equals(resource.getProtocol())) {
                 final String path = resource.getPath();
-                final File file = new File(path.substring(5, path.indexOf("!")));
+                final File file = new File(path.substring(5, path.indexOf('!')));
                 return new DateTime(file.lastModified());
             }
             throw new IllegalArgumentException("Unhandled url protocol: " +
