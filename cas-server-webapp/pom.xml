@@ -90,7 +90,17 @@
           </webResources>
         </configuration>
       </plugin>
-
+      <plugin>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>${maven-jetty-plugin.version}</version>
+        <configuration>
+          <webApp>
+            <contextPath>/cas</contextPath>
+          </webApp>
+        </configuration>
+      </plugin>
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -115,16 +125,6 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.eclipse.jetty</groupId>
-        <artifactId>jetty-maven-plugin</artifactId>
-        <version>${maven-jetty-plugin.version}</version>
-        <configuration>
-          <webApp>
-            <contextPath>/cas</contextPath>
-          </webApp>
-        </configuration>
-      </plugin>
       
     </plugins>
   </build>
