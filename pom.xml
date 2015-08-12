@@ -286,6 +286,7 @@
 	                      <directory>target</directory>
 				          <excludes>
 				            <exclude>**/*.war</exclude>
+                            <exclude>**/webapp-runner.jar</exclude>
 				          </excludes>
 	                    </fileset>
                 	</filesets>
