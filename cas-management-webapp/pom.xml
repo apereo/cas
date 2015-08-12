@@ -178,11 +178,14 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>com.heroku.sdk</groupId>
-                <artifactId>heroku-maven-plugin</artifactId>
-                <configuration>
-                  <appName>jasigcasmgmt</appName>
-                </configuration>
+            <groupId>com.heroku.sdk</groupId>
+            <artifactId>heroku-maven-plugin</artifactId>
+            <configuration>
+              <appName>jasigcasmgmt</appName>
+              <configVars>
+                <WEBAPP_RUNNER_OPTS>--expand-war</WEBAPP_RUNNER_OPTS>
+              </configVars>
+            </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -201,33 +204,6 @@
                     </webResources>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.10</version>
-                <executions>
-                  <execution>
-                    <id>copy-dependencies</id>
-                    <phase>package</phase>
-                    <goals>
-                      <goal>copy</goal>
-                    </goals>
-                    <configuration>
-                      <artifactItems>
-                        <artifactItem>
-                          <groupId>com.github.jsimone</groupId>
-                          <artifactId>webapp-runner</artifactId>
-                          <version>8.0.23.0</version>
-                          <destFileName>webapp-runner.jar</destFileName>
-                        </artifactItem>
-                      </artifactItems>
-                      <includeScope>compile</includeScope>
-                    </configuration>
-                  </execution>
-                </executions>
-              </plugin>
-
         </plugins>
     </build>
 

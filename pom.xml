@@ -215,7 +215,7 @@
                 <plugin>
                   <groupId>com.heroku.sdk</groupId>
                   <artifactId>heroku-maven-plugin</artifactId>
-                  <version>0.4.4</version>
+                  <version>0.5.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.eclipse.jetty</groupId>
