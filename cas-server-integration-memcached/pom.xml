@@ -17,32 +17,32 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>4.1.0-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-integration-memcached</artifactId>
-	<packaging>jar</packaging>
-	<name>Apereo CAS Memcached Integration</name>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server</artifactId>
+        <version>4.1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>cas-server-integration-memcached</artifactId>
+    <packaging>jar</packaging>
+    <name>Apereo CAS Memcached Integration</name>
 
-  <repositories>
-    <repository>
-      <id>couchbase</id>
-      <name>Couchbase Maven Repository</name>
-      <url>http://files.couchbase.com/maven2</url>
-    </repository>
-  </repositories>
-	
-	<dependencies>
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+    <repositories>
+        <repository>
+            <id>couchbase</id>
+            <name>Couchbase Maven Repository</name>
+            <url>http://files.couchbase.com/maven2</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
@@ -50,37 +50,54 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-		
-		<dependency>
-			<groupId>net.spy</groupId>
-			<artifactId>spymemcached</artifactId>
-			<version>2.9.1</version>
-		</dependency>
 
-    <dependency>
-      <groupId>com.esotericsoftware</groupId>
-      <artifactId>kryo</artifactId>
-      <version>3.0.0</version>
-    </dependency>
+        <dependency>
+            <groupId>net.spy</groupId>
+            <artifactId>spymemcached</artifactId>
+            <version>${spy.memcached.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>de.javakaffee</groupId>
-      <artifactId>kryo-serializers</artifactId>
-      <version>0.27</version>
-    </dependency>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>${kryo.version}</version>
+        </dependency>
 
-    <!-- Test dependencies -->
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <version>1.9.0</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>de.javakaffee</groupId>
+            <artifactId>kryo-serializers</artifactId>
+            <version>${kryo.serializers.version}</version>
+        </dependency>
 
-	</dependencies>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.memcached</artifactId>
+            <version>${embedded.memcached.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-  <properties>
-    <cs.dir>${project.parent.basedir}</cs.dir>
-  </properties>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <cs.dir>${project.parent.basedir}</cs.dir>
+        <spy.memcached.version>2.11.7</spy.memcached.version>
+        <kryo.version>3.0.2</kryo.version>
+        <kryo.serializers.version>0.35</kryo.serializers.version>
+        <embedded.memcached.version>1.06.2</embedded.memcached.version>
+    </properties>
 
 </project>

@@ -19,10 +19,10 @@
 
 package org.jasig.cas.support.saml.util;
 
-import org.opensaml.common.xml.SAMLConstants;
-import org.opensaml.saml2.core.Response;
-import org.opensaml.saml2.core.Status;
-import org.opensaml.saml2.core.StatusCode;
+import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Status;
+import org.opensaml.saml.saml2.core.StatusCode;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
@@ -48,7 +48,7 @@ public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
             }
             return new QName(SAMLConstants.SAML20_NS, name, XMLConstants.DEFAULT_NS_PREFIX);
         } catch (final Exception e){
-            throw new IllegalStateException("Cannot access field " + objectType.getName() + "." + DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
+            throw new IllegalStateException("Cannot access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_LOCAL_NAME_FIELD);
         }
     }
 }

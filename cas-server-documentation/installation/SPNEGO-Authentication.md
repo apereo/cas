@@ -145,10 +145,7 @@ Define two new action states in `login-webflow.xml` before the `viewLoginForm` s
 </action-state>
 {% endhighlight %}
 
-Additionally, two existing states need to be modified:
-1. `gatewayRequestCheck` - replace `viewLoginForm` with `startAuthenticate`
-2. `renewRequestCheck` - replace `viewLoginForm` with `startAuthenticate`
-
+Additionally, find action `generateLoginTicket` - replace `viewLoginForm` with `startAuthenticate`.
 
 Add two bean definitions in `cas-servlet.xml`:
 
@@ -205,3 +202,68 @@ above.
     jcifs.spnego.accept {
        com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
     };
+
+## Client Selection Strategy
+CAS provides a set of components that attempt to activate the SPNEGO flow conditionally, in case deployers need a configurable way to decide whether SPNEGO should be applied to the current authentication/browser request. The components provided are webflow actions that return either `yes` or `no` to the webflow and allow you to reroute the webflow conditionally based the outcome, to either SPNEGO or the normal CAS login flow. 
+
+The activation strategies are as follows:
+
+### By Remote IP
+Checks to see if the request's remote ip address matches a predefine pattern.
+
+```xml
+<bean id="baseSpnegoClientAction" 
+      class="org.jasig.cas.support.spnego.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction"
+      c:ipsToCheckPattern="127.+"
+      c:alternativeRemoteHostAttribute="alternateRemoteHeader" />
+```
+
+### By Hostname
+Checks to see if the request's remote hostname matches a predefine pattern. This action supports all functionality provided by `BaseSpnegoKnownClientSystemsFilterAction`. 
+
+```xml
+<bean id="hostnameSpnegoClientAction" 
+      class="org.jasig.cas.support.spnego.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction"
+      c:hostNamePatternString="something.+" />
+```
+
+### By LDAP Attribute
+Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence would allow the webflow to resume to SPNEGO. This action supports all functionality provided by `BaseSpnegoKnownClientSystemsFilterAction`. 
+
+
+```xml
+<bean id="ldapSpnegoClientAction" 
+      class="org.jasig.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction"
+      c:connectionFactory-ref="connectionFactory"
+      c:searchRequest-ref="searchRequest"
+      c:spnegoAttributeName="spnegoAttribute" />
+```
+
+Sample search request and filer:
+
+```xml
+<bean id="searchRequest" class="org.ldaptive.SearchRequest"
+      p:baseDn-ref="baseDn"
+      p:searchFilter-ref="searchFilter"/>
+
+<bean id="searchFilter" class="org.ldaptive.SearchFilter"
+      c:filter="host={0}" />
+
+<bean id="baseDn" class="java.lang.String">
+    <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
+</bean>
+```
+
+### Webflow Configuration
+
+Insert the appropriate action before SPNEGO initiation, assigning a `yes` response route to SPNEGO, and a `no` response to route to viewing the login form.
+
+```xml
+<action-state id="eveluateClientRequest">
+  <evaluate expression="hostnameSpnegoClientAction" />
+  <transition on="yes" to="startAuthenticate" />
+  <transition on="no" to="generateLoginTicket" />
+</action-state>
+
+...
+```

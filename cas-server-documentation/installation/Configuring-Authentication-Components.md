@@ -140,7 +140,7 @@ Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-c
 <bean id="casArgumentExtractor"	class="org.jasig.cas.web.support.CasArgumentExtractor" />
 
 <util:list id="argumentExtractors">
-	<ref bean="casArgumentExtractor" />
+    <ref bean="casArgumentExtractor" />
 </util:list>
 {% endhighlight %}
 

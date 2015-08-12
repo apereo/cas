@@ -23,9 +23,8 @@ import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.jasig.cas.web.view.AbstractCasView;
 import org.joda.time.DateTime;
-import org.opensaml.DefaultBootstrap;
-import org.opensaml.saml1.core.Response;
-import org.opensaml.xml.ConfigurationException;
+
+import org.opensaml.saml.saml1.core.Response;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -53,14 +52,6 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
     /** Defaults to 0. */
     private int skewAllowance;
-
-    static {
-        try {
-            DefaultBootstrap.bootstrap();
-        } catch (final ConfigurationException e) {
-            throw new IllegalStateException("Error initializing OpenSAML library.", e);
-        }
-    }
 
     /**
      * Sets the character encoding in the HTTP response.

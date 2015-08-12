@@ -18,15 +18,18 @@
  */
 package org.jasig.cas.adaptors.x509.util;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.security.cert.CRLException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+
+import edu.vt.middleware.crypt.util.CryptReader;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.core.io.Resource;
+
 
 /**
  * Utility class with methods to support various operations on X.509 certs.
@@ -39,6 +42,7 @@ public final class CertUtils {
 
     /** X509 certificate type. */
     public static final String X509_CERTIFICATE_TYPE = "X509";
+
 
     /** Suppressed constructor of utility class. */
     private CertUtils() {
@@ -69,18 +73,16 @@ public final class CertUtils {
     }
 
     /**
-     * Fetches an X.509 CRL from a resource such as a file or URL.
+     * Read certificate.
      *
-     * @param resource Resource descriptor.
-     *
-     * @return X.509 CRL
-     *
-     * @throws IOException On IOErrors.
-     * @throws CRLException On CRL parse errors.
+     * @param resource the resource to read the cert from
+     * @return the x 509 certificate
      */
-    public static X509CRL fetchCRL(final Resource resource) throws CRLException, IOException {
-        try (final InputStream in = resource.getURL().openStream()) {
-            return (X509CRL) CertUtils.getCertificateFactory().generateCRL(in);
+    public static X509Certificate readCertificate(final Resource resource) {
+        try (final InputStream in = resource.getInputStream()) {
+            return (X509Certificate) CryptReader.readCertificate(in);
+        } catch (final Exception e) {
+            throw new RuntimeException("Error reading certificate " + resource, e);
         }
     }
 
@@ -92,7 +94,10 @@ public final class CertUtils {
      * @return String representation of a certificate that includes the subject and serial number.
      */
     public static String toString(final X509Certificate cert) {
-        return String.format("%s, SerialNumber=%s", cert.getSubjectDN(), cert.getSerialNumber());
+        return new ToStringBuilder(cert, ToStringStyle.NO_CLASS_NAME_STYLE)
+                .append("subjectDn", cert.getSubjectDN())
+                .append("serialNumber", cert.getSerialNumber())
+                .build();
     }
 
     /**

@@ -22,7 +22,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
-import org.apache.commons.collections.functors.TruePredicate;
+import org.apache.commons.collections4.functors.TruePredicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -118,7 +118,7 @@ public final class StatisticsController implements ServletContextAware {
         int expiredSts = 0;
 
         try {
-            final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(TruePredicate.getInstance());
+            final Collection<Ticket> tickets = this.centralAuthenticationService.getTickets(TruePredicate.INSTANCE);
 
             for (final Ticket ticket : tickets) {
                 if (ticket instanceof ServiceTicket) {
@@ -173,15 +173,15 @@ public final class StatisticsController implements ServletContextAware {
         final double time = Math.floor(difference / value);
         final double newDifference = difference - time * value;
         final String currentLabel = labels.remove();
-        final String label = time == 0 || time > 1 ? currentLabel + "s" : currentLabel;
+        final String label = time == 0 || time > 1 ? currentLabel + 's' : currentLabel;
 
-        return Integer.toString((int) time) + " " + label + " " + calculateUptime(newDifference, calculations, labels);
+        return Integer.toString((int) time) + ' ' + label + ' ' + calculateUptime(newDifference, calculations, labels);
     }
 
     @Override
     public void setServletContext(final ServletContext servletContext) {
         servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY, this.metricsRegistry);
-        servletContext.setAttribute(MetricsServlet.SHOW_SAMPLES, true);
+        servletContext.setAttribute(MetricsServlet.SHOW_SAMPLES, Boolean.TRUE);
         servletContext.setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, this.healthCheckRegistry);
     }
 }

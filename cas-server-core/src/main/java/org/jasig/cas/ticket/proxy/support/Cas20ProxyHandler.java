@@ -44,9 +44,6 @@ import java.net.URL;
 public final class Cas20ProxyHandler implements ProxyHandler {
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
-    /** The PGTIOU ticket prefix. */
-    private static final String PGTIOU_PREFIX = "PGTIOU";
-
     /** The proxy granting ticket identifier parameter. */
     private static final String PARAMETER_PROXY_GRANTING_TICKET_IOU = "pgtIou";
 
@@ -67,7 +64,7 @@ public final class Cas20ProxyHandler implements ProxyHandler {
     @Override
     public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
         final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
-        final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(PGTIOU_PREFIX);
+        final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX);
 
         final URL callbackUrl = serviceCredentials.getCallbackUrl();
         final String serviceCredentialsAsString = callbackUrl.toExternalForm();
@@ -78,25 +75,25 @@ public final class Cas20ProxyHandler implements ProxyHandler {
         stringBuffer.append(serviceCredentialsAsString);
 
         if (callbackUrl.getQuery() != null) {
-            stringBuffer.append("&");
+            stringBuffer.append('&');
         } else {
-            stringBuffer.append("?");
+            stringBuffer.append('?');
         }
 
         stringBuffer.append(PARAMETER_PROXY_GRANTING_TICKET_IOU);
-        stringBuffer.append("=");
+        stringBuffer.append('=');
         stringBuffer.append(proxyIou);
-        stringBuffer.append("&");
+        stringBuffer.append('&');
         stringBuffer.append(PARAMETER_PROXY_GRANTING_TICKET_ID);
-        stringBuffer.append("=");
+        stringBuffer.append('=');
         stringBuffer.append(proxyGrantingTicketId);
 
         if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
-            logger.debug("Sent ProxyIou of {} for service: {}", proxyIou, serviceCredentials.toString());
+            logger.debug("Sent ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
             return proxyIou;
         }
 
-        logger.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials.toString());
+        logger.debug("Failed to send ProxyIou of {} for service: {}", proxyIou, serviceCredentials);
         return null;
     }
 

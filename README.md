@@ -24,7 +24,7 @@ This approach does not require the adopter to *explicitly* download any version 
 rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local 
 customizations to further ease future upgrades and maintenance.
 
-## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server)
+## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Jasig/cas/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 - Binary releases may be downloaded from [here][downloadcas].
 - CAS artifacts are published through the [Maven Central Repository][casmavencentral].
 - A snapshot of the codebase's `master` branch may be downloaded from [here][downloadcasgithub].
@@ -36,8 +36,6 @@ git clone git@github.com:Jasig/cas.git
 
 **Note:** If building CAS from the source, running the test cases currently requires an active Internet connection.
 Please [see the maven docs][skip] on how to disable the tests.
-
-
 
 ## Documentation [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
 - [Official Documentation][wiki]
@@ -59,4 +57,4 @@ Please [see the maven docs][skip] on how to disable the tests.
 [casmavencentral]: http://mvnrepository.com/artifact/org.jasig.cas
 [downloadcasgithub]: https://github.com/Jasig/cas/archive/master.zip
 [releasenotes]: https://github.com/Jasig/cas/releases
-[casaddons]: https://github.com/Unicon/cas-addons
+[casaddons]: https://github.com/unicon-cas-addons

@@ -21,7 +21,7 @@ package org.jasig.cas.web.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.apache.commons.collections.Predicate;
+import org.apache.commons.collections4.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;

@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.web.support;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +81,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             request.setAttribute(WebUtils.CAS_ACCESS_DENIED_REASON, "screen.blocked.message");
             response.sendError(HttpStatus.SC_FORBIDDEN,
                     "Access Denied for user [" + request.getParameter(usernameParameter)
-                    + "] from IP Address [" + request.getRemoteAddr() + "]");
+                    + "] from IP Address [" + request.getRemoteAddr() + ']');
             return false;
         }
 
@@ -143,8 +144,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param request the request
      */
     protected void recordThrottle(final HttpServletRequest request) {
-        logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds.",
-                request.getRemoteAddr(), failureThreshold, failureRangeInSeconds);
+        logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds. "
+                + "Authentication attempt exceeds the failure threshold {}",
+                request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
+                this.failureThreshold);
     }
 
     /**
@@ -161,4 +164,15 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @return true, if successful
      */
     protected abstract boolean exceedsThreshold(HttpServletRequest request);
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("failureThreshold", this.failureThreshold)
+                .append("failureRangeInSeconds", this.failureRangeInSeconds)
+                .append("usernameParameter", this.usernameParameter)
+                .append("thresholdRate", this.thresholdRate)
+                .toString();
+    }
 }

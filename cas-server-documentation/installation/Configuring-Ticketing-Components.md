@@ -32,12 +32,11 @@ All three arguments map to those of the [`ConcurrentHashMap` constructor](http:/
       c:concurrencyLevel="20" />
 {% endhighlight %}
 
-
-
 ### Cache-Based Ticket Registries
 Cached-based ticket registries provide a high-performance solution for ticket storage in high availability
 deployments. Components for the following caching technologies are provided:
 
+* [Hazelcast](Hazelcast-Ticket-Registry.html)
 * [Ehcache](Ehcache-Ticket-Registry.html)
 * [JBoss Cache](JBoss-Cache-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
@@ -62,14 +61,14 @@ CAS presents a pluggable architecture for generating unique ticket ids for each 
 
 <bean id="loginTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
     c:maxLength="30" c:suffix="${host.name}" />
-	
+
 <bean id="proxy20TicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
     c:maxLength="20" c:suffix="${host.name}" />
- 
+
 <util:map id="uniqueIdGeneratorsMap">
-	<entry
-		key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-		value-ref="serviceTicketUniqueIdGenerator" />
+    <entry
+        key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+        value-ref="serviceTicketUniqueIdGenerator" />
 </util:map>
 
 {% endhighlight %}
@@ -95,14 +94,14 @@ The drawback is that in keeping only one `cas.properties` file, we'd lose the ab
 to define unique `host.name` property values for each node as the suffix, which would assist with troubleshooting
 and diagnostics. To provide a remedy, this ticket generator is able to retrieve the `host.name` value directly from
 the actual node name, rather than relying on the configuration, only if one isn't specified in
-the `cas.properties` file. 
+the `cas.properties` file.
 
 #####`SamlCompliantUniqueTicketIdGenerator`
 Unique Ticket Id Generator compliant with the SAML 1.1 specification for artifacts, that is also compliant with the SAML v2 specification.
- 
+
 
 ### Ticket Registry Cleaner
-The ticket registry cleaner should be used for ticket registries that cannot manage their own state. That would include the default in-memory registry and the JPA ticket registry. Cache-based ticket registry implementations such as Memcached or Ehcache do not require a registry cleaner. The ticket registry cleaner configuration is specified in the `spring-configuration/ticketRegistry.xml` file.
+The ticket registry cleaner should be used for ticket registries that cannot manage their own state. That would include the default in-memory registry and the JPA ticket registry. Cache-based ticket registry implementations such as Memcached, Hazelcast or Ehcache do not require a registry cleaner. The ticket registry cleaner configuration is specified in the `spring-configuration/ticketRegistry.xml` file.
 
 
 ####Components
@@ -113,7 +112,7 @@ Strategy interface to denote the start of cleaning the registry.
 
 #####`DefaultTicketRegistryCleaner`
 The default ticket registry cleaner scans the entire CAS ticket registry for expired tickets and removes them.  This process is only required so that the size of the ticket registry will not grow beyond a reasonable size.
-The functionality of CAS is not dependent on a ticket being removed as soon as it is expired. Locking strategies may be used to support high availability environments. In a clustered CAS environment with several CAS nodes executing ticket cleanup, it is desirable to execute cleanup from only one CAS node at a time. 
+The functionality of CAS is not dependent on a ticket being removed as soon as it is expired. Locking strategies may be used to support high availability environments. In a clustered CAS environment with several CAS nodes executing ticket cleanup, it is desirable to execute cleanup from only one CAS node at a time.
 
 
 #####`LockingStrategy`
@@ -146,5 +145,3 @@ If you're using the default ticket registry configuration, your `/cas-server-web
 
 ## Ticket Expiration Policies
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting tickets (TGT) and service tickets (ST). [See this guide](Configuring-Ticket-Expiration-Policy.html) for details on how to configure the expiration policies.
-
-
