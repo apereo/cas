@@ -4,7 +4,7 @@ title: CAS - Services Management Webapp
 ---
 # Services Management Webapp
 
-The services management webapp is no more part of the CAS server and is a standalone web application: `cas-management-webapp`.
+The services management webapp is no longer part of the CAS server and is a standalone web application: `cas-management-webapp`.
 
 Nonetheless, one must keep in mind that both applications (the CAS server and the services management webapp) share the _same_ configuration for the CAS services:
 
