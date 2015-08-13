@@ -6,13 +6,16 @@ title: CAS - Services Management Webapp
 
 The services management webapp is no longer part of the CAS server and is a standalone web application: `cas-management-webapp`.
 
-Nonetheless, one must keep in mind that both applications (the CAS server and the services management webapp) share the _same_ configuration for the CAS services:
+Nonetheless, one MUST keep in mind that both applications (the CAS server and the services management webapp) 
+share the _same_ configuration for the CAS services:
 
-* the management webapp is used to add/edit/delete all the CAS services
-* the CAS server loads/relies on all these defined CAS services to process all incoming requests.
+* The management webapp is used to add/edit/delete all the CAS services
+* The CAS server loads/relies on all these defined CAS services to process all incoming requests.
 
-You can install the services management webapp in your favourite applications server, there is no restriction.
-Though, you need at first to configure it according to your environment. Towards that goal, the best way to proceed is to create your own services management webapp using a [Maven overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html) based on the CAS services management webapp:
+You can install the services management webapp in your favorite applications server, there is no restriction.
+Though, you need to configure it according to your environment. Towards that goal, the best way to 
+proceed is to create your own services management webapp using 
+a [Maven overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html) based on the CAS services management webapp:
 
 {% highlight xml %}
 <dependency>
@@ -113,23 +116,29 @@ You will also need to ensure that the `spring-security-ldap` dependency is avail
 
 ## Urls Configuration
 
-The urls configuration of the CAS server and management applications can be done by overriding the default `WEB-INF/cas-management.properties` file:
+The urls configuration of the CAS server and management applications can be done 
+by overriding the default `WEB-INF/cas-management.properties` file:
 
-    # CAS
-    cas.host=http://localhost:8080
-    cas.prefix=${cas.host}/cas
-    cas.securityContext.casProcessingFilterEntryPoint.loginUrl=${cas.prefix}/login
-    cas.securityContext.ticketValidator.casServerUrlPrefix=${cas.prefix}
-    # Management
-    cas-management.host=${cas.host}
-    cas-management.prefix=${cas-management.host}/cas-management
-    cas-management.securityContext.serviceProperties.service=${cas-management.prefix}/j_spring_cas_security_check
-    cas-management.securityContext.serviceProperties.adminRoles=ROLE_ADMIN
+{% highlight properties %}
+# CAS
+cas.host=http://localhost:8080
+cas.prefix=${cas.host}/cas
+cas.securityContext.casProcessingFilterEntryPoint.loginUrl=${cas.prefix}/login
+cas.securityContext.ticketValidator.casServerUrlPrefix=${cas.prefix}
 
-When authenticating against a CAS server, the services management webapp will be processed as a regular CAS service and thus, needs to be defined in the services registry (of the CAS server).
+# Management
+cas-management.host=${cas.host}
+cas-management.prefix=${cas-management.host}/cas-management
+cas-management.securityContext.serviceProperties.service=${cas-management.prefix}/login/cas
+cas-management.securityContext.serviceProperties.adminRoles=hasRole('ROLE_ADMIN')
+{% endhighlight %}
 
+When authenticating against a CAS server, the services management webapp will be processed as a 
+regular CAS service and thus, needs to be defined in the services registry of the CAS server.
 
 ## Services Registry
 
-You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml` file and set the appropriate `serviceRegistryDao` (see above: *Persisting Registered Service Data*). It should be the same configuration you already use in your CAS server (in the `WEB-INF/deployerConfigContext.xml` file).
+You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml` 
+file and set the appropriate `serviceRegistryDao`. The [persistence storage](Service-Management.html) MUST be the same.
+It should be the same configuration you already use in your CAS server in the `WEB-INF/deployerConfigContext.xml` file.
 
