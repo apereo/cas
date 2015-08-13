@@ -63,9 +63,9 @@ public final class CasVersion {
                 final File file = new File(path.substring(5, path.indexOf('!')));
                 return new DateTime(file.lastModified());
             }
-            throw new IllegalArgumentException("Unhandled url protocol: " +
-                        resource.getProtocol() + " for class: " +
-                        clazz.getName() + " resource: " + resource);
+            throw new IllegalArgumentException("Unhandled url protocol: "
+                        + resource.getProtocol() + " for class: "
+                        + clazz.getName() + " resource: " + resource);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
