@@ -19,14 +19,14 @@
 
 (function () {
     var app = angular.module('casmgmt', [
-            'ui.sortable'
-        ]);
+        'ui.sortable'
+    ]);
 
     app.filter('checkmark', function () {
-            return function (input) {
-                return input ? '\u2713' : '\u2718';
-            };
-        })
+        return function (input) {
+            return input ? '\u2713' : '\u2718';
+        };
+    })
         .filter('wordCharTrunc', function () {
             return function (str, limit) {
                 if(typeof str != 'string') { return ''; }
@@ -75,7 +75,7 @@
                 factory.assignedId = null;
             };
             factory.getItem = function () {
-                return factory.assignedId;            
+                return factory.assignedId;
             };
 
             factory.forceReload = function() {
@@ -164,7 +164,7 @@
                     if(ui.item.data('data_changed')) {
                         var myData = $(this).sortable('serialize', {key: 'id'});
 
-                       $.ajax({
+                        $.ajax({
                             type: 'post',
                             url: '/cas-management/updateRegisteredServiceEvaluationOrder.html',
                             data: myData,
@@ -196,7 +196,7 @@
                             delayedAlert('listfail', 'danger', response.data);
                         }
                         else {
-                            if(serviceData.alert && serviceData.alert.type != 'info') 
+                            if(serviceData.alert && serviceData.alert.type != 'info')
                                 serviceData.alert = null;
                             serviceData.dataTable = response.data.services || [];
                             angular.forEach(serviceData.dataTable, function(service) {
@@ -390,6 +390,9 @@
                                 sharedFactory.clearItem();
                                 $('#manageServices').click();
                             }, 200);
+
+
+
                         }
                     },
                     error: function(xhr, status) {
@@ -399,6 +402,14 @@
                             delayedAlert('notsaved','danger', xhr.responseJSON);
                     }
                 });
+            };
+
+            this.validateRegex = function(pattern) {
+                try {
+                    var patt = new RegExp(pattern);
+                } catch (e) {
+                    return false;
+                }
             };
 
             this.validateForm = function () {
@@ -422,11 +433,15 @@
                 }
                 // Proxy Policy Options
                 if(data.proxyPolicy.type == 'regex' && !data.proxyPolicy.value) err.push('proxyPolicyRegex');
+                if (!this.validateRegex(data.proxyPolicy.value)) err.push('proxyPolicyRegex');
+
+
                 // Principle Attribute Repository Options
                 if(data.attrRelease.attrOption == 'cached') {
                     if(!data.attrRelease.cachedTimeUnit) err.push('cachedTime');
                     if(!data.attrRelease.mergingStrategy) err.push('mergingStrategy');
                 }
+                if (!this.validateRegex(data.attrRelease.attrFilter)) err.push('attFilter');
 
                 return err;
             };
@@ -523,7 +538,7 @@
 
                 if(dir == 'load') {
                     angular.forEach(serviceForm.formData.availableAttributes, function(item) {
-                        data.supportAccess.requiredAttrStr[item] = textareaArrParse(dir, data.supportAccess.requiredAttr[item]);       
+                        data.supportAccess.requiredAttrStr[item] = textareaArrParse(dir, data.supportAccess.requiredAttr[item]);
                     });
 
                     data.reqHandlersStr = textareaArrParse(dir, data.requiredHandlers);
@@ -531,7 +546,7 @@
                     data.userAttrProvider.valueAttr = (data.userAttrProvider.type == 'attr') ? data.userAttrProvider.value : '';
                 } else {
                     angular.forEach(serviceForm.formData.availableAttributes, function(item) {
-                        data.supportAccess.requiredAttr[item] = textareaArrParse(dir, data.supportAccess.requiredAttrStr[item]);       
+                        data.supportAccess.requiredAttr[item] = textareaArrParse(dir, data.supportAccess.requiredAttrStr[item]);
                     });
 
                     data.requiredHandlers = textareaArrParse(dir, data.reqHandlersStr);
@@ -554,7 +569,7 @@
                         else
                             data.attrRelease.attrPolicy.attributes = data.attrRelease.attrPolicy.allowed || [];
                         break;
-                    default: 
+                    default:
                         data.attrRelease.attrPolicy.value = null;
                         break;
                 }
