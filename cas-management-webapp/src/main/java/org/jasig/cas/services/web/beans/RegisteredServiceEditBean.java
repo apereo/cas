@@ -643,6 +643,9 @@ public final class RegisteredServiceEditBean implements Serializable {
                     policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter(filter));
                 }
 
+                policy.setAuthorizedToReleaseCredentialPassword(this.attrRelease.isReleasePassword());
+                policy.setAuthorizedToReleaseProxyGrantingTicket(this.attrRelease.isReleaseTicket());
+
                 final String attrType = this.attrRelease.getAttrOption();
                 if (StringUtils.equalsIgnoreCase(attrType,
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {

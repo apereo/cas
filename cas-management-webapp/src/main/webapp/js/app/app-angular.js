@@ -386,7 +386,10 @@
                             else {
                                 delayedAlert('updated', 'info', null);
                             }
-
+                            $timeout(function () {
+                                sharedFactory.clearItem();
+                                $('#manageServices').click();
+                            }, 200);
                         }
                     },
                     error: function(xhr, status) {
