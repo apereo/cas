@@ -92,8 +92,8 @@ public class AuthorizeAttributeReleaseAction extends AbstractAction {
                     "Service cannot be found in the registry or access is not authorized");
         }
 
-        final Principal principal = getAuthenticationPrincipal(requestContext);
         if (registeredService.getAttributeReleasePolicy().isAttributeConsentRequired()) {
+            final Principal principal = getAuthenticationPrincipal(requestContext);
             if (!this.attributeReleaseConsentStrategy.isAttributeReleaseConsented(registeredService, principal)) {
                 return new EventFactorySupport().event(this, EVENT_REQUIRED);
             }

@@ -34,7 +34,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class DefaultAttributeReleaseConsentStrategy implements AttributeReleaseConsentStrategy {
+public final class DefaultAttributeReleaseConsentStrategy implements AttributeReleaseConsentStrategy {
     private static final long serialVersionUID = 4971695890141486653L;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -45,8 +45,9 @@ public class DefaultAttributeReleaseConsentStrategy implements AttributeReleaseC
      * Instantiates a new attribute release consent strategy.
      */
     public DefaultAttributeReleaseConsentStrategy() {
-        logger.warn("Attribute release consent strategy uses runtime memory to keep track of "
-                    + "consent options. This is not suitable for a production system.");
+        logger.warn("{} uses runtime memory to keep track of "
+                    + "consent options. This is not suitable for a production system.",
+                    DefaultAttributeReleaseConsentStrategy.class.getName());
     }
     @Override
     public boolean isAttributeReleaseConsented(final RegisteredService service, final Principal principal) {
