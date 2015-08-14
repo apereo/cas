@@ -370,17 +370,23 @@
                         if(data.status != 200) {
                             delayedAlert('notsaved', 'danger', data);
                             serviceForm.newService();
-                        }
-                        else if(angular.isString(data))
+                        } else if(angular.isString(data)) {
                             sharedFactory.forceReload();
-                        else {
-                            if(!serviceForm.serviceData.assignedId && data.id > 0) {
+                        } else {
+
+                            var hasIdAssignedAlready = (serviceForm.serviceData.assignedId != undefined
+                            && serviceForm.serviceData.assignedId > 0);
+
+                            if (!hasIdAssignedAlready && data.id > 0) {
                                 serviceForm.serviceData.assignedId = data.id;
                                 sharedFactory.assignedId = data.id;
+
+                                delayedAlert('added', 'info', null);
+                            }
+                            else {
                                 delayedAlert('updated', 'info', null);
                             }
-                            else 
-                                delayedAlert('added', 'info', null);
+
                         }
                     },
                     error: function(xhr, status) {
@@ -437,7 +443,7 @@
                         cachedTimeUnit: serviceForm.selectOptions.timeUnitsList[0].value,
                         mergingStrategy: serviceForm.selectOptions.mergeStrategyList[0].value
                     },
-                    supportAccess: {casEnabled: true},
+                    supportAccess: {casEnabled: true, ssoEnabled:true},
                     publicKey: {algorithm: 'RSA'},
                     userAttrProvider: {type: 'default'},
                     proxyPolicy: {type: 'refuse'}
@@ -490,10 +496,14 @@
                     newValue = value ? value.join("\n") : '';
                 }
                 else {
-                    newValue = value.split("\n");
-                    for (var i = newValue.length-1; i >= 0; i--) {
-                        newValue[i] = newValue[i].trim();
-                        if (!newValue[i]) newValue.splice(i, 1);
+                    if (value != undefined) {
+                        newValue = value.split("\n");
+                        for (var i = newValue.length-1; i >= 0; i--) {
+                            newValue[i] = newValue[i].trim();
+                            if (!newValue[i]) newValue.splice(i, 1);
+                        }
+                    } else {
+                        newValue = [];
                     }
                 }
                 return newValue;
