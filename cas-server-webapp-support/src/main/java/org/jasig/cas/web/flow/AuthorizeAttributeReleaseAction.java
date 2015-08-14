@@ -80,6 +80,35 @@ public class AuthorizeAttributeReleaseAction extends AbstractAction {
             return new EventFactorySupport().event(this, EVENT_REQUIRED);
         }
 
+        final RegisteredService registeredService = getRegisteredService(requestContext);
+
+        if (registeredService.getAttributeReleasePolicy().isAttributeConsentRequired()) {
+            final Principal principal = getAuthenticationPrincipal(requestContext);
+            if (!isConsentRequired(registeredService, principal)) {
+                return new EventFactorySupport().event(this, EVENT_REQUIRED);
+            }
+        }
+        return new EventFactorySupport().event(this, EVENT_AUTHORIZED);
+    }
+
+    /**
+     * Is consent required for this service by this principal?
+     *
+     * @param registeredService the registered service
+     * @param principal the principal
+     * @return the boolean
+     */
+    protected boolean isConsentRequired(final RegisteredService registeredService, final Principal principal) {
+        return this.attributeReleaseConsentStrategy.isAttributeReleaseConsented(registeredService, principal);
+    }
+
+    /**
+     * Gets registered service from the context.
+     *
+     * @param requestContext the request context
+     * @return the registered service
+     */
+    protected RegisteredService getRegisteredService(final RequestContext requestContext) {
         final Service service = WebUtils.getService(requestContext);
         if (service == null) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
@@ -91,14 +120,7 @@ public class AuthorizeAttributeReleaseAction extends AbstractAction {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                     "Service cannot be found in the registry or access is not authorized");
         }
-
-        if (registeredService.getAttributeReleasePolicy().isAttributeConsentRequired()) {
-            final Principal principal = getAuthenticationPrincipal(requestContext);
-            if (!this.attributeReleaseConsentStrategy.isAttributeReleaseConsented(registeredService, principal)) {
-                return new EventFactorySupport().event(this, EVENT_REQUIRED);
-            }
-        }
-        return new EventFactorySupport().event(this, EVENT_AUTHORIZED);
+        return registeredService;
     }
 
     public void setAlwaysRequireConsent(final boolean alwaysRequireConsent) {
