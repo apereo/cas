@@ -406,6 +406,8 @@
 
             this.validateRegex = function(pattern) {
                 try {
+                    if (pattern == "")
+                        return true;
                     var patt = new RegExp(pattern);
                 } catch (e) {
                     return false;
@@ -433,7 +435,10 @@
                 }
                 // Proxy Policy Options
                 if(data.proxyPolicy.type == 'regex' && !data.proxyPolicy.value) err.push('proxyPolicyRegex');
-                if (!this.validateRegex(data.proxyPolicy.value)) err.push('proxyPolicyRegex');
+
+                if(data.proxyPolicy.type == 'regex' && data.proxyPolicy.value != null) {
+                    if (!this.validateRegex(data.proxyPolicy.value)) err.push('proxyPolicyRegex');
+                }
 
 
                 // Principle Attribute Repository Options
@@ -441,8 +446,9 @@
                     if(!data.attrRelease.cachedTimeUnit) err.push('cachedTime');
                     if(!data.attrRelease.mergingStrategy) err.push('mergingStrategy');
                 }
-                if (!this.validateRegex(data.attrRelease.attrFilter)) err.push('attFilter');
-
+                if (data.attrRelease.attrFilter != null) {
+                    if (!this.validateRegex(data.attrRelease.attrFilter)) err.push('attFilter');
+                }
                 return err;
             };
 
