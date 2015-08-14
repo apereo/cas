@@ -39,7 +39,7 @@
     <ldaptive:bind-search-authenticator id="authenticator"
             ldapUrl="${ldap.url}"
             baseDn="${ldap.baseDn}"
-            userFilter="cn=%s,${ldap.baseDn}"
+            userFilter="cn={user}"
             bindDn="${ldap.managerDn}"
             bindCredential="${ldap.managerPassword}"
             connectTimeout="${ldap.connectTimeout}"
@@ -53,13 +53,13 @@
             idleTime="${ldap.pool.idleTime}"
             prunePeriod="${ldap.pool.prunePeriod}"
             failFastInitialize="true"
-            subtreeSearch="true"
-            useSSL="false"
+            subtreeSearch="${ldap.subtree.search:true}"
+            useSSL="${ldap.use.ssl:false}"
     />
 
     <bean id="ldapAuthenticationHandler"
           class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-          p:principalIdAttribute="sAMAccountName"
+          p:principalIdAttribute-ref="usernameAttribute"
           c:authenticator-ref="authenticator">
         <property name="principalAttributeList">
             <list>
@@ -70,4 +70,6 @@
         </property>
     </bean>
 
+    <bean id="usernameAttribute" class="java.lang.String"
+          c:_0="sAMAccountName" />
 </beans>
