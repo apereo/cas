@@ -275,7 +275,7 @@
                         <!-- Assigned ID -->
                         <div class="form-group">
                             <label class="col-sm-5" for="evalOrder">
-                                <spring:message code="services.form.label.evalOrder" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.evaloOder" />"></i>
+                                <spring:message code="services.form.label.evalOrder" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.evalOrder" />"></i>
                             </label>
                             <div class="col-sm-7">
                                 <input type="text" class="form-control" id="assignedId" ng-model="serviceFormCtrl.serviceData.evalOrder" readonly />
