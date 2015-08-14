@@ -68,7 +68,7 @@
             <div class="collapse navbar-collapse" id="casmgt-navbar-collapse">
                 <ul class="nav navbar-nav navbar-right quicklinks">
                     <li>
-                        <a href="javascript://" ng-click="action.homepage()">
+                        <a id="manageServices" href="javascript://" ng-click="action.homepage()">
                             <i class="fa fa-gears"></i>
                             <spring:message code="management.services.header.navbar.navitem.manageService" />
                         </a>
