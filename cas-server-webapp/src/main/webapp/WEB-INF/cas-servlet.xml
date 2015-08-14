@@ -348,7 +348,7 @@
         c:servicesManager-ref="servicesManager"
         p:alwaysRequireConsent="${cas.attrs.consent.always:false}"/>
 
-  <bean id="attributeReleaseConsentStrategy" class="org.jasig.cas.services.DefaultAttributeReleaseConsentStrategy">
+  <bean id="attributeReleaseConsentStrategy" class="org.jasig.cas.services.DefaultAttributeReleaseConsentStrategy" />
 
   <!--
   <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
