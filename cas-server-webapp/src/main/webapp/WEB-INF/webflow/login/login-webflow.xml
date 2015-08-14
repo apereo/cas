@@ -52,7 +52,7 @@
 
     <decision-state id="renewRequestCheck">
         <if test="requestParameters.renew != '' and requestParameters.renew != null" then="serviceAuthorizationCheck"
-            else="generateServiceTicket"/>
+            else="authorizeAttributeReleaseCheck"/>
     </decision-state>
 
     <!-- Do a service authorization check early without the need to login first -->
@@ -158,8 +158,19 @@
     </action-state>
 
     <decision-state id="serviceCheck">
-        <if test="flowScope.service != null" then="generateServiceTicket" else="viewGenericLoginSuccess"/>
+        <if test="flowScope.service != null" then="authorizeAttributeReleaseCheck" else="viewGenericLoginSuccess"/>
     </decision-state>
+
+    <action-state id="authorizeAttributeReleaseCheck">
+        <evaluate expression="authorizeAttributeReleaseAction"/>
+        <transition on="required" to="casAuthorizeAttributeReleaseView"/>
+        <transition on="authorized" to="generateServiceTicket"/>
+    </action-state>
+
+    <view-state id="casAuthorizeAttributeReleaseView" view="casAuthorizeAttributeReleaseView">
+        <transition on="accept" to="generateServiceTicket"/>
+        <transition on="cancel" to="viewGenericLoginSuccess"/>
+    </view-state>
 
     <action-state id="generateServiceTicket">
         <evaluate expression="generateServiceTicketAction"/>

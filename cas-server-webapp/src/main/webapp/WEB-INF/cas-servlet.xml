@@ -341,6 +341,15 @@
 
   <bean id="acceptableUsagePolicyFormAction" class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
 
+  <bean id="authorizeAttributeReleaseAction"
+        class="org.jasig.cas.web.flow.AuthorizeAttributeReleaseAction"
+        c:attributeReleaseConsentStrategy-ref="attributeReleaseConsentStrategy"
+        c:centralAuthenticationService-ref="centralAuthenticationService"
+        c:servicesManager-ref="servicesManager"
+        p:alwaysRequireConsent="${cas.attrs.consent.always:false}"/>
+
+  <bean id="attributeReleaseConsentStrategy" class="org.jasig.cas.services.DefaultAttributeReleaseConsentStrategy">
+
   <!--
   <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
           p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"

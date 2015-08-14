@@ -54,6 +54,9 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     /** Authorize the release of PGT for this service. Default is false. **/
     private boolean authorizedToReleaseProxyGrantingTicket;
 
+    /** Consent to release of attributes. Default is false. **/
+    private boolean attributeConsentRequired;
+
     @Override
     public final void setAttributeFilter(final AttributeFilter filter) {
         this.attributeFilter = filter;
@@ -95,6 +98,15 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     }
 
     @Override
+    public boolean isAttributeConsentRequired() {
+        return this.attributeConsentRequired;
+    }
+
+    public void setAttributeConsentRequired(final boolean attributeConsentRequired) {
+        this.attributeConsentRequired = attributeConsentRequired;
+    }
+
+    @Override
     public final Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> principalAttributes = this.principalAttributesRepository.getAttributes(p);
         final Map<String, Object> attributesToRelease = getAttributesInternal(principalAttributes);
@@ -118,6 +130,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
         return new HashCodeBuilder(13, 133)
                 .append(this.attributeFilter)
                 .append(this.authorizedToReleaseCredentialPassword)
+                .append(this.attributeConsentRequired)
                 .append(this.authorizedToReleaseProxyGrantingTicket)
                 .append(this.principalAttributesRepository)
                 .toHashCode();
@@ -141,6 +154,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
         final EqualsBuilder builder = new EqualsBuilder();
         return builder
                 .append(this.attributeFilter, that.attributeFilter)
+                .append(this.attributeConsentRequired, that.attributeConsentRequired)
                 .append(this.authorizedToReleaseCredentialPassword, that.authorizedToReleaseCredentialPassword)
                 .append(this.authorizedToReleaseProxyGrantingTicket, that.authorizedToReleaseProxyGrantingTicket)
                 .append(this.principalAttributesRepository, that.principalAttributesRepository)
@@ -152,6 +166,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     public String toString() {
         return new ToStringBuilder(this)
                 .append("attributeFilter", attributeFilter)
+                .append("attributeConsentRequired", attributeConsentRequired)
                 .append("principalAttributesRepository", principalAttributesRepository)
                 .append("authorizedToReleaseCredentialPassword", authorizedToReleaseCredentialPassword)
                 .append("authorizedToReleaseProxyGrantingTicket", authorizedToReleaseProxyGrantingTicket)
