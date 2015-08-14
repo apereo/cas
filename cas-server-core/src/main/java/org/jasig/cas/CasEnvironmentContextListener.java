@@ -76,7 +76,7 @@ public final class CasEnvironmentContextListener implements ServletContextListen
     private String collectEnvironmentInfo() {
         final Properties properties = System.getProperties();
         final Formatter formatter = new Formatter();
-        formatter.format("\n******************** Welcome to CAS ********************\n");
+        formatter.format("\n******************** Welcome to CAS *****************\n");
         formatter.format("CAS Version: %s\n", CasVersion.getVersion());
         formatter.format("Build Date/Time: %s\n", CasVersion.getDateTime());
         formatter.format("Java Home: %s\n", properties.get("java.home"));
