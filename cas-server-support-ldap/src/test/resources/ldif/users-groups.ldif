@@ -17,7 +17,7 @@
 # under the License.
 #
 
-dn: CN=mmoayyed,ou=people,dc=example,dc=org
+dn: cn=mmoayyed,ou=people,dc=example,dc=org
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
@@ -36,7 +36,7 @@ userPassword: misagh
 unicodePwd: ignoredForTests
 
 
-dn: CN=casTest,ou=people,dc=example,dc=org
+dn: cn=casTest,ou=people,dc=example,dc=org
 objectClass: top
 objectClass: person
 objectClass: organizationalPerson
