@@ -49,7 +49,7 @@ public final class SamlMetadataController {
     @Value("${cas.samlidp.metadata.location}")
     private File metadataLocation;
 
-    @Value("${server.prefix}")
+    @Value("${cas.samlidp.entityid}")
     private String entityId;
 
     @Value("${cas.samlidp.hostname}")
