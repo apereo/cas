@@ -19,6 +19,11 @@
 
 package org.jasig.cas.support.saml.web.idp.profile;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.support.saml.util.DefaultSaml20ObjectBuilder;
+import org.jasig.cas.util.CompressionUtils;
+import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -31,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * The {@link SSOProfileHandlerController} is responsible for
+ * The {@link SSORedirectProfileHandlerController} is responsible for
  * handling profile requests for SAML2 Web SSO.
  *
  * @author Misagh Moayyed
@@ -39,10 +44,13 @@ import java.io.IOException;
  */
 @Controller
 @RequestMapping("/idp/profile/SAML2/Redirect/SSO")
-public class SSOProfileHandlerController {
+public class SSORedirectProfileHandlerController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public SSOProfileHandlerController() {
+    /**
+     * Instantiates a new redirect profile handler controller.
+     */
+    public SSORedirectProfileHandlerController() {
     }
 
     /**
@@ -51,10 +59,26 @@ public class SSOProfileHandlerController {
      * the object has completely initialized itself.
      */
     @PostConstruct
-    public void postConstruct() {}
+    public void initialize() {}
 
+    /**
+     * Handle profile request.
+     *
+     * @param response the response
+     * @param request the request
+     * @throws IOException the IO exception
+     * @throws SAMLException the SAML exception
+     */
     @RequestMapping(method = RequestMethod.GET)
-    protected void handleProfileRequest(final HttpServletResponse response, final HttpServletRequest request) throws IOException {
-        logger.info("Received profile request {}", request.getRequestURI());
+    protected void handleProfileRequest(final HttpServletResponse response,
+                                        final HttpServletRequest request) throws
+                                        SAMLException, IOException {
+        logger.info("Received SAML profile request {}", request.getRequestURI());
+        final DefaultSaml20ObjectBuilder builder = new DefaultSaml20ObjectBuilder();
+        final String samlRequest = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        if (StringUtils.isBlank(samlRequest)) {
+            throw new SAMLException("No SAML request could be identified");
+        }
     }
+
 }
