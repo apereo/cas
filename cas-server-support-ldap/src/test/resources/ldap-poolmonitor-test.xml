@@ -30,7 +30,7 @@
 
     <bean id="monitor"
           class="org.jasig.cas.monitor.PooledConnectionFactoryMonitor"
-          c:factory-ref="pooledLdapConnectionFactory"
+          c:factory-ref="provisioningConnectionFactory"
           c:validator-ref="searchValidator"
           p:executor-ref="executor" />
 
