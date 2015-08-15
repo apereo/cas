@@ -57,6 +57,14 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     /**
      * Instantiates a new Cas delegating logger.
+     * Used for serialization purposes only.
+     */
+    private CasDelegatingLogger() {
+        this.delegate = null;
+    }
+
+    /**
+     * Instantiates a new Cas delegating logger.
      *
      * @param delegate the delegate
      */
