@@ -21,6 +21,7 @@ package org.jasig.cas.adaptors.trusted.authentication.handler.support;
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public final class PrincipalBearingCredentialsAuthenticationHandler extends Abst
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         logger.debug("Trusting credential for: {}", credential);
-        return new HandlerResult(
+        return new DefaultHandlerResult(
                 this, (PrincipalBearingCredential) credential, this.principalFactory.createPrincipal(credential.getId()));
     }
 

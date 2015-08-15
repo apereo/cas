@@ -159,7 +159,7 @@ public class PolicyBasedAuthenticationManagerTests {
         if (success) {
             final Principal p = new DefaultPrincipalFactory().createPrincipal("nobody");
 
-            final HandlerResult result = new HandlerResult(
+            final HandlerResult result = new DefaultHandlerResult(
                     mock,
                     mock(CredentialMetaData.class),
                     p);

@@ -30,7 +30,7 @@ import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 
 import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.RegexRegisteredService;
@@ -59,6 +59,7 @@ import com.esotericsoftware.kryo.serializers.DefaultSerializers;
 
 import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
 import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
+import org.slf4j.impl.CasDelegatingLogger;
 
 /**
  * {@link net.spy.memcached.MemcachedClient} transcoder implementation based on Kryo fast serialization framework
@@ -117,7 +118,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(Date.class, new DefaultSerializers.DateSerializer());
         kryo.register(HardTimeoutExpirationPolicy.class);
         kryo.register(HashMap.class);
-        kryo.register(HandlerResult.class);
+        kryo.register(DefaultHandlerResult.class);
         kryo.register(ImmutableAuthentication.class);
         kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
         kryo.register(NeverExpiresExpirationPolicy.class);
@@ -136,6 +137,8 @@ public class KryoTranscoder implements Transcoder<Object> {
 
         // new serializers to manage Joda dates and immutable collections
         kryo.register(DateTime.class, new JodaDateTimeSerializer());
+        kryo.register(CasDelegatingLogger.class, new DefaultSerializers.VoidSerializer());
+
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
         UnmodifiableCollectionsSerializer.registerSerializers(kryo);
 

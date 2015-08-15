@@ -19,6 +19,7 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
+import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.slf4j.Logger;
@@ -143,7 +144,7 @@ public final class SamlService extends AbstractWebApplicationService {
     public Response getResponse(final String ticketId) {
         final Map<String, String> parameters = new HashMap<>();
         parameters.put(SamlProtocolConstants.CONST_PARAM_ARTIFACT, ticketId);
-        return Response.getRedirectResponse(getOriginalUrl(), parameters);
+        return DefaultResponse.getRedirectResponse(getOriginalUrl(), parameters);
     }
 
     /**

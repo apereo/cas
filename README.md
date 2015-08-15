@@ -57,4 +57,4 @@ Please [see the maven docs][skip] on how to disable the tests.
 [casmavencentral]: http://mvnrepository.com/artifact/org.jasig.cas
 [downloadcasgithub]: https://github.com/Jasig/cas/archive/master.zip
 [releasenotes]: https://github.com/Jasig/cas/releases
-[casaddons]: https://github.com/Unicon/cas-addons
+[casaddons]: https://github.com/unicon-cas-addons
