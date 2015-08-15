@@ -54,4 +54,5 @@
             provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
     />
 
+    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
 </beans>
