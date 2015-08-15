@@ -29,7 +29,7 @@ import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
 import org.springframework.util.StringUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
-import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
+import org.jasig.cas.support.saml.util.DefaultSaml20ObjectBuilder;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -63,7 +63,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
 
-    private static final GoogleSaml20ObjectBuilder BUILDER = new GoogleSaml20ObjectBuilder();
+    private static final DefaultSaml20ObjectBuilder BUILDER = new DefaultSaml20ObjectBuilder();
 
     private final String relayState;
 

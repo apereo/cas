@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,13 +72,18 @@ public class GenerateSamlMetadata {
         this.hostName = hostName;
         this.scope = scope;
 
+        if (!metadataLocation.exists()) {
+            if (!metadataLocation.mkdir()) {
+                throw new IllegalArgumentException("Metadata location cannot be located/created");
+            }
+        }
         this.metadataFile = new File(metadataLocation, "idp-metadata.xml");
 
         this.signingCertFile = new File(metadataLocation, "idp-signing.crt");
         this.signingKeyFile = new File(metadataLocation, "idp-signing.key");
 
-        this.encryptionCertKeyFile = new File(metadataLocation, "idp-encryption.key");
         this.encryptionCertFile = new File(metadataLocation, "idp-encryption.crt");
+        this.encryptionCertKeyFile = new File(metadataLocation, "idp-encryption.key");
     }
 
     public File getMetadataFile() {
