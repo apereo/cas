@@ -32,8 +32,10 @@ branches:
   - master
 jdk:
 - oraclejdk7
-- openjdk7
 - oraclejdk8
+cache:
+  directories:
+    - '$HOME/.m2/repository'
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
@@ -45,7 +47,7 @@ before_install:
 install:
 - mvn -T 10 install -P nocheck -Dmaven.javadoc.skip=true -B -V -q
 script:
-- mvn -T 10 clean package -Dlog4j.configurationFile=../travis/log4j2.xml
+- mvn clean package -Dlog4j.configurationFile=../travis/log4j2.xml -Dmaven.javadoc.skip=true -B -V -DskipTests=true
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
