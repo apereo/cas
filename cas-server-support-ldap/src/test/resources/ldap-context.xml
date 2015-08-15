@@ -29,7 +29,29 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="org.jasig.cas" />
+    <context:annotation-config />
+    <context:property-placeholder location="classpath:/ldap.properties"/>
+
+    <ldaptive:pooled-connection-factory
+            id="provisioningConnectionFactory"
+            ldapUrl="${ldap.url}"
+            blockWaitTime="${ldap.pool.blockWaitTime}"
+            failFastInitialize="true"
+            connectTimeout="${ldap.connectTimeout}"
+            useStartTLS="${ldap.useStartTLS}"
+            validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+            validatePeriodically="${ldap.pool.validatePeriodically}"
+            validatePeriod="${ldap.pool.validatePeriod}"
+            idleTime="${ldap.pool.idleTime}"
+            maxPoolSize="${ldap.pool.maxSize}"
+            minPoolSize="${ldap.pool.minSize}"
+            useSSL="${ldap.use.ssl:false}"
+            prunePeriod="${ldap.pool.prunePeriod}"
+            provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+    />
 
 </beans>
