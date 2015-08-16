@@ -42,7 +42,7 @@ will remain unchanged between MINOR versions.
 
 ## MAJOR 
  
-A revolutionary change accommodating sweeping architecture, approach, and
+A *revolutionary* change accommodating sweeping architecture, approach, and
 implementation changes. (i.e. Transitioning from `3.5.x` to `4.0.x`, etc.) 
 Significant changes in APIs, default behavior, and configuration can be expected. 
 Maven overlays may require significant changes and possibly a complete reworking. 
