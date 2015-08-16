@@ -1619,6 +1619,7 @@
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
         <project.build.targetVersion>1.7</project.build.targetVersion>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
         <cs.dir>${project.basedir}</cs.dir>
         <issues.projectKey>CAS</issues.projectKey>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
