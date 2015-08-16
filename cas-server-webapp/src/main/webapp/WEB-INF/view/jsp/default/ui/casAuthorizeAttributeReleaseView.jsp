@@ -29,6 +29,34 @@
 
 
 <div id="login">
+    <p>The following attributes will be released to <strong>${service}</strong></p>
+    <table>
+        <c:forEach var="attr"
+                   items="${attributes}"
+                   varStatus="loopStatus" begin="0"
+                   end="${fn:length(attributes)}"
+                   step="1">
+
+            <tr>
+                <td>${attr.key}</td>
+            </tr>
+
+            <c:forEach var="attrval" items="${attr.value}">
+            <tr>
+                <td>${fn:escapeXml(attrval)}</td>
+            </tr>
+            </c:forEach>
+
+        </c:forEach>
+
+        <c:forEach var="attribute"
+                   items="${attributes}" varStatus="loopStatus" begin="0"
+                   end="${fn:length(attributes)}" step="1">
+
+
+
+        </c:forEach>
+    </table>
 
     <form:form method="post" id="fm1" htmlEscape="true">
         <section class="row btn-row">

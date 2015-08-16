@@ -39,6 +39,8 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Map;
+
 /**
  * An action to decide whether user-consent to attribute release
  * is in fact required. The outcome of this action is either
@@ -46,7 +48,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class AuthorizeAttributeReleaseAction extends AbstractAction {
+public class ConsentAttributeReleaseAction extends AbstractAction {
     private static final String EVENT_REQUIRED = "required";
     private static final String EVENT_AUTHORIZED = "authorized";
 
@@ -65,7 +67,7 @@ public class AuthorizeAttributeReleaseAction extends AbstractAction {
      * @param centralAuthenticationService the central authentication service
      * @param servicesManager the services manager
      */
-    public AuthorizeAttributeReleaseAction(
+    public ConsentAttributeReleaseAction(
             final AttributeReleaseConsentStrategy attributeReleaseConsentStrategy,
             final CentralAuthenticationService centralAuthenticationService,
             final ServicesManager servicesManager) {
@@ -76,19 +78,43 @@ public class AuthorizeAttributeReleaseAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
+
+        final Service service = WebUtils.getService(requestContext);
+        if (service == null) {
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
+                    "Service cannot be found in the request context");
+        }
+        final RegisteredService registeredService = getRegisteredService(service);
+        final Principal principal = getAuthenticationPrincipal(requestContext);
+
         if (this.alwaysRequireConsent) {
+            prepareModelData(requestContext, service, registeredService, principal);
             return new EventFactorySupport().event(this, EVENT_REQUIRED);
         }
 
-        final RegisteredService registeredService = getRegisteredService(requestContext);
-
         if (registeredService.getAttributeReleasePolicy().isAttributeConsentRequired()) {
-            final Principal principal = getAuthenticationPrincipal(requestContext);
             if (!isConsentRequired(registeredService, principal)) {
+                prepareModelData(requestContext, service, registeredService, principal);
                 return new EventFactorySupport().event(this, EVENT_REQUIRED);
             }
         }
         return new EventFactorySupport().event(this, EVENT_AUTHORIZED);
+    }
+
+    /**
+     * Prepare model data by passing service, registered service
+     * and principal to the flow.
+     *
+     * @param requestContext the request context
+     * @param service the service
+     * @param registeredService the registered service
+     * @param principal the principal
+     */
+    private void prepareModelData(final RequestContext requestContext, final Service service,
+                                  final RegisteredService registeredService, final Principal principal) {
+        WebUtils.putService(requestContext, service);
+        final Map<String, Object> attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal);
+        WebUtils.putIntoFlowScope(requestContext, "attributes", attributes);
     }
 
     /**
@@ -105,16 +131,10 @@ public class AuthorizeAttributeReleaseAction extends AbstractAction {
     /**
      * Gets registered service from the context.
      *
-     * @param requestContext the request context
+     * @param service service
      * @return the registered service
      */
-    protected RegisteredService getRegisteredService(final RequestContext requestContext) {
-        final Service service = WebUtils.getService(requestContext);
-        if (service == null) {
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                    "Service cannot be found in the request context");
-        }
-
+    protected RegisteredService getRegisteredService(final Service service) {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,

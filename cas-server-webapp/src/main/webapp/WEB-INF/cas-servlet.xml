@@ -342,7 +342,7 @@
   <bean id="acceptableUsagePolicyFormAction" class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
 
   <bean id="authorizeAttributeReleaseAction"
-        class="org.jasig.cas.web.flow.AuthorizeAttributeReleaseAction"
+        class="org.jasig.cas.web.flow.ConsentAttributeReleaseAction"
         c:attributeReleaseConsentStrategy-ref="attributeReleaseConsentStrategy"
         c:centralAuthenticationService-ref="centralAuthenticationService"
         c:servicesManager-ref="servicesManager"
