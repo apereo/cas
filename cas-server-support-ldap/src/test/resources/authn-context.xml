@@ -49,6 +49,7 @@
             idleTime="${ldap.pool.idleTime}"
             prunePeriod="${ldap.pool.prunePeriod}"
             failFastInitialize="true"
+            provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
             subtreeSearch="${ldap.subtree.search:true}"
             useSSL="${ldap.use.ssl:false}"
     />
