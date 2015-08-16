@@ -53,7 +53,7 @@ Your changes typically are:
 
 ## Prepare Development Environment
 
-![](http://i.imgur.com/jcdDHWb.jpg)
+<img src="http://i.imgur.com/jcdDHWb.jpg" "200px" height="200px" />
 
 Um, No. 
 
