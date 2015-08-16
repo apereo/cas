@@ -20,9 +20,6 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.PrincipalException;
-import org.jasig.cas.authentication.UnresolvedPrincipalException;
-import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.AttributeReleaseConsentStrategy;
@@ -49,8 +46,8 @@ import java.util.Map;
  * @since 4.2
  */
 public class ConsentAttributeReleaseAction extends AbstractAction {
-    private static final String EVENT_REQUIRED = "required";
-    private static final String EVENT_AUTHORIZED = "authorized";
+    protected static final String EVENT_REQUIRED = "required";
+    protected static final String EVENT_AUTHORIZED = "authorized";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -88,14 +85,13 @@ public class ConsentAttributeReleaseAction extends AbstractAction {
         final Principal principal = getAuthenticationPrincipal(requestContext);
 
         if (this.alwaysRequireConsent) {
-            prepareModelData(requestContext, service, registeredService, principal);
-            return new EventFactorySupport().event(this, EVENT_REQUIRED);
+            return prepareModelAndFlow(requestContext, service, registeredService, principal);
+
         }
 
         if (registeredService.getAttributeReleasePolicy().isAttributeConsentRequired()) {
             if (!isConsentRequired(registeredService, principal)) {
-                prepareModelData(requestContext, service, registeredService, principal);
-                return new EventFactorySupport().event(this, EVENT_REQUIRED);
+                return prepareModelAndFlow(requestContext, service, registeredService, principal);
             }
         }
         return new EventFactorySupport().event(this, EVENT_AUTHORIZED);
@@ -109,12 +105,21 @@ public class ConsentAttributeReleaseAction extends AbstractAction {
      * @param service the service
      * @param registeredService the registered service
      * @param principal the principal
+     * @return the event
      */
-    private void prepareModelData(final RequestContext requestContext, final Service service,
-                                  final RegisteredService registeredService, final Principal principal) {
-        WebUtils.putService(requestContext, service);
+    protected Event prepareModelAndFlow(final RequestContext requestContext, final Service service,
+                                     final RegisteredService registeredService, final Principal principal) {
+
         final Map<String, Object> attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal);
-        WebUtils.putIntoFlowScope(requestContext, "attributes", attributes);
+        if (!attributes.isEmpty()) {
+            WebUtils.putService(requestContext, service);
+            WebUtils.putRegisteredService(requestContext, registeredService);
+            WebUtils.putIntoFlowScope(requestContext, "attributes", attributes);
+
+            return new EventFactorySupport().event(this, EVENT_REQUIRED);
+        }
+        logger.debug("Consent is no required because no attributes are configured for release for service {}", service);
+        return new EventFactorySupport().event(this, EVENT_AUTHORIZED);
     }
 
     /**
