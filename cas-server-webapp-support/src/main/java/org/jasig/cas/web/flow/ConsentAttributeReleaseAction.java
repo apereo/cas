@@ -84,7 +84,7 @@ public class ConsentAttributeReleaseAction extends AbstractAction {
         final RegisteredService registeredService = getRegisteredService(service);
         final Principal principal = getAuthenticationPrincipal(requestContext);
 
-        if (this.alwaysRequireConsent) {
+        if (this.alwaysRequireConsent && isConsentRequired(registeredService, principal)) {
             return prepareModelAndFlow(requestContext, service, registeredService, principal);
 
         }
@@ -113,6 +113,7 @@ public class ConsentAttributeReleaseAction extends AbstractAction {
         final Map<String, Object> attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal);
         if (!attributes.isEmpty()) {
             WebUtils.putService(requestContext, service);
+            WebUtils.putPrincipal(requestContext, principal);
             WebUtils.putRegisteredService(requestContext, registeredService);
             WebUtils.putIntoFlowScope(requestContext, "attributes", attributes);
 

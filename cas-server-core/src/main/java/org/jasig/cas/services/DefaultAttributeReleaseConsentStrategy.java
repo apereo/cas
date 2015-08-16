@@ -22,6 +22,7 @@ package org.jasig.cas.services;
 import org.jasig.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,6 +58,8 @@ public final class DefaultAttributeReleaseConsentStrategy implements AttributeRe
 
     @Override
     public void setAttributeReleaseConsented(final RegisteredService service, final Principal principal) {
+        Assert.notNull(service);
+        Assert.notNull(principal);
         Set<RegisteredService> services = consentMapStore.get(principal);
         if (services == null) {
             services = new HashSet<>();

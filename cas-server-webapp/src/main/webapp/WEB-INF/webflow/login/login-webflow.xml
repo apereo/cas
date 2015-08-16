@@ -168,10 +168,13 @@
     </action-state>
 
     <view-state id="casAuthorizeAttributeReleaseView" view="casAuthorizeAttributeReleaseView">
-        <transition on="accept" to="generateServiceTicket"/>
+        <transition on="accept" to="acceptAuthorizeAttributeRelease"/>
         <transition on="cancel" to="viewGenericLoginSuccess"/>
     </view-state>
-
+    <action-state id="acceptAuthorizeAttributeRelease">
+        <evaluate expression="attributeReleaseConsentStrategy.setAttributeReleaseConsented(flowScope.registeredService,flowScope.principal)" />
+        <transition to="generateServiceTicket" />
+    </action-state>
     <action-state id="generateServiceTicket">
         <evaluate expression="generateServiceTicketAction"/>
         <transition on="success" to="warn"/>
