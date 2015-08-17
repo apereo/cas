@@ -26,8 +26,8 @@ org.jasig.cas.remoting.server
 org.jasig.cas.services
 org.jasig.cas.services.support
 org.jasig.cas.services.web
-org.jasig.cas.services.web.support
 org.jasig.cas.support.oauth
+org.jasig.cas.support.oauth.services
 org.jasig.cas.support.oauth.web
 org.jasig.cas.support.openid.authentication.handler.support
 org.jasig.cas.support.openid.authentication.principal
