@@ -119,7 +119,7 @@ public class ConsentAttributeReleaseAction extends AbstractAction {
 
             return new EventFactorySupport().event(this, EVENT_REQUIRED);
         }
-        logger.debug("Consent is no required because no attributes are configured for release for service {}", service);
+        logger.debug("Consent is not required because no attributes are configured for release for service {}", service);
         return new EventFactorySupport().event(this, EVENT_AUTHORIZED);
     }
 
