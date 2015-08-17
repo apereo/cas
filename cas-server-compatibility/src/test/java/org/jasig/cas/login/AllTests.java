@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Suite of compatibility tests.
+ * @since 4.1
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ValidateCompatibilityTests.class, LoginAsCredentialsAcceptorCompatibilityTests.class,
