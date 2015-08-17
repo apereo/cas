@@ -1,17 +1,17 @@
-Licensed to Apereo under one or more contributor license
-agreements. See the NOTICE file distributed with this work
-for additional information regarding copyright ownership.
-Apereo licenses this file to you under the Apache License,
-Version 2.0 (the "License"); you may not use this file
-except in compliance with the License.  You may obtain a
-copy of the License at the following location:
+Copyright 2010, JA-SIG, Inc.
+This project includes software developed by Jasig.
+http://www.jasig.org/
 
-  http://www.apache.org/licenses/LICENSE-2.0
+Licensed under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License. You may obtain a copy of the License at:
+
+http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
+software distributed under the License is distributed on
+an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied. See the License for the
 specific language governing permissions and limitations
 under the License.
 
@@ -21,7 +21,8 @@ This project includes:
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons Codec under Apache License, Version 2.0
-  Apache Commons Lang under The Apache Software License, Version 2.0
+  Apache Commons Collections under The Apache Software License, Version 2.0
+  Apache Commons Lang under Apache License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
   Apache Log4j API under The Apache Software License, Version 2.0
@@ -32,30 +33,28 @@ This project includes:
   Apache Santuario under The Apache Software License, Version 2.0
   Apache Velocity under The Apache Software License, Version 2.0
   Apereo CAS Core under Apache 2
+  Apereo CAS Core APIs under Apache 2
   Apereo CAS Generic Support under Apache 2
   Apereo CAS Management Web Application under Apache 2
+  Apereo CAS OAuth Server Support under Apache 2
   Apereo CAS Web Application support under Apache 2
   AspectJ runtime under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
-  avalon-framework under Apache License, Version 2.0
   Bean Validation API under The Apache Software License, Version 2.0
   Bouncy Castle Provider under Bouncy Castle Licence
   c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
   CDI APIs under Apache License, Version 2.0
-  cglib-full under Apache License, Version 1.1
   ClassMate under The Apache Software License, Version 2.0
-  Collections under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
-  commons-beanutils under Apache License, Version 2.0
+  commons-collections under Apache License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
   Cryptacular Library under Apache 2 or GNU Lesser General Public License
   dom4j under BSD License
   ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
   Expression Language 2.2 Implementation under CDDL + GPLv2 with classpath exception
   Expression Language 3.0 API under CDDL + GPLv2 with classpath exception
-  ezmorph under The Apache Software License, Version 2.0
   fastinfoset under Apache License, Version 2.0
   FindBugs-Annotations under GNU Lesser Public License
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
@@ -63,6 +62,7 @@ This project includes:
   Hibernate Commons Annotations under GNU Lesser General Public License
   Hibernate Validator Engine under Apache License, Version 2.0
   HttpClient under Apache License
+  Inspektr - Aspects under Apache 2.0 License
   Inspektr - Auditing API under Apache 2.0 License
   Inspektr - Common API under Apache 2.0 License
   Inspektr - Error Logging under Apache 2.0 License
@@ -89,10 +89,8 @@ This project includes:
   jersey-server under CDDL 1.1 or GPL2 w/ CPE
   jersey-servlet under CDDL 1.1 or GPL2 w/ CPE
   jersey-spring under CDDL 1.1 or GPL2 w/ CPE
-  Jettison under Apache License, Version 2.0
   Joda-Time under Apache 2
   jose4j under The Apache Software License, Version 2.0
-  json-lib under Apache License, Version 2.0
   JSR-250 Common Annotations for the JavaTM Platform under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   JSR107 API and SPI under JSR-000107 JCACHE 2.9 Public Review - Updated Specification
                 License
@@ -104,12 +102,11 @@ This project includes:
   JUnit under Eclipse Public License 1.0
   JVM Integration for Metrics under Apache License 2.0
   Lang under The Apache Software License, Version 2.0
-  logkit under Apache License, Version 2.0
+  LDAPTIVE under Apache 2 or GNU Lesser General Public License
   Metrics Core under Apache License 2.0
   Metrics Health Checks under Apache License 2.0
   Metrics Utility Servlets under Apache License 2.0
   Mockito under The MIT License
-  MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
   Not Yet Commons SSL under Apache License v2
   Objenesis under Apache 2
   OGNL - Object Graph Navigation Library under Apache License, Version 2.0
@@ -120,7 +117,6 @@ This project includes:
   quartz under The Apache Software License, Version 2.0
   Reflections under WTFPL or The New BSD License
   SLF4J API Module under MIT License
-  SOJO under The Apache Software License, Version 2.0
   Spring AOP under The Apache Software License, Version 2.0
   Spring Beans under The Apache Software License, Version 2.0
   Spring Binding under The Apache Software License, Version 2.0
@@ -131,7 +127,6 @@ This project includes:
   Spring JDBC under The Apache Software License, Version 2.0
   Spring JS under The Apache Software License, Version 2.0
   Spring JS Resources under The Apache Software License, Version 2.0
-  Spring Json View under The Apache Software License, Version 2.0
   Spring Object/Relational Mapping under The Apache Software License, Version 2.0
   Spring TestContext Framework under The Apache Software License, Version 2.0
   Spring Transaction under The Apache Software License, Version 2.0
@@ -144,7 +139,6 @@ This project includes:
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   standard under Apache License, Version 2.0
-  StAX API under The Apache Software License, Version 2.0
   Stax2 API under The BSD License
   Streaming API for XML under Sun Binary Code License
   Woodstox under The Apache Software License, Version 2.0
@@ -154,5 +148,4 @@ This project includes:
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
   XML Commons Resolver Component under The Apache Software License, Version 2.0
   XMLTooling-J under Apache 2
-  XStream Core under BSD style
 
