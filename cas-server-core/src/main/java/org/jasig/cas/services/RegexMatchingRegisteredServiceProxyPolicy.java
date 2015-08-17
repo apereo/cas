@@ -61,7 +61,7 @@ public final class RegexMatchingRegisteredServiceProxyPolicy implements Register
      *
      * @return the pattern
      */
-    protected Pattern getPattern() {
+    public Pattern getPattern() {
         return this.pattern;
     }
 
