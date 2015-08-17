@@ -19,7 +19,6 @@
 
 package org.jasig.cas.services;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -127,7 +126,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
 
     public Map<String, Set<String>> getRequiredAttributes() {
-        return ImmutableMap.copyOf(this.requiredAttributes);
+        return new HashMap<>(this.requiredAttributes);
     }
 
     /**
@@ -200,7 +199,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             }
 
             final Sets.SetView<?> differenceInValues = Sets.intersection(availableValues, requiredValues);
-            if (differenceInValues.size() > 0) {
+            if (!differenceInValues.isEmpty()) {
                 logger.info("Principal is authorized to access the service");
                 return true;
             }

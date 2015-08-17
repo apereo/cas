@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -56,6 +57,7 @@ import java.util.Set;
 @DiscriminatorColumn(name = "expression_type", length = 15, discriminatorType = DiscriminatorType.STRING,
                      columnDefinition = "VARCHAR(15) DEFAULT 'ant'")
 @Table(name = "RegisteredServiceImpl")
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY, property="@class")
 public abstract class AbstractRegisteredService implements RegisteredService, Comparable<RegisteredService> {
 
     private static final long serialVersionUID = 7645279151115635245L;
