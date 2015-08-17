@@ -745,6 +745,12 @@
                 <groupId>org.ldaptive</groupId>
                 <artifactId>ldaptive</artifactId>
                 <version>${ldaptive.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
