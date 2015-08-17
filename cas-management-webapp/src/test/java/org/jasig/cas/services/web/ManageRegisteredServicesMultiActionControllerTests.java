@@ -18,17 +18,15 @@
  */
 package org.jasig.cas.services.web;
 
-import java.util.Collection;
-
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
 import static org.junit.Assert.*;
@@ -39,6 +37,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(JUnit4.class)
 public class ManageRegisteredServicesMultiActionControllerTests {
+
     private ManageRegisteredServicesMultiActionController controller;
 
     private ServicesManager servicesManager;
@@ -50,7 +49,7 @@ public class ManageRegisteredServicesMultiActionControllerTests {
     }
 
     @Test
-    public void verifyDeleteService() {
+    public void verifyDeleteService() throws Exception {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setId(1200);
         r.setName("name");
@@ -59,58 +58,21 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
         this.servicesManager.save(r);
 
-        final ModelAndView modelAndView = this.controller.deleteRegisteredService(1200);
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        this.controller.manage(response);
+        this.controller.deleteRegisteredService(1200, response);
 
-        assertNotNull(modelAndView);
         assertNull(this.servicesManager.findServiceBy(1200));
-        assertEquals("deleted", modelAndView.getModel().get("status"));
-        assertEquals("name", modelAndView.getModelMap().get("serviceName"));
+        assertTrue(response.getContentAsString().contains("serviceName"));
     }
 
-    public void verifyDeleteServiceNoService() {
 
-        final ModelAndView modelAndView = this.controller.deleteRegisteredService(1200);
-        assertNotNull(modelAndView);
+    @Test(expected = IllegalArgumentException.class)
+    public void verifyDeleteServiceNoService() throws Exception {
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        this.controller.deleteRegisteredService(1200, response);
         assertNull(this.servicesManager.findServiceBy(1200));
-        assertEquals("deleted", modelAndView.getModel().get("status"));
-        assertEquals("", modelAndView.getModelMap().get("serviceName"));
-    }
-
-    public void verifyManage() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
-        r.setId(1200);
-        r.setName("name");
-        r.setServiceId("test");
-        r.setEvaluationOrder(2);
-
-        this.servicesManager.save(r);
-
-        final ModelAndView modelAndView = this.controller.manage();
-
-        assertNotNull(modelAndView);
-        assertEquals("manageServiceView", modelAndView.getViewName());
-
-        final Collection<?> c = (Collection<?>) modelAndView.getModel().get("services");
-        assertTrue(c.contains(r));
-    }
-
-    @Test
-    public void updateEvaluationOrderOK() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
-        r.setId(1200);
-        r.setName("name");
-        r.setServiceId("test");
-        r.setEvaluationOrder(2);
-
-        this.servicesManager.save(r);
-
-        final ModelAndView modelAndView = this.controller.updateRegisteredServiceEvaluationOrder(r.getId(), 100);
-
-        assertNotNull(modelAndView);
-        assertEquals("jsonView", modelAndView.getViewName());
-
-        final RegisteredService result = this.servicesManager.findServiceBy(r.getId());
-        assertEquals(result.getEvaluationOrder(), 100);
+        assertFalse(response.getContentAsString().contains("serviceName"));
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -122,7 +84,26 @@ public class ManageRegisteredServicesMultiActionControllerTests {
         r.setEvaluationOrder(2);
 
         this.servicesManager.save(r);
-        this.controller.updateRegisteredServiceEvaluationOrder(5000, 1000);
+        this.controller.updateRegisteredServiceEvaluationOrder(new MockHttpServletResponse(), 5000, 1000);
     }
 
+    @Test
+    public void verifyManage() throws Exception{
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setId(1200);
+        r.setName("name");
+        r.setServiceId("test");
+        r.setEvaluationOrder(2);
+
+        this.servicesManager.save(r);
+
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final ModelAndView mv = this.controller.manage(response);
+
+        assertTrue(mv.getModel().containsKey("defaultServiceUrl"));
+        assertTrue(mv.getModel().containsKey("status"));
+
+        this.controller.getServices(response);
+        assertTrue(response.getContentAsString().contains("services"));
+    }
 }

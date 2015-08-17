@@ -19,7 +19,8 @@
     under the License.
 
 -->
-<Configuration>
+<!-- Specify the refresh internal in seconds. -->
+<Configuration monitorInterval="60">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
