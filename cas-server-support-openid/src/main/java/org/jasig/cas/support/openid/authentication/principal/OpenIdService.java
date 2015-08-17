@@ -23,8 +23,10 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.support.openid.web.support.OpenIdUserNameExtractor;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.util.ApplicationContextProvider;
+import org.jasig.cas.validation.Assertion;
 import org.openid4java.association.Association;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.Message;
@@ -44,7 +46,7 @@ import java.util.Map;
  * @since 3.1
  */
 public final class OpenIdService extends AbstractWebApplicationService {
-    
+
     /** The Constant LOGGER. */
     protected static final Logger LOGGER = LoggerFactory.getLogger(OpenIdService.class);
 
@@ -58,6 +60,8 @@ public final class OpenIdService extends AbstractWebApplicationService {
 
     private final ParameterList requestParameters;
 
+    private final String openIdPrefixUrl;
+
     /**
      * Instantiates a new OpenID service.
      *
@@ -67,14 +71,17 @@ public final class OpenIdService extends AbstractWebApplicationService {
      * @param openIdIdentity the OpenID identity
      * @param signature the signature
      * @param parameterList the parameter list
+     * @param openIdPrefixUrl the prefix url for OpenID
      */
     protected OpenIdService(final String id, final String originalUrl,
             final String artifactId, final String openIdIdentity,
-            final String signature, final ParameterList parameterList) {
+            final String signature, final ParameterList parameterList,
+                            final String openIdPrefixUrl) {
         super(id, originalUrl, artifactId);
         this.identity = openIdIdentity;
         this.artifactId = artifactId;
         this.requestParameters = parameterList;
+        this.openIdPrefixUrl = openIdPrefixUrl;
     }
 
     /**
@@ -118,10 +125,11 @@ public final class OpenIdService extends AbstractWebApplicationService {
             }
 
             boolean successFullAuthentication = true;
+            Assertion assertion = null;
             try {
                 if (associated) {
                     if (associationValid) {
-                        cas.validateServiceTicket(ticketId, this);
+                        assertion = cas.validateServiceTicket(ticketId, this);
                         LOGGER.info("Validated openid ticket");
                     } else {
                         successFullAuthentication = false;
@@ -132,12 +140,18 @@ public final class OpenIdService extends AbstractWebApplicationService {
                 successFullAuthentication = false;
             }
 
+            final String id;
+            if (assertion != null && OpenIdUserNameExtractor.SELECT_IDENTIFIER.equals(this.identity)) {
+                id = this.openIdPrefixUrl + '/' + assertion.getPrimaryAuthentication().getPrincipal().getId();
+            } else {
+                id = this.identity;
+            }
             // We sign directly (final 'true') because we don't add extensions
             // response message can be either a DirectError or an AuthSuccess here.
             // Anyway, handling is the same : send the response message
             final Message response = manager.authResponse(requestParameters,
-                    this.identity,
-                    this.identity,
+                    id,
+                    id,
                     successFullAuthentication,
                     true);
             parameters.putAll(response.getParameterMap());
@@ -164,10 +178,11 @@ public final class OpenIdService extends AbstractWebApplicationService {
      * Creates the service from the request.
      *
      * @param request the request
+     * @param openIdPrefixUrl the prefix url for OpenID
      * @return the OpenID service
      */
     public static OpenIdService createServiceFrom(
-            final HttpServletRequest request) {
+            final HttpServletRequest request, final String openIdPrefixUrl) {
         final String service = request.getParameter(CONST_PARAM_SERVICE);
         final String openIdIdentity = request.getParameter("openid.identity");
         final String signature = request.getParameter("openid.sig");
@@ -181,7 +196,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
         final ParameterList paramList = new ParameterList(request.getParameterMap());
 
         return new OpenIdService(id, service, artifactId, openIdIdentity,
-                signature, paramList);
+                signature, paramList, openIdPrefixUrl);
     }
 
     @Override

@@ -88,7 +88,7 @@ public class OpenIdSingleSignOnActionTests {
                 new NeverExpiresExpirationPolicy(),
                 new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl()), mock(LogoutManager.class));
 
-        this.action = new OpenIdSingleSignOnAction();
+        this.action = new OpenIdSingleSignOnAction(ticketRegistry);
         this.action.setCentralAuthenticationService(this.impl);
         this.action.setExtractor(new DefaultOpenIdUserNameExtractor());
         this.action.afterPropertiesSet();
@@ -124,7 +124,7 @@ public class OpenIdSingleSignOnActionTests {
         request.setParameter("openid.identity", "fablah");
         request.setParameter("openid.return_to", "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request);
+        final OpenIdService service = OpenIdService.createServiceFrom(request, null);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", "tgtId");
 
@@ -147,7 +147,7 @@ public class OpenIdSingleSignOnActionTests {
         request.setParameter("openid.identity", "http://openid.aol.com/scootman28");
         request.setParameter("openid.return_to", "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request);
+        final OpenIdService service = OpenIdService.createServiceFrom(request, null);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", t.getId());
 
