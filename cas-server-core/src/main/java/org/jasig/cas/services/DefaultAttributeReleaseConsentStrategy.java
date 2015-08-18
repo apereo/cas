@@ -53,7 +53,11 @@ public final class DefaultAttributeReleaseConsentStrategy implements AttributeRe
     @Override
     public boolean isAttributeReleaseConsented(final RegisteredService service, final Principal principal) {
         final Set<RegisteredService> services = consentMapStore.get(principal);
-        return services != null && services.contains(service);
+        if (services != null && services.contains(service)) {
+            logger.debug("Consent is already authorized for {}", service.getName());
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -65,6 +69,8 @@ public final class DefaultAttributeReleaseConsentStrategy implements AttributeRe
             services = new HashSet<>();
         }
         services.add(service);
+        logger.debug("Attribute release consented by {} for {}", principal.getId(),
+                service.getName());
         consentMapStore.put(principal, services);
     }
 }

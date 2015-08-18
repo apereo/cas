@@ -56,13 +56,13 @@ public interface OAuthConstants {
     /** The bearer token. */
     String BEARER_TOKEN = "Bearer";
     
-    /** The OAUT h20_ callbackurl. */
+    /** The OAUTH 20 callbackurl. */
     String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
 
-    /** The OAUT h20_ servic e_ name. */
+    /** The OAUTH 20 service name. */
     String OAUTH20_SERVICE_NAME = "oauth20_service_name";
 
-    /** The OAUT h20_ state. */
+    /** The OAUTH 20 state. */
     String OAUTH20_STATE = "oauth20_state";
 
     /**
@@ -77,7 +77,7 @@ public interface OAuthConstants {
     String CONFIRM_VIEW = "oauthConfirmView";
 
     /** The error view. */
-    String ERROR_VIEW = "viewServiceErrorView";
+    String ERROR_VIEW = "serviceErrorView";
 
     /** The invalid request. */
     String INVALID_REQUEST = "invalid_request";

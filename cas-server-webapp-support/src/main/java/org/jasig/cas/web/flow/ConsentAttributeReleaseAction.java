@@ -46,7 +46,14 @@ import java.util.Map;
  * @since 4.2
  */
 public class ConsentAttributeReleaseAction extends AbstractAction {
+    /**
+     * Indicates that consent is required.
+     */
     protected static final String EVENT_REQUIRED = "required";
+
+    /**
+     * Indicates that consent is not required or has already been authorized.
+     */
     protected static final String EVENT_AUTHORIZED = "authorized";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

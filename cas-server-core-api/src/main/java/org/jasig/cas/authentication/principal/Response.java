@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public interface Response extends Serializable {
     /** An enumeration of different response types. */
-    public static enum ResponseType {
+    static enum ResponseType {
 
         /** The post. */
         POST,
