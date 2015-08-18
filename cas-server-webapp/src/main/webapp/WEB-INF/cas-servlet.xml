@@ -74,27 +74,21 @@
   </bean>
 
   <!--
-  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+    <bean id="customXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="1"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
 
 
-    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+    <bean id="samlXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="1"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
   -->
-
-  <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
-        p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
-        p:prefix="/WEB-INF/view/jsp/"
-        p:suffix=".jsp"
-        p:order="2"/>
-
+    
   <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
         p:viewClass="org.springframework.web.servlet.view.JstlView"
         p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
         p:suffix=".jsp"
-        p:order="3"/>
+        p:order="100"/>
 
   <!-- Locale Resolver -->
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
@@ -116,6 +110,9 @@
 
         <!--
         <prop key="/samlValidate">samlValidateController</prop>
+        -->
+        <!--
+        <prop key="/oauth2.0/*">oauth20WrapperController</prop>
         -->
 
         <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
@@ -349,6 +346,13 @@
         p:alwaysRequireConsent="${cas.attrs.consent.always:false}"/>
 
   <bean id="attributeReleaseConsentStrategy" class="org.jasig.cas.services.DefaultAttributeReleaseConsentStrategy" />
+
+  <!--
+  <bean id="oauth20WrapperController"
+        class="org.jasig.cas.support.oauth.web.OAuth20WrapperController"
+        p:loginUrl="${server.prefix}/login"
+        p:timeout="${tgt.timeToKillInSeconds:7200}" />
+  -->
 
   <!--
   <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"

@@ -1,0 +1,11 @@
+{
+  "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
+  "serviceId" : "^.*",
+  "name" : "OAuth Sample Client",
+  "id" : 10000004,
+  "description" : "OAuth Sample Client",
+  "bypassApprovalPrompt" : false,
+  "clientId" : "clientid",
+  "clientSecret" : "secret",
+  "evaluationOrder" : 700
+}

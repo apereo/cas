@@ -1,0 +1,8 @@
+{
+  "@class" : "org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService",
+  "serviceId" : "^.*/oauth2.0/callbackAuthorize",
+  "name" : "OAuth Callback Endpoint",
+  "id" : 10000003,
+  "description" : "OAuth Callback Authorize Endpoint.",
+  "evaluationOrder" : 800
+}
