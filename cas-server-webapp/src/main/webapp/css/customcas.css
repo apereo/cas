@@ -2,9 +2,9 @@
 /* --------------- CUSTOM STYLES
 */
 
-/*body,html {
-    background: #f3f3f4;
-}*/
+body,html {
+    background: #153e50;
+}
 
 /*body,html,*/
 #cas-sessions,
@@ -20,22 +20,45 @@
 .navbar-default .navbar-toggle {
   color: #ffffff;
 }
-.navbar-brand {
+.navbar-default .navbar-brand {
   font-family: 'Open Sans', sans-serif;
   color: #ffffff;
   line-height: 32px;
   font-size: 20px;
+  padding: 0;
+  position: relative;
+  top: 8px;
+  left: 5px;
 }
-.navbar-brand:hover {
+.navbar-default .navbar-brand:hover {
   color: #ffffff;
 }
-.navbar-brand .logo {
+.navbar-default .navbar-brand img {
+  margin-right: 8px;
+  width: 32px;
+}
+.navbar-default .navbar-brand .logo {
   text-transform: uppercase;
   font-size: 26px;
 }
-.navbar-brand .logo .heavy {
+.navbar-default .navbar-brand .logo .heavy {
   font-weight: 700;
 }
+
+@media (min-width: 768px) {
+  .navbar-brand {
+    display: block;
+    padding: 6px 15px 0;
+    box-sizing: border-box;
+    top: auto;
+    left: auto;
+  }
+  .navbar-brand img {
+    display: inline-block;
+    width: 32px;
+  }
+}
+
 
 
 #navbar > .navbar-nav > li > a {
@@ -68,30 +91,6 @@
   background-color: #36a9e1;
 }
 
-.navbar-brand {
-  padding: 0;
-  position: relative;
-  top: 8px;
-  left: 5px;
-}
-.navbar-brand img {
-  margin-right: 8px;
-  width: 32px;
-}
-@media (min-width: 768px) {
-  .navbar-brand {
-    display: block;
-    padding: 6px 15px 0;
-    box-sizing: border-box;
-    top: auto;
-    left: auto;
-  }
-  .navbar-brand img {
-    display: inline-block;
-    width: 32px;
-  }
-}
-
 /* Main content block --*/
 #content {
    border-radius: 4px;
@@ -110,8 +109,17 @@
     text-align: left;   
 }
 
+/* Tables */
 #table-monitor-hdr {
     font-weight: bold;
     margin-left: 16px;
     text-align: center
 }
+
+
+/* UI controls */
+.ui-accordion .ui-accordion-header {
+  margin: 15px 0 0;    
+}
+
+
