@@ -37,13 +37,10 @@ To add the `OAuth20WrapperController`, you need to add the mapping between the /
 You have to create the controller itself in the *cas-servlet.xml* file:
 
 {% highlight xml %}
-<bean
-  id="oauth20WrapperController"
-  class="org.jasig.cas.support.oauth.web.OAuth20WrapperController"
-  p:loginUrl="http://mycasserverwithoauthwrapper/login"
-  p:servicesManager-ref="servicesManager"
-  p:ticketRegistry-ref="ticketRegistry"
-  p:timeout="7200" />
+<bean id="oauth20WrapperController"
+        class="org.jasig.cas.support.oauth.web.OAuth20WrapperController"
+        p:loginUrl="${server.prefix}/login"
+        p:timeout="${tgt.timeToKillInSeconds:7200}" />
 {% endhighlight %}
 
 The *loginUrl* is the login url of the CAS server. The timeout is the lifetime of a CAS ticket granting ticket (in seconds, not in milliseconds!) with its mapping in the `handlerMappingC` bean (*cas-servlet.xml* file):
@@ -70,7 +67,8 @@ The *loginUrl* is the login url of the CAS server. The timeout is the lifetime o
 ###Callback Authorization
 
 One service is needed to make the OAuth wrapper works in CAS. It defines the callback url after CAS authentication to return to the OAuth wrapper as a CAS service.  
-**Note**: the callback url must end with "callbackAuthorize".
+
+<div class="alert alert-info"><strong>Callback Authorize Endpoint</strong><p>The callback url must end with "callbackAuthorize".</p></div>
 
 {% highlight xml %}
 <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
