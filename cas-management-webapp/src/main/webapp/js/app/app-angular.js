@@ -22,7 +22,7 @@ var array = url.pathname.split("/");
 if (array.length == 3) {
     appContext = "/" + array[1];
 } else {
-    appContext = "/";
+    appContext = "";
 }
 
 (function () {
