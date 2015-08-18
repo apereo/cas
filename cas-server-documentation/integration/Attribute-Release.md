@@ -107,7 +107,8 @@ The following settings are shared by all attribute release policies:
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
 | `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
-
+| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
+| `attributeConsentRequired`			   | Boolean to define whether use is attribute consent is required prior to release.	
 #### Components
 
 #####`ReturnAllAttributeReleasePolicy`
