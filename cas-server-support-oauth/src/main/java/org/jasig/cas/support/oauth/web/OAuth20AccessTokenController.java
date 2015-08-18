@@ -20,10 +20,12 @@ package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -49,7 +51,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
 
     private final ServicesManager servicesManager;
 
-    private final TicketRegistry ticketRegistry;
+    private final CentralAuthenticationService centralAuthenticationService;
 
     private final long timeout;
 
@@ -60,10 +62,11 @@ public final class OAuth20AccessTokenController extends AbstractController {
      * @param ticketRegistry the ticket registry
      * @param timeout the timeout
      */
-    public OAuth20AccessTokenController(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
+    public OAuth20AccessTokenController(final ServicesManager servicesManager,
+                                        final CentralAuthenticationService ticketRegistry,
             final long timeout) {
         this.servicesManager = servicesManager;
-        this.ticketRegistry = ticketRegistry;
+        this.centralAuthenticationService = ticketRegistry;
         this.timeout = timeout;
     }
 
@@ -87,15 +90,16 @@ public final class OAuth20AccessTokenController extends AbstractController {
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_BAD_REQUEST);
         }
 
-        final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
-        // service ticket should be valid
-        if (serviceTicket == null || serviceTicket.isExpired()) {
+        final ServiceTicket serviceTicket;
+        try {
+            serviceTicket = this.centralAuthenticationService.getTicket(code, ServiceTicket.class);
+        } catch (final InvalidTicketException e) {
             LOGGER.error("Code expired : {}", code);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
+
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
-        // remove service ticket
-        ticketRegistry.deleteTicket(serviceTicket.getId());
+        this.centralAuthenticationService.validateServiceTicket(serviceTicket.getId(), serviceTicket.getService());
 
         response.setContentType("text/plain");
         final int expires = (int) (timeout - TimeUnit.MILLISECONDS

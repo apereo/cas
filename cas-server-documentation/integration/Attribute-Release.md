@@ -108,7 +108,8 @@ The following settings are shared by all attribute release policies:
 | `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
 | `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
 | `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
-| `attributeConsentRequired`			   | Boolean to define whether use is attribute consent is required prior to release.	
+| `attributeConsentRequired`			   | Boolean to define whether use is attribute consent is required prior to release.
+	
 #### Components
 
 #####`ReturnAllAttributeReleasePolicy`
@@ -352,3 +353,32 @@ which attributes can be encoded. Attributes will be encoded via a `RegisteredSer
     c:servicesManager-ref="servicesManager"
     c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
 {% endhighlight %} 
+
+###Attribute Consent
+CAS allows the user to consent to attribute release prior to generating the service ticket and 
+accessing the application. Consent can be controlled on a per-application basis via the attribute
+release policy settings, or it can be required for all services
+globally, via the following settings inside the `cas.properties` file:
+
+
+{% highlight bash %}
+# cas.attrs.consent.always=false
+{% endhighlight %}
+
+Note that by default, consent is turned off.
+
+Once authorized, consent is tracked via the following configuration:
+
+{% highlight xml %}
+<bean id="attributeReleaseConsentStrategy" 
+      class="org.jasig.cas.services.DefaultAttributeReleaseConsentStrategy" />
+{% endhighlight %}
+
+The default strategy to keep track of consent uses the application's runtime memory
+to map a given CAS principal to a list of applications for which attribute consent is
+given. This implies that as soon as the CAS server is restarted, choices will completely
+be gone. Therefor, for production deployments an alternative implementation may be required
+to use a durable storage mechanism, such as LDAP or JDBC to hold on to consent permissions. 
+
+To create your own implementation of consent storage, implement the `AttributeReleaseConsentStrategy`
+and define the back-end storage and behavior. 

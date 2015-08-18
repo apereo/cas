@@ -50,8 +50,9 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
     public void afterPropertiesSet() throws Exception {
         authorizeController = new OAuth20AuthorizeController(servicesManager, loginUrl);
         callbackAuthorizeController = new OAuth20CallbackAuthorizeController();
-        accessTokenController = new OAuth20AccessTokenController(servicesManager, ticketRegistry, timeout);
-        profileController = new OAuth20ProfileController(ticketRegistry);
+        accessTokenController = new OAuth20AccessTokenController(servicesManager, this.centralAuthenticationService,
+                timeout);
+        profileController = new OAuth20ProfileController(this.centralAuthenticationService);
     }
 
     @Override

@@ -241,6 +241,11 @@
     </servlet-mapping>
     -->
 
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/oauth2.0/*</url-pattern>
+    </servlet-mapping>
+
     <session-config>
         <!-- Default to 5 minute session timeouts -->
         <session-timeout>5</session-timeout>
@@ -263,17 +268,17 @@
 
     <error-page>
         <error-code>500</error-code>
-        <location>/WEB-INF/view/jsp/errors.jsp</location>
+        <location>/WEB-INF/view/jsp/default/ui/errors.jsp</location>
     </error-page>
 
     <error-page>
         <error-code>501</error-code>
-        <location>/WEB-INF/view/jsp/errors.jsp</location>
+        <location>/WEB-INF/view/jsp/default/ui/errors.jsp</location>
     </error-page>
 
     <error-page>
         <error-code>503</error-code>
-        <location>/WEB-INF/view/jsp/errors.jsp</location>
+        <location>/WEB-INF/view/jsp/default/ui/errors.jsp</location>
     </error-page>
 
     <welcome-file-list>

@@ -22,8 +22,10 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -50,21 +53,22 @@ public final class OAuth20ProfileController extends AbstractController {
 
     private static final String ATTRIBUTES = "attributes";
 
-    private final TicketRegistry ticketRegistry;
-
     private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
+
+    private final CentralAuthenticationService centralAuthenticationService;
 
     /**
      * Instantiates a new o auth20 profile controller.
      *
-     * @param ticketRegistry the ticket registry
+     * @param centralAuthenticationService the CAS instance
      */
-    public OAuth20ProfileController(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+    public OAuth20ProfileController(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader("Authorization");
@@ -75,41 +79,97 @@ public final class OAuth20ProfileController extends AbstractController {
         }
         LOGGER.debug("{} : {}", OAuthConstants.ACCESS_TOKEN, accessToken);
 
-        try (final JsonGenerator jsonGenerator = this.jsonFactory.createJsonGenerator(response.getWriter())) {
+        try (final JsonGenerator jsonGenerator = this.jsonFactory.createGenerator(response.getWriter())) {
             response.setContentType("application/json");
-            // accessToken is required
-            if (StringUtils.isBlank(accessToken)) {
-                LOGGER.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
-                jsonGenerator.writeEndObject();
+
+            if (checkPresenseOfAccessToken(accessToken, jsonGenerator)) {
                 return null;
             }
-            // get ticket granting ticket
-            final TicketGrantingTicket ticketGrantingTicket = (TicketGrantingTicket) this.ticketRegistry.getTicket(accessToken);
-            if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
-                LOGGER.error("expired accessToken : {}", accessToken);
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
-                jsonGenerator.writeEndObject();
+
+            final TicketGrantingTicket ticketGrantingTicket =
+                    checkPresenseOfTicketGrantingTicket(accessToken, jsonGenerator);
+            if (ticketGrantingTicket == null) {
                 return null;
             }
-            // generate profile : identifier + attributes
-            final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
-            jsonGenerator.writeStartObject();
-            jsonGenerator.writeStringField(ID, principal.getId());
-            jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
-            final Map<String, Object> attributes = principal.getAttributes();
-            for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
-                jsonGenerator.writeStartObject();
-                jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
-                jsonGenerator.writeEndObject();
-            }
-            jsonGenerator.writeEndArray();
-            jsonGenerator.writeEndObject();
+
+            generateUserProfile(jsonGenerator, ticketGrantingTicket);
             return null;
         } finally {
-            response.flushBuffer();
+            try {
+                response.flushBuffer();
+            } catch (final Exception e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
         }
+    }
+
+    /**
+     * Generate user profile.
+     *
+     * @param jsonGenerator the json generator
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @throws IOException the iO exception
+     */
+    private void generateUserProfile(final JsonGenerator jsonGenerator,
+                                     final TicketGrantingTicket ticketGrantingTicket) throws IOException {
+
+        final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
+        LOGGER.debug("Generating OAuth user profile for {}", principal.getId());
+        jsonGenerator.writeStartObject();
+
+        jsonGenerator.writeStringField(ID, principal.getId());
+        jsonGenerator.writeArrayFieldStart(ATTRIBUTES);
+        final Map<String, Object> attributes = principal.getAttributes();
+        for (final Map.Entry<String, Object> entry : attributes.entrySet()) {
+            jsonGenerator.writeStartObject();
+            LOGGER.debug("Added attribute [{}] to OAuth user profile: [{}]", entry.getKey(), entry.getValue());
+            jsonGenerator.writeObjectField(entry.getKey(), entry.getValue());
+            jsonGenerator.writeEndObject();
+        }
+        jsonGenerator.writeEndArray();
+        jsonGenerator.writeEndObject();
+        LOGGER.debug("Generated OAuth user profile successfully.", principal.getId());
+    }
+
+    /**
+     * Check presense of ticket granting ticket.
+     *
+     * @param accessToken the access token
+     * @param jsonGenerator the json generator
+     * @return the ticket granting ticket
+     * @throws IOException the iO exception
+     */
+    private TicketGrantingTicket checkPresenseOfTicketGrantingTicket(final String accessToken,
+                                                                    final JsonGenerator jsonGenerator)
+                                                                    throws IOException {
+        TicketGrantingTicket ticketGrantingTicket = null;
+        try {
+            ticketGrantingTicket = this.centralAuthenticationService.getTicket(accessToken, TicketGrantingTicket.class);
+        } catch (final InvalidTicketException e) {
+            LOGGER.error("Invalid accessToken: {}. {}", e.getMessage(), accessToken);
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
+            jsonGenerator.writeEndObject();
+        }
+        return ticketGrantingTicket;
+    }
+
+    /**
+     * Check presense of access token.
+     *
+     * @param accessToken the access token
+     * @param jsonGenerator the json generator
+     * @return the boolean
+     * @throws IOException the iO exception
+     */
+    private boolean checkPresenseOfAccessToken(final String accessToken, final JsonGenerator jsonGenerator) throws IOException {
+        if (StringUtils.isBlank(accessToken)) {
+            LOGGER.error("Missing {}", OAuthConstants.ACCESS_TOKEN);
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeStringField("error", OAuthConstants.MISSING_ACCESS_TOKEN);
+            jsonGenerator.writeEndObject();
+            return true;
+        }
+        return false;
     }
 }
