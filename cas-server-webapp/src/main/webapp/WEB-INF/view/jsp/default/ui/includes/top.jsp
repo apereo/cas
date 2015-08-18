@@ -33,34 +33,20 @@
   
   <title>CAS &#8211; Central Authentication Service</title>
 
-  <!-- Twitter Bootstrap UI framework -->
-  <link href="/cas/css/bootstrap.min.css" rel="stylesheet">  
-
-  <!-- Google Fonts -->
-  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
-  <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>         
-    
   <spring:theme code="standard.custom.css.file" var="customCssFile" />
   <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
   <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
-     
+  
+    <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
+
         
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js" type="text/javascript">   </script>
   <![endif]-->
 </head>
-<body>
-
-        <!-- Main Header/Navigation 
-        <nav class="navbar navbar-default navbar-static-top" id="top-navbar" role="navigation">
-            <div class="container">
-                <a class="navbar-brand" href="#"><img src="/cas/images/6inchbrand-64.png" alt="USUHS Logo" />
-                    <span class="logo hidden-xs"><span class="heavy">CAS</span>Monitoring</span></a>
-            </div>
-        </nav>-->
+<body id="cas">
     
-    
-      <div class="container">
+      <div id="container">
          <header>
             <a id="logo" href="http://www.apereo.org" title="<spring:message code="logo.title" />">Apereo</a>
             <h1>Central Authentication Service (CAS)</h1>
