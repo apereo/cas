@@ -26,8 +26,11 @@
         <spring:message code="screen.oauth.confirm.message" arguments="${serviceName}"/>
     </p>
 
-    <p>
-        <a id="allow" name="allow" href="${callbackUrl}"><spring:message code="screen.oauth.confirm.allow"/></a>
-    </p>
+    <div id="login">
+        <div><br/></div>
+        <input id="allow" name="allow" class="btn-submit"
+               type="button" onclick="location.href='${callbackUrl}';"
+               value='<spring:message code="screen.oauth.confirm.allow"/>' />
+    </div>
 </div>
 <jsp:directive.include file="../../default/ui/includes/bottom.jsp"/>
