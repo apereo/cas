@@ -26,11 +26,6 @@ package org.jasig.cas.support.openid.web.support;
 public interface OpenIdUserNameExtractor {
 
     /**
-     * A constant to define the identifier during login.
-     */
-    String SELECT_IDENTIFIER = "http://specs.openid.net/auth/2.0/identifier_select";
-
-    /**
      * Extract local username from uri.
      *
      * @param uri the uri
