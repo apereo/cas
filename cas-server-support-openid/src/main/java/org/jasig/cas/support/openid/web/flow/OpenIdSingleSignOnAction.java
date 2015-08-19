@@ -20,12 +20,13 @@ package org.jasig.cas.support.openid.web.flow;
 
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.support.openid.OpenIdConstants;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.support.openid.web.support.OpenIdUserNameExtractor;
+import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 
@@ -44,22 +45,8 @@ import javax.validation.constraints.NotNull;
  */
 public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
-    private static final String OPENID_LOCALID = "openIdLocalId";
-
     @NotNull
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
-
-    @NotNull
-    private final TicketRegistry ticketRegistry;
-
-    /**
-     * Constructor.
-     *
-     * @param ticketRegistry the ticket registry
-     */
-    public OpenIdSingleSignOnAction(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
 
     public void setExtractor(final OpenIdUserNameExtractor extractor) {
         this.extractor = extractor;
@@ -68,21 +55,24 @@ public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCreden
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        final String openidIdentityParameter = context.getRequestParameters().get("openid.identity");
+        final String openidIdentityParameter = context.getRequestParameters().get(OpenIdConstants.OPENID_IDENTITY);
         String userName = null;
-        if (OpenIdUserNameExtractor.SELECT_IDENTIFIER.equals(openidIdentityParameter)) {
-            userName = OpenIdUserNameExtractor.SELECT_IDENTIFIER;
-            context.getExternalContext().getSessionMap().remove(OPENID_LOCALID);
+        if (OpenIdConstants.OPENID_IDENTIFIERSELECT.equals(openidIdentityParameter)) {
+            userName = OpenIdConstants.OPENID_IDENTIFIERSELECT;
+            context.getExternalContext().getSessionMap().remove(OpenIdConstants.OPENID_LOCALID);
             // already authenticated: retrieve the username from the authentication
             if (ticketGrantingTicketId != null) {
-                final TicketGrantingTicket tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-                if (tgt != null && !tgt.isExpired()) {
+                try {
+                    final TicketGrantingTicket tgt = getCentralAuthenticationService()
+                            .getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
                     userName = tgt.getAuthentication().getPrincipal().getId();
+                } catch (final InvalidTicketException e) {
+                    logger.error("Cannot get TGT", e);
                 }
             }
         } else {
             userName = this.extractor.extractLocalUsernameFromUri(openidIdentityParameter);
-            context.getExternalContext().getSessionMap().put(OPENID_LOCALID, userName);
+            context.getExternalContext().getSessionMap().put(OpenIdConstants.OPENID_LOCALID, userName);
         }
         final Service service = WebUtils.getService(context);
 
