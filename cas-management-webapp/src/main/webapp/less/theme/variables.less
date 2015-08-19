@@ -1,0 +1,143 @@
+/*
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+/**
+ * Licensed to Jasig under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Jasig licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a
+ * copy of the License at:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+// Basic Color Variables
+
+@import "../base/vendor/bootstrap/bootstrap.less";
+
+@white: #fff;
+@black: #000;
+@red:   #DF041E;
+
+// 9 Shades of gray
+@gray1: darken(@white, 10%); // #e6e6e6
+@gray2: darken(@white, 20%); // #cccccc
+@gray3: darken(@white, 30%); // #b3b3b3
+@gray4: darken(@white, 40%); // #999999
+@gray5: darken(@white, 50%); // #808080
+@gray6: darken(@white, 60%); // #666666
+@gray7: darken(@white, 70%); // #4d4d4d
+@gray8: darken(@white, 80%); // #333333
+@gray9: darken(@white, 90%); // #1a1a1a
+
+// Primary color with 3 lightened shades and 3 darkened shades.
+@color1:                            #153e50; // Nile Blue
+@color1-light:                      lighten(@color1, 15%);
+@color1-lighter:                    lighten(@color1, 30%);
+@color1-lightest:                   lighten(@color1, 45%);
+
+@color1-dark:                       darken(@color1, 5%);
+@color1-darker:                     darken(@color1, 10%);
+@color1-darkest:                    darken(@color1, 15%);
+
+// Secondary color with 3 lightened shades and 3 darkened shades.
+@color2:                            #6ec066; // Mantis
+@color2-light:                      lighten(@color2, 10%);
+@color2-lighter:                    lighten(@color2, 25%);
+@color2-lightest:                   lighten(@color2, 50%);
+
+@color2-dark:                       darken(@color2, 10%);
+@color2-darker:                     darken(@color2, 25%);
+@color2-darkest:                    darken(@color2, 50%);
+
+// Complementary color with 3 lightened shades and 3 darkened shades.
+@color3:                            #7f6b1d; // Bull Shot
+@color3-light:                      lighten(@color3, 10%);
+@color3-lighter:                    lighten(@color3, 25%);
+@color3-lightest:                   lighten(@color3, 50%);
+
+@color3-dark:                       darken(@color3, 10%);
+@color3-darker:                     darken(@color3, 25%);
+@color3-darkest:                    darken(@color3, 50%);
+
+// Complementary color with 3 lightened shades and 3 darkened shades.
+@color4:                            #791b28; // Bull Shot
+@color4-light:                      lighten(@color4, 10%);
+@color4-lighter:                    lighten(@color4, 25%);
+@color4-lightest:                   lighten(@color4, 50%);
+
+@color4-dark:                       darken(@color4, 10%);
+@color4-darker:                     darken(@color4, 25%);
+@color4-darkest:                    darken(@color4, 50%);
+
+
+
+// Theme Variables
+// Reassign Bootstrap main colors
+@brand-primary:         @color1-light;
+@brand-success:         @color2-dark;
+@brand-info:            @color1-lighter;
+@brand-warning:         @color3-light;
+@brand-danger:          @color4-light;
+
+@state-success-text:             darken(@brand-success, 15%);
+@state-success-bg:               lighten(@brand-success, 42%);
+
+@state-info-text:                darken(@brand-info, 13%);
+@state-info-bg:                  lighten(@brand-info, 40%);
+
+@state-warning-text:             darken(@brand-warning, 12%);
+@state-warning-bg:               lighten(@brand-warning, 42%);
+
+@state-danger-text:              darken(@brand-danger, 15%);
+@state-danger-bg:                lighten(@brand-danger, 45%);
+
+// Anchors, links
+@link-color:                            @color1-light;
+@link-color-hover:                      @color1-lighter;
+
+// Header styles
+@header-background-color:               @color1;
+@header-background-text-color:          @white;
+@header-height:                         50px;
+@header-image-height:                   @header-height / 2;
+@header-link-font-size:                 90%;
+@header-link-text-color:                @white;
+@header-link-text-hover-color:          @color1-light;
+@header-link-background-color:          @header-background-color;
+@header-link-background-hover-color:    @white;
+
+// Footer styles
+@footer-background-color:               @color1-lightest;
+@footer-background-text-color:          @white;
+@footer-height:                         100px;
+@footer-image-height:                   @footer-height / 2;
+@footer-link-font-size:                 80%;
+@footer-link-text-color:                @white;
+@footer-link-text-hover-color:          @color1-light;
+@footer-link-background-color:          @footer-background-color;
+@footer-link-background-hover-color:    @white;

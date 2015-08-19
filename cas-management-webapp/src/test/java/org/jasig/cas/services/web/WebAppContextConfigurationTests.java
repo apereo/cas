@@ -18,16 +18,11 @@
  */
 package org.jasig.cas.services.web;
 
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,7 +32,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.NestedServletException;
+
+import javax.servlet.http.HttpServletResponse;
+
+import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Integration tests for the management webapp.
@@ -62,62 +62,66 @@ public class WebAppContextConfigurationTests {
     
     @Test
     public void verifyUpdateServiceSuccessfully() throws Exception {
-        final ModelAndView mv = this.mvc.perform(get("/updateRegisteredServiceEvaluationOrder.html")
-                .param("id", "0").param("evaluationOrder", "200"))
+        final MockHttpServletResponse response = this.mvc.perform(post("/updateRegisteredServiceEvaluationOrder.html")
+                .param("id", "0"))
                 .andExpect(status().isOk())
-                .andReturn().getModelAndView();
-        assertNotNull(mv);
-        assertEquals(mv.getViewName(), "jsonView"); 
+                .andReturn().getResponse();
+        assertTrue(response.getContentAsString().contains("\"status\" : " + HttpServletResponse.SC_OK));
     }
     
-    @Test(expected = NestedServletException.class)
+    @Test
     public void verifyUpdateNonExistingService() throws Exception {
-        this.mvc.perform(get("/updateRegisteredServiceEvaluationOrder.html")
-                .param("id", "100").param("evaluationOrder", "200"))
-                .andExpect(status().isBadRequest());
+        this.mvc.perform(post("/updateRegisteredServiceEvaluationOrder.html")
+                .param("id", "-1"))
+                .andExpect(status().isInternalServerError());
     }
     
     @Test
     public void verifyDeleteServiceSuccessfully() throws Exception {
-        final ModelAndView mv = this.mvc.perform(get("/deleteRegisteredService.html").param("id", "0"))
-                .andExpect(status().isFound())
-                .andReturn().getModelAndView();
-        assertNotNull(mv);
-        assertNotNull(mv.getModel().get("serviceName"));    
-        assertEquals(mv.getModel().get("serviceName"), "HTTP and IMAP");        
+        final MockHttpServletResponse response = this.mvc.perform(post("/deleteRegisteredService.html")
+                .param("id", "100"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+        assertTrue(response.getContentAsString().contains("\"status\" : " + HttpServletResponse.SC_OK));
     }
     
     @Test
     public void verifyDeleteNonExistingService() throws Exception {
-        final ModelAndView mv = this.mvc.perform(get("/deleteRegisteredService.html").param("id", "100"))
-                .andExpect(status().isFound())
-                .andReturn().getModelAndView();
-        assertNotNull(mv);
-        assertNotNull(mv.getModel().get("serviceName"));    
-        assertTrue(mv.getModel().get("serviceName").toString().length() == 0);        
+        this.mvc.perform(post("/deleteRegisteredService.html").param("id", "666"))
+                .andExpect(status().isInternalServerError());
     }
     
     @Test
     public void verifyDeleteServiceByInvalidId() throws Exception {
-        this.mvc.perform(get("/deleteRegisteredService.html").param("id", "invalid"))
-                .andExpect(status().isBadRequest());
+        this.mvc.perform(post("/deleteRegisteredService.html").param("id", "invalid"))
+                .andExpect(status().isInternalServerError());
     }
     
     @Test
     public void verifyDeleteServiceByLargeId() throws Exception {
-        this.mvc.perform(get("/deleteRegisteredService.html").param("id", String.valueOf(Double.MAX_VALUE)))
-                .andExpect(status().isBadRequest());
+        this.mvc.perform(post("/deleteRegisteredService.html").param("id", String.valueOf(Double.MAX_VALUE)))
+                .andExpect(status().isInternalServerError());
     }
     
     @Test
-    public void loadServices() throws Exception {
+    public void loadServicesManageView() throws Exception {
         final ModelAndView mv = this.mvc.perform(get("/manage.html"))
                 .andExpect(status().isOk())
                 .andReturn().getModelAndView();
         assertNotNull(mv);
         
         assertNotNull(mv.getModel().get("defaultServiceUrl"));
-        final List<?> svcs = (List<?>) mv.getModel().get("services");
-        assertEquals(svcs.size(), 1);
+        assertNotNull(mv.getModel().get("status"));
+    }
+
+    @Test
+    public void loadServices() throws Exception {
+        final MockHttpServletResponse response = this.mvc.perform(get("/getServices.html"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse();
+
+        final String resp = response.getContentAsString();
+        assertTrue(resp.contains("services"));
+        assertTrue(resp.contains("status"));
     }
 }
