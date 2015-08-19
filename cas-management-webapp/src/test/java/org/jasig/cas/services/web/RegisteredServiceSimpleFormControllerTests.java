@@ -18,7 +18,23 @@
  */
 package org.jasig.cas.services.web;
 
-import static org.junit.Assert.*;
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.DefaultServicesManagerImpl;
+import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
+import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,28 +42,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.services.AbstractRegisteredService;
-import org.jasig.cas.services.DefaultServicesManagerImpl;
-import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.services.MockRegisteredService;
-import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.web.support.RegisteredServiceValidator;
-import org.jasig.services.persondir.support.StubPersonAttributeDao;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
+ * Test cases for {@link RegisteredServiceSimpleFormController}.
  * @author Scott Battaglia
  * @author Misagh Moayyed
  * @since 3.1
@@ -73,7 +72,7 @@ public class RegisteredServiceSimpleFormControllerTests {
                 new InMemoryServiceRegistryDaoImpl());
 
         this.controller = new RegisteredServiceSimpleFormController(
-                this.manager, this.repository, new RegisteredServiceValidator(this.manager, this.repository));
+                this.manager, this.repository);
     }
 
     @Test
@@ -83,7 +82,7 @@ public class RegisteredServiceSimpleFormControllerTests {
         when(result.hasErrors()).thenReturn(true);
         
         final ModelMap model = new ModelMap();
-        this.controller.onSubmit(mock(RegisteredService.class), result, model, new MockHttpServletRequest());
+        //this.controller.onSubmit(mock(RegisteredService.class), result, model, new MockHttpServletRequest());
         
         assertTrue(result.hasErrors());
     }
@@ -97,12 +96,15 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setEvaluationOrder(123);
         
         assertTrue(this.manager.getAllServices().isEmpty());
-        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
-        
+        final RegisteredServiceEditBean data = RegisteredServiceEditBean.fromRegisteredService(svc);
+        this.controller.saveService(new MockHttpServletRequest(),
+                new MockHttpServletResponse(),
+                data.getServiceData(), mock(BindingResult.class));
+
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
         for(final RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof RegisteredServiceImpl);
+            assertTrue(rs instanceof RegexRegisteredService);
         }
     }
 
@@ -122,8 +124,11 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setName("name");
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
-        
-        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
+
+        final RegisteredServiceEditBean data = RegisteredServiceEditBean.fromRegisteredService(svc);
+        this.controller.saveService(new MockHttpServletRequest(),
+                new MockHttpServletResponse(),
+                data.getServiceData(), mock(BindingResult.class));
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
@@ -139,9 +144,12 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setName("name");
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
-        
-        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
-        
+
+       final RegisteredServiceEditBean data = RegisteredServiceEditBean.fromRegisteredService(svc);
+       this.controller.saveService(new MockHttpServletRequest(),
+               new MockHttpServletResponse(),
+               data.getServiceData(), mock(BindingResult.class));
+
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
         for(final RegisteredService rs : this.manager.getAllServices()) {
@@ -149,38 +157,6 @@ public class RegisteredServiceSimpleFormControllerTests {
         }
     }
 
-   @Test
-   public void verifyChangingServicePatternAndType() throws Exception {
-       final AbstractRegisteredService svc = new RegexRegisteredService();
-       svc.setDescription("description");
-       svc.setServiceId("serviceId");
-       svc.setName("name");
-       svc.setId(1000);
-       svc.setEvaluationOrder(1000);
-       
-       this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
-       
-       final Collection<RegisteredService> c = this.manager.getAllServices();
-       assertEquals("Service collection size must be 1", c.size(), 1);
-       
-       for(final RegisteredService rs : c) {
-           assertTrue(rs instanceof RegisteredServiceImpl);
-       }
-       
-       final AbstractRegisteredService svc2 = (AbstractRegisteredService) c.iterator().next();
-       svc2.setServiceId("^serviceId");
-       this.controller.onSubmit(svc2, mock(BindingResult.class),
-               new ModelMap(), new MockHttpServletRequest());
-
-       final Collection<RegisteredService> services = this.manager.getAllServices();
-       assertEquals(1, services.size());
-       
-       for(final RegisteredService rs : services) {
-           assertTrue(rs instanceof RegexRegisteredService);
-       }
-   }
-
-   
     @Test
     public void verifyAddMultipleRegisteredServiceTypes() throws Exception {
         AbstractRegisteredService svc = new RegexRegisteredService();
@@ -189,8 +165,11 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setName("name");
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
-        
-        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
+
+        final RegisteredServiceEditBean data = RegisteredServiceEditBean.fromRegisteredService(svc);
+        this.controller.saveService(new MockHttpServletRequest(),
+                new MockHttpServletResponse(),
+                data.getServiceData(), mock(BindingResult.class));
 
         svc = new RegisteredServiceImpl();
         svc.setDescription("description");
@@ -198,61 +177,41 @@ public class RegisteredServiceSimpleFormControllerTests {
         svc.setName("name");
         svc.setId(100);
         svc.setEvaluationOrder(100);
-        
-        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
+
+        final RegisteredServiceEditBean data2 = RegisteredServiceEditBean.fromRegisteredService(svc);
+        this.controller.saveService(new MockHttpServletRequest(),
+                new MockHttpServletResponse(),
+                data2.getServiceData(), mock(BindingResult.class));
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(2, services.size());
-        for (final RegisteredService rs : this.manager.getAllServices()) {
-            if(StringUtils.equals(rs.getName(), "ant")) {
-                assertTrue(rs instanceof RegisteredServiceImpl);
-            }else if (StringUtils.equals(rs.getName(), "regex")) {
-                assertTrue(rs instanceof RegexRegisteredService);
-            }
-        }
     }
 
     @Test
     public void verifyAddMockRegisteredService() throws Exception {
-        final MockRegisteredService svc = new MockRegisteredService();
+        final RegexRegisteredService svc = new RegexRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("^serviceId");
         svc.setName("name");
         svc.setId(1000);
         svc.setEvaluationOrder(1000);
-        
-        this.controller.onSubmit(svc, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
+
+        final RegisteredServiceEditBean data = RegisteredServiceEditBean.fromRegisteredService(svc);
+        this.controller.saveService(new MockHttpServletRequest(),
+                new MockHttpServletResponse(),
+                data.getServiceData(), mock(BindingResult.class));
 
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
         for (final  RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof MockRegisteredService);
+            assertTrue(rs instanceof RegisteredService);
         }
-    }
-
-    @Test
-    public void verifyEmptyServiceWithModelAttributesRestored() throws Exception {
-        final BindingResult result = mock(BindingResult.class);
-        when(result.getModel()).thenReturn(new HashMap<String, Object>());
-        when(result.hasErrors()).thenReturn(true);
-        
-        final MockRegisteredService svc = new MockRegisteredService();
-        svc.setDescription(null);
-        svc.setServiceId(null);
-        
-        final ModelMap model = new ModelMap();   
-        this.controller.onSubmit(svc, result, model, new MockHttpServletRequest());
-
-        assertTrue(model.containsAttribute("availableAttributes"));
-        assertTrue(model.containsAttribute("availableUsernameAttributes"));
-        assertTrue(model.containsAttribute("pageTitle"));
-        
     }
 
     
     @Test
     public void verifyEditMockRegisteredService() throws Exception {
-        final MockRegisteredService r = new MockRegisteredService();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setId(1000);
         r.setName("Test Service");
         r.setServiceId("test");
@@ -261,12 +220,12 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.manager.save(r);
         
         r.setServiceId("serviceId1");
-        this.controller.onSubmit(r, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
+        //this.controller.onSubmit(r, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
 
         assertEquals("serviceId1", r2.getServiceId());
-        assertTrue(r2 instanceof MockRegisteredService);
+        assertTrue(r2 instanceof RegexRegisteredService);
     }
 }

@@ -26,6 +26,11 @@
   <display-name>CAS Management 4.1.0-SNAPSHOT</display-name>
 
   <context-param>
+    <param-name>isLog4jAutoInitializationDisabled</param-name>
+    <param-value>true</param-value>
+  </context-param>
+
+  <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>
       /WEB-INF/spring-configuration/*.xml
@@ -87,8 +92,8 @@
   </servlet-mapping>
 
   <session-config>
-    <!-- Default to 5 minute session timeouts -->
-    <session-timeout>5</session-timeout>
+    <!-- Default to 30 minute session timeouts -->
+    <session-timeout>30</session-timeout>
   </session-config>
 
   <error-page>
