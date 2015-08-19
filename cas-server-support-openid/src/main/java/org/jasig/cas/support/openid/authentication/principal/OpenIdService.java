@@ -23,7 +23,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.support.openid.web.support.OpenIdUserNameExtractor;
+import org.jasig.cas.support.openid.OpenIdConstants;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.validation.Assertion;
@@ -51,8 +51,6 @@ public final class OpenIdService extends AbstractWebApplicationService {
     protected static final Logger LOGGER = LoggerFactory.getLogger(OpenIdService.class);
 
     private static final long serialVersionUID = 5776500133123291301L;
-
-    private static final String CONST_PARAM_SERVICE = "openid.return_to";
 
     private final String identity;
 
@@ -108,7 +106,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
                 final AuthRequest authReq = AuthRequest.createAuthRequest(requestParameters, manager.getRealmVerifier());
                 final Map parameterMap = authReq.getParameterMap();
                 if (parameterMap != null && parameterMap.size() > 0) {
-                    final String assocHandle = (String) parameterMap.get("openid.assoc_handle");
+                    final String assocHandle = (String) parameterMap.get(OpenIdConstants.OPENID_ASSOCHANDLE);
                     if (assocHandle != null) {
                         final Association association = manager.getSharedAssociations().load(assocHandle);
                         if (association != null) {
@@ -141,7 +139,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
             }
 
             final String id;
-            if (assertion != null && OpenIdUserNameExtractor.SELECT_IDENTIFIER.equals(this.identity)) {
+            if (assertion != null && OpenIdConstants.OPENID_IDENTIFIERSELECT.equals(this.identity)) {
                 id = this.openIdPrefixUrl + '/' + assertion.getPrimaryAuthentication().getPrincipal().getId();
             } else {
                 id = this.identity;
@@ -156,10 +154,10 @@ public final class OpenIdService extends AbstractWebApplicationService {
                     true);
             parameters.putAll(response.getParameterMap());
             if (!associated) {
-                parameters.put("openid.assoc_handle", ticketId);
+                parameters.put(OpenIdConstants.OPENID_ASSOCHANDLE, ticketId);
             }
         } else {
-            parameters.put("openid.mode", "cancel");
+            parameters.put(OpenIdConstants.OPENID_MODE, OpenIdConstants.CANCEL);
         }
         return DefaultResponse.getRedirectResponse(getOriginalUrl(), parameters);
     }
@@ -183,16 +181,16 @@ public final class OpenIdService extends AbstractWebApplicationService {
      */
     public static OpenIdService createServiceFrom(
             final HttpServletRequest request, final String openIdPrefixUrl) {
-        final String service = request.getParameter(CONST_PARAM_SERVICE);
-        final String openIdIdentity = request.getParameter("openid.identity");
-        final String signature = request.getParameter("openid.sig");
+        final String service = request.getParameter(OpenIdConstants.OPENID_RETURNTO);
+        final String openIdIdentity = request.getParameter(OpenIdConstants.OPENID_IDENTITY);
+        final String signature = request.getParameter(OpenIdConstants.OPENID_SIG);
 
         if (openIdIdentity == null || !StringUtils.hasText(service)) {
             return null;
         }
 
         final String id = cleanupUrl(service);
-        final String artifactId = request.getParameter("openid.assoc_handle");
+        final String artifactId = request.getParameter(OpenIdConstants.OPENID_ASSOCHANDLE);
         final ParameterList paramList = new ParameterList(request.getParameterMap());
 
         return new OpenIdService(id, service, artifactId, openIdIdentity,
