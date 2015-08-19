@@ -18,13 +18,21 @@
     under the License.
 
 --%>
-<%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
+  <%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
 
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/flick/jquery-ui.css">
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/flick/jquery-ui.css">
+ 
+  <!-- Twitter Bootstrap UI framework -->
+  <link href="/cas/css/bootstrap.min.css" rel="stylesheet">  
+
+  <!-- Google Fonts -->
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+  <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>   
+
+  <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
     
-<!-- Custom UI styles -->
-<link href="/cas/css/customcas.css" rel="stylesheet"> 
-    
+  <!-- Custom UI styles -->
+  <link href="/cas/css/customcas.css" rel="stylesheet"> 
     
 <script type="text/javascript">
 
@@ -54,7 +62,7 @@
                     + "<tr><td>Ticket Granting Ticket</td>"
                     + "<td>" + (sso.ticket_granting_ticket == undefined ? new Array(30).join("*") : sso.ticket_granting_ticket) + "</td></tr>"
                     + "<tr><td>Principal Attributes</td>"
-                    + "<td>SAMPLE</td></tr>"
+                    + "<td>Insert Datatable here...</td></tr>"
                     + "<tr><td>Proxy Ticket</td>"
                     + "<td>YES</td></tr>"
                     + "<tr><td>Ticket Granting Ticket Service</td>"
@@ -88,22 +96,23 @@
         parseJsonPayload();
         $("#jsonContent").accordion();
     }
+    
 </script>
 
 <div id="cas-sessions">
     
     
-        <!-- Main Header/Navigation -->
+        <!-- Main Header/Navigation
         <nav class="navbar navbar-default navbar-static-top" id="top-navbar" role="navigation">
             <div class="container">
-                <a class="navbar-brand" href="#"><img src="/cas/images/6inchbrand-64.png" alt="USUHS Logo" />
-                    <span class="logo hidden-xs"><span class="heavy">CAS</span>Monitoring</span></a>
+                <span class="navbar-brand" href="#"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                    <span class="logo hidden-xs"><span class="heavy">SSO</span>Sessions Report</span></span>
             </div>
-        </nav>
+        </nav> -->
     
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h4>SSO Sessions Report</h4>
+            <h4><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> SSO Sessions Report</h4>
         </div>
         <div class="panel-body">
             <div>
@@ -120,10 +129,12 @@
               </label>
             </div>
 
-
             <button class="btn btn-sm btn-danger" type="button">Bulk Kill</button></div>
-
+            
             <div id="container-stable">
+                
+               <div id="msg" style="display:none"></div>
+                
                <div id="table-monitor-hdr" class="row">
                     <div class="col-xs-1">&nbsp;</div>
                     <div class="col-xs-3">User</div>
@@ -132,9 +143,8 @@
                     <div class="col-xs-2">Kill</div>
                </div>
 
-               <div id="msg" style="display:none"></div>
-
-               <div id="jsonContent"></div>
+               <div id="jsonContent"></div>            
+                
             </div>
 
             <div id="login">
@@ -143,6 +153,5 @@
         </div>
     </div>
 </div>
-
 
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>
