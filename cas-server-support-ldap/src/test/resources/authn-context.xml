@@ -32,8 +32,8 @@
        http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!--
-    <ldaptive:ad-authenticator id="authenticator"
+
+    <ldaptive:ad-authenticator id="authenticator-ad"
             ldapUrl="${ldap.url}"
             provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
             connectTimeout="${ldap.connectTimeout}"
@@ -41,6 +41,7 @@
             failFastInitialize="true"
             blockWaitTime="${ldap.pool.blockWaitTime}"
             idleTime="${ldap.pool.idleTime}"
+            baseDn="${ldap.baseDn}"
             maxPoolSize="${ldap.pool.maxSize}"
             minPoolSize="${ldap.pool.minSize}"
             validatePeriodically="${ldap.pool.validatePeriodically}"
@@ -50,9 +51,8 @@
             subtreeSearch="${ldap.subtree.search:true}"
             useStartTLS="${ldap.useStartTLS}"
             />
-    -->
-    <!--
-    <ldaptive:anonymous-search-authenticator id="authenticator"
+
+    <ldaptive:anonymous-search-authenticator id="authenticator-anonymous"
            ldapUrl="${ldap.url}"
            provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
            connectTimeout="${ldap.connectTimeout}"
@@ -67,20 +67,23 @@
            prunePeriod="${ldap.pool.prunePeriod}"
            useSSL="${ldap.use.ssl:false}"
            useStartTLS="${ldap.useStartTLS}"
+           usePasswordPolicy="${ldap.usePpolicy:true}"
+           allowMultipleDns="${ldap.allowMultipleDns:false}"
            baseDn="${ldap.baseDn}"
            subtreeSearch="${ldap.subtree.search:true}"
            userFilter="${ldap.authn.searchFilter}"
     />
-    -->
-    <!--
-    <ldaptive:direct-authenticator id="authenticator"
+
+    <ldaptive:direct-authenticator id="authenticator-direct"
             format="${ldap.authn.searchFilter}"
             ldapUrl="${ldap.url}"
+            provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
             connectTimeout="${ldap.connectTimeout}"
             validateOnCheckOut="${ldap.pool.validateOnCheckout}"
             failFastInitialize="true"
             blockWaitTime="${ldap.pool.blockWaitTime}"
             idleTime="${ldap.pool.idleTime}"
+            usePasswordPolicy="${ldap.usePpolicy:true}"
             maxPoolSize="${ldap.pool.maxSize}"
             minPoolSize="${ldap.pool.minSize}"
             validatePeriodically="${ldap.pool.validatePeriodically}"
@@ -88,7 +91,7 @@
             prunePeriod="${ldap.pool.prunePeriod}"
             useSSL="${ldap.use.ssl:false}"
             useStartTLS="${ldap.useStartTLS}" />
-    -->
+
 
     <ldaptive:bind-search-authenticator id="authenticator"
             ldapUrl="${ldap.url}"
@@ -100,7 +103,8 @@
             useStartTLS="${ldap.useStartTLS}"
             blockWaitTime="${ldap.pool.blockWaitTime}"
             maxPoolSize="${ldap.pool.maxSize}"
-            usePpolicy="${ldap.usePpolicy:false}"
+            allowMultipleDns="${ldap.allowMultipleDns:false}"
+            usePasswordPolicy="${ldap.usePpolicy:true}"
             minPoolSize="${ldap.pool.minSize}"
             validateOnCheckOut="${ldap.pool.validateOnCheckout}"
             validatePeriodically="${ldap.pool.validatePeriodically}"
