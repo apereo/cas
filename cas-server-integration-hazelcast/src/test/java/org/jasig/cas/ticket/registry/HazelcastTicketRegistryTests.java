@@ -35,13 +35,13 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for @{HazelcastTicketRegistry}.
+ * Unit tests for {@link HazelcastTicketRegistry}.
  *
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration
+@ContextConfiguration(locations = "classpath:HazelcastTicketRegistryTests-context.xml")
 public class HazelcastTicketRegistryTests {
 
     @Autowired

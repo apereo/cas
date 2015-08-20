@@ -518,6 +518,7 @@
                         <ldif>SCRIPT_STYLE</ldif>
                         <yml>SCRIPT_STYLE</yml>
                         <conf>JAVADOC_STYLE</conf>
+                        <less>JAVADOC_STYLE</less>
                     </mapping>
                     <excludes>
                         <exclude>**/bin/**</exclude>
@@ -744,6 +745,12 @@
                 <groupId>org.ldaptive</groupId>
                 <artifactId>ldaptive</artifactId>
                 <version>${ldaptive.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1625,6 +1632,7 @@
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
         <project.build.targetVersion>1.7</project.build.targetVersion>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
         <cs.dir>${project.basedir}</cs.dir>
         <issues.projectKey>CAS</issues.projectKey>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
