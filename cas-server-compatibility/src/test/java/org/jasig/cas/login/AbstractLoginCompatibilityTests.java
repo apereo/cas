@@ -22,6 +22,7 @@ import java.io.IOException;
 
 /**
  * Base class for Web compatibility tests around CAS login form.
+ * @since 4.1
  */
 public abstract class AbstractLoginCompatibilityTests extends AbstractCompatibilityTests {
     public static final String FORM_USERNAME = "username";

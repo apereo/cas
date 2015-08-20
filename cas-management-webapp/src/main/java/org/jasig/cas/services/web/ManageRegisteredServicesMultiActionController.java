@@ -18,15 +18,13 @@
  */
 package org.jasig.cas.services.web;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
+import org.jasig.cas.web.view.JsonViewUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -34,7 +32,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * MultiActionController to handle the deletion of RegisteredServices as well as
@@ -44,14 +51,9 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 3.1
  */
 @Controller
-public final class ManageRegisteredServicesMultiActionController {
-
-    /** Instance of ServicesManager. */
+public final class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
     @NotNull
-    private final ServicesManager servicesManager;
-
-    @NotNull
-    private final String defaultServiceUrl;
+    private final Service defaultService;
 
     /**
      * Instantiates a new manage registered services multi action controller.
@@ -62,10 +64,27 @@ public final class ManageRegisteredServicesMultiActionController {
     @Autowired
     public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager,
             @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
-        this.servicesManager = servicesManager;
-        this.defaultServiceUrl = defaultServiceUrl;
+        super(servicesManager);
+        this.defaultService = new SimpleWebApplicationServiceImpl(defaultServiceUrl);
     }
 
+    /**
+     * Ensure default service exists.
+     */
+    private void ensureDefaultServiceExists() {
+        final Collection<RegisteredService> c = this.servicesManager.getAllServices();
+        if (c == null) {
+            throw new IllegalStateException("Services cannot be empty");
+        }
+
+        if (!this.servicesManager.matchesExistingService(defaultService)) {
+            final RegexRegisteredService svc = new RegexRegisteredService();
+            svc.setServiceId('^' + defaultService.getId());
+            svc.setName("Services Management Web Application");
+            svc.setDescription(svc.getName());
+            this.servicesManager.save(svc);
+        }
+    }
     /**
      * Authorization failure handling. Simply returns the view name.
      *
@@ -79,73 +98,102 @@ public final class ManageRegisteredServicesMultiActionController {
     /**
      * Logout handling. Simply returns the view name.
      *
+     * @param request the request
+     * @param session the session
      * @return the view name.
      */
-    @RequestMapping(value="loggedOut.html", method={RequestMethod.GET})
-    public String logoutView() {
+    @RequestMapping(value="logout.html", method={RequestMethod.GET})
+    public String logoutView(final HttpServletRequest request, final HttpSession session) {
+        logger.debug("Invalidating application session...");
+        session.invalidate();
         return "logout";
     }
 
-
     /**
-     * Method to delete the RegisteredService by its ID.
+     * Method to delete the RegisteredService by its ID. Will make sure
+     * the default service that is the management app itself cannot be deleted
+     * or the user will be locked out.
      *
      * @param idAsLong the id
-     * @return the Model and View to go to after the service is deleted.
+     * @param response the response
      */
-    @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.GET})
-    public ModelAndView deleteRegisteredService(
-            @RequestParam("id") final long idAsLong) {
-        
-        final ModelAndView modelAndView = new ModelAndView(new RedirectView(
-                "manage.html", true), "status", "deleted");
+    @RequestMapping(value="deleteRegisteredService.html", method={RequestMethod.POST})
+    public void deleteRegisteredService(@RequestParam("id") final long idAsLong,
+                                        final HttpServletResponse response) {
+        final RegisteredService svc = this.servicesManager.findServiceBy(this.defaultService);
+        if (svc == null || svc.getId() == idAsLong) {
+            throw new IllegalArgumentException("The default service " + defaultService.getId() + " cannot be deleted. "
+                                       + "The definition is required for accessing the application.");
+        }
 
         final RegisteredService r = this.servicesManager.delete(idAsLong);
-        modelAndView.addObject("serviceName", r != null ? r.getName() : "");
-
-        return modelAndView;
+        if (r == null) {
+            throw new IllegalArgumentException("Service id " + idAsLong + " cannot be found.");
+        }
+        final Map<String, Object> model = new HashMap<>();
+        model.put("serviceName", r.getName());
+        model.put("status", HttpServletResponse.SC_OK);
+        JsonViewUtils.render(model, response);
     }
 
     /**
      * Method to show the RegisteredServices.
+     * @param response the response
      * @return the Model and View to go to after the services are loaded.
      */
     @RequestMapping(value="manage.html", method={RequestMethod.GET})
-    public ModelAndView manage() {
+    public ModelAndView manage(final HttpServletResponse response) {
+        ensureDefaultServiceExists();
         final Map<String, Object> model = new HashMap<>();
-
-        final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
-
-        model.put("services", services);
-        model.put("pageTitle", "Manage");
-        model.put("defaultServiceUrl", this.defaultServiceUrl);
-
+        model.put("defaultServiceUrl", this.defaultService.getId());
+        model.put("status", HttpServletResponse.SC_OK);
         return new ModelAndView("manage", model);
     }
 
     /**
-     * Updates the {@link RegisteredService#getEvaluationOrder()}. Expects an <code>id</code> parameter to indicate
-     * the {@link RegisteredService#getId()} and the new <code>evaluationOrder</code> integer parameter from the request.
-     * as parameters.
+     * Gets services.
      *
-     * @param id the id
-     * @param evaluationOrder the evaluation order
-     * @return {@link ModelAndView} object that redirects to a <code>jsonView</code>. The model will contain a
-     * a parameter <code>error</code> whose value should describe the error occurred if the update is unsuccessful.
-     * There will also be a <code>successful</code> boolean parameter that indicates whether or not the update
-     * was successful.
+     * @param response the response
      */
-    @RequestMapping(value="updateRegisteredServiceEvaluationOrder.html", method={RequestMethod.GET})
-    public ModelAndView updateRegisteredServiceEvaluationOrder(@RequestParam("id") final long id,
-            @RequestParam("evaluationOrder") final int evaluationOrder) {
-        final RegisteredService svc = this.servicesManager.findServiceBy(id);
-        if (svc == null) {
-            throw new IllegalArgumentException("Service id " + id + " cannot be found.");
+    @RequestMapping(value="getServices.html", method={RequestMethod.GET})
+    public void getServices(final HttpServletResponse response) {
+        ensureDefaultServiceExists();
+        final Map<String, Object> model = new HashMap<>();
+        final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
+        final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
+        for (final RegisteredService svc : services) {
+            serviceBeans.add(RegisteredServiceViewBean.fromRegisteredService(svc));
         }
-
-        svc.setEvaluationOrder(evaluationOrder);
-        this.servicesManager.save(svc);
-
-        return new ModelAndView("jsonView");
+        model.put("services", serviceBeans);
+        model.put("status", HttpServletResponse.SC_OK);
+        JsonViewUtils.render(model, response);
     }
+
+    /**
+     * Updates the {@link RegisteredService#getEvaluationOrder()}.
+     *
+     * @param response the response
+     * @param id the service ids, whose order also determines the service evaluation order
+     */
+    @RequestMapping(value="updateRegisteredServiceEvaluationOrder.html", method={RequestMethod.POST})
+    public void updateRegisteredServiceEvaluationOrder(final HttpServletResponse response,
+                                                       @RequestParam("id") final long... id) {
+        if (id == null || id.length == 0) {
+            throw new IllegalArgumentException("No service id was received. Re-examine the request");
+        }
+        for (int i = 0; i < id.length; i++) {
+            final long svcId = id[i];
+            final RegisteredService svc = this.servicesManager.findServiceBy(svcId);
+            if (svc == null) {
+                throw new IllegalArgumentException("Service id " + svcId + " cannot be found.");
+            }
+            svc.setEvaluationOrder(i);
+            this.servicesManager.save(svc);
+        }
+        final Map<String, Object> model = new HashMap<>();
+        model.put("status", HttpServletResponse.SC_OK);
+        JsonViewUtils.render(model, response);
+    }
+
+
 }
