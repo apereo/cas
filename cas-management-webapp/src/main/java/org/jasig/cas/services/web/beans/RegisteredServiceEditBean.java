@@ -215,6 +215,7 @@ public final class RegisteredServiceEditBean implements Serializable {
 
             attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
             attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
+            attrPolicyBean.setRequireConsent(attrPolicy.isAttributeConsentRequired());
 
             final AttributeFilter filter = attrPolicy.getAttributeFilter();
             if (filter != null) {
@@ -586,33 +587,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                     }
                 }
 
-                final String uidType = this.userAttrProvider.getType();
-                if (StringUtils.equalsIgnoreCase(uidType,
-                        RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString())) {
-                    regSvc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-                } else if (StringUtils.equalsIgnoreCase(uidType,
-                        RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString())) {
-                    final String salt = this.userAttrProvider.getValue();
-                    if (StringUtils.isNotBlank(salt)) {
-
-                        final ShibbolethCompatiblePersistentIdGenerator generator =
-                                new ShibbolethCompatiblePersistentIdGenerator(salt);
-                        regSvc.setUsernameAttributeProvider(
-                                new AnonymousRegisteredServiceUsernameAttributeProvider(generator));
-                    } else {
-                        throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
-                    }
-                } else if (StringUtils.equalsIgnoreCase(uidType,
-                        RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString())) {
-                    final String attr = this.userAttrProvider.getValue();
-
-                    if (StringUtils.isNotBlank(attr)) {
-                        regSvc.setUsernameAttributeProvider(
-                                new PrincipalAttributeRegisteredServiceUsernameProvider(attr));
-                    } else {
-                        throw new IllegalArgumentException("Invalid attribute specified for username");
-                    }
-                }
+                convertUsernameAttributeToRegisteredService(regSvc);
 
                 if (this.publicKey != null && this.publicKey.isValid()) {
                     final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
@@ -624,44 +599,96 @@ public final class RegisteredServiceEditBean implements Serializable {
                         this.attrRelease.getAttrPolicy();
                 final String policyType = policyBean.getType();
 
-                AbstractAttributeReleasePolicy policy = null;
-                if (StringUtils.equalsIgnoreCase(policyType,
-                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
-                    policy = new ReturnAllAttributeReleasePolicy();
-                } else if (StringUtils.equalsIgnoreCase(policyType,
-                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString())) {
-                    policy = new ReturnAllowedAttributeReleasePolicy((List) policyBean.getAttributes());
-                } else if (StringUtils.equalsIgnoreCase(policyType,
-                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString())) {
-                    policy = new ReturnMappedAttributeReleasePolicy((Map) policyBean.getAttributes());
-                } else {
-                    policy = new ReturnAllowedAttributeReleasePolicy();
-                }
-
-                final String filter = this.attrRelease.getAttrFilter();
-                if (StringUtils.isNotBlank(filter)) {
-                    policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter(filter));
-                }
-
-                policy.setAuthorizedToReleaseCredentialPassword(this.attrRelease.isReleasePassword());
-                policy.setAuthorizedToReleaseProxyGrantingTicket(this.attrRelease.isReleaseTicket());
-
-                final String attrType = this.attrRelease.getAttrOption();
-                if (StringUtils.equalsIgnoreCase(attrType,
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
-                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
-                            TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
-                            this.attrRelease.getCachedExpiration()));
-                } else if (StringUtils.equalsIgnoreCase(attrType,
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString())) {
-                    policy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
-                }
-                regSvc.setAttributeReleasePolicy(policy);
+                convertAttributeReleasePolicyToRegisteredService(dao, regSvc, policyBean, policyType);
 
                 return regSvc;
             } catch (final Exception e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        /**
+         * Convert username attribute to registered service.
+         *
+         * @param regSvc the reg svc
+         */
+        private void convertUsernameAttributeToRegisteredService(final AbstractRegisteredService regSvc) {
+            final String uidType = this.userAttrProvider.getType();
+            if (StringUtils.equalsIgnoreCase(uidType,
+                    RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString())) {
+                regSvc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+            } else if (StringUtils.equalsIgnoreCase(uidType,
+                    RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString())) {
+                final String salt = this.userAttrProvider.getValue();
+                if (StringUtils.isNotBlank(salt)) {
+
+                    final ShibbolethCompatiblePersistentIdGenerator generator =
+                            new ShibbolethCompatiblePersistentIdGenerator(salt);
+                    regSvc.setUsernameAttributeProvider(
+                            new AnonymousRegisteredServiceUsernameAttributeProvider(generator));
+                } else {
+                    throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
+                }
+            } else if (StringUtils.equalsIgnoreCase(uidType,
+                    RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString())) {
+                final String attr = this.userAttrProvider.getValue();
+
+                if (StringUtils.isNotBlank(attr)) {
+                    regSvc.setUsernameAttributeProvider(
+                            new PrincipalAttributeRegisteredServiceUsernameProvider(attr));
+                } else {
+                    throw new IllegalArgumentException("Invalid attribute specified for username");
+                }
+            }
+        }
+
+        /**
+         * Convert attribute release policy to registered service.
+         *
+         * @param dao the dao
+         * @param regSvc the reg svc
+         * @param policyBean the policy bean
+         * @param policyType the policy type
+         */
+        private void convertAttributeReleasePolicyToRegisteredService(final IPersonAttributeDao dao,
+                final AbstractRegisteredService regSvc,
+                final RegisteredServiceAttributeReleasePolicyStrategyEditBean policyBean,
+                final String policyType) {
+
+            AbstractAttributeReleasePolicy policy = null;
+            if (StringUtils.equalsIgnoreCase(policyType,
+                    AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
+                policy = new ReturnAllAttributeReleasePolicy();
+            } else if (StringUtils.equalsIgnoreCase(policyType,
+                    AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString())) {
+                policy = new ReturnAllowedAttributeReleasePolicy((List) policyBean.getAttributes());
+            } else if (StringUtils.equalsIgnoreCase(policyType,
+                    AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString())) {
+                policy = new ReturnMappedAttributeReleasePolicy((Map) policyBean.getAttributes());
+            } else {
+                policy = new ReturnAllowedAttributeReleasePolicy();
+            }
+
+            final String filter = this.attrRelease.getAttrFilter();
+            if (StringUtils.isNotBlank(filter)) {
+                policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter(filter));
+            }
+
+            policy.setAuthorizedToReleaseCredentialPassword(this.attrRelease.isReleasePassword());
+            policy.setAuthorizedToReleaseProxyGrantingTicket(this.attrRelease.isReleaseTicket());
+            policy.setAttributeConsentRequired(this.attrRelease.isRequireConsent());
+
+            final String attrType = this.attrRelease.getAttrOption();
+            if (StringUtils.equalsIgnoreCase(attrType,
+                    RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
+                policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
+                        TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
+                        this.attrRelease.getCachedExpiration()));
+            } else if (StringUtils.equalsIgnoreCase(attrType,
+                    RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString())) {
+                policy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
+            }
+            regSvc.setAttributeReleasePolicy(policy);
         }
 
         /**

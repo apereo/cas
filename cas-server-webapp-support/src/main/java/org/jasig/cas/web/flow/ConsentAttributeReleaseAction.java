@@ -138,7 +138,7 @@ public class ConsentAttributeReleaseAction extends AbstractAction {
      * @return the boolean
      */
     protected boolean isConsentRequired(final RegisteredService registeredService, final Principal principal) {
-        return this.attributeReleaseConsentStrategy.isAttributeReleaseConsented(registeredService, principal);
+        return !this.attributeReleaseConsentStrategy.isAttributeReleaseConsented(registeredService, principal);
     }
 
     /**

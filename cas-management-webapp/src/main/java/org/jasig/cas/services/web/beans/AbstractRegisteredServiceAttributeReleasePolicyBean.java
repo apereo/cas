@@ -31,6 +31,15 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicyBean implem
 
     private boolean releasePassword;
     private boolean releaseTicket;
+    private boolean requireConsent;
+
+    public boolean isRequireConsent() {
+        return requireConsent;
+    }
+
+    public void setRequireConsent(final boolean requireConsent) {
+        this.requireConsent = requireConsent;
+    }
 
     public boolean isReleasePassword() {
         return releasePassword;

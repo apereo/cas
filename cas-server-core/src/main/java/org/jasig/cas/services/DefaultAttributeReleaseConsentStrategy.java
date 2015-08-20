@@ -55,9 +55,9 @@ public final class DefaultAttributeReleaseConsentStrategy implements AttributeRe
         final Set<RegisteredService> services = consentMapStore.get(principal);
         if (services != null && services.contains(service)) {
             logger.debug("Consent is already authorized for {}", service.getName());
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
