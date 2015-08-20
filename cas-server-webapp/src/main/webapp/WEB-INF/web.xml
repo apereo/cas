@@ -196,6 +196,21 @@
 
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/ssosessions/getSsoSessions</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/ssosessions/destroySsoSession</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/ssosessions/destroySsoSessions</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
         <url-pattern>/statistics/ssosessions</url-pattern>
     </servlet-mapping>
 
