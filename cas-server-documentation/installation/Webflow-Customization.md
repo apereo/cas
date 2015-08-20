@@ -29,8 +29,9 @@ The flow in CAS is given a unique id that is registered inside a `flowRegistry` 
 
 ...
 
-<webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
-<webflow:flow-location-pattern value="/login/*-webflow.xml"/>
+<webflow:flow-registry id="loginFlowRegistry" 
+    flow-builder-services="builder" base-path="/WEB-INF/webflow">
+    <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
 </webflow:flow-registry>
 
 {% endhighlight %}
@@ -114,7 +115,8 @@ The flow in CAS is given a unique id that is registered inside a `flowRegistry` 
 
 ...
 
-<webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+<webflow:flow-registry id="logoutFlowRegistry" 
+     flow-builder-services="builder" base-path="/WEB-INF/webflow">
     <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
 </webflow:flow-registry>
 
