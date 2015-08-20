@@ -120,9 +120,6 @@ public final class SingleSignOnSessionsReportController {
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Value("${sso.sessions.include.tgt:false}")
-    private boolean includeTicketGrantingTicketId;
-
     /**
      * Instantiates a new Single sign on sessions report resource.
      */
@@ -202,6 +199,19 @@ public final class SingleSignOnSessionsReportController {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
         sessionsMap.put(ROOT_REPORT_ACTIVE_SESSIONS_KEY, getActiveSsoSessions(option));
+        return sessionsMap;
+    }
+
+    /**
+     * Endpoint for destroying SSO Sessions.
+     *
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @return the sso sessions
+     */
+    @RequestMapping(value = "/destroySsoSession", method = RequestMethod.POST)
+    @ResponseBody
+    public  Map<String, Object> destroySsoSessions(@RequestParam final String ticketGrantingTicket) {
+        final Map<String, Object> sessionsMap = new HashMap<>(1);
         return sessionsMap;
     }
 
