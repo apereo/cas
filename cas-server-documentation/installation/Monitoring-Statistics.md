@@ -59,7 +59,7 @@ cas.securityContext.statistics.access=hasIpAddress('127.0.0.1')
 ![](http://i.imgur.com/8CXPgOC.png)
 
 ##Performance Statistics
-CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics. 
+CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics.
 
 ###Configuration
 The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
@@ -71,7 +71,7 @@ The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring
 
 {% endhighlight %}
 
-Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans. 
+Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
 
 {% highlight xml %}
 
@@ -213,23 +213,10 @@ You can also configure the remote destination output over SSL and specify the re
 {% endhighlight %}
 
 For additional logging functionality, please refer to the Log4j configuration url or view
-the [CAS Logging functionality](Logging.html). 
+the [CAS Logging functionality](Logging.html).
 
 ### SSO Sessions Report
 
 CAS also provides a `/statistics/ssosessions` endpoint that produces a report of all active non-expired SSO sessions. The output of this endpoint is a JSON representation of SSO sessions that is rendered into a modest visualization:
 
 ![](https://cloud.githubusercontent.com/assets/1205228/6801195/fcf77186-d1e2-11e4-8059-cfa1d7e80d83.PNG)
-
-By default, ticket-granting ticket ids are not shown. This behavior can be controlled via `cas.properties`:
-
-{% highlight properties %}
-
-##
-# Reports
-#
-# Setting to whether include the ticket granting ticket id in the report
-# sso.sessions.include.tgt=false
-
-{% endhighlight %}
-
