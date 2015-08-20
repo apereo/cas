@@ -18,64 +18,13 @@
     under the License.
 
 --%>
-  <%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
+<%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
 
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/flick/jquery-ui.css">
- 
-  <!-- Twitter Bootstrap UI framework -->
-  <link href="/cas/css/bootstrap.min.css" rel="stylesheet">  
-
-  <!-- Google Fonts -->
-  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
-  <link href='//fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>   
-
-  <link rel="stylesheet" type="text/css" href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
-    
-  <!-- Custom UI styles -->
-  <link href="/cas/css/customcas.css" rel="stylesheet"> 
-    
 <script type="text/javascript">
 
     function parseJsonPayload() {
 
-        var object = $.parseJSON('${activeSsoSessions}');
-        if (object != undefined) {
-            var activeSsoSessions = object.activeSsoSessions;
-            if (activeSsoSessions == undefined || activeSsoSessions.length == 0)	 {
-                showInfo("No SSO Sessions are available at this point.");
-            } else {
-                $("#jsonContent").empty();
-                
-                for (var i = activeSsoSessions.length - 1; i >= 0; i--) {
-                    var sso = activeSsoSessions[i];                   
-                    
-                    $("#jsonContent").append("<h3><div class='row text-center'>"
-                    + "<div class='col-xs-1'><span class='label label-primary'>Proxy</span></div>"
-                    + "<div class='col-xs-3'><span>" + sso.authenticated_principal + "</span></div>"
-                    + "<div class='col-xs-4'><span>" + sso.authentication_date + "</span></div>"
-                    + "<div class='col-xs-2'><span>" + sso.number_of_uses + "</span></div>"
-                    + "<div class='col-xs-2'><span class='glyphicon glyphicon-flash' aria-hidden='true'></span></div>"
-                    + "</div></h3>");
 
-                    $("#jsonContent").append("<div>"
-                    + "<table class='table table-bordered table-striped table-hover'>"
-                    + "<tr><td>Ticket Granting Ticket</td>"
-                    + "<td>" + (sso.ticket_granting_ticket == undefined ? new Array(30).join("*") : sso.ticket_granting_ticket) + "</td></tr>"
-                    + "<tr><td>Principal Attributes</td>"
-                    + "<td>Insert Datatable here...</td></tr>"
-                    + "<tr><td>Proxy Ticket</td>"
-                    + "<td>YES</td></tr>"
-                    + "<tr><td>Ticket Granting Ticket Service</td>"
-                    + "<td>SAMPLE</td></tr>"
-                    + "</table>"
-                    + "</div>");
-                };
-
-
-            }
-        } else {
-            showError("Did not receive the SSO Sessions JSON payload from the CAS server.");
-        }
     }
 
     function showError(msg) {
@@ -93,23 +42,34 @@
     }
 
     function jqueryReady() {
+        head.load("https://code.jquery.com/ui/1.11.4/themes/redmond/jquery-ui.css",
+                "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
+                "https://cdn.datatables.net/1.10.8/css/jquery.dataTables.css",
+                "/cas/css/ssosessions.css");
+
+        head.load("https://cdn.datatables.net/1.10.8/js/jquery.dataTables.min.js",
+                "https://cdn.datatables.net/1.10.8/js/dataTables.jqueryui.min.js",
+                function() {
+                    $("#cas-sessions").show();
+                    $('#table_id').DataTable();
+                });
+
         parseJsonPayload();
-        $("#jsonContent").accordion();
     }
-    
+
 </script>
 
-<div id="cas-sessions">
-    
-    
-        <!-- Main Header/Navigation
-        <nav class="navbar navbar-default navbar-static-top" id="top-navbar" role="navigation">
-            <div class="container">
-                <span class="navbar-brand" href="#"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-                    <span class="logo hidden-xs"><span class="heavy">SSO</span>Sessions Report</span></span>
-            </div>
-        </nav> -->
-    
+<div id="cas-sessions" style="display:none;">
+
+
+    <!-- Main Header/Navigation
+    <nav class="navbar navbar-default navbar-static-top" id="top-navbar" role="navigation">
+        <div class="container">
+            <span class="navbar-brand" href="#"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
+                <span class="logo hidden-xs"><span class="heavy">SSO</span>Sessions Report</span></span>
+        </div>
+    </nav> -->
+
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> SSO Sessions Report</h4>
@@ -117,41 +77,63 @@
         <div class="panel-body">
             <div>
 
-            <div class="btn-group btn-group-sm pull-right" data-toggle="buttons">
-              <label class="btn btn-primary active">
-                <input type="radio" name="options" id="option1" autocomplete="off" checked> All
-              </label>
-              <label class="btn btn-primary">
-                <input type="radio" name="options" id="option2" autocomplete="off"> Proxied
-              </label>
-              <label class="btn btn-primary">
-                <input type="radio" name="options" id="option3" autocomplete="off"> Non-Proxied
-              </label>
-            </div>
+                <div class="btn-group btn-group-sm pull-right" data-toggle="buttons">
+                    <label class="btn btn-primary active">
+                        <input type="radio" name="options" id="optionAll" autocomplete="off" checked> All
+                    </label>
+                    <label class="btn btn-primary">
+                        <input type="radio" name="options" id="optionProxied" autocomplete="off"> Proxied
+                    </label>
+                    <label class="btn btn-primary">
+                        <input type="radio" name="options" id="optionDirect" autocomplete="off"> Non-Proxied
+                    </label>
+                </div>
 
-            <button class="btn btn-sm btn-danger" type="button">Bulk Kill</button></div>
-            
+                <button class="btn btn-sm btn-danger" type="button">Destroy All Sessions</button></div>
+
             <div id="container-stable">
-                
-               <div id="msg" style="display:none"></div>
-                
-               <div id="table-monitor-hdr" class="row">
-                    <div class="col-xs-1">&nbsp;</div>
-                    <div class="col-xs-3">User</div>
-                    <div class="col-xs-4">Authentication Date</div>
-                    <div class="col-xs-2">Usage Count</div>
-                    <div class="col-xs-2">Kill</div>
-               </div>
 
-               <div id="jsonContent"></div>            
-                
-            </div>
+                <div id="msg" style="display:none"></div>
 
-            <div id="login">
-                    <input class="btn btn-success btn-sm" type="button" onclick="location.reload();" value="Refresh">
-            </div>
-        </div>
+                <table id="table_id" class="display">
+                    <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Principal</th>
+                        <th>Ticket Granting Ticket</th>
+                        <th>Authentication Date</th>
+                        <th>Usage Count</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td></td>
+                        <td>User</td>
+                        <td>TGT-123456</td>
+                        <td>Today</td>
+                        <td>5</td>
+                        <td><button class="btn btn-sm btn-danger" type="button">Destroy</button></div></span></td>
+            </tr>
+            <tr>
+                <td><span class='label label-primary'>Proxy</span></td>
+                <td>User</td>
+                <td>PGT-123456</td>
+                <td>Today</td>
+                <td>5</td>
+                <td><button class="btn btn-sm btn-danger" type="button">Destroy</button></div></span></td>
+
+        </tr>
+        </tbody>
+        </table>
+
     </div>
+
+    <div id="login">
+        <input class="btn-submit" type="button" onclick="location.reload();" value="Refresh">
+    </div>
+</div>
+</div>
 </div>
 
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/bottom.jsp" %>
