@@ -31,7 +31,7 @@
     <packaging>pom</packaging>
     <name>Apereo Central Authentication Service</name>
     <description>Apereo CAS SSO server libraries and Web application.</description>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.1.0.RC1-SNAPSHOT</version>
     <url>http://www.jasig.org/cas/</url>
     <inceptionYear>2004</inceptionYear>
 
