@@ -84,6 +84,7 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
         failFastInitialize="true"
         blockWaitTime="${ldap.pool.blockWaitTime}"
         idleTime="${ldap.pool.idleTime}"
+        baseDn="${ldap.baseDn}"
         maxPoolSize="${ldap.pool.maxSize}"
         minPoolSize="${ldap.pool.minSize}"
         validatePeriodically="${ldap.pool.validatePeriodically}"
@@ -92,7 +93,7 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
         useSSL="${ldap.use.ssl:false}"
         subtreeSearch="${ldap.subtree.search:true}"
         useStartTLS="${ldap.useStartTLS}"
-        />
+            />
 {% endhighlight %}
 
 #### LDAP Requiring Authenticated Search
@@ -110,6 +111,8 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
         useStartTLS="${ldap.useStartTLS}"
         blockWaitTime="${ldap.pool.blockWaitTime}"
         maxPoolSize="${ldap.pool.maxSize}"
+        allowMultipleDns="${ldap.allowMultipleDns:false}"
+        usePasswordPolicy="${ldap.usePpolicy:false}"
         minPoolSize="${ldap.pool.minSize}"
         validateOnCheckOut="${ldap.pool.validateOnCheckout}"
         validatePeriodically="${ldap.pool.validatePeriodically}"
@@ -128,7 +131,6 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 {% highlight xml %}
 <ldaptive:anonymous-search-authenticator id="authenticator"
        ldapUrl="${ldap.url}"
-       provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
        connectTimeout="${ldap.connectTimeout}"
        validateOnCheckOut="${ldap.pool.validateOnCheckout}"
        failFastInitialize="true"
@@ -141,6 +143,8 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
        prunePeriod="${ldap.pool.prunePeriod}"
        useSSL="${ldap.use.ssl:false}"
        useStartTLS="${ldap.useStartTLS}"
+       usePasswordPolicy="${ldap.usePpolicy:true}"
+       allowMultipleDns="${ldap.allowMultipleDns:false}"
        baseDn="${ldap.baseDn}"
        subtreeSearch="${ldap.subtree.search:true}"
        userFilter="${ldap.authn.searchFilter}"
@@ -166,6 +170,7 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
         failFastInitialize="true"
         blockWaitTime="${ldap.pool.blockWaitTime}"
         idleTime="${ldap.pool.idleTime}"
+        usePasswordPolicy="${ldap.usePpolicy:false}"
         maxPoolSize="${ldap.pool.maxSize}"
         minPoolSize="${ldap.pool.minSize}"
         validatePeriodically="${ldap.pool.validatePeriodically}"
@@ -255,6 +260,12 @@ ldap.authn.searchFilter=cn={user}
 
 # Ldap domain used to resolve dn
 ldap.domain=example.org
+
+# Should LDAP Password Policy be enabled?
+ldap.usePpolicy=false
+
+# Allow multiple DNs during authentication?
+ldap.allowMultipleDns=false
 {% endhighlight %}
 
 ## LDAP Password Policy Enforcement
@@ -315,7 +326,7 @@ Next, make sure `Authenticator` is set to enable/use password policy:
 {% highlight xml %}
 <ldaptive:bind-search-authenticator id="authenticator"
       ...
-      usePpolicy="${ldap.usePpolicy:true}"
+      usePasswordPolicy="${ldap.usePpolicy:true}"
       ...
 />
 {% endhighlight %}
