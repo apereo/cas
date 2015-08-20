@@ -29,6 +29,86 @@ Health: OK
     1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 {% endhighlight %}
 
+The list of configured monitors are all defined in `deployerConfigContext.xml` file:
+
+{% highlight xml %}
+
+<util:list id="monitorsList">
+  <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
+  <bean class="org.jasig.cas.monitor.SessionMonitor"
+        p:ticketRegistry-ref="ticketRegistry"
+        p:serviceTicketCountWarnThreshold="5000"
+        p:sessionCountWarnThreshold="100000" />
+</util:list>
+
+{% endhighlight %}
+
+The following optional monitors are also available:
+
+- MemcachedMonitor
+
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+
+- EhcacheMonitor
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+- DataSourceMonitor
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+- PooledConnectionFactoryMonitor
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+- ConnectionFactoryMonitor
+Monitors an LDAP connection factories provided by Ldaptive.
+
+{% highlight xml %}
+
+<bean class="org.jasig.cas.monitor.ConnectionFactoryMonitor"
+      c:factory-ref="provisioningConnectionFactory"
+      c:validator-ref="searchValidator" />
+
+<ldaptive:pooled-connection-factory
+        id="provisioningConnectionFactory"
+        ldapUrl="${ldap.url}"
+        blockWaitTime="${ldap.pool.blockWaitTime}"
+        failFastInitialize="true"
+        connectTimeout="${ldap.connectTimeout}"
+        useStartTLS="${ldap.useStartTLS}"
+        validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+        validatePeriodically="${ldap.pool.validatePeriodically}"
+        validatePeriod="${ldap.pool.validatePeriod}"
+        idleTime="${ldap.pool.idleTime}"
+        maxPoolSize="${ldap.pool.maxSize}"
+        minPoolSize="${ldap.pool.minSize}"
+        useSSL="${ldap.use.ssl:false}"
+        prunePeriod="${ldap.pool.prunePeriod}"
+        provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+/>
+
+<bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+{% endhighlight %}
 
 ## Internal Configuration Report
 
@@ -59,7 +139,7 @@ cas.securityContext.statistics.access=hasIpAddress('127.0.0.1')
 ![](http://i.imgur.com/8CXPgOC.png)
 
 ##Performance Statistics
-CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics. 
+CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics.
 
 ###Configuration
 The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
@@ -71,7 +151,7 @@ The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring
 
 {% endhighlight %}
 
-Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans. 
+Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
 
 {% highlight xml %}
 
@@ -213,7 +293,7 @@ You can also configure the remote destination output over SSL and specify the re
 {% endhighlight %}
 
 For additional logging functionality, please refer to the Log4j configuration url or view
-the [CAS Logging functionality](Logging.html). 
+the [CAS Logging functionality](Logging.html).
 
 ### SSO Sessions Report
 
@@ -232,4 +312,3 @@ By default, ticket-granting ticket ids are not shown. This behavior can be contr
 # sso.sessions.include.tgt=false
 
 {% endhighlight %}
-
