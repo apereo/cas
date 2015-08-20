@@ -37,10 +37,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -148,9 +150,7 @@ public final class SingleSignOnSessionsReportController {
             sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString(), principal.getId());
             sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.toString(), authentication.getAuthenticationDate());
             sso.put(SsoSessionAttributeKeys.NUMBER_OF_USES.toString(), tgt.getCountOfUses());
-            if (this.includeTicketGrantingTicketId) {
-                sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString(), tgt.getId());
-            }
+            sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString(), tgt.getId());
             sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.toString(), principal.getAttributes());
             sso.put(SsoSessionAttributeKeys.AUTHENTICATION_ATTRIBUTES.toString(), authentication.getAttributes());
 
@@ -165,9 +165,9 @@ public final class SingleSignOnSessionsReportController {
 
             sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.toString(), tgt.getServices());
 
-            activeSessions.add(Collections.unmodifiableMap(sso));
+            activeSessions.add(sso);
         }
-        return Collections.unmodifiableCollection(activeSessions);
+        return activeSessions;
     }
 
     /**
@@ -203,15 +203,59 @@ public final class SingleSignOnSessionsReportController {
     }
 
     /**
-     * Endpoint for destroying SSO Sessions.
+     * Endpoint for destroying a single SSO Session.
      *
      * @param ticketGrantingTicket the ticket granting ticket
-     * @return the sso sessions
+     * @return result map
      */
     @RequestMapping(value = "/destroySsoSession", method = RequestMethod.POST)
     @ResponseBody
-    public  Map<String, Object> destroySsoSessions(@RequestParam final String ticketGrantingTicket) {
+    public  Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket) {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
+        try {
+            this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            sessionsMap.put("status", HttpServletResponse.SC_OK);
+            sessionsMap.put("ticketGrantingTicket", ticketGrantingTicket);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            sessionsMap.put("status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            sessionsMap.put("ticketGrantingTicket", ticketGrantingTicket);
+            sessionsMap.put("message", e.getMessage());
+        }
+        return sessionsMap;
+    }
+
+    /**
+     * Endpoint for destroying SSO Sessions.
+     *
+     * @param type the type
+     * @return result map
+     */
+    @RequestMapping(value = "/destroySsoSessions", method = RequestMethod.POST)
+    @ResponseBody
+    public  Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
+        final Map<String, Object> sessionsMap = new HashMap<>();
+        final Map<String, String> failedTickets = new HashMap<>();
+
+        final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
+        final Collection<Map<String, Object>> collection = getActiveSsoSessions(option);
+        for (final Map<String, Object> sso : collection) {
+            final String ticketGrantingTicket =
+                    sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString();
+            try {
+                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                failedTickets.put(ticketGrantingTicket, e.getMessage());
+            }
+        }
+
+        if (failedTickets.isEmpty()) {
+            sessionsMap.put("status", HttpServletResponse.SC_OK);
+        } else {
+            sessionsMap.put("status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            sessionsMap.put("failedTicketGrantingTickets", failedTickets);
+        }
         return sessionsMap;
     }
 
@@ -223,7 +267,6 @@ public final class SingleSignOnSessionsReportController {
      */
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView showSsoSessions() throws Exception {
-        final ModelAndView modelAndView = new ModelAndView(VIEW_SSO_SESSIONS);
-        return modelAndView;
+        return new ModelAndView(VIEW_SSO_SESSIONS);
     }
 }
