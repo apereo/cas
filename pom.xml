@@ -471,7 +471,7 @@
                     <weaveDirectories>
                         <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
                     </weaveDirectories>
-                    <skip>false</skip>
+                    <skip>${project.build.aspectj.skip}</skip>
                     <showWeaveInfo />
                 </configuration>
                 <dependencies>
@@ -1488,6 +1488,7 @@
                 <notice.skip>true</notice.skip>
                 <versions.skip>true</versions.skip>
                 <findbugs.skip>true</findbugs.skip>
+                <project.build.aspectj.skip>true</project.build.aspectj.skip>
             </properties>
 
             <build>
@@ -1621,16 +1622,16 @@
         <maven-findbugs-security-plugin.version>1.4.1</maven-findbugs-security-plugin.version>
         <maven-buildnumber-plugin-version>1.3</maven-buildnumber-plugin-version>
         <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
-        <maven-jetty-plugin.version>9.3.0.v20150612</maven-jetty-plugin.version>
+        <maven-jetty-plugin.version>9.3.2.v20150730</maven-jetty-plugin.version>
 
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
         <project.build.targetVersion>1.7</project.build.targetVersion>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
-        <cs.dir>${project.basedir}</cs.dir>
-        <issues.projectKey>CAS</issues.projectKey>
+        <project.build.aspectj.skip>false</project.build.aspectj.skip>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.site.deployDirectory>/tmp/cas-deploy-site</project.site.deployDirectory>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
+        <cs.dir>${project.basedir}</cs.dir>
     </properties>
 </project>
