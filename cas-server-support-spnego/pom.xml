@@ -39,7 +39,6 @@
         <dependency>
             <groupId>org.ldaptive</groupId>
             <artifactId>ldaptive</artifactId>
-            <version>${ldaptive.version}</version>
         </dependency>
 
         <dependency>
