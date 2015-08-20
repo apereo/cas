@@ -18,8 +18,7 @@
   ~ under the License.
   -->
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
@@ -31,7 +30,7 @@
     <packaging>pom</packaging>
     <name>Apereo Central Authentication Service</name>
     <description>Apereo CAS SSO server libraries and Web application.</description>
-    <version>4.1.0-RC1-SNAPSHOT</version>
+    <version>4.1.0-RC1</version>
     <url>http://www.jasig.org/cas/</url>
     <inceptionYear>2004</inceptionYear>
 
@@ -192,7 +191,7 @@
         <connection>scm:git:git@github.com:Jasig/cas.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/cas.git</developerConnection>
         <url>https://github.com/Jasig/cas</url>
-        <tag>HEAD</tag>
+        <tag>v4.1.0-RC1</tag>
     </scm>
 
     <distributionManagement>
@@ -459,7 +458,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sources/>
+                    <sources />
                     <complianceLevel>${project.build.sourceVersion}</complianceLevel>
                     <forceAjcCompile>true</forceAjcCompile>
                     <aspectLibraries>
@@ -498,7 +497,7 @@
                 <version>${maven-antrun-plugin.version}</version>
                 <configuration>
                     <target>
-                        <ant antfile="tasks.xml" target="genhash"/>
+                        <ant antfile="tasks.xml" target="genhash" />
                     </target>
                 </configuration>
             </plugin>
