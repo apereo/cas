@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
 
-<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6626" branches-covered="0" branches-valid="1118" complexity="1.744186046511628" version="2.1.1" timestamp="1440075146396">
+<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6626" branches-covered="0" branches-valid="1118" complexity="1.744186046511628" version="2.1.1" timestamp="1440081609110">
 	<sources>
 		<source>--source</source>
 		<source>/home/travis/build/Jasig/cas/cas-server-core/target/generated-sources/annotations</source>
@@ -48812,25 +48812,13 @@
 				</class>
 				<class name="org.jasig.cas.ticket.AbstractTicket$AjcClosure5" filename="org/jasig/cas/ticket/AbstractTicket.java" line-rate="0.0" branch-rate="1.0" complexity="1.2307692307692308">
 					<methods>
-						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
-							<lines>
-							</lines>
-						</method>
 						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
-							<lines>
-							</lines>
-						</method>
-						<method name="ajc$preClinit" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
 							<lines>
 							</lines>
 						</method>
 						<method name="run" signature="([Ljava/lang/Object;)Ljava/lang/Object;" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
 								<line number="1" hits="0" branch="false"/>
-							</lines>
-						</method>
-						<method name="run_aroundBody0" signature="(Lorg/jasig/cas/ticket/AbstractTicket$AjcClosure5;[Ljava/lang/Object;Lorg/aspectj/lang/JoinPoint;)Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
-							<lines>
 							</lines>
 						</method>
 					</methods>
