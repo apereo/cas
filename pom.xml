@@ -30,7 +30,7 @@
     <packaging>pom</packaging>
     <name>Apereo Central Authentication Service</name>
     <description>Apereo CAS SSO server libraries and Web application.</description>
-    <version>4.1.0-RC1-SNAPSHOT</version>
+    <version>4.1.0-RC1</version>
     <url>http://www.jasig.org/cas/</url>
     <inceptionYear>2004</inceptionYear>
 
@@ -191,7 +191,7 @@
         <connection>scm:git:git@github.com:Jasig/cas.git</connection>
         <developerConnection>scm:git:git@github.com:Jasig/cas.git</developerConnection>
         <url>https://github.com/Jasig/cas</url>
-        <tag>HEAD</tag>
+        <tag>v4.1.0-RC1</tag>
     </scm>
 
     <distributionManagement>
