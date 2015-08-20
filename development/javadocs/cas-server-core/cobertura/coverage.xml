@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
 
-<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6619" branches-covered="0" branches-valid="1118" complexity="1.7448522829006268" version="2.1.1" timestamp="1439884436148">
+<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="6626" branches-covered="0" branches-valid="1118" complexity="1.744186046511628" version="2.1.1" timestamp="1440061351103">
 	<sources>
 		<source>--source</source>
 		<source>/home/travis/build/Jasig/cas/cas-server-core/target/generated-sources/annotations</source>
@@ -70608,15 +70608,24 @@
 				</class>
 			</classes>
 		</package>
-		<package name="org.jasig.cas.web.flow" line-rate="0.0" branch-rate="0.0" complexity="2.5454545454545454">
+		<package name="org.jasig.cas.web.flow" line-rate="0.0" branch-rate="0.0" complexity="2.4166666666666665">
 			<classes>
-				<class name="org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction" filename="org/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction.java" line-rate="0.0" branch-rate="0.0" complexity="2.5714285714285716">
+				<class name="org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction" filename="org/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction.java" line-rate="0.0" branch-rate="0.0" complexity="2.375">
 					<methods>
+						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
 						<method name="&lt;init&gt;" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
 								<line number="47" hits="0" branch="false"/>
 								<line number="50" hits="0" branch="false"/>
 								<line number="55" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="ajc$preClinit" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="1" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="doExecute" signature="(Lorg/springframework/webflow/execution/RequestContext;)Lorg/springframework/webflow/execution/Event;" line-rate="0.0" branch-rate="0.0" complexity="0">
@@ -70654,6 +70663,15 @@
 								<line number="111" hits="0" branch="false"/>
 							</lines>
 						</method>
+						<method name="getCentralAuthenticationService" signature="()Lorg/jasig/cas/CentralAuthenticationService;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="getCentralAuthenticationService_aroundBody0" signature="(Lorg/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction;Lorg/aspectj/lang/JoinPoint;)Lorg/jasig/cas/CentralAuthenticationService;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="116" hits="0" branch="false"/>
+							</lines>
+						</method>
 						<method name="isRenewPresent" signature="(Lorg/springframework/webflow/execution/RequestContext;)Z" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
 								<line number="68" hits="0" branch="false"/>
@@ -70661,28 +70679,29 @@
 						</method>
 						<method name="onError" signature="(Lorg/springframework/webflow/execution/RequestContext;Lorg/jasig/cas/authentication/Credential;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="139" hits="0" branch="false"/>
+								<line number="143" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="onSuccess" signature="(Lorg/springframework/webflow/execution/RequestContext;Lorg/jasig/cas/authentication/Credential;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="151" hits="0" branch="false"/>
+								<line number="155" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="setCentralAuthenticationService" signature="(Lorg/jasig/cas/CentralAuthenticationService;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="117" hits="0" branch="false"/>
-								<line number="118" hits="0" branch="false"/>
+								<line number="121" hits="0" branch="false"/>
+								<line number="122" hits="0" branch="false"/>
 							</lines>
 						</method>
 						<method name="setPrincipalFactory" signature="(Lorg/jasig/cas/authentication/principal/PrincipalFactory;)V" line-rate="0.0" branch-rate="1.0" complexity="0">
 							<lines>
-								<line number="126" hits="0" branch="false"/>
-								<line number="127" hits="0" branch="false"/>
+								<line number="130" hits="0" branch="false"/>
+								<line number="131" hits="0" branch="false"/>
 							</lines>
 						</method>
 					</methods>
 					<lines>
+						<line number="1" hits="0" branch="false"/>
 						<line number="47" hits="0" branch="false"/>
 						<line number="50" hits="0" branch="false"/>
 						<line number="55" hits="0" branch="false"/>
@@ -70718,12 +70737,117 @@
 						<line number="109" hits="0" branch="false"/>
 						<line number="110" hits="0" branch="false"/>
 						<line number="111" hits="0" branch="false"/>
-						<line number="117" hits="0" branch="false"/>
-						<line number="118" hits="0" branch="false"/>
-						<line number="126" hits="0" branch="false"/>
-						<line number="127" hits="0" branch="false"/>
-						<line number="139" hits="0" branch="false"/>
-						<line number="151" hits="0" branch="false"/>
+						<line number="116" hits="0" branch="false"/>
+						<line number="121" hits="0" branch="false"/>
+						<line number="122" hits="0" branch="false"/>
+						<line number="130" hits="0" branch="false"/>
+						<line number="131" hits="0" branch="false"/>
+						<line number="143" hits="0" branch="false"/>
+						<line number="155" hits="0" branch="false"/>
+					</lines>
+				</class>
+				<class name="org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction$AjcClosure1" filename="org/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction.java" line-rate="0.0" branch-rate="1.0" complexity="2.375">
+					<methods>
+						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="ajc$preClinit" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="1" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="run" signature="([Ljava/lang/Object;)Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="run_aroundBody0" signature="(Lorg/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction$AjcClosure1;[Ljava/lang/Object;Lorg/aspectj/lang/JoinPoint;)Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="1" hits="0" branch="false"/>
+					</lines>
+				</class>
+				<class name="org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction$AjcClosure1$AjcClosure1" filename="org/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction.java" line-rate="0.0" branch-rate="1.0" complexity="2.375">
+					<methods>
+						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="run" signature="([Ljava/lang/Object;)Ljava/lang/Object;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="1" hits="0" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="1" hits="0" branch="false"/>
+					</lines>
+				</class>
+				<class name="org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction.java" line-rate="0.0" branch-rate="1.0" complexity="2.375">
+					<methods>
+						<method name="&lt;clinit&gt;" signature="()V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="ajc$preClinit" signature="()V" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="1" hits="0" branch="false"/>
+							</lines>
+						</method>
+						<method name="run" signature="([Ljava/lang/Object;)Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="run_aroundBody0" signature="(Lorg/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction$AjcClosure1$AjcClosure1$AjcClosure1;[Ljava/lang/Object;Lorg/aspectj/lang/JoinPoint;)Ljava/lang/Object;" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="1" hits="0" branch="false"/>
+					</lines>
+				</class>
+				<class name="org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction.java" line-rate="0.0" branch-rate="1.0" complexity="2.375">
+					<methods>
+						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="run" signature="([Ljava/lang/Object;)Ljava/lang/Object;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="1" hits="0" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="1" hits="0" branch="false"/>
+					</lines>
+				</class>
+				<class name="org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1$AjcClosure1" filename="org/jasig/cas/web/flow/AbstractNonInteractiveCredentialsAction.java" line-rate="0.0" branch-rate="1.0" complexity="2.375">
+					<methods>
+						<method name="&lt;init&gt;" signature="([Ljava/lang/Object;)V" line-rate="1.0" branch-rate="1.0" complexity="0">
+							<lines>
+							</lines>
+						</method>
+						<method name="run" signature="([Ljava/lang/Object;)Ljava/lang/Object;" line-rate="0.0" branch-rate="1.0" complexity="0">
+							<lines>
+								<line number="1" hits="0" branch="false"/>
+							</lines>
+						</method>
+					</methods>
+					<lines>
+						<line number="1" hits="0" branch="false"/>
 					</lines>
 				</class>
 				<class name="org.jasig.cas.web.flow.AuthenticationExceptionHandler" filename="org/jasig/cas/web/flow/AuthenticationExceptionHandler.java" line-rate="0.0" branch-rate="0.0" complexity="2.5">

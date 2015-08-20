@@ -34,6 +34,7 @@ org.jasig.cas.services.web.beans
 org.jasig.cas.support.oauth
 org.jasig.cas.support.oauth.services
 org.jasig.cas.support.oauth.web
+org.jasig.cas.support.openid
 org.jasig.cas.support.openid.authentication.handler.support
 org.jasig.cas.support.openid.authentication.principal
 org.jasig.cas.support.openid.web
