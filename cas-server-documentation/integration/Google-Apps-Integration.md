@@ -56,7 +56,7 @@ As an optional step, you can configure an `alternateUsername` to be send to Goog
 
 {% highlight xml %}
 <bean name="googleAccountsArgumentExtractor"
-      class="org.jasig.cas.web.support.GoogleAccountsArgumentExtractor"
+      class="org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor"
         p:privateKey-ref="privateKeyFactoryBean"
         p:publicKey-ref="publicKeyFactoryBean"
         p:alternateUsername="emailAddress" />
