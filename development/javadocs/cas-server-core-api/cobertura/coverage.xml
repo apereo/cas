@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
 
-<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="165" branches-covered="0" branches-valid="2" complexity="1.0103092783505154" version="2.1.1" timestamp="1440082405489">
+<coverage line-rate="0.0" branch-rate="0.0" lines-covered="0" lines-valid="165" branches-covered="0" branches-valid="2" complexity="1.0103092783505154" version="2.1.1" timestamp="1440507167849">
 	<sources>
 		<source>/home/travis/build/Jasig/cas/cas-server-core-api/target/generated-sources/annotations</source>
 		<source>--source</source>
