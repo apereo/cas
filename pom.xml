@@ -1487,6 +1487,7 @@
                 <notice.skip>true</notice.skip>
                 <versions.skip>true</versions.skip>
                 <findbugs.skip>true</findbugs.skip>
+                <cobertura.skip>true</cobertura.skip>
             </properties>
 
             <build>
