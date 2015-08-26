@@ -82,6 +82,7 @@ This project includes:
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Servlet API under CDDL + GPLv2 with classpath exception
   Java Transaction API under Commons Development and Distribution License, Version 1.0
+  java-getopt under GNU General Public License, with the "library exception"
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   javax.inject under The Apache Software License, Version 2.0
   JAXB CORE under CDDL 1.1 or GPL2 w/ CPE
@@ -112,7 +113,6 @@ This project includes:
   net.sf.ehcache:ehcache-terracotta under Apache License, Version 2.0
   Objenesis under Apache 2
   OGNL - Object Graph Navigation Library under Apache License, Version 2.0
-  org.gnu:java-getopt under GNU General Public License, with the "library exception"
   org.jboss.cache:jbosscache-core under LGPL, v2.1
   org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   org.terracotta:terracotta-toolkit-1.0-runtime under Terracotta Public License, http://www.terracotta.org/legal/terracotta-public-license
