@@ -46,6 +46,7 @@ mvn -o notice:check
 mvn -o license:check
 mvn -o checkstyle:check
 mvn -o findbugs:findbugs
+mvn -o javadoc:javadoc
 {% endhighlight %}
 
 If notice and license checks fail, the `notice:generate` and `license:format` goals [may be used](https://wiki.jasig.org/display/LIC/maven-notice-plugin) to help remedy the situation.
@@ -53,15 +54,20 @@ All other checks and reported issues need to be resolved manually.
 
 ##Preparing the Release
 
+Ensure you use JDK 7 by running the following command:
+{% highlight bash %}
+java -version
+{% endhighlight %}
+
 Prepare for release by running prepare goal of Maven Release Plugin, which prompts for version numbers:
 {% highlight bash %}
-export MAVEN_OPTS="-Xmx2048m"
+export MAVEN_OPTS="-Xmx2048m -XX:MaxPermSize=128m"
 mvn release:prepare
 {% endhighlight %}
 
 Alternatively, you may specify the release version number directly on the command line:
 {% highlight bash %}
-export MAVEN_OPTS="-Xmx2048m"
+export MAVEN_OPTS="-Xmx2048m -XX:MaxPermSize=128m"
 mvn -DreleaseVersion=x.y.z -DdevelopmentVersion=a.b.c release:prepare
 {% endhighlight %}
 
