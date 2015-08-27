@@ -74,7 +74,7 @@ function generateToolbarIcons() {
 
   var activeVersion = getActiveDocumentationVersionInView(true);
   if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
-    var linkToDev = "/cas" + page.replace(activeVersion, CONST_CURRENT_VER);
+    var linkToDev = "/cas/" + page.replace(activeVersion, CONST_CURRENT_VER);
      
     $('#toolbarIcons').append("<a href='" + linkToDev +
       "'><img src='/cas/images/indev.png' alt='See the latest version of this page' title='See the latest version of this page'></a>");
