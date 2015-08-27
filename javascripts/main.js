@@ -58,10 +58,10 @@ function generateToolbarIcons() {
   for (var i = 1; i < segments.length; i++) {
     page += segments[i] + "/";    
   }
-  page = page.replace(".html", ".md");
-  page = page.replace(CONST_CURRENT_VER, "")
-  if (page == "") {
-  	page = "index.md";
+  editablePage = page.replace(".html", ".md");
+  editablePage = editablePage.replace(CONST_CURRENT_VER, "")
+  if (editablePage == "") {
+  	editablePage = "index.md";
   }
 
   var imagesPath = "/cas/images/";
@@ -74,7 +74,7 @@ function generateToolbarIcons() {
 
   var activeVersion = getActiveDocumentationVersionInView(true);
   if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
-    var linkToDev = page.replace(activeVersion, CONST_CURRENT_VER);
+    var linkToDev = "/cas" + page.replace(activeVersion, CONST_CURRENT_VER);
      
     $('#toolbarIcons').append("<a href='" + linkToDev +
       "'><img src='/cas/images/indev.png' alt='See the latest version of this page' title='See the latest version of this page'></a>");
@@ -99,19 +99,19 @@ function generateToolbarIcons() {
   	deleteLink = baseLink + "/delete/master/cas-server-documentation/";
   }
 
-  editLink += page;
+  editLink += editablePage;
   editLink = editLink.replace("//", "/");
 
   $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
     "'><img src='" + imagesPath + "edit.png' alt='Edit with Github' title='Edit with Github'></a>");
 
-  historyLink += page;
+  historyLink += editablePage;
   historyLink = historyLink.replace("//", "/");
   
   $('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
     "'><img src='" + imagesPath + "history.png' alt='View commit history on Github' title='View commit history on Github'>");
 
-  deleteLink += page;
+  deleteLink += editablePage;
   deleteLink = deleteLink.replace("//", "/");
   
   $('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
