@@ -26,7 +26,7 @@
 #
 
 language: java
-# sudo: false
+sudo: false
 branches:
   only:
   - master
