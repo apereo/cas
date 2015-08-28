@@ -34,7 +34,8 @@ The `public.key` and `private.p8` go into classpath. The `x509.pem` file should 
 Google Accounts integration within CAS is enabled by simply adding an additional `ArgumentExtractor`. `WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml` should be modified to add the following:
 
 {% highlight xml %}
-<bean id="googleAccountsArgumentExtractor" class="org.jasig.cas.web.support.GoogleAccountsArgumentExtractor"
+<bean id="googleAccountsArgumentExtractor" 
+    class="org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor"
       c:servicesManager-ref="servicesManager"
       c:privateKey-ref="privateKeyFactoryBean"
       c:publicKey-ref="publicKeyFactoryBean" />
