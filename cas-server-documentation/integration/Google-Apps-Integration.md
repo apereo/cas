@@ -35,8 +35,9 @@ Google Accounts integration within CAS is enabled by simply adding an additional
 
 {% highlight xml %}
 <bean id="googleAccountsArgumentExtractor" class="org.jasig.cas.web.support.GoogleAccountsArgumentExtractor"
-      p:privateKey-ref="privateKeyFactoryBean"
-      p:publicKey-ref="publicKeyFactoryBean" />
+      c:servicesManager-ref="servicesManager"
+      c:privateKey-ref="privateKeyFactoryBean"
+      c:publicKey-ref="publicKeyFactoryBean" />
 
 <bean id="privateKeyFactoryBean" class="org.jasig.cas.util.PrivateKeyFactoryBean"
       p:location="classpath:private.p8"
@@ -52,15 +53,9 @@ Replace the public.key and private.key with the names of your key files. If they
 Also, ensure that Google Apps is registered in your Service Registry, by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
 
 ##Configure Username Attribute 
-As an optional step, you can configure an `alternateUsername` to be send to Google in the SAML reply. This `alternameUsername` can be mapped in XML to any CAS principal attribute.
-
-{% highlight xml %}
-<bean name="googleAccountsArgumentExtractor"
-      class="org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor"
-        p:privateKey-ref="privateKeyFactoryBean"
-        p:publicKey-ref="publicKeyFactoryBean"
-        p:alternateUsername="emailAddress" />
-{% endhighlight %}
+As an optional step, you can configure an alternate username to be send to Google in the SAML reply. This alternate user name
+can be specified in the CAS service registry via [username attribute providers](../installation/Service-Management.html)
+for the registered Google Apps service.
 
 ##Configure Google
 You'll need to provide Google with the URL for your SAML-based SSO service, as well as the URL your users will be redirected to when they log out of a hosted Google application.
