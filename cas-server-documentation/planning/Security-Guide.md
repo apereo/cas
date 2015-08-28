@@ -144,6 +144,9 @@ to only include the list of known applications that are authorized to use CAS. L
 open for all applications may create an opportunity for security attacks.
 </p></div>
 
+### SSO Cookie Encryption
+A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. The cookie value is by default encrypted and signed via settings defined in `cas.properties`. While sample data is provided for initial deployments, these keys MUST be regenerated per your specific environment. Please [see this guide](../installation/Configuring-SSO-Session-Cookie.html) for more info.
+
 ### Ticket Expiration Policies
 Ticket expiration policies are a primary mechanism for implementing security policy. Ticket expiration policy allows
 control of some important aspects of CAS SSO session behavior:
@@ -166,9 +169,9 @@ single sign-out shortcomings:
 * Reduce application session timeouts
 * Reduce SSO session duration
 
-SLO can happen in two ways: from the CAS server (back-channel logout) and/or from the browser (front-channel logout).  
-For back-channel logout, the SLO process relies on the `SimpleHttpClient` class which has a threads pool: its size must be defined to properly treat all the logout requests.  
-Additional not-already-processed logout requests are temporarily stored in a queue before being sent: its size is defined to 20% of the global capacity of the threads pool and can be adjusted.  
+SLO can happen in two ways: from the CAS server (back-channel logout) and/or from the browser (front-channel logout).
+For back-channel logout, the SLO process relies on the `SimpleHttpClient` class which has a threads pool: its size must be defined to properly treat all the logout requests.
+Additional not-already-processed logout requests are temporarily stored in a queue before being sent: its size is defined to 20% of the global capacity of the threads pool and can be adjusted.
 Both sizes are critical settings of the CAS system and their values should never exceed the real capacity of the CAS server.
 
 
