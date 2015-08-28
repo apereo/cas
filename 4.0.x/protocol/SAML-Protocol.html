@@ -283,7 +283,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 <p>Google Accounts integration within CAS is enabled by simply adding an additional <code>ArgumentExtractor</code> to the list of <code>ArgumentExtractors</code>. You’ll need to modify the <code>WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml</code>, and add the following:</p>
 
 <div class="highlight"><pre><code class="xml"><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;googleAccountsArgumentExtractor&quot;</span> 
-      <span class="na">class=</span><span class="s">&quot;org.jasig.cas.web.support.GoogleAccountsArgumentExtractor&quot;</span>
+      <span class="na">class=</span><span class="s">&quot;org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor&quot;</span>
       <span class="na">p:privateKey-ref=</span><span class="s">&quot;privateKeyFactoryBean&quot;</span>
       <span class="na">p:publicKey-ref=</span><span class="s">&quot;publicKeyFactoryBean&quot;</span>
       <span class="na">p:alternateUsername</span><span class="s">&quot;mail&quot;</span>
