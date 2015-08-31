@@ -53,4 +53,4 @@ after_success:
 - ./travis/push-javadoc-to-gh-pages.sh
 - chmod -R 777 ./travis/deploy-to-sonatype.sh
 - ./travis/deploy-to-sonatype.sh
-- mvn clean install cobertura:cobertura coveralls:report -Dlog4j.configuration=file:../travis/log4j2.xml -Dcheckstyle.skip=true -Dfindbugs.skip=true -Dlicense.skip=true -Dnotice.skip=true -Dversions.skip=true -q
+# - mvn clean install cobertura:cobertura coveralls:report -Dlog4j.configuration=file:../travis/log4j2.xml -Dcheckstyle.skip=true -Dfindbugs.skip=true -Dlicense.skip=true -Dnotice.skip=true -Dversions.skip=true -q
