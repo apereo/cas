@@ -636,7 +636,7 @@ preventing more than 1 failed login every 3 seconds.</p>
 <p>Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.</p>
 
 <div class="highlight"><pre><code class="xml"><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;loginThrottle&quot;</span>
-      <span class="na">class=</span><span class="s">&quot;org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter&quot;</span>
+      <span class="na">class=</span><span class="s">&quot;org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter&quot;</span>
       <span class="na">p:failureRangeInSeconds=</span><span class="s">&quot;3&quot;</span>
       <span class="na">p:failureThreshold=</span><span class="s">&quot;1&quot;</span> <span class="nt">/&gt;</span>
 </code></pre></div>
