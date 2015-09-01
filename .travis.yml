@@ -47,9 +47,7 @@ before_install:
 install:
 - mvn -T 10 install -P nocheck -Dmaven.javadoc.skip=true -B -V -q
 script:
-- mvn clean cobertura:cobertura coveralls:report -Dlog4j.configurationFile=../travis/log4j2.xml -P nocheck -DskipTests=false -Dcobertura.skip=false -ff -q -Dmaven.compiler.aspectj.skip=true
-- mvn clean install -Dlog4j.configurationFile=../travis/log4j2.xml -Dmaven.javadoc.skip=true -B -V -DskipTests=true
-
+- mvn clean install -Dlog4j.configurationFile=../travis/log4j2.xml -Dmaven.javadoc.skip=true -B -V
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
