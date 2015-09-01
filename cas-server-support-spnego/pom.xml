@@ -80,6 +80,14 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+      <repository>
+          <id>jasig-repository</id>
+          <name>Jasig Maven2 Repository</name>
+          <url>http://developer.jasig.org/repo/content/groups/m2-legacy/</url>
+      </repository>
+    </repositories>
+
     <properties>
         <cs.dir>${project.parent.basedir}</cs.dir>
         <jcifs.version>1.3.17</jcifs.version>
