@@ -256,7 +256,7 @@
                     <configuration>
                         <format>xml</format>
                         <maxmem>256m</maxmem>
-                        <!-- aggregated reports for multi-module projects -->
+                        <quiet>true</quiet>
                         <aggregate>true</aggregate>
                     </configuration>
                 </plugin>
@@ -404,7 +404,7 @@
                 <configuration>
                     <doCheck>false</doCheck>
                     <doUpdate>false</doUpdate>
-                    <timestampFormat>EEE, d MMM yyyy HH:mm:ss Z</timestampFormat>
+                    <timestampFormat>yyyy-MM-dd HH:mm:ssa</timestampFormat>
                     <timestampPropertyName>timestamp</timestampPropertyName>
                 </configuration>
             </plugin>
@@ -699,14 +699,6 @@
             </exclusions>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>jasig-repository</id>
-            <name>Jasig Maven2 Repository</name>
-            <url>http://developer.jasig.org/repo/content/groups/m2-legacy/</url>
-        </repository>
-    </repositories>
 
     <pluginRepositories>
         <pluginRepository>
