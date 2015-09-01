@@ -43,7 +43,7 @@ Uses a memory map to prevent successive failed login attempts from the same IP a
 Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.
 {% highlight xml %}
 <bean id="loginThrottle"
-      class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter"
+      class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter"
       p:failureRangeInSeconds="3"
       p:failureThreshold="1"
       p:usernameParameter="username" />
