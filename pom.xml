@@ -244,29 +244,6 @@
                         </additionalClasspathElements>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>${coveralls-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>${cobertura-maven-plugin.version}</version>
-                    <configuration>
-                        <format>xml</format>
-                        <maxmem>256m</maxmem>
-                        <quiet>true</quiet>
-                        <aggregate>true</aggregate>
-
-                        <instrumentation>
-                            <excludes>
-                              <exclude>org/slf4j/impl/**/*Tests.class</exclude>
-                              <exclude>org/jasig/cas/**/*Tests.class</exclude>
-                            </excludes>
-                          </instrumentation>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -1600,8 +1577,6 @@
         <hazelcast.version>3.5</hazelcast.version>
 
         <!-- Plugin Versions -->
-        <coveralls-maven-plugin.version>3.1.0</coveralls-maven-plugin.version>
-        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
         <maven-versions-plugin.version>2.2</maven-versions-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
