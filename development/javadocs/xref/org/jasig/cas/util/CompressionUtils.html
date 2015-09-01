@@ -68,9 +68,9 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <em class="jxr_javadoccomment">     * @return the array as a string with &lt;code&gt;UTF-8&lt;/code&gt; encoding</em>
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String inflate(<strong class="jxr_keyword">final</strong> byte[] bytes) {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> ByteArrayInputStream inb = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(bytes);
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>               <strong class="jxr_keyword">final</strong> ByteArrayOutputStream out = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>               <strong class="jxr_keyword">final</strong> InflaterOutputStream ios = <strong class="jxr_keyword">new</strong> InflaterOutputStream(out);) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">try</strong> (ByteArrayInputStream inb = <strong class="jxr_keyword">new</strong> ByteArrayInputStream(bytes);
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>               ByteArrayOutputStream out = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>               InflaterOutputStream ios = <strong class="jxr_keyword">new</strong> InflaterOutputStream(out);) {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>              IOUtils.copy(inb, ios);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>              <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> String(out.toByteArray(), UTF8_ENCODING);
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
