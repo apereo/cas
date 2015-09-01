@@ -258,6 +258,13 @@
                         <maxmem>256m</maxmem>
                         <quiet>true</quiet>
                         <aggregate>true</aggregate>
+
+                        <instrumentation>
+                            <excludes>
+                              <exclude>org/slf4j/impl/**/*Tests.class</exclude>
+                              <exclude>org/jasig/cas/**/*Tests.class</exclude>
+                            </excludes>
+                          </instrumentation>
                     </configuration>
                 </plugin>
             </plugins>
@@ -470,7 +477,7 @@
                     <weaveDirectories>
                         <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
                     </weaveDirectories>
-                    <skip>false</skip>
+                    <skip>${maven.compiler.aspectj.skip}</skip>
                     <showWeaveInfo />
                 </configuration>
                 <dependencies>
@@ -698,6 +705,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
     </dependencies>
 
     <pluginRepositories>
@@ -1543,7 +1551,6 @@
         <spring.webflow.client.repo.version>1.0.0</spring.webflow.client.repo.version>
         <ldaptive.version>1.0.6</ldaptive.version>
         <spring.security.version>4.0.1.RELEASE</spring.security.version>
-        <clover.version>2.6.3</clover.version>
         <aspectj.version>1.8.6</aspectj.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
         <commons.jexl.version>1.1</commons.jexl.version>
@@ -1618,6 +1625,7 @@
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
         <project.build.targetVersion>1.7</project.build.targetVersion>
+        <maven.compiler.aspectj.skip>false</maven.compiler.aspectj.skip>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
         <cs.dir>${project.basedir}</cs.dir>
         <issues.projectKey>CAS</issues.projectKey>
