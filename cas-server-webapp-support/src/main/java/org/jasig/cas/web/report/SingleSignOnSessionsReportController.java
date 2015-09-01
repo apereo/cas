@@ -28,9 +28,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,9 +38,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -156,10 +152,10 @@ public final class SingleSignOnSessionsReportController {
 
             if (option != SsoSessionReportOptions.DIRECT) {
                 if (tgt.getProxiedBy() != null) {
-                    sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), true);
+                    sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), Boolean.TRUE);
                     sso.put(SsoSessionAttributeKeys.PROXIED_BY.toString(), tgt.getProxiedBy().getId());
                 } else {
-                    sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), false);
+                    sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), Boolean.FALSE);
                 }
             }
 
@@ -188,7 +184,7 @@ public final class SingleSignOnSessionsReportController {
     }
 
     /**
-     * Endpoint for getting SSO Sessions in JSON format
+     * Endpoint for getting SSO Sessions in JSON format.
      *
      * @param type the type
      * @return the sso sessions
