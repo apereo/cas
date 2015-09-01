@@ -166,13 +166,7 @@
             <artifactId>quartz</artifactId>
             <scope>compile</scope>
         </dependency>
-        
-        <dependency>
-            <groupId>javax.xml</groupId>
-            <artifactId>xmldsig</artifactId>
-            <version>${xmldsig.version}</version>
-            <scope>compile</scope>
-        </dependency>
+
 
         <dependency>
             <groupId>jdom</groupId>
