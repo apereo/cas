@@ -74,27 +74,35 @@
   </bean>
 
   <!--
+
   <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
-          p:order="1"
+          p:order="2"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
 
-
-    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
-          p:order="1"
+  <bean id="samlXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="3"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
+
+  <bean id="openidXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="4"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/openid-protocol-views.xml}" />
+
+  <bean id="oauthXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="5"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/oauth-protocol-views.xml}" />
   -->
 
   <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
         p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
-        p:order="2"/>
+        p:order="2000"/>
 
   <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
         p:viewClass="org.springframework.web.servlet.view.JstlView"
         p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
         p:suffix=".jsp"
-        p:order="3"/>
+        p:order="3000"/>
 
   <!-- Locale Resolver -->
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
