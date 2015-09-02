@@ -84,34 +84,4 @@
     <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
           c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
 
-    <!-- OAuth View -->
-    <bean id="oauthConfirmView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/oauth/confirm.jsp" />
-
-    <!-- OpenId View -->
-
-    <!-- OpenId Service Views -->
-
-    <!-- Failure Validation Views -->
-    <bean id="casOpenIdServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdServiceFailureView.jsp" />
-
-    <!-- Successful Views -->
-    <bean id="casOpenIdServiceSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdServiceSuccessView.jsp" />
-
-    <!-- OpenId Association Views -->
-
-    <!-- Failure Validation Views -->
-    <bean id="casOpenIdAssociationFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdAssociationFailureView.jsp" />
-
-    <!-- Successful Views -->
-    <bean id="casOpenIdAssociationSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdAssociationSuccessView.jsp" />
-
-    <!-- OpenId Provider Views -->
-    <bean id="openIdProviderView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/openid/user.jsp" />
-
 </beans>

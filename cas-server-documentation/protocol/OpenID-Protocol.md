@@ -42,7 +42,7 @@ In the `cas-servlet.xml` file, the following mapping and bean must be also added
       <prop key="/logout">logoutController</prop>
       ...
       <prop key="/openid/*">openIdProviderController</prop>
-      ... 
+      ...
 
 <bean
     id="openIdProviderController"
@@ -50,6 +50,14 @@ In the `cas-servlet.xml` file, the following mapping and bean must be also added
     p:loginUrl="${server.prefix}/login"/>
 {% endhighlight %}
 
+You also need to make sure the appropriate view resolution machinery is enabled
+in the same file:
+
+{% highlight xml %}
+<bean id="oauthXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="4"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/openid-protocol-views.xml}" />
+{% endhighlight %}
 
 ###Add the OpenID entry in the unique id generator map
 
@@ -78,7 +86,7 @@ CAS uses a spring webflow to describe the authentication process. We need to cha
         &amp;&amp; externalContext.requestParameterMap['openid.mode'] ne 'associate'"
        then="openIdSingleSignOnAction" else="ticketGrantingTicketCheck" />
 </decision-state>
-       
+
 <!-- The OpenID authentication action. If authentication is successful, send the ticket granting ticker. Otherwise, redirect to the login form. -->
 <action-state id="openIdSingleSignOnAction">
     <evaluate expression="openIdSingleSignOnAction" />
@@ -91,7 +99,7 @@ CAS uses a spring webflow to describe the authentication process. We need to cha
 The `openIdSingleSignOnAction` is itself defined in the `cas-servlet.xml` file:
 
 {% highlight xml %}
-<bean id="openIdSingleSignOnAction" 
+<bean id="openIdSingleSignOnAction"
     class="org.jasig.cas.support.openid.web.flow.OpenIdSingleSignOnAction"
     p:centralAuthenticationService-ref="centralAuthenticationService"/>
 {% endhighlight %}
@@ -99,7 +107,7 @@ The `openIdSingleSignOnAction` is itself defined in the `cas-servlet.xml` file:
 
 ###Enable OpenID in the AuthenticationManager
 
-The authentication manager is the place where authentication takes place. We must provide it two elements needed for a successful OpenId authentication. The first thing to do is to detect the user name from the OpenID identifier. When your CAS server will work as an OP, users will authenticate with an OpenID identifier, looking like this: `http://localhost:8080/cas/openid/myusername`. We must provide the CAS server with a way to extract the user principal from the credentials provided. So add an `OpenIdCredentialsToPrincipalResolver` to the authentication manager. The next thing to give CAS is a specialized authentication handler. 
+The authentication manager is the place where authentication takes place. We must provide it two elements needed for a successful OpenId authentication. The first thing to do is to detect the user name from the OpenID identifier. When your CAS server will work as an OP, users will authenticate with an OpenID identifier, looking like this: `http://localhost:8080/cas/openid/myusername`. We must provide the CAS server with a way to extract the user principal from the credentials provided. So add an `OpenIdCredentialsToPrincipalResolver` to the authentication manager. The next thing to give CAS is a specialized authentication handler.
 
 Open the `deployerConfigContext.xml` file, and locate the `authenticationManager` bean definition. It has two properties containing beans. In the credentials to principal property, add this bean definition:
 
@@ -124,7 +132,7 @@ We now have to make CAS handle the OpenID request that is presented. First, we'l
 {% highlight xml %}
 <bean id="handlerMappingOpendId"
       class="org.jasig.cas.support.openid.web.support.OpenIdPostUrlHandlerMapping">
-    <!-- Notice we set the order value to 2, which is the order of 
+    <!-- Notice we set the order value to 2, which is the order of
     the flow handler mapping. We'll fix that just next.
     The OpenIDPostUrlHandlerMapping MUST be called before the login
     webflow action is called, otherwise we will never be able to validate the authentication success. -->
@@ -164,7 +172,7 @@ We are done with the delegates. Now we must create the Delegating controller its
 {% highlight xml %}
 <bean id="delegatingController" class="org.jasig.cas.web.DelegatingController"
   p:delegates-ref="delegateControllers"/>
- 
+
 <util:list id="delegateControllers">
   <ref bean="smartOpenIdAssociationController"/>
   <ref bean="openIdValidateController"/>
@@ -182,7 +190,7 @@ We must tell cas how to extract the OpenID information from the authentication r
 <bean id="openIdArgumentExtractor" class="org.jasig.cas.support.openid.web.support.OpenIdArgumentExtractor">
   <property name="openIdPrefixUrl" value="${server.prefix}/openid" />
 </bean>
- 
+
 <util:list id="argumentExtractors">
    <ref bean="casArgumentExtractor" />
    <!-- The OpenId arguments extractor -->
@@ -197,7 +205,7 @@ We must tell cas how to extract the OpenID information from the authentication r
 Next we must provide a `ServerManager`, which is a class from the [`openid4java` library](https://code.google.com/p/openid4java/), which allows us to handle the Diffie-Hellman algorithm used by the association process. In the `spring-configuration/applicationContext.xml` file, add this bean definition:
 
 {% highlight xml %}
-<bean id="serverManager" 
+<bean id="serverManager"
     class="org.openid4java.server.ServerManager"
    p:oPEndpointUrl="${server.prefix}/login"
    p:enforceRpId="false" />
@@ -206,7 +214,7 @@ Next we must provide a `ServerManager`, which is a class from the [`openid4java`
 And finally, we need an applicationContext provider in the `spring-configuration/applicationContext.xml` file again:
 
 {% highlight xml %}
-<bean id="applicationContextProvider" 
+<bean id="applicationContextProvider"
     class="org.jasig.cas.util.ApplicationContextProvider" />
 {% endhighlight %}
 
@@ -214,7 +222,7 @@ And finally, we need an applicationContext provider in the `spring-configuration
 ##OpenID v2.0 support
 
 By default, the CAS server is defined as an OpenID provider v1.0. This definition is held in the `user.jsp` file (in the `WEB-INF/view/jsp/protocol/openid` directory):
- 
+
 {% highlight xml %}
 <html>
 <head>
@@ -256,4 +264,3 @@ This XML content defines the CAS server available on `http://mycasserver/login` 
 # Delegate To an OpenID Provider
 
 Using the OpenID protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to an OpenID provider.
-

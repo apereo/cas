@@ -46,16 +46,16 @@ You have to create the controller itself in the *cas-servlet.xml* file:
   p:timeout="7200" />
 {% endhighlight %}
 
-The *loginUrl* is the login url of the CAS server. The timeout is the lifetime of a CAS ticket granting ticket (in seconds, not in milliseconds!) with its mapping in the `handlerMappingC` bean (*cas-servlet.xml* file):
+The `loginUrl` is the login url of the CAS server. The timeout is the lifetime of a CAS ticket granting ticket in seconds with its mapping in the `handlerMappingC` bean inside the `cas-servlet.xml` file:
 
 {% highlight xml %}
 <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
   <property name="mappings">
     <props>
       <prop key="/serviceValidate">serviceValidateController</prop>
- 
+
    ...
- 
+
       <prop key="/statistics">statisticsController</prop>
       <prop key="/oauth2.0/*">oauth20WrapperController</prop>
     </props>
@@ -64,6 +64,14 @@ The *loginUrl* is the login url of the CAS server. The timeout is the lifetime o
 </bean>
 {% endhighlight %}
 
+You also need to make sure the appropriate view resolution machinery is enabled
+in the same file:
+
+{% highlight xml %}
+<bean id="oauthXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="5"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/oauth-protocol-views.xml}" />
+{% endhighlight %}
 
 ##Add the needed CAS services
 
@@ -80,8 +88,8 @@ One service is needed to make the OAuth wrapper works in CAS. It defines the cal
       <!-- By default, service ids only support regex patterns if/when needed -->
       <bean class="org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService"
             p:id="0"
-            p:name="HTTP" 
-            p:description="oauth wrapper callback url" 
+            p:name="HTTP"
+            p:description="oauth wrapper callback url"
             p:serviceId="${server.prefix}/oauth2.0/callbackAuthorize" />
 ...
 {% endhighlight %}
@@ -95,15 +103,14 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
   <property name="registeredServices">
     <list>
-      <!-- Supports regex patterns by default for service ids --> 
+      <!-- Supports regex patterns by default for service ids -->
       <bean class="org.jasig.cas.support.oauth.services.OAuthRegisteredService"
             p:id="1"
-            p:name="serviceName" 
+            p:name="serviceName"
             p:description="Service Description"
             p:serviceId="oauth client service url"
-            p:bypassApprovalPrompt="false" 
-            p:clientId="client id goes here" 
-            p:clientSecret="client secret goes here" /> 
+            p:bypassApprovalPrompt="false"
+            p:clientId="client id goes here"
+            p:clientSecret="client secret goes here" />
 ...
 {% endhighlight %}
-
