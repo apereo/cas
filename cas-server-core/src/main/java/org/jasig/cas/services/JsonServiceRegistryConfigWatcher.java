@@ -60,7 +60,7 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
      *
      * @param serviceRegistryDao the registry to callback
      */
-    public JsonServiceRegistryConfigWatcher(final JsonServiceRegistryDao serviceRegistryDao) {
+    JsonServiceRegistryConfigWatcher(final JsonServiceRegistryDao serviceRegistryDao) {
         try {
             this.serviceRegistryDao = serviceRegistryDao;
             this.watcher = FileSystems.getDefault().newWatchService();
@@ -142,10 +142,6 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
      * @param file the file
      */
     private void handleModifyEvent(final File file) {
-    /*
-        load the entry and save it back to the map
-        without any warnings on duplicate ids.
-     */
         final RegisteredService newService = this.serviceRegistryDao.loadRegisteredServiceFromFile(file);
         if (newService == null) {
             LOGGER.warn("New service definition could not be loaded from [{}]", file.getAbsolutePath());
@@ -156,7 +152,7 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
                 this.serviceRegistryDao.updateRegisteredService(newService);
                 this.serviceRegistryDao.refreshServicesManager();
             } else {
-                LOGGER.debug("Service [{}] loaded from [{}] is idential to the existing entry. "
+                LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. "
                             + "Services manager will not reload", newService.getId(),
                         file.getName());
             }
