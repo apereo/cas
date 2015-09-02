@@ -1,4 +1,4 @@
-# Central Authentication Service (CAS) [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
+# Central Authentication Service (CAS) [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE) [![Heroku](https://heroku-badge.herokuapp.com/?app=jasigcas)] [![Heroku](https://heroku-badge.herokuapp.com/?app=jasigcasmgmt)]
 
 <http://www.apereo.org/cas>
 
