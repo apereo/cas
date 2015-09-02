@@ -1,4 +1,4 @@
-# Central Authentication Service (CAS)
+# Central Authentication Service (CAS) [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
 
 <http://www.apereo.org/cas>
 
@@ -35,7 +35,7 @@ git clone git@github.com:Jasig/cas.git
 **Note:** If building CAS from the source, running the test cases currently requires an active Internet connection.
 Please [see the maven docs][skip] on how to disable the tests.
 
-## Documentation [![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/Jasig/cas/blob/master/LICENSE)
+## Documentation 
 - [Official Documentation][wiki]
 - [Release Notes][releasenotes]
 - [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/Jasig/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
