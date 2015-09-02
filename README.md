@@ -24,9 +24,11 @@ This approach does not require the adopter to *explicitly* download any version 
 rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local 
 customizations to further ease future upgrades and maintenance.
 
-## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Jasig/cas/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) 
+
 - Binary releases may be downloaded from [here][downloadcas].
-- CAS artifacts are published through the [Maven Central Repository][casmavencentral].
+- CAS artifacts are published to the [Maven Central Repository][casmavencentral].
+- Remember that the [Maven War Overlay method][overlay] is the recommended approach for deployments.
 - A snapshot of the codebase's `master` branch may be downloaded from [here][downloadcasgithub].
 - Snapshot artifacts are also published through the [Sonatype snapashots repository][cassonatype] under the group id **`org.jasig.cas`**.
 - The codebase may also be *cloned* using a Git client via the following command:
