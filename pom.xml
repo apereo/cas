@@ -1531,33 +1531,33 @@
         <aspectj.version>1.8.6</aspectj.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
         <commons.jexl.version>1.1</commons.jexl.version>
-        <hibernate.validator.version>5.1.3.Final</hibernate.validator.version>
-        <hibernate.core.version>4.3.10.Final</hibernate.core.version>
+        <hibernate.validator.version>5.2.1.Final</hibernate.validator.version>
+        <hibernate.core.version>5.0.0.Final</hibernate.core.version>
         <slf4j.version>1.7.12</slf4j.version>
         <person.directory.version>1.7.0</person.directory.version>
         <servlet.api.version>3.0.1</servlet.api.version>
         <jpa.version>2.0-cr-1</jpa.version>
         <metrics.version>3.1.2</metrics.version>
         <commons.codec.version>1.10</commons.codec.version>
-        <metrics.spring.version>3.1.0</metrics.spring.version>
+        <metrics.spring.version>3.1.2</metrics.spring.version>
         <log4j.version>2.3</log4j.version>
         <junit.version>4.12</junit.version>
-        <checkstyle.version>6.7</checkstyle.version>
+        <checkstyle.version>6.9</checkstyle.version>
         <commons.lang.version>3.4</commons.lang.version>
         <commons.collections.version>4.0</commons.collections.version>
         <inspektr.version>1.2.GA</inspektr.version>
         <commons.io.version>2.4</commons.io.version>
         <mockito.version>1.10.19</mockito.version>
         <ehcache.version>2.10.0</ehcache.version>
-        <hsqldb.version>2.3.2</hsqldb.version>
-        <apache.httpclient.version>4.4.1</apache.httpclient.version>
-        <joda-time.version>2.8.1</joda-time.version>
+        <hsqldb.version>2.3.3</hsqldb.version>
+        <apache.httpclient.version>4.5</apache.httpclient.version>
+        <joda-time.version>2.8.2</joda-time.version>
         <cas.client.version>3.3.3</cas.client.version>
         <quartz.version>2.2.1</quartz.version>
         <reflections.version>0.9.10</reflections.version>
         <apache.shiro.version>1.2.3</apache.shiro.version>
-        <jackson.databind.version>2.5.3</jackson.databind.version>
-        <uboundid.ldapsdk.version>2.3.8</uboundid.ldapsdk.version>
+        <jackson.databind.version>2.6.1</jackson.databind.version>
+        <uboundid.ldapsdk.version>3.0.0</uboundid.ldapsdk.version>
         <opensaml.version>3.1.1</opensaml.version>
         <xml.apis.version>1.4.01</xml.apis.version>
         <jstl.version>1.2</jstl.version>
@@ -1569,12 +1569,12 @@
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <javax.el-impl.version>2.2.6</javax.el-impl.version>
         <jersey.version>1.19</jersey.version>
-        <jose.version>0.4.1</jose.version>
+        <jose.version>0.4.4</jose.version>
         <woodstox.version>4.4.1</woodstox.version>
         <pac4j.version>1.7.1</pac4j.version>
         <bouncycastle.version>1.51</bouncycastle.version>
-        <dbcp.version>2.1</dbcp.version>
-        <hazelcast.version>3.5</hazelcast.version>
+        <dbcp.version>2.1.1</dbcp.version>
+        <hazelcast.version>3.5.2</hazelcast.version>
 
         <!-- Plugin Versions -->
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
