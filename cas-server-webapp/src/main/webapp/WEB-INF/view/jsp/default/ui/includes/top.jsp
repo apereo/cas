@@ -33,7 +33,11 @@
 
   <title>CAS &#8211; Central Authentication Service</title>
 
-  <spring:theme code="standard.custom.css.file" var="customCssFile" />
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+
+
+    <spring:theme code="standard.custom.css.file" var="customCssFile" />
   <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
   <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
 
