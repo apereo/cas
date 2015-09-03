@@ -32,6 +32,7 @@ import java.util.zip.Inflater;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.DefaultLogoutRequest;
@@ -138,8 +139,9 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutOneLogoutRequestNotAttempted() throws Exception {
+        final SingleLogoutService service = new WebApplicationServiceFactory().createService(TEST_URL, SingleLogoutService.class);
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(TICKET_ID,
-                new SimpleWebApplicationServiceImpl(TEST_URL),
+                service,
                 new URL(TEST_URL));
         final Event event = getLogoutEvent(Arrays.asList(logoutRequest));
 

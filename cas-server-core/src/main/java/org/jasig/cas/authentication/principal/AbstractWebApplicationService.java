@@ -86,33 +86,6 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     }
 
     /**
-     * Cleanup the url. Removes jsession ids and query strings.
-     *
-     * @param url the url
-     * @return sanitized url.
-     */
-    protected static String cleanupUrl(final String url) {
-        if (url == null) {
-            return null;
-        }
-
-        final int jsessionPosition = url.indexOf(";jsession");
-
-        if (jsessionPosition == -1) {
-            return url;
-        }
-
-        final int questionMarkPosition = url.indexOf('?');
-
-        if (questionMarkPosition < jsessionPosition) {
-            return url.substring(0, url.indexOf(";jsession"));
-        }
-
-        return url.substring(0, jsessionPosition)
-            + url.substring(questionMarkPosition);
-    }
-
-    /**
      * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter).
      * Used to reconstruct the redirect url.
      *

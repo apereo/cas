@@ -20,6 +20,7 @@ package org.jasig.cas.integration.restlet;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.restlet.Context;
@@ -84,7 +85,7 @@ public final class TicketGrantingTicketResource extends ServerResource {
         try {
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                     this.ticketGrantingTicketId,
-                    new SimpleWebApplicationServiceImpl(serviceUrl));
+                    new WebApplicationServiceFactory().createService(serviceUrl));
             getResponse().setEntity(serviceTicketId.getId(), MediaType.TEXT_PLAIN);
         } catch (final InvalidTicketException e) {
             getResponse().setStatus(Status.CLIENT_ERROR_NOT_FOUND, "TicketGrantingTicket could not be found.");
