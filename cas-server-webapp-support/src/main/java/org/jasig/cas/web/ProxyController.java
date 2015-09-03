@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.springframework.util.StringUtils;
@@ -105,7 +106,7 @@ public final class ProxyController extends AbstractController {
      * @return the target service
      */
     private Service getTargetService(final HttpServletRequest request) {
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        return new WebApplicationServiceFactory().createService(request);
     }
 
     /**

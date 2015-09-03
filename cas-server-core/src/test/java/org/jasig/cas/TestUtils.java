@@ -33,6 +33,7 @@ import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.LogoutType;
@@ -190,7 +191,7 @@ public final class TestUtils {
     public static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        return new WebApplicationServiceFactory().createService(request);
     }
 
     public static Authentication getAuthentication() {

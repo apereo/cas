@@ -21,6 +21,7 @@ package org.jasig.cas.ticket.registry;
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -233,7 +234,7 @@ public final class JBossCacheTicketRegistryTests {
                     "TEST" + i, TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket(
-                    "tests" + i, SimpleWebApplicationServiceImpl.createServiceFrom(request),
+                    "tests" + i, new WebApplicationServiceFactory().createService(request),
                     new NeverExpiresExpirationPolicy(), false);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);

@@ -20,6 +20,7 @@ package org.jasig.cas.services.web;
 
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -68,7 +69,7 @@ public class RegisteredServiceThemeBasedViewResolverTests {
         final MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 
-        final WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl("myServiceId");
+        final WebApplicationService webApplicationService = new WebApplicationServiceFactory().createService("myServiceId");
         requestContext.getFlowScope().put("service", webApplicationService);
 
         assertEquals("/WEB-INF/view/jsp/myTheme/ui/casLoginView",
@@ -80,7 +81,7 @@ public class RegisteredServiceThemeBasedViewResolverTests {
         final MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 
-        final WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl("myDefaultId");
+        final WebApplicationService webApplicationService = new WebApplicationServiceFactory().createService("myDefaultId");
         requestContext.getFlowScope().put("service", webApplicationService);
 
         assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView",

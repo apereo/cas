@@ -18,8 +18,10 @@
  */
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.RegisteredService;
@@ -72,9 +74,9 @@ public final class LogoutAction extends AbstractLogoutAction {
             }
         }
 
-        final String service = request.getParameter("service");
+        final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
         if (this.followServiceRedirects && service != null) {
-            final Service webAppService = new SimpleWebApplicationServiceImpl(service);
+            final Service webAppService = new WebApplicationServiceFactory().createService(service);
             final RegisteredService rService = this.servicesManager.findServiceBy(webAppService);
 
             if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()) {
