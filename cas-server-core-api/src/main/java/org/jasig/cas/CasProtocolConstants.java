@@ -57,6 +57,14 @@ public interface CasProtocolConstants {
     /** Constant representing the renew parameter in the request. */
     String PARAMETER_RENEW = "renew";
 
+    String PARAMETER_SERVICE = "service";
+
+    String PARAMETER_TICKET = "ticket";
+
+    String PARAMETER_TARGET_SERVICE = "targetService";
+
+    String PARAMETER_METHOD = "method";
+
     /** CAS Protocol Error Codes. **/
 
     /** Constant representing an invalid request for validation. */

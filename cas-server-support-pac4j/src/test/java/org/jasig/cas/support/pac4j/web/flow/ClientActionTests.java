@@ -30,6 +30,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.support.pac4j.test.MockFacebookClient;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -88,7 +89,7 @@ public final class ClientActionTests {
 
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
-        mockRequestContext.getFlowScope().put(ClientAction.SERVICE, new SimpleWebApplicationServiceImpl(MY_SERVICE));
+        mockRequestContext.getFlowScope().put(ClientAction.SERVICE, new WebApplicationServiceFactory().createService(MY_SERVICE));
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient(MY_KEY, MY_SECRET);
@@ -117,7 +118,7 @@ public final class ClientActionTests {
         mockSession.setAttribute(ClientAction.THEME, MY_THEME);
         mockSession.setAttribute(ClientAction.LOCALE, MY_LOCALE);
         mockSession.setAttribute(ClientAction.METHOD, MY_METHOD);
-        final Service service = new SimpleWebApplicationServiceImpl(MY_SERVICE);
+        final Service service = new WebApplicationServiceFactory().createService(MY_SERVICE);
         mockSession.setAttribute(ClientAction.SERVICE, service);
         mockRequest.setSession(mockSession);
 

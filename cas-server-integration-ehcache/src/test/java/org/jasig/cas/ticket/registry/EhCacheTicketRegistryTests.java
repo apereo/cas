@@ -25,6 +25,7 @@ import java.util.Iterator;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -70,7 +71,7 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
     public static Service getService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", "test");
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        return new WebApplicationServiceFactory().createService(request);
     }
 
     /**
