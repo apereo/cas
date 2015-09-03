@@ -20,6 +20,7 @@ package org.jasig.cas.services.web;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -65,7 +66,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
     public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager,
             @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
         super(servicesManager);
-        this.defaultService = new SimpleWebApplicationServiceImpl(defaultServiceUrl);
+        this.defaultService = new WebApplicationServiceFactory().createService(defaultServiceUrl);
     }
 
     /**

@@ -22,6 +22,7 @@ package org.jasig.cas.support.saml.web.flow.mdui;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -111,7 +112,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             return success();
         }
 
-        final WebApplicationService service = new SimpleWebApplicationServiceImpl(entityId);
+        final WebApplicationService service = new WebApplicationServiceFactory().createService(entityId);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);

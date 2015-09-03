@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 
 /**
  * Implements the traditional CAS2 protocol.
@@ -33,6 +34,6 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        return new WebApplicationServiceFactory().createService(request);
     }
 }
