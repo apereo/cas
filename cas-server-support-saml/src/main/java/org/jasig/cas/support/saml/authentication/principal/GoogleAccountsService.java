@@ -24,12 +24,9 @@ import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.jasig.cas.util.ISOStandardDateFormat;
-import org.jdom.Document;
-import org.springframework.util.StringUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
+import org.jasig.cas.util.ISOStandardDateFormat;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -38,14 +35,12 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
-import javax.servlet.http.HttpServletRequest;
+
 import java.io.StringWriter;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jdom.Element;
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
@@ -56,12 +51,6 @@ import org.jdom.Element;
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
-    private static final int INFLATED_BYTE_ARRAY_LENGTH = 10000;
-    private static final int DEFLATED_BYTE_ARRAY_BUFFER_LENGTH = 1024;
-    private static final int SAML_RESPONSE_RANDOM_ID_LENGTH = 20;
-    private static final int SAML_RESPONSE_ID_LENGTH = 40;
-    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
-    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
 
     private static final GoogleSaml20ObjectBuilder BUILDER = new GoogleSaml20ObjectBuilder();
 
@@ -116,40 +105,6 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     }
 
-    /**
-     * Creates the service from request.
-     *
-     * @param request the request
-     * @param privateKey the private key
-     * @param publicKey the public key
-     * @param servicesManager the services manager
-     * @return the google accounts service
-     */
-    public static GoogleAccountsService createServiceFrom(
-            final HttpServletRequest request, final PrivateKey privateKey,
-            final PublicKey publicKey, final ServicesManager servicesManager) {
-        final String relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-
-        final String xmlRequest = BUILDER.decodeSamlAuthnRequest(
-                request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
-
-        if (!StringUtils.hasText(xmlRequest)) {
-            return null;
-        }
-
-        final Document document = AbstractSaml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
-
-        if (document == null) {
-            return null;
-        }
-
-        final Element root = document.getRootElement();
-        final String assertionConsumerServiceUrl = root.getAttributeValue("AssertionConsumerServiceURL");
-        final String requestId = root.getAttributeValue("ID");
-
-        return new GoogleAccountsService(assertionConsumerServiceUrl,
-                relayState, requestId, privateKey, publicKey, servicesManager);
-    }
 
     @Override
     public Response getResponse(final String ticketId) {

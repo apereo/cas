@@ -27,9 +27,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 
 /**
- * The {@link SamlServiceFactory} is responsible for...
+ * The {@link SamlServiceFactory} creates {@link SamlService} objects.
  *
  * @author Misagh Moayyed
+ * @since 4.2
  */
 public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
@@ -74,8 +75,6 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             final int endTagLocation = requestBody.indexOf(tagEnd);
 
             artifactId = requestBody.substring(artifactStartLocation, endTagLocation).trim();
-
-            // is there a request id?
             requestId = extractRequestId(requestBody);
         } else {
             artifactId = null;

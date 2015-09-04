@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 
 /**
- * The {@link OpenIdServiceFactory} is responsible for...
+ * The {@link OpenIdServiceFactory} creates {@link OpenIdService} objects.
  *
  * @author Misagh Moayyed
  * @since 4.2

@@ -20,7 +20,6 @@
 package org.jasig.cas.support.saml.web.flow.mdui;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.RegisteredService;

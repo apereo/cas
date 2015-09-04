@@ -16,41 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.web.support;
+package org.jasig.cas.support.saml.web.support;
+
+import org.apache.commons.lang3.NotImplementedException;
+import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.web.support.AbstractArgumentExtractor;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.ServiceFactory;
-import org.jasig.cas.authentication.principal.WebApplicationService;
-
 /**
- * The default argument extractor is responsible for creating service
- * objects based on requests. The task of creating services is delegated to
- * a service factory that is pluggable for each instance of the extractor.
+ * @deprecated As of 4.2, use {@link org.jasig.cas.web.support.DefaultArgumentExtractor}.
+ * Retrieve the ticket and artifact based on the SAML 1.1 profile.
  *
- * @author Misagh Moayyed
- * @since 4.2
+ * @author Scott Battaglia
+ * @since 3.1
  */
-public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
-
-    /**
-     * Instantiates a new argument extractor.
-     */
-    public DefaultArgumentExtractor() {
-        super();
-    }
-
-    /**
-     * Instantiates a new argument extractor.
-     *
-     * @param serviceFactory the service factory
-     */
-    public DefaultArgumentExtractor(final ServiceFactory<? extends WebApplicationService> serviceFactory) {
-        super(serviceFactory);
-    }
+@Deprecated
+public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return getServiceFactory().createService(request);
+        throw new NotImplementedException("This operation is not supported. "
+                + "The class is deprecated and will be removed in future versions");
     }
 }

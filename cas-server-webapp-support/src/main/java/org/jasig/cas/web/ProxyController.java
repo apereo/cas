@@ -18,19 +18,18 @@
  */
 package org.jasig.cas.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 /**
  * The ProxyController is involved with returning a Proxy Ticket (in CAS 2
