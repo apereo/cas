@@ -17,46 +17,28 @@
  * under the License.
  */
 
-package org.jasig.cas.authentication.principal;
+package org.jasig.cas.web.support;
 
-import java.io.Serializable;
-import java.util.Map;
+
+import org.apache.commons.lang3.NotImplementedException;
+import org.jasig.cas.authentication.principal.WebApplicationService;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link Response} that is outputted by each service principal.
+ * @deprecated As of 4.2, use {@link DefaultArgumentExtractor}.
+ * Implements the traditional CAS2 protocol.
  *
- * @author Misagh Moayyed
- * @since 4.1.0
+ * @author Scott Battaglia
+ * @since 3.1
  */
-public interface Response extends Serializable {
-    /** An enumeration of different response types. */
-    enum ResponseType {
-
-        /** The post. */
-        POST,
-
-        /** The redirect. */
-        REDIRECT
+@Deprecated
+public final class CasArgumentExtractor extends AbstractArgumentExtractor {
+    @Override
+    public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
+        throw new NotImplementedException("This operation is not supported. "
+                + "The class is deprecated and will be removed in future versions");
     }
-
-    /**
-     * Gets attributes.
-     *
-     * @return the attributes
-     */
-    Map<String, String> getAttributes();
-
-    /**
-     * Gets response type.
-     *
-     * @return the response type
-     */
-    ResponseType getResponseType();
-
-    /**
-     * Gets url.
-     *
-     * @return the url
-     */
-    String getUrl();
 }
+
+

@@ -55,6 +55,9 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     /** Defaults to 0. */
     private int skewAllowance;
 
+    /**
+     * Instantiates a new saml 10 response view.
+     */
     public AbstractSaml10ResponseView() {
         samlArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
     }
