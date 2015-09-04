@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import java.util.Arrays;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.DefaultArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
@@ -52,7 +53,10 @@ public class WebUtilTests {
 
     @Test
     public void verifyFoundNoService() {
-        final DefaultArgumentExtractor casArgumentExtractor = new DefaultArgumentExtractor();
+        final DefaultArgumentExtractor casArgumentExtractor = new DefaultArgumentExtractor(
+                new SamlServiceFactory()
+        );
+
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
                 casArgumentExtractor};
         final MockHttpServletRequest request = new MockHttpServletRequest();
