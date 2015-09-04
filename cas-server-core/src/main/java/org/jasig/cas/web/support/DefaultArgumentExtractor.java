@@ -19,9 +19,13 @@
 package org.jasig.cas.web.support;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Min;
 
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+
+import java.util.List;
 
 /**
  * The default argument extractor is responsible for creating service
@@ -49,8 +53,26 @@ public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
         super(serviceFactory);
     }
 
+    /**
+     * Instantiates a new argument extractor.
+     *
+     * @param serviceFactoryList the service factory list
+     */
+    public DefaultArgumentExtractor(@Min(1)
+                                    final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
+        super(serviceFactoryList);
+    }
+
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return getServiceFactory().createService(request);
+        for (final ServiceFactory<? extends WebApplicationService> factory : getServiceFactories()) {
+            final WebApplicationService service = factory.createService(request);
+            if (service != null) {
+                logger.debug("Created {} based on {}", service, factory);
+                return service;
+            }
+        }
+        logger.debug("No service could be extracted based on the given request");
+        return null;
     }
 }

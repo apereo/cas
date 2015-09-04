@@ -25,6 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Min;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract class for handling argument extraction.
@@ -39,13 +42,13 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The factory responsible for creating service objects based on the arguments extracted. */
-    private final ServiceFactory<? extends WebApplicationService> serviceFactory;
+    private final List<ServiceFactory<? extends WebApplicationService>> serviceFactory;
 
     /**
      * Instantiates a new argument extractor.
      */
     public AbstractArgumentExtractor() {
-        this.serviceFactory = new WebApplicationServiceFactory();
+        this(new WebApplicationServiceFactory());
     }
 
     /**
@@ -54,9 +57,20 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
      * @param serviceFactory the service factory
      */
     public AbstractArgumentExtractor(final ServiceFactory<? extends WebApplicationService> serviceFactory) {
-        this.serviceFactory = serviceFactory;
+        this.serviceFactory = new ArrayList<>();
+        this.serviceFactory.add(serviceFactory);
     }
 
+    /**
+     * Instantiates a new argument extractor.
+     *
+     * @param serviceFactoryList the service factory list
+     */
+    public AbstractArgumentExtractor(@Min(1)
+                                     final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
+        this.serviceFactory = new ArrayList<>();
+        this.serviceFactory.addAll(serviceFactoryList);
+    }
 
     @Override
     public final WebApplicationService extractService(final HttpServletRequest request) {
@@ -80,6 +94,10 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     protected abstract WebApplicationService extractServiceInternal(HttpServletRequest request);
 
     public final ServiceFactory<? extends WebApplicationService> getServiceFactory() {
+        return serviceFactory.get(0);
+    }
+
+    protected final List<ServiceFactory<? extends WebApplicationService>> getServiceFactories() {
         return serviceFactory;
     }
 }
