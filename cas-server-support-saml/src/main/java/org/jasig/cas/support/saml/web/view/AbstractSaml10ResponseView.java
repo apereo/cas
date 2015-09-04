@@ -19,8 +19,10 @@
 package org.jasig.cas.support.saml.web.view;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
-import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
+import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.DefaultArgumentExtractor;
 import org.jasig.cas.web.view.AbstractCasView;
 import org.joda.time.DateTime;
 
@@ -45,13 +47,17 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     protected final Saml10ObjectBuilder samlObjectBuilder = new Saml10ObjectBuilder();
 
-    private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
+    private final ArgumentExtractor samlArgumentExtractor;
 
     @NotNull
     private String encoding = DEFAULT_ENCODING;
 
     /** Defaults to 0. */
     private int skewAllowance;
+
+    public AbstractSaml10ResponseView() {
+        samlArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
+    }
 
     /**
      * Sets the character encoding in the HTTP response.
