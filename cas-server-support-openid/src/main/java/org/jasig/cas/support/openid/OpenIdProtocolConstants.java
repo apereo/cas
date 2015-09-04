@@ -24,7 +24,7 @@ package org.jasig.cas.support.openid;
  * @author Jerome Leleu
  * @since 4.1.0
  */
-public final class OpenIdConstants {
+public final class OpenIdProtocolConstants {
 
     /**
      * The application callback url.
@@ -74,5 +74,5 @@ public final class OpenIdConstants {
     /**
      * Private constructor.
      */
-    private OpenIdConstants() {}
+    private OpenIdProtocolConstants() {}
 }
