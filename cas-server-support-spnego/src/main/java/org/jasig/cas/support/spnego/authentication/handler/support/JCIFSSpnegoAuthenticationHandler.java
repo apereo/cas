@@ -62,6 +62,9 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
         final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
         Principal principal;
         byte[] nextToken;
+        if (!this.isNTLMallowed && spnegoCredential.isNtlm()) {
+            throw new FailedLoginException("NTLM not allowed");
+        }
         try {
             // proceed authentication using jcifs
             synchronized (this) {
@@ -87,7 +90,7 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
             if (spnegoCredential.isNtlm()) {
                 logger.debug("NTLM Credential is valid for user [{}]", principal.getName());
                 spnegoCredential.setPrincipal(getSimplePrincipal(principal.getName(), true));
-                success = this.isNTLMallowed;
+                success = true;
             }
             // else => kerberos
             logger.debug("Kerberos Credential is valid for user [{}]", principal.getName());
