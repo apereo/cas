@@ -18,13 +18,11 @@
  */
 package org.jasig.cas.web.support;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Min;
-
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
