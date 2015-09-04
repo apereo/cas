@@ -87,7 +87,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         final ServicesManager servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(regSvc);
         
-        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey, servicesManager);
+        return new GoogleAccountsServiceFactory(publicKey, privateKey, servicesManager).createService(request);
     }
 
     @Before

@@ -32,7 +32,6 @@ import org.jasig.cas.authentication.principal.CachingPrincipalAttributesReposito
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
