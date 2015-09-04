@@ -23,7 +23,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.support.openid.OpenIdConstants;
+import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.validation.Assertion;
@@ -102,8 +102,8 @@ public final class OpenIdService extends AbstractWebApplicationService {
             try {
                 final AuthRequest authReq = AuthRequest.createAuthRequest(requestParameters, manager.getRealmVerifier());
                 final Map parameterMap = authReq.getParameterMap();
-                if (parameterMap != null && parameterMap.size() > 0) {
-                    final String assocHandle = (String) parameterMap.get(OpenIdConstants.OPENID_ASSOCHANDLE);
+                if (parameterMap != null && !parameterMap.isEmpty()) {
+                    final String assocHandle = (String) parameterMap.get(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
                     if (assocHandle != null) {
                         final Association association = manager.getSharedAssociations().load(assocHandle);
                         if (association != null) {
@@ -136,7 +136,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
             }
 
             final String id;
-            if (assertion != null && OpenIdConstants.OPENID_IDENTIFIERSELECT.equals(this.identity)) {
+            if (assertion != null && OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT.equals(this.identity)) {
                 id = this.openIdPrefixUrl + '/' + assertion.getPrimaryAuthentication().getPrincipal().getId();
             } else {
                 id = this.identity;
@@ -151,10 +151,10 @@ public final class OpenIdService extends AbstractWebApplicationService {
                     true);
             parameters.putAll(response.getParameterMap());
             if (!associated) {
-                parameters.put(OpenIdConstants.OPENID_ASSOCHANDLE, ticketId);
+                parameters.put(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, ticketId);
             }
         } else {
-            parameters.put(OpenIdConstants.OPENID_MODE, OpenIdConstants.CANCEL);
+            parameters.put(OpenIdProtocolConstants.OPENID_MODE, OpenIdProtocolConstants.CANCEL);
         }
         return DefaultResponse.getRedirectResponse(getOriginalUrl(), parameters);
     }
