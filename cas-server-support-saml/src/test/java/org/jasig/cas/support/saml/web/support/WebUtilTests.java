@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.ArgumentExtractor;
-import org.jasig.cas.web.support.CasArgumentExtractor;
+import org.jasig.cas.web.support.DefaultArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -37,24 +37,24 @@ public class WebUtilTests {
 
     @Test
     public void verifyFindService() {
-        final SamlArgumentExtractor openIdArgumentExtractor = new SamlArgumentExtractor();
-        final CasArgumentExtractor casArgumentExtractor = new CasArgumentExtractor();
+
+        final DefaultArgumentExtractor casArgumentExtractor = new DefaultArgumentExtractor();
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
-                openIdArgumentExtractor, casArgumentExtractor};
+                casArgumentExtractor};
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "test");
 
-        final Service service = WebUtils.getService(Arrays
-                .asList(argumentExtractors), request);
+        final Service service = WebUtils.getService(Arrays.asList(argumentExtractors), request);
 
+        assertNotNull(service);
         assertEquals("test", service.getId());
     }
 
     @Test
     public void verifyFoundNoService() {
-        final SamlArgumentExtractor openIdArgumentExtractor = new SamlArgumentExtractor();
+        final DefaultArgumentExtractor casArgumentExtractor = new DefaultArgumentExtractor();
         final ArgumentExtractor[] argumentExtractors = new ArgumentExtractor[] {
-                openIdArgumentExtractor};
+                casArgumentExtractor};
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "test");
 

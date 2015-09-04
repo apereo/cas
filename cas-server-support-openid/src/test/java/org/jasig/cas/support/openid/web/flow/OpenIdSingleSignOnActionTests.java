@@ -40,6 +40,7 @@ import org.jasig.cas.support.openid.OpenIdConstants;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -125,7 +126,8 @@ public class OpenIdSingleSignOnActionTests {
         request.setParameter(OpenIdConstants.OPENID_IDENTITY, "fablah");
         request.setParameter(OpenIdConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request, null);
+        final OpenIdServiceFactory factory = new OpenIdServiceFactory();
+        final OpenIdService service = factory.createService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", "tgtId");
 
@@ -148,7 +150,7 @@ public class OpenIdSingleSignOnActionTests {
         request.setParameter(OpenIdConstants.OPENID_IDENTITY, "http://openid.aol.com/scootman28");
         request.setParameter(OpenIdConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request, null);
+        final OpenIdService service = new OpenIdServiceFactory().createService(request);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", t.getId());
 
