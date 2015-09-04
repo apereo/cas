@@ -19,9 +19,11 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.authentication.principal.Response;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
-import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -38,7 +40,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     public void verifyResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "service");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final SamlService impl = new SamlServiceFactory().createService(request);
 
         final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
@@ -49,8 +51,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     @Test
     public void verifyResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("TARGET", "http://www.cnn.com/;jsession=test");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "http://www.cnn.com/;jsession=test");
+        final SamlService impl = new SamlServiceFactory().createService(request);
 
         assertEquals("http://www.cnn.com/", impl.getId());
     }
@@ -58,8 +60,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     @Test
     public void verifyResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("TARGET", "service");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
+        final SamlService impl = new SamlServiceFactory().createService(request);
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
@@ -76,7 +78,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContent(body.getBytes());
 
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final SamlService impl = new SamlServiceFactory().createService(request);
         assertEquals("artifact", impl.getArtifactId());
         assertEquals("_192.168.16.51.1024506224022", impl.getRequestID());
     }
@@ -84,12 +86,10 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     @Test
     public void verifyTargetMatchesingSamlService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("TARGET", "https://some.service.edu/path/to/app");
+        request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
 
-        final SamlArgumentExtractor ext = new SamlArgumentExtractor();
-        final WebApplicationService service = ext.extractService(request);
-
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final WebApplicationService service = new DefaultArgumentExtractor(new SamlServiceFactory()).extractService(request);
+        final Service impl = new DefaultArgumentExtractor(new SamlServiceFactory()).extractService(request);
         assertTrue(impl.matches(service));
     }
 
@@ -97,12 +97,12 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     public void verifyTargetMatchesNoSamlService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("TARGET", "https://some.service.edu/path/to/app");
-        final SamlService impl = SamlService.createServiceFrom(request);
+        final Service impl = new DefaultArgumentExtractor(new SamlServiceFactory()).extractService(request);
 
         final MockHttpServletRequest request2 = new MockHttpServletRequest();
-        request2.setParameter("TARGET", "https://some.SERVICE.edu");
-        final SamlArgumentExtractor ext = new SamlArgumentExtractor();
-        final WebApplicationService service = ext.extractService(request2);
+        request2.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.SERVICE.edu");
+
+        final WebApplicationService service = new DefaultArgumentExtractor(new SamlServiceFactory()).extractService(request2);
 
         assertFalse(impl.matches(service));
     }

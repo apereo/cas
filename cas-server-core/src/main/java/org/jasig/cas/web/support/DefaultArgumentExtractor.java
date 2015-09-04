@@ -20,20 +20,29 @@ package org.jasig.cas.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 
 /**
- * Implements the traditional CAS2 protocol.
+ * The default argument extractor is responsible for creating service
+ * objects based on requests. The task of creating services is delegated to
+ * a service factory that is pluggable for each instance of the extractor.
  *
- * @author Scott Battaglia
- * @since 3.1
+ * @author Misagh Moayyed
+ * @since 4.2
  */
-public final class CasArgumentExtractor extends AbstractArgumentExtractor {
+public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
+
+    public DefaultArgumentExtractor() {
+        super();
+    }
+
+    public DefaultArgumentExtractor(final ServiceFactory<? extends WebApplicationService> serviceFactory) {
+        super(serviceFactory);
+    }
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return new WebApplicationServiceFactory().createService(request);
+        return getServiceFactory().createService(request);
     }
 }
