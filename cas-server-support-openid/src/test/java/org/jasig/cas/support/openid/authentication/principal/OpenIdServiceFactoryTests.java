@@ -22,9 +22,7 @@ package org.jasig.cas.support.openid.authentication.principal;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.junit.Test;
-import org.openid4java.message.ParameterList;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.util.StringUtils;
 
 import static org.junit.Assert.*;
 

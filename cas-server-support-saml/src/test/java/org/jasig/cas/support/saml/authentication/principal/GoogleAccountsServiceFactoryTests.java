@@ -19,9 +19,7 @@
 
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.junit.Before;
