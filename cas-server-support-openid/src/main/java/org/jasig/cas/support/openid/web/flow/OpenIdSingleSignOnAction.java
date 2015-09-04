@@ -20,7 +20,7 @@ package org.jasig.cas.support.openid.web.flow;
 
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.support.openid.OpenIdConstants;
+import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
@@ -55,11 +55,11 @@ public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCreden
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        final String openidIdentityParameter = context.getRequestParameters().get(OpenIdConstants.OPENID_IDENTITY);
+        final String openidIdentityParameter = context.getRequestParameters().get(OpenIdProtocolConstants.OPENID_IDENTITY);
         String userName = null;
-        if (OpenIdConstants.OPENID_IDENTIFIERSELECT.equals(openidIdentityParameter)) {
-            userName = OpenIdConstants.OPENID_IDENTIFIERSELECT;
-            context.getExternalContext().getSessionMap().remove(OpenIdConstants.OPENID_LOCALID);
+        if (OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT.equals(openidIdentityParameter)) {
+            userName = OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT;
+            context.getExternalContext().getSessionMap().remove(OpenIdProtocolConstants.OPENID_LOCALID);
             // already authenticated: retrieve the username from the authentication
             if (ticketGrantingTicketId != null) {
                 try {
@@ -72,7 +72,7 @@ public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCreden
             }
         } else {
             userName = this.extractor.extractLocalUsernameFromUri(openidIdentityParameter);
-            context.getExternalContext().getSessionMap().put(OpenIdConstants.OPENID_LOCALID, userName);
+            context.getExternalContext().getSessionMap().put(OpenIdProtocolConstants.OPENID_LOCALID, userName);
         }
         final Service service = WebUtils.getService(context);
 
