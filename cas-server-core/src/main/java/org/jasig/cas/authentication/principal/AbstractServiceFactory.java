@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * The {@link AbstractServiceFactory} is responsible for...
+ * The {@link AbstractServiceFactory} is the parent class providing
+ * convenience methods for creating service objects.
  *
  * @author Misagh Moayyed
  * @since 4.2

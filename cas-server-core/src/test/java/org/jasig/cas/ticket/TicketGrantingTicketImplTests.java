@@ -21,7 +21,6 @@ package org.jasig.cas.ticket;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;

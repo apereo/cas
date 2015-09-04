@@ -19,7 +19,6 @@
 package org.jasig.cas.integration.restlet;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
