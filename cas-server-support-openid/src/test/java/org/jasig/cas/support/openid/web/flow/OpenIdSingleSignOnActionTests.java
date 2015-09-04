@@ -36,7 +36,7 @@ import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
-import org.jasig.cas.support.openid.OpenIdConstants;
+import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
@@ -123,8 +123,8 @@ public class OpenIdSingleSignOnActionTests {
     public void verifyBadUsername() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter(OpenIdConstants.OPENID_IDENTITY, "fablah");
-        request.setParameter(OpenIdConstants.OPENID_RETURNTO, "http://www.cnn.com");
+        request.setParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "fablah");
+        request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
         final OpenIdServiceFactory factory = new OpenIdServiceFactory();
         final OpenIdService service = factory.createService(request);
@@ -147,8 +147,8 @@ public class OpenIdSingleSignOnActionTests {
 
         this.ticketRegistry.addTicket(t);
 
-        request.setParameter(OpenIdConstants.OPENID_IDENTITY, "http://openid.aol.com/scootman28");
-        request.setParameter(OpenIdConstants.OPENID_RETURNTO, "http://www.cnn.com");
+        request.setParameter(OpenIdProtocolConstants.OPENID_IDENTITY, "http://openid.aol.com/scootman28");
+        request.setParameter(OpenIdProtocolConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
         final OpenIdService service = new OpenIdServiceFactory().createService(request);
         context.getFlowScope().put("service", service);

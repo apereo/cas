@@ -20,7 +20,7 @@
 package org.jasig.cas.support.openid.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
-import org.jasig.cas.support.openid.OpenIdConstants;
+import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.openid4java.message.ParameterList;
 import org.springframework.util.StringUtils;
 
@@ -51,20 +51,20 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
 
     @Override
     public OpenIdService createService(final HttpServletRequest request) {
-        final String service = request.getParameter(OpenIdConstants.OPENID_RETURNTO);
-        final String openIdIdentity = request.getParameter(OpenIdConstants.OPENID_IDENTITY);
-        final String signature = request.getParameter(OpenIdConstants.OPENID_SIG);
+        final String service = request.getParameter(OpenIdProtocolConstants.OPENID_RETURNTO);
+        final String openIdIdentity = request.getParameter(OpenIdProtocolConstants.OPENID_IDENTITY);
+        final String signature = request.getParameter(OpenIdProtocolConstants.OPENID_SIG);
 
         if (openIdIdentity == null || !StringUtils.hasText(service)) {
             return null;
         }
 
         final String id = cleanupUrl(service);
-        final String artifactId = request.getParameter(OpenIdConstants.OPENID_ASSOCHANDLE);
+        final String artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
         final ParameterList paramList = new ParameterList(request.getParameterMap());
 
         return new OpenIdService(id, service, artifactId, openIdIdentity,
-                signature, paramList, openIdPrefixUrl);
+                signature, paramList, this.openIdPrefixUrl);
     }
 
     @Override
