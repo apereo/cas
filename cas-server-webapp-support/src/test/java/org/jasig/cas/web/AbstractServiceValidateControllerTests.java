@@ -31,7 +31,7 @@ import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
-import org.jasig.cas.web.support.CasArgumentExtractor;
+import org.jasig.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         proxyHandler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
         this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
-        this.serviceValidateController.setArgumentExtractor(new CasArgumentExtractor());
+        this.serviceValidateController.setArgumentExtractor(new DefaultArgumentExtractor());
         this.serviceValidateController.setServicesManager(this.servicesManager);
     }
 

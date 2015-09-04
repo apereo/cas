@@ -20,8 +20,11 @@ package org.jasig.cas.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
+import org.jasig.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,10 +37,20 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
-    /**
-     * Logger instance.
-     */
+    /** Logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /** The factory responsible for creating service objects based on the arguments extracted. */
+    private final ServiceFactory<? extends WebApplicationService> serviceFactory;
+
+    public AbstractArgumentExtractor() {
+        this.serviceFactory = new WebApplicationServiceFactory();
+    }
+
+    public AbstractArgumentExtractor(final ServiceFactory<? extends WebApplicationService> serviceFactory) {
+        this.serviceFactory = serviceFactory;
+    }
+
 
     @Override
     public final WebApplicationService extractService(final HttpServletRequest request) {
@@ -59,4 +72,8 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
      * @return the web application service
      */
     protected abstract WebApplicationService extractServiceInternal(final HttpServletRequest request);
+
+    public final ServiceFactory<? extends WebApplicationService> getServiceFactory() {
+        return serviceFactory;
+    }
 }
