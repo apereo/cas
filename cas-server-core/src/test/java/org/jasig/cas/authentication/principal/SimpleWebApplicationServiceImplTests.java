@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- *
  * @author Scott Battaglia
  * @author Arnaud Lesueur
  * @since 3.1
