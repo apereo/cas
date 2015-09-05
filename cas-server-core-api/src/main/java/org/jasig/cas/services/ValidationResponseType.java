@@ -28,7 +28,7 @@ package org.jasig.cas.services;
  */
 public enum ValidationResponseType {
     /**
-     * Default CAS XML response,
+     * Default CAS XML response.
      */
     XML,
     /**

@@ -257,7 +257,6 @@ public class ServiceValidateController extends DelegateController {
         switch(registeredService.getValidationResponseType()) {
             case JSON:
                 success = new ModelAndView(SERVICE_SUCCESS_JSON_VIEW_NAME);
-                logger.debug("Routing validation success view to {}", SERVICE_SUCCESS_JSON_VIEW_NAME);
                 break;
             default:
                 success = new ModelAndView(this.successView);
@@ -274,6 +273,7 @@ public class ServiceValidateController extends DelegateController {
         if (augmentedModelObjects != null) {
             success.addAllObjects(augmentedModelObjects);
         }
+        logger.debug("Routing validation success view to {}", success.getViewName());
         return success;
     }
 
