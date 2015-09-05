@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.authentication.support.CasAttributeEncoder;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +56,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
      *
      * @param view the view
      */
-    protected Cas30ResponseView(final AbstractUrlBasedView view) {
+    protected Cas30ResponseView(final View view) {
         super(view);
     }
 

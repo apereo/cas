@@ -70,8 +70,14 @@
           p:servicesManager-ref="servicesManager"
           p:casAttributeEncoder-ref="casAttributeEncoder"  />
 
+    <bean id="cas3ServiceSuccessJsonView" parent="cas3ServiceSuccessView"
+          c:view-ref="cas3JsonSuccessView"/>
+
     <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
           c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
+
+    <bean id="cas3JsonSuccessView" class="org.jasig.cas.web.view.Cas30JsonResponseView"
+            p:prettyPrint="true"/>
 
     <bean id="casAttributeEncoder" class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
           c:servicesManager-ref="servicesManager"  />
