@@ -35,6 +35,10 @@
 
     <ldaptive:ad-authenticator id="authenticator-ad"
             ldapUrl="${ldap.url}"
+            userFilter="${ldap.authn.searchFilter}"
+            bindDn="${ldap.managerDn}"
+            bindCredential="${ldap.managerPassword}"
+            allowMultipleDns="${ldap.allowMultipleDns:false}"
             provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
             connectTimeout="${ldap.connectTimeout}"
             validateOnCheckOut="${ldap.pool.validateOnCheckout}"

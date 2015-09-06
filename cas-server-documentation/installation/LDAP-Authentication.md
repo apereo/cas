@@ -72,13 +72,19 @@ LDAP authentication is declared using a custom schema to reduce configuration no
 {% endhighlight %}
 
 ## Active Directory Authentication
-The following configuration authenticates users by _UPN_ without performing a search,
-which requires manager/administrator credentials in most cases. It is therefore the most performant and secure solution for the typical Active Directory deployment.
+The following configuration authenticates users with a custom filter,
+which requires manager/administrator credentials in most cases. If the filter is left blank,
+the authentication is executed by _UPN_ without performing a search. It is
+therefore the most performant and secure solution for the typical Active Directory deployment.
 Simply copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 
 {% highlight xml %}
 <ldaptive:ad-authenticator id="authenticator"
         ldapUrl="${ldap.url}"
+        userFilter="${ldap.authn.searchFilter}"
+        bindDn="${ldap.managerDn}"
+        bindCredential="${ldap.managerPassword}"
+        allowMultipleDns="${ldap.allowMultipleDns:false}"
         connectTimeout="${ldap.connectTimeout}"
         validateOnCheckOut="${ldap.pool.validateOnCheckout}"
         failFastInitialize="true"
