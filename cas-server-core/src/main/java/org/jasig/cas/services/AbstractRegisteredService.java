@@ -110,6 +110,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "logout_type", nullable = true)
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
+    /**
+    * The validation response type of the service.
+    */
+    @Column(name = "validation_response_type", nullable = true)
+    private ValidationResponseType validationResponseType = ValidationResponseType.XML;
+
     @Lob
     @Column(name = "required_handlers")
     private HashSet<String> requiredHandlers = new HashSet<>();
@@ -233,6 +239,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey, that.publicKey)
                 .append(this.logoutUrl, that.logoutUrl)
                 .append(this.requiredHandlers, that.requiredHandlers)
+                .append(this.validationResponseType, that.validationResponseType)
                 .isEquals();
     }
 
@@ -253,6 +260,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey)
                 .append(this.logoutUrl)
                 .append(this.requiredHandlers)
+                .append(this.validationResponseType)
                 .toHashCode();
     }
 
@@ -269,7 +277,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      *
      * @param id the new service id
      */
-    public abstract void setServiceId(final String id);
+    public abstract void setServiceId(String id);
 
     public void setId(final long id) {
         this.id = id;
@@ -291,6 +299,15 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Override
     public int getEvaluationOrder() {
         return this.evaluationOrder;
+    }
+
+    @Override
+    public ValidationResponseType getValidationResponseType() {
+        return this.validationResponseType;
+    }
+
+    public void setValidationResponseType(final ValidationResponseType validationResponseType) {
+        this.validationResponseType = validationResponseType;
     }
 
     @Override
@@ -359,7 +376,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setLogoutUrl(source.getLogoutUrl());
         this.setPublicKey(source.getPublicKey());
         this.setRequiredHandlers(source.getRequiredHandlers());
-
+        this.setValidationResponseType(source.getValidationResponseType());
     }
 
     /**
@@ -389,6 +406,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("theme", this.theme);
         toStringBuilder.append("evaluationOrder", this.evaluationOrder);
         toStringBuilder.append("logoutType", this.logoutType);
+        toStringBuilder.append("validationResponseType", this.validationResponseType);
         toStringBuilder.append("attributeReleasePolicy", this.attributeReleasePolicy);
         toStringBuilder.append("accessStrategy", this.accessStrategy);
         toStringBuilder.append("publicKey", this.publicKey);

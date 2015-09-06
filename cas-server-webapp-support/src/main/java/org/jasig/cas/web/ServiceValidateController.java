@@ -69,6 +69,9 @@ public class ServiceValidateController extends DelegateController {
     /** View if Service Ticket Validation Succeeds. */
     public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
 
+    /** JSON View if Service Ticket Validation Succeeds and if service requires JSON. */
+    public static final String SERVICE_SUCCESS_JSON_VIEW_NAME = "cas3ServiceSuccessJsonView";
+
     /** Implementation of Service Manager. */
     @NotNull
     private ServicesManager servicesManager;
@@ -106,7 +109,8 @@ public class ServiceValidateController extends DelegateController {
      * @return the credentials or null if there was an error or no credentials
      * provided.
      */
-    protected Credential getServiceCredentialsFromRequest(final WebApplicationService service, final HttpServletRequest request) {
+    protected Credential getServiceCredentialsFromRequest(final WebApplicationService service,
+                                                          final HttpServletRequest request) {
         final String pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
         if (StringUtils.hasText(pgtUrl)) {
             try {
@@ -132,7 +136,8 @@ public class ServiceValidateController extends DelegateController {
     }
 
     @Override
-    protected final ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+    protected final ModelAndView handleRequestInternal(final HttpServletRequest request,
+                                                       final HttpServletResponse response)
             throws Exception {
         final WebApplicationService service = this.argumentExtractor.extractService(request);
         final String serviceTicketId = service != null ? service.getArtifactId() : null;
@@ -247,7 +252,17 @@ public class ServiceValidateController extends DelegateController {
                                              final WebApplicationService service,
                                              final TicketGrantingTicket proxyGrantingTicket) {
 
-        final ModelAndView success = new ModelAndView(this.successView);
+        final ModelAndView success;
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        switch(registeredService.getValidationResponseType()) {
+            case JSON:
+                success = new ModelAndView(SERVICE_SUCCESS_JSON_VIEW_NAME);
+                break;
+            default:
+                success = new ModelAndView(this.successView);
+                break;
+        }
+
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
         success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
@@ -258,6 +273,7 @@ public class ServiceValidateController extends DelegateController {
         if (augmentedModelObjects != null) {
             success.addAllObjects(augmentedModelObjects);
         }
+        logger.debug("Routing validation success view to {}", success.getViewName());
         return success;
     }
 

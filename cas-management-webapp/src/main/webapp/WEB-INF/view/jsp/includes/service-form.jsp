@@ -272,6 +272,20 @@
                         </div>
                     </div>
                     <div class="col-sm-6">
+                        <!-- Logout Type -->
+                        <div class="form-group">
+                            <label class="col-sm-6" for="logoutType">
+                                <spring:message code="services.form.label.validationType" /> <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.validationType" />"></i>
+                            </label>
+                            <div class="col-sm-6">
+                                <select class="form-control" id="validationType" ng-model="serviceFormCtrl.serviceData.validationResponseType">
+                                    <option ng-repeat="opt in serviceFormCtrl.selectOptions.validationResponseType" ng-attr-value="{{ opt.value }}"
+                                            ng-selected="serviceFormCtrl.isSelected(opt.value, serviceFormCtrl.serviceData.validationResponseType)">{{ opt.name }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
                         <!-- Assigned ID -->
                         <div class="form-group">
                             <label class="col-sm-5" for="evalOrder">

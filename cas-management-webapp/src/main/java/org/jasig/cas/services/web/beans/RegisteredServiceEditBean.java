@@ -47,6 +47,7 @@ import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
+import org.jasig.cas.services.ValidationResponseType;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
@@ -151,6 +152,8 @@ public final class RegisteredServiceEditBean implements Serializable {
 
         bean.setTheme(svc.getTheme());
         bean.setEvalOrder(svc.getEvaluationOrder());
+        bean.setValidationResponseType(svc.getValidationResponseType().name());
+
         final LogoutType logoutType = svc.getLogoutType();
         switch (logoutType) {
             case BACK_CHANNEL:
@@ -352,6 +355,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         private String type = RegisteredServiceTypeEditBean.CAS.toString();
         private RegisteredServiceOAuthTypeEditBean oauth = new RegisteredServiceOAuthTypeEditBean();
         private String logoutType = RegisteredServiceLogoutTypeEditBean.BACK.toString();
+        private String validationResponseType = ValidationResponseType.XML.name();
         private RegisteredServiceUsernameAttributeProviderEditBean userAttrProvider =
                 new RegisteredServiceUsernameAttributeProviderEditBean();
         private RegisteredServicePublicKeyEditBean publicKey = new RegisteredServicePublicKeyEditBean();
@@ -405,6 +409,14 @@ public final class RegisteredServiceEditBean implements Serializable {
 
         public void setRequiredHandlers(final Set<String> requiredHandlers) {
             this.requiredHandlers = requiredHandlers;
+        }
+
+        public String getValidationResponseType() {
+            return validationResponseType;
+        }
+
+        public void setValidationResponseType(final String validationResponseType) {
+            this.validationResponseType = validationResponseType;
         }
 
         public String getLogoutUrl() {
@@ -529,6 +541,8 @@ public final class RegisteredServiceEditBean implements Serializable {
                 regSvc.setServiceId(this.serviceId);
                 regSvc.setName(this.name);
                 regSvc.setDescription(this.description);
+
+                regSvc.setValidationResponseType(ValidationResponseType.valueOf(this.validationResponseType));
 
                 if (StringUtils.isNotBlank(this.logoUrl)) {
                     regSvc.setLogo(new URL(this.logoUrl));

@@ -139,7 +139,15 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return the logout type of the service.
      */
     LogoutType getLogoutType();
-    
+
+    /**
+     * Returns the validation response type of the service.
+     *
+     * @return the validation response type of the service.
+     * @since 4.2
+     */
+    ValidationResponseType getValidationResponseType();
+
     /**
      * Gets the attribute filtering policy to determine
      * how attributes are to be filtered and released for

@@ -323,6 +323,10 @@ if (array.length == 3) {
                     {name: 'Back Channel',  value: 'back'},
                     {name: 'Front Channel', value: 'front'}
                 ],
+                validationResponseType: [
+                    {name: 'XML',          value: 'XML'},
+                    {name: 'JSON',  value: 'JSON'}
+                ],
                 timeUnitsList: [
                     {name: 'MILLISECONDS',  value: 'MILLISECONDS'},
                     {name: 'SECONDS',       value: 'SECONDS'},
