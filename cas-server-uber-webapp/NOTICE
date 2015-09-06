@@ -61,7 +61,6 @@ This project includes:
   dom4j under BSD License
   ehcache under The Apache Software License, Version 2.0
   Ehcache Core under The Apache Software License, Version 2.0
-  ehcache-terracotta under Terracotta Public License
   Expression Language 2.2 Implementation under CDDL + GPLv2 with classpath exception
   Expression Language 3.0 API under CDDL + GPLv2 with classpath exception
   fastinfoset under Apache License, Version 2.0
@@ -88,7 +87,6 @@ This project includes:
   javax.inject under The Apache Software License, Version 2.0
   JAXB CORE under CDDL 1.1 or GPL2 w/ CPE
   JAXB Reference Implementation under CDDL 1.1 or GPL2 w/ CPE
-  JBoss Cache - Core Edition under GNU Lesser General Public License
   JBoss Common Classes under lgpl
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging Programming Interface under lgpl
@@ -96,8 +94,6 @@ This project includes:
   JGroups under Library (or Lesser) GNU Public License 2.1
   Joda-Time under Apache 2
   jose4j under The Apache Software License, Version 2.0
-  jradius-core-1.1.3 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
-  jradius-dictionary-1.1.3 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
   JSR-250 Common Annotations for the JavaTM Platform under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   JSR107 API and SPI under JSR-000107 JCACHE 2.9 Public Review - Updated Specification
                 License
@@ -112,9 +108,14 @@ This project includes:
   Metrics Core under Apache License 2.0
   MinLog under New BSD License
   Mockito under The MIT License
+  net.jradius:jradius-core under LGPL, v3.0
+  net.jradius:jradius-dictionary under LGPL, v3.0
+  net.sf.ehcache:ehcache-terracotta under Apache License, Version 2.0
   Objenesis under Apache 2
   OGNL - Object Graph Navigation Library under Apache License, Version 2.0
+  org.jboss.cache:jbosscache-core under LGPL, v2.1
   org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
+  org.terracotta:terracotta-toolkit-1.0-runtime under Terracotta Public License, http://www.terracotta.org/legal/terracotta-public-license
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
   Protocol Buffer Java API under New BSD license
@@ -141,7 +142,6 @@ This project includes:
   Spring Web MVC under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   Spymemcached under The Apache Software License, Version 2.0
-  terracotta-toolkit-runtime under Terracotta Public License
   VT Crypt Library under Apache 2 or GNU Lesser General Public License
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
 

@@ -18,8 +18,7 @@
   ~ under the License.
   -->
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
@@ -31,7 +30,7 @@
     <packaging>pom</packaging>
     <name>Apereo Central Authentication Service</name>
     <description>Apereo CAS SSO server libraries and Web application.</description>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.1.0-RC3-SNAPSHOT</version>
     <url>http://www.jasig.org/cas/</url>
     <inceptionYear>2004</inceptionYear>
 
@@ -245,22 +244,6 @@
                         </additionalClasspathElements>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>${coveralls-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>${cobertura-maven-plugin.version}</version>
-                    <configuration>
-                        <format>xml</format>
-                        <maxmem>256m</maxmem>
-                        <!-- aggregated reports for multi-module projects -->
-                        <aggregate>true</aggregate>
-                    </configuration>
-                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -405,7 +388,7 @@
                 <configuration>
                     <doCheck>false</doCheck>
                     <doUpdate>false</doUpdate>
-                    <timestampFormat>EEE, d MMM yyyy HH:mm:ss Z</timestampFormat>
+                    <timestampFormat>yyyy-MM-dd HH:mm:ssa</timestampFormat>
                     <timestampPropertyName>timestamp</timestampPropertyName>
                 </configuration>
             </plugin>
@@ -459,7 +442,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sources/>
+                    <sources />
                     <complianceLevel>${project.build.sourceVersion}</complianceLevel>
                     <forceAjcCompile>true</forceAjcCompile>
                     <aspectLibraries>
@@ -471,7 +454,7 @@
                     <weaveDirectories>
                         <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
                     </weaveDirectories>
-                    <skip>false</skip>
+                    <skip>${maven.compiler.aspectj.skip}</skip>
                     <showWeaveInfo />
                 </configuration>
                 <dependencies>
@@ -498,7 +481,7 @@
                 <version>${maven-antrun-plugin.version}</version>
                 <configuration>
                     <target>
-                        <ant antfile="tasks.xml" target="genhash"/>
+                        <ant antfile="tasks.xml" target="genhash" />
                     </target>
                 </configuration>
             </plugin>
@@ -699,15 +682,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
-    </dependencies>
 
-    <repositories>
-        <repository>
-            <id>jasig-repository</id>
-            <name>Jasig Maven2 Repository</name>
-            <url>http://developer.jasig.org/repo/content/groups/m2-legacy/</url>
-        </repository>
-    </repositories>
+    </dependencies>
 
     <pluginRepositories>
         <pluginRepository>
@@ -1488,6 +1464,7 @@
                 <notice.skip>true</notice.skip>
                 <versions.skip>true</versions.skip>
                 <findbugs.skip>true</findbugs.skip>
+                <cobertura.skip>true</cobertura.skip>
             </properties>
 
             <build>
@@ -1551,7 +1528,6 @@
         <spring.webflow.client.repo.version>1.0.0</spring.webflow.client.repo.version>
         <ldaptive.version>1.0.6</ldaptive.version>
         <spring.security.version>4.0.1.RELEASE</spring.security.version>
-        <clover.version>2.6.3</clover.version>
         <aspectj.version>1.8.6</aspectj.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
         <commons.jexl.version>1.1</commons.jexl.version>
@@ -1601,8 +1577,6 @@
         <hazelcast.version>3.5</hazelcast.version>
 
         <!-- Plugin Versions -->
-        <coveralls-maven-plugin.version>3.1.0</coveralls-maven-plugin.version>
-        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
         <maven-versions-plugin.version>2.2</maven-versions-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
@@ -1626,6 +1600,7 @@
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
         <project.build.targetVersion>1.7</project.build.targetVersion>
+        <maven.compiler.aspectj.skip>false</maven.compiler.aspectj.skip>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
         <cs.dir>${project.basedir}</cs.dir>
         <issues.projectKey>CAS</issues.projectKey>

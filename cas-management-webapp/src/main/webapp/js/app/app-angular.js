@@ -17,10 +17,19 @@
  * under the License.
  */
 
+var url = new URL(document.location);
+var array = url.pathname.split("/");
+if (array.length == 3) {
+    appContext = "/" + array[1];
+} else {
+    appContext = "";
+}
+
 (function () {
     var app = angular.module('casmgmt', [
         'ui.sortable'
     ]);
+   
 
     app.filter('checkmark', function () {
         return function (input) {
@@ -166,7 +175,7 @@
 
                         $.ajax({
                             type: 'post',
-                            url: '/cas-management/updateRegisteredServiceEvaluationOrder.html',
+                            url: appContext + '/updateRegisteredServiceEvaluationOrder.html',
                             data: myData,
                             headers: httpHeaders,
                             dataType: 'json',
@@ -190,7 +199,7 @@
             };
 
             this.getServices = function () {
-                $http.get('/cas-management/getServices.html')
+                $http.get(appContext + '/getServices.html')
                     .then(function (response) {
                         if(response.status != 200) {
                             delayedAlert('listfail', 'danger', response.data);
@@ -217,13 +226,15 @@
             this.closeModalDelete = function () {
                 serviceData.modalItem = null;
             };
+                   
+
             this.deleteService = function (item) {
                 var myData = {id: item.assignedId};
 
                 serviceData.closeModalDelete();
                 $.ajax({
                     type: 'post',
-                    url: '/cas-management/deleteRegisteredService.html',
+                    url: appContext + '/deleteRegisteredService.html',
                     data: myData,
                     headers: httpHeaders,
                     success: function (data, status) {
@@ -361,7 +372,7 @@
 
                 $.ajax({
                     type: 'post',
-                    url: '/cas-management/saveService.html',
+                    url: appContext + '/saveService.html',
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: JSON.stringify(serviceForm.serviceData),
@@ -475,7 +486,7 @@
                 serviceDataTransformation('load');
                 showInstructions();
 
-                $http.get('/cas-management/getService.html?id=-1')
+                $http.get(appContext + '/getService.html?id=-1')
                     .then(function (response) {
                         if(response.status != 200)
                             delayedAlert('notloaded', 'danger', data);
@@ -492,7 +503,7 @@
             this.loadService = function (serviceId) {
                 serviceForm.radioWatchBypass = true;
 
-                $http.get('/cas-management/getService.html?id=' + serviceId)
+                $http.get(appContext + '/getService.html?id=' + serviceId)
                     .then(function (response) {
                         if(response.status != 200) {
                             delayedAlert('notloaded', 'danger', data);
