@@ -17,7 +17,7 @@ affected by that vulnerability and/or bug?
 local changes, I can realize their benefit from CAS directly and end up with a smaller more-maintainable overlay? 
 
 This document attempts to describe, at a very high level, the scope and effort required to upgrade a given 
-[CAS Maven overlay](../Maven-Overlay-Installation.html).Rather than describing all steps/changes that would be required
+[CAS Maven overlay](../Maven-Overlay-Installation.html). Rather than describing all steps/changes that would be required
 to review and adjust (which would be impossible), we describe a strategy by which the upgrade could be executed. 
 
 ## Change Log
@@ -45,11 +45,12 @@ local changes that are present within your overlay are provided by default via C
 have you shed many of those improvements locally. 
 
 Your changes typically are:
-- Authentication scheme and strategy (i.e. LDAP, JDBC, etc)
-- Settings controlling CAS behavior in `cas.properties` file
-- User Interface changes may include CSS and JavaScript
-- Attribute resolution and release policy
-- Services registered and authorized to use CAS
+
+* Authentication scheme and strategy (i.e. LDAP, JDBC, etc)
+* Settings controlling CAS behavior in `cas.properties` file
+* User Interface changes may include CSS and JavaScript
+* Attribute resolution and release policy
+* Services registered and authorized to use CAS
 
 ## Prepare Development Environment
 

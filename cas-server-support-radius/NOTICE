@@ -49,7 +49,6 @@ This project includes:
   dom4j under BSD License
   ehcache under The Apache Software License, Version 2.0 or Terracotta Public License
   Ehcache Core under The Apache Software License, Version 2.0
-  ehcache-terracotta under Terracotta Public License
   Expression Language 2.2 Implementation under CDDL + GPLv2 with classpath exception
   Expression Language 3.0 API under CDDL + GPLv2 with classpath exception
   fastinfoset under Apache License, Version 2.0
@@ -92,8 +91,10 @@ This project includes:
   LDAPTIVE under Apache 2 or GNU Lesser General Public License
   Metrics Core under Apache License 2.0
   Mockito under The MIT License
+  net.sf.ehcache:ehcache-terracotta under Apache License, Version 2.0
   Objenesis under Apache 2
   OGNL - Object Graph Navigation Library under Apache License, Version 2.0
+  org.terracotta:terracotta-toolkit-1.0-runtime under Terracotta Public License, http://www.terracotta.org/legal/terracotta-public-license
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
   Reflections under WTFPL or The New BSD License
@@ -116,6 +117,5 @@ This project includes:
   Spring Web Flow under The Apache Software License, Version 2.0
   Spring Web MVC under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
-  terracotta-toolkit-runtime under Terracotta Public License
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
 
