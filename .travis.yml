@@ -26,7 +26,7 @@
 #
 
 language: java
-# sudo: false
+sudo: false
 branches:
   only:
   - master
@@ -47,12 +47,9 @@ before_install:
 install:
 - mvn -T 10 install -P nocheck -Dmaven.javadoc.skip=true -B -V -q
 script:
-- mvn clean install -Dlog4j.configurationFile=../travis/log4j2.xml -Dmaven.javadoc.skip=true -B -V -DskipTests=true
+- mvn clean install -Dlog4j.configurationFile=../travis/log4j2.xml -Dmaven.javadoc.skip=true -B -V
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
 - chmod -R 777 ./travis/deploy-to-sonatype.sh
 - ./travis/deploy-to-sonatype.sh
-- mvn cobertura:cobertura coveralls:report -Dlog4j.configuration=file:../travis/log4j2.xml -Dcheckstyle.skip=true -Dfindbugs.skip=true -Dlicense.skip=true -Dnotice.skip=true -Dversions.skip=true
-#- chmod -R 777 ./travis/test-commit-message.sh
-#- ./travis/test-commit-message.sh

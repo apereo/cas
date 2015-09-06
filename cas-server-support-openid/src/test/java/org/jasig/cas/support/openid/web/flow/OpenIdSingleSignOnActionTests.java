@@ -36,6 +36,7 @@ import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.support.openid.OpenIdConstants;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
@@ -121,10 +122,10 @@ public class OpenIdSingleSignOnActionTests {
     public void verifyBadUsername() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("openid.identity", "fablah");
-        request.setParameter("openid.return_to", "http://www.cnn.com");
+        request.setParameter(OpenIdConstants.OPENID_IDENTITY, "fablah");
+        request.setParameter(OpenIdConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request);
+        final OpenIdService service = OpenIdService.createServiceFrom(request, null);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", "tgtId");
 
@@ -144,10 +145,10 @@ public class OpenIdSingleSignOnActionTests {
 
         this.ticketRegistry.addTicket(t);
 
-        request.setParameter("openid.identity", "http://openid.aol.com/scootman28");
-        request.setParameter("openid.return_to", "http://www.cnn.com");
+        request.setParameter(OpenIdConstants.OPENID_IDENTITY, "http://openid.aol.com/scootman28");
+        request.setParameter(OpenIdConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request);
+        final OpenIdService service = OpenIdService.createServiceFrom(request, null);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", t.getId());
 
