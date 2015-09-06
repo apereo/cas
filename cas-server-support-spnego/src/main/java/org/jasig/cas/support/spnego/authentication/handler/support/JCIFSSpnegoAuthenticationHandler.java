@@ -92,12 +92,10 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
         if (principal != null) {
             if (spnegoCredential.isNtlm()) {
                 logger.debug("NTLM Credential is valid for user [{}]", principal.getName());
-                spnegoCredential.setPrincipal(getPrincipal(principal.getName(), true));
-                success = true;
+            } else {
+                logger.debug("Kerberos Credential is valid for user [{}]", principal.getName());
             }
-            // else => kerberos
-            logger.debug("Kerberos Credential is valid for user [{}]", principal.getName());
-            spnegoCredential.setPrincipal(getPrincipal(principal.getName(), false));
+            spnegoCredential.setPrincipal(getPrincipal(principal.getName(), spnegoCredential.isNtlm()));
             success = true;
         }
 
