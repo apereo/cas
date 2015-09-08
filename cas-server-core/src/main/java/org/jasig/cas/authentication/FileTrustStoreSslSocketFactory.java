@@ -23,6 +23,9 @@ import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -50,6 +53,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Component("trustStoreSslSocketFactory")
 public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileTrustStoreSslSocketFactory.class);
@@ -61,7 +65,12 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password
      */
-    public FileTrustStoreSslSocketFactory(final File trustStoreFile, final String trustStorePassword) {
+    @Autowired
+    public FileTrustStoreSslSocketFactory(
+            @Value("${http.client.truststore.file:classpath:truststore.jks}")
+            final File trustStoreFile,
+            @Value("${http.client.truststore.psw:changeit}")
+            final String trustStorePassword) {
         this(trustStoreFile, trustStorePassword, KeyStore.getDefaultType());
     }
 
