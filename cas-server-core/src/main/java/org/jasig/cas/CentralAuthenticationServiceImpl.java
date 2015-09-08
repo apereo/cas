@@ -78,7 +78,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Concrete implementation of a CentralAuthenticationService, and also the
+ * Concrete implementation of a {@link CentralAuthenticationService}, and also the
  * central, organizing component of CAS's internal implementation.
  * <p>
  * This class is threadsafe.
