@@ -65,9 +65,13 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -106,6 +110,7 @@ import java.util.Set;
  * @author Dmitry Kopylenko
  * @since 3.0.0
  */
+@Component("centralAuthenticationService")
 public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
 
     /** Log instance for logging events, info, warnings, errors, etc. */
@@ -113,10 +118,14 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
+    @Autowired
+    @Qualifier("ticketRegistry")
     private final TicketRegistry ticketRegistry;
 
     /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
-    @NotNull
+    @Null
+    @Autowired(required = false)
+    @Qualifier("serviceTicketRegistry")
     private final TicketRegistry serviceTicketRegistry;
 
     /**
@@ -124,6 +133,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * obtaining tickets.
      */
     @NotNull
+    @Autowired
+    @Qualifier("authenticationManager")
     private final AuthenticationManager authenticationManager;
 
     /**
@@ -131,26 +142,38 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * created.
      */
     @NotNull
+    @Autowired
+    @Qualifier("ticketGrantingTicketUniqueIdGenerator")
     private final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
     @NotNull
+    @Autowired
+    @Qualifier("uniqueIdGeneratorsMap")
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     /** Implementation of Service Manager. */
     @NotNull
+    @Autowired
+    @Qualifier("servicesManager")
     private final ServicesManager servicesManager;
 
     /** The logout manager. **/
     @NotNull
+    @Autowired
+    @Qualifier("logoutManager")
     private final LogoutManager logoutManager;
 
     /** Expiration policy for ticket granting tickets. */
     @NotNull
+    @Autowired
+    @Qualifier("grantingTicketExpirationPolicy")
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     /** ExpirationPolicy for Service Tickets. */
     @NotNull
+    @Autowired
+    @Qualifier("serviceTicketExpirationPolicy")
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /**
@@ -163,6 +186,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /** Factory to create the principal type. **/
     @NotNull
+    @Autowired
+    @Qualifier("principalFactory")
     private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Default instance for the ticket id generator. */
