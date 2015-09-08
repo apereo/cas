@@ -33,7 +33,7 @@ evaluation to determine feasibility of the solution and the target version in wh
 
 ## Scope Review
 Once you decide your ideal CAS version for the upgrade, before attempting to upgrade, 
-please review the CAS [Release Policy](../../Release-Policy.html). This will provide you
+please review the CAS [Release Policy](../../developer/Release-Policy.html). This will provide you
 with an understanding of what changes you may expect from new version and what the required effort
 may be for the upgrade.
 
