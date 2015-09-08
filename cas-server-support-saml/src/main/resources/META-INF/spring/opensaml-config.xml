@@ -47,9 +47,6 @@
           init-method="initialize">
         <property name="builderAttributes">
             <map>
-                <!-- Sun/Oracle is the default, for Xerces, set property to org.apache.xerces.util.SecurityManager
-                     For Java 1.8, set this property to com.sun.org.apache.xerces.internal.util.XMLSecurityManager-->
-                
                 <entry key="http://apache.org/xml/properties/security-manager">
                     <bean class="${cas.saml.securityManager:com.sun.org.apache.xerces.internal.util.SecurityManager}"/>
                 </entry>
