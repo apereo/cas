@@ -6,7 +6,7 @@ title: CAS - Upgrade Guide
 # Upgrade Guide
 In general, it is recommended that adopters try to keep their CAS deployment in alignment with the latest CAS version available.
 In particular, releases that are of `PATCH` or `SECURITY` nature should be immediately applied as they are drop-in replacements
-for their corresponding parent version. See CAS [Release Policy](../../Release-Policy.html) for more info. 
+for their corresponding parent version. See CAS [Release Policy](../../developer/Release-Policy.html) for more info. 
 
 The general objectives of a CAS upgrade could be:
 
