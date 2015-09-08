@@ -56,7 +56,7 @@ public final class SingleSignOnSessionsReportController {
 
     private enum SsoSessionReportOptions {
         ALL("all"),
-        PROXIED("all"),
+        PROXIED("proxied"),
         DIRECT("direct");
 
         private final String type;
