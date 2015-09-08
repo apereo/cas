@@ -26,6 +26,8 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
@@ -47,7 +49,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Component
+@Component("log4jInitialization")
 public final class CasLoggerContextInitializer implements ServletContextAware {
     private static AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
@@ -57,10 +59,13 @@ public final class CasLoggerContextInitializer implements ServletContextAware {
 
     private ServletContextListener loggerContext;
 
+    @Value("${log4j.config.package:org.apache.logging.log4j.web}")
     private final String loggerContextPackageName;
 
+    @Value("${log4j.config.location:classpath:log4j2.xml}")
     private final Resource logConfigurationFile;
 
+    @Value("${log4j.config.field:log4jConfiguration}")
     private final String logConfigurationField;
 
     /**
