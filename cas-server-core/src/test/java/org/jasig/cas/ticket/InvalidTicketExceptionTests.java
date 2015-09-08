@@ -20,7 +20,6 @@ package org.jasig.cas.ticket;
 
 import static org.junit.Assert.*;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
 import org.junit.Test;
 
 /**
