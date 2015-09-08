@@ -29,7 +29,11 @@ import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.net.URL;
@@ -44,6 +48,7 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@Component("logoutManager")
 public final class LogoutManagerImpl implements LogoutManager {
 
     /** The logger. */
@@ -57,22 +62,30 @@ public final class LogoutManagerImpl implements LogoutManager {
 
     /** The services manager. */
     @NotNull
+    @Autowired
+    @Qualifier("servicesManager")
     private final ServicesManager servicesManager;
 
     /** An HTTP client. */
     @NotNull
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
     private final HttpClient httpClient;
 
     @NotNull
+    @Autowired
+    @Qualifier("logoutBuilder")
     private final LogoutMessageCreator logoutMessageBuilder;
     
     /** Whether single sign out is disabled or not. */
+    @Value("${slo.callbacks.disabled:false}")
     private boolean singleLogoutCallbacksDisabled;
     
     /** 
      * Whether messages to endpoints would be sent in an asynchronous fashion.
      * True by default.
      **/
+    @Value("${slo.callbacks.asynchronous:true}")
     private boolean asynchronous = true;
     
     /**

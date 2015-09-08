@@ -22,6 +22,9 @@ import org.jasig.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
@@ -39,6 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("servicesManager")
 public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
@@ -55,7 +59,9 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      *
      * @param serviceRegistryDao the service registry dao
      */
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
+    @Autowired
+    public DefaultServicesManagerImpl(@Qualifier("serviceRegistryDao")
+                                      final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
 
         load();
