@@ -23,7 +23,11 @@ import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.stereotype.Component;
 
 /**
  * An extension of the {@link ReloadableResourceBundleMessageSource} whose sole concern
@@ -42,6 +46,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Component("messageSource")
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
     private String[] basenames;
@@ -81,11 +86,39 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
     }
 
     @Override
-    public void setBasenames(final String... basenames) {
+    @Autowired
+    public void setBasenames(@Qualifier("basenames")
+                             final String... basenames) {
         this.basenames = basenames;
         super.setBasenames(basenames);
     }
-    
-    
 
+
+    @Override
+    @Autowired
+    public void setDefaultEncoding(@Value("${message.bundle.encoding:UTF-8}")
+                                   final String defaultEncoding) {
+        super.setDefaultEncoding(defaultEncoding);
+    }
+
+    @Override
+    @Autowired
+    public void setCacheSeconds(@Value("${message.bundle.cacheseconds:180}")
+                                final int cacheSeconds) {
+        super.setCacheSeconds(cacheSeconds);
+    }
+
+    @Override
+    @Autowired
+    public void setFallbackToSystemLocale(@Value("${message.bundle.fallback.systemlocale:false}")
+                                          final boolean fallbackToSystemLocale) {
+        super.setFallbackToSystemLocale(fallbackToSystemLocale);
+    }
+
+    @Override
+    @Autowired
+    public void setUseCodeAsDefaultMessage(@Value("${message.bundle.usecode.message:true}")
+                                           final boolean useCodeAsDefaultMessage) {
+        super.setUseCodeAsDefaultMessage(useCodeAsDefaultMessage);
+    }
 }

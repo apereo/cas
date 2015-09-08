@@ -60,10 +60,6 @@
         Also, explicitly set the default encoding to be UTF-8 when parsing message bundles.
         The default, if not set, is none which forces ISO-8859-1 of java.util.ResourceBundle.
     -->
-    <bean id="messageSource" class="org.jasig.cas.web.view.CasReloadableMessageBundle"
-          p:basenames-ref="basenames" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
-          p:cacheSeconds="180" p:useCodeAsDefaultMessage="true"/>
-
     <util:list id="basenames">
         <value>classpath:custom_messages</value>
         <value>classpath:messages</value>
