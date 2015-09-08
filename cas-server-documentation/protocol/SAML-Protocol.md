@@ -190,6 +190,10 @@ In `cas-servlet.xml`, uncomment the following:
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
 {% endhighlight %}
 
+
+###Xerces or JDK8
+The security manager for XML parsing defaults to Oracle's `cas.saml.securityManager=com.sun.org.apache.xerces.internal.util.SecurityManager`. If Xerces' security manager is preferred set `cas.saml.securityManager` to `org.apache.xerces.util.SecurityManager`. For JDK8 support, this value should instead be `com.sun.org.apache.xerces.internal.util.XMLSecurityManager` for Oracle's security manager.
+
 #SAML 2
 
 CAS support for SAML 2 at this point is mostly limited to [Google Apps Integration](../integration/Google-Apps-Integration.html). Full SAML 2 support can also be achieved via Shibboleth with CAS handling the authentication and SSO. [See this guide](../integration/Shibboleth.html) for more info.
