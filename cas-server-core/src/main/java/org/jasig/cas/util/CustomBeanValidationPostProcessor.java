@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 
 import java.lang.annotation.ElementType;
@@ -37,6 +40,7 @@ import javax.validation.Validator;
  * @since 3.4
  *
  */
+@Component("validationAnnotationBeanPostProcessor")
 public final class CustomBeanValidationPostProcessor extends BeanValidationPostProcessor {
 
     /**
@@ -63,5 +67,13 @@ public final class CustomBeanValidationPostProcessor extends BeanValidationPostP
 
         final Validator validator = configuration.buildValidatorFactory().getValidator();
         setValidator(validator);
+    }
+
+    @Override
+    @Autowired
+    public void setAfterInitialization(
+            @Value("${validation.processing.afterinit:true}")
+            final boolean afterInitialization) {
+        super.setAfterInitialization(afterInitialization);
     }
 }

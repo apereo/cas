@@ -23,6 +23,7 @@ import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * A builder that uses the saml standard's <code>LogoutRequest</code> template in order
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * @see DefaultLogoutRequest
  * @since 4.0.0
  */
+@Component("logoutBuilder")
 public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
     /** The logger. */
