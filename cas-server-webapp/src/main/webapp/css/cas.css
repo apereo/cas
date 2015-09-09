@@ -258,3 +258,39 @@ footer a:link, footer a:visited {
 }
 
 
+/**
+ * SSO Sessions Styles
+ */
+#loadingMessage {
+    font-size: 14px;
+}
+
+#cas-sessions, #no-cas-sessions {
+    display: none;
+}
+#no-cas-sessions div {
+    margin-top: 2em;
+}
+
+.ssoSessions #content {
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.ssoSessions .btn-success {
+    background: #70ba61;
+    border: 0;
+    padding: 10px 20px;
+    font-weight: bold;
+    color: white;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+.ssoSessions .sorting_desc, .ssoSessions .sorting_asc {
+    background-color: rgba(239, 239, 239, 0.8);
+}
+.ssoSessions #removeAllSessionsButton.btn .badge {
+    color: #000;
+    padding-right: 9px;
+}
