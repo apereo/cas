@@ -140,4 +140,8 @@ body,html {
   margin: 15px 0 0;    
 }
 
-
+.btn.active, .btn:active {
+  color: #fff;
+  background-color: #286090;
+  border-color: #204d74;
+}
