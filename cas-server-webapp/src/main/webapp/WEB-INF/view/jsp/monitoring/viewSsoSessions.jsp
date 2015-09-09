@@ -22,1116 +22,6 @@
 
 <script type="text/javascript">
 
-    var ssoData =
-    {
-    "activeSsoSessions": [
-    {
-    "authentication_date": 1441736515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736452186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser2",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441737515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736463186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser4",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515663,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736462186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser3",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736452186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser2",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441737515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736463186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser4",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515663,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736462186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser3",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736452186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser2",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441737515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736463186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser4",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515663,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736462186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser3",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736452186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser2",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441737515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736463186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser4",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515663,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736462186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser3",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736452186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser2",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441737515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736463186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser4",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515663,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736462186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser3",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736452186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser2",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441737515763,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736463186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser4",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    },
-    {
-    "authentication_date": 1441736515663,
-    "authentication_attributes": {
-    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
-    },
-    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
-    "number_of_uses": 0,
-    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-    "principal_attributes": {
-    },
-    "is_proxied": true,
-    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
-    "authenticated_services": {
-    }
-    },
-    {
-    "authentication_date": 1441736462186,
-    "authentication_attributes": {
-    "authenticationMethod": "AcceptUsersAuthenticationHandler"
-    },
-    "authenticated_principal": "casuser3",
-    "number_of_uses": 3,
-    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-    "principal_attributes": {
-    "uid": "uid",
-    "eduPersonAffiliation": "eduPersonAffiliation",
-    "memberOf": [
-    "faculty",
-    "staff",
-    "org"
-    ],
-    "groupMembership": "groupMembership"
-    },
-    "is_proxied": false,
-    "authenticated_services": {
-    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    },
-    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
-    "id": "https://mmoayyed.unicon.net/sample1/",
-    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
-    "artifactId": null,
-    "loggedOutAlready": false,
-    "attributes": {
-    }
-    }
-    }
-    }
-    ]
-    }
-    ;
-
-
-
-
-    // Todo: Change out look and feel for Bootstrap
-
     String.prototype.padLeft = function (length, character) {
         return new Array(length - this.length + 1).join(character || ' ') + this;
     };
@@ -1145,6 +35,10 @@
     };
 
     function parseJsonPayload() {}
+
+    function updateAdminPanels( data ) {
+        console.log('updateAdminPanels');
+    }
 
     function showError(msg) {
         $("#msg").removeClass();
@@ -1218,6 +112,8 @@
 //            "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
 //            "https://cdn.datatables.net/1.10.8/css/jquery.dataTables.css",
 // Bootstrap Datables CSS
+        //"https://fonts.googleapis.com/css?family=Lato",
+        "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
         "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
         "https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
 
@@ -1246,7 +142,7 @@
         */
 
             function() {
-console.log(ssoData.activeSsoSessions);
+//console.log(ssoData.activeSsoSessions);
                 $('#removeAllSessionsButton').on('click', function(e) {
                     e.preventDefault();
                     removeSession();
@@ -1269,20 +165,22 @@ console.log(ssoData.activeSsoSessions);
                 $('#ssoSessions').DataTable( {
                     "order": [[ 3, "desc" ]],
                     "initComplete": function(settings, json) {
-/*
+
                         if (!json || json.activeSsoSessions.length == 0) {
                             console.warn('show no data view');
                             $('#loadingMessage').hide();
                             $('#no-cas-sessions').show();
                         } else {
-*/
+    console.log( json );
+                            //updateAdminPanels( json );
+
                             $( "#ssoSessions tbody tr td:last-child button.btn-danger" ).on( "click", function() {
                                 removeSession( this.value );
                             });
                             $('#loadingMessage').hide();
                             $("#no-cas-sessions").hide();
                             $("#cas-sessions").show();
-//                        }
+                        }
                     },
                     "language": {
                         //"infoEmpty": "No active sessions were found",
@@ -1290,13 +188,14 @@ console.log(ssoData.activeSsoSessions);
                         "zeroRecords": "No matching sessions found"
                     },
                     "processing": true,
-    data: ssoData.activeSsoSessions,
-/*
+//                    data: ssoData.activeSsoSessions,
+
                     "ajax": {
-                        "url": '/cas/statistics/ssosessions/getSsoSessions',
+                        //"url": '/cas/statistics/ssosessions/getSsoSessions',
+                        "url": '/cas/js/test_data.json',
                         "dataSrc": "activeSsoSessions"
                     },
-*/
+
                     columnDefs: [
                         {
                             "targets": 0,
@@ -1411,16 +310,97 @@ console.log(ssoData.activeSsoSessions);
                 <span class="logo hidden-xs"><span class="heavy">SSO</span>Sessions Report</span></span>
         </div>
     </nav> -->
+
+<%--
+    <div class="panel panel-default">
+
+<div class="container">
+    <div class="row adminPanels row-eq-height">
+    <div class="col-md-3">
+    <div class="users-panel panel panel-default">
+    <div class="panel-heading">
+    <h3 class="panel-title">Users</h3>
+    </div>
+    <div class="panel-body">
+    <span id="userCount">8</span>
+    <p>Total Active users</p>
+    </div>
+    </div>
+    </div>
+    <div class="col-md-3">
+    <div class="usage-panel panel panel-default">
+    <div class="panel-heading">
+    <h3 class="panel-title">Usage Count</h3>
+    </div>
+    <div class="panel-body">
+    <span id="usageCount">36</span>
+    <p>Sessions</p>
+    </div>
+    </div>
+    </div>
+    <div class="col-md-3">
+    <div class="tickets-panel panel panel-default">
+    <div class="panel-heading">
+    <h3 class="panel-title">Tickets</h3>
+    </div>
+    <div class="panel-body">
+    <span id="ticketCount">36</span>
+    <p>Current TGTs</p>
+    </div>
+    </div>
+    </div>
+    </div>
+</div>
+
+    </div>
+--%>
+
     <div class="panel panel-default">
         <div class="panel-heading">
             <h4><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> SSO Sessions Report</h4>
         </div>
         <div class="panel-body">
-        <div id="session-counts" class="container">
-sessions
-        </div>
-        <hr />
-            <div>
+            <div id="session-counts" class="container-fluid">
+                <div class="row adminPanels">
+                    <div class="col-md-4">
+                        <div class="users-panel panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Users</h3>
+                            </div>
+                            <div class="panel-body">
+                                <span id="userCount">8</span>
+                                <p>Total Active users</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="usage-panel panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Usage Count</h3>
+                            </div>
+                            <div class="panel-body">
+                                <span id="usageCount">36</span>
+                                <p>Sessions</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="tickets-panel panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Tickets</h3>
+                            </div>
+                            <div class="panel-body">
+                                <span id="ticketCount">36</span>
+                                <p>Current TGTs</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="container-fluid">
                 <div id="filterButtons" class="btn-group btn-group-sm pull-right" data-toggle="buttons">
                     <label class="btn btn-default active" data-filter="all">
                         <input type="radio" name="options" id="optionAll" autocomplete="off"> All
@@ -1433,9 +413,10 @@ sessions
                     </label>
                 </div>
 
-                <button id="removeAllSessionsButton" class="btn btn-sm btn-danger" type="button">Remove All Sessions</button></div>
+                <button id="removeAllSessionsButton" class="btn btn-sm btn-danger" type="button">Remove All Sessions</button>
+            </div>
 
-            <div id="container-stable">
+            <div id="container-stable" class="container-fluid">
 
                 <div id="msg" style="display:none"></div>
                 <table id="ssoSessions" class="display table table-striped table-bordered">
@@ -1461,43 +442,6 @@ sessions
                     </tbody>
                 </table>
         <hr />
-<table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
-
-        
-        <%--
-
-                        <table id="ssoSessions-orig" class="display">
-                            <thead>
-                            <tr>
-                                <th>&nbsp;</th>
-                                <th>Principal</th>
-                                <th>Ticket Granting Ticket</th>
-                                <th>Authentication Date</th>
-                                <th>Usage Count</th>
-                                <th>&nbsp;</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td></td>
-                                <td>User</td>
-                                <td>TGT-123456</td>
-                                <td>Today</td>
-                                <td>5</td>
-                                <td><button class="btn btn-sm btn-danger" type="button">Destroy</button></div></span></td>
-                    </tr>
-                    <tr>
-                        <td><span class='label label-primary'>Proxy</span></td>
-                        <td>User</td>
-                        <td>PGT-123456</td>
-                        <td>Today</td>
-                        <td>5</td>
-                        <td><button class="btn btn-sm btn-danger" type="button">Destroy</button></div></span></td>
-
-                </tr>
-                </tbody>
-                </table>
-        --%>
     </div>
 
     <div id="login">

@@ -16,6 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+/*@import url(https://fonts.googleapis.com/css?family=Lato);*/
+@import url(https://fonts.googleapis.com/css?family=Lato:400,300,100);
+
 html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr,
 address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var,
 b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot,
@@ -277,6 +281,10 @@ footer a:link, footer a:visited {
     padding: 20px;
 }
 
+#container-stable {
+    margin: 20px 0 20px;
+}
+
 .ssoSessions .btn-success {
     background: #70ba61;
     border: 0;
@@ -293,4 +301,78 @@ footer a:link, footer a:visited {
 .ssoSessions #removeAllSessionsButton.btn .badge {
     color: #000;
     padding-right: 9px;
+}
+
+.ssoSessions .adminPanels {
+    border-bottom: 1px solid #d5d5d5;
+    margin-bottom: 2em;
+    margin-top: 1em;
+    padding-bottom: 1em;
+}
+
+.ssoSessions .adminPanels .panel-default>.panel-heading {
+    background-color: #fff;
+    border-bottom: none;
+}
+.ssoSessions .adminPanels .panel-default>.panel-heading h3 {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    font-size: 20pt;
+}
+
+.ssoSessions .adminPanels .panel-default > .panel-heading:after {
+    position: absolute;
+    font-family: FontAwesome;
+    top: -5px;
+    right: 30px;
+    font-size: 70pt;
+    color: #153e50;
+    opacity: 0.1;
+}
+.adminPanels .users-panel.panel-default > .panel-heading:after {
+    content: "\f0c0";
+}
+
+.adminPanels .usage-panel.panel-default > .panel-heading:after {
+    content: "\f201";
+}
+
+.adminPanels .tickets-panel.panel-default > .panel-heading:after {
+    content: "\f145";
+}
+
+
+.adminPanels .panel-body {
+    padding-top: 5px;
+}
+.adminPanels .panel-body span {
+    font-family: 'Lato', sans-serif;
+    font-size: 30pt;
+    font-weight: 100;
+}
+
+/*
+.panel-body:after {
+    content: "\f087";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    position: absolute;
+    font-size: 30px;
+    color: lightblue;
+    top: 50%;
+    left: 50%;
+    margin: -50px 0 0 90px;
+    z-index: 1;
+}
+*/
+
+
+
+.row-eq-height {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
 }
