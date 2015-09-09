@@ -21,87 +21,1116 @@
 <%@include file="/WEB-INF/view/jsp/default/ui/includes/top.jsp"%>
 
 <script type="text/javascript">
-    /*
-     * End Points:
-    /statistics/ssosessions/getSsoSessions [GET] renders JSON blob that gets you all session data
 
-    /statistics/ssosessions/destroySsoSession [POST] destroys a single SSO session. Requires a TGT as a parameter available in the JSON blob
+    var ssoData =
+    {
+    "activeSsoSessions": [
+    {
+    "authentication_date": 1441736515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736452186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser2",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441737515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736463186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser4",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515663,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736462186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser3",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736452186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser2",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441737515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736463186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser4",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515663,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736462186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser3",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736452186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser2",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441737515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736463186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser4",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515663,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736462186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser3",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736452186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser2",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441737515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736463186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser4",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515663,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736462186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser3",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736452186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser2",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441737515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736463186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser4",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515663,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736462186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser3",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736452186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser2",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441737515763,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736463186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser4",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    },
+    {
+    "authentication_date": 1441736515663,
+    "authentication_attributes": {
+    "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+    },
+    "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+    "number_of_uses": 0,
+    "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+    "principal_attributes": {
+    },
+    "is_proxied": true,
+    "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+    "authenticated_services": {
+    }
+    },
+    {
+    "authentication_date": 1441736462186,
+    "authentication_attributes": {
+    "authenticationMethod": "AcceptUsersAuthenticationHandler"
+    },
+    "authenticated_principal": "casuser3",
+    "number_of_uses": 3,
+    "ticket_granting_ticket": "TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
+    "principal_attributes": {
+    "uid": "uid",
+    "eduPersonAffiliation": "eduPersonAffiliation",
+    "memberOf": [
+    "faculty",
+    "staff",
+    "org"
+    ],
+    "groupMembership": "groupMembership"
+    },
+    "is_proxied": false,
+    "authenticated_services": {
+    "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    },
+    "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org": {
+    "id": "https://mmoayyed.unicon.net/sample1/",
+    "originalUrl": "https://mmoayyed.unicon.net/sample1/",
+    "artifactId": null,
+    "loggedOutAlready": false,
+    "attributes": {
+    }
+    }
+    }
+    }
+    ]
+    }
+    ;
 
-    /statistics/ssosessions/destroySsoSessions [POST] bulk kill. Destroys all. Optional parameters can be "ALL", "PROXIED", "DIRECT"
-     */
 
-<%--
-var ssoData = {
-        "activeSsoSessions":[
-        {
-        "authentication_date":1441736515763,
-        "authentication_attributes":{
-        "authenticationMethod":"HttpBasedServiceCredentialsAuthenticationHandler"
-        },
-        "authenticated_principal":"https://mmoayyed.unicon.net/sample1/proxyUrl",
-        "number_of_uses":0,
-        "ticket_granting_ticket":"PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
-        "principal_attributes":{
 
-        },
-        "is_proxied":true,
-        "proxied_by":"https://mmoayyed.unicon.net/sample1/",
-        "authenticated_services":{
 
-        }
-        },
-        {
-        "authentication_date":1441736462186,
-        "authentication_attributes":{
-        "authenticationMethod":"AcceptUsersAuthenticationHandler"
-        },
-        "authenticated_principal":"casuser",
-        "number_of_uses":3,
-        "ticket_granting_ticket":"TGT-1-T5hpkh06BOW2tSY1cwGIMblwru6DjdndCtwpBI6oeUqnGzZepu-cas01.example.org",
-        "principal_attributes":{
-        "uid":"uid",
-        "eduPersonAffiliation":"eduPersonAffiliation",
-        "memberOf":[
-        "faculty",
-        "staff",
-        "org"
-        ],
-        "groupMembership":"groupMembership"
-        },
-        "is_proxied":false,
-        "authenticated_services":{
-        "ST-3-uuFc7ddf4vEdBOIIOpN4-cas01.example.org":{
-        "id":"https://mmoayyed.unicon.net/sample1/",
-        "originalUrl":"https://mmoayyed.unicon.net/sample1/",
-        "artifactId":null,
-        "loggedOutAlready":false,
-        "attributes":{
-
-        }
-        },
-        "ST-1-7ZPfcD9LluG3eBZmWStj-cas01.example.org":{
-        "id":"https://mmoayyed.unicon.net/sample1/",
-        "originalUrl":"https://mmoayyed.unicon.net/sample1/",
-        "artifactId":null,
-        "loggedOutAlready":false,
-        "attributes":{
-
-        }
-        },
-        "ST-2-ZDheUfp2GsxrVnevhReK-cas01.example.org":{
-        "id":"https://mmoayyed.unicon.net/sample1/",
-        "originalUrl":"https://mmoayyed.unicon.net/sample1/",
-        "artifactId":null,
-        "loggedOutAlready":false,
-        "attributes":{
-
-        }
-        }
-        }
-        }
-        ]
-        };
---%>
+    // Todo: Change out look and feel for Bootstrap
 
     String.prototype.padLeft = function (length, character) {
         return new Array(length - this.length + 1).join(character || ' ') + this;
@@ -131,38 +1160,12 @@ var ssoData = {
         $("#msg").show();
     }
 
-    function filterData( filter ) {
-        if ( filter == 'no-proxy' ) {
-        // Non-proxied
-            console.log('filter by non-proxy');
-        } else if ( filter == 'proxy' ) {
-        // Proxied
-            console.log('filter by proxy');
-        } else {
-        // All
-            console.log('filter by all');
-        }
-
-/*
-        $('#example').DataTable().column( 0 ).search(
-            //String, Regex, SmartSearch
-            '', false, false
-        ).draw();
-*/
-    }
-
-
-    function removeSession( tid ) {
-        // Single Session: /statistics/ssosessions/destroySsoSession
-        // Multiple Sessions: /statistics/ssosessions/destroySsoSessions
-
+    function removeSession( ticketId ) {
         var factory = {};
         factory.httpHeaders = {};
         factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
 
-        factory.ticketId = tid;
-
-    console.log(factory.httpHeaders);
+        factory.ticketId = ticketId;
 
         if ( factory.ticketId ) {
             factory.url = '/cas/statistics/ssosessions/destroySsoSession';
@@ -171,6 +1174,7 @@ var ssoData = {
             factory.url = '/cas/statistics/ssosessions/destroySsoSessions';
         }
 
+// Todo: Add filter value
 
         $.ajax({
             type: 'post',
@@ -209,9 +1213,14 @@ var ssoData = {
 
     function jqueryReady() {
         head.load(
-            "https://code.jquery.com/ui/1.11.4/themes/redmond/jquery-ui.css",
-            "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
-            "https://cdn.datatables.net/1.10.8/css/jquery.dataTables.css",
+            // CSS Libraries
+//            "https://code.jquery.com/ui/1.11.4/themes/redmond/jquery-ui.css",
+//            "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
+//            "https://cdn.datatables.net/1.10.8/css/jquery.dataTables.css",
+// Bootstrap Datables CSS
+        "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
+        "https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
+
         /*
             "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
             "https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
@@ -220,16 +1229,24 @@ var ssoData = {
         );
 
         head.load(
-            "https://cdn.datatables.net/1.10.8/js/jquery.dataTables.min.js",
-            "https://cdn.datatables.net/1.10.8/js/dataTables.jqueryui.min.js",
+            // JS Libraries
+//            "https://cdn.datatables.net/1.10.8/js/jquery.dataTables.min.js",
+//            "https://cdn.datatables.net/1.10.8/js/dataTables.jqueryui.min.js",
             "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
+
+        // Bootstrap Datatables
+//        "//code.jquery.com/jquery-1.11.3.min.js",
+        "https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
+        "https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
+
+
         /*
             "https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
             "https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"
         */
 
             function() {
-
+console.log(ssoData.activeSsoSessions);
                 $('#removeAllSessionsButton').on('click', function(e) {
                     e.preventDefault();
                     removeSession();
@@ -246,16 +1263,26 @@ var ssoData = {
                     //removeSession();
                 });
 */
-                $("#cas-sessions").show();
-                $('#table_id-orig').DataTable();
+                //$("#cas-sessions").show();
+                //$('#table_id-orig').DataTable();
 
                 $('#ssoSessions').DataTable( {
+                    "order": [[ 3, "desc" ]],
                     "initComplete": function(settings, json) {
-                        //console.log( 'DataTables has finished its initialisation.' );
-                        $( "#ssoSessions tbody tr td:last-child button.btn-danger" ).on( "click", function() {
-                            removeSession( this.value );
-                        });
-                        $('#loadingMessage').hide();
+/*
+                        if (!json || json.activeSsoSessions.length == 0) {
+                            console.warn('show no data view');
+                            $('#loadingMessage').hide();
+                            $('#no-cas-sessions').show();
+                        } else {
+*/
+                            $( "#ssoSessions tbody tr td:last-child button.btn-danger" ).on( "click", function() {
+                                removeSession( this.value );
+                            });
+                            $('#loadingMessage').hide();
+                            $("#no-cas-sessions").hide();
+                            $("#cas-sessions").show();
+//                        }
                     },
                     "language": {
                         //"infoEmpty": "No active sessions were found",
@@ -263,27 +1290,30 @@ var ssoData = {
                         "zeroRecords": "No matching sessions found"
                     },
                     "processing": true,
-                    //data: ssoData.activeSsoSessions,
+    data: ssoData.activeSsoSessions,
+/*
                     "ajax": {
                         "url": '/cas/statistics/ssosessions/getSsoSessions',
                         "dataSrc": "activeSsoSessions"
                     },
+*/
                     columnDefs: [
                         {
                             "targets": 0,
                             "data": 'is_proxied',
+                            'className': 'col-xs-1',
                             "render" : function ( data, type, full, meta ) {
                                 if ( data === true) {
                                     return '<span class="label label-primary">Proxy</span>';
                                 } else {
-                                    return '';
+                                    return ' ';
                                 }
                             }
-                            //"defaultContent": ''
                         },
                         {
                             "targets": 1,
                             "data": 'authenticated_principal',
+                            "className": 'col-xs-2',
                             "render": function ( data, type, full, meta ) {
                                 return type === 'display' && data.length > 20 ?
                                 '<span title="'+data+'">'+data.substr( 0, 18 )+'...</span>' :
@@ -293,6 +1323,7 @@ var ssoData = {
                         {
                             "targets": 2,
                             "data": 'ticket_granting_ticket',
+                            "className": 'col-xs-3',
                             "render": function ( data, type, full, meta ) {
                                 return type === 'display' && data.length > 20 ?
                                 '<span title="'+data+'">'+data.substr( 0, 18 )+'...</span>' :
@@ -302,6 +1333,7 @@ var ssoData = {
                         {
                             "targets": 3,
                             "data": 'authentication_date',
+                            "className": 'col-xs-3',
                             "render": function ( data, type, full, meta ) {
                                 var timeStamp = new Date( data );
                                 return timeStamp.toFormattedString();
@@ -310,53 +1342,42 @@ var ssoData = {
                         },
                         {
                             "targets": 4,
-                            "data": 'number_of_uses'
+                            "data": 'number_of_uses',
+                            "className": 'col-xs-2'
                         },
                         {
                             "targets": 5,
                             "data": "ticket_granting_ticket",
+                            "className": 'col-xs-1',
                             "render": function (data, type, full, meta ) {
                                 return '<button class="btn btn-sm btn-danger" type="button" value="' + data + '">Destroy</button>';
-                            }
+                            },
+                            "orderable": false
                         },
                     ]
-/*
-                    "columns": [
-                        { data: ''},
-                        { data: "authenticated_principal" }
-                    ]
-*/
                 } );
 
 
             $('#filterButtons .btn').click(function() {
-                //$(this).addClass('active').siblings().removeClass('active');
 
                 var filter = $(this).data('filter');
+                var table = $('#ssoSessions').DataTable();
 
                 // Create Filter RegEx:
                 if ( filter == 'proxied') {
                     var filterRegex = '^Proxy$';
-                    var btnText = 'Remove Proxied Sessions';
+                    var btnText = 'Remove <span class="badge">xx</span> Proxied Sessions';
                 } else if ( filter == 'non-proxied') {
-                    var filterRegex = '^$';
-                    var btnText = 'Remove Non-Proxied Sessions';
+                    var filterRegex = '^ $';
+                    var btnText = 'Remove <span class="badge">xx</span> Non-Proxied Sessions';
                 } else {
                     var filterRegex = '';
-                    var btnText = 'Remove All Session';
+                    var btnText = 'Remove All Sessions';
                 }
 
-                var searchTerm = $('#ssoSessions').DataTable().column( 0 ).search(
-                    //'^'+this.value+'$', true, false
-                    //String, Regex, SmartSearch
-                    //'^'+this.value+'$', true, false
-                    filterRegex, true, false
-                ).draw();
+                var searchTerm = table.column( 0 ).search(filterRegex, true, false).draw();
 
-                $('#removeAllSessionsButton').text(btnText)
-console.log(searchTerm.search());
-                //var data = $('#ssoSessions').DataTable().search();
-                //console.log( 'Search term was: ' + data );
+                $('#removeAllSessionsButton').html(btnText.replace('xx', searchTerm.page.info().recordsDisplay ))
             });
 
 
@@ -369,11 +1390,19 @@ console.log(searchTerm.search());
 </script>
 
 
+<div id="loadingMessage"><h3>Loading SSO Sessions...</h3></div>
 
-<div id="loadingMessage">Loading...</div>
+<div id="no-cas-sessions">
+    <h2>No sessions found.</h2>
+    <div>
+        <input class="btn btn-success" type="button" onclick="location.reload();" value="Refresh">
+    </div>
+</div>
+
+<div id="cas-sessions">
 
 
-<div id="cas-sessions" style="display:none;">
+
 
     <!-- Main Header/Navigation
     <nav class="navbar navbar-default navbar-static-top" id="top-navbar" role="navigation">
@@ -387,6 +1416,10 @@ console.log(searchTerm.search());
             <h4><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> SSO Sessions Report</h4>
         </div>
         <div class="panel-body">
+        <div id="session-counts" class="container">
+sessions
+        </div>
+        <hr />
             <div>
                 <div id="filterButtons" class="btn-group btn-group-sm pull-right" data-toggle="buttons">
                     <label class="btn btn-default active" data-filter="all">
@@ -405,7 +1438,7 @@ console.log(searchTerm.search());
             <div id="container-stable">
 
                 <div id="msg" style="display:none"></div>
-                <table id="ssoSessions" class="display">
+                <table id="ssoSessions" class="display table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th>&nbsp;</th>
