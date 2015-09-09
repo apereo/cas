@@ -22,7 +22,7 @@ Contributors:
 -   Robert Oschwald [CAS 3.0]
 -   Misagh Moayyed
 
-Version: 3.0.1
+Version: 3.0.2
 
 Release Date: 2015-01-13
 
@@ -558,7 +558,9 @@ are case sensitive and MUST all be handled by `/serviceValidate`.
     primary credentials. It will fail if the ticket was issued from a single
     sign-on session.
 
-
+-   `format` [OPTIONAL] - if this parameter is set, ticket validation response
+    will be produced based on the parameter value. Supported values are `XML`
+    and `JSON`. If this parameter is not set, the default `XML` format will be used. 
 
 <a name="head2.5.2"/>
 
@@ -569,6 +571,7 @@ in the XML schema in Appendix A. Below are example responses:
 
 **On ticket validation success:**
 
+
 {% highlight xml %}
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
  <cas:authenticationSuccess>
@@ -577,14 +580,38 @@ in the XML schema in Appendix A. Below are example responses:
  </cas:authenticationSuccess>
 </cas:serviceResponse>
 {% endhighlight %}
+
+
+{% highlight json %}
+{
+  "serviceResponse" : {
+    "authenticationSuccess" : {
+      "user" : "username",
+      "proxyGrantingTicket" : "PGTIOU-84678-8a9d..."
+    }
+  }
+}
+{% endhighlight %}
+
 **On ticket validation failure:**
 
 {% highlight xml %}
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
  <cas:authenticationFailure code="INVALID_TICKET">
-    Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized`
+    Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized
   </cas:authenticationFailure>
 </cas:serviceResponse>
+{% endhighlight %}
+
+{% highlight json %}
+{
+  "serviceResponse" : {
+    "authenticationFailure" : {
+      "code" : "INVALID_TICKET",
+      "message" : "Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
+    }
+  }
+}
 {% endhighlight %}
 
 For proxy responses, see section [2.6.2](<#head2.6.2>).
@@ -728,6 +755,24 @@ Pass in a callback URL for proxying:
   </cas:serviceResponse>
 {% endhighlight %}
 
+{% highlight json %}
+{
+  "serviceResponse" : {
+    "authenticationSuccess" : {
+      "user" : "username",
+      "proxyGrantingTicket" : "PGTIOU-84678-8a9d...",
+      "proxies" : [ "https://proxy1/pgtUrl", "https://proxy2/pgtUrl" ],
+      "attributes" : {
+        "firstName" : "John",
+        "affiliation" : [ "staff", "faculty" ],
+        "title" : "Mr.",
+        "email" : "jdoe@example.orgmailto:jdoe@example.org",
+        "lastname" : "Doe"
+      }
+    }
+  }
+}
+{% endhighlight %}
 
 <a name="head2.6"/>
 
@@ -772,6 +817,19 @@ Response on ticket validation success:
   </cas:serviceResponse>
 {% endhighlight %}
 
+{% highlight json %}
+{
+  "serviceResponse" : {
+    "authenticationSuccess" : {
+      "user" : "username",
+      "proxyGrantingTicket" : "PGTIOU-84678-8a9d...",
+      "proxies" : [ "https://proxy1/pgtUrl", "https://proxy2/pgtUrl" ]
+    }
+  }
+}
+{% endhighlight %}
+
+
 >   Note: when authentication has proceeded through multiple proxies, the order
 >   in which the proxies were traversed MUST be reflected in the \<cas:proxies\>
 >   block. The most recently-visited proxy MUST be the first proxy listed, and
@@ -790,6 +848,16 @@ Response on ticket validation failure:
   </cas:serviceResponse>
 {% endhighlight %}
 
+{% highlight json %}
+{
+  "serviceResponse" : {
+    "authenticationFailure" : {
+      "code" : "INVALID_TICKET",
+      "message" : "Ticket PT-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
+    }
+  }
+}
+{% endhighlight %}
 
 <a name="head2.6.3"/>
 
@@ -861,6 +929,15 @@ Response on request failure:
   </cas:serviceResponse>
 {% endhighlight %}
 
+{% highlight json %}
+{
+  "serviceResponse" : {
+    "authenticationFailure" : {
+      "code" : "INVALID_REQUEST",
+      "message" : "'pgt' and 'targetService' parameters are both required"
+    }
+  }
+}
 
 <a name="head2.7.3"/>
 
