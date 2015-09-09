@@ -25,6 +25,7 @@ body,html {
 }
 
 /*body,html,*/
+
 #cas-sessions,
 #container-stable, 
 .ui-widget  {
@@ -110,9 +111,9 @@ body,html {
 }
 
 /* Main content block --*/
-#content {
-   border-radius: 4px;
-}
+/*#content {*/
+   /*border-radius: 4px;*/
+/*}*/
 
 /* Session container --*/
 #container-stable {
