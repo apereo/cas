@@ -559,7 +559,7 @@ are case sensitive and MUST all be handled by `/serviceValidate`.
     sign-on session.
 
 -   `format` [OPTIONAL] - if this parameter is set, ticket validation response
-    will be produced based on the parameter value. Supported values are `XML`
+    MUST be produced based on the parameter value. Supported values are `XML`
     and `JSON`. If this parameter is not set, the default `XML` format will be used. 
 
 <a name="head2.5.2"/>
