@@ -561,6 +561,8 @@ are case sensitive and MUST all be handled by `/serviceValidate`.
 -   `format` [OPTIONAL] - if this parameter is set, ticket validation response
     MUST be produced based on the parameter value. Supported values are `XML`
     and `JSON`. If this parameter is not set, the default `XML` format will be used. 
+    If the parameter value is not supported by the CAS server, an error code
+    MUST be returned as is described in section [2.5.3](<#head2.5.3>). 
 
 <a name="head2.5.2"/>
 
@@ -570,7 +572,6 @@ are case sensitive and MUST all be handled by `/serviceValidate`.
 in the XML schema in Appendix A. Below are example responses:
 
 **On ticket validation success:**
-
 
 {% highlight xml %}
 <cas:serviceResponse xmlns:cas="http://www.yale.edu/tp/cas">
@@ -646,8 +647,6 @@ servers MUST implement. Implementations MAY include others.
 
 For all error codes, it is RECOMMENDED that CAS provide a more detailed message
 as the body of the `\<cas:authenticationFailure\>` block of the XML response.
-
-
 
 <a name="head2.5.4"/>
 
