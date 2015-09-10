@@ -39,7 +39,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * SSO Report web controller that produces JSON data for the view.
@@ -49,7 +51,6 @@ import java.util.Map;
  * @since 4.1
  */
 @Controller("singleSignOnSessionsReportController")
-@RequestMapping("/statistics/ssosessions")
 public final class SingleSignOnSessionsReportController {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
@@ -109,8 +110,6 @@ public final class SingleSignOnSessionsReportController {
             return this.attributeKey;
         }
     }
-
-    private static final String ROOT_REPORT_ACTIVE_SESSIONS_KEY = "activeSsoSessions";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
@@ -194,7 +193,38 @@ public final class SingleSignOnSessionsReportController {
     public Map<String, Object> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type) {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
-        sessionsMap.put(ROOT_REPORT_ACTIVE_SESSIONS_KEY, getActiveSsoSessions(option));
+
+        final Collection<Map<String, Object>> collection = getActiveSsoSessions(option);
+        sessionsMap.put("activeSsoSessions", collection);
+
+        long totalTicketGrantingTickets = 0;
+        long totalProxyGrantingTickets = 0;
+        final Set<String> uniquePrincipals = new HashSet<>();
+
+        for (final Map<String, Object> entry : collection) {
+
+            if (entry.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
+                final Boolean isProxied = Boolean.valueOf(entry.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
+                if (isProxied) {
+                    totalProxyGrantingTickets++;
+                } else {
+                    totalTicketGrantingTickets++;
+                    final String principal = entry.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                    uniquePrincipals.add(principal);
+                }
+            } else {
+                totalTicketGrantingTickets++;
+                final String principal = entry.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                uniquePrincipals.add(principal);
+            }
+
+
+        }
+
+        sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
+        sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
+        sessionsMap.put("totalTickets", totalTicketGrantingTickets + totalProxyGrantingTickets);
+        sessionsMap.put("totalPrincipals", uniquePrincipals.size());
         return sessionsMap;
     }
 
@@ -261,7 +291,7 @@ public final class SingleSignOnSessionsReportController {
      * @return the model and view where json data will be rendered
      * @throws Exception thrown during json processing
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value="/statistics/ssosessions", method = RequestMethod.GET)
     public ModelAndView showSsoSessions() throws Exception {
         return new ModelAndView(VIEW_SSO_SESSIONS);
     }
