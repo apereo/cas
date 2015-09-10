@@ -19,13 +19,26 @@
 
 package org.jasig.cas.support.saml;
 
+import org.jasig.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.ServletContextAware;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
+
+import java.util.List;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -34,10 +47,15 @@ import javax.servlet.annotation.WebListener;
  * @since 4.2
  */
 @WebListener
-public class SamlServletContextListener implements ServletContextListener {
+@Component
+public class SamlServletContextListener implements ServletContextListener, ApplicationContextAware {
     private static final String CAS_SERVLET_NAME = "cas";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = getLogger(this.getClass());
+
+    @Autowired
+    @Qualifier("samlArgumentExtractor")
+    private ArgumentExtractor samlArgumentExtractor;
 
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
@@ -51,4 +69,13 @@ public class SamlServletContextListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(final ServletContextEvent sce) {}
+
+    @Override
+    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+        if (applicationContext.getParent() == null) {
+            final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
+            list.add(this.samlArgumentExtractor);
+        }
+    }
+
 }
