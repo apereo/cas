@@ -108,11 +108,6 @@
       <util:properties>
         <prop key="/serviceValidate">serviceValidateController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
-
-        <!--
-        <prop key="/samlValidate">samlValidateController</prop>
-        -->
-
         <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
         <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
         <prop key="/validate">legacyValidateController</prop>
