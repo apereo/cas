@@ -34,6 +34,16 @@
     <!-- Sample configuration to turn on SAML validation. Note that the SAML module dependency
          is required to be included in the final web application file.  -->
 
+    <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
+          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
+          p:centralAuthenticationService-ref="centralAuthenticationService"
+          p:servicesManager-ref="servicesManager"
+          p:proxyHandler-ref="proxy20Handler"
+          p:argumentExtractor-ref="samlArgumentExtractor"
+          p:successView="casSamlServiceSuccessView"
+          p:failureView="casSamlServiceFailureView"/>
+
+
     <bean id="abstractsamlView" class="org.jasig.cas.support.saml.web.view.AbstractSaml10ResponseView"
           abstract="true"/>
 
