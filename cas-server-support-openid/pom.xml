@@ -46,6 +46,12 @@
             <artifactId>openid4java</artifactId>
             <version>${openid4java.version}</version>
             <scope>compile</scope>
+            <exclusions>
+              <exclusion>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
