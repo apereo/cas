@@ -181,16 +181,30 @@ In the uniqueIdGenerators.xml file:
 </util:map>
 {% endhighlight %}
 
-###SAML Views 
-In `cas-servlet.xml`, uncomment the following:
 
-{% highlight xml %}
-<bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
-          p:order="3"
-          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
+##SAML Configuration
+SAML configuration in CAS is contained within the `cas.properties` file.
+
+### SAML Response Issuer
+The SAML response issuer can be controlled via:
+
+{% highlight properties %}
+# Indicates the SAML response issuer
+# cas.saml.response.issuer=localhost
+{% endhighlight %}
+
+### SAML IssueInstant Skew
+The SAML response can be allowed a skew value to control the issue instant. The behavior is controlled via:
+
+{% highlight properties %}
+# Indicates the skew allowance which controls the issue instant of the SAML response
+# cas.saml.response.skewAllowance=0
 {% endhighlight %}
 
 #SAML 2
 
-CAS support for SAML 2 at this point is mostly limited to [Google Apps Integration](../integration/Google-Apps-Integration.html). Full SAML 2 support can also be achieved via Shibboleth with CAS handling the authentication and SSO. [See this guide](../integration/Shibboleth.html) for more info.
+CAS support for SAML 2 at this point is mostly limited to 
+[Google Apps Integration](../integration/Google-Apps-Integration.html). 
+Full SAML 2 support can also be achieved via Shibboleth with CAS 
+handling the authentication and SSO. [See this guide](../integration/Shibboleth.html) for more info.
 
