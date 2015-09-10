@@ -20,6 +20,7 @@
 package org.jasig.cas;
 
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,7 +52,6 @@ public class SamlApplicationContextInitializer {
     @Qualifier("handlerMappingC")
     private SimpleUrlHandlerMapping handlerMappingC;
 
-
     @Autowired
     @Qualifier("samlValidateController")
     private Controller samlValidateController;
@@ -63,8 +64,11 @@ public class SamlApplicationContextInitializer {
     @PostConstruct
     public void initialize() {
         logger.info("Initializing Saml application context");
-        final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
+
+        final Map<String, Object> urlMap = (Map<String, Object>) this.handlerMappingC.getUrlMap();
         urlMap.put(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, this.samlValidateController);
-        handlerMappingC.initApplicationContext();
+        this.handlerMappingC.initApplicationContext();
+
+        logger.info("Initialized Saml application context successfully");
     }
 }
