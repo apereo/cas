@@ -197,8 +197,8 @@ public final class SingleSignOnSessionsReportController {
         final Collection<Map<String, Object>> collection = getActiveSsoSessions(option);
         sessionsMap.put("activeSsoSessions", collection);
 
-        long totalTicketGrantingTicket = 0;
-        long totalProxyGrantingTicket = 0;
+        long totalTicketGrantingTickets = 0;
+        long totalProxyGrantingTickets = 0;
         final Set<String> uniquePrincipals = new HashSet<>();
 
         for (final Map<String, Object> entry : collection) {
@@ -206,14 +206,14 @@ public final class SingleSignOnSessionsReportController {
             if (entry.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
                 final Boolean isProxied = Boolean.valueOf(entry.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
                 if (isProxied) {
-                    totalProxyGrantingTicket++;
+                    totalProxyGrantingTickets++;
                 } else {
-                    totalTicketGrantingTicket++;
+                    totalTicketGrantingTickets++;
                     final String principal = entry.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                     uniquePrincipals.add(principal);
                 }
             } else {
-                totalTicketGrantingTicket++;
+                totalTicketGrantingTickets++;
                 final String principal = entry.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                 uniquePrincipals.add(principal);
             }
@@ -221,9 +221,9 @@ public final class SingleSignOnSessionsReportController {
 
         }
 
-        sessionsMap.put("totalProxyGrantingTicket", totalProxyGrantingTicket);
-        sessionsMap.put("totalTicketGrantingTicket", totalTicketGrantingTicket);
-        sessionsMap.put("totalTickets", totalTicketGrantingTicket + totalProxyGrantingTicket);
+        sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
+        sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
+        sessionsMap.put("totalTickets", totalTicketGrantingTickets + totalProxyGrantingTickets);
         sessionsMap.put("totalPrincipals", uniquePrincipals.size());
         return sessionsMap;
     }
