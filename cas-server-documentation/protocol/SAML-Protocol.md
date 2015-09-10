@@ -117,37 +117,6 @@ Content-Type: text/xml
 
 In addition to the `cas-server-support-saml` module dependency, the following steps are required to enabled the SAML 1.1 support.
 
-###Definition/Mapping of `samlValidateController` 
-
-In `cas-servlet.xml`:
-
-{% highlight xml %}
-<bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
-  p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-  p:centralAuthenticationService-ref="centralAuthenticationService"
-  p:proxyHandler-ref="proxy20Handler"
-  p:argumentExtractor-ref="samlArgumentExtractor"
-  p:successView="casSamlServiceSuccessView"
-  p:failureView="casSamlServiceFailureView"/>
-
-<bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-  <property name="mappings">
-    <props>
-      ...
-      <prop key="/samlValidate">samlValidateController</prop>
-      ...
-{% endhighlight %}
-
-###Servlet mapping for `/samlValidate` 
-
-In the `web.xml` file:
-
-{% highlight xml %}
-<servlet-mapping>
-  <servlet-name>cas</servlet-name>
-  <url-pattern>/samlValidate</url-pattern>
-</servlet-mapping>
-{% endhighlight %}
 
 ###SAML Argument Extractor 
 
