@@ -19,24 +19,23 @@
 
 package org.jasig.cas.support.saml;
 
+import org.jasig.cas.support.saml.authentication.principal.SamlService;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.ServletContextAware;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
-
 import java.util.List;
+import java.util.Map;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -57,6 +56,10 @@ public class SamlServletContextListener implements ServletContextListener, Appli
     @Qualifier("samlArgumentExtractor")
     private ArgumentExtractor samlArgumentExtractor;
 
+    @Autowired
+    @Qualifier("samlServiceTicketUniqueIdGenerator")
+    private UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator;
+
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
         logger.info("Initializing SAML servlet context...");
@@ -73,8 +76,13 @@ public class SamlServletContextListener implements ServletContextListener, Appli
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         if (applicationContext.getParent() == null) {
+
             final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
             list.add(this.samlArgumentExtractor);
+
+            final Map<String, UniqueTicketIdGenerator> map = applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
+            map.put(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator);
+
         }
     }
 

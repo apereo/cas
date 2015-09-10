@@ -114,44 +114,6 @@ Content-Type: text/xml
 
 
 ##Configuration
-
-In addition to the `cas-server-support-saml` module dependency, the following steps are required to enabled the SAML 1.1 support.
-
-
-###SAML Argument Extractor 
-
-In the `argumentExtractorsConfiguration.xml` file:
-
-{% highlight xml %}
-<bean id="samlArgumentExtractor" class="org.jasig.cas.support.saml.web.support.SamlArgumentExtractor" />
-
-<util:list id="argumentExtractors">
-  <ref bean="casArgumentExtractor" />
-  <ref bean="samlArgumentExtractor" />
-</util:list>
-{% endhighlight %}
-
-###SAML ID Generator
-
-In the uniqueIdGenerators.xml file:
-
-{% highlight xml %}
-<bean id="samlServiceTicketUniqueIdGenerator" class="org.jasig.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator">
-  <constructor-arg index="0" value="[CAS-FQ-HOST-NAME]" />
-</bean>
-
-<util:map id="uniqueIdGeneratorsMap">
-  <entry
-    key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-    value-ref="serviceTicketUniqueIdGenerator" />
-  <entry
-    key="org.jasig.cas.support.saml.authentication.principal.SamlService"
-    value-ref="samlServiceTicketUniqueIdGenerator" />
-</util:map>
-{% endhighlight %}
-
-
-##SAML Configuration
 SAML configuration in CAS is contained within the `cas.properties` file.
 
 ### SAML Response Issuer
