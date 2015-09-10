@@ -37,6 +37,7 @@
     function parseJsonPayload() {}
 
     function updateAdminPanels( data ) {
+        // Todo: wire this up
         console.log('updateAdminPanels');
     }
 
@@ -61,19 +62,24 @@
 
         factory.ticketId = ticketId;
 
-        if ( factory.ticketId ) {
-            factory.url = '/cas/statistics/ssosessions/destroySsoSession';
-            // factory.data = { ticketGrantingTicket: factory.ticketId, type: 'ALL' };
-        } else {
+
+        if (ticketId && (ticketId == 'ALL' || ticketId == 'PROXIED' || ticketId == 'DIRECT' ) ) {
             factory.url = '/cas/statistics/ssosessions/destroySsoSessions';
+            factory.data = { type: ticketId };
+        } else {
+            factory.url = '/cas/statistics/ssosessions/destroySsoSession';
+            factory.data = { ticketGrantingTicket: factory.ticketId };
         }
 
-// Todo: Add filter value
 
+// Todo: Add filter value
+console.log(factory.data);
+    return;
         $.ajax({
             type: 'post',
             url: factory.url,
-            data: { ticketGrantingTicket: factory.ticketId, type: 'ALL' },
+            //data: { ticketGrantingTicket: factory.ticketId, type: 'ALL' },
+            data: factory.data,
             headers: factory.httpHeaders,
             dataType: 'json',
             success: function (data, status) {
@@ -145,7 +151,7 @@
 //console.log(ssoData.activeSsoSessions);
                 $('#removeAllSessionsButton').on('click', function(e) {
                     e.preventDefault();
-                    removeSession();
+                    removeSession(this.value);
                 });
 
                 $(document).on('click', '#filterButtons input:radio[id^="q_op_"]', function (e) {
@@ -171,7 +177,6 @@
                             $('#loadingMessage').hide();
                             $('#no-cas-sessions').show();
                         } else {
-    console.log( json );
                             //updateAdminPanels( json );
 
                             $( "#ssoSessions tbody tr td:last-child button.btn-danger" ).on( "click", function() {
@@ -265,18 +270,21 @@
                 // Create Filter RegEx:
                 if ( filter == 'proxied') {
                     var filterRegex = '^Proxy$';
+                    var deleteValue = 'PROXIED';
                     var btnText = 'Remove <span class="badge">xx</span> Proxied Sessions';
                 } else if ( filter == 'non-proxied') {
                     var filterRegex = '^ $';
+                    var deleteValue = 'DIRECT';
                     var btnText = 'Remove <span class="badge">xx</span> Non-Proxied Sessions';
                 } else {
                     var filterRegex = '';
+                    var deleteValue = 'ALL';
                     var btnText = 'Remove All Sessions';
                 }
 
                 var searchTerm = table.column( 0 ).search(filterRegex, true, false).draw();
 
-                $('#removeAllSessionsButton').html(btnText.replace('xx', searchTerm.page.info().recordsDisplay ))
+                $('#removeAllSessionsButton').val( deleteValue ).html(btnText.replace('xx', searchTerm.page.info().recordsDisplay ))
             });
 
 
@@ -300,60 +308,14 @@
 
 <div id="cas-sessions">
 
-
-
-
-    <!-- Main Header/Navigation
-    <nav class="navbar navbar-default navbar-static-top" id="top-navbar" role="navigation">
-        <div class="container">
-            <span class="navbar-brand" href="#"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span>
-                <span class="logo hidden-xs"><span class="heavy">SSO</span>Sessions Report</span></span>
-        </div>
-    </nav> -->
-
 <%--
-    <div class="panel panel-default">
+ Todo: Wire these messages up, auto close the alerts if its successful.
+ --%>
+    <div class="alert alert-success fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    ...
+    </div>
 
-<div class="container">
-    <div class="row adminPanels row-eq-height">
-    <div class="col-md-3">
-    <div class="users-panel panel panel-default">
-    <div class="panel-heading">
-    <h3 class="panel-title">Users</h3>
-    </div>
-    <div class="panel-body">
-    <span id="userCount">8</span>
-    <p>Total Active users</p>
-    </div>
-    </div>
-    </div>
-    <div class="col-md-3">
-    <div class="usage-panel panel panel-default">
-    <div class="panel-heading">
-    <h3 class="panel-title">Usage Count</h3>
-    </div>
-    <div class="panel-body">
-    <span id="usageCount">36</span>
-    <p>Sessions</p>
-    </div>
-    </div>
-    </div>
-    <div class="col-md-3">
-    <div class="tickets-panel panel panel-default">
-    <div class="panel-heading">
-    <h3 class="panel-title">Tickets</h3>
-    </div>
-    <div class="panel-body">
-    <span id="ticketCount">36</span>
-    <p>Current TGTs</p>
-    </div>
-    </div>
-    </div>
-    </div>
-</div>
-
-    </div>
---%>
 
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -361,6 +323,56 @@
         </div>
         <div class="panel-body">
             <div id="session-counts" class="container-fluid">
+
+
+<div class="row adminPanels">
+        <div class="col-lg-4 col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-users fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">26</div>
+                            <div>Total Active Users</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-tasks fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">12</div>
+                            <div>Usage Count Sessions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-ticket fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">124</div>
+                            <div>Total TG Tickets</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<%--
                 <div class="row adminPanels">
                     <div class="col-md-4">
                         <div class="users-panel panel panel-default">
@@ -396,7 +408,7 @@
                         </div>
                     </div>
                 </div>
-
+--%>
 
             </div>
 
@@ -413,7 +425,7 @@
                     </label>
                 </div>
 
-                <button id="removeAllSessionsButton" class="btn btn-sm btn-danger" type="button">Remove All Sessions</button>
+                <button id="removeAllSessionsButton" class="btn btn-sm btn-danger" type="button" value="ALL">Remove All Sessions</button>
             </div>
 
             <div id="container-stable" class="container-fluid">

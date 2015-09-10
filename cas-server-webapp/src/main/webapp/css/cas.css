@@ -304,7 +304,7 @@ footer a:link, footer a:visited {
 }
 
 .ssoSessions .adminPanels {
-    border-bottom: 1px solid #d5d5d5;
+    border-bottom: 1px solid #efefef;
     margin-bottom: 2em;
     margin-top: 1em;
     padding-bottom: 1em;
@@ -375,4 +375,15 @@ footer a:link, footer a:visited {
     display: -webkit-flex;
     display: -ms-flexbox;
     display: flex;
+}
+
+
+/**
+ SB Admin Styles
+ */
+
+.huge {
+    font-size: 30pt;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
 }
