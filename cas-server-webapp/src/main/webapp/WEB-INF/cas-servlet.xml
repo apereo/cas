@@ -77,11 +77,6 @@
   <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="1"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
-
-
-    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
-          p:order="1"
-          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
   -->
 
   <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
@@ -341,13 +336,4 @@
 
   <bean id="acceptableUsagePolicyFormAction" class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
 
-  <!--
-  <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
-          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-          p:centralAuthenticationService-ref="centralAuthenticationService"
-          p:proxyHandler-ref="proxy20Handler"
-          p:argumentExtractor-ref="samlArgumentExtractor"
-          p:successView="casSamlServiceSuccessView"
-          p:failureView="casSamlServiceFailureView"/>
-  -->
 </beans>
