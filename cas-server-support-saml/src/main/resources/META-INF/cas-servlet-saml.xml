@@ -40,5 +40,4 @@
           p:argumentExtractor-ref="samlArgumentExtractor"
           p:successView="casSamlServiceSuccessView"
           p:failureView="casSamlServiceFailureView"/>
-
 </beans>
