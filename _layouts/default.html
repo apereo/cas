@@ -5,6 +5,7 @@
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="CAS - Single Sign-On for the Web" />
+    {% feed_meta %}
     {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
 	
