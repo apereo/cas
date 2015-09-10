@@ -20,7 +20,6 @@
 package org.jasig.cas;
 
 import org.jasig.cas.support.saml.SamlProtocolConstants;
-import org.jasig.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 import java.util.Map;
 
 /**
