@@ -16,6 +16,21 @@
       }
     },
     {
+      "authentication_date": 1441736515763,
+      "authentication_attributes": {
+        "authenticationMethod": "HttpBasedServiceCredentialsAuthenticationHandler"
+      },
+      "authenticated_principal": "https://mmoayyed.unicon.net/sample1/proxyUrl",
+      "number_of_uses": 0,
+      "ticket_granting_ticket": "PGT-2-IKlUwrZMxpkOFYifIGbcv6CYDnETaEeMdmZfRYjHdpfsndK3XI-cas01.example.org",
+      "principal_attributes": {
+      },
+      "is_proxied": true,
+      "proxied_by": "https://mmoayyed.unicon.net/sample1/",
+      "authenticated_services": {
+      }
+    },
+    {
       "authentication_date": 1441736452186,
       "authentication_attributes": {
         "authenticationMethod": "AcceptUsersAuthenticationHandler"

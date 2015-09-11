@@ -351,25 +351,6 @@ footer a:link, footer a:visited {
     font-weight: 100;
 }
 
-/*
-.panel-body:after {
-    content: "\f087";
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    text-decoration: inherit;
-    position: absolute;
-    font-size: 30px;
-    color: lightblue;
-    top: 50%;
-    left: 50%;
-    margin: -50px 0 0 90px;
-    z-index: 1;
-}
-*/
-
-
-
 .row-eq-height {
     display: -webkit-box;
     display: -webkit-flex;
@@ -377,6 +358,9 @@ footer a:link, footer a:visited {
     display: flex;
 }
 
+#alertBox {
+    display: none;
+}
 
 /**
  SB Admin Styles

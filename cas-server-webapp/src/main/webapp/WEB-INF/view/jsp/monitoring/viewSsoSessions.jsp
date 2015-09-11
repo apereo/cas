@@ -1,4 +1,4 @@
-<%--
+    <%--
 
        Licensed to Apereo under one or more contributor license
        agreements. See the NOTICE file distributed with this work
@@ -37,8 +37,22 @@
     function parseJsonPayload() {}
 
     function updateAdminPanels( data ) {
-        // Todo: wire this up
-        console.log('updateAdminPanels');
+        //$('#totalUsers').text(data.totalPrincipals);
+        $('#totalUsers').text(data.activeSsoSessions.length);
+        $('#totalUsageSessions').text( sum(data.activeSsoSessions, 'number_of_uses') );
+        //$('#totalProxied').text(data.totalTicketGrantingTickets);
+        //$('#totalTGTs').text(data.totalTicketGrantingTickets);
+        $('#totalTGTs').text( sum(data.activeSsoSessions, 'is_proxied' ) );
+    }
+
+    function sum( obj, prop ) {
+        var sum = 0;
+        for( var el in obj ) {
+            if( obj.hasOwnProperty( el ) ) {
+                sum += ( typeof obj[el][prop] == 'boolean' ) ? +obj[el][prop] : obj[el][prop] ;
+            }
+        }
+        return sum;
     }
 
     function showError(msg) {
@@ -55,9 +69,21 @@
         $("#msg").show();
     }
 
+    function alertUser(message, alertType) {
+        $('#alertWrapper').append('<div id="alertdiv" class="alert alert-' +  alertType + ' alert-dismissible">' +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+            '<span class="alertMessage">' + message + '</span></div>'
+        );
+
+        setTimeout(function() { // this will automatically close the alert and remove this if the users doesnt close it in 5 secs
+            $("#alertdiv").remove();
+        }, 5000);
+    }
+
     function removeSession( ticketId ) {
         var factory = {};
         factory.httpHeaders = {};
+        factory.messages = {};
         factory.httpHeaders[ $("meta[name='_csrf_header']").attr("content") ] = $("meta[name='_csrf']").attr("content");
 
         factory.ticketId = ticketId;
@@ -66,15 +92,15 @@
         if (ticketId && (ticketId == 'ALL' || ticketId == 'PROXIED' || ticketId == 'DIRECT' ) ) {
             factory.url = '/cas/statistics/ssosessions/destroySsoSessions';
             factory.data = { type: ticketId };
+            factory.messages.success = 'Successfully removed ' + ticketId + ' sessions.';
+            factory.messages.error = 'Error removing ' + ticketId + ' sessions.  Please try your request again';
         } else {
             factory.url = '/cas/statistics/ssosessions/destroySsoSession';
             factory.data = { ticketGrantingTicket: factory.ticketId };
+            factory.messages.success = 'Successfully removed ' + factory.ticketId + ' sessions.';
+            factory.messages.error = 'Error removing ' + ticketId + '.  Please try your request again';
         }
 
-
-// Todo: Add filter value
-console.log(factory.data);
-    return;
         $.ajax({
             type: 'post',
             url: factory.url,
@@ -85,26 +111,19 @@ console.log(factory.data);
             success: function (data, status) {
                 // Reinitialize the table data
                 $('#ssoSessions').DataTable().ajax.reload();
-                console.log('successfully removed ' + factory.sid);
-                /*
-                if(data.status != 200) {
-                delayedAlert('notupdated', 'danger', data);
-                } else if(angular.isString(data)) {
-                sharedFactory.forceReload();
+
+
+                if ( data.status != 200 ) {
+                    alertUser(factory.messages.error, 'danger');
                 } else {
-                serviceData.getServices();
+                    alertUser( factory.messages.success, 'success' );
+                    // Reload the page
+                    //location.reload();
                 }
-                */
             },
             error: function(xhr, status) {
-                console.error(xhr.responseText);
-                /*
-                if(xhr.status == 403) {
-                sharedFactory.forceReload();
-                } else {
-                delayedAlert('notupdated', 'danger', xhr.responseJSON);
-                }
-                */
+                //console.error(xhr.responseText);
+                alertUser('There appears to be an error. Please try your request again.', 'danger');
             }
         });
 
@@ -113,12 +132,7 @@ console.log(factory.data);
 
     function jqueryReady() {
         head.load(
-            // CSS Libraries
-//            "https://code.jquery.com/ui/1.11.4/themes/redmond/jquery-ui.css",
-//            "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
-//            "https://cdn.datatables.net/1.10.8/css/jquery.dataTables.css",
-// Bootstrap Datables CSS
-        //"https://fonts.googleapis.com/css?family=Lato",
+        // Bootstrap Datables CSS
         "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
         "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
         "https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
@@ -132,42 +146,22 @@ console.log(factory.data);
 
         head.load(
             // JS Libraries
-//            "https://cdn.datatables.net/1.10.8/js/jquery.dataTables.min.js",
-//            "https://cdn.datatables.net/1.10.8/js/dataTables.jqueryui.min.js",
             "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js",
 
-        // Bootstrap Datatables
-//        "//code.jquery.com/jquery-1.11.3.min.js",
-        "https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
-        "https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
-
-
-        /*
+            // Bootstrap Datatables
+            "https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
             "https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
-            "https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"
-        */
 
             function() {
-//console.log(ssoData.activeSsoSessions);
                 $('#removeAllSessionsButton').on('click', function(e) {
                     e.preventDefault();
                     removeSession(this.value);
                 });
-
-                $(document).on('click', '#filterButtons input:radio[id^="q_op_"]', function (e) {
-                    //alert("click fired");
-                    console.log(this.value);
-                });
 /*
-                $('#filterButtons :radio').on('click', function(e) {
-                    e.preventDefault();
+                $(document).on('click', '#filterButtons input:radio[id^="q_op_"]', function (e) {
                     console.log(this.value);
-                    //removeSession();
                 });
 */
-                //$("#cas-sessions").show();
-                //$('#table_id-orig').DataTable();
-
                 $('#ssoSessions').DataTable( {
                     "order": [[ 3, "desc" ]],
                     "initComplete": function(settings, json) {
@@ -177,9 +171,10 @@ console.log(factory.data);
                             $('#loadingMessage').hide();
                             $('#no-cas-sessions').show();
                         } else {
-                            //updateAdminPanels( json );
+                            updateAdminPanels( json );
 
                             $( "#ssoSessions tbody tr td:last-child button.btn-danger" ).on( "click", function() {
+                                console.log('remove button clicked');
                                 removeSession( this.value );
                             });
                             $('#loadingMessage').hide();
@@ -193,11 +188,9 @@ console.log(factory.data);
                         "zeroRecords": "No matching sessions found"
                     },
                     "processing": true,
-//                    data: ssoData.activeSsoSessions,
-
                     "ajax": {
-                        //"url": '/cas/statistics/ssosessions/getSsoSessions',
-                        "url": '/cas/js/test_data.json',
+                        "url": '/cas/statistics/ssosessions/getSsoSessions',
+                        //"url": '/cas/js/test_data.json',
                         "dataSrc": "activeSsoSessions"
                     },
 
@@ -241,7 +234,6 @@ console.log(factory.data);
                             "render": function ( data, type, full, meta ) {
                                 var timeStamp = new Date( data );
                                 return timeStamp.toFormattedString();
-                                //return data.toFormattedString();
                             }
                         },
                         {
@@ -311,11 +303,7 @@ console.log(factory.data);
 <%--
  Todo: Wire these messages up, auto close the alerts if its successful.
  --%>
-    <div class="alert alert-success fade in" role="alert">
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    ...
-    </div>
-
+    <div id="alertWrapper"></div>
 
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -323,93 +311,53 @@ console.log(factory.data);
         </div>
         <div class="panel-body">
             <div id="session-counts" class="container-fluid">
-
-
-<div class="row adminPanels">
-        <div class="col-lg-4 col-md-6">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-users fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">26</div>
-                            <div>Total Active Users</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-            <div class="panel panel-success">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-tasks fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">12</div>
-                            <div>Usage Count Sessions</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-            <div class="panel panel-warning">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-ticket fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">124</div>
-                            <div>Total TG Tickets</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-<%--
                 <div class="row adminPanels">
-                    <div class="col-md-4">
-                        <div class="users-panel panel panel-default">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-info">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Users</h3>
-                            </div>
-                            <div class="panel-body">
-                                <span id="userCount">8</span>
-                                <p>Total Active users</p>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-users fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge" id="totalUsers">0</div>
+                                        <div>Total Active Users</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="usage-panel panel panel-default">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-success">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Usage Count</h3>
-                            </div>
-                            <div class="panel-body">
-                                <span id="usageCount">36</span>
-                                <p>Sessions</p>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-tasks fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge" id="totalUsageSessions">0</div>
+                                        <div>Usage Count Sessions</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="tickets-panel panel panel-default">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="panel panel-warning">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Tickets</h3>
-                            </div>
-                            <div class="panel-body">
-                                <span id="ticketCount">36</span>
-                                <p>Current TGTs</p>
+                                <div class="row">
+                                    <div class="col-xs-3">
+                                        <i class="fa fa-ticket fa-5x"></i>
+                                    </div>
+                                    <div class="col-xs-9 text-right">
+                                        <div class="huge" id="totalTGTs">0</div>
+                                        <div>Total TG Tickets</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
---%>
-
             </div>
 
             <div class="container-fluid">
