@@ -23,6 +23,7 @@ import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,8 +38,6 @@ import javax.servlet.annotation.WebListener;
 import java.util.List;
 import java.util.Map;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 /**
  * Initializes the CAS root servlet context to make sure
  * SAML validation endpoint can be activated by the main CAS servlet.
@@ -50,7 +49,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class SamlServletContextListener implements ServletContextListener, ApplicationContextAware {
     private static final String CAS_SERVLET_NAME = "cas";
 
-    private final Logger logger = getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     @Qualifier("samlArgumentExtractor")
@@ -77,12 +76,16 @@ public class SamlServletContextListener implements ServletContextListener, Appli
     public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         if (applicationContext.getParent() == null) {
 
-            final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
-            list.add(this.samlArgumentExtractor);
+            try {
+                final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
+                list.add(this.samlArgumentExtractor);
 
-            final Map<String, UniqueTicketIdGenerator> map = applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
-            map.put(SamlService.class.getCanonicalName(), samlServiceTicketUniqueIdGenerator);
+                final Map<String, UniqueTicketIdGenerator> map = applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
+                map.put(SamlService.class.getCanonicalName(), this.samlServiceTicketUniqueIdGenerator);
 
+            } catch (final Exception e) {
+                logger.warn("SAML application context could not be auto-configured. {}", e.getMessage());
+            }
         }
     }
 
