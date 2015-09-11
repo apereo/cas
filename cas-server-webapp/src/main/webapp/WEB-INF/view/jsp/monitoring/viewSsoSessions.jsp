@@ -122,7 +122,6 @@
                 }
             },
             error: function(xhr, status) {
-                //console.error(xhr.responseText);
                 alertUser('There appears to be an error. Please try your request again.', 'danger');
             }
         });
@@ -132,15 +131,10 @@
 
     function jqueryReady() {
         head.load(
-        // Bootstrap Datables CSS
-        "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
-        "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
-        "https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
-
-        /*
-            "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
+            // Bootstrap Datables CSS
+            "https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css",
+            "//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css",
             "https://cdn.datatables.net/1.10.9/css/dataTables.bootstrap.min.css",
-        */
             "/cas/css/ssosessions.css"
         );
 
@@ -157,26 +151,17 @@
                     e.preventDefault();
                     removeSession(this.value);
                 });
-/*
-                $(document).on('click', '#filterButtons input:radio[id^="q_op_"]', function (e) {
-                    console.log(this.value);
-                });
-*/
+
                 $('#ssoSessions').DataTable( {
                     "order": [[ 3, "desc" ]],
                     "initComplete": function(settings, json) {
 
                         if (!json || json.activeSsoSessions.length == 0) {
-                            console.warn('show no data view');
                             $('#loadingMessage').hide();
                             $('#no-cas-sessions').show();
                         } else {
                             updateAdminPanels( json );
 
-                            $( "#ssoSessions tbody tr td:last-child button.btn-danger" ).on( "click", function() {
-                                console.log('remove button clicked');
-                                removeSession( this.value );
-                            });
                             $('#loadingMessage').hide();
                             $("#no-cas-sessions").hide();
                             $("#cas-sessions").show();
@@ -253,6 +238,10 @@
                     ]
                 } );
 
+            $(document).on('click', '#ssoSessions tbody tr td:last-child button.btn-danger', function (e) {
+                e.preventDefault();
+                removeSession( this.value );
+            });
 
             $('#filterButtons .btn').click(function() {
 
