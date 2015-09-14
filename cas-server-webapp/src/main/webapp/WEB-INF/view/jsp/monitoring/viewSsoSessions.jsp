@@ -34,8 +34,6 @@
         String(this.getMinutes()).padLeft(2, '0')].join(":");
     };
 
-    function parseJsonPayload() {}
-
     function updateAdminPanels( data ) {
         //$('#totalUsers').text(data.totalPrincipals);
         $('#totalUsers').text(data.activeSsoSessions.length);
@@ -113,20 +111,19 @@
                 $('#ssoSessions').DataTable().ajax.reload();
 
 
+
                 if ( data.status != 200 ) {
                     alertUser(factory.messages.error, 'danger');
                 } else {
                     alertUser( factory.messages.success, 'success' );
                     // Reload the page
-                    //location.reload();
+                    location.reload();
                 }
             },
             error: function(xhr, status) {
                 alertUser('There appears to be an error. Please try your request again.', 'danger');
             }
         });
-
-
     }
 
     function jqueryReady() {
@@ -146,133 +143,8 @@
             "https://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js",
             "https://cdn.datatables.net/1.10.9/js/dataTables.bootstrap.min.js",
 
-            function() {
-                $('#removeAllSessionsButton').on('click', function(e) {
-                    e.preventDefault();
-                    removeSession(this.value);
-                });
-
-                $('#ssoSessions').DataTable( {
-                    "order": [[ 3, "desc" ]],
-                    "initComplete": function(settings, json) {
-
-                        if (!json || json.activeSsoSessions.length == 0) {
-                            $('#loadingMessage').hide();
-                            $('#no-cas-sessions').show();
-                        } else {
-                            updateAdminPanels( json );
-
-                            $('#loadingMessage').hide();
-                            $("#no-cas-sessions").hide();
-                            $("#cas-sessions").show();
-                        }
-                    },
-                    "language": {
-                        //"infoEmpty": "No active sessions were found",
-                        "emptyTable": "No sessions found",
-                        "zeroRecords": "No matching sessions found"
-                    },
-                    "processing": true,
-                    "ajax": {
-                        "url": '/cas/statistics/ssosessions/getSsoSessions',
-                        //"url": '/cas/js/test_data.json',
-                        "dataSrc": "activeSsoSessions"
-                    },
-
-                    columnDefs: [
-                        {
-                            "targets": 0,
-                            "data": 'is_proxied',
-                            'className': 'col-xs-1',
-                            "render" : function ( data, type, full, meta ) {
-                                if ( data === true) {
-                                    return '<span class="label label-primary">Proxy</span>';
-                                } else {
-                                    return ' ';
-                                }
-                            }
-                        },
-                        {
-                            "targets": 1,
-                            "data": 'authenticated_principal',
-                            "className": 'col-xs-2',
-                            "render": function ( data, type, full, meta ) {
-                                return type === 'display' && data.length > 20 ?
-                                '<span title="'+data+'">'+data.substr( 0, 18 )+'...</span>' :
-                                data;
-                            }
-                        },
-                        {
-                            "targets": 2,
-                            "data": 'ticket_granting_ticket',
-                            "className": 'col-xs-3',
-                            "render": function ( data, type, full, meta ) {
-                                return type === 'display' && data.length > 20 ?
-                                '<span title="'+data+'">'+data.substr( 0, 18 )+'...</span>' :
-                                data;
-                            }
-                        },
-                        {
-                            "targets": 3,
-                            "data": 'authentication_date',
-                            "className": 'col-xs-3',
-                            "render": function ( data, type, full, meta ) {
-                                var timeStamp = new Date( data );
-                                return timeStamp.toFormattedString();
-                            }
-                        },
-                        {
-                            "targets": 4,
-                            "data": 'number_of_uses',
-                            "className": 'col-xs-2'
-                        },
-                        {
-                            "targets": 5,
-                            "data": "ticket_granting_ticket",
-                            "className": 'col-xs-1',
-                            "render": function (data, type, full, meta ) {
-                                return '<button class="btn btn-sm btn-danger" type="button" value="' + data + '">Destroy</button>';
-                            },
-                            "orderable": false
-                        },
-                    ]
-                } );
-
-            $(document).on('click', '#ssoSessions tbody tr td:last-child button.btn-danger', function (e) {
-                e.preventDefault();
-                removeSession( this.value );
-            });
-
-            $('#filterButtons .btn').click(function() {
-
-                var filter = $(this).data('filter');
-                var table = $('#ssoSessions').DataTable();
-
-                // Create Filter RegEx:
-                if ( filter == 'proxied') {
-                    var filterRegex = '^Proxy$';
-                    var deleteValue = 'PROXIED';
-                    var btnText = 'Remove <span class="badge">xx</span> Proxied Sessions';
-                } else if ( filter == 'non-proxied') {
-                    var filterRegex = '^ $';
-                    var deleteValue = 'DIRECT';
-                    var btnText = 'Remove <span class="badge">xx</span> Non-Proxied Sessions';
-                } else {
-                    var filterRegex = '';
-                    var deleteValue = 'ALL';
-                    var btnText = 'Remove All Sessions';
-                }
-
-                var searchTerm = table.column( 0 ).search(filterRegex, true, false).draw();
-
-                $('#removeAllSessionsButton').val( deleteValue ).html(btnText.replace('xx', searchTerm.page.info().recordsDisplay ))
-            });
-
-
-
-        });
-
-        //parseJsonPayload();
+            "/cas/js/ssosessions.js"
+        );
     }
 
 </script>
