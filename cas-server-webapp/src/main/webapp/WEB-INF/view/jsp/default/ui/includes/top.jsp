@@ -42,7 +42,7 @@
   <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
 
 </head>
-<body id="cas" class="ssoSessions">
+<body id="cas">
 
 <div id="container">
   <header>
