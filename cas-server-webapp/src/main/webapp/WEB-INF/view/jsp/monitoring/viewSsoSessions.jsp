@@ -39,8 +39,8 @@
             $('#totalUsers').text(data.activeSsoSessions.length);
             $('#totalUsageSessions').text( sum(data.activeSsoSessions, 'number_of_uses') );
             //$('#totalProxied').text(data.totalTicketGrantingTickets);
-            //$('#totalTGTs').text(data.totalTicketGrantingTickets);
-            $('#totalTGTs').text( sum(data.activeSsoSessions, 'is_proxied' ) );
+            $('#totalTGTs').text(data.totalTicketGrantingTickets);
+            //$('#totalTGTs').text( sum(data.activeSsoSessions, 'is_proxied' ) );
         }
 
         function sum( obj, prop ) {
