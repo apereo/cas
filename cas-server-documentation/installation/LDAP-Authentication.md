@@ -155,7 +155,7 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
 <!-- If you wish to search by user, rather than by dn, change {dn} to {user} -->
 <bean id="entryResolver"
       class="org.ldaptive.auth.SearchEntryResolver"
-      p:baseDn="${ldap.baseDn}"
+      p:baseDn="${ldap.authn.baseDn}"
       p:userFilter="userPrincipalName={dn}"
       p:subtreeSearch="true" />
 {% endhighlight %}
@@ -189,7 +189,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       c:handler-ref="authHandler" />
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-      p:baseDn="${ldap.baseDn}"
+      p:baseDn="${ldap.authn.baseDn}"
       p:subtreeSearch="true"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
@@ -300,7 +300,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       c:handler-ref="authHandler" />
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-      p:baseDn="${ldap.baseDn}"
+      p:baseDn="${ldap.authn.baseDn}"
       p:subtreeSearch="true"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
@@ -400,7 +400,7 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
    -->
 <bean id="dnResolver"
       class="org.ldaptive.auth.FormatDnResolver"
-      c:format="uid=%s,${ldap.baseDn}" />
+      c:format="uid=%s,${ldap.authn.baseDn}" />
 
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
       p:connectionFactory-ref="pooledLdapConnectionFactory" />
