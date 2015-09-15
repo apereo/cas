@@ -17,7 +17,8 @@ Attributes pass through a two-step process:
 
 
 ## Configuration
-Once principal attributes are [resolved](Attribute-Resolution.html), adopters may choose to allow/release each attribute per each definition in the registry. Example configuration follows:
+Once principal attributes are [resolved](Attribute-Resolution.html), adopters may choose 
+to allow/release each attribute per each definition in the registry. Example configuration follows:
 
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -41,13 +42,15 @@ Once principal attributes are [resolved](Attribute-Resolution.html), adopters ma
 
 
 ### Principal-Id Attribute
-The service registry component of CAS has the ability to allow for configuration of a `usernameAttributeProvider` to be returned for the given registered service. When this property is set for a service, CAS will return the value of the configured attribute as part of its validation process. 
+The service registry component of CAS has the ability to allow for configuration of a 
+`usernameAttributeProvider` to be returned for the given registered service. When this property is set for a service, CAS will return the value of the configured attribute as part of its validation process. 
 
 * Ensure the attribute is available and resolved for the principal
 * Set the `usernameAttributeProvider` property of the given service to once of the attribute providers below
 
 ####`DefaultRegisteredServiceUsernameProvider`
-The default configuration which need not explicitly be defined, simply returns the resolved principal id as the username for this service.
+The default configuration which need not explicitly be defined, simply returns the resolved 
+principal id as the username for this service.
 
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -99,14 +102,17 @@ of the [eduPersonTargetedID](http://www.incommon.org/federation/attributesummary
 
 
 ### Attribute Release Policy
-The release policy decides how attributes are to be released for a given service. Each policy has the ability to apply an optional filter.
+The release policy decides how attributes are to be released for a given service. Each policy has
+the ability to apply an optional filter.
 
 The following settings are shared by all attribute release policies:
 
 | Field                             | Description 
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized to [release the credential as an attribute](ClearPass.html).
-| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
+| `authorizedToReleaseCredentialPassword` | Boolean to define whether the service is authorized 
+to [release the credential as an attribute](ClearPass.html).
+| `authorizedToReleaseProxyGrantingTicket` | Boolean to define whether the service is authorized 
+to [release the proxy-granting ticket id as an attribute](../installation/Configuring-Proxy-Authentication.html)
 
 #### Components
 
@@ -144,9 +150,12 @@ Only return the attributes that are explicitly allowed by the configuration.
 
 
 #####`ReturnMappedAttributeReleasePolicy`
-Similar to above, this policy will return a collection of allowed attributes for the service, but also allows those attributes to be mapped and "renamed" at the more granular service level.
+Similar to above, this policy will return a collection of allowed attributes for the 
+service, but also allows those attributes to be mapped and "renamed" at the more granular service level.
 
-For example, the following configuration will recognize the resolved attributes `uid`, `eduPersonAffiliation` and `groupMembership` and will then release `uid`, `affiliation` and `group` to the web application configured.
+For example, the following configuration will recognize the resolved 
+attributes `uid`, `eduPersonAffiliation` and `groupMembership` and will then 
+release `uid`, `affiliation` and `group` to the web application configured.
 
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -167,10 +176,12 @@ For example, the following configuration will recognize the resolved attributes 
 
 
 #### Attribute Filters
-While each policy defines what attributes may be allowed for a given service, there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**. 
+While each policy defines what attributes may be allowed for a given service, 
+there are optional attribute filters that can be set per policy to further weed out attributes based on their **values**. 
 
 ######`RegisteredServiceRegexAttributeFilter`
-The regex filter that is responsible to make sure only attributes whose value matches a certain regex pattern are released.
+The regex filter that is responsible to make sure only attributes whose value 
+matches a certain regex pattern are released.
 
 Suppose that the following attributes are resolved:
 
@@ -180,7 +191,9 @@ Suppose that the following attributes are resolved:
 | `groupMembership`        				| std  
 | `cn`        							| JohnSmith   
 
-The following configuration for instance considers the initial list of `uid`, `groupMembership` and then only allows and releases attributes whose value's length is 3 characters. Therefor, out of the above list, only `groupMembership` is released to the application.
+The following configuration for instance considers the initial list of `uid`, 
+`groupMembership` and then only allows and releases attributes whose value's length 
+is 3 characters. Therefor, out of the above list, only `groupMembership` is released to the application.
 
 {% highlight xml %}
 <bean class="org.jasig.cas.services.RegexRegisteredService"
@@ -204,22 +217,38 @@ The following configuration for instance considers the initial list of `uid`, `g
 {% endhighlight %}
 
 ### Caching/Updating Attributes
-By default, [resolved attributes](Attribute-Resolution.html) are cached to the length of the SSO session. If there are any attribute value changes since the commencement of SSO session, the changes are not reflected and returned back to the service upon release time. 
+By default, [resolved attributes](Attribute-Resolution.html) are cached to the 
+length of the SSO session. If there are any attribute value changes since the 
+commencement of SSO session, the changes are not reflected and returned back 
+to the service upon release time. 
 
 ####Components
 
 ####`PrincipalAttributesRepository`
-Parent component that describes the relationship between a CAS `Principal` and the underlying attribute repository source.
+Parent component that describes the relationship between a CAS `Principal` 
+and the underlying attribute repository source.
  
 ####`DefaultPrincipalAttributesRepository`
-The default relationship between a CAS `Principal` and the underlying attribute repository source, such that principal attributes are kept as they are without any additional processes to evaluate and update them. This need not be configured explicitly.
+The default relationship between a CAS `Principal` and the underlying attribute 
+repository source, such that principal attributes are kept as they are without 
+any additional processes to evaluate and update them. This need not be configured explicitly.
 
 ####`CachingPrincipalAttributesRepository`
-The  relationship between a CAS `Principal` and the underlying attribute repository source, that describes how and at what length the CAS `Principal` attributes should be cached. Upon attribute release time, this component is consulted to ensure that appropriate attribute values are released to the scoped service, per the cache expiration policy. If the expiration policy has passed, the underlying attribute repository source will be consulted to figure out the available set of attributes. 
+The relationship between a CAS `Principal` and the underlying attribute 
+repository source, that describes how and at what length the CAS `Principal` attributes should 
+be cached. Upon attribute release time, this component is consulted to ensure that appropriate 
+attribute values are released to the scoped service, per the cache expiration policy. 
+If the expiration policy has passed, the underlying attribute repository source will be consulted
+to figure out the available set of attributes. 
 
-The default caching policy is 2 hours which can be controlled via the `cas.attrs.timeToExpireInHours` property. This component also has the ability to resolve conflicts between existing principal attributes and those that are retrieved from repository source via a `mergingStrategy` property. This is useful if you want to preserve the collection of attributes that are already available to the principal that were retrieved from a different place during the authentication event, etc.
+The default caching policy is 2 hours which can be controlled via the `cas.attrs.timeToExpireInHours` 
+property. This component also has the ability to resolve conflicts between existing principal attributes and 
+those that are retrieved from repository source via a `mergingStrategy` property. 
+This is useful if you want to preserve the collection of attributes that are already 
+available to the principal that were retrieved from a different place during the authentication event, etc.
 
-<div class="alert alert-info"><strong>Caching Upon Release</strong><p>Note that the policy is only consulted at release time, upon a service ticket validation event. If there are any custom webflows and such that wish to rely on the resolved <code>Principal</code> AND also wish to receive an updated set of attributes, those components must consult the underlying source directory without relying on the <code>Principal</code>.</p></div>
+<div class="alert alert-info"><strong>Caching Upon Release</strong><p>Note 
+that the policy is only consulted at release time, upon a service ticket validation event. If there are any custom webflows and such that wish to rely on the resolved <code>Principal</code> AND also wish to receive an updated set of attributes, those components must consult the underlying source directory without relying on the <code>Principal</code>.</p></div>
 
 Sample configuration follows:
 
@@ -229,24 +258,38 @@ Sample configuration follows:
       p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
     <property name="attributeReleasePolicy">
         <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
-        <property name="allowedAttributes">
-                <list>
-                        <value>mail</value>
-                    </list>
-                </property>
-        <property name="principalAttributesRepository">
-                    <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+            <property name="allowedAttributes">
+                    <list>
+                            <value>mail</value>
+                        </list>
+            </property>
+            <property name="principalAttributesRepository">
+                    <bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
                             c:attributeRepository-ref="attributeRepository"
                             c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
-                </property>
+            </property>
         </bean>
     </property>
 </bean>
 {% endhighlight %}
 
+####`GuavaCachingPrincipalAttributesRepository`
+
+Identical to `CachingPrincipalAttributesRepository`, except that the underlying cache is
+based on the Google Guava library. 
+
+Sample configuration follows:
+
+{% highlight xml %}
+<bean class="org.jasig.cas.authentication.principal.cache.GuavaCachingPrincipalAttributesRepository"
+                            c:attributeRepository-ref="attributeRepository"
+                            c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
+{% endhighlight %}
 
 ####Merging Strategies
-By default, no merging strategy takes place, which means the principal attributes are always ignored and attributes from the source are always returned. But any of the following merging strategies may be a suitable option:
+By default, no merging strategy takes place, which means the principal attributes are always 
+ignored and attributes from the source are always returned. All caching components
+support a merging strategy as such. Any of the following merging strategies may be a suitable option:
 
 * `MultivaluedAttributeMerger`
 Attributes with the same name are merged into multi-valued lists.
@@ -262,7 +305,7 @@ For example:
 <bean class="org.jasig.cas.services.RegexRegisteredService">
 ...
     <property name="principalAttributesRepository">
-        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+        <bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
               c:attributeRepository-ref="attributeRepository"
               c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
             <property name="mergingStrategy">
@@ -287,7 +330,7 @@ For example:
 <bean class="org.jasig.cas.services.RegexRegisteredService">
 ...
     <property name="principalAttributesRepository">
-        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+        <bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
               c:attributeRepository-ref="attributeRepository"
               c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
             <property name="mergingStrategy">
@@ -313,7 +356,7 @@ For example:
 <bean class="org.jasig.cas.services.RegexRegisteredService">
 ...
     <property name="principalAttributesRepository">
-        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+        <bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
               c:attributeRepository-ref="attributeRepository"
               c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
             <property name="mergingStrategy">

@@ -21,7 +21,7 @@ package org.jasig.cas.services.web.beans;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
