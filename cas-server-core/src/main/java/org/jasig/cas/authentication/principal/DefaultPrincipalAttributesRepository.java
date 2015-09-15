@@ -21,6 +21,7 @@ package org.jasig.cas.authentication.principal;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 
 import java.util.Map;
 
@@ -30,13 +31,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class DefaultPrincipalAttributesRepository implements PrincipalAttributesRepository {
+public final class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
     private static final long serialVersionUID = -4535358847021241725L;
-
-    @Override
-    public Map<String, Object> getAttributes(final Principal p) {
-        return p.getAttributes();
-    }
 
     @Override
     public String toString() {
