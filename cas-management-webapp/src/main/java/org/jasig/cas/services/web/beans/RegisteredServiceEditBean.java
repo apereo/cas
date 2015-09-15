@@ -21,11 +21,13 @@ package org.jasig.cas.services.web.beans;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.jasig.cas.authentication.principal.cache.GuavaCachingPrincipalAttributesRepository;
 import org.jasig.cas.services.AbstractAttributeReleasePolicy;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
@@ -225,33 +227,8 @@ public final class RegisteredServiceEditBean implements Serializable {
                 }
             }
 
-            final PrincipalAttributesRepository pr = attrPolicy.getPrincipalAttributesRepository();
-            if (pr instanceof DefaultPrincipalAttributesRepository) {
-                attrPolicyBean.setAttrOption(
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
-            } else if (pr instanceof CachingPrincipalAttributesRepository) {
-                attrPolicyBean.setAttrOption(
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
-                final CachingPrincipalAttributesRepository cc = (CachingPrincipalAttributesRepository) pr;
-                final Duration duration = cc.getDuration();
-                attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
-                attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
+            configurePrincipalRepository(attrPolicy, attrPolicyBean);
 
-                final IAttributeMerger merger = cc.getMergingStrategy();
-
-                if (merger != null) {
-                    if (merger instanceof NoncollidingAttributeAdder) {
-                        attrPolicyBean.setMergingStrategy(
-                                RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.ADD.toString());
-                    } else if (merger instanceof MultivaluedAttributeMerger) {
-                        attrPolicyBean.setMergingStrategy(
-                                RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.MULTIVALUED.toString());
-                    } else if (merger instanceof ReplacingAttributeAdder) {
-                        attrPolicyBean.setMergingStrategy(
-                                RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.REPLACE.toString());
-                    }
-                }
-            }
             final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
             if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
@@ -263,6 +240,56 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString());
                 sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
+            }
+        }
+    }
+
+    /**
+     * Configure principal repository.
+     *
+     * @param attrPolicy the attr policy
+     * @param attrPolicyBean the attr policy bean
+     */
+    private static void configurePrincipalRepository(final AbstractAttributeReleasePolicy attrPolicy,
+                                                     final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean) {
+        final PrincipalAttributesRepository pr = attrPolicy.getPrincipalAttributesRepository();
+        if (pr instanceof DefaultPrincipalAttributesRepository) {
+            attrPolicyBean.setAttrOption(
+                    RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
+        } else {
+
+            if (pr instanceof CachingPrincipalAttributesRepository) {
+                attrPolicyBean.setAttrOption(
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
+
+                final CachingPrincipalAttributesRepository cc = (CachingPrincipalAttributesRepository) pr;
+                final Duration duration = cc.getDuration();
+                attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
+                attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
+            }
+
+            if (pr instanceof GuavaCachingPrincipalAttributesRepository) {
+                attrPolicyBean.setAttrOption(
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED_GUAVA.toString());
+                final GuavaCachingPrincipalAttributesRepository cc = (GuavaCachingPrincipalAttributesRepository) pr;
+                attrPolicyBean.setCachedExpiration(cc.getExpiration());
+                attrPolicyBean.setCachedTimeUnit(cc.getTimeUnit().name());
+            }
+
+            final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
+            final IAttributeMerger merger = cc.getMergingStrategy();
+
+            if (merger != null) {
+                if (merger instanceof NoncollidingAttributeAdder) {
+                    attrPolicyBean.setMergingStrategy(
+                            RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.ADD.toString());
+                } else if (merger instanceof MultivaluedAttributeMerger) {
+                    attrPolicyBean.setMergingStrategy(
+                            RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.MULTIVALUED.toString());
+                } else if (merger instanceof ReplacingAttributeAdder) {
+                    attrPolicyBean.setMergingStrategy(
+                            RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.REPLACE.toString());
+                }
             }
         }
     }
