@@ -564,82 +564,18 @@ public final class RegisteredServiceEditBean implements Serializable {
                 regSvc.setEvaluationOrder(this.evalOrder);
                 regSvc.setRequiredHandlers(this.requiredHandlers);
 
-                if (StringUtils.equalsIgnoreCase(this.logoutType,
-                        RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
-                    regSvc.setLogoutType(LogoutType.BACK_CHANNEL);
-                } else if (StringUtils.equalsIgnoreCase(this.logoutType,
-                        RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
-                    regSvc.setLogoutType(LogoutType.FRONT_CHANNEL);
-                } else {
-                    regSvc.setLogoutType(LogoutType.NONE);
-                }
+                convertLogoutTypesToService(regSvc);
 
                 if (StringUtils.isNotBlank(this.logoutUrl)) {
                     regSvc.setLogoutUrl(new URL(this.logoutUrl));
                 }
 
                 final RegisteredServiceAccessStrategy accessStrategy = regSvc.getAccessStrategy();
+                convertAccessStrategyToService((DefaultRegisteredServiceAccessStrategy) accessStrategy);
 
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setEnabled(this.supportAccess.isCasEnabled());
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setSsoEnabled(this.supportAccess.isSsoEnabled());
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setRequireAllAttributes(this.supportAccess.isRequireAll());
+                convertProxyPolicyToService(regSvc);
 
-                final Map<String, Set<String>> requiredAttrs = this.supportAccess.getRequiredAttr();
-                final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
-                final Iterator<Map.Entry<String, Set<String>>> it = entries.iterator();
-                while (it.hasNext()) {
-                    final Map.Entry<String, Set<String>> entry = it.next();
-                    if (entry.getValue().isEmpty()) {
-                        it.remove();
-                    }
-                }
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setRequiredAttributes(requiredAttrs);
-
-                final String proxyType = this.proxyPolicy.getType();
-                if (StringUtils.equalsIgnoreCase(proxyType,
-                        RegisteredServiceProxyPolicyBean.Types.REFUSE.toString())) {
-                    regSvc.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
-                } else if (StringUtils.equalsIgnoreCase(proxyType,
-                        RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
-                    final String value = this.proxyPolicy.getValue();
-                    if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
-                        regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(value));
-                    } else {
-                        throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
-                    }
-                }
-
-                final String uidType = this.userAttrProvider.getType();
-                if (StringUtils.equalsIgnoreCase(uidType,
-                        RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString())) {
-                    regSvc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-                } else if (StringUtils.equalsIgnoreCase(uidType,
-                        RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString())) {
-                    final String salt = this.userAttrProvider.getValue();
-                    if (StringUtils.isNotBlank(salt)) {
-
-                        final ShibbolethCompatiblePersistentIdGenerator generator =
-                                new ShibbolethCompatiblePersistentIdGenerator(salt);
-                        regSvc.setUsernameAttributeProvider(
-                                new AnonymousRegisteredServiceUsernameAttributeProvider(generator));
-                    } else {
-                        throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
-                    }
-                } else if (StringUtils.equalsIgnoreCase(uidType,
-                        RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString())) {
-                    final String attr = this.userAttrProvider.getValue();
-
-                    if (StringUtils.isNotBlank(attr)) {
-                        regSvc.setUsernameAttributeProvider(
-                                new PrincipalAttributeRegisteredServiceUsernameProvider(attr));
-                    } else {
-                        throw new IllegalArgumentException("Invalid attribute specified for username");
-                    }
-                }
+                convertUsernameAttributeToService(regSvc);
 
                 if (this.publicKey != null && this.publicKey.isValid()) {
                     final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
@@ -680,6 +616,11 @@ public final class RegisteredServiceEditBean implements Serializable {
                             TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
                             this.attrRelease.getCachedExpiration()));
                 } else if (StringUtils.equalsIgnoreCase(attrType,
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED_GUAVA.toString())) {
+                    policy.setPrincipalAttributesRepository(new GuavaCachingPrincipalAttributesRepository(dao,
+                            TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
+                            this.attrRelease.getCachedExpiration()));
+                } else if (StringUtils.equalsIgnoreCase(attrType,
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString())) {
                     policy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
                 }
@@ -688,6 +629,85 @@ public final class RegisteredServiceEditBean implements Serializable {
                 return regSvc;
             } catch (final Exception e) {
                 throw new RuntimeException(e);
+            }
+        }
+
+        private void convertProxyPolicyToService(final AbstractRegisteredService regSvc) {
+            final String proxyType = this.proxyPolicy.getType();
+            if (StringUtils.equalsIgnoreCase(proxyType,
+                    RegisteredServiceProxyPolicyBean.Types.REFUSE.toString())) {
+                regSvc.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
+            } else if (StringUtils.equalsIgnoreCase(proxyType,
+                    RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
+                final String value = this.proxyPolicy.getValue();
+                if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
+                    regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(value));
+                } else {
+                    throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
+                }
+            }
+        }
+
+        private void convertUsernameAttributeToService(final AbstractRegisteredService regSvc) {
+            final String uidType = this.userAttrProvider.getType();
+            if (StringUtils.equalsIgnoreCase(uidType,
+                    RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString())) {
+                regSvc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+            } else if (StringUtils.equalsIgnoreCase(uidType,
+                    RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString())) {
+                final String salt = this.userAttrProvider.getValue();
+                if (StringUtils.isNotBlank(salt)) {
+
+                    final ShibbolethCompatiblePersistentIdGenerator generator =
+                            new ShibbolethCompatiblePersistentIdGenerator(salt);
+                    regSvc.setUsernameAttributeProvider(
+                            new AnonymousRegisteredServiceUsernameAttributeProvider(generator));
+                } else {
+                    throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
+                }
+            } else if (StringUtils.equalsIgnoreCase(uidType,
+                    RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString())) {
+                final String attr = this.userAttrProvider.getValue();
+
+                if (StringUtils.isNotBlank(attr)) {
+                    regSvc.setUsernameAttributeProvider(
+                            new PrincipalAttributeRegisteredServiceUsernameProvider(attr));
+                } else {
+                    throw new IllegalArgumentException("Invalid attribute specified for username");
+                }
+            }
+        }
+
+        private void convertAccessStrategyToService(final DefaultRegisteredServiceAccessStrategy accessStrategy) {
+            accessStrategy
+                    .setEnabled(this.supportAccess.isCasEnabled());
+            accessStrategy
+                    .setSsoEnabled(this.supportAccess.isSsoEnabled());
+            accessStrategy
+                    .setRequireAllAttributes(this.supportAccess.isRequireAll());
+
+            final Map<String, Set<String>> requiredAttrs = this.supportAccess.getRequiredAttr();
+            final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
+            final Iterator<Map.Entry<String, Set<String>>> it = entries.iterator();
+            while (it.hasNext()) {
+                final Map.Entry<String, Set<String>> entry = it.next();
+                if (entry.getValue().isEmpty()) {
+                    it.remove();
+                }
+            }
+            accessStrategy
+                    .setRequiredAttributes(requiredAttrs);
+        }
+
+        private void convertLogoutTypesToService(final AbstractRegisteredService regSvc) {
+            if (StringUtils.equalsIgnoreCase(this.logoutType,
+                    RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
+                regSvc.setLogoutType(LogoutType.BACK_CHANNEL);
+            } else if (StringUtils.equalsIgnoreCase(this.logoutType,
+                    RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
+                regSvc.setLogoutType(LogoutType.FRONT_CHANNEL);
+            } else {
+                regSvc.setLogoutType(LogoutType.NONE);
             }
         }
 
