@@ -511,7 +511,6 @@
                                                 <i class="fa fa-lg fa-question-circle form-tooltip-icon" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration" />"></i>
                                             </label>
                                             <div class="col-sm-8">
-<%-- TODO: Shouldn't this be at least greater than 0? --%>
                                                 <input type="number" min="0" class="form-control" id="cachedExp" ng-model="serviceFormCtrl.serviceData.attrRelease.cachedExpiration" />
                                             </div>
                                         </div>
