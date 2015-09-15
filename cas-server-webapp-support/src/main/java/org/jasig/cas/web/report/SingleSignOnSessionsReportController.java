@@ -199,6 +199,8 @@ public final class SingleSignOnSessionsReportController {
 
         long totalTicketGrantingTickets = 0;
         long totalProxyGrantingTickets = 0;
+        long totalUsageCount = 0;
+
         final Set<String> uniquePrincipals = new HashSet<>();
 
         for (final Map<String, Object> entry : collection) {
@@ -217,7 +219,7 @@ public final class SingleSignOnSessionsReportController {
                 final String principal = entry.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                 uniquePrincipals.add(principal);
             }
-
+            totalUsageCount += Long.valueOf(entry.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
 
         }
 
@@ -225,6 +227,7 @@ public final class SingleSignOnSessionsReportController {
         sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
         sessionsMap.put("totalTickets", totalTicketGrantingTickets + totalProxyGrantingTickets);
         sessionsMap.put("totalPrincipals", uniquePrincipals.size());
+        sessionsMap.put("totalUsageCount", totalUsageCount);
         return sessionsMap;
     }
 
