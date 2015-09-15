@@ -133,6 +133,7 @@ public final class SingleSignOnSessionsReportController {
      */
     private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
         final Collection<Map<String, Object>> activeSessions = new ArrayList<>();
+        final ISOStandardDateFormat dateFormat = new ISOStandardDateFormat();
 
         for (final Ticket ticket : getNonExpiredTicketGrantingTickets()) {
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
@@ -148,7 +149,7 @@ public final class SingleSignOnSessionsReportController {
             sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString(), principal.getId());
             sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.toString(), authentication.getAuthenticationDate());
             sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.toString(),
-                    new ISOStandardDateFormat().format(authentication.getAuthenticationDate()));
+                    dateFormat.format(authentication.getAuthenticationDate()));
             sso.put(SsoSessionAttributeKeys.NUMBER_OF_USES.toString(), tgt.getCountOfUses());
             sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString(), tgt.getId());
             sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.toString(), principal.getAttributes());
@@ -224,7 +225,7 @@ public final class SingleSignOnSessionsReportController {
                 final String principal = entry.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                 uniquePrincipals.add(principal);
             }
-            totalUsageCount += Long.valueOf(entry.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
+            totalUsageCount += Long.parseLong(entry.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
 
         }
 
