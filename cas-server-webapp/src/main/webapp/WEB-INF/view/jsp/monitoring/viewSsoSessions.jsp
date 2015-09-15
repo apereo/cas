@@ -178,7 +178,7 @@
                                         </div>
                                         <div class="col-xs-9 text-right">
                                             <div class="huge" id="totalUsers">0</div>
-                                            <div>Total Active Users</div>
+                                            <div>Total Active Principals</div>
                                         </div>
                                     </div>
                                 </div>
@@ -208,7 +208,7 @@
                                         </div>
                                         <div class="col-xs-9 text-right">
                                             <div class="huge" id="totalTGTs">0</div>
-                                            <div>Total TG Tickets</div>
+                                            <div>Total SSO Sessions</div>
                                         </div>
                                     </div>
                                 </div>
