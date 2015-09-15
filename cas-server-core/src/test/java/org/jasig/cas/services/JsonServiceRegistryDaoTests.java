@@ -20,7 +20,7 @@ package org.jasig.cas.services;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
-import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;

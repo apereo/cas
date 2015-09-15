@@ -19,7 +19,7 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
