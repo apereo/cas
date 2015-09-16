@@ -63,7 +63,7 @@
     <repositories>
         <!-- 
         The JRadius artifacts above are not available in Maven Central yet.
-        So the following alterantive is provided.
+        So the following alternative is provided.
         -->
         <repository>
             <id>jitpack.io</id>
