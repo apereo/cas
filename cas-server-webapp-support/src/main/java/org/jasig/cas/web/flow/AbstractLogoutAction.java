@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Abstract logout action, which prevents caching on logout.
@@ -70,7 +70,8 @@ public abstract class AbstractLogoutAction extends AbstractAction {
 
     /**
      * Prevent caching by adding the appropriate headers.
-     * Copied from the <code>preventCaching</code> method in the {@link WebContentGenerator} class.
+     * Copied from the <code>preventCaching</code> method in the
+     * {@link org.springframework.web.servlet.support.WebContentGenerator} class.
      *
      * @param response the HTTP response.
      */
@@ -81,10 +82,22 @@ public abstract class AbstractLogoutAction extends AbstractAction {
         response.addHeader("Cache-Control", "no-store");
     }
 
+    /**
+     * Put logout index into flow scope.
+     *
+     * @param context the context
+     * @param index the index
+     */
     protected final void putLogoutIndex(final RequestContext context, final int index) {
         context.getFlowScope().put(LOGOUT_INDEX, index);
     }
 
+    /**
+     * Gets the logout index from the flow scope.
+     *
+     * @param context the context
+     * @return the logout index
+     */
     protected final int getLogoutIndex(final RequestContext context) {
         final Object value = context.getFlowScope().get(LOGOUT_INDEX);
         return value == null ? 0 : (Integer) value;

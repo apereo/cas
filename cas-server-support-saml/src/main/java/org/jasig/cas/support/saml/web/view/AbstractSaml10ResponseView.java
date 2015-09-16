@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,38 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.support.saml.web.view;
 
-import java.lang.reflect.Field;
-import java.security.NoSuchAlgorithmException;
-import java.util.Map;
+import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
+import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
+import org.jasig.cas.web.view.AbstractCasView;
+import org.joda.time.DateTime;
+
+import org.opensaml.saml.saml1.core.Response;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import javax.xml.namespace.QName;
-
-import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.support.saml.authentication.principal.SamlService;
-import org.jasig.cas.support.saml.util.CasHTTPSOAP11Encoder;
-import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
-import org.jasig.cas.web.view.AbstractCasView;
-import org.joda.time.DateTime;
-import org.opensaml.Configuration;
-import org.opensaml.DefaultBootstrap;
-import org.opensaml.common.SAMLObject;
-import org.opensaml.common.SAMLObjectBuilder;
-import org.opensaml.common.SAMLVersion;
-import org.opensaml.common.binding.BasicSAMLMessageContext;
-import org.opensaml.common.impl.SecureRandomIdentifierGenerator;
-import org.opensaml.saml1.binding.encoding.HTTPSOAP11Encoder;
-import org.opensaml.saml1.core.Response;
-import org.opensaml.saml1.core.Status;
-import org.opensaml.saml1.core.StatusCode;
-import org.opensaml.saml1.core.StatusMessage;
-import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
-import org.opensaml.xml.ConfigurationException;
+import java.util.Map;
 
 /**
  * Base class for all views that render SAML1 SOAP messages directly to the HTTP response stream.
@@ -56,19 +38,20 @@ import org.opensaml.xml.ConfigurationException;
  * @since 3.5.1
  */
 public abstract class AbstractSaml10ResponseView extends AbstractCasView {
-
-    private static final String DEFAULT_ELEMENT_NAME_FIELD = "DEFAULT_ELEMENT_NAME";
-
     private static final String DEFAULT_ENCODING = "UTF-8";
+
+    /**
+     * The Saml object builder.
+     */
+    protected final Saml10ObjectBuilder samlObjectBuilder = new Saml10ObjectBuilder();
 
     private final SamlArgumentExtractor samlArgumentExtractor = new SamlArgumentExtractor();
 
-    private final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
-
-    private final SecureRandomIdentifierGenerator idGenerator;
-
     @NotNull
     private String encoding = DEFAULT_ENCODING;
+
+    /** Defaults to 0. */
+    private int skewAllowance;
 
     /**
      * Sets the character encoding in the HTTP response.
@@ -79,22 +62,29 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         this.encoding = encoding;
     }
 
-    static {
-        try {
-            // Initialize OpenSAML default configuration
-            // (only needed once per classloader)
-            DefaultBootstrap.bootstrap();
-        } catch (final ConfigurationException e) {
-            throw new IllegalStateException("Error initializing OpenSAML library.", e);
-        }
-    }
-
-    protected AbstractSaml10ResponseView() {
-        try {
-            this.idGenerator = new SecureRandomIdentifierGenerator();
-        } catch (final NoSuchAlgorithmException e) {
-            throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.");
-        }
+    /**
+    * Sets the allowance for time skew in seconds
+    * between CAS and the client server.  Default 0s.
+    * This value will be subtracted from the current time when setting the SAML
+    * <code>NotBeforeDate</code> attribute, thereby allowing for the
+    * CAS server to be ahead of the client by as much as the value defined here.
+    *
+    * <p><strong>Note:</strong> Skewing of the issue instant via setting this property
+    * applies to all saml assertions that are issued by CAS and it
+    * currently cannot be controlled on a per relying party basis.
+    * Before configuring this, it is recommended that each service provider
+    * attempt to correctly sync their system time with an NTP server
+    * so as to match the CAS server's issue instant config and to
+    * avoid applying this setting globally. This should only
+    * be used in situations where the NTP server is unresponsive to
+    * sync time on the client, or the client is simply unable
+    * to adjust their server time configuration.</p>
+    *
+    * @param skewAllowance Number of seconds to allow for variance.
+    */
+    public void setSkewAllowance(final int skewAllowance) {
+        logger.debug("Using {} seconds as skew allowance.", skewAllowance);
+        this.skewAllowance = skewAllowance;
     }
 
     @Override
@@ -107,24 +97,13 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         final String serviceId = service != null ? service.getId() : "UNKNOWN";
 
         try {
-            final Response samlResponse = newSamlObject(Response.class);
-            samlResponse.setID(generateId());
-            samlResponse.setIssueInstant(new DateTime());
-            samlResponse.setVersion(SAMLVersion.VERSION_11);
-            samlResponse.setRecipient(serviceId);
-            if (service instanceof SamlService) {
-                final SamlService samlService = (SamlService) service;
+            final Response samlResponse = this.samlObjectBuilder.newResponse(
+                    this.samlObjectBuilder.generateSecureRandomId(),
+                    DateTime.now().minusSeconds(this.skewAllowance), serviceId, service);
 
-                if (samlService.getRequestID() != null) {
-                    samlResponse.setInResponseTo(samlService.getRequestID());
-                }
-            }
             prepareResponse(samlResponse, model);
 
-            final BasicSAMLMessageContext messageContext = new BasicSAMLMessageContext();
-            messageContext.setOutboundMessageTransport(new HttpServletResponseAdapter(response, request.isSecure()));
-            messageContext.setOutboundSAMLMessage(samlResponse);
-            this.encoder.encode(messageContext);
+            this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
             logger.error("Error generating SAML response for service {}.", serviceId);
             throw e;
@@ -140,38 +119,4 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     protected abstract void prepareResponse(Response response, Map<String, Object> model);
 
-
-    protected final String generateId() {
-        return this.idGenerator.generateIdentifier();
-    }
-
-    protected final <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
-        final QName qName;
-        try {
-            final Field f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
-            qName = (QName) f.get(null);
-        } catch (final NoSuchFieldException e) {
-            throw new IllegalStateException("Cannot find field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
-        } catch (final IllegalAccessException e) {
-            throw new IllegalStateException("Cannot access field " + objectType.getName() + "." + DEFAULT_ELEMENT_NAME_FIELD);
-        }
-        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>) Configuration.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAMLObjectBuilder registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject());
-    }
-
-    protected final Status newStatus(final QName codeValue, final String statusMessage) {
-        final Status status = newSamlObject(Status.class);
-        final StatusCode code = newSamlObject(StatusCode.class);
-        code.setValue(codeValue);
-        status.setStatusCode(code);
-        if (statusMessage != null) {
-            final StatusMessage message = newSamlObject(StatusMessage.class);
-            message.setMessage(statusMessage);
-            status.setStatusMessage(message);
-        }
-        return status;
-    }
 }

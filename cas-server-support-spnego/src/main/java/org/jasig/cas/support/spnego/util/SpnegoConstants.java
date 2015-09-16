@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -27,20 +27,24 @@ package org.jasig.cas.support.spnego.util;
  */
 public interface SpnegoConstants {
 
+    /** The header authenticate. */
     String HEADER_AUTHENTICATE = "WWW-Authenticate";
 
+    /** The header authorization. */
     String HEADER_AUTHORIZATION = "Authorization";
 
+    /** The header user agent. */
     String HEADER_USER_AGENT = "User-Agent";
 
+    /** The negotiate. */
     String NEGOTIATE = "Negotiate";
 
+    /** The spnego first time. */
     String SPNEGO_FIRST_TIME = "spnegoFirstTime";
 
+    /** The spnego credentials. */
     String SPNEGO_CREDENTIALS = "spnegoCredentials";
 
-    byte[] NTLMSSP_SIGNATURE = new byte[]{(byte) 'N', (byte) 'T', (byte) 'L',
-            (byte) 'M', (byte) 'S', (byte) 'S', (byte) 'P', (byte) 0};
-
+    /** The ntlm. */
     String NTLM = "NTLM";
 }

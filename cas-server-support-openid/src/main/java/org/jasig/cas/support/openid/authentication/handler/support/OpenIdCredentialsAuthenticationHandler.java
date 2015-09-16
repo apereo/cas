@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -22,8 +22,9 @@ import java.security.GeneralSecurityException;
 
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -58,7 +59,7 @@ public final class OpenIdCredentialsAuthenticationHandler extends AbstractAuthen
         if (!principal.getId().equals(c.getUsername())) {
             throw new FailedLoginException("Principal ID mismatch");
         }
-        return new HandlerResult(this, new BasicCredentialMetaData(c), principal);
+        return new DefaultHandlerResult(this, new BasicCredentialMetaData(c), principal);
     }
 
     @Override

@@ -1,9 +1,9 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -22,7 +22,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <cas:clearPassResponse xmlns:cas='http://www.yale.edu/tp/cas'>
-	<cas:clearPassSuccess>
-		<cas:credentials>${fn:escapeXml(credentials)}</cas:credentials>
-	</cas:clearPassSuccess>
+    <cas:clearPassSuccess>
+        <cas:credentials>${fn:escapeXml(credentials)}</cas:credentials>
+    </cas:clearPassSuccess>
 </cas:clearPassResponse>

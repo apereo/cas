@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
@@ -55,23 +55,23 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void testTicketIsNull() {
+    public void verifyTicketIsNull() {
         assertTrue(this.expirationPolicy.isExpired(null));
     }
 
     @Test
-    public void testTicketIsNotExpired() {
+    public void verifyTicketIsNotExpired() {
         assertFalse(this.ticket.isExpired());
     }
 
     @Test
-    public void testTicketIsExpiredByTime() throws InterruptedException {
+    public void verifyTicketIsExpiredByTime() throws InterruptedException {
             Thread.sleep(TIMEOUT_MILLISECONDS + TIMEOUT_BUFFER);
             assertTrue(this.ticket.isExpired());
     }
 
     @Test
-    public void testTicketIsExpiredByCount() {
+    public void verifyTicketIsExpiredByCount() {
         for (int i = 0; i < NUMBER_OF_USES; i++) {
             this.ticket.grantServiceTicket("test", TestUtils.getService(), new NeverExpiresExpirationPolicy(), false);
         }

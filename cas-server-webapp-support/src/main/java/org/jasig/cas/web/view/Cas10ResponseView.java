@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,12 +18,9 @@
  */
 package org.jasig.cas.web.view;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.jasig.cas.validation.Assertion;
+import java.util.Map;
 
 /**
  * Custom View to Return the CAS 1.0 Protocol Response. Implemented as a view
@@ -31,33 +28,22 @@ import org.jasig.cas.validation.Assertion;
  * line feeds to be "\n".
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class Cas10ResponseView extends AbstractCasView {
-
-    /**
-     * Indicate whether this view will be generating the success response or
-     * not.
-     */
-    private boolean successResponse;
 
     @Override
     protected void renderMergedOutputModel(final Map model,
             final HttpServletRequest request, final HttpServletResponse response)
                     throws Exception {
-        final Assertion assertion = getAssertionFrom(model);
 
         if (this.successResponse) {
             response.getWriter().print(
-                    "yes\n"
-                            + assertion.getPrimaryAuthentication().getPrincipal()
-                            .getId() + "\n");
+                    "yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
         } else {
             response.getWriter().print("no\n\n");
         }
     }
 
-    public void setSuccessResponse(final boolean successResponse) {
-        this.successResponse = successResponse;
-    }
+
 }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -34,7 +34,7 @@ import org.jasig.cas.authentication.Credential;
  * a search (e.g. LDAP, database) for the final principal based on the temporary ID.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class ChainingPrincipalResolver implements PrincipalResolver {
 
@@ -92,7 +92,11 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         /** Credential identifier. */
         private final String id;
 
-        /** Creates a new instance with the given ID. */
+        /**
+         * Creates a new instance with the given ID.
+         *
+         * @param id the credential id
+         */
         public IdentifiableCredential(final String id) {
             this.id = id;
         }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -54,31 +54,35 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * attribute values extracted from DN attribute values.
      * <p>
      * EXAMPLE:
+     * </p>
+     * {@code
+     * <code>
+     * &lt;bean class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
+     *   p:descriptor="$UID@$DC.$DC" /&gt;
+     * </code>
+     * }
+     *
+     * The above bean when applied to a certificate with the DN
      * <p>
-     * <pre>
-     * <bean class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
-     *   p:descriptor="$UID@$DC.$DC" />
-     * </pre>
+     * <b>DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto</b></p>
      * <p>
-     * The above bean when applied to a certificate with the DN<br>
-     * <strong>DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto</strong><br>
-     * produces the principal <strong>jacky@vt.edu</strong>.
+     * produces the principal <strong>jacky@vt.edu</strong>.</p>
      *
      * @param s Descriptor string where attribute names are prefixed with "$"
      * to identify replacement by real attribute values from the subject DN.
      * Valid attributes include common X.509 DN attributes such as the following:
      * <ul>
-     * <li>C</li>
-     * <li>CN</li>
-     * <li>DC</li>
-     * <li>EMAILADDRESS</li>
-     * <li>L</li>
-     * <li>O</li>
-     * <li>OU</li>
-     * <li>SERIALNUMBER</li>
-     * <li>ST</li>
-     * <li>UID</li>
-     * <li>UNIQUEIDENTIFIER</li>
+     *  <li>C</li>
+     *  <li>CN</li>
+     *  <li>DC</li>
+     *  <li>EMAILADDRESS</li>
+     *  <li>L</li>
+     *  <li>O</li>
+     *  <li>OU</li>
+     *  <li>SERIALNUMBER</li>
+     *  <li>ST</li>
+     *  <li>UID</li>
+     *  <li>UNIQUEIDENTIFIER</li>
      * </ul>
      * For a complete list of supported attributes, see
      * {@link edu.vt.middleware.crypt.x509.types.AttributeType}.
@@ -101,7 +105,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         logger.debug("Resolving principal for {}", certificate);
         final StringBuffer sb = new StringBuffer();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
-        final Map<String, AttributeContext> attrMap = new HashMap<String, AttributeContext>();
+        final Map<String, AttributeContext> attrMap = new HashMap<>();
         String name;
         String[] values;
         AttributeContext context;
@@ -125,10 +129,23 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         private String name;
         private final String[] values;
 
+        /**
+         * Instantiates a new attribute context.
+         *
+         * @param name the name
+         * @param values the values
+         */
         public AttributeContext(final String name, final String[] values) {
             this.values = values;
         }
 
+  
+        /**
+         * Retrieve the next value, by incrementing the current index.
+         *
+         * @return the string
+         * @throws IllegalStateException if no values are remaining.
+         */
         public String nextValue() {
             if (this.currentIndex == this.values.length) {
                 throw new IllegalStateException("No values remaining for attribute " + this.name);

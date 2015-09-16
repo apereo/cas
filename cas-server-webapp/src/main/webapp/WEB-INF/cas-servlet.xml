@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -23,18 +23,32 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:webflow="http://www.springframework.org/schema/webflow-config"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+
+  <!--
+  | The base-package indicates where components stored. Spring will scan this
+  | folder and find out the annotated beans and register it in Spring container.
+  -->
+  <context:component-scan base-package="org.jasig.cas" />
+  <context:annotation-config/>
+
+  <!-- Scan CAS artifacts to mvc annotations, such as controllers.
+       The scan is controlled by the application context config file -->
+  <mvc:annotation-driven />
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
 
   <!-- Theme Resolver -->
   <bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
         p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
-        p:argumentExtractors-ref="argumentExtractors"
         p:servicesManager-ref="servicesManager">
     <property name="mobileBrowsers">
       <util:map>
@@ -46,28 +60,47 @@
     </property>
   </bean>
 
-  <!-- View Resolver -->
+  <bean id="themeChangeInterceptor" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"
+        p:paramName="theme" />
+
+  <!-- View Resolver  -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
         p:order="0">
     <property name="basenames">
-      <util:list>
-        <value>${cas.viewResolver.basename}</value>
-        <value>protocol_views</value>
-      </util:list>
+        <util:list>
+            <value>cas_views</value>
+        </util:list>
     </property>
   </bean>
-  
-  <!-- Locale Resolver -->
-  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
 
-  <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+  <!--
+  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="1"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
+
+
+    <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+          p:order="1"
+          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
+  -->
 
   <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
         p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
-        p:order="1"/>
-  
+        p:order="2"/>
+
+  <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+        p:viewClass="org.springframework.web.servlet.view.JstlView"
+        p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
+        p:suffix=".jsp"
+        p:order="3"/>
+
+  <!-- Locale Resolver -->
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
+
+  <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+
   <bean id="errorHandlerResolver" class="org.jasig.cas.web.FlowExecutionExceptionResolver"/>
 
   <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
@@ -80,15 +113,16 @@
       <util:properties>
         <prop key="/serviceValidate">serviceValidateController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
-        
+
+        <!--
+        <prop key="/samlValidate">samlValidateController</prop>
+        -->
+
         <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
         <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
-        
         <prop key="/validate">legacyValidateController</prop>
         <prop key="/proxy">proxyController</prop>
         <prop key="/authorizationFailure.html">passThroughController</prop>
-        <prop key="/status">healthCheckController</prop>
-        <prop key="/statistics">statisticsController</prop>
       </util:properties>
     </property>
     <!--
@@ -108,7 +142,9 @@
   <bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="loginFlowRegistry" p:order="2">
     <property name="interceptors">
-      <ref local="localeChangeInterceptor" />
+        <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+            <ref bean="localeChangeInterceptor" />
+        </array>
     </property>
   </bean>
 
@@ -116,27 +152,68 @@
         p:supportedFlowId="login" p:flowExecutor-ref="loginFlowExecutor" p:flowUrlHandler-ref="loginFlowUrlHandler" />
 
   <bean id="loginFlowUrlHandler" class="org.jasig.cas.web.flow.CasDefaultFlowUrlHandler" />
+              
+  <bean name="loginFlowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl" 
+        c:definitionLocator-ref="loginFlowRegistry"
+        c:executionFactory-ref="loginFlowExecutionFactory"
+        c:executionRepository-ref="loginFlowExecutionRepository" />
+   
+  <bean name="loginFlowExecutionFactory" class="org.springframework.webflow.engine.impl.FlowExecutionImplFactory"
+        p:executionKeyFactory-ref="loginFlowExecutionRepository"/>
+  
+  <bean id="loginFlowExecutionRepository" class=" org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
+        c:flowExecutionFactory-ref="loginFlowExecutionFactory"
+        c:flowDefinitionLocator-ref="loginFlowRegistry"
+        c:transcoder-ref="loginFlowStateTranscoder" />
 
-  <webflow:flow-executor id="loginFlowExecutor" flow-registry="loginFlowRegistry">
-    <webflow:flow-execution-attributes>
-      <webflow:always-redirect-on-pause value="false" />
-      <webflow:redirect-in-same-state value="false" />
-    </webflow:flow-execution-attributes>
-    <webflow:flow-execution-listeners>
-      <webflow:listener ref="terminateWebSessionListener" />
-    </webflow:flow-execution-listeners>
-  </webflow:flow-executor>
+  <!--
+  The login flow transcoder encrypts the flow execution identifier
+  using the  128-bit AES in CBC ciphering mode with compression turned on.
 
-  <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location path="/WEB-INF/login-webflow.xml" id="login" />
+  This behaviour can be altered by defining an explicit CipherBean.
+  -->
+    <bean id="loginFlowStateTranscoder" class="org.jasig.spring.webflow.plugin.EncryptedTranscoder"
+          c:cipherBean-ref="loginFlowCipherBean" />
+
+    <bean id="loginFlowCipherBean" class="org.cryptacular.bean.BufferedBlockCipherBean"
+          p:keyAlias="${cas.webflow.keyalias:aes128}"
+          p:keyStore-ref="loginFlowCipherKeystore"
+          p:keyPassword="${cas.webflow.keypassword:changeit}">
+        <property name="nonce">
+            <bean class="org.cryptacular.generator.sp80038a.RBGNonce" />
+        </property>
+        <property name="blockCipherSpec">
+            <bean class="org.cryptacular.spec.BufferedBlockCipherSpec"
+                  c:algName="${cas.webflow.cipher.alg:AES}"
+                  c:cipherMode="${cas.webflow.cipher.mode:CBC}"
+                  c:cipherPadding="${cas.webflow.cipher.padding:PKCS7}" />
+        </property>
+    </bean>
+
+    <bean id="loginFlowCipherKeystore" class="java.security.KeyStore"
+          factory-bean="loginFlowCipherKeystoreFactory" factory-method="newInstance" />
+
+    <bean id="loginFlowCipherKeystoreFactory" class="org.cryptacular.bean.KeyStoreFactoryBean"
+          c:type="${cas.webflow.keystore.type:JCEKS}"
+          c:password="${cas.webflow.keystore.password:changeit}">
+        <constructor-arg name="resource">
+            <bean class="org.cryptacular.io.URLResource"
+                  c:url="${cas.webflow.keystore:classpath:/etc/keystore.jceks}" />
+        </constructor-arg>
+    </bean>
+
+  <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+    <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
   </webflow:flow-registry>
 
   <!-- logout webflow configuration -->
   <bean id="logoutFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
         p:flowRegistry-ref="logoutFlowRegistry" p:order="3">
-    <property name="interceptors">
-      <ref local="localeChangeInterceptor" />
-    </property>
+      <property name="interceptors">
+          <array value-type="org.springframework.web.servlet.HandlerInterceptor">
+              <ref bean="localeChangeInterceptor" />
+          </array>
+      </property>
   </bean>
 
   <bean id="logoutHandlerAdapter" class="org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter"
@@ -150,20 +227,15 @@
       <webflow:always-redirect-on-pause value="false" />
       <webflow:redirect-in-same-state value="false" />
     </webflow:flow-execution-attributes>
-    <webflow:flow-execution-listeners>
-      <webflow:listener ref="terminateWebSessionListener" />
-    </webflow:flow-execution-listeners>
   </webflow:flow-executor>
 
-  <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder">
-    <webflow:flow-location path="/WEB-INF/logout-webflow.xml" id="logout" />
+  <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+    <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
   </webflow:flow-registry>
 
   <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator" expression-parser="expressionParser" />
 
   <bean id="logoutConversionService" class="org.jasig.cas.web.flow.LogoutConversionService" />
-
-  <bean id="terminateWebSessionListener" class="org.jasig.cas.web.flow.TerminateWebSessionListener" />
 
   <bean id="expressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser"
         c:conversionService-ref="logoutConversionService">
@@ -175,16 +247,18 @@
   <bean id="viewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
     <property name="viewResolvers">
       <util:list>
-        <ref local="viewResolver"/>
+        <ref bean="viewResolver"/>
+        <ref bean="internalViewResolver"/>
       </util:list>
     </property>
   </bean>
-  
+
   <!--  CAS 2 Protocol service/proxy validation -->     
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
-        p:argumentExtractor-ref="casArgumentExtractor"/>
+        p:argumentExtractor-ref="casArgumentExtractor"
+        p:servicesManager-ref="servicesManager" />
   
   <bean id="proxyValidateController" parent="abstractValidateController"/>
 
@@ -211,9 +285,6 @@
   <bean id="proxyController" class="org.jasig.cas.web.ProxyController"
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
-  <bean id="statisticsController" class="org.jasig.cas.web.StatisticsController"
-        p:casTicketSuffix="${host.name}" c:ticketRegistry-ref="ticketRegistry" />
-
   <bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
         p:servicesManager-ref="servicesManager"
         p:followServiceRedirects="${cas.logout.followServiceRedirects:false}"/>
@@ -221,13 +292,15 @@
   <bean id="frontChannelLogoutAction" class="org.jasig.cas.web.flow.FrontChannelLogoutAction"
         c:logoutManager-ref="logoutManager"/>
 
-  <bean id="healthCheckController" class="org.jasig.cas.web.HealthCheckController"
-        p:healthCheckMonitor-ref="healthCheckMonitor"/>
-
   <bean id="initialFlowSetupAction" class="org.jasig.cas.web.flow.InitialFlowSetupAction"
         p:argumentExtractors-ref="argumentExtractors"
         p:warnCookieGenerator-ref="warnCookieGenerator"
-        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
+        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+        p:servicesManager-ref="servicesManager"
+        p:enableFlowOnAbsentServiceRequest="${create.sso.missing.service:true}"  />
+
+  <bean id="genericSuccessViewAction" class="org.jasig.cas.web.flow.GenericSuccessViewAction"
+        c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
         p:centralAuthenticationService-ref="centralAuthenticationService"
@@ -239,8 +312,10 @@
         p:centralAuthenticationService-ref="centralAuthenticationService"/>
 
   <bean id="sendTicketGrantingTicketAction" class="org.jasig.cas.web.flow.SendTicketGrantingTicketAction"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"/>
+        c:centralAuthenticationService-ref="centralAuthenticationService"
+        c:ticketGrantingTicketCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
+        c:servicesManager-ref="servicesManager"
+        p:createSsoSessionCookieOnRenewAuthentications="${create.sso.renewed.authn:true}" />
 
   <bean id="gatewayServicesManagementCheck" class="org.jasig.cas.web.flow.GatewayServicesManagementCheck"
     c:servicesManager-ref="servicesManager" />
@@ -257,10 +332,23 @@
         p:messageInterpolator-ref="messageInterpolator"/>
 
   <bean id="ticketGrantingTicketCheckAction" class="org.jasig.cas.web.flow.TicketGrantingTicketCheckAction"
-        c:registry-ref="ticketRegistry" />
+        c:centralAuthenticationService-ref="centralAuthenticationService" />
 
   <bean id="terminateSessionAction" class="org.jasig.cas.web.flow.TerminateSessionAction"
         c:cas-ref="centralAuthenticationService"
         c:tgtCookieGenerator-ref="ticketGrantingTicketCookieGenerator"
         c:warnCookieGenerator-ref="warnCookieGenerator"/>
+
+  <bean id="acceptableUsagePolicyFormAction" class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
+
+  <!--
+  <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
+          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
+          p:centralAuthenticationService-ref="centralAuthenticationService"
+          p:servicesManager-ref="servicesManager"
+          p:proxyHandler-ref="proxy20Handler"
+          p:argumentExtractor-ref="samlArgumentExtractor"
+          p:successView="casSamlServiceSuccessView"
+          p:failureView="casSamlServiceFailureView"/>
+  -->
 </beans>

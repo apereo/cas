@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,20 +18,24 @@
  */
 package org.jasig.cas.services.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
-import org.springframework.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.HashMap;
-import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
 /**
@@ -42,31 +46,26 @@ import java.util.regex.Pattern;
  * with the service or the service was not found, a default theme will be used.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class ServiceThemeResolver extends AbstractThemeResolver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThemeResolver.class);
 
     /** The ServiceRegistry to look up the service. */
     private ServicesManager servicesManager;
 
-    private List<ArgumentExtractor> argumentExtractors;
-
-    private Map<Pattern, String> overrides = new HashMap<Pattern, String>();
+    private Map<Pattern, String> overrides = new HashMap<>();
 
     @Override
     public String resolveThemeName(final HttpServletRequest request) {
         if (this.servicesManager == null) {
             return getDefaultThemeName();
         }
-
-        final Service service = WebUtils.getService(this.argumentExtractors, request);
-
-        final RegisteredService rService = this.servicesManager.findServiceBy(service);
-
         // retrieve the user agent string from the request
-        String userAgent = request.getHeader("User-Agent");
+        final String userAgent = request.getHeader("User-Agent");
 
-        if (userAgent == null) {
+        if (StringUtils.isBlank(userAgent)) {
             return getDefaultThemeName();
         }
 
@@ -78,8 +77,25 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
             }
         }
 
-        return service != null && rService != null && StringUtils.hasText(rService.getTheme())
-                ? rService.getTheme() : getDefaultThemeName();
+        final RequestContext context = RequestContextHolder.getRequestContext();
+        final Service service = WebUtils.getService(context);
+        if (service != null) {
+            final RegisteredService rService = this.servicesManager.findServiceBy(service);
+            if (rService != null && rService.getAccessStrategy().isServiceAccessAllowed()
+                    && StringUtils.isNotBlank(rService.getTheme())) {
+                LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
+                final CasThemeResourceBundleMessageSource messageSource = new CasThemeResourceBundleMessageSource();
+                messageSource.setBasename(rService.getTheme());
+                if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
+                    LOGGER.debug("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
+                    return rService.getTheme();
+                } else {
+                    LOGGER.warn("Custom theme {} for service {} cannot be located. Falling back to default theme...",
+                            rService.getTheme(), rService);
+                }
+            }
+        }
+        return getDefaultThemeName();
     }
 
     @Override
@@ -89,10 +105,6 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     public void setServicesManager(final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
-    }
-
-    public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
-        this.argumentExtractors = argumentExtractors;
     }
 
     /**
@@ -105,10 +117,25 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
      */
     public void setMobileBrowsers(final Map<String, String> mobileOverrides) {
         // initialize the overrides variable to an empty map
-        this.overrides = new HashMap<Pattern, String>();
+        this.overrides = new HashMap<>();
 
         for (final Map.Entry<String, String> entry : mobileOverrides.entrySet()) {
             this.overrides.put(Pattern.compile(entry.getKey()), entry.getValue());
+        }
+    }
+
+    private static class CasThemeResourceBundleMessageSource extends ResourceBundleMessageSource {
+        @Override
+        protected ResourceBundle doGetBundle(final String basename, final Locale locale) {
+            try {
+                final ResourceBundle bundle = ResourceBundle.getBundle(basename, locale, getBundleClassLoader());
+                if (bundle != null && bundle.keySet().size() > 0) {
+                    return bundle;
+                }
+            } catch (final Exception e) {
+                LOGGER.debug(e.getMessage(), e);
+            }
+            return null;
         }
     }
 }

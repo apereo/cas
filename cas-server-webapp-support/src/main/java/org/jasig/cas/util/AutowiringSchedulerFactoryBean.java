@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,13 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationContext;
 import org.quartz.Trigger;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
@@ -39,8 +36,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.3.4
  **/
-public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean implements ApplicationContextAware,
-        InitializingBean {
+public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,24 +18,24 @@
  */
 package org.jasig.cas.adaptors.radius.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import java.util.List;
-
+import org.jasig.cas.adaptors.radius.RadiusResponse;
 import org.jasig.cas.adaptors.radius.RadiusServer;
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.security.GeneralSecurityException;
+import java.util.List;
 
 /**
  * Authentication Handler to authenticate a user against a RADIUS server.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -57,16 +57,22 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
     private boolean failoverOnAuthenticationFailure;
 
     @Override
-    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        final String password = getPasswordEncoder().encode(credential.getPassword());
+        final String username = credential.getUsername();
+        
         for (final RadiusServer radiusServer : this.servers) {
             logger.debug("Attempting to authenticate {} at {}", username, radiusServer);
             try {
-                if (radiusServer.authenticate(username, password)) {
-                    return new SimplePrincipal(username);
-                } else if (!this.failoverOnAuthenticationFailure) {
-                    throw new FailedLoginException();
+                final RadiusResponse response = radiusServer.authenticate(username, password);
+                if (response != null) {
+                     return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+                } 
+                                
+                if (!this.failoverOnAuthenticationFailure) {
+                    throw new FailedLoginException("Radius authentication failed for user " + username);
                 }
                 logger.debug("failoverOnAuthenticationFailure enabled -- trying next server");
             } catch (final PreventedException e) {
@@ -76,7 +82,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
                 logger.warn("failoverOnException enabled -- trying next server.", e);
             }
         }
-        throw new FailedLoginException();
+        throw new FailedLoginException("Radius authentication failed for user " + username);
     }
 
     /**
@@ -86,7 +92,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      * @param failoverOnAuthenticationFailure boolean on whether to failover or
      * not.
      */
-    public void setFailoverOnAuthenticationFailure(
+    public final void setFailoverOnAuthenticationFailure(
             final boolean failoverOnAuthenticationFailure) {
         this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
     }
@@ -97,11 +103,11 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      *
      * @param failoverOnException boolean on whether to failover or not.
      */
-    public void setFailoverOnException(final boolean failoverOnException) {
+    public final void setFailoverOnException(final boolean failoverOnException) {
         this.failoverOnException = failoverOnException;
     }
 
-    public void setServers(final List<RadiusServer> servers) {
+    public final void setServers(final List<RadiusServer> servers) {
         this.servers = servers;
     }
 }

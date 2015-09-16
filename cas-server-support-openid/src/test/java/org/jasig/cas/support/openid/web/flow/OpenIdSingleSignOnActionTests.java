@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -36,6 +36,7 @@ import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.support.openid.OpenIdConstants;
 import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
@@ -80,7 +81,7 @@ public class OpenIdSingleSignOnActionTests {
                         handler,
                         new OpenIdPrincipalResolver()));
 
-        final Map<String, UniqueTicketIdGenerator> generator = new HashMap<String, UniqueTicketIdGenerator>();
+        final Map<String, UniqueTicketIdGenerator> generator = new HashMap<>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
 
         impl = new CentralAuthenticationServiceImpl(this.ticketRegistry, null, this.authenticationManager,
@@ -95,7 +96,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testNoTgt() throws Exception {
+    public void verifyNoTgt() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), new MockHttpServletRequest(),
@@ -104,13 +105,13 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testNoService() throws Exception {
+    public void verifyNoService() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request,
                 new MockHttpServletResponse()));
-        Event event = this.action.execute(context);
+        final Event event = this.action.execute(context);
 
         assertNotNull(event);
 
@@ -118,13 +119,13 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testBadUsername() throws Exception {
+    public void verifyBadUsername() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("openid.identity", "fablah");
-        request.setParameter("openid.return_to", "http://www.cnn.com");
+        request.setParameter(OpenIdConstants.OPENID_IDENTITY, "fablah");
+        request.setParameter(OpenIdConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request);
+        final OpenIdService service = OpenIdService.createServiceFrom(request, null);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", "tgtId");
 
@@ -135,7 +136,7 @@ public class OpenIdSingleSignOnActionTests {
     }
 
     @Test
-    public void testSuccessfulServiceTicket() throws Exception {
+    public void verifySuccessfulServiceTicket() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final Authentication authentication = TestUtils.getAuthentication("scootman28");
@@ -144,10 +145,10 @@ public class OpenIdSingleSignOnActionTests {
 
         this.ticketRegistry.addTicket(t);
 
-        request.setParameter("openid.identity", "http://openid.aol.com/scootman28");
-        request.setParameter("openid.return_to", "http://www.cnn.com");
+        request.setParameter(OpenIdConstants.OPENID_IDENTITY, "http://openid.aol.com/scootman28");
+        request.setParameter(OpenIdConstants.OPENID_RETURNTO, "http://www.cnn.com");
 
-        final OpenIdService service = OpenIdService.createServiceFrom(request);
+        final OpenIdService service = OpenIdService.createServiceFrom(request, null);
         context.getFlowScope().put("service", service);
         context.getFlowScope().put("ticketGrantingTicketId", t.getId());
 

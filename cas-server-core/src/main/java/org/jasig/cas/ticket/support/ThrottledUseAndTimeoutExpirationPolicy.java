@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,25 +18,17 @@
  */
 package org.jasig.cas.ticket.support;
 
-import java.io.Serializable;
-
-import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
- * ticket can only be used once every X millseconds to prevent misconfigured
+ * ticket can only be used once every X milliseconds to prevent misconfigured
  * clients from consuming resources by doing constant redirects.
  *
  * @author Scott Battaglia
-
- * @since 3.0.5
+ * @since 3.0.0.5
  */
-public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThrottledUseAndTimeoutExpirationPolicy.class);
+public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 205979491183779408L;
@@ -56,21 +48,25 @@ public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationP
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
     }
 
+    @Override
     public boolean isExpired(final TicketState ticketState) {
+        final long currentTimeInMillis = System.currentTimeMillis();
+        final long lastTimeTicketWasUsed = ticketState.getLastTimeUsed();
+
         if (ticketState.getCountOfUses() == 0
-            && (System.currentTimeMillis() - ticketState.getLastTimeUsed() < this.timeToKillInMilliSeconds)) {
-            LOGGER.debug("Ticket is not expired due to a count of zero and the time being less "
+            && (currentTimeInMillis - lastTimeTicketWasUsed < this.timeToKillInMilliSeconds)) {
+            logger.debug("Ticket is not expired due to a count of zero and the time being less "
                     + "than the timeToKillInMilliseconds");
             return false;
         }
 
-        if ((System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds)) {
-            LOGGER.debug("Ticket is expired due to the time being greater than the timeToKillInMilliseconds");
+        if ((currentTimeInMillis - lastTimeTicketWasUsed >= this.timeToKillInMilliSeconds)) {
+            logger.debug("Ticket is expired due to the time being greater than the timeToKillInMilliseconds");
             return true;
         }
 
-        if ((System.currentTimeMillis() - ticketState.getLastTimeUsed() <= this.timeInBetweenUsesInMilliSeconds)) {
-            LOGGER.warn("Ticket is expired due to the time being less than the waiting period.");
+        if ((currentTimeInMillis - lastTimeTicketWasUsed <= this.timeInBetweenUsesInMilliSeconds)) {
+            logger.warn("Ticket is expired due to the time being less than the waiting period.");
             return true;
         }
 

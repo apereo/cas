@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -19,17 +19,39 @@
     under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-	<description>
-		Defines the cookie that stores the TicketGrantingTicket.  You most likely should never modify these (especially the "secure" property).
-		You can change the name if you want to make it harder for people to guess.
-	</description>
-	<bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-		p:cookieSecure="true"
-		p:cookieMaxAge="-1"
-		p:cookieName="CASTGC"
-		p:cookiePath="/cas" />
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <description>
+        Defines the cookie that stores the TicketGrantingTicket. You most likely should never modify these (especially
+        the "secure" property).
+        You can change the name if you want to make it harder for people to guess.
+    </description>
+
+    <bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
+          c:casCookieValueManager-ref="cookieValueManager"
+          p:cookieSecure="true"
+          p:cookieMaxAge="-1"
+          p:cookieName="TGC"
+          p:cookiePath="/cas"/>
+
+    <bean id="cookieCipherExecutor" class="org.jasig.cas.util.DefaultCipherExecutor"
+          c:secretKeyEncryption="${tgc.encryption.key}"
+          c:secretKeySigning="${tgc.signing.key}"/>
+
+    <bean id="cookieValueManager" class="org.jasig.cas.web.support.DefaultCasCookieValueManager"
+          c:cipherExecutor-ref="cookieCipherExecutor"/>
+
+    <!-- As an alternative, the cookie value verification and encryption can be turned off via
+    the following configuration
+
+    <bean id="cookieCipherExecutor" class="org.jasig.cas.util.NoOpCipherExecutor" />
+
+    <bean id="cookieValueManager" class="org.jasig.cas.web.support.NoOpCookieValueManager"
+          c:cipherExecutor-ref="cookieCipherExecutor" />
+
+    -->
 </beans>

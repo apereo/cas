@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -25,6 +25,7 @@ import org.springframework.context.MessageSourceAware;
 
 import javax.validation.MessageInterpolator;
 import javax.validation.Validation;
+
 import java.util.Locale;
 
 /**
@@ -36,7 +37,7 @@ import java.util.Locale;
  */
 public final class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
 
-    private MessageInterpolator defaultMessageInterpolator =
+    private final MessageInterpolator defaultMessageInterpolator =
             Validation.byDefaultProvider().configure().getDefaultMessageInterpolator();
 
     private MessageSource messageSource;
@@ -45,10 +46,12 @@ public final class SpringAwareMessageMessageInterpolator implements MessageInter
         this.messageSource = messageSource;
     }
 
+    @Override
     public String interpolate(final String s, final Context context) {
         return interpolate(s, context, LocaleContextHolder.getLocale());
     }
 
+    @Override
     public String interpolate(final String s, final Context context, final Locale locale) {
         try {
             return this.messageSource.getMessage(s,

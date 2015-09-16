@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,15 +18,8 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -35,6 +28,15 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * This class tests the {@link OAuth20ProfileController} class.
@@ -59,7 +61,7 @@ public final class OAuth20ProfileControllerTests {
     private static final String CONTENT_TYPE = "application/json";
 
     @Test
-    public void testNoAccessToken() throws Exception {
+    public void verifyNoAccessToken() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
@@ -72,7 +74,7 @@ public final class OAuth20ProfileControllerTests {
     }
 
     @Test
-    public void testNoTicketGrantingTicketImpl() throws Exception {
+    public void verifyNoTicketGrantingTicketImpl() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
@@ -89,7 +91,7 @@ public final class OAuth20ProfileControllerTests {
     }
 
     @Test
-    public void testExpiredTicketGrantingTicketImpl() throws Exception {
+    public void verifyExpiredTicketGrantingTicketImpl() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
@@ -106,9 +108,9 @@ public final class OAuth20ProfileControllerTests {
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
         assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
     }
-
+    
     @Test
-    public void testOK() throws Exception {
+    public void verifyOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
@@ -121,9 +123,9 @@ public final class OAuth20ProfileControllerTests {
         final Authentication authentication = mock(Authentication.class);
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn(ID);
-        final Map<String, Object> map = new HashMap<String, Object>();
+        final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
-        List<String> list = Arrays.asList(VALUE, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
         when(principal.getAttributes()).thenReturn(map);
         when(authentication.getPrincipal()).thenReturn(principal);
@@ -133,7 +135,61 @@ public final class OAuth20ProfileControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
-                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}", mockResponse.getContentAsString());
+
+        final ObjectMapper mapper = new ObjectMapper();
+
+        final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
+        final JsonNode expectedObj = mapper.readTree(expected);
+        final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
+        assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
+
+        final JsonNode expectedAttributes = expectedObj.get("attributes");
+        final JsonNode receivedAttributes = receivedObj.get("attributes");
+
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
+        assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
+    }
+    
+    @Test
+    public void verifyOKWithAuthorizationHeader() throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
+                + OAuthConstants.PROFILE_URL);
+        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + " " + TGT_ID);
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
+        final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
+        final TicketGrantingTicket ticketGrantingTicket = mock(TicketGrantingTicket.class);
+        when(ticketGrantingTicket.isExpired()).thenReturn(false);
+        when(ticketRegistry.getTicket(TGT_ID)).thenReturn(ticketGrantingTicket);
+        final Authentication authentication = mock(Authentication.class);
+        final Principal principal = mock(Principal.class);
+        when(principal.getId()).thenReturn(ID);
+        final Map<String, Object> map = new HashMap<>();
+        map.put(NAME, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
+        map.put(NAME2, list);
+        when(principal.getAttributes()).thenReturn(map);
+        when(authentication.getPrincipal()).thenReturn(principal);
+        when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
+        oauth20WrapperController.setTicketRegistry(ticketRegistry);
+        oauth20WrapperController.afterPropertiesSet();
+        oauth20WrapperController.handleRequest(mockRequest, mockResponse);
+        assertEquals(200, mockResponse.getStatus());
+        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
+        final JsonNode expectedObj = mapper.readTree(expected);
+        final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
+
+        assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
+
+        final JsonNode expectedAttributes = expectedObj.get("attributes");
+        final JsonNode receivedAttributes = receivedObj.get("attributes");
+
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
+        assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
 }

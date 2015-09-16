@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,14 +18,16 @@
  */
 package org.jasig.cas.ticket;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
+import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
-import org.springframework.util.Assert;
+import javax.validation.constraints.NotNull;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -35,7 +37,7 @@ import org.springframework.util.Assert;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 @Entity
 @Table(name="SERVICETICKET")
@@ -55,8 +57,11 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     private boolean fromNewLogin;
 
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
-    private Boolean grantedTicketAlready = false;
+    private Boolean grantedTicketAlready = Boolean.FALSE;
 
+    /**
+     * Instantiates a new service ticket impl.
+     */
     public ServiceTicketImpl() {
         // exists for JPA purposes
     }
@@ -75,13 +80,12 @@ public final class ServiceTicketImpl extends AbstractTicket implements
      * Service are null.
      */
     protected ServiceTicketImpl(final String id,
-        final TicketGrantingTicketImpl ticket, final Service service,
+        @NotNull final TicketGrantingTicketImpl ticket, @NotNull final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, ticket, policy);
 
-        Assert.notNull(ticket, "ticket cannot be null");
         Assert.notNull(service, "service cannot be null");
-
+        Assert.notNull(ticket, "ticket cannot be null");
         this.service = service;
         this.fromNewLogin = fromNewLogin;
     }
@@ -108,6 +112,29 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         return serviceToValidate.matches(this.service);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof ServiceTicket)) {
+            return false;
+        }
+
+        final Ticket ticket = (Ticket) object;
+
+        return new EqualsBuilder()
+                .append(ticket.getId(), this.getId())
+                .isEquals();
+    }
+
+    @Override
     public TicketGrantingTicket grantTicketGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
@@ -116,25 +143,15 @@ public final class ServiceTicketImpl extends AbstractTicket implements
                 throw new IllegalStateException(
                     "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
             }
-            this.grantedTicketAlready = true;
+            this.grantedTicketAlready = Boolean.TRUE;
         }
 
-        return new TicketGrantingTicketImpl(id, (TicketGrantingTicketImpl) this.getGrantingTicket(),
-            authentication, expirationPolicy);
+        return new TicketGrantingTicketImpl(id, service,
+                this.getGrantingTicket(), authentication, expirationPolicy);
     }
 
     public Authentication getAuthentication() {
         return null;
     }
 
-    public boolean equals(final Object object) {
-        if (object == null
-            || !(object instanceof ServiceTicket)) {
-            return false;
-        }
-
-        final Ticket serviceTicket = (Ticket) object;
-
-        return serviceTicket.getId().equals(this.getId());
-    }
 }

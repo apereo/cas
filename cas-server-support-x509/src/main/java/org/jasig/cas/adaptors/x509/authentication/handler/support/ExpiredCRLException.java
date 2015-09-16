@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,6 +17,8 @@
  * under the License.
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
+
+import org.joda.time.DateTime;
 
 import java.security.GeneralSecurityException;
 import java.util.Date;
@@ -36,7 +38,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
     private final String id;
 
     /** CRL expiration date. */
-    private final Date expirationDate;
+    private final DateTime expirationDate;
 
     /** Leniency of expiration. */
     private final int leniency;
@@ -62,7 +64,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
      */
     public ExpiredCRLException(final String identifier, final Date expirationDate, final int leniency) {
         this.id = identifier;
-        this.expirationDate = expirationDate;
+        this.expirationDate = new DateTime(expirationDate);
         if (leniency < 0) {
             throw new IllegalArgumentException("Leniency cannot be negative.");
         }
@@ -79,8 +81,8 @@ public class ExpiredCRLException extends GeneralSecurityException {
     /**
      * @return Returns the expirationDate.
      */
-    public Date getExpirationDate() {
-        return this.expirationDate;
+    public DateTime getExpirationDate() {
+        return this.expirationDate == null ? null : new DateTime(this.expirationDate);
     }
 
     /**
@@ -90,7 +92,9 @@ public class ExpiredCRLException extends GeneralSecurityException {
         return this.leniency;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getMessage() {
         if (this.leniency > 0) {

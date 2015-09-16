@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.support.openid.web.mvc;
 
 import static org.junit.Assert.*;
@@ -31,10 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Map;
 
-
 /**
  * Test case of the Smart OpenId Controller.
  * @author Frederic Esnault
+ * @since 3.0.0
  */
 public class SmartOpenIdControllerTest {
     private final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -51,30 +50,30 @@ public class SmartOpenIdControllerTest {
     }
 
     @Test
-    public void testCanHandle() {
+    public void verifyCanHandle() {
         request.addParameter("openid.mode", "associate");
-        boolean canHandle = smartOpenIdController.canHandle(request, response);
+        final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
         assertEquals(true, canHandle);
     }
 
     @Test
-    public void testCannotHandle() {
+    public void verifyCannotHandle() {
         request.addParameter("openid.mode", "anythingElse");
-        boolean canHandle = smartOpenIdController.canHandle(request, response);
+        final boolean canHandle = smartOpenIdController.canHandle(request, response);
         request.removeParameter("openid.mode");
         assertEquals(false, canHandle);
     }
 
     @Test
-    public void testGetAssociationResponse() {
+    public void verifyGetAssociationResponse() {
         request.addParameter("openid.mode", "associate");
         request.addParameter("openid.session_type", "DH-SHA1");
         request.addParameter("openid.assoc_type", "HMAC-SHA1");
         request.addParameter("openid.dh_consumer_public",
                 "NzKoFMyrzFn/5iJFPdX6MVvNA/BChV1/sJdnYbupDn7ptn+cerwEzyFfWFx25KsoLSkxQCaSMmYtc1GPy/2GI1BSKSDhpdJmDBb"
                 + "QRa/9Gs+giV/5fHcz/mHz8sREc7RTGI+0Ka9230arwrWt0fnoaJLRKEGUsmFR71rCo4EUOew=");
-        Map<String, String> assocResponse = smartOpenIdController.getAssociationResponse(request);
+        final Map<String, String> assocResponse = smartOpenIdController.getAssociationResponse(request);
         assertTrue(assocResponse.containsKey("assoc_handle"));
         assertTrue(assocResponse.containsKey("expires_in"));
         assertTrue(assocResponse.containsKey("dh_server_public"));

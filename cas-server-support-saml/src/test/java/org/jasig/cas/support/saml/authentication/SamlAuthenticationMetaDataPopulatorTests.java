@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,24 +18,26 @@
  */
 package org.jasig.cas.support.saml.authentication;
 
-import static org.junit.Assert.*;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.jasig.cas.authentication.principal.Principal;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
-import org.jasig.cas.authentication.AuthenticationHandler;
-import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.Principal;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Scott Battaglia
@@ -52,7 +54,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAuthenticationTypeFound() {
+    public void verifyAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
@@ -64,7 +66,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAuthenticationTypeNotFound() {
+    public void verifyAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
         final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
@@ -74,10 +76,10 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     }
 
     @Test
-    public void testAuthenticationTypeFoundCustom() {
+    public void verifyAuthenticationTypeFoundCustom() {
         final CustomCredential credentials = new CustomCredential();
 
-        final Map<String, String> added = new HashMap<String, String>();
+        final Map<String, String> added = new HashMap<>();
         added.put(CustomCredential.class.getName(), "FF");
 
         this.populator.setUserDefinedMappings(added);
@@ -91,7 +93,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
                 auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
-    protected class CustomCredential implements Credential {
+    private static class CustomCredential implements Credential {
 
         public String getId() {
             return "nobody";
@@ -101,8 +103,8 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     private static AuthenticationBuilder newAuthenticationBuilder(final Principal principal) {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        return new AuthenticationBuilder(principal)
+        return new DefaultAuthenticationBuilder(principal)
                 .addCredential(meta)
-                .addSuccess("test", new HandlerResult(handler, meta));
+                .addSuccess("test", new DefaultHandlerResult(handler, meta));
     }
 }

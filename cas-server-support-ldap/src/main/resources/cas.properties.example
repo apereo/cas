@@ -1,8 +1,8 @@
 #
-# Licensed to Jasig under one or more contributor license
+# Licensed to Apereo under one or more contributor license
 # agreements. See the NOTICE file distributed with this work
 # for additional information regarding copyright ownership.
-# Jasig licenses this file to you under the Apache License,
+# Apereo licenses this file to you under the Apache License,
 # Version 2.0 (the "License"); you may not use this file
 # except in compliance with the License.  You may obtain a
 # copy of the License at the following location:
@@ -24,29 +24,33 @@
 # configure ldap authentication, but also enable and configure the lppe feature.
 #
 
-# == LDAP Authentication settings ==
+# == General connection settings ==
 
-#Example: sAMAccountName=%u
+# Search filter when using a search-and-bind strategy.
 ldap.authentication.filter=sAMAccountName=%u
 
-#Comma-separated list of server urls (i.e. ldap://1.2.3.4)
+# Directory URL. Only one URL should be supplied.
+# For deployments that need HA directory connections, hardware load balancing with a
+# single virtual host is the only reasonable solution.
 ldap.authentication.server.urls=ldap://1.1.1.1
 
-#Ldap Base DNs based on the context for query execution (i.e.
+# Base DN for directory searches.
 ldap.authentication.basedn=cn=users,dc=school,dc=edu
 
-#Manager credentials to bind (i.e. cn=manager,cn=users,dc=school,dc=edu/password)
-ldap.authentication.manager.userdn=
-ldap.authentication.manager.password=
+# Manager credentials to bind; only used for searches.
+# Only required by directories that prevent anonymous queries (e.g. AD) when performing
+# a search-and-bind authentication strategy.
+ldap.authentication.manager.userdn=cn=manager,cn=users,dc=school,dc=edu
+ldap.authentication.manager.password=password
 
-#Ignore the exception if LDAP query returned more than one item
+# Strongly recommended for AD.
 ldap.authentication.ignorePartialResultException=true
 
 ldap.authentication.jndi.connect.timeout=3000
 ldap.authentication.jndi.read.timeout=3000
 ldap.authentication.jndi.security.level=simple
 
-# == LDAP Context Pooling settings ==
+# == Connection pooling settings ==
 
 ldap.authentication.pool.minIdle=3
 ldap.authentication.pool.maxIdle=5
@@ -74,44 +78,3 @@ ldap.authentication.pool.testWhileIdle=true
 # Set to true to enable connection liveliness testing before every
 # request to borrow an object from the pool.
 ldap.authentication.pool.testOnBorrow=false
-
-# ======================================================
-# == LDAP Password Policy Enforcement (LPPE) settings ==
-# ======================================================
-
-#Warn all users of expiration date regardless of warningDays value
-ldap.authentication.lppe.warnAll=false
-
-#Date format for value from dateAttribute see http://java.sun.com/j2se/1.4.2/docs/api/java/text/SimpleDateFormat.html
-#Change value to 'ActiveDirectory' or 'AD' when using AD
-#ldap.authentication.lppe.dateFormat=yyyyMMddHHmmss'Z'
-ldap.authentication.lppe.dateFormat=AD
-
-#LDAP attribute that stores the last password change time
-#Change value to 'pwdlastset' or 'lastlogon' when using AD
-#ldap.authentication.lppe.dateAttribute=passwordchangedtime
-ldap.authentication.lppe.dateAttribute=accountExpires
-
-#The attribute that contains the data that will determine if password warning is skipped
-ldap.authentication.lppe.noWarnAttribute=
-
-#The list of values that will cause password warning to be bypassed
-#If the value retrieved for the attribute above matches the elements defined below, password warning will be bypassed.
-#LPPE automatically checks for 'never' used by ActiveDirectory
-ldap.authentication.lppe.noWarnValues=
-
-#LDAP attribute that stores the user's personal setting for the number of days to warn before expiration
-ldap.authentication.lppe.warningDaysAttribute=passwordwarningdays
-
-#LDAP attribute that stores the custom setting for the number of days a password is valid
-#ldap.authentication.lppe.validDaysAttribute=passwordexpiredays
-ldap.authentication.lppe.validDaysAttribute=maxPwdAge
-
-#Default value used if warningDaysAttribute is not found
-ldap.authentication.lppe.warningDays=30
-
-#Default value used if validDaysAttribute is not found
-ldap.authentication.lppe.validDays=90
-
-#Url to which the user will be redirected to change the passsword
-ldap.authentication.lppe.password.url=https://password.example.edu/change

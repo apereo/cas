@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,17 +18,16 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Performs two important error handling functions on an {@link AuthenticationException} raised from the authentication
@@ -42,7 +41,7 @@ import org.springframework.binding.message.MessageContext;
  * </ol>
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class AuthenticationExceptionHandler {
 
@@ -54,7 +53,7 @@ public class AuthenticationExceptionHandler {
 
     /** Default list of errors this class knows how to handle. */
     private static final List<Class<? extends Exception>> DEFAULT_ERROR_LIST =
-            new ArrayList<Class<? extends Exception>>();
+            new ArrayList<>();
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
@@ -65,6 +64,7 @@ public class AuthenticationExceptionHandler {
         DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountNotFoundException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountDisabledException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginLocationException.class);
+        DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountPasswordMustChangeException.class);
         DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginTimeException.class);
     }
 
@@ -99,24 +99,26 @@ public class AuthenticationExceptionHandler {
     }
 
     /**
-     * Maps an authentication exception onto a state name equal to the simple class name of the
+     * Maps an authentication exception onto a state name equal to the simple class name of the.
+     *
+     * @param e Authentication error to handle.
+     * @param messageContext the spring message context
+     * @return Name of next flow state to transition to or {@value #UNKNOWN}
      * {@link org.jasig.cas.authentication.AuthenticationException#getHandlerErrors()} with highest precedence.
      * Also sets an ERROR severity message in the message context of the form
      * <code>[messageBundlePrefix][exceptionClassSimpleName]</code> for each handler error that is
      * configured. If not match is found, {@value #UNKNOWN} is returned.
-     *
-     * @param e Authentication error to handle.
-     *
-     * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
     public String handle(final AuthenticationException e, final MessageContext messageContext) {
         if (e != null) {
+            final MessageBuilder builder = new MessageBuilder();
             for (final Class<? extends Exception> kind : this.errors) {
                 for (final Class<? extends Exception> handlerError : e.getHandlerErrors().values()) {
                     if (handlerError != null && handlerError.equals(kind)) {
-                        final String messageCode = this.messageBundlePrefix + handlerError.getSimpleName();
-                        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
-                        return handlerError.getSimpleName();
+                        final String handlerErrorName = handlerError.getSimpleName();
+                        final String messageCode = this.messageBundlePrefix + handlerErrorName;
+                        messageContext.addMessage(builder.error().code(messageCode).build());
+                        return handlerErrorName;
                     }
                 }
 

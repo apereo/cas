@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -73,15 +73,15 @@ public class EncryptedMapDecoratorTests {
 
     @Test
     public void addManyItems() {
-        final int TOTAL_ITEMS = 100;
+        final int totalItems = 100;
 
-        for (int i = 0; i < TOTAL_ITEMS; i++) {
+        for (int i = 0; i < totalItems; i++) {
             this.decorator.put("key" + i, "value" + i);
         }
 
-        assertEquals(this.decorator.size(), TOTAL_ITEMS);
+        assertEquals(this.decorator.size(), totalItems);
 
-        for (int i = 0; i < TOTAL_ITEMS; i++) {
+        for (int i = 0; i < totalItems; i++) {
             assertNull(this.map.get("key" + i));
             assertEquals("value" + i, this.decorator.get("key" + i));
         }

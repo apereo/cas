@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,11 +18,10 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import org.apache.commons.collections4.Predicate;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.RegistryCleaner;
@@ -31,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * The default ticket registry cleaner scans the entire CAS ticket registry
@@ -44,10 +45,11 @@ import javax.validation.constraints.NotNull;
  * In a clustered CAS environment with several CAS nodes executing ticket
  * cleanup, it is desirable to execute cleanup from only one CAS node at a time.
  * This dramatically reduces the potential for deadlocks in
- * {@link org.jasig.cas.ticket.registry.JpaTicketRegistry}, for example.
+ * JPA-backed ticket registries, for example.
+ *
  * By default this implementation uses {@link NoOpLockingStrategy} to preserve
- * the same semantics as previous versions, but {@link JpaLockingStrategy}
- * should be used with {@link org.jasig.cas.ticket.registry.JpaTicketRegistry}
+ * the same semantics as previous versions, but specific locking strategies
+ * for JPA should be used with a JPA-backed ticket registry
  * in a clustered CAS environment.
  * </p>
  * <p>The following property is required.</p>
@@ -57,103 +59,122 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0
- * @see JpaLockingStrategy
+ * @author Misagh Moayyed
  * @see NoOpLockingStrategy
+ * @since 3.0.0
  */
 public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
     /** The Commons Logging instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /** The instance of the TicketRegistry to clean. */
     @NotNull
-    private TicketRegistry ticketRegistry;
+    private final CentralAuthenticationService centralAuthenticationService;
 
     /** Execution locking strategy. */
     @NotNull
     private LockingStrategy lock = new NoOpLockingStrategy();
 
-    /** The logout manager. */
     @NotNull
-    private LogoutManager logoutManager;
-
-    /** If the user must be logged out of the services. */
-    private boolean logUserOutOfServices = true;
+    private TicketRegistry ticketRegistry;
 
     /**
-     * @see org.jasig.cas.ticket.registry.RegistryCleaner#clean()
+     * Instantiates a new Default ticket registry cleaner.
+     *
+     * @param centralAuthenticationService the CAS interface acting as the service layer
+     * @param ticketRegistry the ticket registry
      */
-    public void clean() {
-        logger.info("Beginning ticket cleanup.");
-        logger.debug("Attempting to acquire ticket cleanup lock.");
-        if (!this.lock.acquire()) {
-            logger.info("Could not obtain lock.  Aborting cleanup.");
-            return;
-        }
-        logger.debug("Acquired lock.  Proceeding with cleanup.");
+    public DefaultTicketRegistryCleaner(final CentralAuthenticationService centralAuthenticationService,
+                                        final TicketRegistry ticketRegistry) {
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketRegistry = ticketRegistry;
+    }
+
+    @Override
+    public Collection<Ticket> clean() {
         try {
-            final List<Ticket> ticketsToRemove = new ArrayList<Ticket>();
-            final Collection<Ticket> ticketsInCache;
-            ticketsInCache = this.ticketRegistry.getTickets();
-            for (final Ticket ticket : ticketsInCache) {
-                if (ticket.isExpired()) {
-                    ticketsToRemove.add(ticket);
+            logger.info("Beginning ticket cleanup.");
+            logger.debug("Attempting to acquire ticket cleanup lock.");
+            if (!this.lock.acquire()) {
+                logger.info("Could not obtain lock.  Aborting cleanup.");
+                return Collections.emptyList();
+            }
+            logger.debug("Acquired lock.  Proceeding with cleanup.");
+
+            final Collection<Ticket> ticketsToRemove = this.centralAuthenticationService.getTickets(new Predicate() {
+                @Override
+                public boolean evaluate(final Object o) {
+                    final Ticket ticket = (Ticket) o;
+                    return ticket.isExpired();
                 }
+            });
+
+            logger.info("{} expired tickets found to be removed.", ticketsToRemove.size());
+
+            try {
+                for (final Ticket ticket : ticketsToRemove) {
+                    if (ticket instanceof TicketGrantingTicket) {
+                        logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                        this.centralAuthenticationService.destroyTicketGrantingTicket(ticket.getId());
+                    } else if (ticket instanceof ServiceTicket) {
+                        logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
+                        this.ticketRegistry.deleteTicket(ticket.getId());
+                    } else {
+                        logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
+                    }
+                }
+            } catch (final Exception e) {
+                logger.error(e.getMessage(), e);
             }
 
-            logger.info("{} tickets found to be removed.", ticketsToRemove.size());
-            for (final Ticket ticket : ticketsToRemove) {
-                // CAS-686: Expire TGT to trigger single sign-out
-                if (this.logUserOutOfServices && ticket instanceof TicketGrantingTicket) {
-                    logoutManager.performLogout((TicketGrantingTicket) ticket);
-                }
-                this.ticketRegistry.deleteTicket(ticket.getId());
-            }
+            return ticketsToRemove;
         } finally {
             logger.debug("Releasing ticket cleanup lock.");
             this.lock.release();
+            logger.info("Finished ticket cleanup.");
         }
-
-        logger.info("Finished ticket cleanup.");
     }
-
 
     /**
      * @param ticketRegistry The ticketRegistry to set.
+     * @deprecated As of 4.1. Consider using constructors instead.
      */
+    @Deprecated
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
+        logger.warn("Invoking setTicketRegistry() is deprecated and has no impact.");
     }
 
 
     /**
      * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
      * strategy is preferable if not required for some ticket backing stores,
-     * such as JPA, in a clustered CAS environment.  Use {@link JdbcLockingStrategy}
-     * for {@link org.jasig.cas.ticket.registry.JpaTicketRegistry} in a clustered
+     * such as JPA, in a clustered CAS environment.  Use JPA locking strategies
+     * for JPA-backed ticket registries in a clustered
      * CAS environment.
+     * @deprecated As of 4.1. Consider using constructors instead.
      */
+    @Deprecated
     public void setLock(final LockingStrategy strategy) {
         this.lock = strategy;
     }
 
     /**
-     * Whether to logger users out of services when we remove an expired ticket.  The default is true. Set this to
-     * false to disable.
-     *
+     * @deprecated As of 4.1, single signout callbacks are entirely controlled by the {@link LogoutManager}.
      * @param logUserOutOfServices whether to logger the user out of services or not.
      */
+    @Deprecated
     public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
-        this.logUserOutOfServices = logUserOutOfServices;
+        logger.warn("Invoking setLogUserOutOfServices() is deprecated and has no impact.");
     }
 
     /**
      * Set the logout manager.
      *
      * @param logoutManager the logout manager.
+     * @deprecated As of 4.1. Consider using constructors instead.
      */
+    @Deprecated
     public void setLogoutManager(final LogoutManager logoutManager) {
-        this.logoutManager = logoutManager;
+        logger.warn("Invoking setLogoutManager() is deprecated and has no impact.");
     }
 }

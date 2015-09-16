@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,43 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.extension.clearpass;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.util.Map;
+
 /**
  * A controller that returns the password based on some external authentication/authorization rules.  The recommended
- * method is to use the Jasig CAS Client for Java and its proxy authentication features.
+ * method is to use the Apereo CAS Client for Java and its proxy authentication features.
  *
+ * @deprecated As of 4.1, use {@link org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator} instead.
  * @author Scott Battaglia
  * @since 1.0
  */
+@Deprecated
 public final class ClearPassController extends AbstractController {
 
+    /** view if clearpass request fails. */
+    protected static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
+
+    /** view if clearpass request succeeds. */
+    protected static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "protocol/clearPass/clearPassSuccess";
+
+    /** key under which clearpass will be placed into the model. */
+    protected static final String MODEL_CLEARPASS = "credentials";
+
+    /** key under which failure descriptions are placed into the model. */
+    protected static final String MODEL_FAILURE_DESCRIPTION = "description";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ClearPassController.class);
-
-    // view if clearpass request fails
-    private static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "protocol/clearPass/clearPassFailure";
-
-    // view if clearpass request succeeds
-    private static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "protocol/clearPass/clearPassSuccess";
-
-    // key under which clearpass will be placed into the model
-    private static final String MODEL_CLEARPASS = "credentials";
-
-    // key under which failure descriptions are placed into the model
-    private static final String MODEL_FAILURE_DESCRIPTION = "description";
 
     @NotNull
     private String successView = DEFAULT_SERVICE_SUCCESS_VIEW_NAME;
@@ -63,6 +63,11 @@ public final class ClearPassController extends AbstractController {
     @NotNull
     private final Map<String, String> credentialsCache;
 
+    /**
+     * Instantiates a new clear pass controller.
+     *
+     * @param credentialsCache the credentials cache
+     */
     public ClearPassController(final Map<String, String> credentialsCache) {
         this.credentialsCache = credentialsCache;
     }
@@ -91,6 +96,12 @@ public final class ClearPassController extends AbstractController {
         return new ModelAndView(this.successView, MODEL_CLEARPASS, password);
     }
 
+    /**
+     * Return error based on {@link #setFailureView(String)}.
+     *
+     * @param description the description
+     * @return the model and view
+     */
     protected ModelAndView returnError(final String description) {
         final ModelAndView mv = new ModelAndView(this.failureView);
         mv.addObject(MODEL_FAILURE_DESCRIPTION, description);

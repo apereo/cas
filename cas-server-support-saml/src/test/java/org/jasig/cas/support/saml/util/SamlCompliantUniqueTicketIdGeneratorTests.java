@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.support.saml.util;
 
 import static org.junit.Assert.*;
@@ -24,19 +23,20 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
+ * Test cases for {@link SamlCompliantUniqueTicketIdGenerator}.
  * @author Scott Battaglia
  * @since 3.4.3
  */
 public final class SamlCompliantUniqueTicketIdGeneratorTests {
 
     @Test
-    public void testSaml1Compliant() {
+    public void verifySaml1Compliant() {
         final SamlCompliantUniqueTicketIdGenerator g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         assertNotNull(g.getNewTicketId("TT"));
     }
 
     @Test
-    public void testSaml2Compliant() {
+    public void verifySaml2Compliant() {
         final SamlCompliantUniqueTicketIdGenerator g = new SamlCompliantUniqueTicketIdGenerator("http://www.cnn.com");
         g.setSaml2compliant(true);
         assertNotNull(g.getNewTicketId("TT"));

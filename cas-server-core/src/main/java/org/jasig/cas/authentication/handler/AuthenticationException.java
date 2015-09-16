@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,7 +19,8 @@
 package org.jasig.cas.authentication.handler;
 
 import org.jasig.cas.authentication.RootCasException;
-import org.springframework.util.Assert;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * The most generic type of authentication exception that one can catch if not
@@ -27,22 +28,37 @@ import org.springframework.util.Assert;
  * other AuthenticationExceptions.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
+ * @deprecated As of 4.1, the class is required to note its abstractness in the name and will be renamed in the future.
  */
+@Deprecated
 public abstract class AuthenticationException extends RootCasException {
 
     /** Serializable ID. */
     private static final long serialVersionUID = 3906648604830611762L;
 
-     /** The error type that provides additional info about the nature of the exception cause. **/
-    private String type = "error";
+    private static final String DEFAULT_TYPE = "error";
 
+     /** The error type that provides additional info about the nature of the exception cause. **/
+    private final String type;
+
+    /**
+     * Instantiates a new authentication exception.
+     *
+     * @param code the code
+     */
     public AuthenticationException(final String code) {
-        super(code);
+        this(code, "", DEFAULT_TYPE);
     }
 
+    /**
+     * Instantiates a new authentication exception.
+     *
+     * @param code the code
+     * @param msg the msg
+     */
     public AuthenticationException(final String code, final String msg) {
-        super(code, msg);
+        this(code, msg, DEFAULT_TYPE);
     }
 
     /**
@@ -51,10 +67,8 @@ public abstract class AuthenticationException extends RootCasException {
      * @param code the exception code
      * @param msg the error message
      */
-    public AuthenticationException(final String code, final String msg, final String type) {
-        this(code, msg);
-
-        Assert.hasLength(type, "The exception type cannot be blank");
+    public AuthenticationException(final String code, final String msg, @NotNull final String type) {
+        super(code, msg);
         this.type = type;
     }
 
@@ -64,6 +78,7 @@ public abstract class AuthenticationException extends RootCasException {
      */
     public AuthenticationException(final String code, final Throwable throwable) {
         super(code, throwable);
+        this.type = DEFAULT_TYPE;
     }
 
     /**

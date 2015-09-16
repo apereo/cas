@@ -1,8 +1,8 @@
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -18,52 +18,58 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>4.0.0-RC4-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>cas-server-support-pac4j</artifactId>
-	<packaging>jar</packaging>
-	<name>Jasig CAS Client Protocols Support using pac4j</name>
+    <parent>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server</artifactId>
+        <version>4.1.0-RC3-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>cas-server-support-pac4j</artifactId>
+    <packaging>jar</packaging>
+    <name>Apereo CAS Client Protocols Support using pac4j</name>
 
-	<developers>
-		<developer>
-			<id>leleuj</id>
-			<name>Jérôme Leleu</name>
-			<email>leleuj@gmail.com</email>
-			<timezone>-5</timezone>
-			<roles>
-				<role>developer</role>
-				<role>maintainer</role>
-			</roles>
-		</developer>
-	</developers>
+    <developers>
+        <developer>
+            <id>leleuj</id>
+            <name>Jérôme Leleu</name>
+            <email>leleuj@gmail.com</email>
+            <timezone>-5</timezone>
+            <roles>
+                <role>developer</role>
+                <role>maintainer</role>
+            </roles>
+        </developer>
+    </developers>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.pac4j</groupId>
-			<artifactId>pac4j-core</artifactId>
-			<version>${pac4j.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>org.pac4j</groupId>
+            <artifactId>pac4j-core</artifactId>
+            <version>${pac4j.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.pac4j</groupId>
-			<artifactId>pac4j-oauth</artifactId>
-			<scope>test</scope>
-			<version>${pac4j.version}</version>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.pac4j</groupId>
+            <artifactId>pac4j-oauth</artifactId>
+            <scope>test</scope>
+            <version>${pac4j.version}</version>
+        </dependency>
 
-	<properties>
-		<pac4j.version>1.4.1</pac4j.version>
-    <cs.dir>${project.parent.basedir}</cs.dir>
-  </properties>
+        <dependency>
+            <groupId>org.pac4j</groupId>
+            <artifactId>pac4j-http</artifactId>
+            <scope>test</scope>
+            <version>${pac4j.version}</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <cs.dir>${project.parent.basedir}</cs.dir>
+    </properties>
 </project>

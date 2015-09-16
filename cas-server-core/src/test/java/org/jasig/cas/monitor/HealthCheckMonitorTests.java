@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -44,13 +44,13 @@ public class HealthCheckMonitorTests {
     }
 
     @Test
-    public void testObserveUnknown() throws Exception {
+    public void verifyObserveUnknown() throws Exception {
         assertEquals(StatusCode.UNKNOWN, this.monitor.observe().getCode());
     }
 
     @Test
-    public void testObserveOk() throws Exception {
-        final Set<Monitor> monitors = new HashSet<Monitor>();
+    public void verifyObserveOk() throws Exception {
+        final Set<Monitor> monitors = new HashSet<>();
         monitors.add(new MemoryMonitor());
         monitors.add(newSessionMonitor());
         this.monitor.setMonitors(monitors);
@@ -58,8 +58,8 @@ public class HealthCheckMonitorTests {
     }
 
     @Test
-    public void testObserveWarn() throws Exception {
-        final Set<Monitor> monitors = new HashSet<Monitor>();
+    public void verifyObserveWarn() throws Exception {
+        final Set<Monitor> monitors = new HashSet<>();
         final MemoryMonitor memoryMonitor = new MemoryMonitor();
         memoryMonitor.setFreeMemoryWarnThreshold(100);
         monitors.add(memoryMonitor);
@@ -69,7 +69,7 @@ public class HealthCheckMonitorTests {
     }
 
     @Test
-    public void testThrowsUncheckedException() throws Exception {
+    public void verifyThrowsUncheckedException() throws Exception {
         final Monitor throwsUnchecked = new Monitor() {
             @Override
             public String getName() {
