@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
@@ -33,7 +33,7 @@ import org.springframework.util.Assert;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public final class ImmutableAssertion implements Assertion, Serializable {
 
@@ -95,6 +95,7 @@ public final class ImmutableAssertion implements Assertion, Serializable {
         return this.service;
     }
 
+    @Override
     public boolean equals(final Object o) {
         if (!(o instanceof Assertion)) {
             return false;
@@ -107,6 +108,7 @@ public final class ImmutableAssertion implements Assertion, Serializable {
                 && this.fromNewLogin == a.isFromNewLogin();
     }
 
+    @Override
     public int hashCode() {
         final HashCodeBuilder builder = new HashCodeBuilder(15, 11);
         builder.append(this.primaryAuthentication);
@@ -116,7 +118,8 @@ public final class ImmutableAssertion implements Assertion, Serializable {
         return builder.toHashCode();
     }
 
+    @Override
     public String toString() {
-        return this.primaryAuthentication + ":" + this.service;
+        return this.primaryAuthentication.toString() + ':' + this.service.toString();
     }
 }

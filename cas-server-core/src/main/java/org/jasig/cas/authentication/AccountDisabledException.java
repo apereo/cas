@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -24,16 +24,24 @@ import javax.security.auth.login.AccountException;
  * Describes an authentication error condition where a user account has been administratively disabled.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class AccountDisabledException extends AccountException {
 
     /** Serialization metadata. */
     private static final long serialVersionUID = 7487835035108753209L;
 
+    /**
+     * Instantiates a new account disabled exception.
+     */
     public AccountDisabledException() {
     }
 
+    /**
+     * Instantiates a new account disabled exception.
+     *
+     * @param msg the msg
+     */
     public AccountDisabledException(final String msg) {
         super(msg);
     }

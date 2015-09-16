@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,10 +26,18 @@ import java.util.Map;
  * Helper class that provides convenience methods for getting and setting field values via reflection.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public final class FieldHelper {
-    private final Map<String, Field> fieldCache = new HashMap<String, Field>();
+    private final Map<String, Field> fieldCache = new HashMap<>();
 
+    /**
+     * Gets the field value.
+     *
+     * @param target the target
+     * @param fieldName the field name
+     * @return the field value
+     */
     public Object getFieldValue(final Object target, final String fieldName) {
         final Field f = getField(target, fieldName);
         try {
@@ -39,6 +47,13 @@ public final class FieldHelper {
         }
     }
 
+    /**
+     * Sets the field value.
+     *
+     * @param target the target
+     * @param fieldName the field name
+     * @param value the value
+     */
     public void setFieldValue(final Object target, final String fieldName, final Object value) {
         final Field f = getField(target, fieldName);
         try {
@@ -48,6 +63,13 @@ public final class FieldHelper {
         }
     }
 
+    /**
+     * Gets the field.
+     *
+     * @param target the target
+     * @param name the name
+     * @return the field
+     */
     private Field getField(final Object target, final String name) {
         Class<?> clazz = target.getClass();
         final String key = new StringBuilder().append(clazz.getName()).append('.').append(name).toString();

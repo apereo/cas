@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Provides special handling for parameters in requests made to the CAS login
@@ -35,7 +34,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
-    /** Default flow execution key parameter name, {@value}. Same as that used by {@link DefaultFlowUrlHandler}. */
+    /**
+     * Default flow execution key parameter name, {@value}.
+     * Same as that used by {@link DefaultFlowUrlHandler}.
+     **/
     public static final String DEFAULT_FLOW_EXECUTION_KEY_PARAMETER = "execution";
 
     /** Flow execution parameter name. */
@@ -62,9 +64,9 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
-        final StringBuffer builder = new StringBuffer();
+        final StringBuilder builder = new StringBuilder();
         builder.append(request.getRequestURI());
-        builder.append("?");
+        builder.append('?');
         @SuppressWarnings("unchecked")
         final Map<String, Object> flowParams = new LinkedHashMap<String, Object>(request.getParameterMap());
         flowParams.put(this.flowExecutionKeyParameter, flowExecutionKey);
@@ -75,7 +77,7 @@ public final class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     @Override
     public String createFlowDefinitionUrl(final String flowId, final AttributeMap input, final HttpServletRequest request) {
         return request.getRequestURI()
-            + (request.getQueryString() != null ? "?"
+            + (request.getQueryString() != null ? '?'
             + request.getQueryString() : "");
     }
 }

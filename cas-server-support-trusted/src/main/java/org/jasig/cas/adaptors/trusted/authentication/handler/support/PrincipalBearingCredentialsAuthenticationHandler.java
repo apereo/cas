@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,15 +18,15 @@
  */
 package org.jasig.cas.adaptors.trusted.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.security.GeneralSecurityException;
 
 /**
  * AuthenticationHandler which authenticates Principal-bearing credentials.
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * true.
  *
  * @author Andrew Petro
- * @since 3.0.5
+ * @since 3.0.0.5
  */
 public final class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
@@ -45,8 +45,8 @@ public final class PrincipalBearingCredentialsAuthenticationHandler extends Abst
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         logger.debug("Trusting credential for: {}", credential);
-        return new HandlerResult(
-                this, (PrincipalBearingCredential) credential, new SimplePrincipal(credential.getId()));
+        return new DefaultHandlerResult(
+                this, (PrincipalBearingCredential) credential, this.principalFactory.createPrincipal(credential.getId()));
     }
 
     @Override

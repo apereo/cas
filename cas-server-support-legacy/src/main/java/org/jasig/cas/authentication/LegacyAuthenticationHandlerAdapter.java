@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,21 +18,19 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
+import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
+import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
-
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.NamedAuthenticationHandler;
-import org.jasig.cas.authentication.principal.UsernamePasswordCredentials;
+import java.security.GeneralSecurityException;
 
 /**
  * Adapts a CAS 3.x {@link org.jasig.cas.authentication.handler.AuthenticationHandler} onto a CAS 4.x
  * {@link AuthenticationHandler}.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler {
 
@@ -83,12 +81,12 @@ public class LegacyAuthenticationHandlerAdapter implements AuthenticationHandler
                 } else {
                     md = new BasicCredentialMetaData(credential);
                 }
-                return new HandlerResult(this, md);
+                return new DefaultHandlerResult(this, md);
             } else {
                 throw new FailedLoginException(
                         String.format("%s failed to authenticate %s", this.getName(), credential));
             }
-        } catch (final AuthenticationException e) {
+        } catch (final org.jasig.cas.authentication.handler.AuthenticationException e) {
             throw new GeneralSecurityException(
                     String.format("%s failed to authenticate %s", this.getName(), credential), e);
         }

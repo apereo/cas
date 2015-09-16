@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.authentication.handler;
 
 /**
@@ -34,6 +33,26 @@ public final class PrefixSuffixPrincipalNameTransformer implements PrincipalName
 
     private String suffix;
 
+    /**
+     * Instantiates a new Prefix suffix principal name transformer.
+     */
+    public PrefixSuffixPrincipalNameTransformer() {
+        this.prefix = null;
+        this.suffix = null;
+    }
+
+    /**
+     * Instantiates a new Prefix suffix principal name transformer.
+     *
+     * @param prefix the prefix
+     * @param suffix the suffix
+     */
+    public PrefixSuffixPrincipalNameTransformer(final String prefix, final String suffix) {
+        setPrefix(prefix);
+        setSuffix(suffix);
+    }
+
+    @Override
     public String transform(final String formUserId) {
         final StringBuilder stringBuilder = new StringBuilder();
 

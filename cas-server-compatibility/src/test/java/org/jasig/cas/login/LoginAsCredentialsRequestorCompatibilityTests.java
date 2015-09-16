@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -28,7 +28,7 @@ import net.sourceforge.jwebunit.HttpUnitDialog;
  *
  * @author Scott Battaglia
  * @author Drew Mazurek
- * @since 3.0
+ * @since 3.0.0
  *
  */
 public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLoginCompatibilityTests {
@@ -41,29 +41,29 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         super(name);
     }
 
-    public void testLoginWithNoParams() {
-        final String URL = "/login";
-        beginAt(URL);
+    public void verifyLoginWithNoParams() {
+        final String url = "/login";
+        beginAt(url);
         assertFormElementPresent(LOGIN_TOKEN);
     }
 
-    public void testGatewayWithServiceWithNoTgt() throws UnsupportedEncodingException {
-        final String GATEWAY = "true";
-        final String SERVICE = URLEncoder.encode("http://www.cnn.com", "UTF-8");
-        final String URL = "/login?service=" + SERVICE + "&gateway=" + GATEWAY;
+    public void verifyGatewayWithServiceWithNoTgt() throws UnsupportedEncodingException {
+        final String gateway = "true";
+        final String service = URLEncoder.encode("http://www.cnn.com", "UTF-8");
+        final String url = "/login?service=" + service + "&gateway=" + gateway;
 
-        beginAt(URL);
+        beginAt(url);
 
         // test that we're now at cnn.com rather than at the login form.
         assertTextPresent("cnn.com");
         assertFormElementNotPresent("lt");
     }
 
-    public void testBlankGateway() throws UnsupportedEncodingException {
-        final String SERVICE = URLEncoder.encode("http://www.cnn.com", "UTF-8");
-        final String URL = "/login?service=" + SERVICE + "&gateway=";
+    public void verifyBlankGateway() throws UnsupportedEncodingException {
+        final String service = URLEncoder.encode("http://www.cnn.com", "UTF-8");
+        final String url = "/login?service=" + service + "&gateway=";
 
-        beginAt(URL);
+        beginAt(url);
 
         // test that we're now at cnn.com rather than at the login form.
         assertTextPresent("cnn.com");
@@ -75,23 +75,23 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * were set to true, since the spec for gateway is present / not-present.
      * @throws UnsupportedEncodingException
      */
-    public void testGatewayFalseEqualsGatewayTrueWithServiceWithNoTgt() throws UnsupportedEncodingException {
-        final String GATEWAY = "false";
-        final String SERVICE = URLEncoder.encode("http://www.cnn.com", "UTF-8");
-        final String URL = "/login?service=" + SERVICE + "&gateway=" + GATEWAY;
+    public void verifyGatewayFalseEqualsGatewayTrueWithServiceWithNoTgt() throws UnsupportedEncodingException {
+        final String gateway = "false";
+        final String service = URLEncoder.encode("http://www.cnn.com", "UTF-8");
+        final String url = "/login?service=" + service + "&gateway=" + gateway;
 
-        beginAt(URL);
+        beginAt(url);
         assertTextPresent("cnn.com");
     }
 
-    public void testServiceWithSingleSignOn() {
+    public void verifyServiceWithSingleSignOn() {
         beginAt("/login");
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
-        final String URL = "/login";
+        final String url = "/login";
         submit();
         assertCookiePresent(COOKIE_TGC_ID);
-        beginAt(URL);
+        beginAt(url);
         assertFormNotPresent(FORM_USERNAME);
     }
 
@@ -104,11 +104,11 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * CAS server instances failing this test may not be non-compliant -
      * not following the recommended behavior can cause this test case to fail.
      */
-    public void testGatewayWithNoService() {
-        final String GATEWAY = "notNull";
-        final String URL = "/login?gateway=" + GATEWAY;
+    public void verifyGatewayWithNoService() {
+        final String gateway = "notNull";
+        final String url = "/login?gateway=" + gateway;
 
-        beginAt(URL);
+        beginAt(url);
         assertFormElementPresent(LOGIN_TOKEN);
     }
 
@@ -117,32 +117,32 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * without painting the login screen.
      * @throws IOException
      */
-    public void testGatewayWithServiceWithTgt() throws IOException {
-        final String GATEWAY = "notNull";
+    public void verifyGatewayWithServiceWithTgt() throws IOException {
+        final String gateway = "notNull";
         final String service = "http://www.yale.edu";
         final String encodedService = URLEncoder.encode(service, "UTF-8");
-        final String URLNOGW = "/login?service=" + encodedService;
-        final String URLGW = "/login?service=" + encodedService + "&gateway=" + GATEWAY;
+        final String urlnogw = "/login?service=" + encodedService;
+        final String urlgw = "/login?service=" + encodedService + "&gateway=" + gateway;
 
-        beginAt(URLNOGW);
+        beginAt(urlnogw);
 
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
 
-        beginAt(URLGW);
+        beginAt(urlgw);
 
         // extract the service ticket
-        String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // be sure it's valid
         assertNotNull(st);
 
         beginAt("/validate?ticket=" + st + "&service=" + encodedService);
-        HttpUnitDialog htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final HttpUnitDialog htDialog = getDialog();
+        final String validateOutput = htDialog.getResponseText();
 
-        String expected = "yes\n" + getUsername() + "\n";
+        final String expected = "yes\n" + getUsername() + "\n";
 
         assertEquals(expected, validateOutput);
 
@@ -152,7 +152,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * Test that /login?gateway=&service=whatever is the same as /login?gateway=true&service=whatever.
      * @throws IOException
      */
-    public void testGatewayEqualsBlankWithServiceWithTgt() throws IOException {
+    public void verifyGatewayEqualsBlankWithServiceWithTgt() throws IOException {
         final String service = "http://www.yale.edu";
         final String encodedService = URLEncoder.encode(service, "UTF-8");
         final String establishSsoUrl = "/login?service=" + encodedService;
@@ -167,17 +167,17 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         beginAt(gatewayUrl);
 
         // extract the service ticket
-        String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
+        final String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
 
         // be sure it's valid
         assertNotNull(st);
 
 
         beginAt("/validate?ticket=" + st + "&service=" + encodedService);
-        HttpUnitDialog htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final HttpUnitDialog htDialog = getDialog();
+        final String validateOutput = htDialog.getResponseText();
 
-        String expected = "yes\n" + getUsername() + "\n";
+        final String expected = "yes\n" + getUsername() + "\n";
 
         assertEquals(expected, validateOutput);
 
@@ -188,7 +188,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * the login UI.
      * @throws UnsupportedEncodingException
      */
-    public void testExistingTgtRenewEqualsTrue() throws UnsupportedEncodingException {
+    public void verifyExistingTgtRenewEqualsTrue() throws UnsupportedEncodingException {
         final String service = "http://www.yale.edu";
         final String encodedService = URLEncoder.encode(service, "UTF-8");
         final String renewUrl = "/login?service=" + encodedService + "&renew=true";
@@ -210,7 +210,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * an existing TGT still causes CAS to render the login UI.
      * @throws UnsupportedEncodingException
      */
-    public void testExistingTgtRenewEqualsNonNull() throws UnsupportedEncodingException {
+    public void verifyExistingTgtRenewEqualsNonNull() throws UnsupportedEncodingException {
         final String service = getServiceUrl();
         final String encodedService = URLEncoder.encode(service, "UTF-8");
         final String nonNullRenewUrl = "/login?service=" + encodedService + "&renew=nonnull";
@@ -237,11 +237,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
 
     }
 
-    public void testTrustHandling() {
-        // TODO test trust handling
-    }
-
-    public void testInitialFormParameters() {
+    public void verifyInitialFormParameters() {
         beginAt("/login");
         assertFormElementPresent(FORM_USERNAME);
         assertFormElementPresent(FORM_PASSWORD);
@@ -256,7 +252,7 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * failing to follow a recommendation.
      * @throws UnsupportedEncodingException
      */
-    public void testRenewOverridesGateway() throws UnsupportedEncodingException {
+    public void verifyRenewOverridesGateway() throws UnsupportedEncodingException {
         // first, establish SSO
         final String service = "http://www.yale.edu";
         final String encodedService = URLEncoder.encode(service, "UTF-8");

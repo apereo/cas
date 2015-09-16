@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,17 +18,19 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
-import java.security.cert.X509Certificate;
-
+import com.google.common.collect.ImmutableList;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.jasig.cas.authentication.AbstractCredential;
+
+import javax.validation.constraints.NotNull;
+import java.security.cert.X509Certificate;
 
 /**
  * An X.509 certificate credential.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0.4
+ * @since 3.0.0.4
  *
  */
 public final class X509CertificateCredential extends AbstractCredential {
@@ -42,12 +44,17 @@ public final class X509CertificateCredential extends AbstractCredential {
     /** The certificate that we actually use. */
     private X509Certificate certificate;
 
-    public X509CertificateCredential(final X509Certificate[] certificates) {
-        this.certificates = certificates;
+    /**
+     * Instantiates a new x509 certificate credential.
+     *
+     * @param certificates the certificates
+     */
+    public X509CertificateCredential(@NotNull final X509Certificate[] certificates) {
+        this.certificates = ImmutableList.copyOf(certificates).toArray(new X509Certificate[certificates.length]);
     }
 
     public X509Certificate[] getCertificates() {
-        return this.certificates;
+        return ImmutableList.copyOf(this.certificates).toArray(new X509Certificate[this.certificates.length]);
     }
 
     public void setCertificate(final X509Certificate certificate) {
@@ -63,7 +70,7 @@ public final class X509CertificateCredential extends AbstractCredential {
         X509Certificate cert = null;
         if (this.certificate != null) {
             cert = this.certificate;
-        } else if (this.certificates != null && this.certificates.length > 0) {
+        } else if (this.certificates.length > 0) {
             cert = this.certificates[0];
         }
 

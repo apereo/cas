@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,11 +18,9 @@
  */
 package org.jasig.cas.ticket.support;
 
-import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 import org.springframework.util.Assert;
 
-import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,9 +28,9 @@ import java.util.concurrent.TimeUnit;
  * certain time period for a ticket to exist.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
-public final class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPolicy, Serializable {
+public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = -5704993954986738308L;
@@ -50,6 +48,12 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPo
         this.numberOfUses = 0;
     }
 
+    /**
+     * Instantiates a new multi time use or timeout expiration policy.
+     *
+     * @param numberOfUses the number of uses
+     * @param timeToKillInMilliSeconds the time to kill in milli seconds
+     */
     public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses,
         final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
@@ -59,11 +63,19 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy implements ExpirationPo
 
     }
 
+    /**
+     * Instantiates a new multi time use or timeout expiration policy.
+     *
+     * @param numberOfUses the number of uses
+     * @param timeToKill the time to kill
+     * @param timeUnit the time unit
+     */
     public MultiTimeUseOrTimeoutExpirationPolicy(final int numberOfUses, final long timeToKill,
             final TimeUnit timeUnit) {
         this(numberOfUses, timeUnit.toMillis(timeToKill));
     }
 
+    @Override
     public boolean isExpired(final TicketState ticketState) {
         return (ticketState == null)
             || (ticketState.getCountOfUses() >= this.numberOfUses)

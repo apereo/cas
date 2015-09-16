@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -19,21 +19,27 @@
     under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
-	<description>
-		Argument Extractors are what are used to translate HTTP requests into requests of the appropriate protocol (i.e. CAS, SAML, SAML2,
-		OpenId, etc.).  By default, only CAS is enabled.
-	</description>
- 	<bean
- 		id="casArgumentExtractor"
- 		class="org.jasig.cas.web.support.CasArgumentExtractor" />
+    <description>
+        Argument Extractors are what are used to translate HTTP requests into requests of the appropriate protocol (i.e.
+        CAS, SAML, SAML2,
+        OpenId, etc.). By default, only CAS is enabled.
+    </description>
 
- 	<util:list id="argumentExtractors">
-		<ref bean="casArgumentExtractor" />
- 	</util:list>
+    <!--
+    <bean id="samlArgumentExtractor" class="org.jasig.cas.support.saml.web.support.SamlArgumentExtractor" />
+    -->
+
+    <bean
+            id="casArgumentExtractor"
+            class="org.jasig.cas.web.support.CasArgumentExtractor"/>
+
+    <util:list id="argumentExtractors">
+        <!-- <ref bean="samlArgumentExtractor" /> -->
+        <ref bean="casArgumentExtractor"/>
+    </util:list>
 </beans>

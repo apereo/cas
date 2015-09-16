@@ -1,8 +1,8 @@
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -18,70 +18,82 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>4.0.0-RC4-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-integration-jboss</artifactId>
-	<packaging>jar</packaging>
-	<name>Jasig CAS JBoss Cache Integration</name>
+    <parent>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server</artifactId>
+        <version>4.1.0-RC3-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>cas-server-integration-jboss</artifactId>
+    <packaging>jar</packaging>
+    <name>Apereo CAS JBoss Cache Integration - DEPRECATED</name>
+    <description>
+        The CAS cas-server-integration-jboss module is deprecated and will be removed from subsequent CAS releases.
+        You should not attempt to include this module in your CAS Maven overlays, and rather try to use alternative
+        methods for your distributed ticket registry needs, such as the cas-server-integration-ehcache or
+        cas-server-integration-memcached modules.
+    </description>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.5</version>
-        <configuration>
-          <systemPropertyVariables>
-            <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
-          </systemPropertyVariables>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-	
-	<dependencies>
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
-		<dependency>
-			<groupId>org.jboss.cache</groupId>
-			<artifactId>jbosscache-core</artifactId>
-			<version>2.2.2.GA</version>
-			<type>jar</type>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
-			<version>${project.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-		</dependency>
-	</dependencies>
-	
-	<repositories>
-		<repository>
-			<id>jboss-maven2</id>
-			<layout>default</layout>
-			<name>JBoss Repository</name>
-			<url>http://repository.jboss.org/nexus/content/repositories/deprecated</url>
-		</repository>
-	</repositories>
+        <dependency>
+            <groupId>org.jboss.cache</groupId>
+            <artifactId>jbosscache-core</artifactId>
+            <version>2.2.2.GA</version>
+            <type>jar</type>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-  <properties>
-    <cs.dir>${project.parent.basedir}</cs.dir>
-  </properties>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>jboss-maven2</id>
+            <layout>default</layout>
+            <name>JBoss Repository</name>
+            <url>http://repository.jboss.org/nexus/content/repositories/deprecated</url>
+        </repository>
+
+        <repository>
+            <id>jboss</id>
+            <name>JBoss Repository</name>
+            <layout>default</layout>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
+        </repository>
+
+    </repositories>
+
+    <properties>
+        <cs.dir>${project.parent.basedir}</cs.dir>
+    </properties>
 </project>

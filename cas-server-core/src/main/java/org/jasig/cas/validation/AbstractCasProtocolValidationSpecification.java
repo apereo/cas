@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -24,8 +24,7 @@ package org.jasig.cas.validation;
  * validation is occurring from a new login.
  *
  * @author Scott Battaglia
-
- * @since 3.0
+ * @since 3.0.0
  */
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
 
@@ -35,10 +34,18 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;
 
+    /**
+     * Instantiates a new abstract cas protocol validation specification.
+     */
     public AbstractCasProtocolValidationSpecification() {
         this.renew = DEFAULT_RENEW;
     }
 
+    /**
+     * Instantiates a new abstract cas protocol validation specification.
+     *
+     * @param renew the renew
+     */
     public AbstractCasProtocolValidationSpecification(final boolean renew) {
         this.renew = renew;
     }
@@ -61,9 +68,13 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
         return this.renew;
     }
 
+    /* (non-Javadoc)
+     * @see org.jasig.cas.validation.ValidationSpecification#isSatisfiedBy(org.jasig.cas.validation.Assertion)
+     */
+    @Override
     public final boolean isSatisfiedBy(final Assertion assertion) {
         return isSatisfiedByInternal(assertion)
-            && ((!this.renew) || (assertion.isFromNewLogin() && this.renew));
+            && (!this.renew || assertion.isFromNewLogin());
     }
 
     /**

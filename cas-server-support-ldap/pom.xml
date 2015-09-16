@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Licensed to Jasig under one or more contributor license
+  ~ Licensed to Apereo under one or more contributor license
   ~ agreements. See the NOTICE file distributed with this work
   ~ for additional information regarding copyright ownership.
-  ~ Jasig licenses this file to you under the Apache License,
+  ~ Apereo licenses this file to you under the Apache License,
   ~ Version 2.0 (the "License"); you may not use this file
   ~ except in compliance with the License.  You may obtain a
   ~ copy of the License at the following location:
@@ -19,16 +19,22 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>4.0.0-RC4-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-support-ldap</artifactId>
-	<packaging>jar</packaging>
-	<name>Jasig CAS LDAP Support</name>
+    <parent>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server</artifactId>
+        <version>4.1.0-RC3-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+  <artifactId>cas-server-support-ldap</artifactId>
+    <packaging>jar</packaging>
+    <name>Apereo CAS LDAP Support</name>
+
+  <repositories>
+    <repository>
+      <id>vt-middleware</id>
+      <url>https://raw.github.com/vt-middleware/maven-repo/master</url>
+    </repository>
+  </repositories>
 
   <developers>
     <developer>
@@ -59,13 +65,18 @@
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive</artifactId>
-      <version>${ldaptive.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.ldaptive</groupId>
+        <artifactId>ldaptive-unboundid</artifactId>
+        <version>${ldaptive.version}</version>
+        <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
-      <version>${spring.version}</version>
     </dependency>
 
     <dependency>
@@ -77,27 +88,15 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.2.0</version>
-      <scope>test</scope>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-legacy</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
+      <groupId>com.unboundid</groupId>
+      <artifactId>unboundid-ldapsdk</artifactId>
     </dependency>
 
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 
   <properties>
     <cs.dir>${project.parent.basedir}</cs.dir>

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,12 +18,12 @@
  */
 package org.jasig.cas.support.spnego.authentication.principal;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Marc-Antoine Garrigue
@@ -43,14 +43,14 @@ public class SpnegoCredentialsToPrincipalResolverTests {
     }
 
     @Test
-    public void testValidCredentials() {
-        this.spnegoCredentials.setPrincipal(new SimplePrincipal("test"));
+    public void verifyValidCredentials() {
+        this.spnegoCredentials.setPrincipal(new DefaultPrincipalFactory().createPrincipal("test"));
         assertEquals("test", this.resolver.resolve(this.spnegoCredentials)
                 .getId());
     }
 
     @Test
-    public void testSupports() {
+    public void verifySupports() {
         assertFalse(this.resolver.supports(null));
         assertTrue(this.resolver.supports(this.spnegoCredentials));
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,20 +18,18 @@
  */
 package org.jasig.cas.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.github.inspektr.audit.annotation.Audit;
+import org.jasig.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Default implementation of the {@link ServicesManager} interface. If there are
@@ -43,37 +41,50 @@ import javax.validation.constraints.NotNull;
  */
 public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
     /** Instance of ServiceRegistryDao. */
     @NotNull
-    private ServiceRegistryDao serviceRegistryDao;
+    private final ServiceRegistryDao serviceRegistryDao;
 
     /** Map to store all services. */
-    private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<Long, RegisteredService>();
+    private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
-    public DefaultServicesManagerImpl(
-        final ServiceRegistryDao serviceRegistryDao) {
-        this(serviceRegistryDao, new ArrayList<String>());
+    /**
+     * Instantiates a new default services manager impl.
+     *
+     * @param serviceRegistryDao the service registry dao
+     */
+    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
+        this.serviceRegistryDao = serviceRegistryDao;
+
+        load();
     }
 
     /**
      * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService
      * can include a set of default attributes to use if no services are defined in the registry.
      *
+     * @deprecated
+     * <p>As of 4.1. Use {@link #DefaultServicesManagerImpl(ServiceRegistryDao)}
+     * instead. The <code>defaultAttributes</code> parameter is no longer used. Attributes are configured
+     * per service definition in the services registry. See {@link RegisteredService#getAttributeReleasePolicy()}
+     * for more details.</p>
+     *
      * @param serviceRegistryDao the Service Registry Dao.
      * @param defaultAttributes the list of default attributes to use.
      */
+    @Deprecated
     public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao,
             final List<String> defaultAttributes) {
-        this.serviceRegistryDao = serviceRegistryDao;
-
-        load();
+        this(serviceRegistryDao);
+        LOGGER.warn("This constructor is deprecated and will be removed in future CAS versions");
     }
 
     @Transactional(readOnly = false)
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+    @Override
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService r = findServiceBy(id);
         if (r == null) {
@@ -88,9 +99,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /**
      * {@inheritDoc}
-     * Note, if the repository is empty, this implementation will return a default service to grant all access.
-     * <p>
-     * This preserves default CAS behavior.
      */
     @Override
     public RegisteredService findServiceBy(final Service service) {
@@ -105,6 +113,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         return null;
     }
 
+    @Override
     public RegisteredService findServiceBy(final long id) {
         final RegisteredService r = this.services.get(id);
 
@@ -115,6 +124,11 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
     }
 
+    /**
+     * Stuff services to tree set.
+     *
+     * @return the tree set
+     */
     protected TreeSet<RegisteredService> convertToTreeSet() {
         return new TreeSet<RegisteredService>(this.services.values());
     }
@@ -123,6 +137,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         return Collections.unmodifiableCollection(convertToTreeSet());
     }
 
+    @Override
     public boolean matchesExistingService(final Service service) {
         return findServiceBy(service) != null;
     }
@@ -130,27 +145,33 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @Transactional(readOnly = false)
     @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+    @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
         this.services.put(r.getId(), r);
         return r;
     }
 
+    @Override
     public void reload() {
-        logger.info("Reloading registered services.");
+        LOGGER.info("Reloading registered services.");
         load();
     }
 
+    /**
+     * Load services that are provided by the DAO. 
+     */
     private void load() {
         final ConcurrentHashMap<Long, RegisteredService> localServices =
-                new ConcurrentHashMap<Long, RegisteredService>();
+                new ConcurrentHashMap<>();
 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            logger.debug("Adding registered service {}", r.getServiceId());
+            LOGGER.debug("Adding registered service {}", r.getServiceId());
             localServices.put(r.getId(), r);
         }
 
         this.services = localServices;
-        logger.info(String.format("Loaded %s services.", this.services.size()));
+        LOGGER.info("Loaded {} services.", this.services.size());
+        
     }
 }

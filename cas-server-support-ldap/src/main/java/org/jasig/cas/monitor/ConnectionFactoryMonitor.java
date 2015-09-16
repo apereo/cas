@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.monitor;
 
+import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -28,7 +29,7 @@ import org.ldaptive.pool.Validator;
  * {@link org.ldaptive.pool.PooledConnectionFactory}, the {@link PooledConnectionFactoryMonitor} class is preferable.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
 
@@ -62,6 +63,7 @@ public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
      *
      * @return  Status with code {@link StatusCode#OK} on success otherwise {@link StatusCode#ERROR}.
      */
+    @Override
     public Status observe() {
         Connection conn = null;
         try {
@@ -73,9 +75,7 @@ public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
         } catch (final LdapException e) {
             logger.warn("Validation failed with error.", e);
         } finally {
-            if (conn != null && conn.isOpen()) {
-                conn.close();
-            }
+            LdapUtils.closeConnection(conn);
         }
         return ERROR;
     }

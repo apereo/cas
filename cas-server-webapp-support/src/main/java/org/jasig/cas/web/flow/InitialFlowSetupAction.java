@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,20 +18,25 @@
  */
 package org.jasig.cas.web.flow;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.List;
 
 /**
  * Class to automatically set the paths for the CookieGenerators.
@@ -46,6 +51,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.1
  */
 public final class InitialFlowSetupAction extends AbstractAction {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /** The services manager with access to the registry. **/
+    @NotNull
+    private ServicesManager servicesManager;
 
     /** CookieGenerator for the Warnings. */
     @NotNull
@@ -61,36 +71,49 @@ public final class InitialFlowSetupAction extends AbstractAction {
     private List<ArgumentExtractor> argumentExtractors;
 
     /** Boolean to note whether we've set the values on the generators or not. */
-    private boolean pathPopulated = false;
+    private boolean pathPopulated;
+
+    /** If no authentication request from a service is present, halt and warn the user. */
+    private boolean enableFlowOnAbsentServiceRequest = true;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         if (!this.pathPopulated) {
             final String contextPath = context.getExternalContext().getContextPath();
-            final String cookiePath = StringUtils.hasText(contextPath) ? contextPath + "/" : "/";
-            logger.info("Setting path for cookies to: "
-                + cookiePath);
+            final String cookiePath = StringUtils.hasText(contextPath) ? contextPath + '/' : "/";
+            logger.info("Setting path for cookies to: {} ", cookiePath);
             this.warnCookieGenerator.setCookiePath(cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
             this.pathPopulated = true;
         }
 
-        context.getFlowScope().put(
-            "ticketGrantingTicketId", this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
-        context.getFlowScope().put(
-            "warnCookieValue",
-            Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
+        WebUtils.putTicketGrantingTicketInScopes(context,
+                this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
 
-        final Service service = WebUtils.getService(this.argumentExtractors,
-            context);
+        WebUtils.putWarningCookie(context,
+                Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
 
-        if (service != null && logger.isDebugEnabled()) {
-            logger.debug("Placing service in FlowScope: " + service.getId());
+        final Service service = WebUtils.getService(this.argumentExtractors, context);
+
+
+        if (service != null) {
+            logger.debug("Placing service in context scope: [{}]", service.getId());
+
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+                logger.debug("Placing registered service [{}] with id [{}] in context scope",
+                        registeredService.getServiceId(),
+                        registeredService.getId());
+                WebUtils.putRegisteredService(context, registeredService);
+            }
+        } else if (!this.enableFlowOnAbsentServiceRequest) {
+            logger.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
+                    WebUtils.getHttpServletRequest(context).getRequestURL());
+            throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),
+                    new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
-
-        context.getFlowScope().put("service", service);
-
+        WebUtils.putService(context, service);
         return result("success");
     }
 
@@ -103,8 +126,28 @@ public final class InitialFlowSetupAction extends AbstractAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    public void setArgumentExtractors(
-        final List<ArgumentExtractor> argumentExtractors) {
+    public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
+    }
+
+    /**
+     * Set the service manager to allow access to the registry
+     * to retrieve the registered service details associated
+     * with an incoming service.
+     * Since 4.1
+     * @param servicesManager the services manager
+     */
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    /**
+     * Decide whether CAS should allow authentication requests
+     * when no service is present in the request. Default is enabled.
+     *
+     * @param enableFlowOnAbsentServiceRequest the enable flow on absent service request
+     */
+    public void setEnableFlowOnAbsentServiceRequest(final boolean enableFlowOnAbsentServiceRequest) {
+        this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
     }
 }

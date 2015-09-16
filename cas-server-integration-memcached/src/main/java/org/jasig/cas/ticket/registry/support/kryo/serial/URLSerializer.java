@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -20,10 +20,11 @@ package org.jasig.cas.ticket.registry.support.kryo.serial;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.ByteBuffer;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 /**
  * Kryo serializer for {@link URL}.
@@ -31,20 +32,11 @@ import com.esotericsoftware.kryo.serialize.SimpleSerializer;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class URLSerializer extends SimpleSerializer<URL> {
+public final class URLSerializer extends Serializer<URL> {
 
-    private final Kryo kryo;
-    
-    /**
-     * @param kryo
-     */
-    public URLSerializer(final Kryo kryo) {
-        this.kryo = kryo;
-    }
-    
     @Override
-    public URL read(final ByteBuffer buffer) {
-        final String url = kryo.readObjectData(buffer, String.class);
+    public URL read(final Kryo kryo, final Input input, final  Class<URL> type) {
+        final String url = kryo.readObject(input, String.class);
         try {
             return new URL(url);
         } catch (final MalformedURLException e) {
@@ -53,7 +45,7 @@ public final class URLSerializer extends SimpleSerializer<URL> {
     }
 
     @Override
-    public void write(final ByteBuffer buffer, final URL url) {
-        kryo.writeObjectData(buffer, url.toExternalForm());
+    public void write(final Kryo kryo, final Output output, final URL url) {
+        kryo.writeObject(output, url.toExternalForm());
     }
 }

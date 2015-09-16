@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -31,7 +31,7 @@ import org.junit.Test;
  * Test of the simple username/password handler.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class SimpleTestUsernamePasswordHandlerTests {
 
@@ -43,24 +43,24 @@ public final class SimpleTestUsernamePasswordHandlerTests {
     }
 
     @Test
-    public void testSupportsProperUserCredentials() {
+    public void verifySupportsProperUserCredentials() {
         assertTrue(this.authenticationHandler.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
-    public void testDoesntSupportBadUserCredentials() {
+    public void verifyDoesntSupportBadUserCredentials() {
         assertFalse(this.authenticationHandler.supports(TestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
-    public void testValidUsernamePassword() throws Exception {
+    public void verifyValidUsernamePassword() throws Exception {
         final HandlerResult result = authenticationHandler.authenticate(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }
 
     @Test(expected = FailedLoginException.class)
-    public void testInvalidUsernamePassword() throws Exception {
+    public void verifyInvalidUsernamePassword() throws Exception {
         this.authenticationHandler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
     }
 

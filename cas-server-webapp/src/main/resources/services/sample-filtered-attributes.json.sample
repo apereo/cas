@@ -1,0 +1,15 @@
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 200,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "attributeFilter" : {
+      "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
+      "pattern" : "\\w+"
+    },
+    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "givenName" ] ]
+  }
+}

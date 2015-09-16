@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -37,15 +37,29 @@ public class UnauthorizedSsoServiceException extends
     /** The code description. */
     private static final String CODE = "service.not.authorized.sso";
 
+    /**
+     * Instantiates a new unauthorized sso service exception.
+     */
     public UnauthorizedSsoServiceException() {
         this(CODE);
     }
 
+    /**
+     * Instantiates a new unauthorized sso service exception.
+     *
+     * @param message the message
+     * @param cause the cause
+     */
     public UnauthorizedSsoServiceException(final String message,
         final Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * Instantiates a new unauthorized sso service exception.
+     *
+     * @param message the message
+     */
     public UnauthorizedSsoServiceException(final String message) {
         super(message);
     }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -20,23 +20,17 @@ package org.jasig.cas.ticket;
 
 import static org.junit.Assert.*;
 
-import org.jasig.cas.authentication.handler.AuthenticationException;
-import org.jasig.cas.authentication.handler.BadCredentialsAuthenticationException;
 import org.junit.Test;
 
+/**
+ * @author Misagh Moayyed
+ * @since 3.0.0
+ */
 public class InvalidTicketExceptionTests {
 
     @Test
-    public void testCodeNoThrowable() {
-        TicketException t = new InvalidTicketException("InvalidTicketId");
+    public void verifyCodeNoThrowable() {
+        final TicketException t = new InvalidTicketException("InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
-    }
-
-    @Test
-    public void testCodeWithThrowable() {
-        final AuthenticationException a = new BadCredentialsAuthenticationException();
-        final TicketException t = new InvalidTicketException(a, "InvalidTicketId");
-
-        assertEquals(a.toString(), t.getCode());
     }
 }

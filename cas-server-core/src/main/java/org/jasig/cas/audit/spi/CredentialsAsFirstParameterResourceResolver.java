@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -21,7 +21,9 @@ package org.jasig.cas.audit.spi;
 import java.util.Arrays;
 
 import org.aspectj.lang.JoinPoint;
-import com.github.inspektr.audit.spi.AuditResourceResolver;
+
+import org.jasig.inspektr.audit.spi.AuditResourceResolver;
+
 import org.jasig.cas.util.AopUtils;
 
 /**
@@ -33,14 +35,23 @@ import org.jasig.cas.util.AopUtils;
  */
 public final class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
 
+    @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 
+    @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 
+    
+    /**
+     * Turn the arguments into a list.
+     *
+     * @param args the args
+     * @return the string[]
+     */
     private static String[] toResources(final Object[] args) {
         return new String[] {"supplied credentials: " + Arrays.asList((Object[]) args[0])};
     }

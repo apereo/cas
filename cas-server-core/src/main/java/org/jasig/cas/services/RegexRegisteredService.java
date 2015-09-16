@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -22,12 +22,17 @@ import org.jasig.cas.authentication.principal.Service;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
 import java.util.regex.Pattern;
 
 /**
  * Mutable registered service that uses Java regular expressions for service matching.
+ * Matching is case insensitive, and is successful, if, and only if, the entire region
+ * sequence matches the pattern.
  *
  * @author Marvin S. Addison
+ * @author Misagh Moayyed
+ * @since 3.4
  */
 @Entity
 @DiscriminatorValue("regex")
@@ -38,10 +43,10 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     private transient Pattern servicePattern;
 
     public void setServiceId(final String id) {
-        servicePattern = createPattern(id);
         serviceId = id;
     }
-
+    
+    @Override
     public boolean matches(final Service service) {
         if (servicePattern == null) {
             servicePattern = createPattern(serviceId);
@@ -49,14 +54,23 @@ public class RegexRegisteredService extends AbstractRegisteredService {
         return service != null && servicePattern.matcher(service.getId()).matches();
     }
 
+    @Override
     protected AbstractRegisteredService newInstance() {
         return new RegexRegisteredService();
     }
 
+    /**
+     * Creates the pattern. Matching is by default
+     * case insensitive.
+     *
+     * @param pattern the pattern, may not be null.
+     * @return the pattern
+     */
     private Pattern createPattern(final String pattern) {
         if (pattern == null) {
             throw new IllegalArgumentException("Pattern cannot be null.");
         }
-        return Pattern.compile(pattern);
+        
+        return Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
     }
 }

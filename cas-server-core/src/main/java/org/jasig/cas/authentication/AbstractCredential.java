@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,15 +18,16 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import java.io.Serializable;
 
 /**
  * Base class for CAS credentials that are safe for long-term storage.
  *
  * @author Marvin S. Addison
- * @since 4.0
+ * @since 4.0.0
  */
 public abstract class AbstractCredential implements Credential, CredentialMetaData, Serializable {
 
@@ -43,10 +44,18 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
 
     @Override
     public boolean equals(final Object other) {
-        if (other instanceof  Credential && getClass().equals(other.getClass())) {
-            return getId().equals(((Credential) other).getId());
+        if (other == null) {
+            return false;
         }
-        return false;
+        if (!(other instanceof Credential)) {
+            return false;
+        }
+        if (other == this) {
+            return true;
+        }
+        final EqualsBuilder builder = new EqualsBuilder();
+        builder.append(getId(), ((Credential) other).getId());
+        return builder.isEquals();
     }
 
     @Override

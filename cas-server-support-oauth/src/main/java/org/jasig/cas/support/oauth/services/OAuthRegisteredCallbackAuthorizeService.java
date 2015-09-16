@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,18 +18,24 @@
  */
 package org.jasig.cas.support.oauth.services;
 
-import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.support.oauth.OAuthConstants;
 
 /**
- * Some Javadoc I will add later.
+ * OAuth registered service that denotes the callback authorized url.
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
-public final class OAuthRegisteredCallbackAuthorizeService extends RegisteredServiceImpl {
+public final class OAuthRegisteredCallbackAuthorizeService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 2993846310010319047L;
 
+    /**
+     * Sets the callback authorize url.
+     *
+     * @param url the new callback authorize url
+     */
     public void setCallbackAuthorizeUrl(final String url) {
         if (!url.endsWith(OAuthConstants.CALLBACK_AUTHORIZE_URL)) {
             throw new IllegalArgumentException("Calllback authorize url must end with "
@@ -41,5 +47,10 @@ public final class OAuthRegisteredCallbackAuthorizeService extends RegisteredSer
     @Override
     public void setServiceId(final String id) {
         this.setCallbackAuthorizeUrl(id);
+    }
+
+    @Override
+    protected AbstractRegisteredService newInstance() {
+        return new OAuthRegisteredCallbackAuthorizeService();
     }
 }

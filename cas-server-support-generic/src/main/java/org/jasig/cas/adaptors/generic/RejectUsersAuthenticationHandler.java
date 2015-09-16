@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,16 +18,16 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import java.security.GeneralSecurityException;
-import java.util.List;
-
+import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.List;
+import java.util.Set;
 
 /**
  * AuthenticationHandler which fails to authenticate a user purporting to be one
@@ -40,22 +40,35 @@ import javax.validation.constraints.NotNull;
  * RejectUsersAuthenticationHandler to authenticate someone.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The collection of users to reject. */
     @NotNull
-    private List<String> users;
+    private Set<String> users;
 
-    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+    @Override
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        final String username = credential.getUsername();
         if (this.users.contains(username)) {
             throw new FailedLoginException();
         }
 
-        return new SimplePrincipal(username);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+    }
+
+    /**
+     * @deprecated As of 4.1. Use {@link #setUsers(Set)} instead.
+     * Set the Collection of usernames which we will fail to authenticate.
+     *
+     * @param users The Collection of usernames we should not authenticate.
+     */
+    @Deprecated
+    public final void setUsers(final List<String> users) {
+        logger.warn("setUsers(List) is deprecated and has no effect. Consider defining a set instead");
     }
 
     /**
@@ -63,7 +76,8 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      *
      * @param users The Collection of usernames we should not authenticate.
      */
-    public final void setUsers(final List<String> users) {
+    public final void setUsers(final Set<String> users) {
         this.users = users;
     }
+
 }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,22 +18,22 @@
  */
 package org.jasig.cas.web.support;
 
+import org.jasig.inspektr.audit.AuditActionContext;
+import org.jasig.inspektr.audit.AuditPointRuntimeInfo;
+import org.jasig.inspektr.audit.AuditTrailManager;
+import org.jasig.inspektr.common.web.ClientInfo;
+import org.jasig.inspektr.common.web.ClientInfoHolder;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
-
-import com.github.inspektr.audit.AuditActionContext;
-import com.github.inspektr.audit.AuditPointRuntimeInfo;
-import com.github.inspektr.audit.AuditTrailManager;
-import com.github.inspektr.common.web.ClientInfo;
-import com.github.inspektr.common.web.ClientInfoHolder;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 /**
  * Works in conjunction with the Inspektr Library to block attempts to dictionary attack users.
@@ -55,6 +55,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private static final String DEFAULT_AUTHN_FAILED_ACTION = "AUTHENTICATION_FAILED";
 
     private static final String INSPEKTR_ACTION = "THROTTLED_LOGIN_ATTEMPT";
+    private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 
     private final AuditTrailManager auditTrailManager;
 
@@ -64,6 +65,12 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     private String authenticationFailureCode = DEFAULT_AUTHN_FAILED_ACTION;
 
+    /**
+     * Instantiates a new inspektr throttled submission by ip address and username handler interceptor adapter.
+     *
+     * @param auditTrailManager the audit trail manager
+     * @param dataSource the data source
+     */
     public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
             final DataSource dataSource) {
         this.auditTrailManager = auditTrailManager;
@@ -91,7 +98,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             return false;
         }
         // Compute rate in submissions/sec between last two authn failures and compare with threshold
-        return 1000.0 / (failures.get(0).getTime() - failures.get(1).getTime()) > getThresholdRate();
+        return NUMBER_OF_MILLISECONDS_IN_SECOND / (failures.get(0).getTime() - failures.get(1).getTime()) > getThresholdRate();
     }
 
     @Override
@@ -132,8 +139,15 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         this.authenticationFailureCode = authenticationFailureCode;
     }
 
+    /**
+     * Construct username from the request.
+     *
+     * @param request the request
+     * @param usernameParameter the username parameter
+     * @return the string
+     */
     protected String constructUsername(final HttpServletRequest request, final String usernameParameter) {
         final String username = request.getParameter(usernameParameter);
-        return "[username: " + (username != null ? username : "") + "]";
+        return "[username: " + (username != null ? username : "") + ']';
     }
 }

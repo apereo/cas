@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,13 +18,14 @@
  */
 package org.jasig.cas.ticket;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
-
-import org.springframework.util.Assert;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -40,7 +41,7 @@ import org.springframework.util.Assert;
  * subclasses should use static Logger instances.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 @MappedSuperclass
 public abstract class AbstractTicket implements Ticket, TicketState {
@@ -49,7 +50,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     /** The ExpirationPolicy this ticket will be following. */
     @Lob
-    @Column(name="EXPIRATION_POLICY", nullable=false)
+    @Column(name="EXPIRATION_POLICY", length = 1000000, nullable=false)
     private ExpirationPolicy expirationPolicy;
 
     /** The unique identifier for this ticket. */
@@ -77,6 +78,9 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Column(name="NUMBER_OF_TIMES_USED")
     private int countOfUses;
 
+    /**
+     * Instantiates a new abstract ticket.
+     */
     protected AbstractTicket() {
         // nothing to do
     }
@@ -102,6 +106,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         this.ticketGrantingTicket = ticket;
     }
 
+    @Override
     public final String getId() {
         return this.id;
     }
@@ -122,29 +127,36 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         this.countOfUses++;
     }
 
+    @Override
     public final int getCountOfUses() {
         return this.countOfUses;
     }
 
+    @Override
     public final long getCreationTime() {
         return this.creationTime;
     }
 
+    @Override
     public final TicketGrantingTicket getGrantingTicket() {
         return this.ticketGrantingTicket;
     }
 
+    @Override
     public final long getLastTimeUsed() {
         return this.lastTimeUsed;
     }
 
+    @Override
     public final long getPreviousTimeUsed() {
         return this.previousLastTimeUsed;
     }
 
+    @Override
     public final boolean isExpired() {
+        final TicketGrantingTicket tgt = getGrantingTicket();
         return this.expirationPolicy.isExpired(this)
-                || (getGrantingTicket() != null && getGrantingTicket().isExpired())
+                || (tgt != null && tgt.isExpired())
                 || isExpiredInternal();
     }
 
@@ -152,10 +164,12 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         return false;
     }
 
+    @Override
     public final int hashCode() {
-        return this.getId().hashCode();
+        return new HashCodeBuilder().append(this.getId()).toHashCode();
     }
 
+    @Override
     public final String toString() {
         return this.getId();
     }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,25 +26,25 @@ import org.junit.Test;
 /**
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public final class DefaultPasswordEncoderTests {
 
     private final PasswordEncoder passwordEncoder = new DefaultPasswordEncoder("MD5");
 
     @Test
-    public void testNullPassword() {
+    public void verifyNullPassword() {
         assertEquals(null, this.passwordEncoder.encode(null));
     }
 
     @Test
-    public void testMd5Hash() {
+    public void verifyMd5Hash() {
         assertEquals("1f3870be274f6c49b3e31a0c6728957f", this.passwordEncoder
             .encode("apple"));
     }
 
     @Test
-    public void testSha1Hash() {
+    public void verifySha1Hash() {
         final PasswordEncoder pe = new DefaultPasswordEncoder("SHA1");
 
         final String hash = pe.encode("this is a test");
@@ -54,7 +54,7 @@ public final class DefaultPasswordEncoderTests {
     }
 
     @Test
-    public void testSha1Hash2() {
+    public void verifySha1Hash2() {
         final PasswordEncoder pe = new DefaultPasswordEncoder("SHA1");
 
         final String hash = pe.encode("TEST of the SYSTEM");
@@ -64,7 +64,7 @@ public final class DefaultPasswordEncoderTests {
     }
 
     @Test
-    public void testInvalidEncodingType() {
+    public void verifyInvalidEncodingType() {
         final PasswordEncoder pe = new DefaultPasswordEncoder("scott");
         try {
             pe.encode("test");

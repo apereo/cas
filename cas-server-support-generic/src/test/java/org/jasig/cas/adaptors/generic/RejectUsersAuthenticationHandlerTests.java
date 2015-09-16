@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,31 +18,32 @@
  */
 package org.jasig.cas.adaptors.generic;
 
-import static org.junit.Assert.*;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.services.RegisteredServiceImpl;
+import org.junit.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
+ * @since 3.0.0
  */
 public class RejectUsersAuthenticationHandlerTests {
 
-    private final List<String> users;
+    private final Set<String> users;
 
     private final RejectUsersAuthenticationHandler authenticationHandler;
 
     public RejectUsersAuthenticationHandlerTests() throws Exception {
-        this.users = new ArrayList<String>();
+        this.users = new HashSet<>();
 
         this.users.add("scott");
         this.users.add("dima");
@@ -54,8 +55,8 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void testSupportsProperUserCredentials() throws Exception {
-        UsernamePasswordCredential c = new UsernamePasswordCredential();
+    public void verifySupportsProperUserCredentials() throws Exception {
+        final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fff");
         c.setPassword("rutgers");
@@ -63,18 +64,20 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void testDoesntSupportBadUserCredentials() {
+    public void verifyDoesntSupportBadUserCredentials() {
         try {
+            final RegisteredServiceImpl svc = new RegisteredServiceImpl();
+            svc.setServiceId("https://some.app.edu");
             assertFalse(this.authenticationHandler
                 .supports(new HttpBasedServiceCredential(new URL(
-                    "http://www.rutgers.edu"))));
+                    "http://www.rutgers.edu"), svc)));
         } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }
     }
 
     @Test(expected=FailedLoginException.class)
-    public void testFailsUserInMap() throws Exception {
+    public void verifyFailsUserInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("scott");
@@ -83,7 +86,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void testPassesUserNotInMap() throws Exception {
+    public void verifyPassesUserNotInMap() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
@@ -93,7 +96,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testPassesNullUserName() throws Exception {
+    public void verifyPassesNullUserName() throws Exception {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(null);
@@ -103,7 +106,7 @@ public class RejectUsersAuthenticationHandlerTests {
     }
 
     @Test(expected = AccountNotFoundException.class)
-    public void testPassesNullUserNameAndPassword() throws Exception {
+    public void verifyPassesNullUserNameAndPassword() throws Exception {
         this.authenticationHandler.authenticate(new UsernamePasswordCredential());
     }
 }
