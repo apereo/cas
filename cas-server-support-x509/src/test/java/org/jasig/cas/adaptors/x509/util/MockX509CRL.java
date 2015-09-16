@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -221,7 +221,7 @@ public class MockX509CRL extends X509CRL {
     public boolean isRevoked(final Certificate cert) {
         if (cert instanceof X509Certificate) {
             final X509Certificate xcert = (X509Certificate) cert;
-            for (X509CRLEntry entry : getRevokedCertificates()) {
+            for (final X509CRLEntry entry : getRevokedCertificates()) {
                 if (entry.getSerialNumber().equals(xcert.getSerialNumber())) {
                     return true;
                 }

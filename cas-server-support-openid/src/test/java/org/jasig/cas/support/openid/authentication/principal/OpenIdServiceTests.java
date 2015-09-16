@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -60,16 +60,18 @@ public class OpenIdServiceTests {
         manager.setEnforceRpId(false);
         manager.setSharedAssociations(sharedAssociations);
         context = mock(ApplicationContext.class);
-        ApplicationContextProvider contextProvider = new ApplicationContextProvider();
-        contextProvider.setApplicationContext(context);
         cas = mock(CentralAuthenticationService.class);
+
+        when(context.getBean("serverManager")).thenReturn(manager);
+        when(context.getBean("centralAuthenticationService", CentralAuthenticationService.class)).thenReturn(cas);
+
+        final ApplicationContextProvider contextProvider = new ApplicationContextProvider();
+        contextProvider.setApplicationContext(context);
     }
 
     @Test
-    public void testGetResponse() {
-        openIdService = OpenIdService.createServiceFrom(request);
-        when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
+    public void verifyGetResponse() {
+        openIdService = OpenIdService.createServiceFrom(request, null);
         final Response response = this.openIdService.getResponse("test");
         try {
             verify(cas, never()).validateServiceTicket("test", openIdService);
@@ -87,17 +89,15 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testSmartModeGetResponse() {
+    public void verifySmartModeGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
-        openIdService = OpenIdService.createServiceFrom(request);
+        openIdService = OpenIdService.createServiceFrom(request, null);
         Association association = null;
         try {
             association = Association.generate(Association.TYPE_HMAC_SHA1, "test", 60);
         } catch (final Exception e) {
             fail("Could not generate association");
         }
-        when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
         when(sharedAssociations.load("test")).thenReturn(association);
         final Response response = this.openIdService.getResponse("test");
         try {
@@ -115,17 +115,15 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testExpiredAssociationGetResponse() {
+    public void verifyExpiredAssociationGetResponse() {
         request.addParameter("openid.assoc_handle", "test");
-        openIdService = OpenIdService.createServiceFrom(request);
+        openIdService = OpenIdService.createServiceFrom(request, null);
         Association association = null;
         try {
             association = Association.generate(Association.TYPE_HMAC_SHA1, "test", 2);
         } catch (final Exception e) {
             fail("Could not generate association");
         }
-        when(context.getBean("serverManager")).thenReturn(manager);
-        when(context.getBean("centralAuthenticationService")).thenReturn(cas);
         when(sharedAssociations.load("test")).thenReturn(association);
         synchronized (this) {
             try {
@@ -143,7 +141,7 @@ public class OpenIdServiceTests {
     }
 
     @Test
-    public void testEquals() {
+    public void verifyEquals() {
         final MockHttpServletRequest request1 = new MockHttpServletRequest();
         request1.addParameter("openid.identity", "http://openid.ja-sig.org/battags");
         request1.addParameter("openid.return_to", "http://www.ja-sig.org/?service=fa");
@@ -153,11 +151,10 @@ public class OpenIdServiceTests {
         request2.addParameter("openid.identity", "http://openid.ja-sig.org/battags");
         request2.addParameter("openid.return_to", "http://www.ja-sig.org/?service=fa");
 
-        final OpenIdService o1 = OpenIdService.createServiceFrom(request1);
-        final OpenIdService o2 = OpenIdService.createServiceFrom(request2);
+        final OpenIdService o1 = OpenIdService.createServiceFrom(request1, null);
+        final OpenIdService o2 = OpenIdService.createServiceFrom(request2, null);
 
         assertTrue(o1.equals(o2));
-        assertFalse(o1.equals(null));
         assertFalse(o1.equals(new Object()));
     }
 }

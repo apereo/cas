@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -19,35 +19,35 @@
     under the License.
 
 -->
-<project name="Jasig CAS ${project.version}">
-	<skin>
+<project name="Apereo CAS ${project.version}">
+    <skin>
         <groupId>org.apache.maven.skins</groupId>
         <artifactId>maven-fluido-skin</artifactId>
         <version>1.3.0</version>
     </skin>
     <custom>
         <fluidoSkin>
-          <sideBarEnabled>true</sideBarEnabled>
-          <googlePlusOne />
-          <googleSearch>
-            <sitesearch/>
-          </googleSearch>
-          <twitter>
-            <user>Jasig</user>
-            <showUser>true</showUser>
-            <showFollowers>true</showFollowers>
-          </twitter>
-          <facebookLike />
+            <sideBarEnabled>true</sideBarEnabled>
+            <googlePlusOne/>
+            <googleSearch>
+                <sitesearch/>
+            </googleSearch>
+            <twitter>
+                <user>Apereo</user>
+                <showUser>true</showUser>
+                <showFollowers>true</showFollowers>
+            </twitter>
+            <facebookLike/>
         </fluidoSkin>
     </custom>
-		
+
     <bannerLeft>
         <name>CAS</name>
         <src>images/cas-logo-150x83.png</src>
         <href>http://www.jasig.org/cas</href>
     </bannerLeft>
     <bannerRight>
-        <name>Jasig</name>
+        <name>Apereo</name>
         <src>images/jasig-logo.png</src>
         <href>http://www.jasig.org</href>
     </bannerRight>
@@ -55,16 +55,11 @@
 
     <body>
         <breadcrumbs>
-          <item name="Home" href="${project.url}"/>
+            <item name="Home" href="${project.url}"/>
         </breadcrumbs>
 
-        <menu name="Documentation">
-          <item name="CAS User Manual" href="casum/html/chunked/index.html" />
-          <item name="CAS User Manual (Single Page)" href="casum/html/single/manual.html" />
-        </menu>
-        
-		<menu ref="parent" />
-        <menu ref="reports" name="Reports" />
-		<menu ref="modules" name="Modules" />
+        <menu ref="parent"/>
+        <menu ref="reports" name="Reports"/>
+        <menu ref="modules" name="Modules"/>
     </body>
 </project>

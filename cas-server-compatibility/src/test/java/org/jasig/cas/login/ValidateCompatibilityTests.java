@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -29,7 +29,7 @@ import net.sourceforge.jwebunit.HttpUnitDialog;
  * @author Scott Battaglia
  * @author Andrew Petro
  * @author Drew Mazurek
- * @since 3.0
+ * @since 3.0.0
  */
 public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
@@ -49,15 +49,15 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
     /**
      * Test /validate with no parameters set.
      */
-    public void testNoParameters() {
+    public void verifyNoParameters() {
         beginAt("/validate");
         assertTextPresent("no");
 
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
-        HttpUnitDialog htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
-        String exactExpectedResponse = LEGACY_NO_RESPONSE;
+        final HttpUnitDialog htDialog = getDialog();
+        final String validateOutput = htDialog.getResponseText();
+        final String exactExpectedResponse = LEGACY_NO_RESPONSE;
 
         assertEquals(exactExpectedResponse, validateOutput);
     }
@@ -67,15 +67,15 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
      * response.
      * @throws UnsupportedEncodingException
      */
-    public void testBadServiceTicket() throws UnsupportedEncodingException {
+    public void verifyBadServiceTicket() throws UnsupportedEncodingException {
         final String service = "https://localhost:8443/contacts-cas/j_acegi_cas_security_check";
         beginAt("/validate?service=" + URLEncoder.encode(service, "UTF-8") + "&ticket=test");
         assertTextPresent("no");
 
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
-        HttpUnitDialog htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final HttpUnitDialog htDialog = getDialog();
+        final String validateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, validateOutput);
     }
@@ -84,7 +84,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
      * Test for the correct CAS1 validation success response.
      * @throws IOException
      */
-    public void testProperCredentialsAndServiceTicket() throws IOException {
+    public void verifyProperCredentialsAndServiceTicket() throws IOException {
 
         // log into CAS and obtain a service ticket
 
@@ -96,7 +96,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
         HttpUnitDialog htDialog = getDialog();
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
 
         beginAt("/validate?service=" + URLEncoder.encode(service, "UTF-8") + "&ticket=" + serviceTicket);
         assertTextPresent("yes");
@@ -104,9 +104,9 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final String validateOutput = htDialog.getResponseText();
 
-        String expected = "yes\n" + getUsername() + "\n";
+        final String expected = "yes\n" + getUsername() + "\n";
 
         assertEquals(expected, validateOutput);
 
@@ -117,7 +117,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String secondValidateOutput = htDialog.getResponseText();
+        final String secondValidateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, secondValidateOutput);
 
@@ -129,7 +129,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
      * causes the ticket validation failure response.
      * @throws IOException
      */
-    public void testServiceMismatch() throws IOException {
+    public void verifyServiceMismatch() throws IOException {
 
         // log into CAS and obtain a service ticket
 
@@ -143,7 +143,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
         HttpUnitDialog htDialog = getDialog();
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
 
         beginAt("/validate?service=" + URLEncoder.encode(validateService, "UTF-8") + "&ticket=" + serviceTicket);
         assertTextPresent("no");
@@ -151,7 +151,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final String validateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, validateOutput);
 
@@ -162,7 +162,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String secondValidateOutput = htDialog.getResponseText();
+        final String secondValidateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, secondValidateOutput);
 
@@ -175,7 +175,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
      * ticket to fail with the ticket validation failure response.
      * @throws IOException
      */
-    public void testNoService() throws IOException {
+    public void verifyNoService() throws IOException {
 
         // log into CAS and obtain a service ticket
         final String service = "http://www.ja-sig.org";
@@ -187,7 +187,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
         HttpUnitDialog htDialog = getDialog();
 
-        String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
+        final String serviceTicket = LoginHelper.serviceTicketFromResponse(htDialog.getResponse());
 
         beginAt("/validate?ticket=" + serviceTicket);
         assertTextPresent("no");
@@ -195,7 +195,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
         // here we test that the response was exactly that specified
         // in section 2.4.2 of the CAS spec
         htDialog = getDialog();
-        String validateOutput = htDialog.getResponseText();
+        final String validateOutput = htDialog.getResponseText();
 
         assertEquals(LEGACY_NO_RESPONSE, validateOutput);
 
@@ -204,7 +204,7 @@ public class ValidateCompatibilityTests extends AbstractCompatibilityTests {
 
     }
 
-    public void testNoValidateProxyTickets() {
+    public void verifyNoValidateProxyTickets() {
         //TODO test that validation of a proxy ticket fails.
     }
 }

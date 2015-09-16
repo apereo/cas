@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,7 +19,7 @@
 package org.jasig.cas.logout;
 
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.SamlDateUtils;
+import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +28,8 @@ import org.slf4j.LoggerFactory;
  * A builder that uses the saml standard's <code>LogoutRequest</code> template in order
  * to build the logout request.
  * @author Misagh Moayyed
- * @since 4.0
- * @see LogoutRequest
+ * @see DefaultLogoutRequest
+ * @since 4.0.0
  */
 public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
@@ -48,7 +48,7 @@ public final class SamlCompliantLogoutMessageCreator implements LogoutMessageCre
     @Override
     public String create(final LogoutRequest request) {
         final String logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
-                SamlDateUtils.getCurrentDateAndTime(), request.getTicketId());
+                new ISOStandardDateFormat().getCurrentDateAndTime(), request.getTicketId());
         
         LOGGER.debug("Generated logout message: [{}]", logoutRequest);
         return logoutRequest;

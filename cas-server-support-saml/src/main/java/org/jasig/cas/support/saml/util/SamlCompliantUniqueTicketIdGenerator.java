@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.support.saml.util;
 
 import java.security.MessageDigest;
@@ -24,8 +23,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-import org.opensaml.saml1.binding.artifact.SAML1ArtifactType0001;
-import org.opensaml.saml2.binding.artifact.SAML2ArtifactType0004;
+import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
+import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for
@@ -34,7 +33,7 @@ import org.opensaml.saml2.binding.artifact.SAML2ArtifactType0004;
  * Default to SAML 1.1 Compliance.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
@@ -53,6 +52,11 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     /** Random generator to construct the AssertionHandle. */
     private final SecureRandom random;
 
+    /**
+     * Instantiates a new SAML compliant unique ticket id generator.
+     *
+     * @param sourceId the source id
+     */
     public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
         try {
             final MessageDigest messageDigest = MessageDigest.getInstance("SHA");
@@ -76,15 +80,19 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     public String getNewTicketId(final String prefix) {
         if (saml2compliant) {
             return new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), sourceIdDigest).base64Encode();
-        } else {
-            return new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle()).base64Encode();
         }
+        return new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle()).base64Encode();
     }
 
     public void setSaml2compliant(final boolean saml2compliant) {
         this.saml2compliant = saml2compliant;
     }
 
+    /**
+     * New assertion handle.
+     *
+     * @return the byte[] array of size {@link #ASSERTION_HANDLE_SIZE}
+     */
     private byte[] newAssertionHandle() {
         final byte[] handle = new byte[ASSERTION_HANDLE_SIZE];
         this.random.nextBytes(handle);

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -33,16 +33,25 @@ import static org.junit.Assert.assertEquals;
  * Unit test for {@link RegexRegisteredService}.
  *
  * @author Marvin S. Addison
+ * @since 3.4.0
  */
 @RunWith(Parameterized.class)
 public class RegexRegisteredServiceTests {
 
-    private RegexRegisteredService service;
+    private final RegexRegisteredService service;
 
-    private String serviceToMatch;
+    private final String serviceToMatch;
 
-    private boolean expected;
+    private final boolean expected;
 
+    public RegexRegisteredServiceTests(
+            final RegexRegisteredService service,
+            final String serviceToMatch,
+            final boolean expectedResult) {
+        this.service = service;
+        this.serviceToMatch = serviceToMatch;
+        this.expected = expectedResult;
+    }
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
@@ -101,19 +110,8 @@ public class RegexRegisteredServiceTests {
         });
     }
 
-
-    public RegexRegisteredServiceTests(
-            final RegexRegisteredService service,
-            final String serviceToMatch,
-            final boolean expectedResult) {
-        this.service = service;
-        this.serviceToMatch = serviceToMatch;
-        this.expected = expectedResult;
-    }
-
-
     @Test
-    public void testMatches() throws Exception {
+    public void verifyMatches() throws Exception {
         final Service testService;
         if (serviceToMatch == null) {
             testService = null;

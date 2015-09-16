@@ -1,5 +1,55 @@
-language: java
+#
+# Licensed to Apereo under one or more contributor license
+# agreements. See the NOTICE file distributed with this work
+# for additional information regarding copyright ownership.
+# Apereo licenses this file to you under the Apache License,
+# Version 2.0 (the "License"); you may not use this file
+# except in compliance with the License.  You may obtain a
+# copy of the License at the following location:
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+#
 
+# Steps to enable this build are:
+#
+# Generate the OAUTH-TOKEN at https://github.com/settings/applications
+# Install travis: gem install travis
+# Login to travis: travis login
+# Encrypt the token: travis encrypt GH_TOKEN=[OAUTH-TOKEN] -r Jasig/cas --add env.global
+#
+
+language: java
+sudo: false
 branches:
   only:
-    - master
+  - master
+jdk:
+- oraclejdk7
+# - oraclejdk8
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+env:
+  global:
+  - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
+  - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
+  - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
+before_install:
+- chmod -R 777 ./travis/init-travis-build.sh
+- ./travis/init-travis-build.sh
+install:
+- mvn -T 10 install -P nocheck -Dmaven.javadoc.skip=true -B -V -q
+script:
+- mvn clean install -Dlog4j.configurationFile=../travis/log4j2.xml -Dmaven.javadoc.skip=true -B -V
+after_success:
+- chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
+- ./travis/push-javadoc-to-gh-pages.sh
+- chmod -R 777 ./travis/deploy-to-sonatype.sh
+- ./travis/deploy-to-sonatype.sh

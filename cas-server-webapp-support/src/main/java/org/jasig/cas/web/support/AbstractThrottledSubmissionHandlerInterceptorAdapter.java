@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.web.support;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -76,8 +78,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
         if (exceedsThreshold(request)) {
             recordThrottle(request);
-            response.sendError(403, "Access Denied for user [" + request.getParameter(usernameParameter)
-                                + " from IP Address [" + request.getRemoteAddr() + "]");
+            request.setAttribute(WebUtils.CAS_ACCESS_DENIED_REASON, "screen.blocked.message");
+            response.sendError(HttpStatus.SC_FORBIDDEN,
+                    "Access Denied for user [" + request.getParameter(usernameParameter)
+                    + "] from IP Address [" + request.getRemoteAddr() + ']');
             return false;
         }
 
@@ -91,7 +95,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
 
-        RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
+        final RequestContext context = (RequestContext) request.getAttribute("flowRequestContext");
 
         if (context == null || context.getCurrentEvent() == null) {
             return;
@@ -134,12 +138,41 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         return this.usernameParameter;
     }
 
+    /**
+     * Record throttling event.
+     *
+     * @param request the request
+     */
     protected void recordThrottle(final HttpServletRequest request) {
-        logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds.",
-                new Object[] {request.getRemoteAddr(), failureThreshold, failureRangeInSeconds});
+        logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds. "
+                + "Authentication attempt exceeds the failure threshold {}",
+                request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
+                this.failureThreshold);
     }
 
+    /**
+     * Record submission failure.
+     *
+     * @param request the request
+     */
     protected abstract void recordSubmissionFailure(HttpServletRequest request);
 
+    /**
+     * Determine whether threshold has been exceeded.
+     *
+     * @param request the request
+     * @return true, if successful
+     */
     protected abstract boolean exceedsThreshold(HttpServletRequest request);
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("failureThreshold", this.failureThreshold)
+                .append("failureRangeInSeconds", this.failureRangeInSeconds)
+                .append("usernameParameter", this.usernameParameter)
+                .append("thresholdRate", this.thresholdRate)
+                .toString();
+    }
 }

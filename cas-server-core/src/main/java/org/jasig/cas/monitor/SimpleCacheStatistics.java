@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,12 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.monitor;
 
 import java.util.Formatter;
-
-import org.apache.commons.io.IOUtils;
 
 /**
  * Simple implementation of cache statistics.
@@ -32,6 +29,7 @@ import org.apache.commons.io.IOUtils;
 public class SimpleCacheStatistics implements CacheStatistics {
 
     private static final double BYTES_PER_MB = 1048510.0;
+    private static final int PERCENTAGE_VALUE = 100;
 
     private final long size;
 
@@ -87,25 +85,25 @@ public class SimpleCacheStatistics implements CacheStatistics {
         return this.evictions;
     }
 
-
+    @Override
     public int getPercentFree() {
         if (this.capacity == 0) {
             return 0;
         }
-        return (int) ((this.capacity - this.size) * 100 / this.capacity);
+        return (int) ((this.capacity - this.size) * PERCENTAGE_VALUE / this.capacity);
     }
 
-
+    @Override
     public void toString(final StringBuilder builder) {
         if (this.name != null) {
             builder.append(this.name).append(':');
         }
-        final Formatter formatter = new Formatter(builder);
-        formatter.format("%.2f", this.size / BYTES_PER_MB);
-        builder.append("MB used, ");
-        builder.append(getPercentFree()).append("% free, ");
-        builder.append(this.evictions).append(" evictions");
-        IOUtils.closeQuietly(formatter);
+        try (final Formatter formatter = new Formatter(builder)) {
+            formatter.format("%.2f", this.size / BYTES_PER_MB);
+            builder.append("MB used, ");
+            builder.append(getPercentFree()).append("% free, ");
+            builder.append(this.evictions).append(" evictions");
+        }
     }
 
 

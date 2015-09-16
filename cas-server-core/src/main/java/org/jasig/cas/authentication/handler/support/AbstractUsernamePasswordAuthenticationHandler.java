@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,9 +18,7 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-
-import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -28,11 +26,11 @@ import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.support.PasswordPolicyConfiguration;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -41,7 +39,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     AbstractPreAndPostProcessingAuthenticationHandler {
@@ -56,7 +54,12 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     @NotNull
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
-    /** {@inheritDoc} */
+    /** The password policy configuration to be used by extensions. */
+    private PasswordPolicyConfiguration passwordPolicyConfiguration;
+    
+    /**
+     * {@inheritDoc}
+     **/
     @Override
     protected final HandlerResult doAuthentication(final Credential credential)
             throws GeneralSecurityException, PreventedException {
@@ -64,30 +67,27 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         if (userPass.getUsername() == null) {
             throw new AccountNotFoundException("Username is null.");
         }
-        final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
+        
+        final String transformedUsername= this.principalNameTransformer.transform(userPass.getUsername());
         if (transformedUsername == null) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
-        final Principal principal = authenticateUsernamePasswordInternal(
-                transformedUsername,
-                userPass.getPassword());
-        return new HandlerResult(this, new BasicCredentialMetaData(credential), principal);
+        userPass.setUsername(transformedUsername);
+        return authenticateUsernamePasswordInternal(userPass);
     }
 
     /**
      * Authenticates a username/password credential by an arbitrary strategy.
      *
-     * @param username Non-null username produced by {@link #principalNameTransformer} acting on
-     *                 {@link org.jasig.cas.authentication.UsernamePasswordCredential#getUsername()}.
-     * @param password Password to authenticate.
+     * @param transformedCredential the credential object bearing the transformed username and password.
      *
-     * @return Principal resolved from credential on authentication success or null if no principal could be resolved
+     * @return HandlerResult resolved from credential on authentication success or null if no principal could be resolved
      * from the credential.
      *
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException On the indeterminate case when authentication is prevented.
      */
-    protected abstract Principal authenticateUsernamePasswordInternal(String username, String password)
+    protected abstract HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException;
 
     /**
@@ -101,6 +101,10 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
 
     protected final PrincipalNameTransformer getPrincipalNameTransformer() {
         return this.principalNameTransformer;
+    }
+    
+    protected final PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
+        return this.passwordPolicyConfiguration;
     }
 
     /**
@@ -116,8 +120,13 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
     public final void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
         this.principalNameTransformer = principalNameTransformer;
     }
+    
+    public final void setPasswordPolicyConfiguration(final PasswordPolicyConfiguration passwordPolicyConfiguration) {
+        this.passwordPolicyConfiguration = passwordPolicyConfiguration;
+    }
 
     /**
+     * {@inheritDoc}
      * @return True if credential is a {@link UsernamePasswordCredential}, false otherwise.
      */
     @Override

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,9 +18,10 @@
  */
 package org.jasig.cas.web.flow;
 
-import javax.servlet.http.Cookie;
-
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.CasProtocolConstants;
+import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -30,34 +31,38 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-import static org.junit.Assert.*;
 
+import javax.servlet.http.Cookie;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+/**
+ * @author Marvin S. Addison
+ * @since 3.4.0
+ */
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
     private SendTicketGrantingTicketAction action;
-
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
     private MockRequestContext context;
 
     @Before
     public void onSetUp() throws Exception {
-        this.action = new SendTicketGrantingTicketAction();
 
         this.ticketGrantingTicketCookieGenerator = new CookieRetrievingCookieGenerator();
+        ticketGrantingTicketCookieGenerator.setCookieName("TGT");
 
-        this.ticketGrantingTicketCookieGenerator.setCookieName("TGT");
-
-        this.action.setCentralAuthenticationService(getCentralAuthenticationService());
-
-        this.action.setTicketGrantingTicketCookieGenerator(this.ticketGrantingTicketCookieGenerator);
-
+        this.action = new SendTicketGrantingTicketAction(ticketGrantingTicketCookieGenerator,
+                getCentralAuthenticationService(), getServicesManager());
+        this.action.setServicesManager(getServicesManager());
+        this.action.setCreateSsoSessionCookieOnRenewAuthentications(true);
         this.action.afterPropertiesSet();
 
         this.context = new MockRequestContext();
     }
 
     @Test
-    public void testNoTgtToSet() throws Exception {
+    public void verifyNoTgtToSet() throws Exception {
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(),
                 new MockHttpServletRequest(), new MockHttpServletResponse()));
 
@@ -65,27 +70,71 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
     }
 
     @Test
-    public void testTgtToSet() throws Exception {
+    public void verifyTgtToSet() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
-        final String TICKET_VALUE = "test";
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("test");
 
-        WebUtils.putTicketGrantingTicketInRequestScope(this.context, TICKET_VALUE);
-        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), response));
+        WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(),
+                request, response));
 
         assertEquals("success", this.action.execute(this.context).getId());
-        assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());
+        request.setCookies(response.getCookies());
+        assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
     }
 
     @Test
-    public void testTgtToSetRemovingOldTgt() throws Exception {
+    public void verifyTgtToSetRemovingOldTgt() throws Exception {
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final String TICKET_VALUE = "test";
-        request.setCookies(new Cookie[] {new Cookie("TGT", "test5")});
-        WebUtils.putTicketGrantingTicketInRequestScope(this.context, TICKET_VALUE);
+
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("test");
+
+        request.setCookies(new Cookie("TGT", "test5"));
+        WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
 
         assertEquals("success", this.action.execute(this.context).getId());
-        assertEquals(TICKET_VALUE, response.getCookies()[0].getValue());
+        request.setCookies(response.getCookies());
+        assertEquals(tgt.getId(), this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
+    }
+
+    @Test
+    public void verifySsoSessionCookieOnRenewAsParameter() throws Exception {
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
+
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("test");
+        request.setCookies(new Cookie("TGT", "test5"));
+        WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+
+        this.action.setCreateSsoSessionCookieOnRenewAuthentications(false);
+        assertEquals("success", this.action.execute(this.context).getId());
+        assertEquals(0, response.getCookies().length);
+    }
+
+    @Test
+    public void verifySsoSessionCookieOnServiceSsoDisallowed() throws Exception {
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+
+        final WebApplicationService svc = mock(WebApplicationService.class);
+        when(svc.getId()).thenReturn("TestSsoFalse");
+
+        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getId()).thenReturn("test");
+        request.setCookies(new Cookie("TGT", "test5"));
+        WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
+        this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+        this.context.getFlowScope().put("service", svc);
+        this.action.setCreateSsoSessionCookieOnRenewAuthentications(false);
+        assertEquals("success", this.action.execute(this.context).getId());
+        assertEquals(0, response.getCookies().length);
     }
 }

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -33,11 +33,11 @@
   <sec:authentication-manager />
 
   <sec:http pattern="/status/**" entry-point-ref="notAuthorizedEntryPoint" use-expressions="true" auto-config="true">
-    <sec:intercept-url pattern="/status" access="hasIpAddress('${cas.securityContext.status.allowedSubnet}')" />
+    <sec:intercept-url pattern="/status" access="${cas.securityContext.status.access}" />
   </sec:http>
 
   <sec:http pattern="/statistics/**" entry-point-ref="notAuthorizedEntryPoint" use-expressions="true" auto-config="true">
-    <sec:intercept-url pattern="/statistics" access="hasIpAddress('${cas.securityContext.status.allowedSubnet}')" />
+    <sec:intercept-url pattern="/statistics/**" access="${cas.securityContext.statistics.access}" />
   </sec:http>
 
   <bean id="notAuthorizedEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />

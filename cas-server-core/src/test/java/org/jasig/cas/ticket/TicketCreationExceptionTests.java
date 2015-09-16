@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,27 +18,27 @@
  */
 package org.jasig.cas.ticket;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class TicketCreationExceptionTests {
 
     @Test
-    public void testNoParamConstructor() {
+    public void verifyNoParamConstructor() {
         new TicketCreationException();
     }
 
     @Test
-    public void testThrowableParamConstructor() {
-        final Throwable THROWABLE = new Throwable();
-        TicketCreationException t = new TicketCreationException(THROWABLE);
+    public void verifyThrowableParamConstructor() {
+        final Throwable throwable = new Throwable();
+        final TicketCreationException t = new TicketCreationException(throwable);
 
-        assertEquals(THROWABLE, t.getCause());
+        assertEquals(throwable, t.getCause());
     }
 }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.services.jmx;
 
 import org.jasig.cas.services.ReloadableServicesManager;
@@ -38,10 +37,18 @@ import org.springframework.jmx.export.annotation.ManagedResource;
         currencyTimeLimit = 15)
 public final class ReloadableServicesManagerMBean extends AbstractServicesManagerMBean<ReloadableServicesManager> {
 
+    /**
+     * Instantiates a new reloadable services manager m bean.
+     *
+     * @param reloadableServicesManager the reloadable services manager
+     */
     public ReloadableServicesManagerMBean(final ReloadableServicesManager reloadableServicesManager) {
         super(reloadableServicesManager);
     }
 
+    /**
+     * Reload services that are provided by the manager.
+     */
     @ManagedOperation(description = "Reloads the list of the services from the persistence storage.")
     public void reload() {
         getServicesManager().reload();

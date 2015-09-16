@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,23 +18,24 @@
  */
 package org.jasig.cas.extension.clearpass;
 
-import java.util.Collection;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * Decorator that captures tickets and attempts to map them.
  *
+ * @deprecated As of 4.1, use {@link org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator} instead.
  * @author Scott Battaglia
  * @since 1.0.7
  */
+@Deprecated
 public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
     /** The real instance of the ticket registry that is to be decorated. */
@@ -100,7 +101,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         if (this.ticketRegistry instanceof TicketRegistryState) {
             return ((TicketRegistryState) this.ticketRegistry).sessionCount();
         }
-        logger.debug("Ticket registry {} does not support report the sessionCount() operation of the registry state.",
+        logger.debug("Ticket registry {} does not report the sessionCount() operation of the registry state.",
                 this.ticketRegistry.getClass().getName());
         return super.sessionCount();
     }
@@ -110,7 +111,7 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
         if (this.ticketRegistry instanceof TicketRegistryState) {
             return ((TicketRegistryState) this.ticketRegistry).serviceTicketCount();
         }
-        logger.debug("Ticket registry {} does not support report the serviceTicketCount() operation of the registry state.",
+        logger.debug("Ticket registry {} does not report the serviceTicketCount() operation of the registry state.",
                 this.ticketRegistry.getClass().getName());
         return super.serviceTicketCount();
     }

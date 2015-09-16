@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,21 +18,24 @@
  */
 package org.jasig.cas.services.web;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.web.support.ArgumentExtractor;
-import org.jasig.cas.web.support.CasArgumentExtractor;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  *
@@ -53,14 +56,13 @@ public class ServiceThemeResolverTests {
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");
         this.serviceThemeResolver.setServicesManager(this.servicesManager);
-        this.serviceThemeResolver.setArgumentExtractors(Arrays.asList((ArgumentExtractor) new CasArgumentExtractor()));
-        final Map<String, String> mobileBrowsers = new HashMap<String, String>();
+        final Map<String, String> mobileBrowsers = new HashMap<>();
         mobileBrowsers.put("Mozilla", "theme");
         this.serviceThemeResolver.setMobileBrowsers(mobileBrowsers);
     }
 
     @Test
-    public void testGetServiceTheme() {
+    public void verifyGetServiceThemeDoesNotExist() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setTheme("myTheme");
         r.setId(1000);
@@ -70,13 +72,17 @@ public class ServiceThemeResolverTests {
         this.servicesManager.save(r);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setParameter("service", "myServiceId");
+        final RequestContext ctx = mock(RequestContext.class);
+        final MutableAttributeMap scope = new LocalAttributeMap();
+        scope.put("service", TestUtils.getService(r.getServiceId()));
+        when(ctx.getFlowScope()).thenReturn(scope);
+        RequestContextHolder.setRequestContext(ctx);
         request.addHeader("User-Agent", "Mozilla");
-        assertEquals("myTheme", this.serviceThemeResolver.resolveThemeName(request));
+        assertEquals("test", this.serviceThemeResolver.resolveThemeName(request));
     }
 
     @Test
-    public void testGetDefaultService() {
+    public void verifyGetDefaultService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");
         request.addHeader("User-Agent", "Mozilla");
@@ -84,7 +90,7 @@ public class ServiceThemeResolverTests {
     }
 
     @Test
-    public void testGetDefaultServiceWithNoServicesManager() {
+    public void verifyGetDefaultServiceWithNoServicesManager() {
         this.serviceThemeResolver.setServicesManager(null);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "myServiceId");

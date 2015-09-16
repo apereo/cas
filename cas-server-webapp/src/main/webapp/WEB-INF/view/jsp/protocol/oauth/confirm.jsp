@@ -1,9 +1,9 @@
 <%--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -18,15 +18,16 @@
     under the License.
 
 --%>
-<jsp:directive.include file="../../default/ui/includes/top.jsp" />
-		<div id="msg" class="question">
-			<h2><spring:message code="screen.oauth.confirm.header" /></h2>
+<jsp:directive.include file="../../default/ui/includes/top.jsp"/>
+<div id="msg" class="question">
+    <h2><spring:message code="screen.oauth.confirm.header"/></h2>
 
-			<p>
-			   <spring:message code="screen.oauth.confirm.message" arguments="${serviceName}" />
-			</p>
-			<p>
-				<a id="allow" name="allow" href="${callbackUrl}"><spring:message code="screen.oauth.confirm.allow" /></a>
-			</p>
-		</div>
-<jsp:directive.include file="../../default/ui/includes/bottom.jsp" />
+    <p>
+        <spring:message code="screen.oauth.confirm.message" arguments="${serviceName}"/>
+    </p>
+
+    <p>
+        <a id="allow" name="allow" href="${callbackUrl}"><spring:message code="screen.oauth.confirm.allow"/></a>
+    </p>
+</div>
+<jsp:directive.include file="../../default/ui/includes/bottom.jsp"/>

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,7 +19,9 @@
 package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
-import com.github.inspektr.audit.spi.AuditResourceResolver;
+
+import org.jasig.inspektr.audit.spi.AuditResourceResolver;
+
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.util.AopUtils;
 
@@ -31,11 +33,17 @@ import org.jasig.cas.util.AopUtils;
  */
 public final class ServiceResourceResolver implements AuditResourceResolver {
 
+    @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
         final Service service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
-        return new String[] {retval.toString() + " for " + service.getId()};
+        final StringBuilder builder = new StringBuilder(retval.toString());
+        builder.append(" for ");
+        builder.append(service.getId());
+
+        return new String[] {builder.toString()};
     }
 
+    @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception ex) {
         final Service service = (Service) AopUtils.unWrapJoinPoint(joinPoint).getArgs()[1];
         return new String[] {service.getId()};

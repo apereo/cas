@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -52,7 +52,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void testTgtIsExpiredByHardTimeOut() throws InterruptedException {
+    public void verifyTgtIsExpiredByHardTimeOut() throws InterruptedException {
          // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
          while (System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()
                  < (HARD_TIMEOUT - SLIDING_TIMEOUT / 2)) {
@@ -69,7 +69,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     }
 
     @Test
-    public void testTgtIsExpiredBySlidingWindow() throws InterruptedException {
+    public void verifyTgtIsExpiredBySlidingWindow() throws InterruptedException {
         ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false);
         Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
         assertFalse(ticketGrantingTicket.isExpired());

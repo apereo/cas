@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,14 +18,7 @@
  */
 package org.jasig.cas.web;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -33,6 +26,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.webflow.execution.repository.BadlyFormattedFlowExecutionKeyException;
 import org.springframework.webflow.execution.repository.FlowExecutionRepositoryException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The FlowExecutionExceptionResolver catches the FlowExecutionRepositoryException
@@ -45,7 +44,7 @@ import org.springframework.webflow.execution.repository.FlowExecutionRepositoryE
  *
  * @author Scott Battaglia
  * @author Misagh Moayyed
- * @since 3.0
+ * @since 3.0.0
  */
 public final class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
 
@@ -76,12 +75,12 @@ public final class FlowExecutionExceptionResolver implements HandlerExceptionRes
         }
 
         final String urlToRedirectTo = request.getRequestURI()
-                + (request.getQueryString() != null ? "?"
+                + (request.getQueryString() != null ? '?'
                 + request.getQueryString() : "");
 
         logger.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
-        final Map<String, Object> model = new HashMap<String, Object>();
-        model.put(this.modelKey, StringEscapeUtils.escapeHtml(exception.getMessage()));
+        final Map<String, Object> model = new HashMap<>();
+        model.put(this.modelKey, StringEscapeUtils.escapeHtml4(exception.getMessage()));
 
         return new ModelAndView(new RedirectView(urlToRedirectTo), model);
     }

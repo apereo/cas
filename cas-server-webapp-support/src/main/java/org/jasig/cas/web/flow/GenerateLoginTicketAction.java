@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -45,6 +45,12 @@ public class GenerateLoginTicketAction {
     @NotNull
     private UniqueTicketIdGenerator ticketIdGenerator;
 
+    /**
+     * Generate the login ticket.
+     *
+     * @param context the context
+     * @return <code>"generated"</code>
+     */
     public final String generate(final RequestContext context) {
         final String loginTicket = this.ticketIdGenerator.getNewTicketId(PREFIX);
         logger.debug("Generated login ticket {}", loginTicket);

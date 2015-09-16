@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,15 +26,16 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
+ * @deprecated As for 4.1. Consider using {@link org.jasig.cas.services.RegexRegisteredService} instead.
  * Mutable registered service that uses Ant path patterns for service matching.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
-
  * @since 3.1
  */
 @Entity
 @DiscriminatorValue("ant")
+@Deprecated
 public class RegisteredServiceImpl extends AbstractRegisteredService {
 
     /** Unique Id for serialization. */
@@ -42,14 +43,29 @@ public class RegisteredServiceImpl extends AbstractRegisteredService {
 
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
 
+    /**
+     * @deprecated As of 4.1. Consider using regex patterns instead
+     * via {@link org.jasig.cas.services.RegexRegisteredService}.
+     * Instantiates a new registered service.
+     */
+    @Deprecated
+    public RegisteredServiceImpl() {
+        super();
+        logger.warn("[{}] is deprecated and will be removed in future CAS releases. Consider using [{}] instead.",
+                this.getClass().getSimpleName(), RegexRegisteredService.class.getSimpleName());
+    }
+
+    @Override
     public void setServiceId(final String id) {
         this.serviceId = id;
     }
 
+    @Override
     public boolean matches(final Service service) {
         return service != null && PATH_MATCHER.match(serviceId.toLowerCase(), service.getId().toLowerCase());
     }
 
+    @Override
     protected AbstractRegisteredService newInstance() {
         return new RegisteredServiceImpl();
     }

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -25,20 +25,27 @@ package org.jasig.cas.validation;
  * occurring from a new login.
  *
  * @author Scott Battaglia
-
- * @since 3.0
+ * @since 3.0.0
  */
-public class Cas20ProtocolValidationSpecification extends
-    AbstractCasProtocolValidationSpecification {
+public class Cas20ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
+    /**
+     * Instantiates a new cas20 protocol validation specification.
+     */
     public Cas20ProtocolValidationSpecification() {
         super();
     }
 
+    /**
+     * Instantiates a new cas20 protocol validation specification.
+     *
+     * @param renew the renew
+     */
     public Cas20ProtocolValidationSpecification(final boolean renew) {
         super(renew);
     }
 
+    @Override
     protected boolean isSatisfiedByInternal(final Assertion assertion) {
         return true;
     }

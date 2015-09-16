@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -35,7 +35,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  *
  */
-public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
+public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
 
     @NotNull
     private Resource location;
@@ -43,17 +43,14 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean {
     @NotNull
     private String algorithm;
 
-    protected Object createInstance() throws Exception {
-        final InputStream privKey = this.location.getInputStream();
-        try {
+    @Override
+    protected PrivateKey createInstance() throws Exception {
+        try (final InputStream privKey = this.location.getInputStream()) {
             final byte[] bytes = new byte[privKey.available()];
             privKey.read(bytes);
-            privKey.close();
             final PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(bytes);
-            KeyFactory factory = KeyFactory.getInstance(this.algorithm);
+            final KeyFactory factory = KeyFactory.getInstance(this.algorithm);
             return factory.generatePrivate(privSpec);
-        } finally {
-            privKey.close();
         }
     }
 

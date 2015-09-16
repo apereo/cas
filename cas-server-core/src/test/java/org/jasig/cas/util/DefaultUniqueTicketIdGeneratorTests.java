@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,20 +18,20 @@
  */
 package org.jasig.cas.util;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public class DefaultUniqueTicketIdGeneratorTests {
 
     @Test
-    public void testUniqueGenerationOfTicketIds() {
-        DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(
+    public void verifyUniqueGenerationOfTicketIds() {
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(
             10);
 
         assertNotSame(generator.getNewTicketId("TEST"), generator
@@ -39,10 +39,10 @@ public class DefaultUniqueTicketIdGeneratorTests {
     }
 
     @Test
-    public void testSuffix() {
-        final String SUFFIX = "suffix";
-        DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(SUFFIX);
+    public void verifySuffix() {
+        final String suffix = "suffix";
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10, suffix);
 
-        assertTrue(generator.getNewTicketId("test").endsWith(SUFFIX));
+        assertTrue(generator.getNewTicketId("test").endsWith(suffix));
     }
 }

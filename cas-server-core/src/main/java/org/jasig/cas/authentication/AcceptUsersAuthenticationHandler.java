@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,17 +18,14 @@
  */
 package org.jasig.cas.authentication;
 
-import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.Map;
-
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.Map;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -46,7 +43,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  *
- * @since 3.0
+ * @since 3.0.0
  */
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
@@ -54,11 +51,14 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     @NotNull
     private Map<String, String> users;
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     **/
     @Override
-    protected final Principal authenticateUsernamePasswordInternal(final String username, final String password)
+    protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
 
+        final String username = credential.getUsername();
         final String cachedPassword = this.users.get(username);
 
         if (cachedPassword == null) {
@@ -66,11 +66,11 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
            throw new AccountNotFoundException(username + " not found in backing map.");
         }
 
-        final String encodedPassword = this.getPasswordEncoder().encode(password);
+        final String encodedPassword = this.getPasswordEncoder().encode(credential.getPassword());
         if (!cachedPassword.equals(encodedPassword)) {
             throw new FailedLoginException();
         }
-        return new SimplePrincipal(username);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
     /**

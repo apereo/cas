@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,13 +18,12 @@
  */
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
-import java.net.URL;
-
 import jcifs.Config;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+
+import java.net.URL;
 
 /**
  * Configuration helper for JCIFS and the Spring framework.
@@ -32,8 +31,10 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Marc-Antoine Garrigue
  * @author Arnaud Lesueur
  * @author Scott Battaglia
+ * @deprecated As of 4.1, the class name is abbreviated in a way that is not per camel-casing standards and will be renamed in the future.
  * @since 3.1
  */
+@Deprecated
 public final class JCIFSConfig implements InitializingBean {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
@@ -77,6 +78,9 @@ public final class JCIFSConfig implements InitializingBean {
     private String loginConf;
 
 
+    /**
+     * Instantiates a new jCIFS config.
+     */
     public JCIFSConfig() {
         Config.setProperty("jcifs.smb.client.soTimeout", "300000");
         Config.setProperty("jcifs.netbios.cachePolicy", "600");
@@ -84,9 +88,9 @@ public final class JCIFSConfig implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (System.getProperty(SYS_PROP_LOGIN_CONF) != null) {
-            logger.warn("found login config in system property, may overide : "
-                    + System.getProperty(SYS_PROP_LOGIN_CONF));
+        final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
+        if (propValue != null) {
+            logger.warn("found login config in system property, may overide : {}", propValue);
         }
 
         URL url = getClass().getResource(
@@ -102,30 +106,54 @@ public final class JCIFSConfig implements InitializingBean {
                 System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
             }
         }
-        logger.debug("configured login configuration path : "
-                + System.getProperty(SYS_PROP_LOGIN_CONF));
+        logger.debug("configured login configuration path : {}", propValue);
     }
 
+    /**
+     * Sets the jcifs service password.
+     *
+     * @param jcifsServicePassword the new jcifs service password
+     */
     public void setJcifsServicePassword(final String jcifsServicePassword) {
         logger.debug("jcifsServicePassword is set to *****");
         Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
     }
 
+    /**
+     * Sets the jcifs service principal.
+     *
+     * @param jcifsServicePrincipal the new jcifs service principal
+     */
     public void setJcifsServicePrincipal(final String jcifsServicePrincipal) {
         logger.debug("jcifsServicePrincipal is set to {}", jcifsServicePrincipal);
         Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
     }
 
+    /**
+     * Sets the kerberos conf.
+     *
+     * @param kerberosConf the new kerberos conf
+     */
     public void setKerberosConf(final String kerberosConf) {
         logger.debug("kerberosConf is set to :{}", kerberosConf);
         System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
     }
 
+    /**
+     * Sets the kerberos kdc.
+     *
+     * @param kerberosKdc the new kerberos kdc
+     */
     public void setKerberosKdc(final String kerberosKdc) {
         logger.debug("kerberosKdc is set to : {}", kerberosKdc);
         System.setProperty(SYS_PROP_KERBEROS_KDC, kerberosKdc);
     }
 
+    /**
+     * Sets the kerberos realm.
+     *
+     * @param kerberosRealm the new kerberos realm
+     */
     public void setKerberosRealm(final String kerberosRealm) {
         logger.debug("kerberosRealm is set to :{}", kerberosRealm);
         System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
@@ -135,11 +163,21 @@ public final class JCIFSConfig implements InitializingBean {
         this.loginConf = loginConf;
     }
 
+    /**
+     * Sets the use subject creds only.
+     *
+     * @param useSubjectCredsOnly the new use subject creds only
+     */
     public void setUseSubjectCredsOnly(final boolean useSubjectCredsOnly) {
         logger.debug("useSubjectCredsOnly is set to {}", useSubjectCredsOnly);
         System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, Boolean.toString(useSubjectCredsOnly));
     }
 
+    /**
+     * Sets the kerberos debug.
+     *
+     * @param kerberosDebug the new kerberos debug
+     */
     public void setKerberosDebug(final String kerberosDebug) {
         logger.debug("kerberosDebug is set to : {}", kerberosDebug);
         System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);

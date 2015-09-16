@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,156 +18,126 @@
  */
 package org.jasig.cas.services.web;
 
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
+import org.jasig.cas.web.view.JsonViewUtils;
+import org.jasig.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
-
-import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.ServletRequestDataBinder;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.SimpleFormController;
-import org.springframework.web.servlet.view.RedirectView;
 
 /**
- * SimpleFormController to handle adding/editing of RegisteredServices.
+ * Handle adding/editing of RegisteredServices.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class RegisteredServiceSimpleFormController extends SimpleFormController {
+@Controller
+public final class RegisteredServiceSimpleFormController extends AbstractManagementController {
 
-    /** Instance of ServiceRegistryManager. */
-    @NotNull
-    private final ServicesManager servicesManager;
-
-    /** Instance of AttributeRegistry. */
+    /**
+     * Instance of AttributeRegistry.
+     */
     @NotNull
     private final IPersonAttributeDao personAttributeDao;
 
-    public RegisteredServiceSimpleFormController(
-            final ServicesManager servicesManager,
-            final IPersonAttributeDao attributeRepository) {
-        this.servicesManager = servicesManager;
-        this.personAttributeDao = attributeRepository;
+    /**
+     * Instantiates a new registered service simple form controller.
+     *
+     * @param servicesManager    the services manager
+     * @param personAttributeDao the attribute repository
+     */
+    @Autowired
+    public RegisteredServiceSimpleFormController(final ServicesManager servicesManager,
+                                                 final IPersonAttributeDao personAttributeDao) {
+        super(servicesManager);
+        this.personAttributeDao = personAttributeDao;
     }
 
     /**
-     * {@inheritDoc}
-     * Sets the require fields and the disallowed fields from the
-     * HttpServletRequest.
-     *
-     * @see org.springframework.web.servlet.mvc.BaseCommandController#initBinder(javax.servlet.http.HttpServletRequest,
-     * org.springframework.web.bind.ServletRequestDataBinder)
+     * Adds the service to the Service Registry.
+     * @param request the request
+     * @param response the response
+     * @param result the result
+     * @param service the edit bean
      */
-    @Override
-    protected void initBinder(final HttpServletRequest request,
-            final ServletRequestDataBinder binder) throws Exception {
-        binder.setRequiredFields(new String[] {"description", "serviceId",
-                "name", "allowedToProxy", "enabled", "ssoEnabled",
-                "anonymousAccess", "evaluationOrder"});
-        binder.setDisallowedFields(new String[] {"id"});
-        binder.registerCustomEditor(String.class, new StringTrimmerEditor(true));
-    }
+    @RequestMapping(method = RequestMethod.POST, value = {"saveService.html"})
+    public void saveService(final HttpServletRequest request,
+                            final HttpServletResponse response,
+                            @RequestBody final RegisteredServiceEditBean.ServiceData service,
+                            final BindingResult result) {
+        try {
 
-    /**
-     * {@inheritDoc}
-     * Adds the service to the ServiceRegistry via the ServiceRegistryManager.
-     *
-     * @see org.springframework.web.servlet.mvc.SimpleFormController#onSubmit(javax.servlet.http.HttpServletRequest,
-     * javax.servlet.http.HttpServletResponse, java.lang.Object,
-     * org.springframework.validation.BindException)
-     */
-    @Override
-    protected ModelAndView onSubmit(final HttpServletRequest request,
-            final HttpServletResponse response, final Object command,
-            final BindException errors) throws Exception {
-        RegisteredService service = (RegisteredService) command;
-
-        // only change object class if there isn't an explicit RegisteredService class set
-        if (this.getCommandClass() == null) {
-            // CAS-1071
-            // Treat _new_ patterns starting with ^ character as a regular expression
-            if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE
-                    && service.getServiceId().startsWith("^")) {
-                logger.debug("Detected regular expression starting with ^");
-                final RegexRegisteredService regexService = new RegexRegisteredService();
-                regexService.copyFrom(service);
-                service = regexService;
+            final RegisteredService svcToUse = service.toRegisteredService(this.personAttributeDao);
+            if (svcToUse.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+                final RegisteredService curService = this.servicesManager.findServiceBy(svcToUse.getId());
+                if (curService != null && this.servicesManager.delete(curService.getId()) == null) {
+                    throw new IllegalArgumentException("Service " + curService.getId() + " cannot be updated");
+                }
             }
+
+            final RegisteredService newSvc = this.servicesManager.save(svcToUse);
+            logger.info("Saved changes to service {}", svcToUse.getId());
+
+            final Map<String, Object> model = new HashMap<>();
+            model.put("id", newSvc.getId());
+            model.put("status", HttpServletResponse.SC_OK);
+            JsonViewUtils.render(model, response);
+
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-        this.servicesManager.save(service);
-        logger.info("Saved changes to service " + service.getId());
-
-        final ModelAndView modelAndView = new ModelAndView(new RedirectView(
-                "manage.html#" + service.getId(), true));
-        modelAndView.addObject("action", "add");
-        modelAndView.addObject("id", service.getId());
-
-        return modelAndView;
     }
 
-    @Override
-    protected Object formBackingObject(final HttpServletRequest request)
-            throws Exception {
-        final String id = request.getParameter("id");
+    /**
+     * Gets service by id.
+     *
+     * @param id       the id
+     * @param request  the request
+     * @param response the response
+     */
+    @RequestMapping(method = RequestMethod.GET, value = {"getService.html"})
+    public void getServiceById(@RequestParam(value = "id", required = false) final Long id,
+                               final HttpServletRequest request, final HttpServletResponse response) {
 
-        if (!StringUtils.hasText(id)) {
-            // create a default RegisteredServiceImpl object if an explicit class isn't set
-            final Object service;
-            if (this.getCommandClass() != null) {
-                service = this.createCommand();
+        try {
+            RegisteredServiceEditBean bean = null;
+            if (id == -1) {
+                bean = new RegisteredServiceEditBean();
+                bean.setServiceData(null);
             } else {
-                service = new RegisteredServiceImpl();
+                final RegisteredService service = this.servicesManager.findServiceBy(id);
+
+                if (service == null) {
+                    logger.warn("Invalid service id specified [{}]. Cannot find service in the registry", id);
+                    throw new IllegalArgumentException("Service id cannot be found");
+                }
+                bean = RegisteredServiceEditBean.fromRegisteredService(service);
             }
-            logger.debug("Created new service of type " + service.getClass().getName());
-            return service;
+            final RegisteredServiceEditBean.FormData formData = bean.getFormData();
+            final List<String> possibleAttributeNames = new ArrayList<>();
+            possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
+            Collections.sort(possibleAttributeNames);
+            formData.setAvailableAttributes(possibleAttributeNames);
+
+            bean.setStatus(HttpServletResponse.SC_OK);
+            JsonViewUtils.render(bean, response);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-
-        final RegisteredService service = this.servicesManager.findServiceBy(Long.parseLong(id));
-
-        if (service != null) {
-            logger.debug("Loaded service " + service.getServiceId());
-        } else {
-            logger.debug("Invalid service id specified.");
-        }
-
-        return service;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @see org.springframework.web.servlet.mvc.SimpleFormController#referenceData(javax.servlet.http.HttpServletRequest)
-     */
-    @Override
-    protected Map<?, ?> referenceData(final HttpServletRequest request) throws Exception {
-
-        final Map<String, Object> model = new HashMap<String, Object>();
-
-        final List<String> possibleAttributeNames = new ArrayList<String>();
-        possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
-        Collections.sort(possibleAttributeNames);
-        model.put("availableAttributes", possibleAttributeNames);
-
-        final List<String> possibleUsernameAttributeNames = new ArrayList<String>();
-        possibleUsernameAttributeNames.addAll(possibleAttributeNames);
-        possibleUsernameAttributeNames.add(0, "");
-        model.put("availableUsernameAttributes", possibleUsernameAttributeNames);
-
-
-        model.put("pageTitle", getFormView());
-        model.put("commandName", getCommandName());
-        return model;
     }
 }

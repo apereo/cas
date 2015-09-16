@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -40,12 +40,20 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class RegisteredServiceImplTests {
 
-    private RegisteredServiceImpl service;
+    private final RegisteredServiceImpl service;
 
-    private String serviceToMatch;
+    private final String serviceToMatch;
 
-    private boolean expected;
+    private final boolean expected;
 
+    public RegisteredServiceImplTests(
+            final RegisteredServiceImpl service,
+            final String serviceToMatch,
+            final boolean expectedResult) {
+        this.service = service;
+        this.serviceToMatch = serviceToMatch;
+        this.expected = expectedResult;
+    }
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
@@ -71,19 +79,8 @@ public class RegisteredServiceImplTests {
         });
     }
 
-
-    public RegisteredServiceImplTests(
-            final RegisteredServiceImpl service,
-            final String serviceToMatch,
-            final boolean expectedResult) {
-        this.service = service;
-        this.serviceToMatch = serviceToMatch;
-        this.expected = expectedResult;
-    }
-
-
     @Test
-    public void testMatches() throws Exception {
+    public void verifyMatches() throws Exception {
         final Service testService;
         if (serviceToMatch == null) {
             testService = null;

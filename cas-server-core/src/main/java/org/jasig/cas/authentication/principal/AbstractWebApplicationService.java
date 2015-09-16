@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,12 +18,14 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of a WebApplicationService.
@@ -35,10 +37,11 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private static final long serialVersionUID = 610105280927740076L;
 
-    /** Logger instance. **/
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
-
     private static final Map<String, Object> EMPTY_MAP = Collections.unmodifiableMap(new HashMap<String, Object>());
+
+    /** Logger instance. **/
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     /** The id of the service. */
     private final String id;
 
@@ -49,8 +52,15 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private Principal principal;
 
-    private boolean loggedOutAlready = false;
+    private boolean loggedOutAlready;
 
+    /**
+     * Instantiates a new abstract web application service.
+     *
+     * @param id the id
+     * @param originalUrl the original url
+     * @param artifactId the artifact id
+     */
     protected AbstractWebApplicationService(final String id, final String originalUrl,
             final String artifactId) {
         this.id = id;
@@ -58,6 +68,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         this.artifactId = artifactId;
     }
 
+    @Override
     public final String toString() {
         return this.id;
     }
@@ -74,6 +85,12 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return EMPTY_MAP;
     }
 
+    /**
+     * Cleanup the url. Removes jsession ids and query strings.
+     *
+     * @param url the url
+     * @return sanitized url.
+     */
     protected static String cleanupUrl(final String url) {
         if (url == null) {
             return null;
@@ -85,7 +102,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
             return url;
         }
 
-        final int questionMarkPosition = url.indexOf("?");
+        final int questionMarkPosition = url.indexOf('?');
 
         if (questionMarkPosition < jsessionPosition) {
             return url.substring(0, url.indexOf(";jsession"));
@@ -105,6 +122,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return this.originalUrl;
     }
 
+    @Override
     public boolean equals(final Object object) {
         if (object == null) {
             return false;
@@ -119,12 +137,11 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return false;
     }
 
+    @Override
     public int hashCode() {
-        final int prime = 41;
-        int result = 1;
-        result = prime * result
-            + ((this.id == null) ? 0 : this.id.hashCode());
-        return result;
+        return new HashCodeBuilder()
+                .append(this.id)
+                .toHashCode();
     }
 
     protected Principal getPrincipal() {
@@ -135,8 +152,18 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         this.principal = principal;
     }
 
+    @Override
     public boolean matches(final Service service) {
-        return this.id.equals(service.getId());
+        try {
+            final String thisUrl = URLDecoder.decode(this.id, "UTF-8");
+            final String serviceUrl = URLDecoder.decode(service.getId(), "UTF-8");
+
+            logger.trace("Decoded urls and comparing [{}] with [{}]", thisUrl, serviceUrl);
+            return thisUrl.equalsIgnoreCase(serviceUrl);
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return false;
     }
 
     /**

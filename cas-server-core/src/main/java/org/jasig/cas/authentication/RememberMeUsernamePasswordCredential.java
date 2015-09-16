@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
  * Handles both remember me services and username and password.
@@ -27,7 +27,7 @@ import java.io.Serializable;
  * @since 3.2.1
  *
  */
-public class RememberMeUsernamePasswordCredential extends UsernamePasswordCredential implements RememberMeCredential, Serializable {
+public class RememberMeUsernamePasswordCredential extends UsernamePasswordCredential implements RememberMeCredential {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -6710007659431302397L;
@@ -38,13 +38,15 @@ public class RememberMeUsernamePasswordCredential extends UsernamePasswordCreden
         return this.rememberMe;
     }
 
+    @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (this.rememberMe ? 1231 : 1237);
-        return result;
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .append(rememberMe)
+                .toHashCode();
     }
 
+    @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;

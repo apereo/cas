@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,10 +18,10 @@
  */
 package org.jasig.cas.support.spnego.web.flow;
 
-import jcifs.util.Base64;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
 import org.jasig.cas.support.spnego.util.SpnegoConstants;
+import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
@@ -29,29 +29,31 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.Charset;
 
 /**
  * Second action of a SPNEGO flow : decode the gssapi-data and build a new
- * {@link org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential}.<br/>
+ * {@link org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential}.
+ * <p>
  * Once AbstractNonInteractiveCredentialsAction has executed the authentication
  * procedure, this action check whether a principal is present in Credential and
- * add corresponding response headers.
+ * add corresponding response headers.</p>
  *
  * @author Arnaud Lesueur
  * @author Marc-Antoine Garrigue
- * @see <a href='http://ietfreport.isoc.org/idref/rfc4559/#page-2'>RFC 4559</a>
+ * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
-public final class SpnegoCredentialsAction extends
-AbstractNonInteractiveCredentialsAction {
+public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
-    private boolean ntlm = false;
+
+    private boolean ntlm;
 
     private String messageBeginPrefix = constructMessagePrefix();
 
     /**
-     * Behavior in case of SPNEGO authentication failure :<br />
-     * <ul><li>True : if spnego is the last authentication method with no fallback.</li>
+     * Behavior in case of SPNEGO authentication failure :
+     * <ul><li>True : if SPNEGO is the last authentication method with no fallback.</li>
      * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
      * </ul>
      */
@@ -60,8 +62,7 @@ AbstractNonInteractiveCredentialsAction {
     @Override
     protected Credential constructCredentialsFromRequest(
             final RequestContext context) {
-        final HttpServletRequest request = WebUtils
-                .getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
         final String authorizationHeader = request
                 .getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
@@ -69,25 +70,30 @@ AbstractNonInteractiveCredentialsAction {
         if (StringUtils.hasText(authorizationHeader)
                 && authorizationHeader.startsWith(this.messageBeginPrefix)
                 && authorizationHeader.length() > this.messageBeginPrefix.length()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("SPNEGO Authorization header found with "
-                        + (authorizationHeader.length() - this.messageBeginPrefix
-                                .length()) + " bytes");
+
+            logger.debug("SPNEGO Authorization header found with {} bytes",
+                    authorizationHeader.length() - this.messageBeginPrefix.length());
+
+            final byte[] token = CompressionUtils.decodeBase64ToByteArray(authorizationHeader.substring(this.messageBeginPrefix.length()));
+            if (token == null) {
+                logger.warn("Could not compress authorization header in base64");
+                return null;
             }
-            final byte[] token = Base64.decode(authorizationHeader
-                    .substring(this.messageBeginPrefix.length()));
-            if (logger.isDebugEnabled()) {
-                logger.debug("Obtained token: " + new String(token));
-            }
+            logger.debug("Obtained token: {}", new String(token, Charset.defaultCharset()));
             return new SpnegoCredential(token);
         }
 
         return null;
     }
 
+    /**
+     * Construct message prefix.
+     *
+     * @return the string
+     */
     protected String constructMessagePrefix() {
         return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                + " ";
+                + ' ';
     }
 
     @Override
@@ -102,6 +108,12 @@ AbstractNonInteractiveCredentialsAction {
         setResponseHeader(context, credential);
     }
 
+    /**
+     * Sets the response header based on the retrieved tocken.
+     *
+     * @param context the context
+     * @param credential the credential
+     */
     private void setResponseHeader(final RequestContext context,
             final Credential credential) {
         if (credential == null) {
@@ -113,12 +125,10 @@ AbstractNonInteractiveCredentialsAction {
         final SpnegoCredential spnegoCredentials = (SpnegoCredential) credential;
         final byte[] nextToken = spnegoCredentials.getNextToken();
         if (nextToken != null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Obtained output token: " + new String(nextToken));
-            }
+            logger.debug("Obtained output token: {}", new String(nextToken, Charset.defaultCharset()));
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, (this.ntlm
                     ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE)
-                    + " " + Base64.encode(nextToken));
+                    + ' ' + CompressionUtils.encodeBase64(nextToken));
         } else {
             logger.debug("Unable to obtain the output token required.");
         }
@@ -129,6 +139,11 @@ AbstractNonInteractiveCredentialsAction {
         }
     }
 
+    /**
+     * Sets the ntlm and generate message prefix.
+     *
+     * @param ntlm the new ntlm
+     */
     public void setNtlm(final boolean ntlm) {
         this.ntlm = ntlm;
         this.messageBeginPrefix = constructMessagePrefix();
