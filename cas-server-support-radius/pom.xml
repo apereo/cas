@@ -53,14 +53,14 @@
     </dependencies>
 
     <repositories>
-    	<!-- 
-    	The JRadius artifacts above are not available in Maven Central yet.
-    	So the following alterantive is provided.
-    	-->
+        <!-- 
+        The JRadius artifacts above are not available in Maven Central yet.
+        So the following alterantive is provided.
+        -->
         <repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <properties>
