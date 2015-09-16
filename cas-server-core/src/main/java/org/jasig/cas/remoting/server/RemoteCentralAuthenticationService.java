@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,25 +18,30 @@
  */
 package org.jasig.cas.remoting.server;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.constraints.NotNull;
-
+import org.apache.commons.collections4.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.validation.Assertion;
 import org.springframework.util.Assert;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 /**
- * Wrapper implementation around a CentralAuthenticationService that does
+ * Wrapper implementation around a CentralAuthenticationService that
  * completes the marshalling of parameters from the web-service layer to the
  * service layer. Typically the only thing that is done is to validate the
  * parameters (as you would in the web tier) and then delegate to the service
@@ -49,9 +54,11 @@ import org.springframework.util.Assert;
  * </ul>
  *
  * @author Scott Battaglia
-
- * @since 3.0
+   @deprecated As of 4.1. No longer required. The default implementation can be used
+   to delegate calls to the service layer from WS.
+ * @since 3.0.0
  */
+@Deprecated
 public final class RemoteCentralAuthenticationService implements CentralAuthenticationService {
 
     /** The CORE to delegate to. */
@@ -68,7 +75,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * invalid credentials.
      */
     @Override
-    public String createTicketGrantingTicket(final Credential... credentials)
+    public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         Assert.notNull(credentials, "credentials cannot be null");
@@ -81,9 +88,17 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * {@inheritDoc}
      */
     @Override
-    public String grantServiceTicket(final String ticketGrantingTicketId, final Service service)
+    public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service)
             throws TicketException {
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<Ticket> getTickets(@NotNull final Predicate predicate) {
+        return this.centralAuthenticationService.getTickets(predicate);
     }
 
     /**
@@ -91,13 +106,22 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @throws IllegalArgumentException if given invalid credentials
      */
     @Override
-    public String grantServiceTicket(
+    public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId, final Service service, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         checkForErrors(credentials);
 
         return this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, credentials);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz)
+            throws InvalidTicketException {
+        return this.centralAuthenticationService.getTicket(ticketId, clazz);
     }
 
     /**
@@ -127,7 +151,7 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
      * @throws IllegalArgumentException if the credentials are invalid.
      */
     @Override
-    public String delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
+    public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
         checkForErrors(credentials);
@@ -135,6 +159,11 @@ public final class RemoteCentralAuthenticationService implements CentralAuthenti
         return this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId, credentials);
     }
 
+    /**
+     * Check for errors by asking the validator to review each credential.
+     *
+     * @param credentials the credentials
+     */
     private void checkForErrors(final Credential... credentials) {
         if (credentials == null) {
             return;

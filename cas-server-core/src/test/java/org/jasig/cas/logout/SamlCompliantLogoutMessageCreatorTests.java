@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,12 +18,7 @@
  */
 package org.jasig.cas.logout;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,19 +26,31 @@ import org.junit.runners.JUnit4;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.net.URL;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+/**
+ * @author Marvin S. Addison
+ * @since 4.0.0
+ */
 @RunWith(JUnit4.class)
 public class SamlCompliantLogoutMessageCreatorTests {
 
     private final LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
 
     @Test
-    public void testMessageBuilding() throws Exception {
+    public void verifyMessageBuilding() throws Exception {
 
         final SingleLogoutService service = mock(SingleLogoutService.class);
-        final LogoutRequest request = new LogoutRequest("TICKET-ID", service);
+        when(service.getOriginalUrl()).thenReturn(TestUtils.CONST_TEST_URL);
+        final URL logoutUrl = new URL(service.getOriginalUrl());
+        final DefaultLogoutRequest request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl);
 
         final String msg = builder.create(request);
 

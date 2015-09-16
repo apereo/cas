@@ -1,0 +1,28 @@
+{
+    "@class" : "org.jasig.cas.services.RegexRegisteredService",
+    "id" : 103935657744185,
+    "description" : null,
+    "serviceId" : "testId",
+    "name" : "testSaveAttributeReleasePolicyAllowedAttrRulesAndFilter",
+    "theme" : "testtheme",
+    "proxyPolicy" : {
+        "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+        "pattern" : "https://.+"
+    },
+    "enabled" : true,
+    "ssoEnabled" : false,
+    "evaluationOrder" : 1000,
+    "usernameAttributeProvider" : {
+        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
+    },
+    "logoutType" : "BACK_CHANNEL",
+    "requiredHandlers" : [ "java.util.HashSet", [ "h1", "h2" ] ],
+    "attributeReleasePolicy" : {
+        "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+        "attributeFilter" : {
+            "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
+            "pattern" : "\\w+"
+        },
+        "allowedAttributes" : [ "java.util.ArrayList", [ "1", "2", "3" ] ]
+    }
+}

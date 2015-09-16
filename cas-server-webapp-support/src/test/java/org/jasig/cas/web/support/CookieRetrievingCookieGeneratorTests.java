@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,69 +18,68 @@
  */
 package org.jasig.cas.web.support;
 
-import static org.junit.Assert.*;
-
-import javax.servlet.http.Cookie;
-
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import javax.servlet.http.Cookie;
+
+import static org.junit.Assert.assertEquals;
+
 /**
- *
+ * Unit tests for {@link org.jasig.cas.web.support.CookieRetrievingCookieGenerator}.
  * @author Scott Battaglia
  * @since 3.2.1
  *
  */
 public final class CookieRetrievingCookieGeneratorTests {
 
-    private CookieRetrievingCookieGenerator g;
+    private CookieRetrievingCookieGenerator generator;
 
     @Before
     public void setUp() throws Exception {
-        this.g = new CookieRetrievingCookieGenerator();
-        this.g.setRememberMeMaxAge(100);
-        this.g.setCookieDomain("cas.org");
-        this.g.setCookieMaxAge(5);
-        this.g.setCookiePath("/");
-        this.g.setCookieName("test");
+        this.generator = new CookieRetrievingCookieGenerator();
+        this.generator.setRememberMeMaxAge(100);
+        this.generator.setCookieDomain("cas.org");
+        this.generator.setCookieMaxAge(5);
+        this.generator.setCookiePath("/");
+        this.generator.setCookieName("test");
     }
 
     @Test
-    public void testCookieAddWithRememberMe() {
+    public void verifyCookieAddWithRememberMe() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, "true");
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
-        this.g.addCookie(request, response, "test");
+        this.generator.addCookie(request, response, "test");
+        request.setCookies(response.getCookies());
 
         final Cookie c = response.getCookie("test");
         assertEquals(100, c.getMaxAge());
-        assertEquals("test", c.getValue());
+        assertEquals("test", this.generator.retrieveCookieValue(request));
     }
 
     @Test
-    public void testCookieAddWithoutRememberMe() {
+    public void verifyCookieAddWithoutRememberMe() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
-
-        this.g.addCookie(request, response, "test");
+        this.generator.addCookie(request, response, "test");
+        request.setCookies(response.getCookies());
 
         final Cookie c = response.getCookie("test");
         assertEquals(5, c.getMaxAge());
-        assertEquals("test", c.getValue());
+        assertEquals("test", this.generator.retrieveCookieValue(request));
     }
 
     @Test
-    public void testCookieRetrieve() {
+    public void verifyCookieRetrieve() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final Cookie cookie = new Cookie("test", "test");
-        cookie.setDomain("cas.org");
-        cookie.setMaxAge(5);
-        request.setCookies(new Cookie[] {cookie});
-
-        assertEquals("test", this.g.retrieveCookieValue(request));
+        final MockHttpServletResponse response = new MockHttpServletResponse();
+        this.generator.addCookie(request, response, "test");
+        request.setCookies(response.getCookies());
+        assertEquals("test", this.generator.retrieveCookieValue(request));
     }
 }

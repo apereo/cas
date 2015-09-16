@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -34,6 +34,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Unit test for {@link X509SubjectPrincipalResolver}.
  *
  * @author Marvin S. Addison
+ * @since 4.0.0
  */
 @RunWith(Parameterized.class)
 public class X509SubjectPrincipalResolverTests {
@@ -45,9 +46,9 @@ public class X509SubjectPrincipalResolverTests {
     /**
      * Creates a new test instance with the given parameters.
      *
-     * @param certPath
-     * @param descriptor
-     * @param expectedResult
+     * @param certPath path to the cert
+     * @param descriptor the descriptor
+     * @param expectedResult the expected result
      */
     public X509SubjectPrincipalResolverTests(
             final String certPath,
@@ -72,7 +73,7 @@ public class X509SubjectPrincipalResolverTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<Object[]>();
+        final Collection<Object[]> params = new ArrayList<>();
 
         // Test case #1
         // Use CN for principal ID
@@ -118,7 +119,7 @@ public class X509SubjectPrincipalResolverTests {
     }
 
     @Test
-    public void testResolvePrincipalInternal() {
+    public void verifyResolvePrincipalInternal() {
         Assert.assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
     }
 

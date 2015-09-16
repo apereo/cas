@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -17,10 +17,6 @@
  * under the License.
  */
 package org.jasig.cas.userdetails;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import javax.validation.constraints.NotNull;
 
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
@@ -38,6 +34,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * Provides a simple {@link UserDetailsService} implementation that obtains user details from an LDAP search.
  * Two searches are performed by this component for every user details lookup:
@@ -51,7 +51,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  *
  * @author Marvin S. Addison
  * @author Misagh Moayyed
- * @since 4.0
+ * @since 4.0.0
  */
 public class LdapUserDetailsService implements UserDetailsService {
 
@@ -84,12 +84,14 @@ public class LdapUserDetailsService implements UserDetailsService {
     @NotNull
     private final String roleAttributeName;
 
-    /** Prefix appended to the uppercased {@link #roleAttributeName} per the normal Spring Security convention. */
+    /** Prefix appended to the uppercased
+     * {@link #roleAttributeName} per the normal Spring Security convention.
+     **/
     @NotNull
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
 
     /** Flag that indicates whether multiple search results are allowed for a given credential. */
-    private boolean allowMultipleResults = false;
+    private boolean allowMultipleResults;
 
     /**
      * Creates a new instance with the given required parameters.
@@ -159,8 +161,9 @@ public class LdapUserDetailsService implements UserDetailsService {
             throw new IllegalStateException(
                     "Found multiple results for user which is not allowed (allowMultipleResults=false).");
         }
-        final String userDn = userResult.getEntry().getDn();
-        final LdapAttribute userAttribute = userResult.getEntry().getAttribute(this.userAttributeName);
+        final LdapEntry userResultEntry = userResult.getEntry();
+        final String userDn = userResultEntry.getDn();
+        final LdapAttribute userAttribute = userResultEntry.getAttribute(this.userAttributeName);
         if (userAttribute == null) {
             throw new IllegalStateException(this.userAttributeName + " attribute not found in results.");
         }
@@ -178,14 +181,18 @@ public class LdapUserDetailsService implements UserDetailsService {
             throw new RuntimeException("LDAP error fetching roles for user.", e);
         }
         LdapAttribute roleAttribute;
-        final Collection<SimpleGrantedAuthority> roles = new ArrayList<SimpleGrantedAuthority>(roleResult.size());
+        final Collection<SimpleGrantedAuthority> roles = new ArrayList<>(roleResult.size());
         for (final LdapEntry entry : roleResult.getEntries()) {
             roleAttribute = entry.getAttribute(this.roleAttributeName);
             if (roleAttribute == null) {
                 logger.warn("Role attribute not found on entry {}", entry);
                 continue;
             }
-            roles.add(new SimpleGrantedAuthority(this.rolePrefix + roleAttribute.getStringValue().toUpperCase()));
+
+            for (final String role : roleAttribute.getStringValues()) {
+                roles.add(new SimpleGrantedAuthority(this.rolePrefix + role.toUpperCase()));
+            }
+
         }
 
         return new User(id, UNKNOWN_PASSWORD, roles);
@@ -195,8 +202,8 @@ public class LdapUserDetailsService implements UserDetailsService {
      * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
      * the username as a parameter.
      *
-     * @param  username  Username parameter of search query.
-     *
+     * @param executor the executor
+     * @param username the username
      * @return  Search filter with parameters applied.
      */
     private SearchFilter createSearchFilter(final SearchExecutor executor, final String username) {

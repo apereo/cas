@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -27,6 +27,7 @@ import net.sourceforge.jwebunit.WebTestCase;
 
 /**
  * Base class for all Web compatibility tests.
+ * @since 4.0
  */
 public abstract class AbstractCompatibilityTests extends WebTestCase {
 
@@ -39,8 +40,6 @@ public abstract class AbstractCompatibilityTests extends WebTestCase {
      * classpath.
      */
     public static final String PROPERTIES_FILE_NAME = "configuration.properties";
-
-    private final Properties properties = new Properties();
 
     /**
      * The name of the compatibility test configuration property the value of which
@@ -73,6 +72,8 @@ public abstract class AbstractCompatibilityTests extends WebTestCase {
      * which will be a URL to a service we can use for testing.
      */
     public static final String SERVICE_URL_PROPERTY = "service.url";
+
+    private final Properties properties = new Properties();
 
     protected AbstractCompatibilityTests() throws IOException {
         super();

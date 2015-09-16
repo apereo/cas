@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,22 +18,25 @@
  */
 package org.jasig.cas.ticket;
 
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -43,7 +46,7 @@ import org.springframework.util.Assert;
  * specified as object creation.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
@@ -57,22 +60,29 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob
-    @Column(name="AUTHENTICATION", nullable=false)
+    @Column(name="AUTHENTICATION", nullable=false, length = 1000000)
     private Authentication authentication;
 
     /** Flag to enforce manual expiration. */
     @Column(name="EXPIRED", nullable=false)
-    private Boolean expired = false;
+    private Boolean expired = Boolean.FALSE;
+
+    /** Service that produced a proxy-granting ticket. */
+    @Column(name="PROXIED_BY", nullable=true)
+    private Service proxiedBy;
 
     /** The services associated to this ticket. */
     @Lob
-    @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false)
-    private final HashMap<String, Service> services = new HashMap<String, Service>();
+    @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = 1000000)
+    private final HashMap<String, Service> services = new HashMap<>();
 
     @Lob
-    @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false)
-    private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<Authentication>();
+    @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = 1000000)
+    private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
 
+    /**
+     * Instantiates a new ticket granting ticket impl.
+     */
     public TicketGrantingTicketImpl() {
         // nothing to do
     }
@@ -82,18 +92,24 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * May throw an {@link IllegalArgumentException} if the Authentication object is null.
      *
      * @param id the id of the Ticket
-     * @param ticketGrantingTicket the parent ticket
+     * @param proxiedBy Service that produced this proxy ticket.
+     * @param parentTicketGrantingTicket the parent ticket
      * @param authentication the Authentication request for this ticket
      * @param policy the expiration policy for this ticket.
      */
     public TicketGrantingTicketImpl(final String id,
-        final TicketGrantingTicket ticketGrantingTicket,
-        final Authentication authentication, final ExpirationPolicy policy) {
-        super(id, ticketGrantingTicket, policy);
+        final Service proxiedBy,
+        final TicketGrantingTicket parentTicketGrantingTicket,
+        @NotNull final Authentication authentication, final ExpirationPolicy policy) {
 
+        super(id, parentTicketGrantingTicket, policy);
+
+        if (parentTicketGrantingTicket != null && proxiedBy == null) {
+            throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
+        }
         Assert.notNull(authentication, "authentication cannot be null");
-
         this.authentication = authentication;
+        this.proxiedBy = proxiedBy;
     }
 
     /**
@@ -106,7 +122,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      */
     public TicketGrantingTicketImpl(final String id,
         final Authentication authentication, final ExpirationPolicy policy) {
-        this(id, null, authentication, policy);
+        this(id, null, null, authentication, policy);
     }
 
     /**
@@ -144,16 +160,15 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
     /**
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
+     * Unlike {@link Collections#unmodifiableMap(java.util.Map)},
+     * which is a view of a separate map which can still change, an instance of {@link ImmutableMap}
+     * contains its own data and will never change.
      *
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
     @Override
     public synchronized Map<String, Service> getServices() {
-        final Map<String, Service> map = new HashMap<String, Service>(services.size());
-        for (final String ticket : services.keySet()) {
-            map.put(ticket, services.get(ticket));
-        }
-        return Collections.unmodifiableMap(map);
+        return ImmutableMap.copyOf(this.services);
     }
 
     /**
@@ -174,13 +189,17 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.getGrantingTicket() == null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void markTicketExpired() {
-        this.expired = true;
+        this.expired = Boolean.TRUE;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public TicketGrantingTicket getRoot() {
         TicketGrantingTicket current = this;
@@ -202,16 +221,20 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.expired;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Authentication> getSupplementalAuthentications() {
         return this.supplementalAuthentications;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Authentication> getChainedAuthentications() {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
 
         list.add(getAuthentication());
 
@@ -223,16 +246,31 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return Collections.unmodifiableList(list);
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public Service getProxiedBy() {
+        return this.proxiedBy;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(final Object object) {
-        if (object == null
-            || !(object instanceof TicketGrantingTicket)) {
+        if (object == null) {
+            return false;
+        }
+        if (object == this) {
+            return true;
+        }
+        if (!(object instanceof TicketGrantingTicket)) {
             return false;
         }
 
         final Ticket ticket = (Ticket) object;
 
-        return ticket.getId().equals(this.getId());
+        return new EqualsBuilder()
+                .append(ticket.getId(), this.getId())
+                .isEquals();
     }
+
 }

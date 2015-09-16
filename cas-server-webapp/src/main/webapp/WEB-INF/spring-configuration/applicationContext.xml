@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -19,19 +19,19 @@
     under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     <description>
         This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
-        modify this unless you
-        know what you're doing!
+        modify this unless you know what you're doing!
     </description>
 
     <!--
@@ -41,35 +41,28 @@
     -->
     <aop:aspectj-autoproxy/>
 
-    <!--
-      Declare the TimingAspect that we want to weave into the other beans
-      defined in this config file.
-    -->
-    <bean id="timingAspect" class="org.perf4j.log4j.aop.TimingAspect"/>
-
-
     <!-- 
         Message source for this context, loaded from localized "messages_xx" files.]
         
-    	Disable the fallback mechanism to the system/JVM locale. By turning off this behavior, CAS
-    	will be able to revert back to the default language bundle that is "messages.properties"
-    	and will not rely on the JVM default locale which introduces the side effect of rendering
-    	the UI in the JVM locale by default.
+        Disable the fallback mechanism to the system/JVM locale. By turning off this behavior, CAS
+        will be able to revert back to the default language bundle that is "messages.properties"
+        and will not rely on the JVM default locale which introduces the side effect of rendering
+        the UI in the JVM locale by default.
       
         Also, explicitly set the default encoding to be UTF-8 when parsing message bundles.
         The default, if not set, is none which forces ISO-8859-1 of java.util.ResourceBundle.
     -->
     <bean id="messageSource" class="org.jasig.cas.web.view.CasReloadableMessageBundle"
           p:basenames-ref="basenames" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
-          p:cacheSeconds="180" p:useCodeAsDefaultMessage="true" />
+          p:cacheSeconds="180" p:useCodeAsDefaultMessage="true"/>
 
     <util:list id="basenames">
         <value>classpath:custom_messages</value>
         <value>classpath:messages</value>
     </util:list>
-    
+
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
-        c:serviceRegistryDao-ref="serviceRegistryDao" />
+          c:serviceRegistryDao-ref="serviceRegistryDao"/>
 
     <!--
         Job to periodically reload services from service registry.
@@ -81,50 +74,58 @@
           p:targetObject-ref="servicesManager"
           p:targetMethod="reload"/>
 
-    <bean id="periodicServiceRegistryReloaderTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+    <bean id="periodicServiceRegistryReloaderTrigger"
+          class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
           p:jobDetail-ref="serviceRegistryReloaderJobDetail"
           p:startDelay="${service.registry.quartz.reloader.startDelay:120000}"
           p:repeatInterval="${service.registry.quartz.reloader.repeatInterval:120000}"/>
 
-    <bean id="httpClient" class="org.jasig.cas.util.SimpleHttpClient"
-          p:readTimeout="5000"
-          p:connectionTimeout="5000"/>
 
-    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.SimpleHttpClient" parent="httpClient"
-          p:followRedirects="false" />
+    <!-- HTTP clients -->
+    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" abstract="true"
+          p:readTimeout="${http.client.read.timeout:5000}"
+          p:connectionTimeout="${http.client.connection.timeout:5000}"/>
 
-    <bean id="persistentIdGenerator"
-          class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
-          p:salt="casrocks"/>
+    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" parent="httpClient"
+          p:redirectsEnabled="false" p:circularRedirectsAllowed="false"/>
+
+    <bean id="trustStoreSslSocketFactory" class="org.jasig.cas.authentication.FileTrustStoreSslSocketFactory"
+          c:trustStoreFile="${http.client.truststore.file:classpath:truststore.jks}"
+          c:trustStorePassword="${http.client.truststore.psw:changeit}"/>
+
+    <bean id="supportsTrustStoreSslSocketFactoryHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
+          parent="httpClient" p:sslSocketFactory-ref="trustStoreSslSocketFactory"/>
+
 
     <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
           c:servicesManager-ref="servicesManager"
           c:httpClient-ref="noRedirectHttpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"
-          p:disableSingleSignOut="${slo.callbacks.disabled:false}" />
+          p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}"
+          p:asynchronous="${slo.callbacks.asynchronous:true}"/>
 
-    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
-    
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator"/>
+
+    <bean id="principalFactory" class="org.jasig.cas.authentication.principal.DefaultPrincipalFactory"
+          scope="prototype"/>
+
     <!-- CentralAuthenticationService -->
-    <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl">
-        <constructor-arg index="0" ref="ticketRegistry"/>
-        <constructor-arg index="1">
-          <null />
-        </constructor-arg>
-        <constructor-arg index="2" ref="authenticationManager"/>
-        <constructor-arg index="3" ref="ticketGrantingTicketUniqueIdGenerator"/>
-        <constructor-arg index="4" ref="uniqueIdGeneratorsMap"/>
-        <constructor-arg index="5" ref="grantingTicketExpirationPolicy"/>
-        <constructor-arg index="6" ref="serviceTicketExpirationPolicy"/>
-        <constructor-arg index="7" ref="servicesManager"/>
-        <constructor-arg index="8" ref="logoutManager"/>
-        <property name="persistentIdGenerator" ref="persistentIdGenerator"/>
-    </bean>
+    <bean id="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
+          c:ticketRegistry-ref="ticketRegistry"
+          c:serviceTicketRegistry="#{null}"
+          c:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"
+          c:authenticationManager-ref="authenticationManager"
+          c:ticketGrantingTicketUniqueTicketIdGenerator-ref="ticketGrantingTicketUniqueIdGenerator"
+          c:ticketGrantingTicketExpirationPolicy-ref="grantingTicketExpirationPolicy"
+          c:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
+          c:servicesManager-ref="servicesManager"
+          c:logoutManager-ref="logoutManager"
+          p:principalFactory-ref="principalFactory"/>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 
     <bean id="proxy20Handler" class="org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler"
-          p:httpClient-ref="httpClient"
+          p:httpClient-ref="supportsTrustStoreSslSocketFactoryHttpClient"
           p:uniqueTicketIdGenerator-ref="proxy20TicketUniqueIdGenerator"/>
 
     <!-- ADVISORS -->
@@ -132,9 +133,9 @@
           class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
-            p:afterInitialization="true" />
+          p:afterInitialization="true"/>
 
     <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
     <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"/>
-            
+
 </beans>

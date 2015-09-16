@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.login;
 
 import java.io.IOException;
@@ -25,11 +24,14 @@ import com.meterware.httpunit.WebResponse;
 
 /**
  * Helper class for accomplishing CAS login, a common task of compatibility tests.
- *
- * @since 3.0
+ * @author Marvin Addison
+ * @since 3.0.0
  */
 public final class LoginHelper {
 
+    /**
+     * Instantiates a new login helper.
+     */
     private LoginHelper() {}
 
     /**
@@ -52,9 +54,9 @@ public final class LoginHelper {
         // followed the redirect to the service, so we'll find the service ticket
         // on the response URL.
 
-        String queryString = webResponse.getURL().getQuery();
+        final String queryString = webResponse.getURL().getQuery();
 
-        int ticketIndex = queryString.indexOf("ticket=");
+        final int ticketIndex = queryString.indexOf("ticket=");
 
         if (ticketIndex == -1) {
 
@@ -64,11 +66,11 @@ public final class LoginHelper {
 
             // parse the ticket out of the JavaScript
 
-            String response = webResponse.getText();
+            final String response = webResponse.getText();
 
-            int declarationStartsAt = response.indexOf("window.location.href");
+            final int declarationStartsAt = response.indexOf("window.location.href");
             // cut off the front of the response up to the beginning of the service URL
-            String responseAfterWindowLocHref = response.substring(declarationStartsAt
+            final String responseAfterWindowLocHref = response.substring(declarationStartsAt
                     + "window.location.href12".length());
 
             // The URL might be single or double quoted
@@ -85,7 +87,7 @@ public final class LoginHelper {
                 endQuoteIndex = endSingleQuoteIndex;
             }
 
-            int ticketEqualsIndex = responseAfterWindowLocHref.indexOf("ticket=");
+            final int ticketEqualsIndex = responseAfterWindowLocHref.indexOf("ticket=");
 
             serviceTicket = responseAfterWindowLocHref.substring(ticketEqualsIndex + "ticket=".length(), endQuoteIndex);
 

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -21,12 +21,15 @@ package org.jasig.cas.ticket.registry;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
+
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -66,7 +69,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
      * @param serviceTicketTimeOut        ST timeout in seconds.
      */
     public MemCacheTicketRegistry(final String[] hostnames, final int ticketGrantingTicketTimeOut,
-final int serviceTicketTimeOut) {
+                                  final int serviceTicketTimeOut) {
         try {
             this.client = new MemcachedClient(AddrUtil.getAddresses(Arrays.asList(hostnames)));
         } catch (final IOException e) {
@@ -89,7 +92,8 @@ final int serviceTicketTimeOut) {
     @Deprecated
     public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut,
             final String[] hostnames) {
-        this(hostnames, (int) (ticketGrantingTicketTimeOut / 1000), (int) (serviceTicketTimeOut / 1000));
+        this(hostnames, (int) TimeUnit.MILLISECONDS.toSeconds(ticketGrantingTicketTimeOut),
+                (int) TimeUnit.MILLISECONDS.toSeconds(serviceTicketTimeOut));
     }
 
     /**
@@ -107,6 +111,7 @@ final int serviceTicketTimeOut) {
         this.client = client;
     }
 
+    @Override
     protected void updateTicket(final Ticket ticket) {
         logger.debug("Updating ticket {}", ticket);
         try {
@@ -121,6 +126,7 @@ final int serviceTicketTimeOut) {
         }
     }
 
+    @Override
     public void addTicket(final Ticket ticket) {
         logger.debug("Adding ticket {}", ticket);
         try {
@@ -134,7 +140,7 @@ final int serviceTicketTimeOut) {
             logger.error("Failed adding {}", ticket, e);
         }
     }
-
+    @Override
     public boolean deleteTicket(final String ticketId) {
         logger.debug("Deleting ticket {}", ticketId);
         try {
@@ -144,7 +150,7 @@ final int serviceTicketTimeOut) {
         }
         return false;
     }
-
+    @Override
     public Ticket getTicket(final String ticketId) {
         try {
             final Ticket t = (Ticket) this.client.get(ticketId);
@@ -168,6 +174,11 @@ final int serviceTicketTimeOut) {
         throw new UnsupportedOperationException("GetTickets not supported.");
     }
 
+    /**
+     * Destroy the client and shut down.
+     *
+     * @throws Exception the exception
+     */
     public void destroy() throws Exception {
         this.client.shutdown();
     }
@@ -184,6 +195,12 @@ final int serviceTicketTimeOut) {
         return true;
     }
 
+    /**
+     * Gets the timeout value for the ticket.
+     *
+     * @param t the t
+     * @return the timeout
+     */
     private int getTimeout(final Ticket t) {
         if (t instanceof TicketGrantingTicket) {
             return this.tgtTimeout;

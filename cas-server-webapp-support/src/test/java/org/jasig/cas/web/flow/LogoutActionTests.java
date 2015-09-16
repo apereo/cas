@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,17 +18,8 @@
  */
 package org.jasig.cas.web.flow;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.http.Cookie;
-
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
@@ -45,9 +36,18 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.Cookie;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 /**
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest {
 
@@ -96,18 +96,17 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     }
 
     @Test
-    public void testLogoutNoCookie() throws Exception {
+    public void verifyLogoutNoCookie() throws Exception {
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
     }
 
     @Test
-    public void testLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
+    public void verifyLogoutForServiceWithFollowRedirectsAndMatchingService() throws Exception {
         this.request.addParameter("service", "TestService");
         final RegisteredServiceImpl impl = new RegisteredServiceImpl();
         impl.setServiceId("TestService");
         impl.setName("TestService");
-        impl.setEnabled(true);
         this.serviceManager.save(impl);
         this.logoutAction.setFollowServiceRedirects(true);
         final Event event = this.logoutAction.doExecute(this.requestContext);
@@ -138,18 +137,18 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
     }
 
     @Test
-    public void testLogoutCookie() throws Exception {
-        Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
-        this.request.setCookies(new Cookie[] {cookie});
+    public void verifyLogoutCookie() throws Exception {
+        final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
+        this.request.setCookies(cookie);
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FINISH_EVENT, event.getId());
     }
 
     @Test
-    public void testLogoutRequestBack() throws Exception {
+    public void verifyLogoutRequestBack() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
-        this.request.setCookies(new Cookie[] {cookie});
-        LogoutRequest logoutRequest = new LogoutRequest("", null);
+        this.request.setCookies(cookie);
+        final LogoutRequest logoutRequest = new DefaultLogoutRequest("", null, null);
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
@@ -158,14 +157,14 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testLogoutRequestFront() throws Exception {
+    public void verifyLogoutRequestFront() throws Exception {
         final Cookie cookie = new Cookie(COOKIE_TGC_ID, "test");
-        this.request.setCookies(new Cookie[] {cookie});
-        final LogoutRequest logoutRequest = new LogoutRequest("", null);
+        this.request.setCookies(cookie);
+        final LogoutRequest logoutRequest = new DefaultLogoutRequest("", null, null);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         final Event event = this.logoutAction.doExecute(this.requestContext);
         assertEquals(LogoutAction.FRONT_EVENT, event.getId());
-        List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
+        final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, logoutRequests.size());
         assertEquals(logoutRequest, logoutRequests.get(0));
     }

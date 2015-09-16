@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -32,15 +32,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
  *
  * @author Scott Battaglia
- * @since 3.0
+ * @since 3.0.0
  */
 public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
 
     /** A HashMap to contain the tickets. */
     private final Map<String, Ticket> cache;
 
+    /**
+     * Instantiates a new default ticket registry.
+     */
     public DefaultTicketRegistry() {
-        this.cache = new ConcurrentHashMap<String, Ticket>();
+        this.cache = new ConcurrentHashMap<>();
     }
 
     /**
@@ -57,7 +60,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
      * accommodate this many threads.
      */
     public DefaultTicketRegistry(final int initialCapacity, final float loadFactor, final int concurrencyLevel) {
-        this.cache = new ConcurrentHashMap<String, Ticket>(initialCapacity, loadFactor, concurrencyLevel);
+        this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
     /**
@@ -72,6 +75,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         this.cache.put(ticket.getId(), ticket);
     }
 
+    @Override
     public Ticket getTicket(final String ticketId) {
         if (ticketId == null) {
             return null;
@@ -87,6 +91,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         return ticket;
     }
 
+    @Override
     public boolean deleteTicket(final String ticketId) {
         if (ticketId == null) {
             return false;
@@ -99,9 +104,10 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         return Collections.unmodifiableCollection(this.cache.values());
     }
 
+    @Override
     public int sessionCount() {
         int count = 0;
-        for (Ticket t : this.cache.values()) {
+        for (final Ticket t : this.cache.values()) {
             if (t instanceof TicketGrantingTicket) {
                 count++;
             }
@@ -109,9 +115,10 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         return count;
     }
 
+    @Override
     public int serviceTicketCount() {
         int count = 0;
-        for (Ticket t : this.cache.values()) {
+        for (final Ticket t : this.cache.values()) {
             if (t instanceof ServiceTicket) {
                 count++;
             }

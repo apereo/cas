@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,21 +18,34 @@
  */
 package org.jasig.cas;
 
+import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.jasig.cas.services.LogoutType;
+import org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
+import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
+import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
+import org.jasig.services.persondir.support.StubPersonAttributeDao;
+import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -42,22 +55,31 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.2
+ * @since 3.0.0.2
  */
 public final class TestUtils {
 
     public static final String CONST_USERNAME = "test";
 
-    private static final String CONST_PASSWORD = "test1";
+    public static final String CONST_TEST_URL = "https://test.com";
 
-    private static final String CONST_BAD_URL = "http://www.acs.rutgers.edu";
+    public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
+
+    public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
+
+    public static final String CONST_GOOD_URL = "https://github.com/";
+
+    private static final String CONST_PASSWORD = "test1";
 
     private static final String CONST_CREDENTIALS = "credentials";
 
@@ -65,12 +87,6 @@ public final class TestUtils {
             "org.springframework.validation.BindException.credentials";
 
     private static final String[] CONST_NO_PRINCIPALS = new String[0];
-
-    public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
-
-    public static final String CONST_EXCEPTION_NON_EXPECTED = "Exception not expected.";
-
-    public static final String CONST_GOOD_URL = "https://github.com/";
 
     private TestUtils() {
         // do not instantiate
@@ -105,14 +121,10 @@ public final class TestUtils {
         return getHttpBasedServiceCredentials(CONST_GOOD_URL);
     }
 
-    public static HttpBasedServiceCredential getBadHttpBasedServiceCredentials() {
-        return getHttpBasedServiceCredentials(CONST_BAD_URL);
-    }
-
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(
         final String url) {
         try {
-            return new HttpBasedServiceCredential(new URL(url));
+            return new HttpBasedServiceCredential(new URL(url), TestUtils.getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }
@@ -123,11 +135,56 @@ public final class TestUtils {
     }
 
     public static Principal getPrincipal(final String name) {
-        return new SimplePrincipal(name);
+        return getPrincipal(name, Collections.EMPTY_MAP);
+    }
+
+    public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
+        return new DefaultPrincipalFactory().createPrincipal(name, attributes);
+    }
+
+    public static AbstractRegisteredService getRegisteredService(final String id) {
+        try  {
+            final RegexRegisteredService s = new RegexRegisteredService();
+            s.setServiceId(id);
+            s.setEvaluationOrder(1);
+            s.setName("Test registered service");
+            s.setDescription("Registered service description");
+            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+            s.setId(new SecureRandom().nextInt(Math.abs(s.hashCode())));
+            s.setTheme("exampleTheme");
+            s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
+            final DefaultRegisteredServiceAccessStrategy accessStrategy =
+                    new DefaultRegisteredServiceAccessStrategy(true, true);
+            accessStrategy.setRequireAllAttributes(true);
+            accessStrategy.setRequiredAttributes(getTestAttributes());
+            s.setAccessStrategy(accessStrategy);
+            s.setLogo(new URL("https://logo.example.org/logo.png"));
+            s.setLogoutType(LogoutType.BACK_CHANNEL);
+            s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
+            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
+
+            s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:pub.key", "RSA"));
+
+            final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+            policy.setAuthorizedToReleaseCredentialPassword(true);
+            policy.setAuthorizedToReleaseProxyGrantingTicket(true);
+
+            final CachingPrincipalAttributesRepository repo =
+                    new CachingPrincipalAttributesRepository(new StubPersonAttributeDao(), 10);
+            repo.setMergingStrategy(new NoncollidingAttributeAdder());
+            policy.setPrincipalAttributesRepository(repo);
+            policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
+            policy.setAllowedAttributes(new ArrayList(getTestAttributes().keySet()));
+            s.setAttributeReleasePolicy(policy);
+
+            return s;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Service getService() {
-        return getService(CONST_USERNAME);
+        return getService(CONST_TEST_URL);
     }
 
     public static Service getService(final String name) {
@@ -151,9 +208,9 @@ public final class TestUtils {
     public static Authentication getAuthentication(final Principal principal, final Map<String, Object> attributes) {
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
-        return new AuthenticationBuilder(principal)
+        return new DefaultAuthenticationBuilder(principal)
                 .addCredential(meta)
-                .addSuccess("testHandler", new HandlerResult(handler, meta))
+                .addSuccess("testHandler", new DefaultHandlerResult(handler, meta))
                 .setAttributes(attributes)
                 .build();
     }
@@ -168,7 +225,7 @@ public final class TestUtils {
 
     public static Assertion getAssertion(final boolean fromNewLogin,
         final String[] extraPrincipals) {
-        final List<Authentication> list = new ArrayList<Authentication>();
+        final List<Authentication> list = new ArrayList<>();
         list.add(TestUtils.getAuthentication());
 
         for (int i = 0; i < extraPrincipals.length; i++) {
@@ -211,5 +268,13 @@ public final class TestUtils {
                     CONST_CREDENTIALS));
 
         return context;
+    }
+
+    public static Map<String, Set<String>> getTestAttributes() {
+        final Map<String, Set<String>>  attributes = new HashMap<>();
+        attributes.put("uid", ImmutableSet.of("uid"));
+        attributes.put("givenName", ImmutableSet.of("CASUser"));
+        attributes.put("memberOf", ImmutableSet.of("system", "admin", "cas"));
+        return attributes;
     }
 }

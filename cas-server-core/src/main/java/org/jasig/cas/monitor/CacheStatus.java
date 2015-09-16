@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -16,8 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package org.jasig.cas.monitor;
+
+import com.google.common.collect.ImmutableList;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Describes meaningful health metrics on the status of a cache.
@@ -36,7 +39,7 @@ public class CacheStatus extends Status {
      * @param description Optional status description.
      * @param statistics One or more sets of cache statistics.
      */
-    public CacheStatus(final StatusCode code, final String description, final CacheStatistics... statistics) {
+    public CacheStatus(final StatusCode code, final String description, @NotNull final CacheStatistics... statistics) {
         super(code, buildDescription(description, statistics));
         this.statistics = statistics;
     }
@@ -60,10 +63,17 @@ public class CacheStatus extends Status {
      * @return Cache statistics.
      */
     public CacheStatistics[] getStatistics() {
-        return this.statistics;
+        return ImmutableList.copyOf(this.statistics).toArray(new CacheStatistics[this.statistics.length]);
     }
 
 
+    /**
+     * Builds the description string for the retrieved statistics.
+     *
+     * @param desc the desc
+     * @param statistics the statistics
+     * @return the string
+     */
     private static String buildDescription(final String desc, final CacheStatistics... statistics) {
         if (statistics == null || statistics.length == 0) {
             return desc;

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -31,11 +31,14 @@ import org.slf4j.LoggerFactory;
  * @since 3.1.2
  *
  */
-public abstract class AbstractArgumentExtractor implements
-    ArgumentExtractor {
+public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    /**
+     * Logger instance.
+     */
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Override
     public final WebApplicationService extractService(final HttpServletRequest request) {
         final WebApplicationService service = extractServiceInternal(request);
 
@@ -48,5 +51,11 @@ public abstract class AbstractArgumentExtractor implements
         return service;
     }
 
+    /**
+     * Extract service from the request.
+     *
+     * @param request the request
+     * @return the web application service
+     */
     protected abstract WebApplicationService extractServiceInternal(final HttpServletRequest request);
 }

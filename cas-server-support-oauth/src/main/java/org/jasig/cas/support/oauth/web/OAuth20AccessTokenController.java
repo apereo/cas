@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,10 +18,8 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
@@ -34,6 +32,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.concurrent.TimeUnit;
+
 /**
  * This controller returns an access token which is the CAS
  * granting ticket according to the service and code (service ticket) given.
@@ -43,7 +45,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
  */
 public final class OAuth20AccessTokenController extends AbstractController {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
 
     private final ServicesManager servicesManager;
 
@@ -51,6 +53,13 @@ public final class OAuth20AccessTokenController extends AbstractController {
 
     private final long timeout;
 
+    /**
+     * Instantiates a new o auth20 access token controller.
+     *
+     * @param servicesManager the services manager
+     * @param ticketRegistry the ticket registry
+     * @param timeout the timeout
+     */
     public OAuth20AccessTokenController(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
             final long timeout) {
         this.servicesManager = servicesManager;
@@ -75,29 +84,40 @@ public final class OAuth20AccessTokenController extends AbstractController {
 
         final boolean isVerified = verifyAccessTokenRequest(response, redirectUri, clientId, clientSecret, code);
         if (!isVerified) {
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, 400);
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_BAD_REQUEST);
         }
 
         final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
             LOGGER.error("Code expired : {}", code);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, 400);
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
         // remove service ticket
         ticketRegistry.deleteTicket(serviceTicket.getId());
 
         response.setContentType("text/plain");
-        final int expires = (int) (timeout - (System.currentTimeMillis()
-                - ticketGrantingTicket.getCreationTime()) / 1000);
+        final int expires = (int) (timeout - TimeUnit.MILLISECONDS
+                .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
 
         final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, ticketGrantingTicket.getId(),
                                                     OAuthConstants.EXPIRES, expires);
         LOGGER.debug("text : {}", text);
-        return OAuthUtils.writeText(response, text, 200);
+        return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
     }
 
+    /**
+     * Verify access token request by reviewing the values of
+     * client id, redirect uri, client secret, code, etc.
+     *
+     * @param response the response
+     * @param redirectUri the redirect uri
+     * @param clientId the client id
+     * @param clientSecret the client secret
+     * @param code the code
+     * @return true, if successful
+     */
     private boolean verifyAccessTokenRequest(final HttpServletResponse response, final String redirectUri,
                                              final String clientId, final String clientSecret, final String code) {
 

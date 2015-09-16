@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -19,8 +19,12 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -34,7 +38,7 @@ import javax.validation.constraints.NotNull;
  * Service.
  *
  * @author Scott Battaglia
- * @since 3.0.4
+ * @since 3.0.0.4
  */
 public final class GenerateServiceTicketAction extends AbstractAction {
 
@@ -48,13 +52,18 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
         try {
-            final String serviceTicketId = this.centralAuthenticationService
-                .grantServiceTicket(ticketGrantingTicket,
-                    service);
-            WebUtils.putServiceTicketInRequestScope(context,
-                serviceTicketId);
+            final Credential credential = WebUtils.getCredential(context);
+
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService
+                .grantServiceTicket(ticketGrantingTicket, service, credential);
+            WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
+        } catch (final AuthenticationException e) {
+            logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final TicketException e) {
+            if (e instanceof InvalidTicketException) {
+                this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
+            }
             if (isGatewayPresent(context)) {
                 return result("gateway");
             }
@@ -68,6 +77,12 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    /**
+     * Checks if <code>gateway</code> is present in the request params.
+     *
+     * @param context the context
+     * @return true, if gateway present
+     */
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
             .getRequestParameterMap().get("gateway"));

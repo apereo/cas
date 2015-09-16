@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Scott Battaglia
 
- * @since 3.0
+ * @since 3.0.0
  */
 public final class DefaultLongNumericGenerator implements LongNumericGenerator {
 
@@ -39,11 +39,19 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
 
     private final AtomicLong count;
 
+    /**
+     * Instantiates a new default long numeric generator.
+     */
     public DefaultLongNumericGenerator() {
         this(0);
         // nothing to do
     }
 
+    /**
+     * Instantiates a new default long numeric generator.
+     *
+     * @param initialValue the initial value
+     */
     public DefaultLongNumericGenerator(final long initialValue) {
         this.count = new AtomicLong(initialValue);
     }
@@ -56,14 +64,23 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
         return Long.toString(this.getNextValue());
     }
 
+    @Override
     public int maxLength() {
         return DefaultLongNumericGenerator.MAX_STRING_LENGTH;
     }
-
+    
+    @Override
     public int minLength() {
         return DefaultLongNumericGenerator.MIN_STRING_LENGTH;
     }
 
+    
+    /**
+     * Gets the next value.
+     *
+     * @return the next value. If the count has reached {@link Long#MAX_VALUE}, 
+     * then {@link Long#MAX_VALUE} is returned. Otherwise, the next increment.
+     */
     protected long getNextValue() {
         if (this.count.compareAndSet(Long.MAX_VALUE, 0)) {
             return Long.MAX_VALUE;

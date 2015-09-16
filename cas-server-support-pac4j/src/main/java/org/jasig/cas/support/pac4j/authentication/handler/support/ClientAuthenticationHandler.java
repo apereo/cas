@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,37 +18,30 @@
  */
 package org.jasig.cas.support.pac4j.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
-import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.profile.UserProfile;
 
+import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
+
 /**
- * This handler authenticates the client credentials : it uses them to get the user profile returned by the provider
- * for an authenticated user.
+ * Specialized handler which builds the authenticated user directly from the retrieved user profile.
  *
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@SuppressWarnings("unchecked")
-public final class ClientAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class ClientAuthenticationHandler extends AbstractClientAuthenticationHandler {
 
     /**
-     * The clients for authentication.
+     * Whether to use the typed identifier (by default) or just the identifier.
      */
-    @NotNull
-    private final Clients clients;
+    private boolean typedIdUsed = true;
 
     /**
      * Define the clients.
@@ -56,38 +49,36 @@ public final class ClientAuthenticationHandler extends AbstractPreAndPostProcess
      * @param theClients The clients for authentication
      */
     public ClientAuthenticationHandler(final Clients theClients) {
-        this.clients = theClients;
+        super(theClients);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean supports(final Credential credential) {
-        return credential != null && ClientCredential.class.isAssignableFrom(credential.getClass());
-    }
-
-    @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
-        final ClientCredential clientCredentials = (ClientCredential) credential;
-        logger.debug("clientCredentials : {}", clientCredentials);
-
-        final String clientName = clientCredentials.getCredentials().getClientName();
-        logger.debug("clientName : {}", clientName);
-
-        // get client
-        final Client<org.pac4j.core.credentials.Credentials, UserProfile> client = this.clients.findClient(clientName);
-        logger.debug("client : {}", client);
-
-        // get user profile
-        final UserProfile userProfile = client.getUserProfile(clientCredentials.getCredentials());
-        logger.debug("userProfile : {}", userProfile);
-
-        if (userProfile != null && StringUtils.isNotBlank(userProfile.getId())) {
-            clientCredentials.setUserProfile(userProfile);
-            return new HandlerResult(
-                    this,
-                    new BasicCredentialMetaData(credential),
-                    new SimplePrincipal(userProfile.getId(), userProfile.getAttributes()));
+    protected HandlerResult createResult(final ClientCredential credentials, final UserProfile profile)
+        throws GeneralSecurityException, PreventedException {
+        final String id;
+        if (typedIdUsed) {
+            id = profile.getTypedId();
+        } else {
+            id = profile.getId();
         }
+        if (StringUtils.isNotBlank(id)) {
+            credentials.setUserProfile(profile);
+            return new DefaultHandlerResult(
+                this,
+                new BasicCredentialMetaData(credentials),
+                this.principalFactory.createPrincipal(id, profile.getAttributes()));
+        }
+        throw new FailedLoginException("No identifier found for this user profile: " + profile);
+    }
 
-        throw new FailedLoginException("Provider did not produce profile for " + clientCredentials);
+    public boolean isTypedIdUsed() {
+        return typedIdUsed;
+    }
+
+    public void setTypedIdUsed(final boolean typedIdUsed) {
+        this.typedIdUsed = typedIdUsed;
     }
 }

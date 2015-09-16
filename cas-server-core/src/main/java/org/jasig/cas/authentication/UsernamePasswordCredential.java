@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,18 +18,23 @@
  */
 package org.jasig.cas.authentication;
 
-import java.io.Serializable;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  * Credential for authenticating with a username and password.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0
+ * @since 3.0.0
  */
 public class UsernamePasswordCredential implements Credential, Serializable {
+
+    /** Authentication attribute name for password. **/
+    public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
 
     /** Unique ID for serialization. */
     private static final long serialVersionUID = -700605081472810939L;
@@ -89,7 +94,9 @@ public class UsernamePasswordCredential implements Credential, Serializable {
         this.username = userName;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getId() {
         return this.username;
@@ -109,7 +116,7 @@ public class UsernamePasswordCredential implements Credential, Serializable {
             return false;
         }
 
-        UsernamePasswordCredential that = (UsernamePasswordCredential) o;
+        final UsernamePasswordCredential that = (UsernamePasswordCredential) o;
 
         if (password != null ? !password.equals(that.password) : that.password != null) {
             return false;
@@ -124,8 +131,10 @@ public class UsernamePasswordCredential implements Credential, Serializable {
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(username)
+                .append(password)
+                .toHashCode();
     }
+
 }

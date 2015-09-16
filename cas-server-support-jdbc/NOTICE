@@ -16,60 +16,96 @@ specific language governing permissions and limitations
 under the License.
 
 This project includes:
-  A Hibernate Core Module under GNU Lesser General Public License
+  Annotations for Metrics under Apache License 2.0
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
-  Apache Log4j under The Apache Software License, Version 2.0
+  Apache Commons Codec under Apache License, Version 2.0
+  Apache Commons Collections under The Apache Software License, Version 2.0
+  Apache Commons Lang under Apache License, Version 2.0
+  Apache HttpClient under Apache License, Version 2.0
+  Apache HttpCore under Apache License, Version 2.0
+  Apache Log4j API under The Apache Software License, Version 2.0
+  Apache Log4j Commons Logging Bridge under The Apache Software License, Version 2.0
+  Apache Log4j Core under The Apache Software License, Version 2.0
+  Apache Log4j SLF4J Binding under The Apache Software License, Version 2.0
+  Apache Shiro :: Core under The Apache Software License, Version 2.0
+  Apereo CAS Core under Apache 2
+  Apereo CAS Core APIs under Apache 2
+  Apereo CAS JDBC Support under Apache 2
   AspectJ runtime under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
-  Bean Validation API under Apache License, Version 2.0
-  Commons Codec under The Apache Software License, Version 2.0
-  Commons Collections under The Apache Software License, Version 2.0
+  Bean Validation API under The Apache Software License, Version 2.0
+  CDI APIs under Apache License, Version 2.0
+  ClassMate under The Apache Software License, Version 2.0
+  Commons BeanUtils under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
-  Commons Lang under The Apache Software License, Version 2.0
+  Commons Logging under The Apache Software License, Version 2.0
+  Core Hibernate O/RM functionality under GNU Lesser General Public License
   dom4j under BSD License
+  Expression Language 2.2 Implementation under CDDL + GPLv2 with classpath exception
+  Expression Language 3.0 API under CDDL + GPLv2 with classpath exception
+  fastinfoset under Apache License, Version 2.0
+  FindBugs-Annotations under GNU Lesser Public License
+  Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest Core under New BSD License
-  Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
+  Hibernate Commons Annotations under GNU Lesser General Public License
+  Hibernate JPA Support under GNU Lesser General Public License
+  Hibernate Validator Engine under Apache License, Version 2.0
+  HyperSQL Database under HSQLDB License, a BSD open source license
+  Inspektr - Aspects under Apache 2.0 License
   Inspektr - Auditing API under Apache 2.0 License
   Inspektr - Common API under Apache 2.0 License
-  Jasig CAS Core under Apache 2
-  Jasig CAS JDBC Support under Apache 2
-  JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
+  Interceptors 1.1 API under lgpl
+  istack common utility code runtime under CDDL 1.1 or GPL2 w/ CPE
+  Jackson-annotations under The Apache Software License, Version 2.0
+  Jackson-core under The Apache Software License, Version 2.0
+  jackson-databind under The Apache Software License, Version 2.0
+  Java Annotation Indexer under AL 2.0
+  Java Architecture for XML Binding under CDDL 1.1 or GPL2 w/ CPE
+  Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
+  Java Servlet API under CDDL + GPLv2 with classpath exception
+  Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
-  jaxb-api under Commons Development and Distribution License, Version 1.0
-  jaxb-impl under Commons Development and Distribution License, Version 1.0
-  JBoss Logging 3 under GNU Lesser General Public License, version 2.1
-  JCL 1.1.1 implemented over SLF4J under MIT License
-  Joda time under Apache 2
-  JPA 2.0 API under Sun Binary Code License
-  JUnit under Common Public License Version 1.0
+  javax.inject under The Apache Software License, Version 2.0
+  JAXB CORE under CDDL 1.1 or GPL2 w/ CPE
+  JAXB Reference Implementation under CDDL 1.1 or GPL2 w/ CPE
+  JBoss Logging 3 under Apache License, version 2.0
+  JBoss Logging I18n Annotations under Public Domain
+  Joda-Time under Apache 2
+  jose4j under The Apache Software License, Version 2.0
+  JSR-250 Common Annotations for the JavaTM Platform under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
+  JSR107 API and SPI under JSR-000107 JCACHE 2.9 Public Review - Updated Specification
+                License
+  JSR107 Cache RI under The Apache Software License, Version 2.0
+  jsr173_api under Commons Development and Distribution License, Version 1.0
+  JUL to SLF4J bridge under MIT License
+  JUnit under Eclipse Public License 1.0
+  LDAPTIVE under Apache 2 or GNU Lesser General Public License
+  Metrics Core under Apache License 2.0
   Mockito under The MIT License
-  Objenesis under MIT License
-  Perf4J under Apache 2
+  Objenesis under Apache 2
+  OGNL - Object Graph Navigation Library under Apache License, Version 2.0
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
-  servlet-api under Commons Development and Distribution License, Version 1.0
+  Reflections under WTFPL or The New BSD License
   SLF4J API Module under MIT License
-  SLF4J LOG4J-12 Binding under MIT License
   Spring AOP under The Apache Software License, Version 2.0
   Spring Beans under The Apache Software License, Version 2.0
-  Spring Binding under Apache License, Version 2.0
+  Spring Binding under The Apache Software License, Version 2.0
   Spring Context under The Apache Software License, Version 2.0
   Spring Context Support under The Apache Software License, Version 2.0
   Spring Core under The Apache Software License, Version 2.0
   Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
-  Spring JavaScript under Apache License, Version 2.0
-  Spring JavaScript Resources under Apache License, Version 2.0
   Spring JDBC under The Apache Software License, Version 2.0
+  Spring JS under The Apache Software License, Version 2.0
+  Spring JS Resources under The Apache Software License, Version 2.0
   Spring Object/Relational Mapping under The Apache Software License, Version 2.0
   Spring TestContext Framework under The Apache Software License, Version 2.0
   Spring Transaction under The Apache Software License, Version 2.0
   Spring Web under The Apache Software License, Version 2.0
-  Spring Web Flow under Apache License, Version 2.0
+  Spring Web Flow under The Apache Software License, Version 2.0
   Spring Web MVC under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
-  Streaming API for XML under Sun Binary Code License
-  Transaction 1.1 API under lgpl
-  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
 

@@ -1,8 +1,8 @@
 /*
- * Licensed to Jasig under one or more contributor license
+ * Licensed to Apereo under one or more contributor license
  * agreements. See the NOTICE file distributed with this work
  * for additional information regarding copyright ownership.
- * Jasig licenses this file to you under the Apache License,
+ * Apereo licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file
  * except in compliance with the License.  You may obtain a
  * copy of the License at the following location:
@@ -18,14 +18,11 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.util.Collection;
-import java.util.HashSet;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -33,40 +30,63 @@ import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.style.ToStringCreator;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 /**
  * <p>
  * <a href="http://ehcache.org/">Ehcache</a> based distributed ticket registry.
  * </p>
+ *
  * <p>
  * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
  * <ul>
- * <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
- * <li>Monitoring : follow separately the number of TGT and ST.</li>
+ *   <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
+ *   <li>Monitoring : follow separately the number of TGT and ST.</li>
  * </ul>
- * </p>
  *
  * @author <a href="mailto:cleclerc@xebia.fr">Cyrille Le Clerc</a>
  * @author Adam Rybicki
  * @author Andrew Tillinghast
+ * @since 3.5
  */
 public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
 
-    private Cache serviceTicketsCache = null;
+    private Cache serviceTicketsCache;
 
-    private Cache ticketGrantingTicketsCache = null;
+    private Cache ticketGrantingTicketsCache;
 
-    /** @see #setSupportRegistryState(boolean)*/
+    /**
+     * @see #setSupportRegistryState(boolean)
+     **/
     private boolean supportRegistryState = true;
 
+    /**
+     * Instantiates a new EhCache ticket registry.
+     */
     public EhCacheTicketRegistry() {
+        
     }
 
+    /**
+     * Instantiates a new EhCache ticket registry.
+     *
+     * @param serviceTicketsCache the service tickets cache
+     * @param ticketGrantingTicketsCache the ticket granting tickets cache
+     */
     public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache) {
         super();
         setServiceTicketsCache(serviceTicketsCache);
         setTicketGrantingTicketsCache(ticketGrantingTicketsCache);
     }
 
+    /**
+     * Instantiates a new EhCache ticket registry.
+     *
+     * @param serviceTicketsCache the service tickets cache
+     * @param ticketGrantingTicketsCache the ticket granting tickets cache
+     * @param supportRegistryState the support registry state
+     */
     public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache,
             final boolean supportRegistryState) {
         this(serviceTicketsCache, ticketGrantingTicketsCache);
@@ -77,7 +97,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     public void addTicket(final Ticket ticket) {
         final Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
-            logger.debug("Adding service ticket {} to the cache", ticket.getId(), this.serviceTicketsCache.getName());
+            logger.debug("Adding service ticket {} to the cache {}", ticket.getId(), this.serviceTicketsCache.getName());
             this.serviceTicketsCache.put(element);
         } else if (ticket instanceof TicketGrantingTicket) {
             logger.debug("Adding ticket granting ticket {} to the cache {}", ticket.getId(),
@@ -116,7 +136,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         final Collection<Element> tgtTicketsTickets = this.ticketGrantingTicketsCache.getAll(
                 this.ticketGrantingTicketsCache.getKeysWithExpiryCheck()).values();
 
-        final Collection<Ticket> allTickets = new HashSet<Ticket>(serviceTickets.size() + tgtTicketsTickets.size());
+        final Collection<Ticket> allTickets = new HashSet<>(serviceTickets.size() + tgtTicketsTickets.size());
 
         for (final Element ticket : serviceTickets) {
             allTickets.add((Ticket) ticket.getObjectValue());

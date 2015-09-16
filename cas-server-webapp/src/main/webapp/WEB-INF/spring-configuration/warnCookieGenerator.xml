@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Licensed to Jasig under one or more contributor license
+    Licensed to Apereo under one or more contributor license
     agreements. See the NOTICE file distributed with this work
     for additional information regarding copyright ownership.
-    Jasig licenses this file to you under the Apache License,
+    Apereo licenses this file to you under the Apache License,
     Version 2.0 (the "License"); you may not use this file
     except in compliance with the License.  You may obtain a
     copy of the License at the following location:
@@ -19,18 +19,20 @@
     under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-	<description>
-	This Spring Configuration file describes the cookie used to store the WARN parameter so that a user is warned whenever the CAS service
-	is used.  You would modify this if you wanted to change the cookie path or the name.
-	</description>
-	
-	<bean id="warnCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-		p:cookieSecure="true"
-		p:cookieMaxAge="-1"
-		p:cookieName="CASPRIVACY"
-		p:cookiePath="/cas" />
+    <description>
+        This Spring Configuration file describes the cookie used to store the WARN parameter so that a user is warned
+        whenever the CAS service
+        is used. You would modify this if you wanted to change the cookie path or the name.
+    </description>
+
+    <bean id="warnCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
+          p:cookieSecure="true"
+          p:cookieMaxAge="-1"
+          p:cookieName="CASPRIVACY"
+          p:cookiePath="/cas"/>
+
 </beans>
