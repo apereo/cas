@@ -21,11 +21,20 @@ package org.jasig.cas.web.report;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.FileAppender;
+import org.apache.logging.log4j.core.appender.MemoryMappedFileAppender;
+import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
+import org.apache.logging.log4j.core.appender.RollingFileAppender;
+import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.util.StringBuilders;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.CasDelegatingLogger;
 import org.slf4j.impl.CasLoggerFactory;
@@ -39,6 +48,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,8 +68,17 @@ import java.util.Set;
 @Controller("loggingConfigController")
 public class LoggingConfigController {
 
+    private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
+
     @Value("${log4j.config.location:classpath:log4j2.xml}")
     private Resource logConfigurationFile;
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView getDefaultView() throws Exception {
+        final Map<String, Object> model = new HashMap<>();
+        model.put("logConfigurationFile", logConfigurationFile.getURI());
+        return new ModelAndView(VIEW_CONFIG, model);
+    }
 
     /**
      * Gets configuration as JSON.
@@ -94,7 +113,36 @@ public class LoggingConfigController {
             }
             loggerMap.put("additive", config.isAdditive());
             loggerMap.put("level", config.getLevel().name());
-            loggerMap.put("appenders", config.getAppenders().keySet());
+
+            final Set<String> appenders = new HashSet<>();
+            for (final String key : config.getAppenders().keySet()) {
+                final Appender appender = config.getAppenders().get(key);
+                final ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.JSON_STYLE);
+                builder.append("name", appender.getName());
+                builder.append("state", appender.getState());
+                builder.append("layoutFormat", appender.getLayout().getContentFormat());
+                builder.append("layoutContentType", appender.getLayout().getContentType());
+
+                if (appender instanceof FileAppender) {
+                    builder.append("file", ((FileAppender) appender).getFileName());
+                }
+                if (appender instanceof RandomAccessFileAppender) {
+                    builder.append("file", ((RandomAccessFileAppender) appender).getFileName());
+                }
+                if (appender instanceof RollingFileAppender) {
+                    builder.append("file", ((RollingFileAppender) appender).getFileName());
+                    builder.append("filePattern", ((RollingFileAppender) appender).getFilePattern());
+                }
+                if (appender instanceof MemoryMappedFileAppender) {
+                    builder.append("file", ((MemoryMappedFileAppender) appender).getFileName());
+                }
+                if (appender instanceof RollingRandomAccessFileAppender) {
+                    builder.append("file", ((RollingRandomAccessFileAppender) appender).getFileName());
+                    builder.append("filePattern", ((RollingRandomAccessFileAppender) appender).getFilePattern());
+                }
+                appenders.add(builder.build());
+            }
+            loggerMap.put("appenders", appenders);
 
             configuredLoggers.add(loggerMap);
         }
