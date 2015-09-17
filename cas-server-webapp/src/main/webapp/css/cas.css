@@ -468,6 +468,14 @@ footer a:link, footer a:visited {
     flex:1 1 auto;
 }
 
-#memoryUsageWrapper {
-    margin-bottom: 2em;
+.statisticsView .section {
+    margin-bottom: 25px;
+}
+
+#viewSsoSessions {
+    color: white;
+}
+
+.statisticsView .adminPanels.container-fluid {
+    padding-right: 0;
 }
