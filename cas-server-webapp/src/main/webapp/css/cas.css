@@ -467,3 +467,7 @@ footer a:link, footer a:visited {
     display: flex;
     flex:1 1 auto;
 }
+
+#memoryUsageWrapper {
+    margin-bottom: 2em;
+}
