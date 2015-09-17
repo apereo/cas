@@ -18,6 +18,7 @@
  */
 package org.slf4j.impl;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -25,6 +26,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.NOPLogger;
 import org.slf4j.helpers.Util;
 
@@ -110,13 +112,29 @@ public final class CasLoggerFactory implements ILoggerFactory {
      * @param name requested logger name
      * @return the logger instance created by the logger factory available on the classpath during runtime, or null.
      */
-    private Logger getRealLoggerInstance(final String name) {
+    public Logger getRealLoggerInstance(final String name) {
         try {
-            final ILoggerFactory factInstance = this.realLoggerFactoryClass.newInstance();
+            final ILoggerFactory factInstance = getLoggerFactory();
             return factInstance.getLogger(name);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
+    /**
+     * Gets a new instance of the real logger factory.
+     *
+     * @return the logger factory
+     */
+    public ILoggerFactory getLoggerFactory() {
+        try {
+            return this.realLoggerFactoryClass.newInstance();
+        } catch (final Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    public Map<String, CasDelegatingLogger> getLoggers() {
+        return ImmutableMap.copyOf(this.loggerMap);
+    }
 }

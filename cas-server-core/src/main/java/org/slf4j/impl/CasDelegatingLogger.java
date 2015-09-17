@@ -18,7 +18,9 @@
  */
 package org.slf4j.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -43,6 +45,9 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     private static final long serialVersionUID = 6182834493563598289L;
 
+    /**
+     * The pattern to detect ticket ids in the log message.
+     */
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(" + TicketGrantingTicket.PREFIX + "|"
             + TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + "|" + TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
             + ")(-)*(\\w)*(-)*(\\w)*");
@@ -53,7 +58,9 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      */
     private static final int VISIBLE_ID_TAIL_LENGTH = 10;
 
-    private final Logger delegate;
+    private final transient Logger delegate;
+
+    private Level level = Level.ERROR;
 
     /**
      * Instantiates a new Cas delegating logger.
@@ -70,6 +77,22 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      */
     public CasDelegatingLogger(final Logger delegate) {
         this.delegate = delegate;
+
+        if (isErrorEnabled()) {
+            this.level = Level.ERROR;
+        }
+        if (isWarnEnabled()) {
+            this.level = Level.WARN;
+        }
+        if (isInfoEnabled()) {
+            this.level = Level.INFO;
+        }
+        if (isDebugEnabled()) {
+            this.level = Level.DEBUG;
+        }
+        if (isTraceEnabled()) {
+            this.level = Level.TRACE;
+        }
     }
 
     /**
@@ -202,7 +225,7 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public boolean isDebugEnabled() {
-        return delegate.isDebugEnabled();
+        return delegate.isDebugEnabled() || getLevel().equals(Level.DEBUG);
     }
 
     @Override
@@ -434,6 +457,25 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     @Override
     public String getName() {
-        return "CAS Delegating Logger";
+        return this.delegate.getName();
+    }
+
+    /**
+     * Returns the current log level.
+     * @return the log level
+     * @since 4.2
+     */
+    public Level getLevel() {
+        return this.level;
+    }
+
+    /**
+     * Gets delegate.
+     *
+     * @return the delegate
+     */
+    @JsonIgnore
+    public Logger getDelegate() {
+        return this.delegate;
     }
 }
