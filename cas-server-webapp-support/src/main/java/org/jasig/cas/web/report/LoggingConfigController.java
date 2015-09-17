@@ -94,6 +94,7 @@ public class LoggingConfigController {
      *
      * @param request the request
      * @param response the response
+     * @return the configuration
      * @throws Exception the exception
      */
     @RequestMapping(value="/getConfiguration", method = RequestMethod.GET)
@@ -206,6 +207,7 @@ public class LoggingConfigController {
      * Gets logs.
      * @param request the request
      * @param response the response
+     * @return the log output
      * @throws Exception the exception
      */
     @RequestMapping(value="/getLogOutput")
