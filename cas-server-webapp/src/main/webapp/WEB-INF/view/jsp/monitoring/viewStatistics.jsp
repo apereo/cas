@@ -40,75 +40,12 @@
                 "/cas/js/statisticsview.js",
                 function() {
 
-                    var memory = new Gauge('#memoryGauge', ${freeMemory / (totalMemory)}, {width: 200, height: 200, label: 'Memory', textClass: 'runtimeStatistics'});
+                    var memory = new Gauge('#memoryGauge', ${freeMemory / (totalMemory)}, {width: 200, height: 200, label: 'Total JVM Memory', textClass: 'runtimeStatistics'});
+                    var maxMemory = new Gauge('#maxMemoryGauge', ${totalMemory / (maxMemory)}, {width: 200, height: 200, label: 'Max Memory', textClass: 'runtimeStatistics'});
 
-                    //var uptime = new CountUp( '${startTime}', 'uptime');
+                    var server_uptime = upTime('${startTime}', 'uptime');
 
-
-                    var server_uptime = upTime('jan,01,2014,00:00:00', 'uptime');
-
-        $('#loading, .statisticsView').toggle();
-
-//                    memory_graph = memoryGraph();
-//                    memory_graph.init('memory-chart', .40);
-
-//                    completion_graph = memoryGraph();
-//                    completion_graph.init( 'completion-chart', .85 );
-            /*
-                    var jvm_fd_usage = c3.generate({
-                        bindto: d3.select("#jvm_fd_usage"),
-                        data: {
-                            columns: [
-                                ['data', 65]
-                            ],
-                            type: 'gauge',
-                        },
-                        gauge: {
-                            width: 15 // for adjusting arc thickness
-                        },
-                        color: {
-                            pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'].reverse(),
-                            threshold: {
-                                values: [30, 60, 90, 100]
-                            }
-                        },
-                        size: {
-                            height: 120,
-                            width: 90
-                        }
-                    });
-                    var jvm_fd_usage2 = c3.generate({
-                        bindto: d3.select("#jvm_fd_usage2"),
-                        data: {
-                            columns: [
-                                ['data', 25]
-                            ],
-                            type: 'gauge',
-                        },
-                        gauge: {
-                            width: 15 // for adjusting arc thickness
-                        },
-                        color: {
-                            pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'].reverse(),
-                            threshold: {
-                                values: [30, 60, 90, 100]
-                            }
-                        },
-                        size: {
-                            height: 90,
-                            width: 90
-                        },
-                        padding: {
-                            top: 0,
-                            right: 0,
-                            bottom: 0,
-                            left: 0
-                        },
-                        tooltip: {
-                            show: false
-                        }
-                    });
-        */
+                    $('#loading, .statisticsView').toggle();
                 }
             );
         };
@@ -149,7 +86,7 @@
 
         <h2>Ticket Registry Statistics</h2>
 
-        <div class="row adminPanels">
+        <div class="row adminPanels clearfix">
             <div class="col-lg-3 col-md-6">
                 <div class="panel panel-success">
                     <div class="panel-heading">
@@ -199,114 +136,33 @@
                 </div>
             </div>
         </div>
+        <a href="statistics/ssosessions" class="btn btn-primary pull-right ">View SSO Sessions</a>
 
-        <div class="row">
-            <div class="col-md-4">
-                <h3>Performance Statistics</h3>
-                <div class="well clearfix">
-                    <div id="pingBox">checking...</div>
-                    <%--<button id="pingBoxRefresh" type="button" class="btn btn-sm btn-info pull-right" value="statistics/ping" data-toggle="modal" data-target="#pingModal" data-remote="false">refresh</button>--%>
-                    <button id="pingBoxRefresh" type="button" class="btn btn-sm btn-default pull-right" value="statistics/ping">refresh</button>
-                </div>
-                <%--<a href="statistics/ping?pretty=true">Ping</a>--%>
-            </div>
-            <div class="col-md-8">
-                <h3>Thread Dump</h3>
-                <div class="well clearfix">
-                    <pre id="threadDumpPreview"></pre>
-                    <button id="threadDumpViewButton" type="button" class="btn btn-sm btn-default pull-right" value="statistics/threads?pretty=true" data-toggle="modal" data-target="#threadDumpModal" data-remote="false">View more</button>
-                </div>
-            </div>
-        </div>
-        <%--<a href="statistics/threads?pretty=true">Thread Dump</a>--%>
+        <br />
 
-
-
-
-        <h2>Metrics</h2>
-<%--
-TODO: Add metric gauges/meters here
-note: should these be in an acordian/collapse?  If so, how to populate when it opens?
---%>
-        <div class="row metricsPanels">
-            <div class="col-md-12">
-                <a href="statistics/metrics?pretty=true">Metrics</a>
-                <div id="metricsGauges"></div>
-            </div>
-        </div>
-
-
-
-        <h2>Reports</h2>
-<%--
-TODO: add SSOSessions chart here
---%>
-        <div class="row performancePanels">
-            <div class="col-md-4">
-            <a href="statistics/ssosessions">SSO Sessions</a>
-            </div>
-        </div>
-
-        <h2>Runtime Statistics</h2>
+        <h2>JVM Server Statistics</h2>
         <div class="row runtimePanels">
-            <div class="col-md-4 text-center">
-                <div>
-<%--
-TODO: add tooltip
---%>
-                    <div id="memoryGauge"></div>
-                    Max memory: ${maxMemory} MB
-                </div>
-
-<%--
-TODO: wire up memory visualisation
---%>
-<div class="progress">
-  <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
-    <span class="sr-only">60% Complete (warning)</span>
-  </div>
-</div>
-
-<div class="progress">
-  <div class="progress-bar progress-bar-success" style="width: 35%">
-    <span class="sr-only">35% Complete (success)</span>
-  </div>
-  <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 20%">
-    <span class="sr-only">20% Complete (warning)</span>
-  </div>
-  <div class="progress-bar progress-bar-danger" style="width: 10%">
-    <span class="sr-only">10% Complete (danger)</span>
-  </div>
-</div>
-
-
-
-            </div>
-            <div class="col-md-8">
-<%--
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <div class="row">
-                            <div class="col-xs-3">
-                                <i class="fa fa-server fa-5x"></i>
-                            </div>
-                            <div class="col-xs-9 text-right">
-                                <div class="huge">${availableProcessors}</div>
-                                <div>Available Processors</div>
-                            </div>
-                        </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <div id="memoryUsageWrapper">
+                        <%--
+                        TODO: add tooltip
+                        --%>
+                        <div id="memoryGauge"></div>
+                        <%--<h4>JVM Memory</h4>--%>
+                        <%--Max memory: ${maxMemory} MB--%>
+                    </div>
+                    <div id="maxMemoryWrapper">
+                        <%--
+                        TODO: add tooltip
+                        --%>
+                        <div id="maxMemoryGauge"></div>
+                        <%--<h4>Max Memory</h4>--%>
+                        <%--Max memory: ${maxMemory} MB--%>
                     </div>
                 </div>
-
             </div>
-            <div class="col-md-5">
-
-            </div>
-        </div>
-        <div class="row runtimePanels">
-            <div class="col-md-6">
---%>
-
+            <div class="col-md-8">
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <div class="row">
@@ -320,7 +176,6 @@ TODO: wire up memory visualisation
                         </div>
                     </div>
                 </div>
-
                 <div class="panel panel-info">
                     <div class="panel-heading">
                         <div class="row">
@@ -358,16 +213,30 @@ TODO: wire up memory visualisation
                                     <td>Uptime</td>
                                     <td>${upTime}</td>
                                 </tr>
-                                <%--
                                 <tr>
                                     <td>Memory</td>
-                                    <td> ${freeMemory} MB free<br />
-                        <p>${freeMemory} / ${totalMemory} = ${freeMemory / (totalMemory)}</p>
-                        <img src="images/green.gif" width="${freeMemory / (totalMemory) * 500}" height="30" /> <br />
-                        <img src="images/red.gif" width="${(totalMemory - freeMemory) / totalMemory * 500}" height="30" /> ${totalMemory} MB total
+                                    <td>${freeMemory} MB free <br/>${totalMemory} MB total</td>
+<%--
+                                    <td>
+                                        <c:set var="freeMem" value="${fn:substringBefore(freeMemory / (totalMemory) * 100, '.')}"/>
+                                        <c:set var="maxMem" value="${fn:substringBefore((totalMemory - freeMemory) / totalMemory * 100, '.')}"/>
+
+                                        <div class="progress">
+                                          <div class="progress-bar" role="progressbar" aria-valuenow="${freeMem}" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;width: ${freeMem}%;">
+                                                ${freeMem}%
+                                          </div>
+                                        </div>
+
+                                        <div class="progress">
+                                          <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="maxMem" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;width: ${maxMem}%;">
+                                            ${maxMem}%
+                                          </div>
+                                        </div>
+
+                                        ${freeMemory} MB free <br> <img src="images/green.gif" width="${freeMemory / (totalMemory) * 500}" height="30" /><img src="images/red.gif" width="${(totalMemory - freeMemory) / totalMemory * 500}" height="30" /> ${totalMemory} MB total
                                     </td>
+--%>
                                 </tr>
-                                --%>
                                 <tr>
                                     <td>Maximum Memory</td>
                                     <td>${maxMemory} MB</td>
@@ -382,6 +251,101 @@ TODO: wire up memory visualisation
                 </div>
             </div>
         </div>
+
+
+
+        <div class="row">
+            <%--<div class="col-md-4">--%>
+<%--
+                <h3>SSO Sessions</h3>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Total Sessions</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>Proxied Sessions</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>Direct Sessions</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>Total Sessions</td>
+                            <td>4</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <a href="statistics/ssosessions" class="btn btn-default">View SSO Sessions</a>
+--%>
+<%--
+                <h3>Performance Statistics</h3>
+                <div class="well clearfix">
+                    <div id="pingBox">checking...</div>
+                    <button id="pingBoxRefresh" type="button" class="btn btn-sm btn-default pull-right" value="statistics/ping">refresh</button>
+                </div>
+--%>
+            <%--</div>--%>
+            <div class="col-md-12">
+                <h3>Thread Dump</h3>
+                <div class="well clearfix">
+                    <pre id="threadDumpPreview"></pre>
+                    <button id="threadDumpViewButton" type="button" class="btn btn-sm btn-default pull-right" value="statistics/threads?pretty=true" data-toggle="modal" data-target="#threadDumpModal" data-remote="false">View more</button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <h2>Metrics</h2>
+        <div class="row">
+            <div class="col-sm-12">
+                <a href="statistics/metrics?pretty=true" class="btn btn-default">Metrics</a>
+            </div>
+<%--
+            <div class="col-md-6 col-sm-12">
+                <h2>Gauges</h2>
+                <div class="row metricsPanels">
+                    <div class="col-md-12">
+                        <a href="statistics/metrics?pretty=true">Metrics</a>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="col-sm-4">Property</th>
+                                    <th class="col-sm-8">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>jvm.fd.usage</td>
+                                    <td>0.0087890625</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div id="metricsGauges">
+                        </div>
+                    </div>
+                </div>
+            </div>
+--%>
+        </div>
+
+<%--
+TODO: Add metric gauges/meters here
+note: should these be in an acordian/collapse?  If so, how to populate when it opens?
+--%>
+
+
+<%--
+        <h2>Reports</h2>
+        <div class="row performancePanels">
+            <div class="col-md-4">
+            <a href="statistics/ssosessions">SSO Sessions</a>
+            </div>
+        </div>
+--%>
 
 <%--
         <table width="800">
@@ -429,77 +393,7 @@ TODO: wire up memory visualisation
 --%>
     </div>
 
-
-<!-- Modal -->
-        <%--
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal">×</button>
-			<h3>Dialog</h3>
-	</div>
-	<div class="modal-body">
-      <iframe src="" style="zoom:0.60" width="99.6%" height="250" frameborder="0"></iframe>
-	</div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal">OK</button>
-	</div>
-</div>
---%>
-<%--
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-      </div>
-      <div class="modal-body">
-        <iframe id="modalIframe" src="" style="zoom:0.60" width="99.6%" height="250" frameborder="0"></iframe>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  </div>
-</div>
---%>
-<%--
-<br /><br />
-
-<h2>Ticket Registry Statistics</h2>
-<table width="800">
-    <thead>
-    <tr>
-        <th>Property</th>
-        <th>Value</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>Unexpired TGTs</td>
-        <td>${unexpiredTgts}</td>
-    </tr>
-    <tr>
-        <td>Unexpired STs</td>
-        <td>${unexpiredSts}</td>
-    </tr>
-    <tr>
-        <td>Expired TGTs</td>
-        <td>${expiredTgts}</td>
-    </tr>
-    <tr>
-        <td>Expired STs</td>
-        <td>${expiredSts}</td>
-    </tr>
-    </tbody>
-</table>
---%>
-
-
 <!-- Small modal -->
-<%--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#pingModal">Small modal</button>--%>
-
 <div id="pingModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
