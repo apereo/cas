@@ -19,7 +19,7 @@
 
 var Gauge = function (wrapper, percent, options) {
     if (!wrapper || !percent) {
-        console.error('wrapper and percentage are required.  Please check your code.');
+        //console.error('wrapper and percentage are required.  Please check your code.');
         return;
     }
 
@@ -133,116 +133,15 @@ $("#threadDumpModal").on("show.bs.modal", function(e) {
     $(this).find(".modal-body pre").load(link.val());
 });
 
-/*
-$("#pingModal").on("show.bs.modal", function(e) {
-    var link = $(e.relatedTarget);
-
-    //$(this).find(".modal-body").load(link.val());
-    var resp = {};
-
-    $.get( link.val() , function( data ) {
-        if ( data.trim() == 'pong') {
-            resp.msg = data.trim();
-            resp.status = 'success';
-        } else {
-            resp.msg = 'Something went wrong';
-            resp.status = 'danger';
-        }
-    })
-      .fail(function() {
-        resp.msg = 'Something went wrong';
-        resp.status = 'danger';
-      }).always(function() {
-        var alert = '<div class="alert alert-' + resp.status+ '">'+ resp.msg +'</div>';
-        $('#pingModal .modal-body').html(alert);
-      });
-});
-*/
-
 /**
  * Thread Dump Preview
+ * Returnes the xx amount of characters from the end of the thread dump for preview sake.
+ * The length can be changed by passing ini a value, otherwise it defaults to 400.
  */
-$.get( $('#threadDumpViewButton').val() , function( data ) {
-    $('#threadDumpPreview').html( data.substr(-400) );
-});
-
-/**
- * Ping box
- */
-function populatePingBox() {
-    console.log('calling pingbox');
-    var url = $('#pingBoxRefresh').val();
-    var pingBox = $('#pingBox');
-
-    pingBox.text('pinging...');
-
-    var resp = {};
-
-    $.get(url, function (data) {
-        console.log('pingBox',data);
-        if (data.trim() == 'pong') {
-            resp.msg = data.trim();
-            resp.status = 'success';
-        } else {
-            resp.msg = 'Something went wrong';
-            resp.status = 'danger';
-        }
-    })
-    .fail(function () {
-        resp.msg = 'Something went wrong';
-        resp.status = 'danger';
-    }).always(function () {
-        var alert = '<div class="alert alert-' + resp.status + '">' + resp.msg + '!!</div>';
-        pingBox.html(alert);
-    });
-};
-populatePingBox();
-
-$('#pingBoxRefresh').click(function() {
-    populatePingBox();
-});
-
-function metricsGauges() {
-    //http://localhost:8080/cas/statistics/metrics
-    $.get('statistics/metrics', function( data ) {
-        console.dir(data);
-
-        var gauges;
-        var gaugesCount = Object.keys(data.gauges).length;
-
-        var str = '<div class="row equal">';
-
-        var count = 0;
-
-//for(var i in $yourArray){
-//   str += '<li><a href="#">String 1</a></li>';
-//}
-
-        $.each(data.gauges, function (key, value) {
-            console.log('pre count: ', count);
-            if (count == 4) {
-                str += '</div><div class="row equal">';
-                count = 0;
-            }
-            str += '<div class="col-md-3"><div class="panel panel-default"><div class="panel-heading">'+key+'</div><div class="panel-body">';
-            $.each(value, function (index, value) {
-                str += value + '</div></div></div>';
-            })
-            count++;
-            console.log('post count: ', count);
-        });
-
-        str += '</row>';
-
-        $('#metricsGauges').append(str);
-
-        //for (i=0; i< gaugesCount;i++) {
-        //    gauges += '<li>' +
-        //}
-        //console.log(Object.keys(data.gauges).length);
-
-    }).fail(function(err){
-        console.error(err);
+function getThreadDumpPreview(len) {
+    var len = len || 400;
+    $.get( $('#threadDumpViewButton').val() , function( data ) {
+        $('#threadDumpPreview').html( data.substr(-len) );
     });
 }
-//metricsGauges();
+
