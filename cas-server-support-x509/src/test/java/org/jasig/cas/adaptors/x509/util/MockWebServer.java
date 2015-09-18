@@ -43,7 +43,7 @@ public class MockWebServer {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Request handler. */
-    private Worker worker;
+    private final Worker worker;
 
     /** Controls the worker thread. */
     private Thread workerThread;
@@ -96,7 +96,8 @@ public class MockWebServer {
     /**
      * Worker class handles request processing.
      */
-    final class Worker implements Runnable {
+    private static final class Worker implements Runnable {
+
         /** Server always returns HTTP 200 response. */
         private static final String STATUS_LINE = "HTTP/1.1 200 Success\r\n";
 
@@ -105,6 +106,8 @@ public class MockWebServer {
 
         /** Response buffer size. */
         private static final int BUFFER_SIZE = 2048;
+
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
         /** Run flag. */
         private boolean running;
@@ -127,7 +130,7 @@ public class MockWebServer {
          * @param resource Single resource to serve.
          * @param contentType MIME content type of resource to serve.
          */
-        public Worker(final ServerSocket sock, final Resource resource, final String contentType) {
+        Worker(final ServerSocket sock, final Resource resource, final String contentType) {
             this.serverSocket = sock;
             this.resource = resource;
             this.contentType = contentType;
