@@ -131,6 +131,30 @@ public class ServiceValidateController extends DelegateController {
         binder.setRequiredFields("renew");
     }
 
+    /**
+     * Handle proxy granting ticket delivery.
+     *
+     * @param serviceTicketId the service ticket id
+     * @param serviceCredential the service credential
+     * @return the ticket granting ticket
+     */
+    private TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential serviceCredential) {
+        TicketGrantingTicket proxyGrantingTicketId = null;
+
+        try {
+            proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
+                    serviceCredential);
+            logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
+                    proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
+        } catch (final AuthenticationException e) {
+            logger.info("Failed to authenticate service credential {}", serviceCredential);
+        } catch (final TicketException e) {
+            logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+        }
+
+        return proxyGrantingTicketId;
+    }
+
     @Override
     protected final ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
@@ -144,37 +168,19 @@ public class ServiceValidateController extends DelegateController {
         }
 
         try {
-            final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
             TicketGrantingTicket proxyGrantingTicketId = null;
-            
+            final Credential serviceCredential = getServiceCredentialsFromRequest(service, request);
             if (serviceCredential != null) {
-                try {
-                    proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
-                                serviceCredential);
-                    logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
-                            proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
-                } catch (final AuthenticationException e) {
-                    logger.info("Failed to authenticate service credential {}", serviceCredential);
-                } catch (final TicketException e) {
-                    logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
-                }
-                
+                proxyGrantingTicketId = handleProxyGrantingTicketDelivery(serviceTicketId, serviceCredential);
                 if (proxyGrantingTicketId == null) {
                     return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                            new Object[] {serviceCredential.getId()});
+                            new Object[]{serviceCredential.getId()});
                 }
             }
 
             final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
-
-            final ValidationSpecification validationSpecification = this.getCommandClass();
-            final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
-            initBinder(request, binder);
-            binder.bind(request);
-
-            if (!validationSpecification.isSatisfiedBy(assertion)) {
-                logger.debug("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
+            if (!validateAssertion(request, serviceTicketId, assertion)) {
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
                         CasProtocolConstants.ERROR_CODE_INVALID_TICKET, null);
             }
@@ -204,6 +210,27 @@ public class ServiceValidateController extends DelegateController {
         } catch (final UnauthorizedServiceException e) {
             return generateErrorView(e.getMessage(), e.getMessage(), null);
         }
+    }
+
+    /**
+     * Validate assertion.
+     *
+     * @param request the request
+     * @param serviceTicketId the service ticket id
+     * @param assertion the assertion
+     * @return the boolean
+     */
+    private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion) {
+        final ValidationSpecification validationSpecification = this.getCommandClass();
+        final ServletRequestDataBinder binder = new ServletRequestDataBinder(validationSpecification, "validationSpecification");
+        initBinder(request, binder);
+        binder.bind(request);
+
+        if (!validationSpecification.isSatisfiedBy(assertion)) {
+            logger.debug("Service ticket [{}] does not satisfy validation specification.", serviceTicketId);
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -29,7 +29,7 @@
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="512 KB"/>
+                <SizeBasedTriggeringPolicy size="1 MB"/>
                 <TimeBasedTriggeringPolicy />
             </Policies>
         </RollingFile>
