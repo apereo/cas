@@ -84,9 +84,9 @@ public final class CompressionUtils {
      * @return the array as a string with <code>UTF-8</code> encoding
      */
     public static String inflate(final byte[] bytes) {
-        try (final ByteArrayInputStream inb = new ByteArrayInputStream(bytes);
-             final ByteArrayOutputStream out = new ByteArrayOutputStream();
-             final InflaterOutputStream ios = new InflaterOutputStream(out);) {
+        try (ByteArrayInputStream inb = new ByteArrayInputStream(bytes);
+             ByteArrayOutputStream out = new ByteArrayOutputStream();
+             InflaterOutputStream ios = new InflaterOutputStream(out);) {
             IOUtils.copy(inb, ios);
             return new String(out.toByteArray(), UTF8_ENCODING);
         } catch (final Exception e) {

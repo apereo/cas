@@ -196,7 +196,7 @@ public final class ImmutableAuthentication implements Authentication {
          *
          * @param instant Milliseconds since the Unix epoch.
          */
-        public ImmutableDate(final long instant) {
+        ImmutableDate(final long instant) {
             super(instant);
         }
 

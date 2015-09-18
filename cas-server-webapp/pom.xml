@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.2.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>cas-server-webapp</artifactId>
@@ -107,4 +107,5 @@
     <cs.dir>${project.parent.basedir}</cs.dir>
   </properties>
 </project>
+
 
