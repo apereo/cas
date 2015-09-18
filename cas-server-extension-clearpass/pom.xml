@@ -22,7 +22,7 @@
 	<parent>
 		<artifactId>cas-server</artifactId>
 		<groupId>org.jasig.cas</groupId>
-		<version>4.0.5-SNAPSHOT</version>
+		<version>4.0.5</version>
 	</parent>
 	<groupId>org.jasig.cas</groupId>
 	<artifactId>cas-server-extension-clearpass</artifactId>
