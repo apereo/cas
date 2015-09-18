@@ -1562,7 +1562,7 @@
         <cas.client.version>3.4.1</cas.client.version>
         <quartz.version>2.2.1</quartz.version>
         <reflections.version>0.9.10</reflections.version>
-        <apache.shiro.version>1.2.3</apache.shiro.version>
+        <apache.shiro.version>1.2.4</apache.shiro.version>
         <jackson.databind.version>2.6.1</jackson.databind.version>
         <uboundid.ldapsdk.version>3.0.0</uboundid.ldapsdk.version>
         <opensaml.version>3.1.1</opensaml.version>
