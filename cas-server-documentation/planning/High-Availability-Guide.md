@@ -154,6 +154,11 @@ where _h(T)_ is the hash of the ticket ID, _N1 ... Nm_ is the set of cache nodes
 These sorts of cache systems do not require replication and generally provide for simplicity at the expense of some
 durability.
 
+##### Secure Cache Replication
+A number of cache-based ticket registries support secure replication of ticket data across the wire, 
+so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops. 
+[See this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info. 
+
 
 ### Distributing Service Definitions
 In an HA environment, service definitions must be replicated and accessible by all nodes in the CAS cluster. Typically, this may be achieved by leveraging centralized registry implementation that are backed by JPA or LDAP. Registries that are backed by the file system need to devise a process of ensuring proper file replication, either manually or via background daemon.

@@ -18,15 +18,39 @@
  */
 package org.jasig.cas.util;
 
+import com.google.common.io.ByteSource;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.SerializationUtils;
+import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.TicketState;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.joda.time.DateTime;
+import org.ldaptive.handler.HandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.InflaterOutputStream;
@@ -60,9 +84,9 @@ public final class CompressionUtils {
      * @return the array as a string with <code>UTF-8</code> encoding
      */
     public static String inflate(final byte[] bytes) {
-        try (final ByteArrayInputStream inb = new ByteArrayInputStream(bytes);
-             final ByteArrayOutputStream out = new ByteArrayOutputStream();
-             final InflaterOutputStream ios = new InflaterOutputStream(out);) {
+        try (ByteArrayInputStream inb = new ByteArrayInputStream(bytes);
+             ByteArrayOutputStream out = new ByteArrayOutputStream();
+             InflaterOutputStream ios = new InflaterOutputStream(out);) {
             IOUtils.copy(inb, ios);
             return new String(out.toByteArray(), UTF8_ENCODING);
         } catch (final Exception e) {
@@ -112,6 +136,16 @@ public final class CompressionUtils {
      */
     public static String encodeBase64(final byte[] data) {
         return Base64.encodeBase64String(data);
+    }
+
+    /**
+     * Base64-decode the given string as byte[].
+     *
+     * @param data the base64 string
+     * @return the encoded array
+     */
+    public static byte[] decodeBase64(final String data) {
+        return Base64.decodeBase64(data);
     }
 
     /**
@@ -180,5 +214,51 @@ public final class CompressionUtils {
         }
     }
 
+    /**
+     * Serialize and encode object.
+     *
+     * @param cipher the cipher
+     * @param object the object
+     * @return the byte []
+     * @since 4.2
+     */
+    public static byte[] serializeAndEncodeObject(final CipherExecutor<byte[], byte[]> cipher,
+                                                  final Serializable object) {
+        final ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+        SerializationUtils.serialize(object, outBytes);
+        return cipher.encode(outBytes.toByteArray());
+    }
 
+    /**
+     * Decode and serialize object.
+     *
+     * @param <T>  the type parameter
+     * @param object the object
+     * @param cipher the cipher
+     * @param type the type
+     * @return the t
+     * @since 4.2
+     */
+    public static <T> T decodeAndSerializeObject(final byte[] object,
+                                                 final CipherExecutor<byte[], byte[]> cipher,
+                                                 final Class<? extends Serializable> type) {
+        final byte[] decoded = cipher.decode(object);
+        final Object result = SerializationUtils.deserialize(decoded);
+        if (!type.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Decoded object is of type " + result.getClass()
+                    + " when we were expecting " + type);
+        }
+        return (T) result;
+    }
+
+    /**
+     * Calculates the SHA-512 digest and returns the value as a hex string.
+     *
+     * @param input the input
+     * @return the value as hex
+     * @since 4.2
+     */
+    public static String sha512Hex(final String input) {
+        return DigestUtils.sha512Hex(input);
+    }
 }

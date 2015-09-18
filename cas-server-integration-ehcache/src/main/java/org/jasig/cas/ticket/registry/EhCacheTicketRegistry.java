@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.style.ToStringCreator;
@@ -50,7 +51,7 @@ import java.util.HashSet;
  * @author Andrew Tillinghast
  * @since 3.5
  */
-public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
+public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry implements InitializingBean {
 
     private Cache serviceTicketsCache;
 
@@ -65,7 +66,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
      * Instantiates a new EhCache ticket registry.
      */
     public EhCacheTicketRegistry() {
-        
+        super();
     }
 
     /**
@@ -94,7 +95,8 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicket(final Ticket ticketToAdd) {
+        final Ticket ticket = encodeTicket(ticketToAdd);
         final Element element = new Element(ticket.getId(), ticket);
         if (ticket instanceof ServiceTicket) {
             logger.debug("Adding service ticket {} to the cache {}", ticket.getId(), this.serviceTicketsCache.getName());
@@ -109,7 +111,8 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
 
     @Override
-    public boolean deleteTicket(final String ticketId) {
+    public boolean deleteTicket(final String ticketIdToDelete) {
+        final String ticketId = encodeTicketId(ticketIdToDelete);
         if (StringUtils.isBlank(ticketId)) {
             return false;
         }
@@ -117,7 +120,8 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketIdToGet) {
+        final String ticketId = encodeTicketId(ticketIdToGet);
         if (ticketId == null) {
             return null;
         }
@@ -126,7 +130,13 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         if (element == null) {
             element = this.ticketGrantingTicketsCache.get(ticketId);
         }
-        return element == null ? null : getProxiedTicketInstance((Ticket) element.getObjectValue());
+        if (element == null) {
+            logger.debug("No ticket by id [{}] is found in the registry", ticketId);
+            return null;
+        }
+
+        final Ticket ticket = decodeTicket((Ticket) element.getObjectValue());
+        return getProxiedTicketInstance(ticket);
     }
 
     @Override
@@ -146,7 +156,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
             allTickets.add((Ticket) ticket.getObjectValue());
         }
 
-        return allTickets;
+        return decodeTickets(allTickets);
     }
 
     public void setServiceTicketsCache(final Cache serviceTicketsCache) {

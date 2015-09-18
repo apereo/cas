@@ -18,12 +18,14 @@
     under the License.
 
 --%>
-<jsp:directive.include file="includes/top.jsp"/>
-<p/>
+<%@include file="includes/header.noauth.jsp" %>
 
-<div id="msg" class="errors">
-    <h2><spring:message code="screen.unavailable.heading"/></h2>
-
-    <p><spring:message code="screen.unavailable.message"/></p>
+<%@ page isErrorPage="true" %>
+<div class="col-sm-12">
+    <div id="msg" class="errors">
+        <h2><spring:message code="screen.unavailable.heading"/></h2>
+        <p><spring:message code="screen.unavailable.message"/></p>
+    </div>
 </div>
-<jsp:directive.include file="includes/bottom.jsp"/>
+
+<%@include file="includes/footer.jsp" %>
