@@ -149,17 +149,27 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         final AuthenticationBuilder builder = authenticateInternal(credentials);
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
-        if (principal  instanceof NullPrincipal) {
+        if (principal instanceof NullPrincipal) {
             throw new UnresolvedPrincipalException(authentication);
         }
 
-        for (final HandlerResult result : authentication.getSuccesses().values()) {
-            builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName());
-        }
+        addAuthenticationMethodAttribute(builder, authentication);
 
         logger.info("Authenticated {} with credentials {}.", principal, Arrays.asList(credentials));
         logger.debug("Attribute map for {}: {}", principal.getId(), principal.getAttributes());
 
+        populateAuthenticationMetadataAttributes(builder, credentials);
+
+        return builder.build();
+    }
+
+    /**
+     * Populate authentication metadata attributes.
+     *
+     * @param builder the builder
+     * @param credentials the credentials
+     */
+    private void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder, final Credential[] credentials) {
         for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
             for (final Credential credential : credentials) {
                 if (populator.supports(credential)) {
@@ -167,8 +177,18 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                 }
             }
         }
+    }
 
-        return builder.build();
+    /**
+     * Add authentication method attribute.
+     *
+     * @param builder the builder
+     * @param authentication the authentication
+     */
+    private void addAuthenticationMethodAttribute(final AuthenticationBuilder builder, final Authentication authentication) {
+        for (final HandlerResult result : authentication.getSuccesses().values()) {
+            builder.addAttribute(AUTHENTICATION_METHOD_ATTRIBUTE, result.getHandlerName());
+        }
     }
 
     /**
@@ -208,8 +228,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             builder.addCredential(new BasicCredentialMetaData(c));
         }
         boolean found;
-        Principal principal;
-        PrincipalResolver resolver;
         for (final Credential credential : credentials) {
             found = false;
             for (final Map.Entry<AuthenticationHandler, PrincipalResolver> entry : this.handlerResolverMap.entrySet()) {
@@ -217,24 +235,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                 if (handler.supports(credential)) {
                     found = true;
                     try {
-                        final HandlerResult result = handler.authenticate(credential);
-                        builder.addSuccess(handler.getName(), result);
-                        logger.info("{} successfully authenticated {}", handler.getName(), credential);
-                        resolver = entry.getValue();
-                        if (resolver == null) {
-                            principal = result.getPrincipal();
-                            logger.debug(
-                                    "No resolver configured for {}. Falling back to handler principal {}",
-                                    handler.getName(),
-                                    principal);
-                        } else {
-                            principal = resolvePrincipal(handler.getName(), resolver, credential);
-                        }
-                        // Must avoid null principal since AuthenticationBuilder/ImmutableAuthentication
-                        // require principal to be non-null
-                        if (principal != null) {
-                            builder.setPrincipal(principal);
-                        }
+                        authenticateAndResolvePrincipal(builder, credential, entry.getValue(), handler);
                         if (this.authenticationPolicy.isSatisfiedBy(builder.build())) {
                             return builder;
                         }
@@ -254,6 +255,18 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                         credential);
             }
         }
+        evaluateProducedAuthenticationContext(builder);
+
+        return builder;
+    }
+
+    /**
+     * Evaluate produced authentication context.
+     *
+     * @param builder the builder
+     * @throws AuthenticationException the authentication exception
+     */
+    private void evaluateProducedAuthenticationContext(final AuthenticationBuilder builder) throws AuthenticationException {
         // We apply an implicit security policy of at least one successful authentication
         if (builder.getSuccesses().isEmpty()) {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
@@ -262,10 +275,43 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (!this.authenticationPolicy.isSatisfiedBy(builder.build())) {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
-        return builder;
     }
 
-      
+    /**
+     * Authenticate and resolve principal.
+     *
+     * @param builder the builder
+     * @param credential the credential
+     * @param resolver the resolver
+     * @param handler the handler
+     * @throws GeneralSecurityException the general security exception
+     * @throws PreventedException the prevented exception
+     */
+    private void authenticateAndResolvePrincipal(final AuthenticationBuilder builder, final Credential credential,
+                                                 final PrincipalResolver resolver, final AuthenticationHandler handler)
+            throws GeneralSecurityException, PreventedException {
+
+        final Principal principal;
+        final HandlerResult result = handler.authenticate(credential);
+        builder.addSuccess(handler.getName(), result);
+        logger.info("{} successfully authenticated {}", handler.getName(), credential);
+        if (resolver == null) {
+            principal = result.getPrincipal();
+            logger.debug(
+                    "No resolver configured for {}. Falling back to handler principal {}",
+                    handler.getName(),
+                    principal);
+        } else {
+            principal = resolvePrincipal(handler.getName(), resolver, credential);
+        }
+        // Must avoid null principal since AuthenticationBuilder/ImmutableAuthentication
+        // require principal to be non-null
+        if (principal != null) {
+            builder.setPrincipal(principal);
+        }
+    }
+
+
     /**
      * Resolve principal.
      *

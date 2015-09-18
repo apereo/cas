@@ -27,6 +27,7 @@ import net.sourceforge.jwebunit.WebTestCase;
 
 /**
  * Base class for all Web compatibility tests.
+ * @since 4.0
  */
 public abstract class AbstractCompatibilityTests extends WebTestCase {
 
@@ -39,8 +40,6 @@ public abstract class AbstractCompatibilityTests extends WebTestCase {
      * classpath.
      */
     public static final String PROPERTIES_FILE_NAME = "configuration.properties";
-
-    private final Properties properties = new Properties();
 
     /**
      * The name of the compatibility test configuration property the value of which
@@ -73,6 +72,8 @@ public abstract class AbstractCompatibilityTests extends WebTestCase {
      * which will be a URL to a service we can use for testing.
      */
     public static final String SERVICE_URL_PROPERTY = "service.url";
+
+    private final Properties properties = new Properties();
 
     protected AbstractCompatibilityTests() throws IOException {
         super();

@@ -19,6 +19,7 @@
 
 package org.jasig.cas.support.saml.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
@@ -81,8 +82,9 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         if (service instanceof SamlService) {
             final SamlService samlService = (SamlService) service;
 
-            if (samlService.getRequestID() != null) {
-                samlResponse.setInResponseTo(samlService.getRequestID());
+            final String requestId = samlService.getRequestID();
+            if (StringUtils.isNotBlank(requestId)) {
+                samlResponse.setInResponseTo(requestId);
             }
         }
         return samlResponse;

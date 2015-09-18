@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.web.support.AbstractArgumentExtractor;
+import org.springframework.stereotype.Component;
 
 /**
  * Retrieve the ticket and artifact based on the SAML 1.1 profile.
@@ -30,6 +31,7 @@ import org.jasig.cas.web.support.AbstractArgumentExtractor;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("samlArgumentExtractor")
 public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override

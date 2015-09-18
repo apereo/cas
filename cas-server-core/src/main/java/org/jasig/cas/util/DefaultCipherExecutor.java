@@ -19,14 +19,11 @@
 
 package org.jasig.cas.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.keys.AesKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,16 +40,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class DefaultCipherExecutor implements CipherExecutor {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, String> {
     private final String contentEncryptionAlgorithmIdentifier;
 
     private final String signingAlgorithm;
 
     private final Key secretKeyEncryptionKey;
-
-    private final Key secretKeySigningKey;
 
     /**
      * Instantiates a new cipher.
@@ -82,6 +75,8 @@ public final class DefaultCipherExecutor implements CipherExecutor {
                                  final String secretKeySigning,
                                  final String contentEncryptionAlgorithmIdentifier,
                                  final String signingAlgorithm) {
+
+        super(secretKeySigning);
         this.secretKeyEncryptionKey =  prepareJsonWebTokenKey(secretKeyEncryption);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
 
@@ -89,8 +84,6 @@ public final class DefaultCipherExecutor implements CipherExecutor {
                  contentEncryptionAlgorithmIdentifier);
 
         this.signingAlgorithm = signingAlgorithm;
-        this.secretKeySigningKey = new AesKey(secretKeySigning.getBytes());
-
         logger.debug("Initialized cipher signing sequence via [{}]",
                 signingAlgorithm);
 
@@ -98,15 +91,16 @@ public final class DefaultCipherExecutor implements CipherExecutor {
 
     @Override
     public String encode(final String value) {
-        final String encoded = encryptValue(value);
-        return signValue(encoded);
+        final String encoded = encryptValue(value.toString());
+        final String signed = new String(sign(encoded.getBytes()));
+        return signed;
     }
 
     @Override
     public String decode(final String value) {
-        final String encoded = verifySignature(value);
-        if (StringUtils.isNotBlank(encoded)) {
-            return decryptValue(encoded);
+        final byte[] encoded = verifySignature(value.getBytes());
+        if (encoded != null && encoded.length > 0) {
+            return decryptValue(new String(encoded));
         }
         return null;
     }
@@ -164,47 +158,6 @@ public final class DefaultCipherExecutor implements CipherExecutor {
             jwe.setCompactSerialization(value);
             logger.debug("Decrypting value...");
             return jwe.getPayload();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Signs value based on the signing algorithm and the key length.
-     *
-     * @param value the value
-     * @return the signed value
-     */
-    private String signValue(@NotNull final String value) {
-        try {
-            final JsonWebSignature jws = new JsonWebSignature();
-            jws.setPayload(value);
-            jws.setAlgorithmHeaderValue(this.signingAlgorithm);
-            jws.setKey(this.secretKeySigningKey);
-            return jws.getCompactSerialization();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Verify signature.
-     *
-     * @param value the value
-     * @return the value associated with the signature, which may have to
-     * be decoded, or null.
-     */
-    private String verifySignature(@NotNull final String value) {
-        try {
-            final JsonWebSignature jws = new JsonWebSignature();
-            jws.setCompactSerialization(value);
-            jws.setKey(this.secretKeySigningKey);
-            final boolean verified = jws.verifySignature();
-            if (verified) {
-                logger.debug("Signature successfully verified. Payload is [{}]", jws.getPayload());
-                return jws.getPayload();
-            }
-            return null;
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }

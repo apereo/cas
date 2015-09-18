@@ -101,7 +101,7 @@ public interface CentralAuthenticationService {
      * @return the tickets
      * @since 4.1.0
      */
-     Collection<Ticket> getTickets(@NotNull Predicate predicate);
+    Collection<Ticket> getTickets(@NotNull Predicate predicate);
 
     /**
      * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.
