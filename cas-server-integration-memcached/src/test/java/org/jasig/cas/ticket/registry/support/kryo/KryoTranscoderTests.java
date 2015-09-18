@@ -243,7 +243,7 @@ public class KryoTranscoderTests {
 
         MockServiceTicket() { /* for serialization */ }
 
-        public MockServiceTicket(final String id) {
+        MockServiceTicket(final String id) {
             this.id = id;
         }
 
@@ -297,7 +297,7 @@ public class KryoTranscoderTests {
         }
     }
 
-    static class MockTicketGrantingTicket implements TicketGrantingTicket {
+    private static class MockTicketGrantingTicket implements TicketGrantingTicket {
 
         private static final long serialVersionUID = 4829406617873497061L;
 
@@ -321,7 +321,7 @@ public class KryoTranscoderTests {
             this.authentication = null;
         }
 
-        public MockTicketGrantingTicket(final String id, final Credential credential, final Map<String, Object> principalAttributes) {
+        MockTicketGrantingTicket(final String id, final Credential credential, final Map<String, Object> principalAttributes) {
             this.id = id;
             final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credential);
             final DefaultAuthenticationBuilder builder = new DefaultAuthenticationBuilder();
@@ -434,7 +434,7 @@ public class KryoTranscoderTests {
         }
     }
 
-    public static class MockAuthenticationHandler implements AuthenticationHandler {
+    private static class MockAuthenticationHandler implements AuthenticationHandler {
 
         @Override
         public DefaultHandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
@@ -452,7 +452,7 @@ public class KryoTranscoderTests {
 
         @Override
         public String getName() {
-            return "MockAuthenticationHandler";
+            return this.getClass().getSimpleName();
         }
     }
 }

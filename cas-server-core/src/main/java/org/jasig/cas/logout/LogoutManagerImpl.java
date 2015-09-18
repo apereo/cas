@@ -277,7 +277,7 @@ public final class LogoutManagerImpl implements LogoutManager {
          * @param url The url to send the message to
          * @param message Message to send to the url
          */
-        public LogoutHttpMessage(final URL url, final String message) {
+        LogoutHttpMessage(final URL url, final String message) {
             super(url, message, LogoutManagerImpl.this.asynchronous);
             setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
         }

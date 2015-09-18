@@ -32,11 +32,10 @@ import java.util.concurrent.TimeUnit;
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
  *
- * <p>
- * This implementation just wraps the Hazelcast's {@link IMap} which is an extension of the
- * standard Java's <code>ConcurrentMap</code>. The heavy lifting of distributed data partitioning,
- * network cluster discovery and join, data replication, etc. is done by Hazelcast's Map implementation.
- * <p/>
+ * <p>This implementation just wraps the Hazelcast's {@link IMap}
+ * which is an extension of the standard Java's <code>ConcurrentMap</code>.</p>
+ * <p>The heavy lifting of distributed data partitioning, network cluster discovery and
+ * join, data replication, etc. is done by Hazelcast's Map implementation.</p>
  *
  * @author Dmitriy Kopylenko
  * @author Jonathan Johnson

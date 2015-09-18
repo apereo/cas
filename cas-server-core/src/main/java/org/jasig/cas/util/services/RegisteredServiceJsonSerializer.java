@@ -25,6 +25,7 @@ import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.util.AbstractJacksonBackedJsonSerializer;
 
+import javax.cache.expiry.Duration;
 import java.net.URL;
 import java.util.Map;
 
@@ -49,11 +50,28 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
     @Override
     protected ObjectMapper initializeObjectMapper() {
         final ObjectMapper mapper = super.initializeObjectMapper();
-        mapper.addMixInAnnotations(RegisteredServiceProxyPolicy.class, RegisteredServiceProxyPolicyMixin.class);
-        mapper.addMixInAnnotations(RegisteredServiceAccessStrategy.class, RegisteredServiceAuthorizationStrategyMixin.class);
+        mapper.addMixIn(RegisteredServiceProxyPolicy.class, RegisteredServiceProxyPolicyMixin.class);
+        mapper.addMixIn(RegisteredServiceAccessStrategy.class, RegisteredServiceAuthorizationStrategyMixin.class);
+        mapper.addMixIn(Duration.class, DurationMixin.class);
         return mapper;
     }
 
+    private static class DurationMixin extends Duration {
+
+        private static final long serialVersionUID = 743505593336053306L;
+        @JsonIgnore
+        @Override
+        public boolean isEternal() {
+            return false;
+        }
+
+        @JsonIgnore
+        @Override
+        public boolean isZero() {
+            return false;
+        }
+
+    }
     private static class RegisteredServiceProxyPolicyMixin implements RegisteredServiceProxyPolicy {
 
         private static final long serialVersionUID = 4854597398304437341L;
@@ -62,13 +80,13 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         @Override
         public boolean isAllowedToProxy() {
             return false;
-        };
+        }
 
         @JsonIgnore
         @Override
         public boolean isAllowedProxyCallbackUrl(final URL pgtUrl) {
             return false;
-        };
+        }
     }
 
     private static class RegisteredServiceAuthorizationStrategyMixin implements RegisteredServiceAccessStrategy {
@@ -79,7 +97,7 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         @Override
         public boolean isServiceAccessAllowed() {
             return false;
-        };
+        }
 
         @JsonIgnore
         @Override
@@ -91,7 +109,7 @@ public final class RegisteredServiceJsonSerializer extends AbstractJacksonBacked
         @Override
         public  boolean doPrincipalAttributesAllowServiceAccess(final Map<String, Object> principalAttributes) {
             return false;
-        };
+        }
     }
 
     @Override
