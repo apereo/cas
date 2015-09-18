@@ -38,9 +38,11 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
         <module name="JavadocMethod">
+      <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
             <property name="allowUndeclaredRTE" value="true"/>
             <property name="allowMissingPropertyJavadoc" value="true"/>
+      <property name="allowThrowsTagsForSubclasses" value="true"/>
         </module>
         <module name="JavadocType">
             <property name="severity" value="error"/>
@@ -51,6 +53,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         <module name="JavadocVariable">
             <property name="severity" value="error"/>
             <property name="scope" value="protected"/>
+      <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
         </module>
         <module name="JavadocStyle">
             <property name="severity" value="error"/>
