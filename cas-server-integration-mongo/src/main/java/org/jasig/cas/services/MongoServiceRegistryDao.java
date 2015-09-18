@@ -33,8 +33,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * Implementation of <code>ServiceRegistryDao</code> that uses a MongoDb repository as the backend
- * persistence mechanism. The repository is configured by the Spring application context. <p/>
+ * <p>Implementation of <code>ServiceRegistryDao</code> that uses a MongoDb repository as the backend
+ * persistence mechanism. The repository is configured by the Spring application context. </p>
  * <p>The class will automatically create a default collection to use with services. The name
  * of the collection may be specified through {@link #setCollectionName(String)}.
  * It also presents the ability to drop an existing collection and start afresh

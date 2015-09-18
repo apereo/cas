@@ -19,7 +19,8 @@
     under the License.
 
 -->
-<Configuration>
+<!-- Specify the refresh internal in seconds. -->
+<Configuration monitorInterval="60">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
@@ -40,7 +41,7 @@
         <Logger name="org.springframework.web" level="warn" />
         <Logger name="org.springframework.security" level="warn" />
 
-        <Logger name="org.jasig" level="info" additivity="false">
+        <Logger name="org.jasig" level="debug" additivity="false">
             <AppenderRef ref="cas-management"/>
             <AppenderRef ref="console"/>
         </Logger>

@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.support.oauth.services;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.support.oauth.OAuthConstants;
 
@@ -45,5 +47,29 @@ public final class OAuthCallbackAuthorizeService extends RegexRegisteredService 
             throw new IllegalArgumentException(msg);
         }
         super.setServiceId(id);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final OAuthCallbackAuthorizeService rhs = (OAuthCallbackAuthorizeService) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 137)
+                .appendSuper(super.hashCode())
+                .toHashCode();
     }
 }
