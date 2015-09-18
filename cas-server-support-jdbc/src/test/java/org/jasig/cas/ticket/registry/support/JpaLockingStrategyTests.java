@@ -257,19 +257,16 @@ public class JpaLockingStrategyTests implements InitializingBean {
         private final JpaLockingStrategy jpaLock;
         private final PlatformTransactionManager txManager;
 
-        public TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
+        TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
                                       final PlatformTransactionManager txManager) {
             jpaLock = lock;
             this.txManager = txManager;
         }
 
         public JpaLockingStrategy getLock() {
-            return jpaLock;
+            return this.jpaLock;
         }
 
-        /**
-     * {@inheritDoc}
-     */
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
@@ -293,13 +290,10 @@ public class JpaLockingStrategyTests implements InitializingBean {
         private final Logger logger = LoggerFactory.getLogger(this.getClass());
         private final LockingStrategy lock;
 
-        public Locker(final LockingStrategy l) {
+        Locker(final LockingStrategy l) {
             lock = l;
         }
 
-        /**
-     * {@inheritDoc}
-     */
         @Override
         public Boolean call() throws Exception {
             try {
@@ -315,13 +309,10 @@ public class JpaLockingStrategyTests implements InitializingBean {
         private final Logger logger = LoggerFactory.getLogger(this.getClass());
         private final LockingStrategy lock;
 
-        public Releaser(final LockingStrategy l) {
+        Releaser(final LockingStrategy l) {
             lock = l;
         }
 
-        /**
-     * {@inheritDoc}
-     */
         @Override
         public Boolean call() throws Exception {
             try {
