@@ -47,7 +47,16 @@ This project includes:
   Bean Validation API under The Apache Software License, Version 2.0
   Bouncy Castle Provider under Bouncy Castle Licence
   CDI APIs under Apache License, Version 2.0
-  Collections under The Apache Software License, Version 2.0
+  com.github.coova.jradius:jradius-apps under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-client under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-core under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-dictionary under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-dictionary-min under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-example under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-extended under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-extras under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-server under GNU Lesser General Public License, version 2.1
+  com.github.coova:jradius under GNU Lesser General Public License, version 2.1
   Commons BeanUtils under The Apache Software License, Version 2.0
   Commons Chain under The Apache Software License, Version 2.0
   Commons CLI under The Apache Software License, Version 2.0
@@ -65,7 +74,6 @@ This project includes:
   Expression Language 3.0 API under CDDL + GPLv2 with classpath exception
   fastinfoset under Apache License, Version 2.0
   FindBugs-Annotations under GNU Lesser Public License
-  gnu-crypto under GNU General Public License, with the "library exception"
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   Hamcrest Core under New BSD License
   Hibernate Commons Annotations under GNU Lesser General Public License
@@ -82,11 +90,11 @@ This project includes:
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Servlet API under CDDL + GPLv2 with classpath exception
   Java Transaction API under Commons Development and Distribution License, Version 1.0
-  java-getopt under GNU General Public License, with the "library exception"
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   javax.inject under The Apache Software License, Version 2.0
   JAXB CORE under CDDL 1.1 or GPL2 w/ CPE
   JAXB Reference Implementation under CDDL 1.1 or GPL2 w/ CPE
+  JBoss Cache - Core Edition under GNU Lesser General Public License
   JBoss Common Classes under lgpl
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging Programming Interface under lgpl
@@ -108,14 +116,10 @@ This project includes:
   Metrics Core under Apache License 2.0
   MinLog under New BSD License
   Mockito under The MIT License
-  net.jradius:jradius-core under LGPL, v3.0
-  net.jradius:jradius-dictionary under LGPL, v3.0
-  net.sf.ehcache:ehcache-terracotta under Apache License, Version 2.0
   Objenesis under Apache 2
   OGNL - Object Graph Navigation Library under Apache License, Version 2.0
-  org.jboss.cache:jbosscache-core under LGPL, v2.1
+  ON Enterprise Server JAR under GNU Lesser General Public License (LGPL)
   org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
-  org.terracotta:terracotta-toolkit-1.0-runtime under Terracotta Public License, http://www.terracotta.org/legal/terracotta-public-license
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
   Protocol Buffer Java API under New BSD license

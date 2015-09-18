@@ -196,6 +196,12 @@ The filters are configured to sanitize authentication request parameters and rej
 
 It is **STRONGLY** recommended that all CAS deployments be evaluated and include this configuration if necessary to prevent protocol attacks in situations where the CAS container and environment are unable to block malicious and badly-configured requests.
 
+### Spring Webflow Sessions
+The CAS project uses Spring Webflow to manage and orchestrate the authentication process. The conversational state of the
+webflow used by CAS is managed by the client which is then passed and tracked throughout various states of the authentication
+process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryptions
+settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be evaluated prior to production rollouts and regenerate this configuration to prevent attacks. 
+
 ## User-Driven Security Features
 The following features may be employed to afford some user control of the SSO experience.
 
