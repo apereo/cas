@@ -265,84 +265,75 @@
 <a class="jxr_linenumber" name="L257" href="#L257">257</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> JpaLockingStrategy jpaLock;
 <a class="jxr_linenumber" name="L258" href="#L258">258</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> PlatformTransactionManager txManager;
 <a class="jxr_linenumber" name="L259" href="#L259">259</a> 
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">TransactionalLockInvocationHandler</a>(<strong class="jxr_keyword">final</strong> JpaLockingStrategy lock,
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>         <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">TransactionalLockInvocationHandler</a>(<strong class="jxr_keyword">final</strong> JpaLockingStrategy lock,
 <a class="jxr_linenumber" name="L261" href="#L261">261</a>                                       <strong class="jxr_keyword">final</strong> PlatformTransactionManager txManager) {
 <a class="jxr_linenumber" name="L262" href="#L262">262</a>             jpaLock = lock;
 <a class="jxr_linenumber" name="L263" href="#L263">263</a>             <strong class="jxr_keyword">this</strong>.txManager = txManager;
 <a class="jxr_linenumber" name="L264" href="#L264">264</a>         }
 <a class="jxr_linenumber" name="L265" href="#L265">265</a> 
 <a class="jxr_linenumber" name="L266" href="#L266">266</a>         <strong class="jxr_keyword">public</strong> JpaLockingStrategy getLock() {
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>             <strong class="jxr_keyword">return</strong> jpaLock;
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.jpaLock;
 <a class="jxr_linenumber" name="L268" href="#L268">268</a>         }
 <a class="jxr_linenumber" name="L269" href="#L269">269</a> 
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L271" href="#L271">271</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L272" href="#L272">272</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>         @Override
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>         <strong class="jxr_keyword">public</strong> Object invoke(<strong class="jxr_keyword">final</strong> Object proxy, <strong class="jxr_keyword">final</strong> Method method, <strong class="jxr_keyword">final</strong> Object[] args) <strong class="jxr_keyword">throws</strong> Throwable {
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> TransactionTemplate(txManager).execute(<strong class="jxr_keyword">new</strong> TransactionCallback&lt;Object&gt;() {
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>                 <strong class="jxr_keyword">public</strong> Object doInTransaction(<strong class="jxr_keyword">final</strong> TransactionStatus status) {
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>                         <strong class="jxr_keyword">final</strong> Object result = method.invoke(jpaLock, args);
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>                         jpaLock.entityManager.flush();
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>                         logger.debug(<span class="jxr_string">"Performed {} on {}"</span>, method.getName(), jpaLock);
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>                         <strong class="jxr_keyword">return</strong> result;
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>                         <em class="jxr_comment">// Force result of transaction to database</em>
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>                     } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"Transactional method invocation failed."</span>, e);
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>                     }
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>                 }
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>             });
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>         }
-<a class="jxr_linenumber" name="L289" href="#L289">289</a> 
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>     }
-<a class="jxr_linenumber" name="L291" href="#L291">291</a> 
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Locker</a> <strong class="jxr_keyword">implements</strong> Callable&lt;Boolean&gt; {
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(<strong class="jxr_keyword">this</strong>.getClass());
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> LockingStrategy lock;
-<a class="jxr_linenumber" name="L295" href="#L295">295</a> 
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Locker</a>(<strong class="jxr_keyword">final</strong> LockingStrategy l) {
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>             lock = l;
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>         }
-<a class="jxr_linenumber" name="L299" href="#L299">299</a> 
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L301" href="#L301">301</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L302" href="#L302">302</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>         @Override
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>         <strong class="jxr_keyword">public</strong> Boolean call() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>                 <strong class="jxr_keyword">return</strong> lock.acquire();
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>                 logger.debug(<span class="jxr_string">"{} failed to acquire lock"</span>, lock, e);
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>                 <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>             }
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>         }
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>     }
-<a class="jxr_linenumber" name="L313" href="#L313">313</a> 
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Releaser</a> <strong class="jxr_keyword">implements</strong> Callable&lt;Boolean&gt; {
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(<strong class="jxr_keyword">this</strong>.getClass());
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> LockingStrategy lock;
-<a class="jxr_linenumber" name="L317" href="#L317">317</a> 
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Releaser</a>(<strong class="jxr_keyword">final</strong> LockingStrategy l) {
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>             lock = l;
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>         }
-<a class="jxr_linenumber" name="L321" href="#L321">321</a> 
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L323" href="#L323">323</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L324" href="#L324">324</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>         @Override
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>         <strong class="jxr_keyword">public</strong> Boolean call() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>                 lock.release();
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>                 logger.debug(<span class="jxr_string">"{} failed to release lock"</span>, lock, e);
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>                 <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>             }
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>         }
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>     }
-<a class="jxr_linenumber" name="L336" href="#L336">336</a> 
-<a class="jxr_linenumber" name="L337" href="#L337">337</a> }
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>         @Override
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>         <strong class="jxr_keyword">public</strong> Object invoke(<strong class="jxr_keyword">final</strong> Object proxy, <strong class="jxr_keyword">final</strong> Method method, <strong class="jxr_keyword">final</strong> Object[] args) <strong class="jxr_keyword">throws</strong> Throwable {
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> TransactionTemplate(txManager).execute(<strong class="jxr_keyword">new</strong> TransactionCallback&lt;Object&gt;() {
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>                 <strong class="jxr_keyword">public</strong> Object doInTransaction(<strong class="jxr_keyword">final</strong> TransactionStatus status) {
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>                     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>                         <strong class="jxr_keyword">final</strong> Object result = method.invoke(jpaLock, args);
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>                         jpaLock.entityManager.flush();
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>                         logger.debug(<span class="jxr_string">"Performed {} on {}"</span>, method.getName(), jpaLock);
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>                         <strong class="jxr_keyword">return</strong> result;
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>                         <em class="jxr_comment">// Force result of transaction to database</em>
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>                     } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>                         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(<span class="jxr_string">"Transactional method invocation failed."</span>, e);
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>                     }
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>                 }
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>             });
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>         }
+<a class="jxr_linenumber" name="L286" href="#L286">286</a> 
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>     }
+<a class="jxr_linenumber" name="L288" href="#L288">288</a> 
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Locker</a> <strong class="jxr_keyword">implements</strong> Callable&lt;Boolean&gt; {
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(<strong class="jxr_keyword">this</strong>.getClass());
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> LockingStrategy lock;
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> 
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>         <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Locker</a>(<strong class="jxr_keyword">final</strong> LockingStrategy l) {
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>             lock = l;
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>         }
+<a class="jxr_linenumber" name="L296" href="#L296">296</a> 
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>         @Override
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>         <strong class="jxr_keyword">public</strong> Boolean call() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>                 <strong class="jxr_keyword">return</strong> lock.acquire();
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>                 logger.debug(<span class="jxr_string">"{} failed to acquire lock"</span>, lock, e);
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>                 <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>             }
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>         }
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>     }
+<a class="jxr_linenumber" name="L307" href="#L307">307</a> 
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Releaser</a> <strong class="jxr_keyword">implements</strong> Callable&lt;Boolean&gt; {
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(<strong class="jxr_keyword">this</strong>.getClass());
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> LockingStrategy lock;
+<a class="jxr_linenumber" name="L311" href="#L311">311</a> 
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>         <a href="../../../../../../org/jasig/cas/ticket/registry/support/JpaLockingStrategyTests.html">Releaser</a>(<strong class="jxr_keyword">final</strong> LockingStrategy l) {
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>             lock = l;
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>         }
+<a class="jxr_linenumber" name="L315" href="#L315">315</a> 
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>         @Override
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>         <strong class="jxr_keyword">public</strong> Boolean call() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>                 lock.release();
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>                 <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>                 logger.debug(<span class="jxr_string">"{} failed to release lock"</span>, lock, e);
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>                 <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>             }
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         }
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>     }
+<a class="jxr_linenumber" name="L327" href="#L327">327</a> 
+<a class="jxr_linenumber" name="L328" href="#L328">328</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

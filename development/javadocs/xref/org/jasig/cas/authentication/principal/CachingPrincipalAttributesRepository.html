@@ -356,51 +356,44 @@
 <a class="jxr_linenumber" name="L348" href="#L348">348</a>     }
 <a class="jxr_linenumber" name="L349" href="#L349">349</a> 
 <a class="jxr_linenumber" name="L350" href="#L350">350</a>     @Override
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">void</strong> finalize() <strong class="jxr_keyword">throws</strong> Throwable {
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>         close();
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>         <strong class="jxr_keyword">super</strong>.finalize();
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>     }
-<a class="jxr_linenumber" name="L355" href="#L355">355</a> 
-<a class="jxr_linenumber" name="L356" href="#L356">356</a> 
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>     @Override
-<a class="jxr_linenumber" name="L358" href="#L358">358</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> ToStringBuilder(<strong class="jxr_keyword">this</strong>)
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>                 .append(<span class="jxr_string">"attributeRepository"</span>, attributeRepository)
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>                 .append(<span class="jxr_string">"cache"</span>, cache)
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>                 .append(<span class="jxr_string">"cacheName"</span>, cacheName)
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>                 .append(<span class="jxr_string">"durationTimeUnit"</span>, duration.getTimeUnit())
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>                 .append(<span class="jxr_string">"durationAmount"</span>, duration.getDurationAmount())
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>                 .append(<span class="jxr_string">"mergingStrategy"</span>, mergingStrategy)
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>                 .toString();
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>     }
-<a class="jxr_linenumber" name="L368" href="#L368">368</a> 
-<a class="jxr_linenumber" name="L369" href="#L369">369</a> 
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>     @Override
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(<strong class="jxr_keyword">final</strong> Object obj) {
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>         <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>         }
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>         <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">this</strong>) {
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>         }
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>         <strong class="jxr_keyword">if</strong> (obj.getClass() != getClass()) {
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>         }
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/CachingPrincipalAttributesRepository.html">CachingPrincipalAttributesRepository</a> rhs = (CachingPrincipalAttributesRepository) obj;
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>         <strong class="jxr_keyword">final</strong> EqualsBuilder builder = <strong class="jxr_keyword">new</strong> EqualsBuilder();
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>         <strong class="jxr_keyword">return</strong> builder
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>                 .append(<strong class="jxr_keyword">this</strong>.duration, rhs.duration)
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>                 .isEquals();
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>     <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> ToStringBuilder(<strong class="jxr_keyword">this</strong>)
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>                 .append(<span class="jxr_string">"attributeRepository"</span>, attributeRepository)
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>                 .append(<span class="jxr_string">"cache"</span>, cache)
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>                 .append(<span class="jxr_string">"cacheName"</span>, cacheName)
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>                 .append(<span class="jxr_string">"durationTimeUnit"</span>, duration.getTimeUnit())
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>                 .append(<span class="jxr_string">"durationAmount"</span>, duration.getDurationAmount())
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>                 .append(<span class="jxr_string">"mergingStrategy"</span>, mergingStrategy)
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>                 .toString();
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>     }
+<a class="jxr_linenumber" name="L361" href="#L361">361</a> 
+<a class="jxr_linenumber" name="L362" href="#L362">362</a> 
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>     @Override
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(<strong class="jxr_keyword">final</strong> Object obj) {
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>         <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>         }
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>         <strong class="jxr_keyword">if</strong> (obj == <strong class="jxr_keyword">this</strong>) {
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>         }
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>         <strong class="jxr_keyword">if</strong> (obj.getClass() != getClass()) {
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>         }
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../org/jasig/cas/authentication/principal/CachingPrincipalAttributesRepository.html">CachingPrincipalAttributesRepository</a> rhs = (CachingPrincipalAttributesRepository) obj;
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>         <strong class="jxr_keyword">final</strong> EqualsBuilder builder = <strong class="jxr_keyword">new</strong> EqualsBuilder();
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>         <strong class="jxr_keyword">return</strong> builder
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>                 .append(<strong class="jxr_keyword">this</strong>.duration, rhs.duration)
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>                 .isEquals();
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>     }
+<a class="jxr_linenumber" name="L380" href="#L380">380</a> 
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>     @Override
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> HashCodeBuilder(13, 133)
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>                 .append(duration)
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>                 .toHashCode();
 <a class="jxr_linenumber" name="L386" href="#L386">386</a>     }
 <a class="jxr_linenumber" name="L387" href="#L387">387</a> 
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>     @Override
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> hashCode() {
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> HashCodeBuilder(13, 133)
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>                 .append(duration)
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>                 .toHashCode();
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>     }
-<a class="jxr_linenumber" name="L394" href="#L394">394</a> 
-<a class="jxr_linenumber" name="L395" href="#L395">395</a> }
+<a class="jxr_linenumber" name="L388" href="#L388">388</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

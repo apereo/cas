@@ -27,8 +27,8 @@ under the License.
     <item>
       <title>File: 65,
              Errors: 0,
-             Warnings: 2,
-             Infos: 0
+             Warnings: 1,
+             Infos: 1
       </title>
             <link>http://www.jasig.org/cas/cas-server-core-api//checkstyle.html</link>
       <description>
@@ -567,10 +567,10 @@ under the License.
                   <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.CasProtocolConstants.java">org/jasig/cas/CasProtocolConstants.java</a>
                 </td>
                 <td>
-                  0
+                  1
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0

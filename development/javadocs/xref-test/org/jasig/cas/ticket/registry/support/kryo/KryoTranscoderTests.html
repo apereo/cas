@@ -251,7 +251,7 @@
 <a class="jxr_linenumber" name="L243" href="#L243">243</a> 
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>         MockServiceTicket() { <em class="jxr_comment">/* for serialization */</em> }
 <a class="jxr_linenumber" name="L245" href="#L245">245</a> 
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockServiceTicket</a>(<strong class="jxr_keyword">final</strong> String id) {
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockServiceTicket</a>(<strong class="jxr_keyword">final</strong> String id) {
 <a class="jxr_linenumber" name="L247" href="#L247">247</a>             <strong class="jxr_keyword">this</strong>.id = id;
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>         }
 <a class="jxr_linenumber" name="L249" href="#L249">249</a> 
@@ -305,7 +305,7 @@
 <a class="jxr_linenumber" name="L297" href="#L297">297</a>         }
 <a class="jxr_linenumber" name="L298" href="#L298">298</a>     }
 <a class="jxr_linenumber" name="L299" href="#L299">299</a> 
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>     <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockTicketGrantingTicket</a> <strong class="jxr_keyword">implements</strong> TicketGrantingTicket {
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockTicketGrantingTicket</a> <strong class="jxr_keyword">implements</strong> TicketGrantingTicket {
 <a class="jxr_linenumber" name="L301" href="#L301">301</a> 
 <a class="jxr_linenumber" name="L302" href="#L302">302</a>         <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 4829406617873497061L;
 <a class="jxr_linenumber" name="L303" href="#L303">303</a> 
@@ -329,7 +329,7 @@
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>             <strong class="jxr_keyword">this</strong>.authentication = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>         }
 <a class="jxr_linenumber" name="L323" href="#L323">323</a> 
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockTicketGrantingTicket</a>(<strong class="jxr_keyword">final</strong> String id, <strong class="jxr_keyword">final</strong> Credential credential, <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; principalAttributes) {
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockTicketGrantingTicket</a>(<strong class="jxr_keyword">final</strong> String id, <strong class="jxr_keyword">final</strong> Credential credential, <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; principalAttributes) {
 <a class="jxr_linenumber" name="L325" href="#L325">325</a>             <strong class="jxr_keyword">this</strong>.id = id;
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>             <strong class="jxr_keyword">final</strong> CredentialMetaData credentialMetaData = <strong class="jxr_keyword">new</strong> BasicCredentialMetaData(credential);
 <a class="jxr_linenumber" name="L327" href="#L327">327</a>             <strong class="jxr_keyword">final</strong> DefaultAuthenticationBuilder builder = <strong class="jxr_keyword">new</strong> DefaultAuthenticationBuilder();
@@ -442,7 +442,7 @@
 <a class="jxr_linenumber" name="L434" href="#L434">434</a>         }
 <a class="jxr_linenumber" name="L435" href="#L435">435</a>     }
 <a class="jxr_linenumber" name="L436" href="#L436">436</a> 
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockAuthenticationHandler</a> <strong class="jxr_keyword">implements</strong> AuthenticationHandler {
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockAuthenticationHandler</a> <strong class="jxr_keyword">implements</strong> AuthenticationHandler {
 <a class="jxr_linenumber" name="L438" href="#L438">438</a> 
 <a class="jxr_linenumber" name="L439" href="#L439">439</a>         @Override
 <a class="jxr_linenumber" name="L440" href="#L440">440</a>         <strong class="jxr_keyword">public</strong> DefaultHandlerResult authenticate(<strong class="jxr_keyword">final</strong> Credential credential) <strong class="jxr_keyword">throws</strong> GeneralSecurityException, PreventedException {
@@ -460,7 +460,7 @@
 <a class="jxr_linenumber" name="L452" href="#L452">452</a> 
 <a class="jxr_linenumber" name="L453" href="#L453">453</a>         @Override
 <a class="jxr_linenumber" name="L454" href="#L454">454</a>         <strong class="jxr_keyword">public</strong> String getName() {
-<a class="jxr_linenumber" name="L455" href="#L455">455</a>             <strong class="jxr_keyword">return</strong> <span class="jxr_string">"MockAuthenticationHandler"</span>;
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.getClass().getSimpleName();
 <a class="jxr_linenumber" name="L456" href="#L456">456</a>         }
 <a class="jxr_linenumber" name="L457" href="#L457">457</a>     }
 <a class="jxr_linenumber" name="L458" href="#L458">458</a> }

@@ -36,7 +36,7 @@
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> * Delegates to one or more principal resolves in series to resolve a principal. The input to first configured resolver</em>
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> * is the authenticated credential; for every subsequent resolver, the input is a {@link Credential} whose ID is the</em>
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * resolved princpial ID of the previous resolver.</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * resolved principal ID of the previous resolver.</em>
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;</em>
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment"> * A common use case for this component is resolving a temporary principal ID from an X.509 credential followed by</em>
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment"> * a search (e.g. LDAP, database) for the final principal based on the temporary ID.</em>
@@ -96,7 +96,7 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>      }
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>  
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>      <em class="jxr_javadoccomment">/** Credential that stores only an ID. */</em>
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/authentication/principal/ChainingPrincipalResolver.html">IdentifiableCredential</a> <strong class="jxr_keyword">implements</strong> Credential {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../org/jasig/cas/authentication/principal/ChainingPrincipalResolver.html">IdentifiableCredential</a> <strong class="jxr_keyword">implements</strong> Credential {
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          <em class="jxr_javadoccomment">/** Credential identifier. */</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>          <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String id;
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  
@@ -105,7 +105,7 @@
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>  <em class="jxr_javadoccomment">         *</em>
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">         * @param id the credential id</em>
 <a class="jxr_linenumber" name="L99" href="#L99">99</a>  <em class="jxr_javadoccomment">         */</em>
-<a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../org/jasig/cas/authentication/principal/ChainingPrincipalResolver.html">IdentifiableCredential</a>(<strong class="jxr_keyword">final</strong> String id) {
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>         <a href="../../../../../org/jasig/cas/authentication/principal/ChainingPrincipalResolver.html">IdentifiableCredential</a>(<strong class="jxr_keyword">final</strong> String id) {
 <a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">this</strong>.id = id;
 <a class="jxr_linenumber" name="L102" href="#L102">102</a>         }
 <a class="jxr_linenumber" name="L103" href="#L103">103</a> 

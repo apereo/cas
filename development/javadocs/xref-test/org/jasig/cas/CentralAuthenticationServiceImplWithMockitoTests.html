@@ -97,7 +97,7 @@
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a> <strong class="jxr_keyword">extends</strong> ArgumentMatcher&lt;Service&gt; {
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> String id;
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>  
-<a class="jxr_linenumber" name="L92" href="#L92">92</a>          <strong class="jxr_keyword">public</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(<strong class="jxr_keyword">final</strong> String id) {
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>          <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(<strong class="jxr_keyword">final</strong> String id) {
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>              <strong class="jxr_keyword">this</strong>.id = id;
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>          }
 <a class="jxr_linenumber" name="L95" href="#L95">95</a>  
@@ -142,134 +142,144 @@
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtMock2 = createMockTicketGrantingTicket(TGT2_ID, stMock2, false, tgtRootMock, authnListMock);        
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>         <em class="jxr_comment">//Mock TicketRegistry</em>
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>         <strong class="jxr_keyword">this</strong>.ticketRegMock = mock(TicketRegistry.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>         when(ticketRegMock.getTicket(eq(tgtMock.getId()), eq(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>))).thenReturn(tgtMock);
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>         when(ticketRegMock.getTicket(eq(tgtMock2.getId()), eq(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>))).thenReturn(tgtMock2);
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.<strong class="jxr_keyword">class</strong>))).thenReturn(stMock);
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.<strong class="jxr_keyword">class</strong>))).thenReturn(stMock2);
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>         when(ticketRegMock.getTickets()).thenReturn(Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
-<a class="jxr_linenumber" name="L143" href="#L143">143</a> 
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>         <em class="jxr_comment">//Mock ServicesManager</em>
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>         <strong class="jxr_keyword">final</strong> RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), <strong class="jxr_keyword">true</strong>, getServiceProxyPolicy(false));
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>         <strong class="jxr_keyword">final</strong> RegisteredService mockRegSvc2 = createMockRegisteredService(<span class="jxr_string">"test"</span>, false, getServiceProxyPolicy(<strong class="jxr_keyword">true</strong>)); 
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">final</strong> RegisteredService mockRegSvc3 = createMockRegisteredService(service2.getId(), <strong class="jxr_keyword">true</strong>, getServiceProxyPolicy(<strong class="jxr_keyword">true</strong>)); 
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>         
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> ServicesManager smMock = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         when(smMock.findServiceBy(argThat(<strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(service1.getId())))).thenReturn(mockRegSvc1);
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         when(smMock.findServiceBy(argThat(<strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(<span class="jxr_string">"test"</span>)))).thenReturn(mockRegSvc2);
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         when(smMock.findServiceBy(argThat(<strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(service2.getId())))).thenReturn(mockRegSvc3);
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>         
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> Map ticketIdGenForServiceMock = mock(Map.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         when(ticketIdGenForServiceMock.containsKey(any())).thenReturn(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         when(ticketIdGenForServiceMock.get(any())).thenReturn(<strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator());
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>         
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         <strong class="jxr_keyword">this</strong>.cas = <strong class="jxr_keyword">new</strong> CentralAuthenticationServiceImpl(ticketRegMock, <strong class="jxr_keyword">null</strong>, mock(AuthenticationManager.<strong class="jxr_keyword">class</strong>),
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>                 mock(UniqueTicketIdGenerator.<strong class="jxr_keyword">class</strong>), ticketIdGenForServiceMock, mock(ExpirationPolicy.<strong class="jxr_keyword">class</strong>),
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>                 mock(ExpirationPolicy.<strong class="jxr_keyword">class</strong>), smMock, mock(LogoutManager.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>         mockTicketRegistry(stMock, tgtMock, stMock2, tgtMock2);
+<a class="jxr_linenumber" name="L138" href="#L138">138</a> 
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>         <em class="jxr_comment">//Mock ServicesManager</em>
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">final</strong> ServicesManager smMock = getServicesManager(service1, service2);
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>         <strong class="jxr_keyword">final</strong> Map ticketIdGenForServiceMock = mock(Map.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         when(ticketIdGenForServiceMock.containsKey(any())).thenReturn(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         when(ticketIdGenForServiceMock.get(any())).thenReturn(<strong class="jxr_keyword">new</strong> DefaultUniqueTicketIdGenerator());
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>         <strong class="jxr_keyword">this</strong>.cas = <strong class="jxr_keyword">new</strong> CentralAuthenticationServiceImpl(ticketRegMock, <strong class="jxr_keyword">null</strong>, mock(AuthenticationManager.<strong class="jxr_keyword">class</strong>),
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>                 mock(UniqueTicketIdGenerator.<strong class="jxr_keyword">class</strong>), ticketIdGenForServiceMock, mock(ExpirationPolicy.<strong class="jxr_keyword">class</strong>),
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>                 mock(ExpirationPolicy.<strong class="jxr_keyword">class</strong>), smMock, mock(LogoutManager.<strong class="jxr_keyword">class</strong>));
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>     }
+<a class="jxr_linenumber" name="L150" href="#L150">150</a> 
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>     <strong class="jxr_keyword">private</strong> ServicesManager getServicesManager(<strong class="jxr_keyword">final</strong> Service service1, <strong class="jxr_keyword">final</strong> Service service2) {
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         <strong class="jxr_keyword">final</strong> RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), <strong class="jxr_keyword">true</strong>, getServiceProxyPolicy(false));
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">final</strong> RegisteredService mockRegSvc2 = createMockRegisteredService(<span class="jxr_string">"test"</span>, false, getServiceProxyPolicy(<strong class="jxr_keyword">true</strong>));
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> RegisteredService mockRegSvc3 = createMockRegisteredService(service2.getId(), <strong class="jxr_keyword">true</strong>, getServiceProxyPolicy(<strong class="jxr_keyword">true</strong>));
+<a class="jxr_linenumber" name="L155" href="#L155">155</a> 
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">final</strong> ServicesManager smMock = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         when(smMock.findServiceBy(argThat(<strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(service1.getId())))).thenReturn(mockRegSvc1);
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         when(smMock.findServiceBy(argThat(<strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(<span class="jxr_string">"test"</span>)))).thenReturn(mockRegSvc2);
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         when(smMock.findServiceBy(argThat(<strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(service2.getId())))).thenReturn(mockRegSvc3);
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">return</strong> smMock;
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>     }
 <a class="jxr_linenumber" name="L162" href="#L162">162</a> 
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>     @Test(expected=InvalidTicketException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>         <strong class="jxr_keyword">this</strong>.cas.delegateTicketGrantingTicket(<span class="jxr_string">"bad-st"</span>, TestUtils.getCredentialsWithSameUsernameAndPassword());
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>     }
-<a class="jxr_linenumber" name="L167" href="#L167">167</a> 
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>     @Test(expected=UnauthorizedServiceException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyInvalidServiceWhenDelegatingTicketGrantingTicket() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>         <strong class="jxr_keyword">this</strong>.cas.delegateTicketGrantingTicket(ST_ID, TestUtils.getCredentialsWithSameUsernameAndPassword());
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> mockTicketRegistry(<strong class="jxr_keyword">final</strong> ServiceTicket stMock, <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtMock,
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>                                     <strong class="jxr_keyword">final</strong> ServiceTicket stMock2, <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtMock2) {
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         <strong class="jxr_keyword">this</strong>.ticketRegMock = mock(TicketRegistry.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>         when(ticketRegMock.getTicket(eq(tgtMock.getId()), eq(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>))).thenReturn(tgtMock);
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         when(ticketRegMock.getTicket(eq(tgtMock2.getId()), eq(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>))).thenReturn(tgtMock2);
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>         when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.<strong class="jxr_keyword">class</strong>))).thenReturn(stMock);
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.<strong class="jxr_keyword">class</strong>))).thenReturn(stMock2);
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>         when(ticketRegMock.getTickets()).thenReturn(Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
 <a class="jxr_linenumber" name="L171" href="#L171">171</a>     }
 <a class="jxr_linenumber" name="L172" href="#L172">172</a> 
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>     @Test(expected=UnauthorizedProxyingException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() <strong class="jxr_keyword">throws</strong> TicketException {
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>         <strong class="jxr_keyword">this</strong>.cas.grantServiceTicket(TGT_ID, TestUtils.getService(SVC1_ID));
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>     @Test(expected=InvalidTicketException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         <strong class="jxr_keyword">this</strong>.cas.delegateTicketGrantingTicket(<span class="jxr_string">"bad-st"</span>, TestUtils.getCredentialsWithSameUsernameAndPassword());
 <a class="jxr_linenumber" name="L176" href="#L176">176</a>     }
 <a class="jxr_linenumber" name="L177" href="#L177">177</a> 
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>     @Test(expected=IllegalArgumentException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> getTicketGrantingTicketIfTicketIdIsNull() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>         <strong class="jxr_keyword">this</strong>.cas.getTicket(<strong class="jxr_keyword">null</strong>, TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>     @Test(expected=UnauthorizedServiceException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyInvalidServiceWhenDelegatingTicketGrantingTicket() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>         <strong class="jxr_keyword">this</strong>.cas.delegateTicketGrantingTicket(ST_ID, TestUtils.getCredentialsWithSameUsernameAndPassword());
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>     }
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> 
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>     @Test(expected=InvalidTicketException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> getTicketGrantingTicketIfTicketIdIsMissing() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">this</strong>.cas.getTicket(<span class="jxr_string">"TGT-9000"</span>, TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>     @Test(expected=UnauthorizedProxyingException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() <strong class="jxr_keyword">throws</strong> TicketException {
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">this</strong>.cas.grantServiceTicket(TGT_ID, TestUtils.getService(SVC1_ID));
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> 
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>     @Test
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> getTicketsWithNoPredicate() {
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; c = <strong class="jxr_keyword">this</strong>.cas.getTickets(TruePredicate.INSTANCE);
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>         assertEquals(c.size(), <strong class="jxr_keyword">this</strong>.ticketRegMock.getTickets().size());
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>     }
-<a class="jxr_linenumber" name="L193" href="#L193">193</a> 
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>     @Test
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyChainedAuthenticationsOnValidation() <strong class="jxr_keyword">throws</strong> TicketException {
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(SVC2_ID);
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>         <strong class="jxr_keyword">final</strong> ServiceTicket st = <strong class="jxr_keyword">this</strong>.cas.grantServiceTicket(TGT2_ID, svc);
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>         assertNotNull(st);
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>         
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = <strong class="jxr_keyword">this</strong>.cas.validateServiceTicket(st.getId(), svc);
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>         assertNotNull(assertion);
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>         
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>         assertEquals(assertion.getService(), svc);
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>         assertEquals(assertion.getPrimaryAuthentication().getPrincipal().getId(), PRINCIPAL);
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>         assertTrue(assertion.getChainedAuthentications().size()  == 2);
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; assertion.getChainedAuthentications().size(); i++) {
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>             <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getChainedAuthentications().get(i);
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>             assertEquals(auth, authentication);
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>         }
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>     }
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>     
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>     <strong class="jxr_keyword">private</strong> TicketGrantingTicket createRootTicketGrantingTicket() {
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtRootMock = mock(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>         when(tgtRootMock.isExpired()).thenReturn(false);
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>         when(tgtRootMock.getAuthentication()).thenReturn(<strong class="jxr_keyword">this</strong>.authentication);
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>         <strong class="jxr_keyword">return</strong> tgtRootMock;
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>     }
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>     
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>     <strong class="jxr_keyword">private</strong> TicketGrantingTicket createMockTicketGrantingTicket(<strong class="jxr_keyword">final</strong> String id,
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>             <strong class="jxr_keyword">final</strong> ServiceTicket svcTicket, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isExpired, 
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket root, <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; chainedAuthnList) {
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>         when(tgtMock.isExpired()).thenReturn(isExpired);
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>         when(tgtMock.getId()).thenReturn(id);
-<a class="jxr_linenumber" name="L225" href="#L225">225</a> 
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>         <strong class="jxr_keyword">final</strong> String svcId = svcTicket.getService().getId();
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>         when(tgtMock.grantServiceTicket(anyString(), argThat(<strong class="jxr_keyword">new</strong> VerifyServiceByIdMatcher(svcId)),
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>                 any(ExpirationPolicy.<strong class="jxr_keyword">class</strong>), anyBoolean())).thenReturn(svcTicket);
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>         when(tgtMock.getRoot()).thenReturn(root);
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>         when(tgtMock.getChainedAuthentications()).thenReturn(chainedAuthnList);
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>         when(svcTicket.getGrantingTicket()).thenReturn(tgtMock);   
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>         
-<a class="jxr_linenumber" name="L233" href="#L233">233</a>         <strong class="jxr_keyword">return</strong> tgtMock;
-<a class="jxr_linenumber" name="L234" href="#L234">234</a>     }
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>     
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>     <strong class="jxr_keyword">private</strong> ServiceTicket createMockServiceTicket(<strong class="jxr_keyword">final</strong> String id, <strong class="jxr_keyword">final</strong> Service svc) {
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>         <strong class="jxr_keyword">final</strong> ServiceTicket stMock = mock(ServiceTicket.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>         when(stMock.getService()).thenReturn(svc);
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>         when(stMock.getId()).thenReturn(id);
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>         when(stMock.isValidFor(svc)).thenReturn(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>         <strong class="jxr_keyword">return</strong> stMock;
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>     }
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>     
-<a class="jxr_linenumber" name="L244" href="#L244">244</a>     <strong class="jxr_keyword">private</strong> RegisteredServiceProxyPolicy getServiceProxyPolicy(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> canProxy) {
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>         <strong class="jxr_keyword">if</strong> (!canProxy) {
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> RefuseRegisteredServiceProxyPolicy();
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>         }
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>         
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> RegexMatchingRegisteredServiceProxyPolicy(<span class="jxr_string">".*"</span>);
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>     }
-<a class="jxr_linenumber" name="L251" href="#L251">251</a> 
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>     <strong class="jxr_keyword">private</strong> RegisteredService createMockRegisteredService(<strong class="jxr_keyword">final</strong> String svcId,
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> enabled, <strong class="jxr_keyword">final</strong> RegisteredServiceProxyPolicy proxy) {
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>         <strong class="jxr_keyword">final</strong> RegisteredService mockRegSvc = mock(RegisteredService.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>         when(mockRegSvc.getServiceId()).thenReturn(svcId);
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>         when(mockRegSvc.getName()).thenReturn(svcId);
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>         when(mockRegSvc.matches(argThat(<strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(svcId)))).thenReturn(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>         when(mockRegSvc.getAttributeReleasePolicy()).thenReturn(<strong class="jxr_keyword">new</strong> ReturnAllAttributeReleasePolicy());
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>         when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(<strong class="jxr_keyword">new</strong> DefaultRegisteredServiceUsernameProvider());
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>         when(mockRegSvc.getAccessStrategy()).thenReturn(<strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(enabled, <strong class="jxr_keyword">true</strong>));
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>         <strong class="jxr_keyword">return</strong> mockRegSvc;
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>     }
-<a class="jxr_linenumber" name="L264" href="#L264">264</a> }
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     @Test(expected=IllegalArgumentException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> getTicketGrantingTicketIfTicketIdIsNull() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>         <strong class="jxr_keyword">this</strong>.cas.getTicket(<strong class="jxr_keyword">null</strong>, TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>     }
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> 
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>     @Test(expected=InvalidTicketException.<strong class="jxr_keyword">class</strong>)
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> getTicketGrantingTicketIfTicketIdIsMissing() <strong class="jxr_keyword">throws</strong> InvalidTicketException {
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>         <strong class="jxr_keyword">this</strong>.cas.getTicket(<span class="jxr_string">"TGT-9000"</span>, TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>     }
+<a class="jxr_linenumber" name="L197" href="#L197">197</a> 
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>     @Test
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> getTicketsWithNoPredicate() {
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; c = <strong class="jxr_keyword">this</strong>.cas.getTickets(TruePredicate.INSTANCE);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         assertEquals(c.size(), <strong class="jxr_keyword">this</strong>.ticketRegMock.getTickets().size());
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>     }
+<a class="jxr_linenumber" name="L203" href="#L203">203</a> 
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>     @Test
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyChainedAuthenticationsOnValidation() <strong class="jxr_keyword">throws</strong> TicketException {
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(SVC2_ID);
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>         <strong class="jxr_keyword">final</strong> ServiceTicket st = <strong class="jxr_keyword">this</strong>.cas.grantServiceTicket(TGT2_ID, svc);
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         assertNotNull(st);
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>         
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = <strong class="jxr_keyword">this</strong>.cas.validateServiceTicket(st.getId(), svc);
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>         assertNotNull(assertion);
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>         
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>         assertEquals(assertion.getService(), svc);
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>         assertEquals(assertion.getPrimaryAuthentication().getPrincipal().getId(), PRINCIPAL);
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>         assertTrue(assertion.getChainedAuthentications().size()  == 2);
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; assertion.getChainedAuthentications().size(); i++) {
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>             <strong class="jxr_keyword">final</strong> Authentication auth = assertion.getChainedAuthentications().get(i);
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>             assertEquals(auth, authentication);
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>         }
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>     }
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>     
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>     <strong class="jxr_keyword">private</strong> TicketGrantingTicket createRootTicketGrantingTicket() {
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtRootMock = mock(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>         when(tgtRootMock.isExpired()).thenReturn(false);
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>         when(tgtRootMock.getAuthentication()).thenReturn(<strong class="jxr_keyword">this</strong>.authentication);
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>         <strong class="jxr_keyword">return</strong> tgtRootMock;
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>     }
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>     
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>     <strong class="jxr_keyword">private</strong> TicketGrantingTicket createMockTicketGrantingTicket(<strong class="jxr_keyword">final</strong> String id,
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>             <strong class="jxr_keyword">final</strong> ServiceTicket svcTicket, <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> isExpired, 
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket root, <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; chainedAuthnList) {
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>         when(tgtMock.isExpired()).thenReturn(isExpired);
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>         when(tgtMock.getId()).thenReturn(id);
+<a class="jxr_linenumber" name="L235" href="#L235">235</a> 
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>         <strong class="jxr_keyword">final</strong> String svcId = svcTicket.getService().getId();
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>         when(tgtMock.grantServiceTicket(anyString(), argThat(<strong class="jxr_keyword">new</strong> VerifyServiceByIdMatcher(svcId)),
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>                 any(ExpirationPolicy.<strong class="jxr_keyword">class</strong>), anyBoolean())).thenReturn(svcTicket);
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>         when(tgtMock.getRoot()).thenReturn(root);
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>         when(tgtMock.getChainedAuthentications()).thenReturn(chainedAuthnList);
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>         when(svcTicket.getGrantingTicket()).thenReturn(tgtMock);   
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>         
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>         <strong class="jxr_keyword">return</strong> tgtMock;
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>     }
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>     
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>     <strong class="jxr_keyword">private</strong> ServiceTicket createMockServiceTicket(<strong class="jxr_keyword">final</strong> String id, <strong class="jxr_keyword">final</strong> Service svc) {
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">final</strong> ServiceTicket stMock = mock(ServiceTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>         when(stMock.getService()).thenReturn(svc);
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>         when(stMock.getId()).thenReturn(id);
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>         when(stMock.isValidFor(svc)).thenReturn(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>         <strong class="jxr_keyword">return</strong> stMock;
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>     }
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>     
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>     <strong class="jxr_keyword">private</strong> RegisteredServiceProxyPolicy getServiceProxyPolicy(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> canProxy) {
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>         <strong class="jxr_keyword">if</strong> (!canProxy) {
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> RefuseRegisteredServiceProxyPolicy();
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         }
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>         
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> RegexMatchingRegisteredServiceProxyPolicy(<span class="jxr_string">".*"</span>);
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>     }
+<a class="jxr_linenumber" name="L261" href="#L261">261</a> 
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>     <strong class="jxr_keyword">private</strong> RegisteredService createMockRegisteredService(<strong class="jxr_keyword">final</strong> String svcId,
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>             <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> enabled, <strong class="jxr_keyword">final</strong> RegisteredServiceProxyPolicy proxy) {
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>         <strong class="jxr_keyword">final</strong> RegisteredService mockRegSvc = mock(RegisteredService.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>         when(mockRegSvc.getServiceId()).thenReturn(svcId);
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>         when(mockRegSvc.getProxyPolicy()).thenReturn(proxy);
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         when(mockRegSvc.getName()).thenReturn(svcId);
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>         when(mockRegSvc.matches(argThat(<strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/CentralAuthenticationServiceImplWithMockitoTests.html">VerifyServiceByIdMatcher</a>(svcId)))).thenReturn(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>         when(mockRegSvc.getAttributeReleasePolicy()).thenReturn(<strong class="jxr_keyword">new</strong> ReturnAllAttributeReleasePolicy());
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>         when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(<strong class="jxr_keyword">new</strong> DefaultRegisteredServiceUsernameProvider());
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>         when(mockRegSvc.getAccessStrategy()).thenReturn(<strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(enabled, <strong class="jxr_keyword">true</strong>));
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>         <strong class="jxr_keyword">return</strong> mockRegSvc;
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>     }
+<a class="jxr_linenumber" name="L274" href="#L274">274</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

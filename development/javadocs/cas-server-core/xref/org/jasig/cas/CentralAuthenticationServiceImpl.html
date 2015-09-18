@@ -281,369 +281,381 @@
 <a class="jxr_linenumber" name="L273" href="#L273">273</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedSsoServiceException.html">UnauthorizedSsoServiceException</a>();
 <a class="jxr_linenumber" name="L274" href="#L274">274</a>         }
 <a class="jxr_linenumber" name="L275" href="#L275">275</a> 
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>         <strong class="jxr_keyword">final</strong> Service proxiedBy = ticketGrantingTicket.getProxiedBy();
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>         <strong class="jxr_keyword">if</strong> (proxiedBy != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>             logger.debug(<span class="jxr_string">"TGT is proxied by [{}]. Locating proxy service in registry..."</span>, proxiedBy.getId());
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>             <strong class="jxr_keyword">final</strong> RegisteredService proxyingService = servicesManager.findServiceBy(proxiedBy);
-<a class="jxr_linenumber" name="L280" href="#L280">280</a> 
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>             <strong class="jxr_keyword">if</strong> (proxyingService != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>                 logger.debug(<span class="jxr_string">"Located proxying service [{}] in the service registry"</span>, proxyingService);
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>                 <strong class="jxr_keyword">if</strong> (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>                     logger.warn(<span class="jxr_string">"Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}"</span>,
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>                             proxyingService.getId(), service.getId());
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedProxyingException.html">UnauthorizedProxyingException</a>(<span class="jxr_string">"Proxying is not allowed for registered service "</span>
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>                             + registeredService.getId());
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>                 }
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>             } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>                 logger.warn(<span class="jxr_string">"No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed."</span>,
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>                         service.getId(), registeredService.getId());
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedProxyingException.html">UnauthorizedProxyingException</a>(<span class="jxr_string">"Proxying is not allowed for registered service "</span>
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>                         + registeredService.getId());
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>             }
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>             logger.trace(<span class="jxr_string">"TGT is not proxied by another service"</span>);
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>         }
-<a class="jxr_linenumber" name="L298" href="#L298">298</a> 
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>         <em class="jxr_comment">// Perform security policy check by getting the authentication that satisfies the configured policy</em>
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>         <em class="jxr_comment">// This throws if no suitable policy is found</em>
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/ServiceContext.html">ServiceContext</a>(service, registeredService));
-<a class="jxr_linenumber" name="L302" href="#L302">302</a> 
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; authentications = ticketGrantingTicket.getChainedAuthentications();
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>         <strong class="jxr_keyword">final</strong> Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
-<a class="jxr_linenumber" name="L305" href="#L305">305</a> 
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>         <strong class="jxr_keyword">if</strong> (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>             logger.warn(<span class="jxr_string">"ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}]."</span>,
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>                     service.getId(), principal);
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedServiceForPrincipalException.html">UnauthorizedServiceForPrincipalException</a>();
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>         }
-<a class="jxr_linenumber" name="L312" href="#L312">312</a> 
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>         <strong class="jxr_keyword">final</strong> String uniqueTicketIdGenKey = service.getClass().getName();
-<a class="jxr_linenumber" name="L314" href="#L314">314</a>         logger.debug(<span class="jxr_string">"Looking up service ticket id generator for [{}]"</span>, uniqueTicketIdGenKey);
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>         <a href="../../../org/jasig/cas/util/UniqueTicketIdGenerator.html">UniqueTicketIdGenerator</a> serviceTicketUniqueTicketIdGenerator =
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>                 <strong class="jxr_keyword">this</strong>.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>         <strong class="jxr_keyword">if</strong> (serviceTicketUniqueTicketIdGenerator == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>             serviceTicketUniqueTicketIdGenerator = <strong class="jxr_keyword">this</strong>.defaultServiceTicketIdGenerator;
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>             logger.debug(<span class="jxr_string">"Service ticket id generator not found for [{}]. Using the default generator..."</span>,
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>                     uniqueTicketIdGenKey);
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>         }
-<a class="jxr_linenumber" name="L322" href="#L322">322</a> 
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>         <strong class="jxr_keyword">final</strong> String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <strong class="jxr_keyword">final</strong> String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ticketPrefix);
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>                 ticketId,
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>                 service,
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>                 <strong class="jxr_keyword">this</strong>.serviceTicketExpirationPolicy,
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>                 currentAuthentication != <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L330" href="#L330">330</a> 
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>         <strong class="jxr_keyword">this</strong>.serviceTicketRegistry.addTicket(serviceTicket);
-<a class="jxr_linenumber" name="L332" href="#L332">332</a> 
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>         logger.info(<span class="jxr_string">"Granted ticket [{}] for service [{}] for user [{}]"</span>,
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>                 serviceTicket.getId(), service.getId(), principal.getId());
-<a class="jxr_linenumber" name="L335" href="#L335">335</a> 
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>         <strong class="jxr_keyword">return</strong> serviceTicket;
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>     }
-<a class="jxr_linenumber" name="L338" href="#L338">338</a> 
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L340" href="#L340">340</a> <em class="jxr_javadoccomment">     * Attempts to sanitize the array of credentials by removing</em>
-<a class="jxr_linenumber" name="L341" href="#L341">341</a> <em class="jxr_javadoccomment">     * all null elements from the collection.</em>
-<a class="jxr_linenumber" name="L342" href="#L342">342</a> <em class="jxr_javadoccomment">     * @param credentials credentials to sanitize</em>
-<a class="jxr_linenumber" name="L343" href="#L343">343</a> <em class="jxr_javadoccomment">     * @return a set of credentials with no null values</em>
-<a class="jxr_linenumber" name="L344" href="#L344">344</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L345" href="#L345">345</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Set&lt;Credential&gt; sanitizeCredentials(<strong class="jxr_keyword">final</strong> Credential[] credentials) {
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>         <strong class="jxr_keyword">if</strong> (credentials != <strong class="jxr_keyword">null</strong> &amp;&amp; credentials.length &gt; 0) {
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>             <strong class="jxr_keyword">final</strong> Set&lt;Credential&gt; set = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;(Arrays.asList(credentials));
-<a class="jxr_linenumber" name="L348" href="#L348">348</a>             <strong class="jxr_keyword">final</strong> Iterator&lt;Credential&gt; it = set.iterator();
-<a class="jxr_linenumber" name="L349" href="#L349">349</a>             <strong class="jxr_keyword">while</strong> (it.hasNext()) {
-<a class="jxr_linenumber" name="L350" href="#L350">350</a>                 <strong class="jxr_keyword">if</strong> (it.next() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L351" href="#L351">351</a>                     it.remove();
-<a class="jxr_linenumber" name="L352" href="#L352">352</a>                 }
-<a class="jxr_linenumber" name="L353" href="#L353">353</a>             }
-<a class="jxr_linenumber" name="L354" href="#L354">354</a>             <strong class="jxr_keyword">return</strong> set;
-<a class="jxr_linenumber" name="L355" href="#L355">355</a>         }
-<a class="jxr_linenumber" name="L356" href="#L356">356</a>         <strong class="jxr_keyword">return</strong> Collections.emptySet();
-<a class="jxr_linenumber" name="L357" href="#L357">357</a>     }
-<a class="jxr_linenumber" name="L358" href="#L358">358</a> 
-<a class="jxr_linenumber" name="L359" href="#L359">359</a>     @Audit(
-<a class="jxr_linenumber" name="L360" href="#L360">360</a>         action=<span class="jxr_string">"SERVICE_TICKET"</span>,
-<a class="jxr_linenumber" name="L361" href="#L361">361</a>         actionResolverName=<span class="jxr_string">"GRANT_SERVICE_TICKET_RESOLVER"</span>,
-<a class="jxr_linenumber" name="L362" href="#L362">362</a>         resourceResolverName=<span class="jxr_string">"GRANT_SERVICE_TICKET_RESOURCE_RESOLVER"</span>)
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>     @Timed(name = <span class="jxr_string">"GRANT_SERVICE_TICKET_TIMER"</span>)
-<a class="jxr_linenumber" name="L364" href="#L364">364</a>     @Metered(name=<span class="jxr_string">"GRANT_SERVICE_TICKET_METER"</span>)
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>     @Counted(name=<span class="jxr_string">"GRANT_SERVICE_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>     @Override
-<a class="jxr_linenumber" name="L367" href="#L367">367</a>     <strong class="jxr_keyword">public</strong> ServiceTicket grantServiceTicket(<strong class="jxr_keyword">final</strong> String ticketGrantingTicketId,
-<a class="jxr_linenumber" name="L368" href="#L368">368</a>         <strong class="jxr_keyword">final</strong> Service service) <strong class="jxr_keyword">throws</strong> TicketException {
-<a class="jxr_linenumber" name="L369" href="#L369">369</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L370" href="#L370">370</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.grantServiceTicket(ticketGrantingTicketId, service, (Credential[]) <strong class="jxr_keyword">null</strong>);
-<a class="jxr_linenumber" name="L371" href="#L371">371</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AuthenticationException e) {
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Unexpected authentication exception"</span>, e);
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>         }
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>     }
-<a class="jxr_linenumber" name="L375" href="#L375">375</a> 
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>     @Audit(
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>         action=<span class="jxr_string">"PROXY_GRANTING_TICKET"</span>,
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>         actionResolverName=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_RESOLVER"</span>,
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>         resourceResolverName=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER"</span>)
-<a class="jxr_linenumber" name="L380" href="#L380">380</a>     @Timed(name=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_TIMER"</span>)
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>     @Metered(name=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_METER"</span>)
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>     @Counted(name=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>     @Override
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>     <strong class="jxr_keyword">public</strong> TicketGrantingTicket delegateTicketGrantingTicket(<strong class="jxr_keyword">final</strong> String serviceTicketId, <strong class="jxr_keyword">final</strong> Credential... credentials)
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException {
-<a class="jxr_linenumber" name="L386" href="#L386">386</a> 
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket =  <strong class="jxr_keyword">this</strong>.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L388" href="#L388">388</a> 
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>         <strong class="jxr_keyword">if</strong> (serviceTicket == <strong class="jxr_keyword">null</strong> || serviceTicket.isExpired()) {
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>             logger.debug(<span class="jxr_string">"ServiceTicket [{}] has expired or cannot be found in the ticket registry"</span>, serviceTicketId);
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(serviceTicketId);
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>         }
-<a class="jxr_linenumber" name="L393" href="#L393">393</a> 
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>         <strong class="jxr_keyword">final</strong> RegisteredService registeredService = <strong class="jxr_keyword">this</strong>.servicesManager
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>                 .findServiceBy(serviceTicket.getService());
-<a class="jxr_linenumber" name="L396" href="#L396">396</a> 
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>         verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>         
-<a class="jxr_linenumber" name="L399" href="#L399">399</a>         <strong class="jxr_keyword">if</strong> (!registeredService.getProxyPolicy().isAllowedToProxy()) {
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>             logger.warn(<span class="jxr_string">"ServiceManagement: Service [{}] attempted to proxy, but is not allowed."</span>, serviceTicket.getService().getId());
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedProxyingException.html">UnauthorizedProxyingException</a>();
-<a class="jxr_linenumber" name="L402" href="#L402">402</a>         }
-<a class="jxr_linenumber" name="L403" href="#L403">403</a> 
-<a class="jxr_linenumber" name="L404" href="#L404">404</a>         <strong class="jxr_keyword">final</strong> Authentication authentication = <strong class="jxr_keyword">this</strong>.authenticationManager.authenticate(credentials);
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>         evaluateProxiedServiceIfNeeded(service, ticketGrantingTicket, registeredService);
+<a class="jxr_linenumber" name="L277" href="#L277">277</a> 
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>         <em class="jxr_comment">// Perform security policy check by getting the authentication that satisfies the configured policy</em>
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>         <em class="jxr_comment">// This throws if no suitable policy is found</em>
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>         getAuthenticationSatisfiedByPolicy(ticketGrantingTicket, <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/ServiceContext.html">ServiceContext</a>(service, registeredService));
+<a class="jxr_linenumber" name="L281" href="#L281">281</a> 
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; authentications = ticketGrantingTicket.getChainedAuthentications();
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>         <strong class="jxr_keyword">final</strong> Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
+<a class="jxr_linenumber" name="L284" href="#L284">284</a> 
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>         <strong class="jxr_keyword">if</strong> (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>             logger.warn(<span class="jxr_string">"ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}]."</span>,
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>                     service.getId(), principal);
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedServiceForPrincipalException.html">UnauthorizedServiceForPrincipalException</a>();
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>         }
+<a class="jxr_linenumber" name="L291" href="#L291">291</a> 
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>         <strong class="jxr_keyword">final</strong> String uniqueTicketIdGenKey = service.getClass().getName();
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>         logger.debug(<span class="jxr_string">"Looking up service ticket id generator for [{}]"</span>, uniqueTicketIdGenKey);
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>         <a href="../../../org/jasig/cas/util/UniqueTicketIdGenerator.html">UniqueTicketIdGenerator</a> serviceTicketUniqueTicketIdGenerator =
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>                 <strong class="jxr_keyword">this</strong>.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>         <strong class="jxr_keyword">if</strong> (serviceTicketUniqueTicketIdGenerator == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>             serviceTicketUniqueTicketIdGenerator = <strong class="jxr_keyword">this</strong>.defaultServiceTicketIdGenerator;
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>             logger.debug(<span class="jxr_string">"Service ticket id generator not found for [{}]. Using the default generator..."</span>,
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>                     uniqueTicketIdGenKey);
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>         }
+<a class="jxr_linenumber" name="L301" href="#L301">301</a> 
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>         <strong class="jxr_keyword">final</strong> String ticketPrefix = authentications.size() == 1 ? ServiceTicket.PREFIX : ServiceTicket.PROXY_TICKET_PREFIX;
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>         <strong class="jxr_keyword">final</strong> String ticketId = serviceTicketUniqueTicketIdGenerator.getNewTicketId(ticketPrefix);
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>                 ticketId,
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>                 service,
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>                 <strong class="jxr_keyword">this</strong>.serviceTicketExpirationPolicy,
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>                 currentAuthentication != <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L309" href="#L309">309</a> 
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>         <strong class="jxr_keyword">this</strong>.serviceTicketRegistry.addTicket(serviceTicket);
+<a class="jxr_linenumber" name="L311" href="#L311">311</a> 
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>         logger.info(<span class="jxr_string">"Granted ticket [{}] for service [{}] for user [{}]"</span>,
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>                 serviceTicket.getId(), service.getId(), principal.getId());
+<a class="jxr_linenumber" name="L314" href="#L314">314</a> 
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">return</strong> serviceTicket;
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>     }
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> 
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L319" href="#L319">319</a> <em class="jxr_javadoccomment">     * Evaluate proxied service if needed.</em>
+<a class="jxr_linenumber" name="L320" href="#L320">320</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L321" href="#L321">321</a> <em class="jxr_javadoccomment">     * @param service the service</em>
+<a class="jxr_linenumber" name="L322" href="#L322">322</a> <em class="jxr_javadoccomment">     * @param ticketGrantingTicket the ticket granting ticket</em>
+<a class="jxr_linenumber" name="L323" href="#L323">323</a> <em class="jxr_javadoccomment">     * @param registeredService the registered service</em>
+<a class="jxr_linenumber" name="L324" href="#L324">324</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> evaluateProxiedServiceIfNeeded(<strong class="jxr_keyword">final</strong> Service service, <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket,
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>                                                 <strong class="jxr_keyword">final</strong> RegisteredService registeredService) {
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>         <strong class="jxr_keyword">final</strong> Service proxiedBy = ticketGrantingTicket.getProxiedBy();
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>         <strong class="jxr_keyword">if</strong> (proxiedBy != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>             logger.debug(<span class="jxr_string">"TGT is proxied by [{}]. Locating proxy service in registry..."</span>, proxiedBy.getId());
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>             <strong class="jxr_keyword">final</strong> RegisteredService proxyingService = servicesManager.findServiceBy(proxiedBy);
+<a class="jxr_linenumber" name="L331" href="#L331">331</a> 
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>             <strong class="jxr_keyword">if</strong> (proxyingService != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>                 logger.debug(<span class="jxr_string">"Located proxying service [{}] in the service registry"</span>, proxyingService);
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>                 <strong class="jxr_keyword">if</strong> (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>                     logger.warn(<span class="jxr_string">"Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}"</span>,
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>                             proxyingService.getId(), service.getId());
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedProxyingException.html">UnauthorizedProxyingException</a>(<span class="jxr_string">"Proxying is not allowed for registered service "</span>
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>                             + registeredService.getId());
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>                 }
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>             } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>                 logger.warn(<span class="jxr_string">"No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed."</span>,
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>                         service.getId(), registeredService.getId());
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedProxyingException.html">UnauthorizedProxyingException</a>(<span class="jxr_string">"Proxying is not allowed for registered service "</span>
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>                         + registeredService.getId());
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>             }
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>             logger.trace(<span class="jxr_string">"TGT is not proxied by another service"</span>);
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>         }
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>     }
+<a class="jxr_linenumber" name="L350" href="#L350">350</a> 
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L352" href="#L352">352</a> <em class="jxr_javadoccomment">     * Attempts to sanitize the array of credentials by removing</em>
+<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">     * all null elements from the collection.</em>
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">     * @param credentials credentials to sanitize</em>
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">     * @return a set of credentials with no null values</em>
+<a class="jxr_linenumber" name="L356" href="#L356">356</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> Set&lt;Credential&gt; sanitizeCredentials(<strong class="jxr_keyword">final</strong> Credential[] credentials) {
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>         <strong class="jxr_keyword">if</strong> (credentials != <strong class="jxr_keyword">null</strong> &amp;&amp; credentials.length &gt; 0) {
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>             <strong class="jxr_keyword">final</strong> Set&lt;Credential&gt; set = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;(Arrays.asList(credentials));
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>             <strong class="jxr_keyword">final</strong> Iterator&lt;Credential&gt; it = set.iterator();
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>             <strong class="jxr_keyword">while</strong> (it.hasNext()) {
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>                 <strong class="jxr_keyword">if</strong> (it.next() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>                     it.remove();
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>                 }
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>             }
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>             <strong class="jxr_keyword">return</strong> set;
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>         }
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>         <strong class="jxr_keyword">return</strong> Collections.emptySet();
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>     }
+<a class="jxr_linenumber" name="L370" href="#L370">370</a> 
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>     @Audit(
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>         action=<span class="jxr_string">"SERVICE_TICKET"</span>,
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>         actionResolverName=<span class="jxr_string">"GRANT_SERVICE_TICKET_RESOLVER"</span>,
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>         resourceResolverName=<span class="jxr_string">"GRANT_SERVICE_TICKET_RESOURCE_RESOLVER"</span>)
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>     @Timed(name = <span class="jxr_string">"GRANT_SERVICE_TICKET_TIMER"</span>)
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>     @Metered(name=<span class="jxr_string">"GRANT_SERVICE_TICKET_METER"</span>)
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>     @Counted(name=<span class="jxr_string">"GRANT_SERVICE_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>     @Override
+<a class="jxr_linenumber" name="L379" href="#L379">379</a>     <strong class="jxr_keyword">public</strong> ServiceTicket grantServiceTicket(<strong class="jxr_keyword">final</strong> String ticketGrantingTicketId,
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>         <strong class="jxr_keyword">final</strong> Service service) <strong class="jxr_keyword">throws</strong> TicketException {
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.grantServiceTicket(ticketGrantingTicketId, service, (Credential[]) <strong class="jxr_keyword">null</strong>);
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AuthenticationException e) {
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalStateException(<span class="jxr_string">"Unexpected authentication exception"</span>, e);
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>         }
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>     }
+<a class="jxr_linenumber" name="L387" href="#L387">387</a> 
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>     @Audit(
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>         action=<span class="jxr_string">"PROXY_GRANTING_TICKET"</span>,
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>         actionResolverName=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_RESOLVER"</span>,
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>         resourceResolverName=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER"</span>)
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>     @Timed(name=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_TIMER"</span>)
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>     @Metered(name=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_METER"</span>)
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>     @Counted(name=<span class="jxr_string">"GRANT_PROXY_GRANTING_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>     @Override
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>     <strong class="jxr_keyword">public</strong> TicketGrantingTicket delegateTicketGrantingTicket(<strong class="jxr_keyword">final</strong> String serviceTicketId, <strong class="jxr_keyword">final</strong> Credential... credentials)
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException {
+<a class="jxr_linenumber" name="L398" href="#L398">398</a> 
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket =  <strong class="jxr_keyword">this</strong>.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L400" href="#L400">400</a> 
+<a class="jxr_linenumber" name="L401" href="#L401">401</a>         <strong class="jxr_keyword">if</strong> (serviceTicket == <strong class="jxr_keyword">null</strong> || serviceTicket.isExpired()) {
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>             logger.debug(<span class="jxr_string">"ServiceTicket [{}] has expired or cannot be found in the ticket registry"</span>, serviceTicketId);
+<a class="jxr_linenumber" name="L403" href="#L403">403</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(serviceTicketId);
+<a class="jxr_linenumber" name="L404" href="#L404">404</a>         }
 <a class="jxr_linenumber" name="L405" href="#L405">405</a> 
-<a class="jxr_linenumber" name="L406" href="#L406">406</a>         <strong class="jxr_keyword">final</strong> String pgtId = <strong class="jxr_keyword">this</strong>.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(
-<a class="jxr_linenumber" name="L407" href="#L407">407</a>                 TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket proxyGrantingTicket = serviceTicket.grantTicketGrantingTicket(pgtId,
-<a class="jxr_linenumber" name="L409" href="#L409">409</a>                                     authentication, <strong class="jxr_keyword">this</strong>.ticketGrantingTicketExpirationPolicy);
-<a class="jxr_linenumber" name="L410" href="#L410">410</a> 
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>         logger.debug(<span class="jxr_string">"Generated proxy granting ticket [{}] based off of [{}]"</span>, proxyGrantingTicket, serviceTicketId);
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>         <strong class="jxr_keyword">this</strong>.ticketRegistry.addTicket(proxyGrantingTicket);
-<a class="jxr_linenumber" name="L413" href="#L413">413</a> 
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>         <strong class="jxr_keyword">return</strong> proxyGrantingTicket;
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>     }
-<a class="jxr_linenumber" name="L416" href="#L416">416</a> 
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>     @Audit(
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>         action=<span class="jxr_string">"SERVICE_TICKET_VALIDATE"</span>,
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>         actionResolverName=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_RESOLVER"</span>,
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>         resourceResolverName=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER"</span>)
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>     @Timed(name=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_TIMER"</span>)
-<a class="jxr_linenumber" name="L422" href="#L422">422</a>     @Metered(name=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_METER"</span>)
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>     @Counted(name=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>     @Override
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>     <strong class="jxr_keyword">public</strong> Assertion validateServiceTicket(<strong class="jxr_keyword">final</strong> String serviceTicketId, <strong class="jxr_keyword">final</strong> Service service) <strong class="jxr_keyword">throws</strong> TicketException {
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>         <strong class="jxr_keyword">final</strong> RegisteredService registeredService = <strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(service);
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>         verifyRegisteredServiceProperties(registeredService, service);
+<a class="jxr_linenumber" name="L406" href="#L406">406</a>         <strong class="jxr_keyword">final</strong> RegisteredService registeredService = <strong class="jxr_keyword">this</strong>.servicesManager
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>                 .findServiceBy(serviceTicket.getService());
+<a class="jxr_linenumber" name="L408" href="#L408">408</a> 
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>         verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>         
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <strong class="jxr_keyword">if</strong> (!registeredService.getProxyPolicy().isAllowedToProxy()) {
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>             logger.warn(<span class="jxr_string">"ServiceManagement: Service [{}] attempted to proxy, but is not allowed."</span>, serviceTicket.getService().getId());
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedProxyingException.html">UnauthorizedProxyingException</a>();
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>         }
+<a class="jxr_linenumber" name="L415" href="#L415">415</a> 
+<a class="jxr_linenumber" name="L416" href="#L416">416</a>         <strong class="jxr_keyword">final</strong> Authentication authentication = <strong class="jxr_keyword">this</strong>.authenticationManager.authenticate(credentials);
+<a class="jxr_linenumber" name="L417" href="#L417">417</a> 
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>         <strong class="jxr_keyword">final</strong> String pgtId = <strong class="jxr_keyword">this</strong>.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>                 TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>         <strong class="jxr_keyword">final</strong> TicketGrantingTicket proxyGrantingTicket = serviceTicket.grantTicketGrantingTicket(pgtId,
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>                                     authentication, <strong class="jxr_keyword">this</strong>.ticketGrantingTicketExpirationPolicy);
+<a class="jxr_linenumber" name="L422" href="#L422">422</a> 
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>         logger.debug(<span class="jxr_string">"Generated proxy granting ticket [{}] based off of [{}]"</span>, proxyGrantingTicket, serviceTicketId);
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">this</strong>.ticketRegistry.addTicket(proxyGrantingTicket);
+<a class="jxr_linenumber" name="L425" href="#L425">425</a> 
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>         <strong class="jxr_keyword">return</strong> proxyGrantingTicket;
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>     }
 <a class="jxr_linenumber" name="L428" href="#L428">428</a> 
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket =  <strong class="jxr_keyword">this</strong>.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L430" href="#L430">430</a> 
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>         <strong class="jxr_keyword">if</strong> (serviceTicket == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>             logger.info(<span class="jxr_string">"Service ticket [{}] does not exist."</span>, serviceTicketId);
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(serviceTicketId);
-<a class="jxr_linenumber" name="L434" href="#L434">434</a>         }
-<a class="jxr_linenumber" name="L435" href="#L435">435</a> 
-<a class="jxr_linenumber" name="L436" href="#L436">436</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L437" href="#L437">437</a>             <strong class="jxr_keyword">synchronized</strong> (serviceTicket) {
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>                 <strong class="jxr_keyword">if</strong> (serviceTicket.isExpired()) {
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>                     logger.info(<span class="jxr_string">"ServiceTicket [{}] has expired."</span>, serviceTicketId);
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(serviceTicketId);
-<a class="jxr_linenumber" name="L441" href="#L441">441</a>                 }
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>     @Audit(
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>         action=<span class="jxr_string">"SERVICE_TICKET_VALIDATE"</span>,
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>         actionResolverName=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_RESOLVER"</span>,
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>         resourceResolverName=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER"</span>)
+<a class="jxr_linenumber" name="L433" href="#L433">433</a>     @Timed(name=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_TIMER"</span>)
+<a class="jxr_linenumber" name="L434" href="#L434">434</a>     @Metered(name=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_METER"</span>)
+<a class="jxr_linenumber" name="L435" href="#L435">435</a>     @Counted(name=<span class="jxr_string">"VALIDATE_SERVICE_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L436" href="#L436">436</a>     @Override
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>     <strong class="jxr_keyword">public</strong> Assertion validateServiceTicket(<strong class="jxr_keyword">final</strong> String serviceTicketId, <strong class="jxr_keyword">final</strong> Service service) <strong class="jxr_keyword">throws</strong> TicketException {
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>         <strong class="jxr_keyword">final</strong> RegisteredService registeredService = <strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(service);
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>         verifyRegisteredServiceProperties(registeredService, service);
+<a class="jxr_linenumber" name="L440" href="#L440">440</a> 
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket =  <strong class="jxr_keyword">this</strong>.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L442" href="#L442">442</a> 
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>                 <strong class="jxr_keyword">if</strong> (!serviceTicket.isValidFor(service)) {
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>                     logger.error(<span class="jxr_string">"Service ticket [{}] with service [{}] does not match supplied service [{}]"</span>,
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>                             serviceTicketId, serviceTicket.getService().getId(), service);
-<a class="jxr_linenumber" name="L446" href="#L446">446</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/ticket/UnrecognizableServiceForServiceTicketValidationException.html">UnrecognizableServiceForServiceTicketValidationException</a>(serviceTicket.getService());
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>                 }
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>             }
-<a class="jxr_linenumber" name="L449" href="#L449">449</a> 
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket root = serviceTicket.getGrantingTicket().getRoot();
-<a class="jxr_linenumber" name="L451" href="#L451">451</a>             <strong class="jxr_keyword">final</strong> Authentication authentication = getAuthenticationSatisfiedByPolicy(
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>                     root, <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/ServiceContext.html">ServiceContext</a>(serviceTicket.getService(), registeredService));
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>             <strong class="jxr_keyword">final</strong> Principal principal = authentication.getPrincipal();
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>         <strong class="jxr_keyword">if</strong> (serviceTicket == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>             logger.info(<span class="jxr_string">"Service ticket [{}] does not exist."</span>, serviceTicketId);
+<a class="jxr_linenumber" name="L445" href="#L445">445</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(serviceTicketId);
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>         }
+<a class="jxr_linenumber" name="L447" href="#L447">447</a> 
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>             <strong class="jxr_keyword">synchronized</strong> (serviceTicket) {
+<a class="jxr_linenumber" name="L450" href="#L450">450</a>                 <strong class="jxr_keyword">if</strong> (serviceTicket.isExpired()) {
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>                     logger.info(<span class="jxr_string">"ServiceTicket [{}] has expired."</span>, serviceTicketId);
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(serviceTicketId);
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>                 }
 <a class="jxr_linenumber" name="L454" href="#L454">454</a> 
-<a class="jxr_linenumber" name="L455" href="#L455">455</a>             <strong class="jxr_keyword">final</strong> AttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>             logger.debug(<span class="jxr_string">"Attribute policy [{}] is associated with service [{}]"</span>, attributePolicy, registeredService);
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>             
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>             @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>             <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributesToRelease = attributePolicy != <strong class="jxr_keyword">null</strong>
-<a class="jxr_linenumber" name="L460" href="#L460">460</a>                     ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>             
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>             <strong class="jxr_keyword">final</strong> String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service);
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>             <strong class="jxr_keyword">final</strong> Principal modifiedPrincipal = <strong class="jxr_keyword">this</strong>.principalFactory.createPrincipal(principalId, attributesToRelease);
-<a class="jxr_linenumber" name="L464" href="#L464">464</a>             <strong class="jxr_keyword">final</strong> AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
-<a class="jxr_linenumber" name="L465" href="#L465">465</a>             builder.setPrincipal(modifiedPrincipal);
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>                 <strong class="jxr_keyword">if</strong> (!serviceTicket.isValidFor(service)) {
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>                     logger.error(<span class="jxr_string">"Service ticket [{}] with service [{}] does not match supplied service [{}]"</span>,
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>                             serviceTicketId, serviceTicket.getService().getId(), service);
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/ticket/UnrecognizableServiceForServiceTicketValidationException.html">UnrecognizableServiceForServiceTicketValidationException</a>(serviceTicket.getService());
+<a class="jxr_linenumber" name="L459" href="#L459">459</a>                 }
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>             }
+<a class="jxr_linenumber" name="L461" href="#L461">461</a> 
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket root = serviceTicket.getGrantingTicket().getRoot();
+<a class="jxr_linenumber" name="L463" href="#L463">463</a>             <strong class="jxr_keyword">final</strong> Authentication authentication = getAuthenticationSatisfiedByPolicy(
+<a class="jxr_linenumber" name="L464" href="#L464">464</a>                     root, <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/ServiceContext.html">ServiceContext</a>(serviceTicket.getService(), registeredService));
+<a class="jxr_linenumber" name="L465" href="#L465">465</a>             <strong class="jxr_keyword">final</strong> Principal principal = authentication.getPrincipal();
 <a class="jxr_linenumber" name="L466" href="#L466">466</a> 
-<a class="jxr_linenumber" name="L467" href="#L467">467</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/validation/ImmutableAssertion.html">ImmutableAssertion</a>(
-<a class="jxr_linenumber" name="L468" href="#L468">468</a>                     builder.build(),
-<a class="jxr_linenumber" name="L469" href="#L469">469</a>                     serviceTicket.getGrantingTicket().getChainedAuthentications(),
-<a class="jxr_linenumber" name="L470" href="#L470">470</a>                     serviceTicket.getService(),
-<a class="jxr_linenumber" name="L471" href="#L471">471</a>                     serviceTicket.isFromNewLogin());
-<a class="jxr_linenumber" name="L472" href="#L472">472</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L473" href="#L473">473</a>             <strong class="jxr_keyword">if</strong> (serviceTicket.isExpired()) {
-<a class="jxr_linenumber" name="L474" href="#L474">474</a>                 <strong class="jxr_keyword">this</strong>.serviceTicketRegistry.deleteTicket(serviceTicketId);
-<a class="jxr_linenumber" name="L475" href="#L475">475</a>             }
-<a class="jxr_linenumber" name="L476" href="#L476">476</a>         }
-<a class="jxr_linenumber" name="L477" href="#L477">477</a>     }
-<a class="jxr_linenumber" name="L478" href="#L478">478</a>     
-<a class="jxr_linenumber" name="L479" href="#L479">479</a>     @Audit(
-<a class="jxr_linenumber" name="L480" href="#L480">480</a>         action=<span class="jxr_string">"TICKET_GRANTING_TICKET"</span>,
-<a class="jxr_linenumber" name="L481" href="#L481">481</a>         actionResolverName=<span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_RESOLVER"</span>,
-<a class="jxr_linenumber" name="L482" href="#L482">482</a>         resourceResolverName=<span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER"</span>)
-<a class="jxr_linenumber" name="L483" href="#L483">483</a>     @Timed(name = <span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_TIMER"</span>)
-<a class="jxr_linenumber" name="L484" href="#L484">484</a>     @Metered(name = <span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_METER"</span>)
-<a class="jxr_linenumber" name="L485" href="#L485">485</a>     @Counted(name=<span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L486" href="#L486">486</a>     @Override
-<a class="jxr_linenumber" name="L487" href="#L487">487</a>     <strong class="jxr_keyword">public</strong> TicketGrantingTicket createTicketGrantingTicket(<strong class="jxr_keyword">final</strong> Credential... credentials)
-<a class="jxr_linenumber" name="L488" href="#L488">488</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException {
-<a class="jxr_linenumber" name="L489" href="#L489">489</a> 
-<a class="jxr_linenumber" name="L490" href="#L490">490</a>         <strong class="jxr_keyword">final</strong> Set&lt;Credential&gt; sanitizedCredentials = sanitizeCredentials(credentials);
-<a class="jxr_linenumber" name="L491" href="#L491">491</a>         <strong class="jxr_keyword">if</strong> (sanitizedCredentials.size() &gt; 0) {
-<a class="jxr_linenumber" name="L492" href="#L492">492</a>             <strong class="jxr_keyword">final</strong> Authentication authentication = <strong class="jxr_keyword">this</strong>.authenticationManager.authenticate(credentials);
-<a class="jxr_linenumber" name="L493" href="#L493">493</a> 
-<a class="jxr_linenumber" name="L494" href="#L494">494</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/ticket/TicketGrantingTicketImpl.html">TicketGrantingTicketImpl</a>(
-<a class="jxr_linenumber" name="L495" href="#L495">495</a>                     <strong class="jxr_keyword">this</strong>.ticketGrantingTicketUniqueTicketIdGenerator
-<a class="jxr_linenumber" name="L496" href="#L496">496</a>                             .getNewTicketId(TicketGrantingTicket.PREFIX),
-<a class="jxr_linenumber" name="L497" href="#L497">497</a>                     authentication, <strong class="jxr_keyword">this</strong>.ticketGrantingTicketExpirationPolicy);
-<a class="jxr_linenumber" name="L498" href="#L498">498</a> 
-<a class="jxr_linenumber" name="L499" href="#L499">499</a>             <strong class="jxr_keyword">this</strong>.ticketRegistry.addTicket(ticketGrantingTicket);
-<a class="jxr_linenumber" name="L500" href="#L500">500</a>             <strong class="jxr_keyword">return</strong> ticketGrantingTicket;
-<a class="jxr_linenumber" name="L501" href="#L501">501</a>         }
-<a class="jxr_linenumber" name="L502" href="#L502">502</a>         <strong class="jxr_keyword">final</strong> String msg = <span class="jxr_string">"No credentials were specified in the request for creating a new ticket-granting ticket"</span>;
-<a class="jxr_linenumber" name="L503" href="#L503">503</a>         logger.warn(msg);
-<a class="jxr_linenumber" name="L504" href="#L504">504</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/ticket/TicketCreationException.html">TicketCreationException</a>(<strong class="jxr_keyword">new</strong> IllegalArgumentException(msg));
-<a class="jxr_linenumber" name="L505" href="#L505">505</a>     }
-<a class="jxr_linenumber" name="L506" href="#L506">506</a> 
-<a class="jxr_linenumber" name="L507" href="#L507">507</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L508" href="#L508">508</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L509" href="#L509">509</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L510" href="#L510">510</a>     @Timed(name = <span class="jxr_string">"GET_TICKET_TIMER"</span>)
-<a class="jxr_linenumber" name="L511" href="#L511">511</a>     @Metered(name = <span class="jxr_string">"GET_TICKET_METER"</span>)
-<a class="jxr_linenumber" name="L512" href="#L512">512</a>     @Counted(name=<span class="jxr_string">"GET_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L513" href="#L513">513</a>     @Override
-<a class="jxr_linenumber" name="L514" href="#L514">514</a>     <strong class="jxr_keyword">public</strong> &lt;T <strong class="jxr_keyword">extends</strong> Ticket&gt; T getTicket(<strong class="jxr_keyword">final</strong> String ticketId, <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> Ticket&gt; clazz)
-<a class="jxr_linenumber" name="L515" href="#L515">515</a>             <strong class="jxr_keyword">throws</strong> InvalidTicketException {
-<a class="jxr_linenumber" name="L516" href="#L516">516</a>         Assert.notNull(ticketId, <span class="jxr_string">"ticketId cannot be null"</span>);
-<a class="jxr_linenumber" name="L517" href="#L517">517</a>         <strong class="jxr_keyword">final</strong> Ticket ticket = <strong class="jxr_keyword">this</strong>.ticketRegistry.getTicket(ticketId, clazz);
+<a class="jxr_linenumber" name="L467" href="#L467">467</a>             <strong class="jxr_keyword">final</strong> AttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
+<a class="jxr_linenumber" name="L468" href="#L468">468</a>             logger.debug(<span class="jxr_string">"Attribute policy [{}] is associated with service [{}]"</span>, attributePolicy, registeredService);
+<a class="jxr_linenumber" name="L469" href="#L469">469</a>             
+<a class="jxr_linenumber" name="L470" href="#L470">470</a>             @SuppressWarnings(<span class="jxr_string">"unchecked"</span>)
+<a class="jxr_linenumber" name="L471" href="#L471">471</a>             <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; attributesToRelease = attributePolicy != <strong class="jxr_keyword">null</strong>
+<a class="jxr_linenumber" name="L472" href="#L472">472</a>                     ? attributePolicy.getAttributes(principal) : Collections.EMPTY_MAP;
+<a class="jxr_linenumber" name="L473" href="#L473">473</a>             
+<a class="jxr_linenumber" name="L474" href="#L474">474</a>             <strong class="jxr_keyword">final</strong> String principalId = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service);
+<a class="jxr_linenumber" name="L475" href="#L475">475</a>             <strong class="jxr_keyword">final</strong> Principal modifiedPrincipal = <strong class="jxr_keyword">this</strong>.principalFactory.createPrincipal(principalId, attributesToRelease);
+<a class="jxr_linenumber" name="L476" href="#L476">476</a>             <strong class="jxr_keyword">final</strong> AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
+<a class="jxr_linenumber" name="L477" href="#L477">477</a>             builder.setPrincipal(modifiedPrincipal);
+<a class="jxr_linenumber" name="L478" href="#L478">478</a> 
+<a class="jxr_linenumber" name="L479" href="#L479">479</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/validation/ImmutableAssertion.html">ImmutableAssertion</a>(
+<a class="jxr_linenumber" name="L480" href="#L480">480</a>                     builder.build(),
+<a class="jxr_linenumber" name="L481" href="#L481">481</a>                     serviceTicket.getGrantingTicket().getChainedAuthentications(),
+<a class="jxr_linenumber" name="L482" href="#L482">482</a>                     serviceTicket.getService(),
+<a class="jxr_linenumber" name="L483" href="#L483">483</a>                     serviceTicket.isFromNewLogin());
+<a class="jxr_linenumber" name="L484" href="#L484">484</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L485" href="#L485">485</a>             <strong class="jxr_keyword">if</strong> (serviceTicket.isExpired()) {
+<a class="jxr_linenumber" name="L486" href="#L486">486</a>                 <strong class="jxr_keyword">this</strong>.serviceTicketRegistry.deleteTicket(serviceTicketId);
+<a class="jxr_linenumber" name="L487" href="#L487">487</a>             }
+<a class="jxr_linenumber" name="L488" href="#L488">488</a>         }
+<a class="jxr_linenumber" name="L489" href="#L489">489</a>     }
+<a class="jxr_linenumber" name="L490" href="#L490">490</a>     
+<a class="jxr_linenumber" name="L491" href="#L491">491</a>     @Audit(
+<a class="jxr_linenumber" name="L492" href="#L492">492</a>         action=<span class="jxr_string">"TICKET_GRANTING_TICKET"</span>,
+<a class="jxr_linenumber" name="L493" href="#L493">493</a>         actionResolverName=<span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_RESOLVER"</span>,
+<a class="jxr_linenumber" name="L494" href="#L494">494</a>         resourceResolverName=<span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER"</span>)
+<a class="jxr_linenumber" name="L495" href="#L495">495</a>     @Timed(name = <span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_TIMER"</span>)
+<a class="jxr_linenumber" name="L496" href="#L496">496</a>     @Metered(name = <span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_METER"</span>)
+<a class="jxr_linenumber" name="L497" href="#L497">497</a>     @Counted(name=<span class="jxr_string">"CREATE_TICKET_GRANTING_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L498" href="#L498">498</a>     @Override
+<a class="jxr_linenumber" name="L499" href="#L499">499</a>     <strong class="jxr_keyword">public</strong> TicketGrantingTicket createTicketGrantingTicket(<strong class="jxr_keyword">final</strong> Credential... credentials)
+<a class="jxr_linenumber" name="L500" href="#L500">500</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException {
+<a class="jxr_linenumber" name="L501" href="#L501">501</a> 
+<a class="jxr_linenumber" name="L502" href="#L502">502</a>         <strong class="jxr_keyword">final</strong> Set&lt;Credential&gt; sanitizedCredentials = sanitizeCredentials(credentials);
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>         <strong class="jxr_keyword">if</strong> (sanitizedCredentials.size() &gt; 0) {
+<a class="jxr_linenumber" name="L504" href="#L504">504</a>             <strong class="jxr_keyword">final</strong> Authentication authentication = <strong class="jxr_keyword">this</strong>.authenticationManager.authenticate(credentials);
+<a class="jxr_linenumber" name="L505" href="#L505">505</a> 
+<a class="jxr_linenumber" name="L506" href="#L506">506</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/ticket/TicketGrantingTicketImpl.html">TicketGrantingTicketImpl</a>(
+<a class="jxr_linenumber" name="L507" href="#L507">507</a>                     <strong class="jxr_keyword">this</strong>.ticketGrantingTicketUniqueTicketIdGenerator
+<a class="jxr_linenumber" name="L508" href="#L508">508</a>                             .getNewTicketId(TicketGrantingTicket.PREFIX),
+<a class="jxr_linenumber" name="L509" href="#L509">509</a>                     authentication, <strong class="jxr_keyword">this</strong>.ticketGrantingTicketExpirationPolicy);
+<a class="jxr_linenumber" name="L510" href="#L510">510</a> 
+<a class="jxr_linenumber" name="L511" href="#L511">511</a>             <strong class="jxr_keyword">this</strong>.ticketRegistry.addTicket(ticketGrantingTicket);
+<a class="jxr_linenumber" name="L512" href="#L512">512</a>             <strong class="jxr_keyword">return</strong> ticketGrantingTicket;
+<a class="jxr_linenumber" name="L513" href="#L513">513</a>         }
+<a class="jxr_linenumber" name="L514" href="#L514">514</a>         <strong class="jxr_keyword">final</strong> String msg = <span class="jxr_string">"No credentials were specified in the request for creating a new ticket-granting ticket"</span>;
+<a class="jxr_linenumber" name="L515" href="#L515">515</a>         logger.warn(msg);
+<a class="jxr_linenumber" name="L516" href="#L516">516</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/ticket/TicketCreationException.html">TicketCreationException</a>(<strong class="jxr_keyword">new</strong> IllegalArgumentException(msg));
+<a class="jxr_linenumber" name="L517" href="#L517">517</a>     }
 <a class="jxr_linenumber" name="L518" href="#L518">518</a> 
-<a class="jxr_linenumber" name="L519" href="#L519">519</a>         <strong class="jxr_keyword">if</strong> (ticket == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L520" href="#L520">520</a>             logger.debug(<span class="jxr_string">"Ticket [{}] by type [{}] cannot be found in the ticket registry."</span>, ticketId, clazz.getSimpleName());
-<a class="jxr_linenumber" name="L521" href="#L521">521</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(ticketId);
-<a class="jxr_linenumber" name="L522" href="#L522">522</a>         }
-<a class="jxr_linenumber" name="L523" href="#L523">523</a> 
-<a class="jxr_linenumber" name="L524" href="#L524">524</a>         <strong class="jxr_keyword">if</strong> (ticket instanceof TicketGrantingTicket) {
-<a class="jxr_linenumber" name="L525" href="#L525">525</a>             <strong class="jxr_keyword">synchronized</strong> (ticket) {
-<a class="jxr_linenumber" name="L526" href="#L526">526</a>                 <strong class="jxr_keyword">if</strong> (ticket.isExpired()) {
-<a class="jxr_linenumber" name="L527" href="#L527">527</a>                     <strong class="jxr_keyword">this</strong>.ticketRegistry.deleteTicket(ticketId);
-<a class="jxr_linenumber" name="L528" href="#L528">528</a>                     logger.debug(<span class="jxr_string">"Ticket [{}] has expired and is now deleted from the ticket registry."</span>, ticketId);
-<a class="jxr_linenumber" name="L529" href="#L529">529</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(ticketId);
-<a class="jxr_linenumber" name="L530" href="#L530">530</a>                 }
-<a class="jxr_linenumber" name="L531" href="#L531">531</a>             }
-<a class="jxr_linenumber" name="L532" href="#L532">532</a>         }
-<a class="jxr_linenumber" name="L533" href="#L533">533</a>         <strong class="jxr_keyword">return</strong> (T) ticket;
-<a class="jxr_linenumber" name="L534" href="#L534">534</a>     }
-<a class="jxr_linenumber" name="L535" href="#L535">535</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L536" href="#L536">536</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L537" href="#L537">537</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L538" href="#L538">538</a>     @Timed(name = <span class="jxr_string">"GET_TICKETS_TIMER"</span>)
-<a class="jxr_linenumber" name="L539" href="#L539">539</a>     @Metered(name = <span class="jxr_string">"GET_TICKETS_METER"</span>)
-<a class="jxr_linenumber" name="L540" href="#L540">540</a>     @Counted(name=<span class="jxr_string">"GET_TICKETS_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
-<a class="jxr_linenumber" name="L541" href="#L541">541</a>     @Override
-<a class="jxr_linenumber" name="L542" href="#L542">542</a>     <strong class="jxr_keyword">public</strong> Collection&lt;Ticket&gt; getTickets(<strong class="jxr_keyword">final</strong> Predicate predicate) {
-<a class="jxr_linenumber" name="L543" href="#L543">543</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; c = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;(<strong class="jxr_keyword">this</strong>.ticketRegistry.getTickets());
-<a class="jxr_linenumber" name="L544" href="#L544">544</a>         <strong class="jxr_keyword">final</strong> Iterator&lt;Ticket&gt; it = c.iterator();
-<a class="jxr_linenumber" name="L545" href="#L545">545</a>         <strong class="jxr_keyword">while</strong> (it.hasNext()) {
-<a class="jxr_linenumber" name="L546" href="#L546">546</a>             <strong class="jxr_keyword">if</strong> (!predicate.evaluate(it.next())) {
-<a class="jxr_linenumber" name="L547" href="#L547">547</a>                 it.remove();
-<a class="jxr_linenumber" name="L548" href="#L548">548</a>             }
-<a class="jxr_linenumber" name="L549" href="#L549">549</a>         }
-<a class="jxr_linenumber" name="L550" href="#L550">550</a>         <strong class="jxr_keyword">return</strong> c;
-<a class="jxr_linenumber" name="L551" href="#L551">551</a>     }
-<a class="jxr_linenumber" name="L552" href="#L552">552</a> 
-<a class="jxr_linenumber" name="L553" href="#L553">553</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setServiceContextAuthenticationPolicyFactory(<strong class="jxr_keyword">final</strong> ContextualAuthenticationPolicyFactory&lt;ServiceContext&gt; policy) {
-<a class="jxr_linenumber" name="L554" href="#L554">554</a>         <strong class="jxr_keyword">this</strong>.serviceContextAuthenticationPolicyFactory = policy;
-<a class="jxr_linenumber" name="L555" href="#L555">555</a>     }
-<a class="jxr_linenumber" name="L556" href="#L556">556</a> 
-<a class="jxr_linenumber" name="L557" href="#L557">557</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L558" href="#L558">558</a> <em class="jxr_javadoccomment">     * @param ticketGrantingTicketExpirationPolicy a TGT expiration policy.</em>
-<a class="jxr_linenumber" name="L559" href="#L559">559</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L560" href="#L560">560</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTicketGrantingTicketExpirationPolicy(<strong class="jxr_keyword">final</strong> ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-<a class="jxr_linenumber" name="L561" href="#L561">561</a>         <strong class="jxr_keyword">this</strong>.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-<a class="jxr_linenumber" name="L562" href="#L562">562</a>     }
-<a class="jxr_linenumber" name="L563" href="#L563">563</a> 
-<a class="jxr_linenumber" name="L564" href="#L564">564</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L565" href="#L565">565</a> <em class="jxr_javadoccomment">     * @param serviceTicketExpirationPolicy a ST expiration policy.</em>
-<a class="jxr_linenumber" name="L566" href="#L566">566</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L567" href="#L567">567</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setServiceTicketExpirationPolicy(<strong class="jxr_keyword">final</strong> ExpirationPolicy serviceTicketExpirationPolicy) {
-<a class="jxr_linenumber" name="L568" href="#L568">568</a>         <strong class="jxr_keyword">this</strong>.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
-<a class="jxr_linenumber" name="L569" href="#L569">569</a>     }
-<a class="jxr_linenumber" name="L570" href="#L570">570</a> 
-<a class="jxr_linenumber" name="L571" href="#L571">571</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L572" href="#L572">572</a> <em class="jxr_javadoccomment">     * @deprecated</em>
-<a class="jxr_linenumber" name="L573" href="#L573">573</a> <em class="jxr_javadoccomment">     * Sets persistent id generator.</em>
-<a class="jxr_linenumber" name="L574" href="#L574">574</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L575" href="#L575">575</a> <em class="jxr_javadoccomment">     * @param persistentIdGenerator the persistent id generator</em>
-<a class="jxr_linenumber" name="L576" href="#L576">576</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L577" href="#L577">577</a>     @Deprecated
-<a class="jxr_linenumber" name="L578" href="#L578">578</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPersistentIdGenerator(<strong class="jxr_keyword">final</strong> PersistentIdGenerator persistentIdGenerator) {
-<a class="jxr_linenumber" name="L579" href="#L579">579</a>         logger.warn(<span class="jxr_string">"setPersistentIdGenerator() is deprecated and no longer available. Consider "</span>
-<a class="jxr_linenumber" name="L580" href="#L580">580</a>                 + <span class="jxr_string">"configuring the an attribute provider for service definitions."</span>);
+<a class="jxr_linenumber" name="L519" href="#L519">519</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L520" href="#L520">520</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L521" href="#L521">521</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L522" href="#L522">522</a>     @Timed(name = <span class="jxr_string">"GET_TICKET_TIMER"</span>)
+<a class="jxr_linenumber" name="L523" href="#L523">523</a>     @Metered(name = <span class="jxr_string">"GET_TICKET_METER"</span>)
+<a class="jxr_linenumber" name="L524" href="#L524">524</a>     @Counted(name=<span class="jxr_string">"GET_TICKET_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L525" href="#L525">525</a>     @Override
+<a class="jxr_linenumber" name="L526" href="#L526">526</a>     <strong class="jxr_keyword">public</strong> &lt;T <strong class="jxr_keyword">extends</strong> Ticket&gt; T getTicket(<strong class="jxr_keyword">final</strong> String ticketId, <strong class="jxr_keyword">final</strong> Class&lt;? <strong class="jxr_keyword">extends</strong> Ticket&gt; clazz)
+<a class="jxr_linenumber" name="L527" href="#L527">527</a>             <strong class="jxr_keyword">throws</strong> InvalidTicketException {
+<a class="jxr_linenumber" name="L528" href="#L528">528</a>         Assert.notNull(ticketId, <span class="jxr_string">"ticketId cannot be null"</span>);
+<a class="jxr_linenumber" name="L529" href="#L529">529</a>         <strong class="jxr_keyword">final</strong> Ticket ticket = <strong class="jxr_keyword">this</strong>.ticketRegistry.getTicket(ticketId, clazz);
+<a class="jxr_linenumber" name="L530" href="#L530">530</a> 
+<a class="jxr_linenumber" name="L531" href="#L531">531</a>         <strong class="jxr_keyword">if</strong> (ticket == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L532" href="#L532">532</a>             logger.debug(<span class="jxr_string">"Ticket [{}] by type [{}] cannot be found in the ticket registry."</span>, ticketId, clazz.getSimpleName());
+<a class="jxr_linenumber" name="L533" href="#L533">533</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(ticketId);
+<a class="jxr_linenumber" name="L534" href="#L534">534</a>         }
+<a class="jxr_linenumber" name="L535" href="#L535">535</a> 
+<a class="jxr_linenumber" name="L536" href="#L536">536</a>         <strong class="jxr_keyword">if</strong> (ticket instanceof TicketGrantingTicket) {
+<a class="jxr_linenumber" name="L537" href="#L537">537</a>             <strong class="jxr_keyword">synchronized</strong> (ticket) {
+<a class="jxr_linenumber" name="L538" href="#L538">538</a>                 <strong class="jxr_keyword">if</strong> (ticket.isExpired()) {
+<a class="jxr_linenumber" name="L539" href="#L539">539</a>                     <strong class="jxr_keyword">this</strong>.ticketRegistry.deleteTicket(ticketId);
+<a class="jxr_linenumber" name="L540" href="#L540">540</a>                     logger.debug(<span class="jxr_string">"Ticket [{}] has expired and is now deleted from the ticket registry."</span>, ticketId);
+<a class="jxr_linenumber" name="L541" href="#L541">541</a>                     <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> InvalidTicketException(ticketId);
+<a class="jxr_linenumber" name="L542" href="#L542">542</a>                 }
+<a class="jxr_linenumber" name="L543" href="#L543">543</a>             }
+<a class="jxr_linenumber" name="L544" href="#L544">544</a>         }
+<a class="jxr_linenumber" name="L545" href="#L545">545</a>         <strong class="jxr_keyword">return</strong> (T) ticket;
+<a class="jxr_linenumber" name="L546" href="#L546">546</a>     }
+<a class="jxr_linenumber" name="L547" href="#L547">547</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L548" href="#L548">548</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L549" href="#L549">549</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L550" href="#L550">550</a>     @Timed(name = <span class="jxr_string">"GET_TICKETS_TIMER"</span>)
+<a class="jxr_linenumber" name="L551" href="#L551">551</a>     @Metered(name = <span class="jxr_string">"GET_TICKETS_METER"</span>)
+<a class="jxr_linenumber" name="L552" href="#L552">552</a>     @Counted(name=<span class="jxr_string">"GET_TICKETS_COUNTER"</span>, monotonic=<strong class="jxr_keyword">true</strong>)
+<a class="jxr_linenumber" name="L553" href="#L553">553</a>     @Override
+<a class="jxr_linenumber" name="L554" href="#L554">554</a>     <strong class="jxr_keyword">public</strong> Collection&lt;Ticket&gt; getTickets(<strong class="jxr_keyword">final</strong> Predicate predicate) {
+<a class="jxr_linenumber" name="L555" href="#L555">555</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Ticket&gt; c = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;(<strong class="jxr_keyword">this</strong>.ticketRegistry.getTickets());
+<a class="jxr_linenumber" name="L556" href="#L556">556</a>         <strong class="jxr_keyword">final</strong> Iterator&lt;Ticket&gt; it = c.iterator();
+<a class="jxr_linenumber" name="L557" href="#L557">557</a>         <strong class="jxr_keyword">while</strong> (it.hasNext()) {
+<a class="jxr_linenumber" name="L558" href="#L558">558</a>             <strong class="jxr_keyword">if</strong> (!predicate.evaluate(it.next())) {
+<a class="jxr_linenumber" name="L559" href="#L559">559</a>                 it.remove();
+<a class="jxr_linenumber" name="L560" href="#L560">560</a>             }
+<a class="jxr_linenumber" name="L561" href="#L561">561</a>         }
+<a class="jxr_linenumber" name="L562" href="#L562">562</a>         <strong class="jxr_keyword">return</strong> c;
+<a class="jxr_linenumber" name="L563" href="#L563">563</a>     }
+<a class="jxr_linenumber" name="L564" href="#L564">564</a> 
+<a class="jxr_linenumber" name="L565" href="#L565">565</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setServiceContextAuthenticationPolicyFactory(<strong class="jxr_keyword">final</strong> ContextualAuthenticationPolicyFactory&lt;ServiceContext&gt; policy) {
+<a class="jxr_linenumber" name="L566" href="#L566">566</a>         <strong class="jxr_keyword">this</strong>.serviceContextAuthenticationPolicyFactory = policy;
+<a class="jxr_linenumber" name="L567" href="#L567">567</a>     }
+<a class="jxr_linenumber" name="L568" href="#L568">568</a> 
+<a class="jxr_linenumber" name="L569" href="#L569">569</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L570" href="#L570">570</a> <em class="jxr_javadoccomment">     * @param ticketGrantingTicketExpirationPolicy a TGT expiration policy.</em>
+<a class="jxr_linenumber" name="L571" href="#L571">571</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L572" href="#L572">572</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTicketGrantingTicketExpirationPolicy(<strong class="jxr_keyword">final</strong> ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
+<a class="jxr_linenumber" name="L573" href="#L573">573</a>         <strong class="jxr_keyword">this</strong>.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
+<a class="jxr_linenumber" name="L574" href="#L574">574</a>     }
+<a class="jxr_linenumber" name="L575" href="#L575">575</a> 
+<a class="jxr_linenumber" name="L576" href="#L576">576</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L577" href="#L577">577</a> <em class="jxr_javadoccomment">     * @param serviceTicketExpirationPolicy a ST expiration policy.</em>
+<a class="jxr_linenumber" name="L578" href="#L578">578</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L579" href="#L579">579</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setServiceTicketExpirationPolicy(<strong class="jxr_keyword">final</strong> ExpirationPolicy serviceTicketExpirationPolicy) {
+<a class="jxr_linenumber" name="L580" href="#L580">580</a>         <strong class="jxr_keyword">this</strong>.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
 <a class="jxr_linenumber" name="L581" href="#L581">581</a>     }
 <a class="jxr_linenumber" name="L582" href="#L582">582</a> 
-<a class="jxr_linenumber" name="L583" href="#L583">583</a>    <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L584" href="#L584">584</a> <em class="jxr_javadoccomment">    * Sets principal factory to create principal objects.</em>
-<a class="jxr_linenumber" name="L585" href="#L585">585</a> <em class="jxr_javadoccomment">    *</em>
-<a class="jxr_linenumber" name="L586" href="#L586">586</a> <em class="jxr_javadoccomment">    * @param principalFactory the principal factory</em>
-<a class="jxr_linenumber" name="L587" href="#L587">587</a> <em class="jxr_javadoccomment">    */</em>
-<a class="jxr_linenumber" name="L588" href="#L588">588</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipalFactory(<strong class="jxr_keyword">final</strong> PrincipalFactory principalFactory) {
-<a class="jxr_linenumber" name="L589" href="#L589">589</a>         <strong class="jxr_keyword">this</strong>.principalFactory = principalFactory;
-<a class="jxr_linenumber" name="L590" href="#L590">590</a>     }
-<a class="jxr_linenumber" name="L591" href="#L591">591</a> 
-<a class="jxr_linenumber" name="L592" href="#L592">592</a>    
-<a class="jxr_linenumber" name="L593" href="#L593">593</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L594" href="#L594">594</a> <em class="jxr_javadoccomment">     * Gets the authentication satisfied by policy.</em>
-<a class="jxr_linenumber" name="L595" href="#L595">595</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L596" href="#L596">596</a> <em class="jxr_javadoccomment">     * @param ticket the ticket</em>
-<a class="jxr_linenumber" name="L597" href="#L597">597</a> <em class="jxr_javadoccomment">     * @param context the context</em>
-<a class="jxr_linenumber" name="L598" href="#L598">598</a> <em class="jxr_javadoccomment">     * @return the authentication satisfied by policy</em>
-<a class="jxr_linenumber" name="L599" href="#L599">599</a> <em class="jxr_javadoccomment">     * @throws org.jasig.cas.ticket.TicketException the ticket exception</em>
-<a class="jxr_linenumber" name="L600" href="#L600">600</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L601" href="#L601">601</a>     <strong class="jxr_keyword">private</strong> Authentication getAuthenticationSatisfiedByPolicy(
-<a class="jxr_linenumber" name="L602" href="#L602">602</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticket, <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/services/ServiceContext.html">ServiceContext</a> context) <strong class="jxr_keyword">throws</strong> TicketException {
+<a class="jxr_linenumber" name="L583" href="#L583">583</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L584" href="#L584">584</a> <em class="jxr_javadoccomment">     * @deprecated</em>
+<a class="jxr_linenumber" name="L585" href="#L585">585</a> <em class="jxr_javadoccomment">     * Sets persistent id generator.</em>
+<a class="jxr_linenumber" name="L586" href="#L586">586</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L587" href="#L587">587</a> <em class="jxr_javadoccomment">     * @param persistentIdGenerator the persistent id generator</em>
+<a class="jxr_linenumber" name="L588" href="#L588">588</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L589" href="#L589">589</a>     @Deprecated
+<a class="jxr_linenumber" name="L590" href="#L590">590</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPersistentIdGenerator(<strong class="jxr_keyword">final</strong> PersistentIdGenerator persistentIdGenerator) {
+<a class="jxr_linenumber" name="L591" href="#L591">591</a>         logger.warn(<span class="jxr_string">"setPersistentIdGenerator() is deprecated and no longer available. Consider "</span>
+<a class="jxr_linenumber" name="L592" href="#L592">592</a>                 + <span class="jxr_string">"configuring the an attribute provider for service definitions."</span>);
+<a class="jxr_linenumber" name="L593" href="#L593">593</a>     }
+<a class="jxr_linenumber" name="L594" href="#L594">594</a> 
+<a class="jxr_linenumber" name="L595" href="#L595">595</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L596" href="#L596">596</a> <em class="jxr_javadoccomment">     * Sets principal factory to create principal objects.</em>
+<a class="jxr_linenumber" name="L597" href="#L597">597</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L598" href="#L598">598</a> <em class="jxr_javadoccomment">     * @param principalFactory the principal factory</em>
+<a class="jxr_linenumber" name="L599" href="#L599">599</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L600" href="#L600">600</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipalFactory(<strong class="jxr_keyword">final</strong> PrincipalFactory principalFactory) {
+<a class="jxr_linenumber" name="L601" href="#L601">601</a>         <strong class="jxr_keyword">this</strong>.principalFactory = principalFactory;
+<a class="jxr_linenumber" name="L602" href="#L602">602</a>     }
 <a class="jxr_linenumber" name="L603" href="#L603">603</a> 
-<a class="jxr_linenumber" name="L604" href="#L604">604</a>         <strong class="jxr_keyword">final</strong> ContextualAuthenticationPolicy&lt;ServiceContext&gt; policy =
-<a class="jxr_linenumber" name="L605" href="#L605">605</a>                 serviceContextAuthenticationPolicyFactory.createPolicy(context);
-<a class="jxr_linenumber" name="L606" href="#L606">606</a>         <strong class="jxr_keyword">if</strong> (policy.isSatisfiedBy(ticket.getAuthentication())) {
-<a class="jxr_linenumber" name="L607" href="#L607">607</a>             <strong class="jxr_keyword">return</strong> ticket.getAuthentication();
-<a class="jxr_linenumber" name="L608" href="#L608">608</a>         }
-<a class="jxr_linenumber" name="L609" href="#L609">609</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Authentication auth : ticket.getSupplementalAuthentications()) {
-<a class="jxr_linenumber" name="L610" href="#L610">610</a>             <strong class="jxr_keyword">if</strong> (policy.isSatisfiedBy(auth)) {
-<a class="jxr_linenumber" name="L611" href="#L611">611</a>                 <strong class="jxr_keyword">return</strong> auth;
-<a class="jxr_linenumber" name="L612" href="#L612">612</a>             }
-<a class="jxr_linenumber" name="L613" href="#L613">613</a>         }
-<a class="jxr_linenumber" name="L614" href="#L614">614</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/ticket/UnsatisfiedAuthenticationPolicyException.html">UnsatisfiedAuthenticationPolicyException</a>(policy);
-<a class="jxr_linenumber" name="L615" href="#L615">615</a>     }
-<a class="jxr_linenumber" name="L616" href="#L616">616</a>     
-<a class="jxr_linenumber" name="L617" href="#L617">617</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L618" href="#L618">618</a> <em class="jxr_javadoccomment">     * Ensure that the service is found and enabled in the service registry.</em>
-<a class="jxr_linenumber" name="L619" href="#L619">619</a> <em class="jxr_javadoccomment">     * @param registeredService the located entry in the registry</em>
-<a class="jxr_linenumber" name="L620" href="#L620">620</a> <em class="jxr_javadoccomment">     * @param service authenticating service</em>
-<a class="jxr_linenumber" name="L621" href="#L621">621</a> <em class="jxr_javadoccomment">     * @throws UnauthorizedServiceException</em>
-<a class="jxr_linenumber" name="L622" href="#L622">622</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L623" href="#L623">623</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> verifyRegisteredServiceProperties(<strong class="jxr_keyword">final</strong> RegisteredService registeredService, <strong class="jxr_keyword">final</strong> Service service) {
-<a class="jxr_linenumber" name="L624" href="#L624">624</a>         <strong class="jxr_keyword">if</strong> (registeredService == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L625" href="#L625">625</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"ServiceManagement: Unauthorized Service Access. "</span>
-<a class="jxr_linenumber" name="L626" href="#L626">626</a>                     + <span class="jxr_string">"Service [%s] is not found in service registry."</span>, service.getId());
-<a class="jxr_linenumber" name="L627" href="#L627">627</a>             logger.warn(msg);
-<a class="jxr_linenumber" name="L628" href="#L628">628</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedServiceException.html">UnauthorizedServiceException</a>(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-<a class="jxr_linenumber" name="L629" href="#L629">629</a>         }
-<a class="jxr_linenumber" name="L630" href="#L630">630</a>         <strong class="jxr_keyword">if</strong> (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-<a class="jxr_linenumber" name="L631" href="#L631">631</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"ServiceManagement: Unauthorized Service Access. "</span>
-<a class="jxr_linenumber" name="L632" href="#L632">632</a>                     + <span class="jxr_string">"Service [%s] is not enabled in service registry."</span>, service.getId());
-<a class="jxr_linenumber" name="L633" href="#L633">633</a> 
-<a class="jxr_linenumber" name="L634" href="#L634">634</a>             logger.warn(msg);
-<a class="jxr_linenumber" name="L635" href="#L635">635</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedServiceException.html">UnauthorizedServiceException</a>(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-<a class="jxr_linenumber" name="L636" href="#L636">636</a>         }
-<a class="jxr_linenumber" name="L637" href="#L637">637</a>     }
-<a class="jxr_linenumber" name="L638" href="#L638">638</a> }
+<a class="jxr_linenumber" name="L604" href="#L604">604</a>    
+<a class="jxr_linenumber" name="L605" href="#L605">605</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L606" href="#L606">606</a> <em class="jxr_javadoccomment">     * Gets the authentication satisfied by policy.</em>
+<a class="jxr_linenumber" name="L607" href="#L607">607</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L608" href="#L608">608</a> <em class="jxr_javadoccomment">     * @param ticket the ticket</em>
+<a class="jxr_linenumber" name="L609" href="#L609">609</a> <em class="jxr_javadoccomment">     * @param context the context</em>
+<a class="jxr_linenumber" name="L610" href="#L610">610</a> <em class="jxr_javadoccomment">     * @return the authentication satisfied by policy</em>
+<a class="jxr_linenumber" name="L611" href="#L611">611</a> <em class="jxr_javadoccomment">     * @throws org.jasig.cas.ticket.TicketException the ticket exception</em>
+<a class="jxr_linenumber" name="L612" href="#L612">612</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L613" href="#L613">613</a>     <strong class="jxr_keyword">private</strong> Authentication getAuthenticationSatisfiedByPolicy(
+<a class="jxr_linenumber" name="L614" href="#L614">614</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticket, <strong class="jxr_keyword">final</strong> <a href="../../../org/jasig/cas/services/ServiceContext.html">ServiceContext</a> context) <strong class="jxr_keyword">throws</strong> TicketException {
+<a class="jxr_linenumber" name="L615" href="#L615">615</a> 
+<a class="jxr_linenumber" name="L616" href="#L616">616</a>         <strong class="jxr_keyword">final</strong> ContextualAuthenticationPolicy&lt;ServiceContext&gt; policy =
+<a class="jxr_linenumber" name="L617" href="#L617">617</a>                 serviceContextAuthenticationPolicyFactory.createPolicy(context);
+<a class="jxr_linenumber" name="L618" href="#L618">618</a>         <strong class="jxr_keyword">if</strong> (policy.isSatisfiedBy(ticket.getAuthentication())) {
+<a class="jxr_linenumber" name="L619" href="#L619">619</a>             <strong class="jxr_keyword">return</strong> ticket.getAuthentication();
+<a class="jxr_linenumber" name="L620" href="#L620">620</a>         }
+<a class="jxr_linenumber" name="L621" href="#L621">621</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> Authentication auth : ticket.getSupplementalAuthentications()) {
+<a class="jxr_linenumber" name="L622" href="#L622">622</a>             <strong class="jxr_keyword">if</strong> (policy.isSatisfiedBy(auth)) {
+<a class="jxr_linenumber" name="L623" href="#L623">623</a>                 <strong class="jxr_keyword">return</strong> auth;
+<a class="jxr_linenumber" name="L624" href="#L624">624</a>             }
+<a class="jxr_linenumber" name="L625" href="#L625">625</a>         }
+<a class="jxr_linenumber" name="L626" href="#L626">626</a>         <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/ticket/UnsatisfiedAuthenticationPolicyException.html">UnsatisfiedAuthenticationPolicyException</a>(policy);
+<a class="jxr_linenumber" name="L627" href="#L627">627</a>     }
+<a class="jxr_linenumber" name="L628" href="#L628">628</a>     
+<a class="jxr_linenumber" name="L629" href="#L629">629</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L630" href="#L630">630</a> <em class="jxr_javadoccomment">     * Ensure that the service is found and enabled in the service registry.</em>
+<a class="jxr_linenumber" name="L631" href="#L631">631</a> <em class="jxr_javadoccomment">     * @param registeredService the located entry in the registry</em>
+<a class="jxr_linenumber" name="L632" href="#L632">632</a> <em class="jxr_javadoccomment">     * @param service authenticating service</em>
+<a class="jxr_linenumber" name="L633" href="#L633">633</a> <em class="jxr_javadoccomment">     * @throws UnauthorizedServiceException</em>
+<a class="jxr_linenumber" name="L634" href="#L634">634</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L635" href="#L635">635</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> verifyRegisteredServiceProperties(<strong class="jxr_keyword">final</strong> RegisteredService registeredService, <strong class="jxr_keyword">final</strong> Service service) {
+<a class="jxr_linenumber" name="L636" href="#L636">636</a>         <strong class="jxr_keyword">if</strong> (registeredService == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L637" href="#L637">637</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"ServiceManagement: Unauthorized Service Access. "</span>
+<a class="jxr_linenumber" name="L638" href="#L638">638</a>                     + <span class="jxr_string">"Service [%s] is not found in service registry."</span>, service.getId());
+<a class="jxr_linenumber" name="L639" href="#L639">639</a>             logger.warn(msg);
+<a class="jxr_linenumber" name="L640" href="#L640">640</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedServiceException.html">UnauthorizedServiceException</a>(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+<a class="jxr_linenumber" name="L641" href="#L641">641</a>         }
+<a class="jxr_linenumber" name="L642" href="#L642">642</a>         <strong class="jxr_keyword">if</strong> (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+<a class="jxr_linenumber" name="L643" href="#L643">643</a>             <strong class="jxr_keyword">final</strong> String msg = String.format(<span class="jxr_string">"ServiceManagement: Unauthorized Service Access. "</span>
+<a class="jxr_linenumber" name="L644" href="#L644">644</a>                     + <span class="jxr_string">"Service [%s] is not enabled in service registry."</span>, service.getId());
+<a class="jxr_linenumber" name="L645" href="#L645">645</a> 
+<a class="jxr_linenumber" name="L646" href="#L646">646</a>             logger.warn(msg);
+<a class="jxr_linenumber" name="L647" href="#L647">647</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/services/UnauthorizedServiceException.html">UnauthorizedServiceException</a>(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+<a class="jxr_linenumber" name="L648" href="#L648">648</a>         }
+<a class="jxr_linenumber" name="L649" href="#L649">649</a>     }
+<a class="jxr_linenumber" name="L650" href="#L650">650</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>
