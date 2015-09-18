@@ -39,7 +39,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -49,6 +48,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.mockito.Mockito.*;
+import static org.slf4j.LoggerFactory.*;
 
 /**
  * Unit test for MemCacheTicketRegistry class.
@@ -58,19 +58,17 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(Parameterized.class)
 public class MemCacheTicketRegistryTests {
+    private static final Logger LOGGER = getLogger(MemCacheTicketRegistryTests.class);
+    private static final int PORT = 11211;
 
     private static MemcachedExecutable MEMCACHED_EXECUTABLE;
     private static MemcachedProcess MEMCACHED;
-
-    private ApplicationContext context;
 
     private MemCacheTicketRegistry registry;
 
     private final String registryBean;
 
     private final boolean binaryProtocol;
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public MemCacheTicketRegistryTests(final String beanName, final boolean binary) {
         registryBean = beanName;
@@ -84,10 +82,14 @@ public class MemCacheTicketRegistryTests {
 
     @BeforeClass
     public static void beforeClass() throws IOException {
-        final MemcachedStarter runtime = MemcachedStarter.getInstance(
-                new CasRuntimeConfigBuilder().defaults(Command.MemcacheD).build());
-        MEMCACHED_EXECUTABLE = runtime.prepare(new MemcachedConfig(Version.V1_4_22, 11211));
-        MEMCACHED = MEMCACHED_EXECUTABLE.start();
+        try {
+            final MemcachedStarter runtime = MemcachedStarter.getInstance(
+                    new CasRuntimeConfigBuilder().defaults(Command.MemcacheD).build());
+            MEMCACHED_EXECUTABLE = runtime.prepare(new MemcachedConfig(Version.V1_4_22, PORT));
+            MEMCACHED = MEMCACHED_EXECUTABLE.start();
+        } catch (final Exception e) {
+            LOGGER.warn("Aborting since no memcached server could be started.", e);
+        }
     }
 
     @AfterClass
@@ -106,10 +108,10 @@ public class MemCacheTicketRegistryTests {
         // Abort tests if there is no memcached server available on localhost:11211.
         final boolean environmentOk = isMemcachedListening();
         if (!environmentOk) {
-            logger.warn("Aborting test since no memcached server is available on localhost.");
+            LOGGER.warn("Aborting test since no memcached server is available on localhost.");
         }
         Assume.assumeTrue(environmentOk);
-        context = new ClassPathXmlApplicationContext("/ticketRegistry-test.xml");
+        final ApplicationContext context = new ClassPathXmlApplicationContext("/ticketRegistry-test.xml");
         registry = context.getBean(registryBean, MemCacheTicketRegistry.class);
     }
 
@@ -139,7 +141,7 @@ public class MemCacheTicketRegistryTests {
     }
 
     private boolean isMemcachedListening() {
-        try (Socket socket = new Socket("127.0.0.1", 11211)) {
+        try (final Socket socket = new Socket("127.0.0.1", PORT)) {
             return true;
         } catch (final Exception e) {
             return false;
@@ -155,11 +157,15 @@ public class MemCacheTicketRegistryTests {
                     .defaultsForCommand(command)
                     .progressListener(new StandardConsoleProgressListener())
                     .build();
-            this.artifactStore().overwriteDefault((new ArtifactStoreBuilder()).defaults(command).download(downloadConfig).build());
+            this.artifactStore().overwriteDefault(new ArtifactStoreBuilder()
+                    .defaults(command).download(downloadConfig).build());
             return builder;
         }
     }
 
+    /**
+     * Download an embedded memcached instance based on environment.
+     */
     private static class CasDownloadConfigBuilder extends DownloadConfigBuilder {
         @Override
         public DownloadConfigBuilder defaults() {

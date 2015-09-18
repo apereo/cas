@@ -273,28 +273,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             throw new UnauthorizedSsoServiceException();
         }
 
-        final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
-        if (proxiedBy != null) {
-            logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
-            final RegisteredService proxyingService = servicesManager.findServiceBy(proxiedBy);
-
-            if (proxyingService != null) {
-                logger.debug("Located proxying service [{}] in the service registry", proxyingService);
-                if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
-                    logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
-                            proxyingService.getId(), service.getId());
-                    throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
-                            + registeredService.getId());
-                }
-            } else {
-                logger.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
-                        service.getId(), registeredService.getId());
-                throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
-                        + registeredService.getId());
-            }
-        } else {
-            logger.trace("TGT is not proxied by another service");
-        }
+        evaluateProxiedServiceIfNeeded(service, ticketGrantingTicket, registeredService);
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
         // This throws if no suitable policy is found
@@ -334,6 +313,39 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 serviceTicket.getId(), service.getId(), principal.getId());
 
         return serviceTicket;
+    }
+
+    /**
+     * Evaluate proxied service if needed.
+     *
+     * @param service the service
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @param registeredService the registered service
+     */
+    private void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket,
+                                                final RegisteredService registeredService) {
+        final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
+        if (proxiedBy != null) {
+            logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
+            final RegisteredService proxyingService = servicesManager.findServiceBy(proxiedBy);
+
+            if (proxyingService != null) {
+                logger.debug("Located proxying service [{}] in the service registry", proxyingService);
+                if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
+                    logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
+                            proxyingService.getId(), service.getId());
+                    throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                            + registeredService.getId());
+                }
+            } else {
+                logger.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
+                        service.getId(), registeredService.getId());
+                throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
+                        + registeredService.getId());
+            }
+        } else {
+            logger.trace("TGT is not proxied by another service");
+        }
     }
 
     /**
@@ -580,11 +592,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 + "configuring the an attribute provider for service definitions.");
     }
 
-   /**
-    * Sets principal factory to create principal objects.
-    *
-    * @param principalFactory the principal factory
-    */
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
     public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }

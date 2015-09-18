@@ -37,16 +37,6 @@ The redirect behavior is turned off by default, and is activated via the followi
 
 The specified url must be registered in the service registry of CAS and enabled.
 
-##Web Session Termination
-By default, CAS comes with a `TerminateWebSessionListener` whose job is to expire the web session once the webflow has ended. The goal is to clean up the session as soon as possible to decrease memory consumption.
-
-The listener configures the maximum inactivity interval for the web session, which is the time, in seconds, between client requests before the servlet container will invalidate this session. An interval value of zero or less indicates that the session should never timeout. This value can be controlled via the following setting in `cas.properties`:
-
-{% highlight bash %}
-# Specifies the time, in seconds, to invalidate the web session.
-# terminate.web.session.timeout=2
-{% endhighlight %}
-
 ##Single Logout (SLO)
 CAS is designed to support single sign out: it means that it will be able to invalidate client application sessions in addition to its own SSO session.  
 Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the logout protocol may notice extra requests in their access logs that appear not to do anything.
