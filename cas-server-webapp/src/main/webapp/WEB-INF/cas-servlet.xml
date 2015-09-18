@@ -345,6 +345,7 @@
   <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
           p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
           p:centralAuthenticationService-ref="centralAuthenticationService"
+          p:servicesManager-ref="servicesManager"
           p:proxyHandler-ref="proxy20Handler"
           p:argumentExtractor-ref="samlArgumentExtractor"
           p:successView="casSamlServiceSuccessView"
