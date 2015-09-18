@@ -26,12 +26,10 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
 import org.jasig.cas.util.CipherExecutor;
 import org.jasig.cas.util.CompressionUtils;
-import org.jasig.cas.util.ShiroCipherExecutor;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * A distributed ticket registry that is able to encode
@@ -42,7 +40,7 @@ import java.util.Set;
  *
  * @author Misagh Moayyed
  * @since 4.2
- * @see ShiroCipherExecutor
+ * @see org.jasig.cas.util.ShiroCipherExecutor
  */
 public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedTicketRegistry {
 
@@ -97,7 +95,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
         final byte[] encodedTicketObject = CompressionUtils.serializeAndEncodeObject(
                 this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
-        final EncodedTicket encodedTicket = new EncodedTicket(
+        final Ticket encodedTicket = new EncodedTicket(
                 ByteSource.wrap(encodedTicketObject), encodedTicketId);
         logger.info("Created [{}]", encodedTicket);
         return encodedTicket;
@@ -144,7 +142,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
             return items;
         }
 
-        final Set<Ticket> tickets = new HashSet<>(items.size());
+        final Collection<Ticket> tickets = new HashSet<>(items.size());
         for (final Ticket item : items) {
             final Ticket ticket = decodeTicket(item);
             tickets.add(ticket);
