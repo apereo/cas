@@ -33,6 +33,7 @@ import net.spy.memcached.MemcachedClientIF;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
@@ -42,7 +43,7 @@ import org.springframework.beans.factory.DisposableBean;
  * @author Marvin S. Addison
  * @since 3.3
  */
-public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegistry implements DisposableBean {
+public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry implements DisposableBean {
 
     /** Memcached client. */
     @NotNull
@@ -112,7 +113,8 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
     }
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    protected void updateTicket(final Ticket ticketToUpdate) {
+        final Ticket ticket = encodeTicket(ticketToUpdate);
         logger.debug("Updating ticket {}", ticket);
         try {
             if (!this.client.replace(ticket.getId(), getTimeout(ticket), ticket).get()) {
@@ -127,7 +129,8 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicket(final Ticket ticketToAdd) {
+        final Ticket ticket = encodeTicket(ticketToAdd);
         logger.debug("Adding ticket {}", ticket);
         try {
             if (!this.client.add(ticket.getId(), getTimeout(ticket), ticket).get()) {
@@ -141,7 +144,8 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
         }
     }
     @Override
-    public boolean deleteTicket(final String ticketId) {
+    public boolean deleteTicket(final String ticketIdToDel) {
+        final String ticketId = encodeTicketId(ticketIdToDel);
         logger.debug("Deleting ticket {}", ticketId);
         try {
             return this.client.delete(ticketId).get();
@@ -151,11 +155,13 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
         return false;
     }
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketIdToGet) {
+        final String ticketId = encodeTicketId(ticketIdToGet);
         try {
             final Ticket t = (Ticket) this.client.get(ticketId);
             if (t != null) {
-                return getProxiedTicketInstance(t);
+                final Ticket result = decodeTicket(t);
+                return getProxiedTicketInstance(result);
             }
         } catch (final Exception e) {
             logger.error("Failed fetching {} ", ticketId, e);
@@ -171,7 +177,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
      */
     @Override
     public Collection<Ticket> getTickets() {
-        throw new UnsupportedOperationException("GetTickets not supported.");
+        throw new UnsupportedOperationException("getTickets not supported.");
     }
 
     /**
