@@ -39,7 +39,7 @@ public abstract class AuthenticationException extends RootCasException {
 
     private static final String DEFAULT_TYPE = "error";
 
-     /** The error type that provides additional info about the nature of the exception cause. **/
+    /** The error type that provides additional info about the nature of the exception cause. **/
     private final String type;
 
     /**

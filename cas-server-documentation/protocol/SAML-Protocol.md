@@ -114,84 +114,20 @@ Content-Type: text/xml
 
 
 ##Configuration
+SAML configuration in CAS is contained within the `cas.properties` file.
 
-In addition to the `cas-server-support-saml` module dependency, the following steps are required to enabled the SAML 1.1 support.
+{% highlight properties %}
+# Indicates the SAML response issuer
+# cas.saml.response.issuer=localhost
 
-###Definition/Mapping of `samlValidateController` 
-
-In `cas-servlet.xml`:
-
-{% highlight xml %}
-<bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
-  p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-  p:centralAuthenticationService-ref="centralAuthenticationService"
-  p:proxyHandler-ref="proxy20Handler"
-  p:servicesManager-ref="servicesManager"
-  p:argumentExtractor-ref="samlArgumentExtractor"
-  p:successView="casSamlServiceSuccessView"
-  p:failureView="casSamlServiceFailureView"/>
-
-<bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-  <property name="mappings">
-    <props>
-      ...
-      <prop key="/samlValidate">samlValidateController</prop>
-      ...
-{% endhighlight %}
-
-###Servlet mapping for `/samlValidate` 
-
-In the `web.xml` file:
-
-{% highlight xml %}
-<servlet-mapping>
-  <servlet-name>cas</servlet-name>
-  <url-pattern>/samlValidate</url-pattern>
-</servlet-mapping>
-{% endhighlight %}
-
-###SAML Argument Extractor 
-
-In the `argumentExtractorsConfiguration.xml` file:
-
-{% highlight xml %}
-<bean id="samlArgumentExtractor" class="org.jasig.cas.support.saml.web.support.SamlArgumentExtractor" />
-
-<util:list id="argumentExtractors">
-  <ref bean="casArgumentExtractor" />
-  <ref bean="samlArgumentExtractor" />
-</util:list>
-{% endhighlight %}
-
-###SAML ID Generator
-
-In the uniqueIdGenerators.xml file:
-
-{% highlight xml %}
-<bean id="samlServiceTicketUniqueIdGenerator" class="org.jasig.cas.support.saml.util.SamlCompliantUniqueTicketIdGenerator">
-  <constructor-arg index="0" value="[CAS-FQ-HOST-NAME]" />
-</bean>
-
-<util:map id="uniqueIdGeneratorsMap">
-  <entry
-    key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-    value-ref="serviceTicketUniqueIdGenerator" />
-  <entry
-    key="org.jasig.cas.support.saml.authentication.principal.SamlService"
-    value-ref="samlServiceTicketUniqueIdGenerator" />
-</util:map>
-{% endhighlight %}
-
-###SAML Views 
-In `cas-servlet.xml`, uncomment the following:
-
-{% highlight xml %}
-<bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
-          p:order="3"
-          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
+# Indicates the skew allowance which controls the issue instant of the SAML response
+# cas.saml.response.skewAllowance=0
 {% endhighlight %}
 
 #SAML 2
 
-CAS support for SAML 2 at this point is mostly limited to [Google Apps Integration](../integration/Google-Apps-Integration.html). Full SAML 2 support can also be achieved via Shibboleth with CAS handling the authentication and SSO. [See this guide](../integration/Shibboleth.html) for more info.
+CAS support for SAML 2 at this point is mostly limited to 
+[Google Apps Integration](../integration/Google-Apps-Integration.html). 
+Full SAML 2 support can also be achieved via Shibboleth with CAS 
+handling the authentication and SSO. [See this guide](../integration/Shibboleth.html) for more info.
 
