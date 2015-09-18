@@ -42,17 +42,17 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     }
 
     public void verifyLoginWithNoParams() {
-        final String URL = "/login";
-        beginAt(URL);
+        final String url = "/login";
+        beginAt(url);
         assertFormElementPresent(LOGIN_TOKEN);
     }
 
     public void verifyGatewayWithServiceWithNoTgt() throws UnsupportedEncodingException {
-        final String GATEWAY = "true";
-        final String SERVICE = URLEncoder.encode("http://www.cnn.com", "UTF-8");
-        final String URL = "/login?service=" + SERVICE + "&gateway=" + GATEWAY;
+        final String gateway = "true";
+        final String service = URLEncoder.encode("http://www.cnn.com", "UTF-8");
+        final String url = "/login?service=" + service + "&gateway=" + gateway;
 
-        beginAt(URL);
+        beginAt(url);
 
         // test that we're now at cnn.com rather than at the login form.
         assertTextPresent("cnn.com");
@@ -60,10 +60,10 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
     }
 
     public void verifyBlankGateway() throws UnsupportedEncodingException {
-        final String SERVICE = URLEncoder.encode("http://www.cnn.com", "UTF-8");
-        final String URL = "/login?service=" + SERVICE + "&gateway=";
+        final String service = URLEncoder.encode("http://www.cnn.com", "UTF-8");
+        final String url = "/login?service=" + service + "&gateway=";
 
-        beginAt(URL);
+        beginAt(url);
 
         // test that we're now at cnn.com rather than at the login form.
         assertTextPresent("cnn.com");
@@ -76,11 +76,11 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * @throws UnsupportedEncodingException
      */
     public void verifyGatewayFalseEqualsGatewayTrueWithServiceWithNoTgt() throws UnsupportedEncodingException {
-        final String GATEWAY = "false";
-        final String SERVICE = URLEncoder.encode("http://www.cnn.com", "UTF-8");
-        final String URL = "/login?service=" + SERVICE + "&gateway=" + GATEWAY;
+        final String gateway = "false";
+        final String service = URLEncoder.encode("http://www.cnn.com", "UTF-8");
+        final String url = "/login?service=" + service + "&gateway=" + gateway;
 
-        beginAt(URL);
+        beginAt(url);
         assertTextPresent("cnn.com");
     }
 
@@ -88,10 +88,10 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         beginAt("/login");
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
-        final String URL = "/login";
+        final String url = "/login";
         submit();
         assertCookiePresent(COOKIE_TGC_ID);
-        beginAt(URL);
+        beginAt(url);
         assertFormNotPresent(FORM_USERNAME);
     }
 
@@ -105,10 +105,10 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * not following the recommended behavior can cause this test case to fail.
      */
     public void verifyGatewayWithNoService() {
-        final String GATEWAY = "notNull";
-        final String URL = "/login?gateway=" + GATEWAY;
+        final String gateway = "notNull";
+        final String url = "/login?gateway=" + gateway;
 
-        beginAt(URL);
+        beginAt(url);
         assertFormElementPresent(LOGIN_TOKEN);
     }
 
@@ -118,19 +118,19 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
      * @throws IOException
      */
     public void verifyGatewayWithServiceWithTgt() throws IOException {
-        final String GATEWAY = "notNull";
+        final String gateway = "notNull";
         final String service = "http://www.yale.edu";
         final String encodedService = URLEncoder.encode(service, "UTF-8");
-        final String URLNOGW = "/login?service=" + encodedService;
-        final String URLGW = "/login?service=" + encodedService + "&gateway=" + GATEWAY;
+        final String urlnogw = "/login?service=" + encodedService;
+        final String urlgw = "/login?service=" + encodedService + "&gateway=" + gateway;
 
-        beginAt(URLNOGW);
+        beginAt(urlnogw);
 
         setFormElement(FORM_USERNAME, getUsername());
         setFormElement(FORM_PASSWORD, getGoodPassword());
         submit();
 
-        beginAt(URLGW);
+        beginAt(urlgw);
 
         // extract the service ticket
         final String st = LoginHelper.serviceTicketFromResponse(getDialog().getResponse());
@@ -235,10 +235,6 @@ public class LoginAsCredentialsRequestorCompatibilityTests extends AbstractLogin
         assertFormElementPresent(LOGIN_TOKEN);
 
 
-    }
-
-    public void verifyTrustHandling() {
-        // TODO test trust handling
     }
 
     public void verifyInitialFormParameters() {

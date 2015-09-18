@@ -23,6 +23,8 @@ import com.hazelcast.core.IMap;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
+import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -30,17 +32,16 @@ import java.util.concurrent.TimeUnit;
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
  *
- * <p>
- * This implementation just wraps the Hazelcast's {@link IMap} which is an extension of the
- * standard Java's <code>ConcurrentMap</code>. The heavy lifting of distributed data partitioning,
- * network cluster discovery and join, data replication, etc. is done by Hazelcast's Map implementation.
- * <p/>
+ * <p>This implementation just wraps the Hazelcast's {@link IMap}
+ * which is an extension of the standard Java's <code>ConcurrentMap</code>.</p>
+ * <p>The heavy lifting of distributed data partitioning, network cluster discovery and
+ * join, data replication, etc. is done by Hazelcast's Map implementation.</p>
  *
  * @author Dmitriy Kopylenko
  * @author Jonathan Johnson
  * @since 4.1.0
  */
-public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
+public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry implements DisposableBean {
 
     private final IMap<String, Ticket> registry;
 
@@ -110,12 +111,14 @@ public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
     }
 
     /**
+     * Adds the ticket to the hazelcast instance.
      * @param ticket a ticket
      * @param ttl time to live in seconds
      */
     private void addTicket(final Ticket ticket, final long ttl) {
         logger.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
-        this.registry.set(ticket.getId(), ticket, ttl, TimeUnit.SECONDS);
+        final Ticket encTicket = encodeTicket(ticket);
+        this.registry.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
     }
 
     /**
@@ -123,7 +126,9 @@ public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
      */
     @Override
     public Ticket getTicket(final String ticketId) {
-        return this.registry.get(ticketId);
+        final String encTicketId = encodeTicketId(ticketId);
+        final Ticket ticket = this.registry.get(encTicketId);
+        return decodeTicket(ticket);
     }
 
     /**
@@ -131,8 +136,9 @@ public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
      */
     @Override
     public boolean deleteTicket(final String ticketId) {
-        logger.debug("Removing ticket [{}]", ticketId);
-        return this.registry.remove(ticketId) != null;
+        final String encTicketId = encodeTicketId(ticketId);
+        logger.debug("Removing ticket [{}]", encTicketId);
+        return this.registry.remove(encTicketId) != null;
     }
 
     /**
@@ -140,7 +146,7 @@ public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
      */
     @Override
     public Collection<Ticket> getTickets() {
-        return this.registry.values();
+        return decodeTickets(this.registry.values());
     }
 
     /**
@@ -166,5 +172,10 @@ public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
      */
     public void shutdown() {
         this.hz.shutdown();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        shutdown();
     }
 }

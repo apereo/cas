@@ -37,6 +37,7 @@
         modify this unless you know what you're doing!
     </description>
 
+    <context:property-placeholder location="classpath:cas-management.properties" />
     <context:component-scan base-package="org.jasig.cas.services.web" />
     <mvc:annotation-driven />
 
@@ -51,20 +52,5 @@
           
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
           c:serviceRegistryDao-ref="serviceRegistryDao" />
-    
-    <!-- Spring-Json View provides a JsonExceptionResolver exceptions thrown during a controller action -->
-    <bean id="ajaxExceptionResolver" class="org.jasig.cas.web.view.AjaxAwareJsonExceptionResolver"
-          p:exceptionView="jsonView">
-        <property name="errorHandler">
-            <util:list>
-                <bean class="org.springframework.web.servlet.view.json.error.HttpStatusError" p:errorCode="412"/>
-                <bean class="org.springframework.web.servlet.view.json.error.ModelFlagError"/>
-            </util:list>
-        </property>
-        <property name="exceptionHandler">
-            <util:list>
-                <bean class="org.springframework.web.servlet.view.json.exception.StackTraceExceptionHandler" />
-            </util:list>
-        </property>
-    </bean>
+
 </beans>
