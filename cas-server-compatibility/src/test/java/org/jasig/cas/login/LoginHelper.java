@@ -24,7 +24,7 @@ import com.meterware.httpunit.WebResponse;
 
 /**
  * Helper class for accomplishing CAS login, a common task of compatibility tests.
- *
+ * @author Marvin Addison
  * @since 3.0.0
  */
 public final class LoginHelper {
