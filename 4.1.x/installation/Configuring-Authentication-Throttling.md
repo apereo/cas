@@ -53,7 +53,7 @@ Uses a memory map to prevent successive failed login attempts for a particular u
 #####`InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
 username from the same IP address. This component requires that the
-[inspektr library](https://github.com/dima767/inspektr) used for CAS auditing be configured with
+[inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
 `JdbcAuditTrailManager`, which writes audit data to a database.
 {% highlight xml %}
 <bean id="loginThrottle"
@@ -112,7 +112,7 @@ It is convenient to place Spring configuration for login throttling components i
 
 <!-- A scheduler that drives all configured triggers is provided by default in applicationContext.xml. -->
 <bean id="loginThrottleTrigger"
-      class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+      class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
       p:jobDetail-ref="loginThrottleJobDetail"
       p:startDelay="1000"
       p:repeatInterval="1000"/>
