@@ -39,6 +39,9 @@
         <Logger name="org.jasig" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.jasig.cas.support.spnego" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Logger name="org.ldaptive" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>

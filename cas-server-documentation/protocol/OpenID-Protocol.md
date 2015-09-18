@@ -179,8 +179,9 @@ Don't forget to include the `util` Spring namespace if you don't have it already
 We must tell cas how to extract the OpenID information from the authentication request (`openid.mode`, `openid.sig`, `openid.assoc_handle`, etc). This is done in the *`argumentExtractorsConfiguration.xml`* file, located in the *`spring-configuration`* directory. Add this bean into the file:
 
 {% highlight xml %}
-<bean id="openIdArgumentExtractor" 
-    class="org.jasig.cas.support.openid.web.support.OpenIdArgumentExtractor" />
+<bean id="openIdArgumentExtractor" class="org.jasig.cas.support.openid.web.support.OpenIdArgumentExtractor">
+  <property name="openIdPrefixUrl" value="${server.prefix}/openid" />
+</bean>
  
 <util:list id="argumentExtractors">
    <ref bean="casArgumentExtractor" />

@@ -79,7 +79,8 @@ public abstract class AbstractClientAuthenticationHandler extends AbstractPreAnd
         final ClientCredential clientCredentials = (ClientCredential) credential;
         logger.debug("clientCredentials : {}", clientCredentials);
 
-        final String clientName = clientCredentials.getCredentials().getClientName();
+        final Credentials credentials = clientCredentials.getCredentials();
+        final String clientName = credentials.getClientName();
         logger.debug("clientName : {}", clientName);
 
         // get client
@@ -93,7 +94,7 @@ public abstract class AbstractClientAuthenticationHandler extends AbstractPreAnd
         final WebContext webContext = new J2EContext(request, response);
         
         // get user profile
-        final UserProfile userProfile = client.getUserProfile(clientCredentials.getCredentials(), webContext);
+        final UserProfile userProfile = client.getUserProfile(credentials, webContext);
         logger.debug("userProfile : {}", userProfile);
 
         if (userProfile != null) {
