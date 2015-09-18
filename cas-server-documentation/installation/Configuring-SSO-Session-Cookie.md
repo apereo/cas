@@ -10,13 +10,12 @@ A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of 
 The generation of the ticket-granting cookie is controlled by the file `cas-server-webapp\src\main\webapp\WEB-INF\spring-configuration\ticketGrantingTicketCookieGenerator.xml`
 
 {% highlight xml %}
-<bean id="ticketGrantingTicketCookieGenerator" 
-    class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-    c:casCookieValueManager-ref="cookieValueManager"
-    p:cookieSecure="true"
-    p:cookieMaxAge="-1"
-    p:cookieName="TGC"
-    p:cookiePath="/cas" />
+<bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
+      c:casCookieValueManager-ref="cookieValueManager"
+      p:cookieSecure="${tgc.secure:true}"
+      p:cookieMaxAge="${tgc.maxAge:-1}"
+      p:cookieName="${tgc.name:TGC}"
+      p:cookiePath="${tgc.path:/cas}"/>
 
 <bean id="cookieCipherExecutor" class="org.jasig.cas.util.DefaultCipherExecutor"
     c:secretKeyEncryption="${tgc.encryption.key}"
@@ -96,4 +95,15 @@ The controlling of this behavior is done via the `cas.properties` file:
 # create.sso.renewed.authn=true
 {% endhighlight %}
 
+# SSO Warning Session Cookie
+A warning cookie set by CAS upon the establishment of the SSO session at the request of the user on the CAS login page. The cookie is used later to warn and prompt
+the user before a service ticket is generated and access to the service application is granted. The cookie is controlled via the
+controlled by the file `cas-server-webapp\src\main\webapp\WEB-INF\spring-configuration\warnCookieGenerator.xml` file:
 
+{% highlight xml %}
+<bean id="warnCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
+          p:cookieSecure="${warn.cookie.secure:true}"
+          p:cookieMaxAge="${warn.cookie.maxAge:-1}"
+          p:cookieName="${warn.cookie.name:CASPRIVACY}"
+          p:cookiePath="${warn.cookie.path:/cas}"/>
+{% endhighlight %}

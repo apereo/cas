@@ -48,10 +48,6 @@
     </property>
   </bean>
 
-  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver" 
-        p:order="1" 
-        p:location="/WEB-INF/view/views.xml" />
-  
   <!-- Locale Resolver -->
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
 

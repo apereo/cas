@@ -67,7 +67,7 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapT
                 this.searchRequest, "mail");
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
-        req.setRemoteAddr("127.0.0.1");
+        req.setRemoteAddr("localhost");
         final ServletExternalContext extCtx = new ServletExternalContext(
                 new MockServletContext(), req,
                 new MockHttpServletResponse());
