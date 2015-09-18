@@ -1530,8 +1530,8 @@
 
     <properties>
         <!-- Dependency Versions -->
-        <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
-        <spring.version>4.2.0.RELEASE</spring.version>
+        <spring.webflow.version>2.4.2.RELEASE</spring.webflow.version>
+        <spring.version>4.2.1.RELEASE</spring.version>
         <spring.webflow.client.repo.version>1.0.0</spring.webflow.client.repo.version>
         <ldaptive.version>1.0.6</ldaptive.version>
         <spring.security.version>4.0.2.RELEASE</spring.security.version>
