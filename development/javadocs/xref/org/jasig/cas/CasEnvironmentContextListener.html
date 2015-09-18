@@ -84,7 +84,7 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> String collectEnvironmentInfo() {
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          <strong class="jxr_keyword">final</strong> Properties properties = System.getProperties();
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">final</strong> Formatter formatter = <strong class="jxr_keyword">new</strong> Formatter();
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>          formatter.format(<span class="jxr_string">"\n******************** Welcome to CAS *****************\n"</span>);
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>          formatter.format(<span class="jxr_string">"\n******************** Welcome to CAS *******************\n"</span>);
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          formatter.format(<span class="jxr_string">"CAS Version: %s\n"</span>, CasVersion.getVersion());
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          formatter.format(<span class="jxr_string">"Build Date/Time: %s\n"</span>, CasVersion.getDateTime());
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>          formatter.format(<span class="jxr_string">"Java Home: %s\n"</span>, properties.get(<span class="jxr_string">"java.home"</span>));
