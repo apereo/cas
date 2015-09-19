@@ -4,7 +4,8 @@ title: CAS - Configuring Principal Resolution
 ---
 
 # Configuring Principal Resolution
-Principal resolution converts information in the authentication credential into a security principal that commonly contains additional
+Principal resolution converts information in the authentication credential into a security principal 
+that commonly contains additional
 metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
 
 A CAS principal contains a unique identifier by which the authenticated user will be known to all requesting
@@ -25,7 +26,7 @@ be be combined with an LDAP-based principal resolver to accommodate this case.
 ## Principal Resolution Components
 
 ###`PersonDirectoryPrincipalResolver`
-Uses the Jasig Person Directory library to provide a flexible principal resolution services against a number of data
+Uses the Person Directory library to provide a flexible principal resolution services against a number of data
 sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
 The [Person Directory documentation](https://wiki.jasig.org/display/PDM15/Person+Directory+1.5+Manual) provides
 configuration for two common examples:
@@ -70,7 +71,7 @@ that provides a simple case transform on the principal ID. The following values 
 
 {% highlight xml %}
 <bean id="principalResolver"
-      class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver"
+      class="org.jasig.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver"
       p:principalAttributeName="username"
       p:attributeRepository-ref="attributeRepository"
       p:returnNullIfNoAttributes="true"
@@ -85,8 +86,10 @@ See the [X.509 principal resolver](#x_509) section for more information.
 Creates a principal ID from the certificate subject distinguished name.
 
 ###`ChainingPrincipalResolver`
-Delegates to one or more principal resolves in series to resolve a principal. The input to first configured resolver is the authenticated
-credential; for every subsequent resolver, the input is a Credential whose ID is the resolved principal ID of the previous resolver.
+Delegates to one or more principal resolves in series to resolve a principal. The input to first configured
+resolver is the authenticated
+credential; for every subsequent resolver, the input is a Credential whose ID is the resolved principal
+ ID of the previous resolver.
 A common use case for this component is resolving a temporary principal ID from an X.509 credential followed
 by a search (e.g. LDAP, database) for the final principal based on the temporary ID.
 

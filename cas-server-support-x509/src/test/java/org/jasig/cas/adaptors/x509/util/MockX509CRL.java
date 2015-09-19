@@ -134,7 +134,7 @@ public class MockX509CRL extends X509CRL {
      * @see java.security.cert.X509CRL#getRevokedCertificates()
      */
     @Override
-    public Set< ? extends X509CRLEntry> getRevokedCertificates() {
+    public Set<? extends X509CRLEntry> getRevokedCertificates() {
         return null;
     }
 
