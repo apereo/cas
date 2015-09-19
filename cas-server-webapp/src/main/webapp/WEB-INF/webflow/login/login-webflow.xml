@@ -29,6 +29,15 @@
         <evaluate expression="initialFlowSetupAction"/>
     </on-start>
 
+    <!--
+    <action-state id="wsFederationAction">
+        <evaluate expression="wsFederationAction" />
+        <transition on="success" to="sendTicketGrantingTicket" />
+        <transition on="error" to="ticketGrantingTicketCheck" />
+    </action-state>
+    <view-state id="wsFederationRedirect" view="externalRedirect:#{flowScope.WsFederationIdentityProviderUrl}"/>
+    -->
+
     <action-state id="ticketGrantingTicketCheck">
         <evaluate expression="ticketGrantingTicketCheckAction"/>
         <transition on="notExists" to="gatewayRequestCheck"/>
@@ -81,6 +90,7 @@
     <action-state id="generateLoginTicket">
         <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)"/>
         <transition on="generated" to="viewLoginForm"/>
+        <!-- <transition on="generated" to="wsFederationRedirect"/> -->
     </action-state>
 
     <view-state id="viewLoginForm" view="casLoginView" model="credential">
