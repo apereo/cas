@@ -25,6 +25,9 @@ import java.security.SecureRandom;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for
@@ -35,6 +38,7 @@ import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Component("samlServiceTicketUniqueIdGenerator")
 public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /** Assertion handles are randomly-generated 20-byte identifiers. */
@@ -47,6 +51,7 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     private final byte[] sourceIdDigest;
 
     /** Flag to indicate SAML2 compliance. Default is SAML1.1. */
+    @Value("${cas.saml.ticketid.saml2:false}")
     private boolean saml2compliant;
 
     /** Random generator to construct the AssertionHandle. */
@@ -57,7 +62,8 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
      *
      * @param sourceId the source id
      */
-    public SamlCompliantUniqueTicketIdGenerator(final String sourceId) {
+    @Autowired
+    public SamlCompliantUniqueTicketIdGenerator(@Value("${server.name}") final String sourceId) {
         try {
             final MessageDigest messageDigest = MessageDigest.getInstance("SHA");
             messageDigest.update(sourceId.getBytes("8859_1"));

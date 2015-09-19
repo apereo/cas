@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 
 /**
  * @deprecated As of 4.1 the Jboss cache integration module is no longer supported.
- * Please use other means of confguring your distributed ticket registry, such as
+ * Please use other means of configuring your distributed ticket registry, such as
  * ehcache or memcached integrations with CAS.
  *
  * <p>Test case to test the DefaultTicketRegistry based on test cases to test all

@@ -89,7 +89,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
         private final String id;
 
-        public VerifyServiceByIdMatcher(final String id) {
+        VerifyServiceByIdMatcher(final String id) {
             this.id = id;
         }
 
@@ -134,22 +134,10 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final TicketGrantingTicket tgtMock2 = createMockTicketGrantingTicket(TGT2_ID, stMock2, false, tgtRootMock, authnListMock);        
         
         //Mock TicketRegistry
-        this.ticketRegMock = mock(TicketRegistry.class);
-        when(ticketRegMock.getTicket(eq(tgtMock.getId()), eq(TicketGrantingTicket.class))).thenReturn(tgtMock);
-        when(ticketRegMock.getTicket(eq(tgtMock2.getId()), eq(TicketGrantingTicket.class))).thenReturn(tgtMock2);
-        when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.class))).thenReturn(stMock);
-        when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
-        when(ticketRegMock.getTickets()).thenReturn(Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
+        mockTicketRegistry(stMock, tgtMock, stMock2, tgtMock2);
 
         //Mock ServicesManager
-        final RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), true, getServiceProxyPolicy(false));
-        final RegisteredService mockRegSvc2 = createMockRegisteredService("test", false, getServiceProxyPolicy(true)); 
-        final RegisteredService mockRegSvc3 = createMockRegisteredService(service2.getId(), true, getServiceProxyPolicy(true)); 
-        
-        final ServicesManager smMock = mock(ServicesManager.class);
-        when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher(service1.getId())))).thenReturn(mockRegSvc1);
-        when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher("test")))).thenReturn(mockRegSvc2);
-        when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher(service2.getId())))).thenReturn(mockRegSvc3);
+        final ServicesManager smMock = getServicesManager(service1, service2);
         
         final Map ticketIdGenForServiceMock = mock(Map.class);
         when(ticketIdGenForServiceMock.containsKey(any())).thenReturn(true);
@@ -158,6 +146,28 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, null, mock(AuthenticationManager.class),
                 mock(UniqueTicketIdGenerator.class), ticketIdGenForServiceMock, mock(ExpirationPolicy.class),
                 mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));
+    }
+
+    private ServicesManager getServicesManager(final Service service1, final Service service2) {
+        final RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), true, getServiceProxyPolicy(false));
+        final RegisteredService mockRegSvc2 = createMockRegisteredService("test", false, getServiceProxyPolicy(true));
+        final RegisteredService mockRegSvc3 = createMockRegisteredService(service2.getId(), true, getServiceProxyPolicy(true));
+
+        final ServicesManager smMock = mock(ServicesManager.class);
+        when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher(service1.getId())))).thenReturn(mockRegSvc1);
+        when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher("test")))).thenReturn(mockRegSvc2);
+        when(smMock.findServiceBy(argThat(new VerifyServiceByIdMatcher(service2.getId())))).thenReturn(mockRegSvc3);
+        return smMock;
+    }
+
+    private void mockTicketRegistry(final ServiceTicket stMock, final TicketGrantingTicket tgtMock,
+                                    final ServiceTicket stMock2, final TicketGrantingTicket tgtMock2) {
+        this.ticketRegMock = mock(TicketRegistry.class);
+        when(ticketRegMock.getTicket(eq(tgtMock.getId()), eq(TicketGrantingTicket.class))).thenReturn(tgtMock);
+        when(ticketRegMock.getTicket(eq(tgtMock2.getId()), eq(TicketGrantingTicket.class))).thenReturn(tgtMock2);
+        when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.class))).thenReturn(stMock);
+        when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
+        when(ticketRegMock.getTickets()).thenReturn(Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
     }
 
     @Test(expected=InvalidTicketException.class)
