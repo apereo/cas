@@ -1319,21 +1319,7 @@
                 <artifactId>cas-server-security-filter</artifactId>
                 <version>${cas-server-security-filter.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>javax.cache</groupId>
-                <artifactId>cache-api</artifactId>
-                <version>${jcache.version}</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jsr107.ri</groupId>
-                <artifactId>cache-ri-impl</artifactId>
-                <version>${jcache.ri.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-
+            
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-web</artifactId>
@@ -1564,8 +1550,6 @@
         <openid4java.version>0.9.8</openid4java.version>
         <cas-server-security-filter.version>2.0.3</cas-server-security-filter.version>
         <google.guava.version>18.0</google.guava.version>
-        <jcache.version>1.0.0</jcache.version>
-        <jcache.ri.version>1.0.0</jcache.ri.version>
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <javax.el-impl.version>2.2.6</javax.el-impl.version>
         <jersey.version>1.19</jersey.version>

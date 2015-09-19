@@ -19,6 +19,8 @@
 
 package org.jasig.cas.authentication.principal.cache;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
@@ -44,10 +46,10 @@ import java.util.concurrent.TimeUnit;
  */
 public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, Closeable {
     /** Default cache expiration time unit. */
-    protected static final TimeUnit DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS;
+    private static final TimeUnit DEFAULT_CACHE_EXPIRATION_UNIT = TimeUnit.HOURS;
 
     /** Default expiration lifetime based on the default time unit. */
-    protected static final long DEFAULT_CACHE_EXPIRATION_DURATION = 2;
+    private static final long DEFAULT_CACHE_EXPIRATION_DURATION = 2;
 
     private static final long serialVersionUID = 6350245643948535906L;
 
@@ -55,6 +57,10 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final IPersonAttributeDao attributeRepository;
+
+    private final long expiration;
+
+    private final TimeUnit timeUnit;
 
     /**
      * The merging strategy that deals with existing principal attributes
@@ -68,16 +74,21 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * Simply used buy
      */
     protected AbstractPrincipalAttributesRepository() {
-        this.attributeRepository = null;
+        this(null, DEFAULT_CACHE_EXPIRATION_DURATION, DEFAULT_CACHE_EXPIRATION_UNIT);
     }
 
     /**
      * Instantiates a new principal attributes repository.
      *
      * @param attributeRepository the attribute repository
+     * @param expiration the expiration
+     * @param timeUnit the time unit
      */
-    public AbstractPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository) {
+    public AbstractPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
+                                                 final long expiration, final TimeUnit timeUnit) {
         this.attributeRepository = attributeRepository;
+        this.expiration = expiration;
+        this.timeUnit = timeUnit;
     }
 
     protected final IPersonAttributeDao getAttributeRepository() {
@@ -217,8 +228,44 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("attributeRepository", attributeRepository)
-                .append("mergingStrategy", mergingStrategy)
+                .append("attributeRepository", this.attributeRepository)
+                .append("mergingStrategy", this.mergingStrategy)
+                .append("expiration", this.expiration)
+                .append("timeUnit", this.timeUnit)
                 .toString();
+    }
+
+    public long getExpiration() {
+        return this.expiration;
+    }
+
+    public TimeUnit getTimeUnit() {
+        return this.timeUnit;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final AbstractPrincipalAttributesRepository rhs = (AbstractPrincipalAttributesRepository) obj;
+        return new EqualsBuilder()
+                .append(this.timeUnit, rhs.timeUnit)
+                .append(this.expiration, rhs.expiration)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 133)
+                .append(this.timeUnit)
+                .append(this.expiration)
+                .toHashCode();
     }
 }

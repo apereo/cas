@@ -22,7 +22,7 @@ package org.jasig.cas.authentication.principal.cache;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Test cases for {@link GuavaCachingPrincipalAttributesRepository}.
+ * Test cases for {@link CachingPrincipalAttributesRepository}.
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -30,7 +30,7 @@ public class GuavaCachingPrincipalAttributesRepositoryTests extends AbstractGuav
 
     @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final TimeUnit unit, final long duration) {
-        return new GuavaCachingPrincipalAttributesRepository(this.dao,
+        return new CachingPrincipalAttributesRepository(this.dao,
                 unit, duration);
     }
 }
