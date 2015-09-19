@@ -125,10 +125,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         this.passwordPolicyConfiguration = passwordPolicyConfiguration;
     }
 
-    /**
-     * {@inheritDoc}
-     * @return True if credential is a {@link UsernamePasswordCredential}, false otherwise.
-     */
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof UsernamePasswordCredential;
