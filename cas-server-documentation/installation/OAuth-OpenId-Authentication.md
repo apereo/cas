@@ -23,30 +23,6 @@ Support is enabled by including the following dependency in the Maven WAR overla
 #Configuration
 
 
-##Add the OAuth20WrapperController
-
-To add the `OAuth20WrapperController`, you need to add the mapping between the /oauth2.0/* url and the CAS servlet in the *web.xml* file:
-
-{% highlight xml %}
-<servlet-mapping>
-  <servlet-name>cas</servlet-name>
-  <url-pattern>/oauth2.0/*</url-pattern>
-</servlet-mapping>
-{% endhighlight %}
-
-You have to create the controller itself in the *cas-servlet.xml* file:
-
-{% highlight xml %}
-<bean
-  id="oauth20WrapperController"
-  class="org.jasig.cas.support.oauth.web.OAuth20WrapperController"
-  p:loginUrl="http://mycasserverwithoauthwrapper/login"
-  p:servicesManager-ref="servicesManager"
-  p:ticketRegistry-ref="ticketRegistry"
-  p:timeout="7200" />
-{% endhighlight %}
-
-The `loginUrl` is the login url of the CAS server. The timeout is the lifetime of a CAS ticket granting ticket in seconds with its mapping in the `handlerMappingC` bean inside the `cas-servlet.xml` file:
 
 {% highlight xml %}
 <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
