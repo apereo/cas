@@ -348,13 +348,6 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        close();
-        super.finalize();
-    }
-
-
-    @Override
     public String toString() {
         return new ToStringBuilder(this)
                 .append("attributeRepository", attributeRepository)
