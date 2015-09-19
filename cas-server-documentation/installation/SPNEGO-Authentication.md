@@ -29,11 +29,13 @@ ticket expires.
 ## SPNEGO Components
 SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
 
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-spnego</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-spnego</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
 
 
 ######`JCIFSSpnegoAuthenticationHandler`

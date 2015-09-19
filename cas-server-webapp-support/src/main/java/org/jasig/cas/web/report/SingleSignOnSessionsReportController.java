@@ -63,7 +63,7 @@ public final class SingleSignOnSessionsReportController {
         TICKET_GRANTING_TICKET("ticket_granting_ticket"),
         NUMBER_OF_USES("number_of_uses");
 
-        private String attributeKey;
+        private final String attributeKey;
 
         /**
          * Instantiates a new Sso session attribute keys.

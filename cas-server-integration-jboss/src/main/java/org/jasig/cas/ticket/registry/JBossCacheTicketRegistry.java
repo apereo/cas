@@ -19,6 +19,7 @@
 package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.jboss.cache.Cache;
 import org.jboss.cache.CacheException;
 import org.jboss.cache.Node;
@@ -40,7 +41,7 @@ import java.util.Set;
  * @since 3.1
  */
 @Deprecated
-public final class JBossCacheTicketRegistry extends AbstractDistributedTicketRegistry {
+public final class JBossCacheTicketRegistry extends AbstractCrypticTicketRegistry {
 
     /** Indicator of what tree branch to put tickets in. */
     private static final String FQN_TICKET = "ticket";
@@ -59,8 +60,9 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicket(final Ticket ticketToAdd) {
         try {
+            final Ticket ticket = encodeTicket(ticketToAdd);
             logger.debug("Adding ticket to registry for: {}", ticket.getId());
             this.cache.put(FQN_TICKET, ticket.getId(), ticket);
         } catch (final CacheException e) {
@@ -70,8 +72,9 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     }
 
     @Override
-    public boolean deleteTicket(final String ticketId) {
+    public boolean deleteTicket(final String ticketIdToDel) {
         try {
+            final String ticketId = encodeTicketId(ticketIdToDel);
             logger.debug("Removing ticket from registry for: {}", ticketId);
             return this.cache.remove(FQN_TICKET, ticketId) != null;
         } catch (final CacheException e) {
@@ -87,10 +90,12 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
      * @see org.jasig.cas.ticket.registry.TicketRegistry#getTicket(java.lang.String)
      */
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketIdToGet) {
         try {
+            final String ticketId = encodeTicketId(ticketIdToGet);
             logger.debug("Retrieving ticket from registry for: {}", ticketId);
-            return getProxiedTicketInstance(this.cache.get(FQN_TICKET, ticketId));
+            final Ticket encTicket = decodeTicket(this.cache.get(FQN_TICKET, ticketId));
+            return getProxiedTicketInstance(encTicket);
         } catch (final CacheException e) {
             logger.error(e.getMessage(), e);
             return null;
@@ -119,7 +124,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
                 }
             }
 
-            return list;
+            return decodeTickets(list);
         } catch (final CacheException e) {
             return Collections.emptyList();
         }
