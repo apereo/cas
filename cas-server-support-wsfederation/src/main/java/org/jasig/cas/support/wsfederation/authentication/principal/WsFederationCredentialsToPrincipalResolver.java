@@ -23,6 +23,9 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * This class resolves the principal id regarding the WsFederation credentials.
@@ -30,10 +33,13 @@ import org.slf4j.LoggerFactory;
  * @author John Gasper
  * @since 4.2.0
  */
+@Component("adfsPrincipalResolver")
 public final class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     private final Logger logger = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
 
+    @Autowired
+    @Qualifier("wsFedConfig")
     private WsFederationConfiguration configuration;
 
     /**
