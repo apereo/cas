@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
@@ -75,19 +76,7 @@ public class OAuthServletContextListener implements ServletContextListener, Appl
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         try {
-            if (applicationContext.getParent() == null) {
-                logger.info("Initializing OAuth root application context");
-
-                final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
-                service.setId(new SecureRandom().nextLong());
-                service.setName(service.getClass().getSimpleName());
-                service.setDescription("OAuth Wrapper Callback Url");
-                service.setServiceId(this.callbackAuthorizeUrl);
-                
-                this.servicesManager.save(service);
-
-                logger.info("Initialized OAuth root application context successfully");
-            } else {
+            if (applicationContext.getParent() != null) {
                 logger.info("Initializing OAuth application context");
                 final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean(SimpleUrlHandlerMapping.class);
                 final Controller samlValidateController = applicationContext.getBean("oauth20WrapperController",
@@ -95,6 +84,15 @@ public class OAuthServletContextListener implements ServletContextListener, Appl
                 final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
                 urlMap.put(OAuthConstants.ENDPOINT_OAUTH2, samlValidateController);
                 handlerMappingC.initApplicationContext();
+
+                final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
+                service.setId(new SecureRandom().nextLong());
+                service.setName(service.getClass().getSimpleName());
+                service.setDescription("OAuth Wrapper Callback Url");
+                service.setServiceId(this.callbackAuthorizeUrl);
+
+                this.servicesManager.save(service);
+
                 logger.info("Initialized OAuth application context successfully");
             }
         } catch (final Exception e) {
