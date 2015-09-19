@@ -35,7 +35,9 @@
     	class="org.jasig.cas.web.support.DefaultArgumentExtractor"
         c:serviceFactoryList-ref="serviceFactoryList" />
 
-    <util:list id="serviceFactoryList" />
+    <util:list id="serviceFactoryList">
+        <bean class="org.jasig.cas.authentication.principal.WebApplicationServiceFactory" />
+    </util:list>
 
     <util:list id="argumentExtractors">
         <ref bean="defaultArgumentExtractor"/>
