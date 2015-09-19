@@ -236,7 +236,7 @@ public final class WsFederationConfiguration implements Serializable {
             logger.debug("getSigningCredential: key retrieved.");
             return publicCredential;
         } catch (final Exception ex) {
-            logger.error("I/O error retrieving the signing cert: {}", ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }

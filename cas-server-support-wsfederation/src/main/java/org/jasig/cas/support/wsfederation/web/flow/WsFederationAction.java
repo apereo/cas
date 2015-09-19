@@ -96,7 +96,7 @@ public final class WsFederationAction extends AbstractAction {
             // it's an authentication
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 final String wresult = request.getParameter(WRESULT);
-                logger.debug("wresult : {}", wresult);
+                logger.debug("Parameter [wresult] received: {}", wresult);
 
                 // create credentials
                 final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
@@ -147,7 +147,7 @@ public final class WsFederationAction extends AbstractAction {
                 }
 
             } else { // no authentication : go to login page
-                logger.debug("Preparing to redirect to the IdP");
+
 
                 // save parameters in web session
                 final Service service = (Service) context.getFlowScope().get(SERVICE);
@@ -163,7 +163,7 @@ public final class WsFederationAction extends AbstractAction {
                         + QUERYSTRING
                         + this.configuration.getRelyingPartyIdentifier();
 
-                logger.debug("{} -> {}", key, authorizationUrl);
+                logger.info("Preparing to redirect to the IdP {}", authorizationUrl);
                 context.getFlowScope().put(key, authorizationUrl);
             }
 
