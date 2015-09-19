@@ -74,8 +74,12 @@ public final class OpenIdConstants {
      */
     public static final String ASSOCIATE = "associate";
 
+    /** Check authentication constant. */
+    public static final String CHECK_AUTHENTICATION = "check_authentication";
     /**
      * Private constructor.
      */
     private OpenIdConstants() {}
+
+
 }
