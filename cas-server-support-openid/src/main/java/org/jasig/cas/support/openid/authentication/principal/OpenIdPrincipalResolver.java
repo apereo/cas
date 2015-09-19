@@ -20,6 +20,7 @@ package org.jasig.cas.support.openid.authentication.principal;
 
 import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
+import org.springframework.stereotype.Component;
 
 /**
  * Implementation of PrincipalResolver that converts the OpenId
@@ -28,6 +29,7 @@ import org.jasig.cas.authentication.Credential;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("openIdPrincipalResolver")
 public final class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override

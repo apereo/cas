@@ -30,6 +30,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.validation.constraints.NotNull;
@@ -43,6 +44,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("openIdSingleSignOnAction")
 public final class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     @NotNull
