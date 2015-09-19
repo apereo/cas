@@ -74,11 +74,10 @@
   </bean>
 
   <!--
-
   <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="1"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
-
+  -->
 
   <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
         p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
