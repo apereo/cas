@@ -89,7 +89,7 @@ public final class OpenSamlConfigBean {
      */
     @PostConstruct
     public void init() {
-        LOGGER.debug("Initializing OpenSaml configuration...");
+        LOGGER.info("Initializing OpenSaml configuration...");
         Assert.notNull(this.parserPool, "parserPool cannot be null");
 
         try {

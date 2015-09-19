@@ -18,15 +18,16 @@
  */
 package org.jasig.cas.support.oauth.services;
 
-import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.support.oauth.OAuthConstants;
 
 /**
- * Some Javadoc I will add later.
+ * OAuth registered service that denotes the callback authorized url.
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public final class OAuthRegisteredCallbackAuthorizeService extends RegisteredServiceImpl {
+public final class OAuthRegisteredCallbackAuthorizeService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 2993846310010319047L;
 
@@ -46,5 +47,10 @@ public final class OAuthRegisteredCallbackAuthorizeService extends RegisteredSer
     @Override
     public void setServiceId(final String id) {
         this.setCallbackAuthorizeUrl(id);
+    }
+
+    @Override
+    protected AbstractRegisteredService newInstance() {
+        return new OAuthRegisteredCallbackAuthorizeService();
     }
 }

@@ -63,6 +63,7 @@ objectClass: top
 objectClass: person
 objectClass: organizationalPerson
 objectClass: inetOrgPerson
+objectClass: account
 objectClass: casServiceUserDetails
 objectClass: ad
 unicodePwd: ignoredForTests
@@ -79,3 +80,4 @@ userAccountControl: 66048
 distinguishedName: cn=Administrators,ou=people,dc=example,dc=org
 userPassword: thePassw0rd
 displayName: Administrators
+host: 127.0.0.1

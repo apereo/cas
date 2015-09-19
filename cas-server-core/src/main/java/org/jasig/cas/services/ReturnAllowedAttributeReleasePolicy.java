@@ -22,6 +22,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +38,24 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttribute
 
     private static final long serialVersionUID = -5771481877391140569L;
     
-    private List<String> allowedAttributes = Collections.emptyList();
-    
+    private List<String> allowedAttributes;
+
+    /**
+     * Instantiates a new Return allowed attribute release policy.
+     */
+    public ReturnAllowedAttributeReleasePolicy() {
+        this(new ArrayList<String>());
+    }
+
+    /**
+     * Instantiates a new Return allowed attribute release policy.
+     *
+     * @param allowedAttributes the allowed attributes
+     */
+    public ReturnAllowedAttributeReleasePolicy(final List<String> allowedAttributes) {
+        this.allowedAttributes = allowedAttributes;
+    }
+
     /**
      * Sets the allowed attributes.
      *
@@ -53,7 +70,7 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttribute
      *
      * @return the allowed attributes
      */
-    protected List<String> getAllowedAttributes() {
+    public List<String> getAllowedAttributes() {
         return Collections.unmodifiableList(this.allowedAttributes);
     }
     

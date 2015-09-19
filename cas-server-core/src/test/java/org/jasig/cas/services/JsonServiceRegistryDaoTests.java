@@ -109,6 +109,11 @@ public class JsonServiceRegistryDaoTests {
                 new ShibbolethCompatiblePersistentIdGenerator("helloworld")
         ));
         final RegisteredService r2 = this.dao.save(r);
+        final AnonymousRegisteredServiceUsernameAttributeProvider anon =
+                (AnonymousRegisteredServiceUsernameAttributeProvider) r2.getUsernameAttributeProvider();
+        final ShibbolethCompatiblePersistentIdGenerator ss =
+                (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
+        assertEquals(new String(ss.getSalt()), "helloworld");
         final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
@@ -277,7 +282,7 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void verifyServiceRemovals() {
+    public void verifyServiceRemovals() throws Exception{
         final List<RegisteredService> list = new ArrayList<>(5);
         for (int i = 1; i < 5; i++) {
             final RegexRegisteredService r = new RegexRegisteredService();
@@ -291,6 +296,7 @@ public class JsonServiceRegistryDaoTests {
 
         for (final RegisteredService r2 : list) {
             this.dao.delete(r2);
+            Thread.sleep(1);
             assertNull(this.dao.findServiceById(r2.getId()));
         }
 
@@ -312,9 +318,9 @@ public class JsonServiceRegistryDaoTests {
         authz.setRequiredAttributes(attrs);
         r.setAccessStrategy(authz);
 
-        this.dao.save(r);
-        final List<RegisteredService> list = this.dao.load();
-        assertEquals(list.size(), 1);
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        assertEquals(r2, r3);
     }
 
     @Test
@@ -332,4 +338,5 @@ public class JsonServiceRegistryDaoTests {
         final List<RegisteredService> list = this.dao.load();
         assertNotNull(this.dao.findServiceById(r.getId()));
     }
+
 }
