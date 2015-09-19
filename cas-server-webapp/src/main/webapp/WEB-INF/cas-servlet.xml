@@ -247,7 +247,7 @@
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
-        p:argumentExtractor-ref="casArgumentExtractor"
+        p:argumentExtractor-ref="defaultArgumentExtractor"
         p:servicesManager-ref="servicesManager" />
   
   <bean id="proxyValidateController" parent="abstractValidateController"/>
