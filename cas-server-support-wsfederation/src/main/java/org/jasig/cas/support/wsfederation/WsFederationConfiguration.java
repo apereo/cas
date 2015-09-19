@@ -22,7 +22,10 @@ import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.io.InputStream;
@@ -37,33 +40,42 @@ import java.util.List;
  * This class gathers configuration information for the WS Federation Identity Provider.
  *
  * @author John Gasper
+ * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Component("wsFedConfig")
 public final class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
+    @Value("${cas.wsfed.idp.idattribute:upn}")
     private String identityAttribute;
 
     @NotNull
+    @Value("${cas.wsfed.idp.id}")
     private String identityProviderIdentifier;
 
     @NotNull
+    @Value("${cas.wsfed.idp.url}")
     private String identityProviderUrl;
 
     @NotNull
+    @Value("#{'${cas.wsfed.idp.signingcerts}'.split(',')}")
     private List<Resource> signingCertificateFiles;
 
     @NotNull
+    @Value("${cas.wsfed.rp.id:urn:cas:localhost}")
     private String relyingPartyIdentifier;
 
-    private int tolerance = 10000;
+    @Value("${cas.wsfed.idp.tolerance:10000}")
+    private int tolerance;
+
+    @Autowired(required=false)
+    private WsFederationAttributeMutator attributeMutator;
 
     private List<Credential> signingWallet;
-
-    private WsFederationAttributeMutator attributeMutator;
 
     /**
      * gets the identity of the IdP.

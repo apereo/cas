@@ -25,6 +25,7 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
  * @author John Gasper
  * @since 4.2.0
  */
+@Component("adfsAuthNHandler")
 public final class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /**
