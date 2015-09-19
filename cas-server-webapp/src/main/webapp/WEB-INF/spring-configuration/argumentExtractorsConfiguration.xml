@@ -29,9 +29,10 @@
         CAS, SAML, SAML2, OpenId, etc.). By default, only CAS is enabled.
     </description>
 
-    <bean id="casArgumentExtractor" class="org.jasig.cas.web.support.DefaultArgumentExtractor"/>
+    <bean id="defaultArgumentExtractor" 
+    	class="org.jasig.cas.web.support.DefaultArgumentExtractor"/>
 
     <util:list id="argumentExtractors">
-        <ref bean="casArgumentExtractor"/>
+        <ref bean="defaultArgumentExtractor"/>
     </util:list>
 </beans>

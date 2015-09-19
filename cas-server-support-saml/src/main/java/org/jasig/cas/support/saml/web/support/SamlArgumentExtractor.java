@@ -21,6 +21,7 @@ package org.jasig.cas.support.saml.web.support;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.web.support.AbstractArgumentExtractor;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.1
  */
 @Deprecated
+@Component("samlArgumentExtractor")
 public final class SamlArgumentExtractor extends AbstractArgumentExtractor {
 
     @Override
