@@ -75,7 +75,7 @@
 
   <!--
   <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
-          p:order="1"
+          p:order="1000"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
   -->
 
