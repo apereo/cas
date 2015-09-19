@@ -21,13 +21,12 @@ package org.jasig.cas.services.web.beans;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
-import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.jasig.cas.authentication.principal.cache.GuavaCachingPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.services.AbstractAttributeReleasePolicy;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
@@ -60,7 +59,6 @@ import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.slf4j.Logger;
 import org.springframework.util.AntPathMatcher;
 
-import javax.cache.expiry.Duration;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -74,7 +72,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static org.slf4j.LoggerFactory.*;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Defines the service bean that is produced by the webapp
@@ -258,20 +256,12 @@ public final class RegisteredServiceEditBean implements Serializable {
                     RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
         } else {
 
-            if (pr instanceof CachingPrincipalAttributesRepository) {
+            if (pr instanceof AbstractPrincipalAttributesRepository) {
                 attrPolicyBean.setAttrOption(
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
 
-                final CachingPrincipalAttributesRepository cc = (CachingPrincipalAttributesRepository) pr;
-                final Duration duration = cc.getDuration();
-                attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
-                attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
-            }
+                final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
 
-            if (pr instanceof GuavaCachingPrincipalAttributesRepository) {
-                attrPolicyBean.setAttrOption(
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED_GUAVA.toString());
-                final GuavaCachingPrincipalAttributesRepository cc = (GuavaCachingPrincipalAttributesRepository) pr;
                 attrPolicyBean.setCachedExpiration(cc.getExpiration());
                 attrPolicyBean.setCachedTimeUnit(cc.getTimeUnit().name());
             }
@@ -616,11 +606,6 @@ public final class RegisteredServiceEditBean implements Serializable {
                             TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
                             this.attrRelease.getCachedExpiration()));
                 } else if (StringUtils.equalsIgnoreCase(attrType,
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED_GUAVA.toString())) {
-                    policy.setPrincipalAttributesRepository(new GuavaCachingPrincipalAttributesRepository(dao,
-                            TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
-                            this.attrRelease.getCachedExpiration()));
-                } else if (StringUtils.equalsIgnoreCase(attrType,
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString())) {
                     policy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
                 }
@@ -632,6 +617,11 @@ public final class RegisteredServiceEditBean implements Serializable {
             }
         }
 
+        /**
+         * Convert proxy policy to service.
+         *
+         * @param regSvc the reg svc
+         */
         private void convertProxyPolicyToService(final AbstractRegisteredService regSvc) {
             final String proxyType = this.proxyPolicy.getType();
             if (StringUtils.equalsIgnoreCase(proxyType,
@@ -648,6 +638,11 @@ public final class RegisteredServiceEditBean implements Serializable {
             }
         }
 
+        /**
+         * Convert username attribute to service.
+         *
+         * @param regSvc the reg svc
+         */
         private void convertUsernameAttributeToService(final AbstractRegisteredService regSvc) {
             final String uidType = this.userAttrProvider.getType();
             if (StringUtils.equalsIgnoreCase(uidType,
@@ -678,6 +673,11 @@ public final class RegisteredServiceEditBean implements Serializable {
             }
         }
 
+        /**
+         * Convert access strategy to service.
+         *
+         * @param accessStrategy the access strategy
+         */
         private void convertAccessStrategyToService(final DefaultRegisteredServiceAccessStrategy accessStrategy) {
             accessStrategy
                     .setEnabled(this.supportAccess.isCasEnabled());
@@ -699,6 +699,11 @@ public final class RegisteredServiceEditBean implements Serializable {
                     .setRequiredAttributes(requiredAttrs);
         }
 
+        /**
+         * Convert logout types to service.
+         *
+         * @param regSvc the reg svc
+         */
         private void convertLogoutTypesToService(final AbstractRegisteredService regSvc) {
             if (StringUtils.equalsIgnoreCase(this.logoutType,
                     RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
@@ -741,7 +746,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         private boolean isValidRegex(final String pattern) {
             try {
                 Pattern.compile(serviceId);
-                LOGGER.debug("Pattern is a valid regex.", pattern);
+                LOGGER.debug("Pattern {} is a valid regex.", pattern);
                 return true;
             } catch (final PatternSyntaxException exception) {
                 return false;

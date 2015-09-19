@@ -37,9 +37,6 @@ public class RegisteredServiceAttributeReleasePolicyEditBean extends AbstractReg
         /** default type. */
         DEFAULT("default"),
 
-        /** default type. */
-        CACHED_GUAVA("cachedGuava"),
-
         /** Mapped type. */
         CACHED("cached");
 
