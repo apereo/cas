@@ -100,7 +100,6 @@ public final class WsFederationAction extends AbstractAction {
                             configuration.getIdentityProviderIdentifier(),
                             configuration.getTolerance())) {
 
-                        //Give the library user a chance to change the attributes as necessary
                         if (configuration.getAttributeMutator() != null) {
                             configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
                         }
