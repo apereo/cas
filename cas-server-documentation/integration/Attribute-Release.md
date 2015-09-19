@@ -281,7 +281,7 @@ based on the Google Guava library.
 Sample configuration follows:
 
 {% highlight xml %}
-<bean class="org.jasig.cas.authentication.principal.cache.GuavaCachingPrincipalAttributesRepository"
+<bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
                             c:attributeRepository-ref="attributeRepository"
                             c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
 {% endhighlight %}
