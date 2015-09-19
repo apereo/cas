@@ -32,6 +32,25 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
+    <bean id="serverManager"
+          class="org.openid4java.server.ServerManager"
+          p:oPEndpointUrl="${server.prefix}/login"
+          p:enforceRpId="${cas.openid.enforce.rpid:false}" />
 
+    <bean id="openIdValidateController" class="org.jasig.cas.web.ServiceValidateController"
+          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
+          p:centralAuthenticationService-ref="centralAuthenticationService"
+          p:proxyHandler-ref="proxy20Handler"
+          p:argumentExtractor-ref="openIdArgumentExtractor"
+          p:successView="casOpenIdServiceSuccessView"
+          p:failureView="casOpenIdServiceFailureView" />
+
+    <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
+          p:delegates-ref="delegateControllers"/>
+
+    <util:list id="delegateControllers">
+        <ref bean="smartOpenIdAssociationController"/>
+        <ref bean="openIdValidateController"/>
+    </util:list>
 
 </beans>

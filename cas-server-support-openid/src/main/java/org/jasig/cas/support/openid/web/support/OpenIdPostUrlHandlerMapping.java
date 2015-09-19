@@ -20,25 +20,44 @@ package org.jasig.cas.support.openid.web.support;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.jasig.cas.support.openid.OpenIdConstants;
+import org.jasig.cas.web.DelegateController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
+import java.util.Properties;
+
 /**
- *
+ * OpenID url handling mappings.
  * @author Scott Battaglia
  * @since 3.1
- *
  */
+@Component("openIdPostUrlHandlerMapping")
 public final class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
+
+    @Autowired
+    @Qualifier("openidDelegatingController")
+    private DelegateController controller;
+
+    /**
+     * Instantiates a new Open id post url handler mapping.
+     */
+    public OpenIdPostUrlHandlerMapping() {
+        setOrder(1);
+
+        final Properties mappings = new Properties();
+        mappings.put("/login", this.controller);
+        setMappings(mappings);
+    }
 
     @Override
     protected Object lookupHandler(final String urlPath, final HttpServletRequest request) throws Exception {
-
-        if ("POST".equals(request.getMethod())
-                && (
-                        "check_authentication".equals(request.getParameter("openid.mode"))
-                        || "associate".equals(request.getParameter("openid.mode"))
-                        )
-                ) {
+        if (HttpMethod.POST.name().equals(request.getMethod())
+                && (OpenIdConstants.CHECK_AUTHENTICATION.equals(request.getParameter(OpenIdConstants.OPENID_MODE))
+                    || OpenIdConstants.ASSOCIATE.equals(request.getParameter(OpenIdConstants.OPENID_MODE)))) {
             return super.lookupHandler(urlPath, request);
         }
 
