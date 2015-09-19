@@ -3,7 +3,7 @@ layout: default
 title: CAS - OAuth Authentication
 ---
 
-# OAuth Authentication
+# OAuth/OpenID Authentication
 
 <div class="alert alert-info"><strong>CAS as OAuth Server</strong><p>This page specifically describes how to enable OAuth/OpenID server support for CAS. If you would like to have CAS act as an OAuth/OpenID client communicating with other providers (such as Google, Facebook, etc), <a href="../integration/Delegate-Authentication.html">see this page</a>.</p></div>
 
@@ -39,3 +39,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
             p:clientSecret="client secret goes here" />
 ...
 {% endhighlight %}
+
+# OAuth Authentication
+
+To configure CAS to act as an OpenID provider, please [see this page](../protocol/OpenID-Protocol.html).
