@@ -22,6 +22,7 @@ import org.apache.http.HttpStatus;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -36,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Component("oauth20WrapperController")
 public final class OAuth20WrapperController extends BaseOAuthWrapperController implements InitializingBean {
 
     private AbstractController authorizeController;
