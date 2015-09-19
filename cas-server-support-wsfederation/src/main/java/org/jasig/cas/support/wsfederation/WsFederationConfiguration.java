@@ -23,6 +23,7 @@ import org.opensaml.security.x509.BasicX509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
@@ -73,6 +74,7 @@ public final class WsFederationConfiguration implements Serializable {
     private int tolerance;
 
     @Autowired(required=false)
+    @Qualifier("wsfedAttributeMutator")
     private WsFederationAttributeMutator attributeMutator;
 
     private List<Credential> signingWallet;
