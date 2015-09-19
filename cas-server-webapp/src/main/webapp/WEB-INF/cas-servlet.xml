@@ -103,6 +103,7 @@
   <bean
       id="handlerMappingC"
       class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
+      p:order="1000"
       p:alwaysUseFullPath="true">
     <property name="mappings">
       <util:properties>

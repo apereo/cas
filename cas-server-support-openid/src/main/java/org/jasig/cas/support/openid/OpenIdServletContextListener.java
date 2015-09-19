@@ -101,6 +101,12 @@ public class OpenIdServletContextListener implements ServletContextListener, App
 
 
                 logger.info("Initialized OpenID application context successfully");
+            } else {
+                logger.info("Initializing OpenID root application context");
+                final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
+                        applicationContext.getBean("authenticationHandlersResolvers", Map.class);
+                authenticationHandlersResolvers.put(openIdCredentialsAuthenticationHandler, openIdPrincipalResolver);
+                logger.info("Initialized OpenID root application context successfully");
             }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
