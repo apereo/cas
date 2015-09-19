@@ -178,6 +178,11 @@ public class TicketResource extends ServerResource {
         }
 
         @Override
+        public boolean checkNotModified(final String s, final long l) {
+            return false;
+        }
+
+        @Override
         public boolean checkNotModified(final long lastModifiedTimestamp) {
             return false;
         }

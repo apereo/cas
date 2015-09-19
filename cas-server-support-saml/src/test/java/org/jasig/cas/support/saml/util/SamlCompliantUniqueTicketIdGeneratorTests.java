@@ -20,6 +20,7 @@ package org.jasig.cas.support.saml.util;
 
 import static org.junit.Assert.*;
 
+import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.junit.Test;
 
 /**
@@ -27,7 +28,7 @@ import org.junit.Test;
  * @author Scott Battaglia
  * @since 3.4.3
  */
-public final class SamlCompliantUniqueTicketIdGeneratorTests {
+public final class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifySaml1Compliant() {
