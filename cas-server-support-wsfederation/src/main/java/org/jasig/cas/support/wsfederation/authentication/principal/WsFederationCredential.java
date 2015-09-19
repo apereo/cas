@@ -149,27 +149,36 @@ public final class WsFederationCredential implements Credential {
      */
     public boolean isValid(final String expectedAudience, final String expectedIssuer, final int timeDrift) {
         if (!this.getAudience().equalsIgnoreCase(expectedAudience)) {
-            logger.warn(".isValid: audience is invalid: {}", this.getAudience());
+            logger.warn("Audience is invalid: {}", this.getAudience());
             return false;
         }
 
         if (!this.getIssuer().equalsIgnoreCase(expectedIssuer)) {
-            logger.warn(".isValid: issuer is invalid: {}", this.getIssuer());
+            logger.warn("Issuer is invalid: {}", this.getIssuer());
             return false;
         }
 
-        if (this.getIssuedOn().isBefore(this.getRetrievedOn().minusMillis(timeDrift))
-                || this.getIssuedOn().isAfter(this.getRetrievedOn().plusMillis(timeDrift))) {
-            logger.warn(".isValid: Ticket outside of drift.");
+        final DateTime retrievedOnTimeDrift = this.getRetrievedOn().minusMillis(timeDrift);
+        if (this.getIssuedOn().isBefore(retrievedOnTimeDrift)) {
+            logger.warn("Ticket is issued before the allowed drift. Issued on {} while allowed drift is {}",
+                    this.getIssuedOn(), retrievedOnTimeDrift);
+            return false;
+        }
+
+        final DateTime retrievedOnTimeAfterDrift = this.getRetrievedOn().plusMillis(timeDrift);
+        if (this.getIssuedOn().isAfter(retrievedOnTimeAfterDrift)) {
+            logger.warn("Ticket is issued after the allowed drift. Issued on {} while allowed drift is {}",
+                    this.getIssuedOn(), retrievedOnTimeAfterDrift);
             return false;
         }
 
         if (this.getRetrievedOn().isAfter(this.getNotOnOrAfter())) {
-            logger.warn(".isValid: ticket is too late.");
+            logger.warn("Ticket is too late because it's retrieved on {} which is after {}.",
+                    this.getRetrievedOn(), this.getNotOnOrAfter());
             return false;
         }
 
-        logger.debug(".isValid: credential is valid.");
+        logger.debug("WsFed Credential is validated for {} and {}.", expectedAudience, expectedIssuer);
         return true;
     }
 }
