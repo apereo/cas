@@ -1,0 +1,91 @@
+/*
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+// ==========================================================================
+// Vendor files - 3rd party resources
+// ==========================================================================
+
+// Bootstrap v3.3.4 | http://www.getbootstrap.com
+// --------------------------------------------------------------------------
+@import "base/vendor/bootstrap/bootstrap.less";
+
+
+// Elements LESS Mixins v0.9 | http://lesselements.com
+// --------------------------------------------------------------------------
+@import "base/vendor/elements/element-mixins.less";
+
+
+// ==========================================================================
+// Theme Variables
+// ==========================================================================
+// Using this as the driver for theme variation, this file contains all the
+// colors needed for the application skin. This file cannot be placed after
+// subsequent files that relies on the values to execute
+@import "theme/variables.less";
+
+
+// ==========================================================================
+// Global Layout
+// ==========================================================================
+// Global layout properties that must exist outside of the scope - such as
+// general Bootstrap overrides (that do not pertain to theme or skin).
+@import "layout/layout.less";
+
+
+// ==========================================================================
+// Namespace: .casmgt-app
+// ==========================================================================
+// Everything in this stylesheet is scoped (nested) within ".casmgt-app".
+// As a best practice, anything added to this stylesheet (that is not a variable
+// or mixin) should also be scoped within the namespace.
+
+.casmgmt-app {
+
+    // ======================================================================
+    // Module Files - Specific sections of the app
+    // ======================================================================
+    @import "modules/casmgmt-form.less";
+    @import "modules/search-form.less";
+    @import "modules/services-table.less";
+
+    // ======================================================================
+    // Layout files - Overall structure of the app
+    // ======================================================================
+
+    // Header
+    // ----------------------------------------------------------------------
+    @import "layout/header.less";
+
+    // Content
+    // ----------------------------------------------------------------------
+    @import "layout/content.less";
+
+    // Footer
+    // ----------------------------------------------------------------------
+    @import "layout/footer.less";
+
+    // Mobile considerations
+    // ----------------------------------------------------------------------
+    @import "layout/mobile.less";
+
+    // Skin Overrides
+    // ----------------------------------------------------------------------
+    @import "theme/skin.less";
+
+} // end .casmgt-app
