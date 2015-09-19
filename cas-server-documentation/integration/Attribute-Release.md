@@ -248,7 +248,10 @@ This is useful if you want to preserve the collection of attributes that are alr
 available to the principal that were retrieved from a different place during the authentication event, etc.
 
 <div class="alert alert-info"><strong>Caching Upon Release</strong><p>Note 
-that the policy is only consulted at release time, upon a service ticket validation event. If there are any custom webflows and such that wish to rely on the resolved <code>Principal</code> AND also wish to receive an updated set of attributes, those components must consult the underlying source directory without relying on the <code>Principal</code>.</p></div>
+that the policy is only consulted at release time, upon a service ticket validation event. If there are 
+any custom webflows and such that wish to rely on the resolved <code>Principal</code> AND also wish to r
+eceive an updated set of attributes, those components must consult the underlying source directory 
+without relying on the <code>Principal</code>.</p></div>
 
 Sample configuration follows:
 
@@ -273,18 +276,6 @@ Sample configuration follows:
 </bean>
 {% endhighlight %}
 
-####`GuavaCachingPrincipalAttributesRepository`
-
-Identical to `CachingPrincipalAttributesRepository`, except that the underlying cache is
-based on the Google Guava library. 
-
-Sample configuration follows:
-
-{% highlight xml %}
-<bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
-                            c:attributeRepository-ref="attributeRepository"
-                            c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
-{% endhighlight %}
 
 ####Merging Strategies
 By default, no merging strategy takes place, which means the principal attributes are always 
