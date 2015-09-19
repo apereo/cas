@@ -31,6 +31,9 @@
         references to other beans and whose changes can be configured externally.
     </description>
 
+    <context:component-scan base-package="org.jasig.cas.support.openid"/>
+    <context:annotation-config/>
+
     <!-- OpenId View -->
 
     <!-- OpenId Service Views -->

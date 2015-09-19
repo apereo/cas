@@ -17,16 +17,18 @@
  * under the License.
  */
 
-package org.jasig.cas.support.oauth;
+package org.jasig.cas.support.openid;
 
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
+import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
@@ -37,36 +39,44 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
-import java.security.SecureRandom;
 import java.util.Map;
 
 /**
  * Initializes the CAS root servlet context to make sure
- * OAuth endpoint can be activated by the main CAS servlet.
+ * OpenID endpoint can be activated by the main CAS servlet.
  * @author Misagh Moayyed
  * @since 4.2
  */
 @WebListener
 @Component
-public class OAuthServletContextListener implements ServletContextListener, ApplicationContextAware {
+public class OpenIdServletContextListener implements ServletContextListener, ApplicationContextAware {
 
     private static final String CAS_SERVLET_NAME = "cas";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${server.prefix}" + OAuthConstants.ENDPOINT_OAUTH2_CALLBACK_AUTHORIZE)
-    private String callbackAuthorizeUrl;
+    @Autowired
+    @Qualifier("serviceTicketUniqueIdGenerator")
+    private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("openIdCredentialsAuthenticationHandler")
+    private AuthenticationHandler openIdCredentialsAuthenticationHandler;
+
+    @Autowired
+    @Qualifier("openIdPrincipalResolver")
+    private PrincipalResolver openIdPrincipalResolver;
+
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
         logger.info("Initializing OAuth servlet context...");
         final ServletRegistration registration = sce.getServletContext().getServletRegistration(CAS_SERVLET_NAME);
-        registration.addMapping(OAuthConstants.ENDPOINT_OAUTH2);
-        logger.info("Added [{}] to {} servlet context", OAuthConstants.ENDPOINT_OAUTH2, CAS_SERVLET_NAME);
+        registration.addMapping(OpenIdConstants.ENDPOINT_OPENID);
+        logger.info("Added [{}] to {} servlet context", OpenIdConstants.ENDPOINT_OPENID, CAS_SERVLET_NAME);
     }
 
     @Override
@@ -76,23 +86,21 @@ public class OAuthServletContextListener implements ServletContextListener, Appl
     public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         try {
             if (applicationContext.getParent() != null) {
-                logger.info("Initializing OAuth application context");
+                logger.info("Initializing OpenID application context");
+
                 final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean(SimpleUrlHandlerMapping.class);
-                final Controller controller = applicationContext.getBean("oauth20WrapperController",
+                final Controller controller = applicationContext.getBean("openIdProviderController",
                         Controller.class);
                 final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
-                urlMap.put(OAuthConstants.ENDPOINT_OAUTH2, controller);
+                urlMap.put(OpenIdConstants.ENDPOINT_OPENID, controller);
                 handlerMappingC.initApplicationContext();
 
-                final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
-                service.setId(new SecureRandom().nextLong());
-                service.setName(service.getClass().getSimpleName());
-                service.setDescription("OAuth Wrapper Callback Url");
-                service.setServiceId(this.callbackAuthorizeUrl);
+                final Map<String, UniqueTicketIdGenerator> map =
+                        applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
+                map.put(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
 
-                this.servicesManager.save(service);
 
-                logger.info("Initialized OAuth application context successfully");
+                logger.info("Initialized OpenID application context successfully");
             }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);

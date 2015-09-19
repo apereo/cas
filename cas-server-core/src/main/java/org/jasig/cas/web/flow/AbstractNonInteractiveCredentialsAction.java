@@ -29,6 +29,8 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -56,6 +58,8 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /**
