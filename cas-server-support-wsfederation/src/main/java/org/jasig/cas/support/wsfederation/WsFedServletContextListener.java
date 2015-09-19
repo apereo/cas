@@ -56,11 +56,6 @@ public class WsFedServletContextListener implements ServletContextListener, Appl
     @Qualifier("adfsPrincipalResolver")
     private PrincipalResolver adfsPrincipalResolver;
 
-
-    @Autowired
-    @Qualifier("authenticationHandlersResolvers")
-    private Map authenticationHandlersResolvers;
-
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
         logger.info("Initializing WsFed servlet context...");
@@ -75,6 +70,8 @@ public class WsFedServletContextListener implements ServletContextListener, Appl
             if (applicationContext.getParent() == null) {
                 logger.info("Initializing WsFed root application context");
 
+                final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
+                        applicationContext.getBean("authenticationHandlersResolvers", Map.class);
                 authenticationHandlersResolvers.put(adfsAuthNHandler, adfsPrincipalResolver);
 
                 logger.info("Initialized WsFed root application context successfully");
