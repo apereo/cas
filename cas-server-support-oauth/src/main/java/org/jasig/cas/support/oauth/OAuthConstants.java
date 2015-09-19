@@ -26,6 +26,9 @@ package org.jasig.cas.support.oauth;
  */
 public interface OAuthConstants {
 
+    /** OAuth 2 endpoint in CAS */
+    String ENDPOINT_OAUTH2 = "/oauth2.0/*";
+
     /** The redirect uri. */
     String REDIRECT_URI = "redirect_uri";
 
