@@ -68,7 +68,7 @@ import java.util.List;
  * @author John Gasper
  * @since 4.2.0
  */
-@Component
+@Component("wsFederationHelper")
 public final class WsFederationHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationHelper.class);
 
