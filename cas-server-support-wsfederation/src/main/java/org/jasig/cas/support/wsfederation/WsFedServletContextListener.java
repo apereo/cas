@@ -23,19 +23,11 @@ package org.jasig.cas.support.wsfederation;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.web.AbstractServletContextInitializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import java.util.Map;
 
 /**
  * Initializes the CAS root servlet context to make sure
