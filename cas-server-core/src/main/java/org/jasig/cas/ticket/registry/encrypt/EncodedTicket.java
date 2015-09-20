@@ -86,7 +86,7 @@ public final class EncodedTicket implements Ticket {
         return this.id;
     }
 
-    public byte[] getEncoded() {
+    protected byte[] getEncoded() {
         return this.encodedTicket;
     }
 
