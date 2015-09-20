@@ -1368,6 +1368,7 @@
         <module>cas-server-support-ldap</module>
         <module>cas-server-support-legacy</module>
         <module>cas-server-support-openid</module>
+        <module>cas-server-support-wsfederation</module>
         <module>cas-server-support-radius</module>
         <module>cas-server-support-spnego</module>
         <module>cas-server-support-trusted</module>
@@ -1383,6 +1384,7 @@
         <module>cas-server-extension-clearpass</module>
         <module>cas-management-webapp</module>
         <module>cas-server-support-rest</module>
+        <module>cas-server-support-yubikey</module>
         <module>cas-server-integration-hazelcast</module>
         <module>cas-server-integration-mongo</module>
     </modules>

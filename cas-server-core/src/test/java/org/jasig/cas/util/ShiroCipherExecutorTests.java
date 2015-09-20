@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 public class ShiroCipherExecutorTests {
 
     @Test
-    public void testEncodingDecoding() {
+    public void checkEncodingDecoding() {
         final String value = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
         final CipherExecutor<byte[], byte[]> cc = new ShiroCipherExecutor("1234567890123456",
                 "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w");
@@ -41,7 +41,7 @@ public class ShiroCipherExecutorTests {
     }
 
     @Test(expected=RuntimeException.class)
-    public void testEncodingDecodingBadKeys() {
+    public void checkEncodingDecodingBadKeys() {
         final String value = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
         final CipherExecutor<byte[], byte[]> cc = new ShiroCipherExecutor("0000", "1234");
         cc.encode(value.getBytes());

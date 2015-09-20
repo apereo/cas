@@ -38,7 +38,6 @@ import java.security.GeneralSecurityException;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.0.0
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends
