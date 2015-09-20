@@ -64,7 +64,7 @@ public final class OpenSamlConfigBean {
      */
     @PostConstruct
     public void init() {
-        LOGGER.debug("Initializing OpenSaml configuration...");
+        LOGGER.info("Initializing OpenSaml configuration...");
         Assert.notNull(this.parserPool, "parserPool cannot be null");
 
         try {
@@ -84,5 +84,6 @@ public final class OpenSamlConfigBean {
         }
 
         registry.setParserPool(parserPool);
+        LOGGER.info("Initialized OpenSaml configuration successfully.");
     }
 }

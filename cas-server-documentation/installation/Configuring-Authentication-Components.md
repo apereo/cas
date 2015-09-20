@@ -69,7 +69,8 @@ used to support a multi-factor authentication situation, for example, where user
 required but an additional OTP is optional.
 
 The following configuration snippet demonstrates how to configure `PolicyBasedAuthenticationManager` for a
-straightforward multi-factor authentication case where username/password authentication is required and an additional OTP credential is optional; in both cases principals are resolved from LDAP.
+straightforward multi-factor authentication case where username/password authentication is required 
+and an additional OTP credential is optional; in both cases principals are resolved from LDAP.
 
 {% highlight xml %}
 <bean id="passwordHandler"
@@ -85,19 +86,21 @@ straightforward multi-factor authentication case where username/password authent
       class="org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory"
       c:requiredHandlerName="passwordHandler"
       p:tryAll="true" />
+      
 
-<bean id="ldapPrincipalResolver"
-      class="org.jasig.cas.authentication.principal.CredentialsToLdapAttributePrincipalResolver">
-      <!-- Details elided for simplicity -->
-</bean>
-
+<bean id="principalResolver"
+      class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver"
+      p:principalAttributeName="username"
+      p:attributeRepository-ref="attributeRepository"
+      p:returnNullIfNoAttributes="true" />
+      
 <bean id="authenticationManager"
       class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
       p:authenticationPolicy-ref="authenticationPolicy">
   <constructor-arg>
     <map>
-      <entry key-ref="passwordHandler" value-ref="ldapPrincipalResolver"/>
-      <entry key-ref="oneTimePasswordHandler" value-ref="ldapPrincipalResolver" />
+      <entry key-ref="passwordHandler" value-ref="principalResolver"/>
+      <entry key-ref="oneTimePasswordHandler" value-ref="principalResolver" />
     </map>
   </constructor-arg>
   <property name="authenticationMetaDataPopulators">
@@ -123,13 +126,12 @@ interest.
 * [Trusted](Trusted-Authentication.html) (REMOTE_USER)
 * [X.509](X509-Authentication.html) (client SSL certificate)
 * [Remote Address](Remote-Address-Authentication.html)
-
+* [YubiKey](YubiKey-Authentication.html)
 
 There are some additional handlers for small deployments and special cases:
 
 * [Whilelist](Whitelist-Authentication.html)
 * [Blacklist](Blacklist-Authentication.html)
-
 
 ##Argument Extractors
 Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction. 
@@ -181,8 +183,9 @@ Default transformer, that actually does no transformation on the user id.
 Transforms the user id by adding a postfix or suffix.
 
 ######`ConvertCasePrincipalNameTransformer`
-A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed. The transformer is also able
-to accept and work on the result of a previous transformer that might have modified the uid, such that the two can be chained.
+A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed.
+The transformer is also able to accept and work on the result of 
+a previous transformer that might have modified the uid, such that the two can be chained.
 
 #### Configuration
 Here is an example configuration based for the `AcceptUsersAuthenticationHandler`:
@@ -198,8 +201,9 @@ Here is an example configuration based for the `AcceptUsersAuthenticationHandler
     </property>
 </bean>
 
-<bean id="convertCasePrincipalNameTransformer" class="org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer"
-p:toUpperCase="true" />
+<bean id="convertCasePrincipalNameTransformer" 
+    class="org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer"
+    p:toUpperCase="true" />
 
 {% endhighlight %}
 
