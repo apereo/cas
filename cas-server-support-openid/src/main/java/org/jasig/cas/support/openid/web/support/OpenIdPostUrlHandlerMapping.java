@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.support.openid.web.support;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.jasig.cas.support.openid.OpenIdConstants;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.servlet.mvc.Controller;
 
 import java.util.Properties;
 
@@ -40,17 +42,19 @@ public final class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
 
     @Autowired
     @Qualifier("openidDelegatingController")
-    private DelegateController controller;
+    private Controller controller;
 
     /**
-     * Instantiates a new Open id post url handler mapping.
+     * Init app context and controllers.
      */
-    public OpenIdPostUrlHandlerMapping() {
+    @PostConstruct
+    public void init() {
         setOrder(1);
 
         final Properties mappings = new Properties();
         mappings.put("/login", this.controller);
         setMappings(mappings);
+        initApplicationContext();
     }
 
     @Override

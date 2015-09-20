@@ -85,8 +85,8 @@ public class DelegatingController extends AbstractController {
     /**
      * @param delegates the delegate controllers to set
      */
-    @NotNull
-    public void setDelegates(final List<DelegateController> delegates) {
+
+    public void setDelegates(@NotNull final List<DelegateController> delegates) {
         this.delegates = delegates;
     }
 
