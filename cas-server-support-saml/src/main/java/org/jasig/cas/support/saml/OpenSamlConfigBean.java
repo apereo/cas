@@ -24,7 +24,10 @@ import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationException;
 import org.opensaml.core.config.InitializationService;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
+import org.opensaml.core.xml.io.MarshallerFactory;
+import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,16 @@ public final class OpenSamlConfigBean {
     @NotNull
     private ParserPool parserPool;
 
+    @NotNull
+    private XMLObjectBuilderFactory builderFactory;
+
+    @NotNull
+    private MarshallerFactory marshallerFactory;
+
+    @NotNull
+    private UnmarshallerFactory unmarshallerFactory;
+
+
     /**
      * Instantiates the config bean.
      */
@@ -57,6 +70,18 @@ public final class OpenSamlConfigBean {
      */
     public ParserPool getParserPool() {
         return parserPool;
+    }
+
+    public XMLObjectBuilderFactory getBuilderFactory() {
+        return builderFactory;
+    }
+
+    public MarshallerFactory getMarshallerFactory() {
+        return marshallerFactory;
+    }
+
+    public UnmarshallerFactory getUnmarshallerFactory() {
+        return unmarshallerFactory;
     }
 
     /**
@@ -83,7 +108,17 @@ public final class OpenSamlConfigBean {
             }
         }
 
-        registry.setParserPool(parserPool);
-        LOGGER.info("Initialized OpenSaml configuration successfully.");
+        registry.setParserPool(this.parserPool);
+
+        this.builderFactory = registry.getBuilderFactory();
+        Assert.notNull(this.builderFactory, "parserPool cannot be null");
+
+        this.marshallerFactory = registry.getMarshallerFactory();
+        Assert.notNull(this.marshallerFactory, "marshallerFactory cannot be null");
+
+        this.unmarshallerFactory = registry.getUnmarshallerFactory();
+        Assert.notNull(this.unmarshallerFactory, "unmarshallerFactory cannot be null");
+
+        LOGGER.debug("Initialized OpenSaml successfully.");
     }
 }
