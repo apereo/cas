@@ -27,7 +27,7 @@ import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
 import org.jasig.cas.util.CipherExecutor;
 import org.jasig.cas.util.CompressionUtils;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -39,12 +39,12 @@ import java.util.HashSet;
  * unless {@link #setCipherExecutor(CipherExecutor)} is configured.
  *
  * @author Misagh Moayyed
- * @since 4.2
  * @see org.jasig.cas.util.ShiroCipherExecutor
+ * @since 4.2
  */
 public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedTicketRegistry {
 
-    @NotNull
+    @Null
     private CipherExecutor<byte[], byte[]> cipherExecutor;
 
     /**
