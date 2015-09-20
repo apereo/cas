@@ -125,8 +125,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
         this.failureView = failureView;
     }
 
-    @NotNull
-    public void setServerManager(final ServerManager serverManager) {
+    public void setServerManager(@NotNull final ServerManager serverManager) {
         this.serverManager = serverManager;
     }
 }

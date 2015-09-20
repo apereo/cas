@@ -82,13 +82,17 @@ public class SamlServletContextListener implements ServletContextListener, Appli
                 final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
                 list.add(this.samlArgumentExtractor);
 
-                final Map<String, UniqueTicketIdGenerator> map = applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
+                final Map<String, UniqueTicketIdGenerator> map =
+                        applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
                 map.put(SamlService.class.getCanonicalName(), this.samlServiceTicketUniqueIdGenerator);
                 logger.info("Initialized Saml root application context successfully");
             } else {
                 logger.info("Initializing Saml application context");
-                final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean(SimpleUrlHandlerMapping.class);
-                final Controller samlValidateController = applicationContext.getBean("samlValidateController", Controller.class);
+                final SimpleUrlHandlerMapping handlerMappingC =
+                        applicationContext.getBean(SimpleUrlHandlerMapping.class);
+
+                final Controller samlValidateController = applicationContext.getBean("samlValidateController",
+                        Controller.class);
                 final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
                 urlMap.put(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, samlValidateController);
                 handlerMappingC.initApplicationContext();
