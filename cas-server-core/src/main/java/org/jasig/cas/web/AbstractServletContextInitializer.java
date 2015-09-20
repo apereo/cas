@@ -37,7 +37,6 @@ import org.springframework.web.servlet.mvc.Controller;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
-import javax.servlet.annotation.WebListener;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +47,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@WebListener
 @Component
 public abstract class AbstractServletContextInitializer implements ServletContextListener, ApplicationContextAware {
 
@@ -60,18 +58,25 @@ public abstract class AbstractServletContextInitializer implements ServletContex
     /** Application context. */
     protected ApplicationContext applicationContext;
 
+    private final String contextInitializerName = getClass().getSimpleName();
+
+    /**
+     * Instantiates a new servlet context initializer.
+     */
+    protected AbstractServletContextInitializer() {}
+
     @Override
     public final void contextInitialized(final ServletContextEvent sce) {
-        logger.info("Initializing {} context...", getClass().getSimpleName());
+        logger.info("Initializing {} context...", contextInitializerName);
         initializeServletContext(sce);
-        logger.info("Initialized {} context...", getClass().getSimpleName());
+        logger.info("Initialized {} context...", contextInitializerName);
     }
 
     @Override
     public final void contextDestroyed(final ServletContextEvent sce) {
-        logger.info("Destroying {} context...", getClass().getSimpleName());
+        logger.info("Destroying {} context...", contextInitializerName);
         destroyServletContext(sce);
-        logger.info("Destroyed {} context...", getClass().getSimpleName());
+        logger.info("Destroyed {} context...", contextInitializerName);
     }
 
     @Override
@@ -80,18 +85,19 @@ public abstract class AbstractServletContextInitializer implements ServletContex
 
         try {
             if (applicationContext.getParent() == null) {
-                logger.info("Initializing Saml root application context");
+                logger.info("Initializing {} root application context", contextInitializerName);
                 initializeRootApplicationContext();
-                logger.info("Initialized Saml root application context successfully");
+                logger.info("Initialized {} root application context successfully", contextInitializerName);
             } else {
-                logger.info("Initializing Saml application context");
+                logger.info("Initializing {} application context", contextInitializerName);
                 initializeServletApplicationContext();
-                logger.info("Initialized Saml application context successfully");
+                logger.info("Initialized {} application context successfully", contextInitializerName);
             }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
     }
+
 
     /**
      * Add authentication handler principal resolver.
@@ -146,8 +152,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * @param controller the controller
      */
     protected final void addControllerToCasServletHandlerMapping(final String path, final Controller controller) {
-        final SimpleUrlHandlerMapping handlerMappingC =
-                applicationContext.getBean(SimpleUrlHandlerMapping.class);
+        final SimpleUrlHandlerMapping handlerMappingC = getCasServletHandlerMapping();
         final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
         urlMap.put(path, controller);
         handlerMappingC.initApplicationContext();
