@@ -5,9 +5,14 @@ title: CAS - Logging Configuration
 
 
 #Logging 
-CAS provides a logging facility that logs important informational events like authentication success and failure; it can be customized to produce additional information for troubleshooting. CAS uses the Slf4J Logging framework as a facade for the [Log4J engine](http://logging.apache.org‎) by default. 
+CAS provides a logging facility that logs important informational events like authentication success and 
+failure; it can be customized to produce additional information for troubleshooting. CAS uses the Slf4J 
+Logging framework as a facade for the [Log4J engine](http://logging.apache.org‎) by default. 
 
-The log4j configuration file is located in `cas-server-webapp/src/main/webapp/WEB-INF/classes/log4j2.xml`. By default logging is set to `INFO` for all functionality related to `org.jasig.cas` code and `WARN` for messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set these levels to  `DEBUG`. 
+The log4j configuration file is located in `cas-server-webapp/src/main/webapp/WEB-INF/classes/log4j2.xml`. 
+By default logging is set to `INFO` for all functionality related to `org.jasig.cas` code and `WARN` for 
+messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set 
+these levels to  `DEBUG`. 
 
 {% highlight xml %}
 ...
@@ -21,11 +26,13 @@ The log4j configuration file is located in `cas-server-webapp/src/main/webapp/WE
 ...
 {% endhighlight %}
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though, you probably want to run them both as `WARN`.</p></div>
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though, 
+you probably want to run them both as `WARN`.</p></div>
 
 
 ##Components
-The log4j configuration is by default loaded using the following components at `cas-server-webapp/src/main/webapp/WEB-INF/spring-configuration/log4jConfiguration.xml`:
+The log4j configuration is by default loaded using the following components 
+at `cas-server-webapp/src/main/webapp/WEB-INF/spring-configuration/log4jConfiguration.xml`:
 
 {% highlight xml %}
 <bean id="log4jInitialization" class="org.jasig.cas.util.CasLoggerContextInitializer"
@@ -34,7 +41,9 @@ The log4j configuration is by default loaded using the following components at `
     c:loggerContextPackageName="org.apache.logging.log4j.web"/>
 {% endhighlight %}
 
-It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades. The location of `log4j2.xml` file by default is on the runtime classpath and at minute intervals respective. These may be overridden by the `cas.properties` file
+It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades. 
+The location of `log4j2.xml` file by default is on the runtime classpath and at minute intervals 
+respective. These may be overridden by the `cas.properties` file
 
 {% highlight bash %}
 # log4j.config.location=classpath:log4j2.xml
@@ -42,10 +51,17 @@ It is often time helpful to externalize `log4j2.xml` to a system path to preserv
 
 
 ##Configuration
-The `log4j2.xml` file by default at `WEB-INF/classes` provides the following `appender` elements that decide where and how messages from components should be displayed. Two are provided by default that output messages to the system console and a `cas.log` file:
+The `log4j2.xml` file by default at `WEB-INF/classes` provides the following `appender` elements that 
+decide where and how messages from components should be displayed. Two are provided by default that 
+output messages to the system console and a `cas.log` file:
 
 ###Refresh Interval
-The `log4j2.xml` itself controls the refresh interval of the logging configuration. Log4j has the ability to automatically detect changes to the configuration file and reconfigure itself. If the `monitorInterval` attribute is specified on the configuration element and is set to a non-zero value then the file will be checked the next time a log event is evaluated and/or logged and the `monitorInterval` has elapsed since the last check. This will allow you to adjust the log levels and configuration without restarting the server environment.
+The `log4j2.xml` itself controls the refresh interval of the logging configuration. Log4j has the ability 
+to automatically detect changes to the configuration file and reconfigure itself. If the `monitorInterval` 
+attribute is specified on the configuration element and is set to a non-zero value then the file will be 
+checked the next time a log event is evaluated and/or logged and the `monitorInterval` has elapsed since 
+the last check. This will allow you to adjust the log levels and configuration without restarting the 
+server environment.
 
 {% highlight xml %}
 <!-- Specify the refresh internal in seconds. -->
@@ -95,7 +111,8 @@ Additional loggers are available to specify the logging level for component cate
 </Root>
 {% endhighlight %}
 
-If you wish enable another package for logging, you can simply add another `Logger` element to the configuration. Here is an example:
+If you wish enable another package for logging, you can simply add another `Logger` 
+element to the configuration. Here is an example:
 
 {% highlight xml %}
 <Logger name="org.ldaptive" level="debug" additivity="false">
@@ -105,7 +122,9 @@ If you wish enable another package for logging, you can simply add another `Logg
 {% endhighlight %}
 
 ##Log Data Sanitation
-For security purposes, CAS by default will attempt to remove TGT and PGT ids from all log data. This will of course include messages that are routed to a log destination by the logging framework as well as all audit messages. A sample follows below:
+For security purposes, CAS by default will attempt to remove TGT and PGT ids from all log data. 
+This will of course include messages that are routed to a log destination by the logging framework as
+ well as all audit messages. A sample follows below:
 
 {% highlight bash %}
 =============================================================
@@ -119,11 +138,15 @@ SERVER IP ADDRESS: ...
 =============================================================
 {% endhighlight %}
 
-Certain number of characters are left at the trailing end of the ticket id to assist with troubleshooting and diagnostics. This is achieved by providing a specific binding for the SLF4j configuration. 
+Certain number of characters are left at the trailing end of the ticket id to assist with 
+troubleshooting and diagnostics. This is achieved by providing a specific binding for the SLF4j configuration. 
  
 
 #Audits
-CAS uses the [Inspektr framework](https://github.com/Jasig/inspektr) for auditing purposes and statistics. The Inspektr project allows for non-intrusive auditing and logging of the coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations and Spring-managed `@Aspect`-style aspects.
+CAS uses the [Inspektr framework](https://github.com/Jasig/inspektr) for auditing purposes 
+and statistics. The Inspektr project allows for non-intrusive auditing and logging of the 
+coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations 
+and Spring-managed `@Aspect`-style aspects.
 
 ##Components
 
@@ -147,11 +170,15 @@ Aspect modularizing management of an audit trail data concern.
 `PrincipalResolver` that can retrieve the username from either the `Ticket` or from the `Credential`.
 
 ##Configuration
-Audit functionality is specifically controlled by the `WEB-INF/spring-configuration/auditTrailContext.xml`. Configuration of the audit trail manager is defined inside `deployerConfigContext.xml`.
-
+Audit functionality is specifically controlled by the `WEB-INF/spring-configuration/auditTrailContext.xml`. 
+Configuration of the audit trail manager is defined inside `deployerConfigContext.xml`.
+By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager` and are routed to
+a `casaudit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
 
 ###Database Audits
-By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager`. If you intend to use a database for auditing functionality, adjust the audit manager to match the sample configuration below:
+ If you intend to use a database 
+for auditing functionality, adjust the audit manager to match the sample configuration below:
+
 {% highlight xml %}
 <bean id="auditCleanupCriteria"
     class="org.jasig.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
