@@ -126,13 +126,12 @@ interest.
 * [Trusted](Trusted-Authentication.html) (REMOTE_USER)
 * [X.509](X509-Authentication.html) (client SSL certificate)
 * [Remote Address](Remote-Address-Authentication.html)
-
+* [YubiKey](YubiKey-Authentication.html)
 
 There are some additional handlers for small deployments and special cases:
 
 * [Whilelist](Whitelist-Authentication.html)
 * [Blacklist](Blacklist-Authentication.html)
-
 
 ##Argument Extractors
 Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction. 
