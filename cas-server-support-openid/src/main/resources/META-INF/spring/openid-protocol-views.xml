@@ -23,13 +23,38 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
     <description>
         This file is loaded by the Spring configuration automatically, and serves as a placeholder
         for various view definitions and beans. This helps with construction of views that require
         references to other beans and whose changes can be configured externally.
     </description>
+
+    <bean id="openIdValidateController" class="org.jasig.cas.web.ServiceValidateController"
+          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
+          p:centralAuthenticationService-ref="centralAuthenticationService"
+          p:proxyHandler-ref="proxy20Handler"
+          p:servicesManager-ref="servicesManager"
+          p:argumentExtractor-ref="openIdArgumentExtractor"
+          p:successView="casOpenIdServiceSuccessView"
+          p:failureView="casOpenIdServiceFailureView" />
+
+    <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
+          p:delegates-ref="delegateControllers"/>
+
+    <util:list id="delegateControllers">
+        <ref bean="smartOpenIdAssociationController"/>
+        <ref bean="openIdValidateController"/>
+    </util:list>
+
+    <bean id="serverManager"
+          class="org.openid4java.server.ServerManager"
+          p:oPEndpointUrl="${server.prefix}/login"
+          p:enforceRpId="${cas.openid.enforce.rpid:false}" />
 
     <context:component-scan base-package="org.jasig.cas.support.openid"/>
     <context:annotation-config/>

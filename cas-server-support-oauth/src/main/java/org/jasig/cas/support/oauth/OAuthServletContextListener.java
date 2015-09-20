@@ -77,7 +77,8 @@ public class OAuthServletContextListener implements ServletContextListener, Appl
         try {
             if (applicationContext.getParent() != null) {
                 logger.info("Initializing OAuth application context");
-                final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean(SimpleUrlHandlerMapping.class);
+                final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean("handlerMappingC",
+                        SimpleUrlHandlerMapping.class);
                 final Controller controller = applicationContext.getBean("oauth20WrapperController",
                         Controller.class);
                 final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();

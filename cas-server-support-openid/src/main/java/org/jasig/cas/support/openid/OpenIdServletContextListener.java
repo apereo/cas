@@ -79,7 +79,7 @@ public class OpenIdServletContextListener implements ServletContextListener, App
 
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
-        logger.info("Initializing OAuth servlet context...");
+        logger.info("Initializing OpenID servlet context...");
         final ServletRegistration registration = sce.getServletContext().getServletRegistration(CAS_SERVLET_NAME);
         registration.addMapping(OpenIdConstants.ENDPOINT_OPENID);
         logger.info("Added [{}] to {} servlet context", OpenIdConstants.ENDPOINT_OPENID, CAS_SERVLET_NAME);
@@ -94,7 +94,8 @@ public class OpenIdServletContextListener implements ServletContextListener, App
             if (applicationContext.getParent() != null) {
                 logger.info("Initializing OpenID application context");
 
-                final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean(SimpleUrlHandlerMapping.class);
+                final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean("handlerMappingC",
+                        SimpleUrlHandlerMapping.class);
                 final Controller controller = applicationContext.getBean("openIdProviderController",
                         Controller.class);
                 final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
