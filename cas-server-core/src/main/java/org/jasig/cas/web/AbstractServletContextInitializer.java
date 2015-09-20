@@ -21,6 +21,8 @@ package org.jasig.cas.web;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
@@ -115,6 +117,16 @@ public abstract class AbstractServletContextInitializer implements ServletContex
         return registration;
     }
 
+
+    /**
+     * Add registered service to services manager.
+     *
+     * @param svc the svc
+     */
+    protected final void addRegisteredServiceToServicesManager(final RegisteredService svc) {
+        final ServicesManager manager = this.applicationContext.getBean("servicesManager", ServicesManager.class);
+
+    }
 
     /**
      * Gets cas servlet handler mapping.
