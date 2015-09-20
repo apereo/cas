@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -39,6 +40,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,6 +73,10 @@ public class OpenIdServletContextListener implements ServletContextListener, App
     @Qualifier("openIdPrincipalResolver")
     private PrincipalResolver openIdPrincipalResolver;
 
+    @Autowired
+    @Qualifier("openIdArgumentExtractor")
+    private ArgumentExtractor openIdArgumentExtractor;
+
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
         logger.info("Initializing OAuth servlet context...");
@@ -99,6 +105,8 @@ public class OpenIdServletContextListener implements ServletContextListener, App
                         applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
                 map.put(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
 
+                final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
+                list.add(this.openIdArgumentExtractor);
 
                 logger.info("Initialized OpenID application context successfully");
             } else {
