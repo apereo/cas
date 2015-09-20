@@ -45,24 +45,6 @@ CAS uses a spring webflow to describe the authentication process. We need to cha
 </action-state>
 {% endhighlight %}
 
-###Add an argument extractor
-
-We must tell cas how to extract the OpenID information from the authentication request (`openid.mode`, `openid.sig`, `openid.assoc_handle`, etc). This is done in the *`argumentExtractorsConfiguration.xml`* file, located in the *`spring-configuration`* directory. Add this bean into the file:
-
-{% highlight xml %}
-<bean id="openIdArgumentExtractor" class="org.jasig.cas.support.openid.web.support.OpenIdArgumentExtractor">
-  <property name="openIdPrefixUrl" value="${server.prefix}/openid" />
-</bean>
-
-<util:list id="argumentExtractors">
-   <ref bean="casArgumentExtractor" />
-   <!-- The OpenId arguments extractor -->
-   <ref bean="openIdArgumentExtractor" />
-   <ref bean="samlArgumentExtractor" />
-</util:list>
-{% endhighlight %}
-
-
 ##OpenID v2.0 support
 
 By default, the CAS server is defined as an OpenID provider v1.0. This definition is held in the `user.jsp` file (in the `WEB-INF/view/jsp/protocol/openid` directory):
