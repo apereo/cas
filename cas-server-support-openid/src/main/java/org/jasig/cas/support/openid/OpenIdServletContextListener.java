@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,11 +52,8 @@ import java.util.Map;
  */
 @WebListener
 @Component
-public class OpenIdServletContextListener implements ServletContextListener, ApplicationContextAware {
+public class OpenIdServletContextListener extends AbstractServletContextInitializer {
 
-    private static final String CAS_SERVLET_NAME = "cas";
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")
@@ -78,47 +76,19 @@ public class OpenIdServletContextListener implements ServletContextListener, App
     private ArgumentExtractor openIdArgumentExtractor;
 
     @Override
-    public void contextInitialized(final ServletContextEvent sce) {
-        logger.info("Initializing OpenID servlet context...");
-        final ServletRegistration registration = sce.getServletContext().getServletRegistration(CAS_SERVLET_NAME);
-        registration.addMapping(OpenIdConstants.ENDPOINT_OPENID);
-        logger.info("Added [{}] to {} servlet context", OpenIdConstants.ENDPOINT_OPENID, CAS_SERVLET_NAME);
+    protected void initializeRootApplicationContext() {
+        addAuthenticationHandlerPrincipalResolver(openIdCredentialsAuthenticationHandler, openIdPrincipalResolver);
     }
 
     @Override
-    public void contextDestroyed(final ServletContextEvent sce) {}
+    protected void initializeServletApplicationContext() {
+        addControllerToCasServletHandlerMapping(OpenIdConstants.ENDPOINT_OPENID, "openIdProviderController");
+        addServiceTicketUniqueIdGenerator(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
+        addArgumentExtractor(this.openIdArgumentExtractor);
+    }
 
     @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        try {
-            if (applicationContext.getParent() != null) {
-                logger.info("Initializing OpenID application context");
-
-                final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean("handlerMappingC",
-                        SimpleUrlHandlerMapping.class);
-                final Controller controller = applicationContext.getBean("openIdProviderController",
-                        Controller.class);
-                final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
-                urlMap.put(OpenIdConstants.ENDPOINT_OPENID, controller);
-                handlerMappingC.initApplicationContext();
-
-                final Map<String, UniqueTicketIdGenerator> map =
-                        applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
-                map.put(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
-
-                final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
-                list.add(this.openIdArgumentExtractor);
-
-                logger.info("Initialized OpenID application context successfully");
-            } else {
-                logger.info("Initializing OpenID root application context");
-                final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
-                        applicationContext.getBean("authenticationHandlersResolvers", Map.class);
-                authenticationHandlersResolvers.put(openIdCredentialsAuthenticationHandler, openIdPrincipalResolver);
-                logger.info("Initialized OpenID root application context successfully");
-            }
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+    protected void initializeServletContext(final ServletContextEvent event) {
+        addEndpointMappingToCasServlet(event, OpenIdConstants.ENDPOINT_OPENID);
     }
 }
