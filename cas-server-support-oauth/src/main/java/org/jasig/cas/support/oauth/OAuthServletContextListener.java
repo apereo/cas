@@ -19,26 +19,14 @@
 
 package org.jasig.cas.support.oauth;
 
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.servlet.mvc.Controller;
 
 import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
 import java.security.SecureRandom;
-import java.util.Map;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -48,55 +36,32 @@ import java.util.Map;
  */
 @WebListener
 @Component
-public class OAuthServletContextListener implements ServletContextListener, ApplicationContextAware {
-
-    private static final String CAS_SERVLET_NAME = "cas";
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class OAuthServletContextListener extends AbstractServletContextInitializer {
 
     @Value("${server.prefix}" + OAuthConstants.ENDPOINT_OAUTH2_CALLBACK_AUTHORIZE)
     private String callbackAuthorizeUrl;
 
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
 
     @Override
-    public void contextInitialized(final ServletContextEvent sce) {
-        logger.info("Initializing OAuth servlet context...");
-        final ServletRegistration registration = sce.getServletContext().getServletRegistration(CAS_SERVLET_NAME);
-        registration.addMapping(OAuthConstants.ENDPOINT_OAUTH2);
-        logger.info("Added [{}] to {} servlet context", OAuthConstants.ENDPOINT_OAUTH2, CAS_SERVLET_NAME);
+    protected void initializeRootApplicationContext() {
+        super.initializeRootApplicationContext();
     }
 
     @Override
-    public void contextDestroyed(final ServletContextEvent sce) {}
+    protected void initializeServletApplicationContext() {
+        addControllerToCasServletHandlerMapping(OAuthConstants.ENDPOINT_OAUTH2, "oauth20WrapperController");
+
+        final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
+        service.setId(new SecureRandom().nextLong());
+        service.setName(service.getClass().getSimpleName());
+        service.setDescription("OAuth Wrapper Callback Url");
+        service.setServiceId(this.callbackAuthorizeUrl);
+
+        addRegisteredServiceToServicesManager(service);
+    }
 
     @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        try {
-            if (applicationContext.getParent() != null) {
-                logger.info("Initializing OAuth application context");
-                final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean("handlerMappingC",
-                        SimpleUrlHandlerMapping.class);
-                final Controller controller = applicationContext.getBean("oauth20WrapperController",
-                        Controller.class);
-                final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
-                urlMap.put(OAuthConstants.ENDPOINT_OAUTH2, controller);
-                handlerMappingC.initApplicationContext();
-
-                final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
-                service.setId(new SecureRandom().nextLong());
-                service.setName(service.getClass().getSimpleName());
-                service.setDescription("OAuth Wrapper Callback Url");
-                service.setServiceId(this.callbackAuthorizeUrl);
-
-                this.servicesManager.save(service);
-
-                logger.info("Initialized OAuth application context successfully");
-            }
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+    protected void initializeServletContext(final ServletContextEvent event) {
+        addEndpointMappingToCasServlet(event, OAuthConstants.ENDPOINT_OAUTH2);
     }
 }

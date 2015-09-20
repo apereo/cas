@@ -18,11 +18,7 @@
  */
 package org.jasig.cas.support.openid.web.support;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-
 import org.jasig.cas.support.openid.OpenIdConstants;
-import org.jasig.cas.web.DelegateController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
@@ -30,6 +26,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Properties;
 
 /**

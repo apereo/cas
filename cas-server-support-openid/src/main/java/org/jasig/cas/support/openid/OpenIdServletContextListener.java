@@ -21,28 +21,16 @@ package org.jasig.cas.support.openid;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.ArgumentExtractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.servlet.mvc.Controller;
 
 import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -54,14 +42,9 @@ import java.util.Map;
 @Component
 public class OpenIdServletContextListener extends AbstractServletContextInitializer {
 
-
     @Autowired
     @Qualifier("serviceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("openIdCredentialsAuthenticationHandler")
