@@ -21,6 +21,7 @@ package org.jasig.cas.support.saml;
 
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,10 +49,7 @@ import java.util.Map;
  */
 @WebListener
 @Component
-public class SamlServletContextListener implements ServletContextListener, ApplicationContextAware {
-    private static final String CAS_SERVLET_NAME = "cas";
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class SamlServletContextListener extends AbstractServletContextInitializer {
 
     @Autowired
     @Qualifier("samlArgumentExtractor")
@@ -62,45 +60,20 @@ public class SamlServletContextListener implements ServletContextListener, Appli
     private UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator;
 
     @Override
-    public void contextInitialized(final ServletContextEvent sce) {
-        logger.info("Initializing SAML servlet context...");
-
-        final ServletRegistration registration = sce.getServletContext().getServletRegistration(CAS_SERVLET_NAME);
-        registration.addMapping(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
-
-        logger.info("Added [{}] to {} servlet context", SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, CAS_SERVLET_NAME);
+    public void initializeServletContext(final ServletContextEvent sce) {
+        addEndpointMappingToCasServlet(sce, SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
     }
 
     @Override
-    public void contextDestroyed(final ServletContextEvent sce) {}
-
-    @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        try {
-            if (applicationContext.getParent() == null) {
-                logger.info("Initializing Saml root application context");
-                final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
-                list.add(this.samlArgumentExtractor);
-
-                final Map<String, UniqueTicketIdGenerator> map =
-                        applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
-                map.put(SamlService.class.getCanonicalName(), this.samlServiceTicketUniqueIdGenerator);
-                logger.info("Initialized Saml root application context successfully");
-            } else {
-                logger.info("Initializing Saml application context");
-                final SimpleUrlHandlerMapping handlerMappingC =
-                        applicationContext.getBean(SimpleUrlHandlerMapping.class);
-
-                final Controller samlValidateController = applicationContext.getBean("samlValidateController",
-                        Controller.class);
-                final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
-                urlMap.put(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, samlValidateController);
-                handlerMappingC.initApplicationContext();
-                logger.info("Initialized Saml application context successfully");
-            }
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+    protected void initializeRootApplicationContext() {
+        addArgumentExtractor(this.samlArgumentExtractor);
+        addServiceTicketUniqueIdGenerator(SamlService.class.getCanonicalName(),
+                this.samlServiceTicketUniqueIdGenerator);
     }
 
+    @Override
+    protected void initializeServletApplicationContext() {
+        addControllerToCasServletHandlerMapping(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE,
+                "samlValidateController");
+    }
 }
