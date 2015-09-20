@@ -49,10 +49,11 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 
 <tx:annotation-driven transaction-manager="transactionManager" />
 
-<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+<bean id="ticketRegistryCleaner"
+  class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+      c:centralAuthenticationService-ref="centralAuthenticationService"
       c:ticketRegistry-ref="ticketRegistry"
-      c:lockingStrategy-ref="cleanerLock"
-      c:logoutManager-ref="logoutManager" />
+      p:lock-ref="cleanerLock"/>
 
 <bean id="cleanerLock" class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy"
         p:uniqueId="${host.name}"
