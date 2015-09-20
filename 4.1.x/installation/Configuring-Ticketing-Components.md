@@ -127,15 +127,18 @@ If you're using the default ticket registry configuration, your `/cas-server-web
 
 {% highlight xml %}
 <!-- TICKET REGISTRY CLEANER -->
-<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+<bean id="ticketRegistryCleaner" 
+      class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
       c:ticketRegistry-ref="ticketRegistry"
       c:logoutManager-ref="logoutManager" />
 
-<bean id="jobDetailTicketRegistryCleaner"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+<bean id="jobDetailTicketRegistryCleaner"  
+      class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
     p:targetObject-ref="ticketRegistryCleaner"
     p:targetMethod="clean" />
 
-<bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+<bean id="triggerJobDetailTicketRegistryCleaner" 
+      class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
     p:jobDetail-ref="jobDetailTicketRegistryCleaner"
     p:startDelay="20000"
     p:repeatInterval="5000000" />
