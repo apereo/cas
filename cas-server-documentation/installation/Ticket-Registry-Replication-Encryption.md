@@ -34,7 +34,7 @@ The settings, algorithms and secret keys used for the cipher may be controlled v
 # ticket.encryption.secretkey=C@$W3bSecretKey!
 
 # Seed to use when encrypting tickets in a distributed ticket registry.
-# ticket.encryption.secretkey=S!ngl3$ign0n4W3b
+# ticket.encryption.seed=S!ngl3$ign0n4W3b
 
 # Secret key to use when signing tickets in a distributed ticket registry.
 # By default, must be a octet string of size 512.
