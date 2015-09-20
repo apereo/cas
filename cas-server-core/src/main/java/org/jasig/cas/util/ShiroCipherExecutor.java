@@ -20,14 +20,8 @@
 package org.jasig.cas.util;
 
 import org.apache.shiro.crypto.AesCipherService;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.keys.AesKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.validation.constraints.NotNull;
 
 /**
  * A {@link CipherExecutor} implementation that is based on algorithms

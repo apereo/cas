@@ -40,14 +40,14 @@ public class CompressionUtilsTests {
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w");
 
     @Test
-    public void testSerializationOfTgt() {
+    public void checkSerializationOfTgt() {
         final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, tgt);
         final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
     @Test
-    public void testSerializationOfSt() {
+    public void checkSerializationOfSt() {
         final MockServiceTicket st = new MockServiceTicket("serviceid", TestUtils.getService(), tgt);
         final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, st);
         final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
@@ -55,7 +55,7 @@ public class CompressionUtilsTests {
     }
 
     @Test
-    public void testSerializationOfStBase64Encode() {
+    public void checkSerializationOfStBase64Encode() {
         final MockServiceTicket st = new MockServiceTicket("serviceid", TestUtils.getService(), tgt);
         final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, st);
         final String string = CompressionUtils.encodeBase64(bytes);
@@ -66,7 +66,7 @@ public class CompressionUtilsTests {
     }
 
     @Test
-    public void testSerializationOfTgtByteSource() throws Exception {
+    public void checkSerializationOfTgtByteSource() throws Exception {
         final ByteSource bytes = ByteSource.wrap(CompressionUtils.serializeAndEncodeObject(cipher, tgt));
         final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes.read(), cipher, Ticket.class);
         assertNotNull(obj);
