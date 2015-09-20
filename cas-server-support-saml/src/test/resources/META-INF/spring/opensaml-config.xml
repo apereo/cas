@@ -162,4 +162,7 @@
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
+
+    <util:list id="argumentExtractors" />
+    <util:map id="uniqueIdGeneratorsMap" />
 </beans>
