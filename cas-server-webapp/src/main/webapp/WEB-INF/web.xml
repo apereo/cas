@@ -110,7 +110,8 @@
         </servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>/WEB-INF/cas-servlet.xml, /WEB-INF/cas-servlet-*.xml</param-value>
+            <!-- Load the child application context. Start with the default, then modules, then overlays. -->
+            <param-value>/WEB-INF/cas-servlet.xml,classpath*:/META-INF/cas-servlet-*.xml,/WEB-INF/cas-servlet-*.xml</param-value>
         </init-param>
         <init-param>
             <param-name>publishContext</param-name>
@@ -233,13 +234,7 @@
         <servlet-name>cas</servlet-name>
         <url-pattern>/v1/*</url-pattern>
     </servlet-mapping>
-
-
-    <servlet-mapping>
-        <servlet-name>cas</servlet-name>
-        <url-pattern>/samlValidate</url-pattern>
-    </servlet-mapping>
-
+    
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
         <url-pattern>/idp/metadata</url-pattern>
@@ -249,7 +244,6 @@
         <servlet-name>cas</servlet-name>
         <url-pattern>/idp/profile/SAML2/Redirect/SSO</url-pattern>
     </servlet-mapping>
-
     <session-config>
         <!-- Default to 5 minute session timeouts -->
         <session-timeout>5</session-timeout>
