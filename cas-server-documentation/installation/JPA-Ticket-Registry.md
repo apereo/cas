@@ -64,7 +64,7 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
         p:targetMethod="clean" />
  
 <bean id="triggerJobDetailTicketRegistryCleaner" 
-    class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+    class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
         p:jobDetail-ref="jobDetailTicketRegistryCleaner"
         p:startDelay="20000"
         p:repeatInterval="5000000" />
