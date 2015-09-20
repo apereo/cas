@@ -128,9 +128,9 @@ If you're using the default ticket registry configuration, your `/cas-server-web
 {% highlight xml %}
 <!-- TICKET REGISTRY CLEANER -->
 <bean id="ticketRegistryCleaner" 
-      class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-      c:ticketRegistry-ref="ticketRegistry"
-      c:logoutManager-ref="logoutManager" />
+  class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+      c:centralAuthenticationService-ref="centralAuthenticationService"
+      c:ticketRegistry-ref="ticketRegistry"/>
 
 <bean id="jobDetailTicketRegistryCleaner"  
       class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
