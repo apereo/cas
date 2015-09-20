@@ -18,39 +18,18 @@
  */
 package org.jasig.cas.util;
 
-import com.google.common.io.ByteSource;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SerializationUtils;
-import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
-import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.CredentialMetaData;
-import org.jasig.cas.authentication.DefaultHandlerResult;
-import org.jasig.cas.authentication.ImmutableAuthentication;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
-import org.jasig.cas.authentication.principal.SimplePrincipal;
-import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.TicketState;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.joda.time.DateTime;
-import org.ldaptive.handler.HandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.zip.Deflater;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.InflaterOutputStream;

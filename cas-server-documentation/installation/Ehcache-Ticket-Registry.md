@@ -6,11 +6,13 @@ title: CAS - Ehcache Ticket Registry
 # Ehcache Ticket Registry
 Ehcache integration is enabled by including the following dependency in the Maven WAR overlay:
 
-    <dependency>
-         <groupId>org.jasig.cas</groupId>
-         <artifactId>cas-server-integration-ehcache</artifactId>
-         <version>${cas.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+     <groupId>org.jasig.cas</groupId>
+     <artifactId>cas-server-integration-ehcache</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
 
 `EhCacheTicketRegistry` stores tickets in an [Ehcache](http://ehcache.org/) instance.
 
