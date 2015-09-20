@@ -39,8 +39,8 @@ import java.util.HashSet;
  * unless {@link #setCipherExecutor(CipherExecutor)} is configured.
  *
  * @author Misagh Moayyed
- * @since 4.2
  * @see org.jasig.cas.util.ShiroCipherExecutor
+ * @since 4.2
  */
 public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedTicketRegistry {
 
