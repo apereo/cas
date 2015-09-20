@@ -162,10 +162,10 @@ Furthermore, the default behavior is to issue single sign out callbacks in respo
 
 {% highlight xml %}
 <bean id="ticketRegistryCleaner"
-      class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+  class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+      c:centralAuthenticationService-ref="centralAuthenticationService"
       c:ticketRegistry-ref="ticketRegistry"
-      c:lockingStrategy-ref="cleanerLock"
-      c:logoutManager-ref="logoutManager" />
+      p:lock-ref="cleanerLock"/>
 {% endhighlight %}
 
 Note that certain ticket registries don't use or need a registry cleaner. For such registries, the option of having a ticker registry cleaner is entirely done away with and is currently not implemented. With that being absent, you will no longer receive automatic SLO callbacks upon TGT expiration. As such, the only thing that would reach back to the should then be explicit logout requests per the CAS protocol.
