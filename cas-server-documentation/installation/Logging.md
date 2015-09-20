@@ -173,7 +173,7 @@ Aspect modularizing management of an audit trail data concern.
 Audit functionality is specifically controlled by the `WEB-INF/spring-configuration/auditTrailContext.xml`. 
 Configuration of the audit trail manager is defined inside `deployerConfigContext.xml`.
 By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager` and are routed to
-a `casaudit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
+a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
 
 ###Database Audits
  If you intend to use a database 
