@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+import org.springframework.web.servlet.mvc.Controller;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -74,18 +76,26 @@ public class SamlServletContextListener implements ServletContextListener, Appli
 
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        if (applicationContext.getParent() == null) {
-
-            try {
+        try {
+            if (applicationContext.getParent() == null) {
+                logger.info("Initializing Saml root application context");
                 final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
                 list.add(this.samlArgumentExtractor);
 
                 final Map<String, UniqueTicketIdGenerator> map = applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
                 map.put(SamlService.class.getCanonicalName(), this.samlServiceTicketUniqueIdGenerator);
-
-            } catch (final Exception e) {
-                logger.warn("SAML application context could not be auto-configured. {}", e.getMessage());
+                logger.info("Initialized Saml root application context successfully");
+            } else {
+                logger.info("Initializing Saml application context");
+                final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean(SimpleUrlHandlerMapping.class);
+                final Controller samlValidateController = applicationContext.getBean("samlValidateController", Controller.class);
+                final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
+                urlMap.put(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, samlValidateController);
+                handlerMappingC.initApplicationContext();
+                logger.info("Initialized Saml application context successfully");
             }
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
