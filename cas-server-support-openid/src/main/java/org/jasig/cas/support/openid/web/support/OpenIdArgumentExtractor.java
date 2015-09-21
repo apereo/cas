@@ -34,6 +34,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.1
  */
 @Deprecated
+@Component("openIdArgumentExtractor")
 public class OpenIdArgumentExtractor extends AbstractArgumentExtractor {
     /**
      * The prefix url for OpenID (without the trailing slash).

@@ -19,7 +19,9 @@
 
 package org.jasig.cas.support.saml;
 
+import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
+import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -41,8 +43,12 @@ import javax.servlet.annotation.WebListener;
 public class SamlServletContextListener extends AbstractServletContextInitializer {
 
     @Autowired
-    @Qualifier("samlArgumentExtractor")
-    private ArgumentExtractor samlArgumentExtractor;
+    @Qualifier("samlServiceFactory")
+    private SamlServiceFactory samlServiceFactory;
+
+    @Autowired
+    @Qualifier("googleAccountsServiceFactory")
+    private GoogleAccountsServiceFactory googleAccountsServiceFactory;
 
     @Autowired
     @Qualifier("samlServiceTicketUniqueIdGenerator")
@@ -55,7 +61,8 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
 
     @Override
     protected void initializeRootApplicationContext() {
-        addArgumentExtractor(this.samlArgumentExtractor);
+        addServiceFactory(samlServiceFactory);
+        addServiceFactory(googleAccountsServiceFactory);
         addServiceTicketUniqueIdGenerator(SamlService.class.getCanonicalName(),
                 this.samlServiceTicketUniqueIdGenerator);
     }
