@@ -21,7 +21,9 @@ package org.jasig.cas.authentication.principal;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -30,13 +32,22 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class DefaultPrincipalAttributesRepository implements PrincipalAttributesRepository {
+public final class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
     private static final long serialVersionUID = -4535358847021241725L;
 
     @Override
-    public Map<String, Object> getAttributes(final Principal p) {
+    protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
+        logger.debug("Using {}, no caching takes place for {} to add attributes.", id,
+                this.getClass().getSimpleName());
+    }
+
+    @Override
+    protected Map<String, Object> getPrincipalAttributes(final Principal p) {
+        logger.debug("{} will return the collection of attributes directly associated with the principal object",
+                this.getClass().getSimpleName());
         return p.getAttributes();
     }
+
 
     @Override
     public String toString() {
@@ -65,4 +76,7 @@ public final class DefaultPrincipalAttributesRepository implements PrincipalAttr
         return new HashCodeBuilder(13, 133)
                 .toHashCode();
     }
+
+    @Override
+    public void close() throws IOException {}
 }

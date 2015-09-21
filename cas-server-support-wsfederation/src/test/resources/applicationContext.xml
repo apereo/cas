@@ -32,6 +32,10 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <context:property-placeholder location="classpath:cas.properties"
+                                  ignore-resource-not-found="false"
+                                  ignore-unresolvable="false"/>
+
     <context:component-scan base-package="org.jasig.cas.support"
                             annotation-config="true" />
     <context:annotation-config />
@@ -71,5 +75,71 @@
             </map>
         </constructor-arg>
     </bean>
-      
+
+    <bean name="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
+          c:authenticationManager-ref="authenticationManager"
+          c:logoutManager-ref="logoutManager"
+          c:servicesManager-ref="servicesManager"
+          c:serviceTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
+          c:serviceTicketRegistry-ref="ticketRegistry"
+          c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
+          c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
+          c:ticketRegistry-ref="ticketRegistry"
+          c:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap" />
+
+    <bean id="attributeRepository"
+          class="org.jasig.services.persondir.support.StubPersonAttributeDao">
+        <property name="backingMap">
+            <map />
+        </property>
+    </bean>
+
+    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
+          p:readTimeout="5000" p:connectionTimeout="5000" />
+
+    <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
+          c:servicesManager-ref="servicesManager"
+          c:httpClient-ref="httpClient"
+          c:logoutMessageBuilder-ref="logoutBuilder"/>
+
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator" />
+
+
+    <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
+          c:map-ref="authenticationHandlersResolvers"/>
+
+    <util:map id="authenticationHandlersResolvers">
+
+        <entry key-ref="simpleTestUsernamePasswordAuthenticationHandler" value-ref="usernamePasswordCredentialsToPrincipalResolver" />
+    </util:map>
+
+    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+          c:serviceRegistryDao-ref="serviceRegistryDao" />
+
+    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+        <property name="registeredServices">
+            <list/>
+        </property>
+    </bean>
+
+    <bean id="usernamePasswordCredentialsToPrincipalResolver"
+          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver" >
+        <property name="attributeRepository" ref="attributeRepository" />
+    </bean>
+
+    <bean id="simpleTestUsernamePasswordAuthenticationHandler"
+          class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler" />
+
+    <bean id="neverExpiresExpirationPolicy"
+          class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy" />
+
+    <bean id="ticketRegistry"
+          class="org.jasig.cas.ticket.registry.DefaultTicketRegistry" />
+
+    <bean id="uniqueTicketIdGenerator"
+          class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator" />
+
+    <util:list id="argumentExtractors" />
+    <util:map id="uniqueIdGeneratorsMap" />
+
 </beans>
