@@ -53,21 +53,6 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyToString() {
-        final String wresult = testTokens.get("goodToken");
-        final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
-        final WsFederationCredential instance = wsFederationHelper.createCredentialFromToken(assertion);
-        final String expResult =
-        "[ID=_6257b2bf-7361-4081-ae1f-ec58d4310f61,Issuer=http://adfs.example.com/adfs/services/trust,"
-        + "Audience=urn:federation:cas,Authentication Method=urn:federation:authentication:windows,"
-        + "Issued On=2014-02-26T22:51:16.504Z,Valid After=2014-02-26T22:51:16.474Z,Valid Before=2014-02-26T23:51:16.474Z,"
-        + "Attributes={Group=example.com\\Domain Users, upn=jgasper@example.com, "
-        + "surname=Gasper, givenname=John, emailaddress=jgasper@example.com}]";
-        final String result = instance.toString();
-        assertEquals("toString() not equal", expResult, result);
-    }
-
-    @Test
     public void verifyIsValidAllGood() throws Exception {
         final boolean result = standardCred.isValid("urn:federation:cas", "http://adfs.example.com/adfs/services/trust", 2000);
         assertTrue("testIsValidAllGood() - True", result);
