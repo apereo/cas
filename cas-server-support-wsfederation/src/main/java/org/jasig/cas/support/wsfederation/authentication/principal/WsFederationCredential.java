@@ -70,6 +70,7 @@ public final class WsFederationCredential implements Credential {
         this.attributes = attributes;
     }
 
+    @Override
     public String getId() {
         return this.id;
     }
