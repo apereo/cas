@@ -21,6 +21,8 @@ package org.jasig.cas.support.openid.web.support;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.web.support.AbstractArgumentExtractor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
@@ -31,12 +33,14 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("openIdArgumentExtractor")
 public class OpenIdArgumentExtractor extends AbstractArgumentExtractor {
 
     /**
      * The prefix url for OpenID (without the trailing slash).
      */
     @NotNull
+    @Value("${server.prefix}/openid")
     private String openIdPrefixUrl;
 
     @Override
