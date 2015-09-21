@@ -44,6 +44,14 @@ public final class CachingPrincipalAttributesRepository extends AbstractPrincipa
     private final transient Cache<String, Map<String, Object>> cache;
     private final PrincipalAttributesCacheLoader cacheLoader =
             new PrincipalAttributesCacheLoader();
+
+    /**
+     * Used for serialization only.
+     */
+    private CachingPrincipalAttributesRepository() {
+        this.cache = null;
+    }
+
     /**
      * Instantiates a new caching attributes principal factory.
      * Sets the default cache size to {@link #DEFAULT_MAXIMUM_CACHE_SIZE}.
