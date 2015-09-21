@@ -19,6 +19,8 @@
 
 package org.jasig.cas.services.convert;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.mongodb.DBObject;
 import org.apache.commons.logging.Log;
@@ -93,6 +95,23 @@ public final class Converters {
     public static class CacheLoaderConverter
             extends NullConverter<CacheLoader, DBObject> {
     }
+
+    /**
+     * The type Cache converter.
+     * @since 4.1
+     */
+    public static class CacheConverter
+            extends NullConverter<Cache, DBObject> {
+    }
+
+    /**
+     * The type Cache builder converter.
+     * @since 4.1
+     */
+    public static class CacheBuilderConverter
+            extends NullConverter<CacheBuilder, DBObject> {
+    }
+
 
     /**
      * The type Runnable converter.
