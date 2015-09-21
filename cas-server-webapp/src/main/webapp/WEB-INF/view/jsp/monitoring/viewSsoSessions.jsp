@@ -90,13 +90,13 @@
             if (ticketId && (ticketId == 'ALL' || ticketId == 'PROXIED' || ticketId == 'DIRECT' ) ) {
                 factory.url = '/cas/statistics/ssosessions/destroySsoSessions';
                 factory.data = { type: ticketId };
-                factory.messages.success = 'Successfully removed ' + ticketId + ' sessions.';
-                factory.messages.error = 'Error removing ' + ticketId + ' sessions.  Please try your request again';
+                factory.messages.success = '<spring:message code="cas.sessions.alert.removal.success.multi.partone" /> ' + ticketId + ' <spring:message code="cas.sessions.alert.removal.success.multi.parttwo" />';
+                factory.messages.error = '<spring:message code="cas.sessions.alert.removal.error.multi.partone" /> ' + ticketId + ' <spring:message code="cas.sessions.alert.removal.error.multi.parttwo" />.';
             } else {
                 factory.url = '/cas/statistics/ssosessions/destroySsoSession';
                 factory.data = { ticketGrantingTicket: factory.ticketId };
-                factory.messages.success = 'Successfully removed ' + factory.ticketId + ' sessions.';
-                factory.messages.error = 'Error removing ' + ticketId + '.  Please try your request again';
+                factory.messages.success = '<spring:message code="cas.sessions.alert.removal.success.single.partone" /> ' + ticketId + ' <spring:message code="cas.sessions.alert.removal.success.single.parttwo" />';
+                factory.messages.error = '<spring:message code="cas.sessions.alert.removal.error.single.partone" /> ' + ticketId + ' <spring:message code="cas.sessions.alert.removal.error.single.parttwo" />.';
             }
 
             $.ajax({
@@ -150,12 +150,12 @@
     </script>
 
 <div class="ssoSessions">
-    <div id="loadingMessage"><h3>Loading SSO Sessions...</h3></div>
+    <div id="loadingMessage"><h3><spring:message code="cas.ssosessions.loading" /></h3></div>
 
     <div id="no-cas-sessions">
-        <h2>No sessions found.</h2>
+        <h2><spring:message code="cas.ssosessions.nosessionsfound" /></h2>
         <div>
-            <input class="btn btn-success" type="button" onclick="location.reload();" value="Refresh">
+            <input class="btn btn-success" type="button" onclick="location.reload();" value="<spring:message code="cas.ssosessions.button.refresh" />">
         </div>
     </div>
 
@@ -164,7 +164,7 @@
 
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h4><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> SSO Sessions Report</h4>
+                <h4><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> <spring:message code="cas.ssosessions.report.pagetitle" /></h4>
             </div>
             <div class="panel-body">
                 <div id="session-counts" class="container-fluid">
@@ -178,7 +178,7 @@
                                         </div>
                                         <div class="col-xs-9 text-right">
                                             <div class="huge" id="totalUsers">0</div>
-                                            <div>Total Active Principals</div>
+                                            <div><spring:message code="cas.ssosessions.report.panel.totalactiveprincipals" /></div>
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +193,7 @@
                                         </div>
                                         <div class="col-xs-9 text-right">
                                             <div class="huge" id="totalUsageSessions">0</div>
-                                            <div>Usage Count Sessions</div>
+                                            <div><spring:message code="cas.ssosessions.report.panel.usagecountsessions" /></div>
                                         </div>
                                     </div>
                                 </div>
@@ -208,7 +208,7 @@
                                         </div>
                                         <div class="col-xs-9 text-right">
                                             <div class="huge" id="totalTGTs">0</div>
-                                            <div>Total SSO Sessions</div>
+                                            <div><spring:message code="cas.ssosessions.report.panel.totalssosessions" /></div>
                                         </div>
                                     </div>
                                 </div>
@@ -220,17 +220,17 @@
                 <div class="container-fluid">
                     <div id="filterButtons" class="btn-group btn-group-sm pull-right" data-toggle="buttons">
                         <label class="btn btn-default active" data-filter="all">
-                            <input type="radio" name="options" id="optionAll" autocomplete="off"> All
+                            <input type="radio" name="options" id="optionAll" autocomplete="off"> <spring:message code="cas.ssosessions.buttons.filter.all" />
                         </label>
                         <label class="btn btn-default" data-filter="proxied">
-                            <input type="radio" name="options" id="optionProxied" autocomplete="off"> Proxied
+                            <input type="radio" name="options" id="optionProxied" autocomplete="off"> <spring:message code="cas.ssosessions.buttons.filter.proxied" />
                         </label>
                         <label class="btn btn-default" data-filter="non-proxied">
-                            <input type="radio" name="options" id="optionDirect" autocomplete="off"> Non-Proxied
+                            <input type="radio" name="options" id="optionDirect" autocomplete="off"> <spring:message code="cas.ssosessions.buttons.filter.nonproxied" />
                         </label>
                     </div>
 
-                    <button id="removeAllSessionsButton" class="btn btn-sm btn-danger" type="button" value="ALL">Remove All Sessions</button>
+                    <button id="removeAllSessionsButton" class="btn btn-sm btn-danger" type="button" value="ALL"><spring:message code="cas.ssosessions.buttons.removeall" /></button>
                 </div>
 
                 <div id="container-stable" class="container-fluid">
@@ -240,10 +240,10 @@
                         <thead>
                             <tr>
                                 <th>&nbsp;</th>
-                                <th>Principal</th>
-                                <th>Ticket Granting Ticket</th>
-                                <th>Authentication Date</th>
-                                <th>Usage Count</th>
+                                <th><spring:message code="cas.ssosessions.table.header.principal" /></th>
+                                <th><spring:message code="cas.ssosessions.table.header.ticketgrantingticket" /></th>
+                                <th><spring:message code="cas.ssosessions.table.header.authenticationdate" /></th>
+                                <th><spring:message code="cas.ssosessions.table.header.usagecount" /></th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
@@ -262,7 +262,7 @@
                 </div>
 
                 <div id="login">
-                    <input class="btn-submit" type="button" onclick="location.reload();" value="Refresh">
+                    <input class="btn-submit" type="button" onclick="location.reload();" value="<spring:message code="cas.ssosessions.button.refresh" />">
                 </div>
             </div>
         </div>
