@@ -65,13 +65,13 @@ public class OpenIdServletContextListener extends AbstractServletContextInitiali
 
     @Override
     protected void initializeServletApplicationContext() {
-        addControllerToCasServletHandlerMapping(OpenIdConstants.ENDPOINT_OPENID, "openIdProviderController");
+        addControllerToCasServletHandlerMapping(OpenIdProtocolConstants.ENDPOINT_OPENID, "openIdProviderController");
         addServiceTicketUniqueIdGenerator(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
         addArgumentExtractor(this.openIdArgumentExtractor);
     }
 
     @Override
     protected void initializeServletContext(final ServletContextEvent event) {
-        addEndpointMappingToCasServlet(event, OpenIdConstants.ENDPOINT_OPENID);
+        addEndpointMappingToCasServlet(event, OpenIdProtocolConstants.ENDPOINT_OPENID);
     }
 }
