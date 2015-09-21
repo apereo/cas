@@ -22,8 +22,6 @@ package org.jasig.cas.authentication.principal.cache;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.services.persondir.IPersonAttributeDao;
 
