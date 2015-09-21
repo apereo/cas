@@ -21,6 +21,7 @@ package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ import java.io.BufferedReader;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Component("samlServiceFactory")
 public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     private static final int CONST_REQUEST_ID_LENGTH = 11;
