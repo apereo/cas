@@ -17,9 +17,11 @@
  * under the License.
  */
 
-package org.jasig.cas.support.saml;
+package org.jasig.cas.support.openid;
 
-import org.jasig.cas.support.saml.authentication.principal.SamlService;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -32,37 +34,44 @@ import javax.servlet.annotation.WebListener;
 
 /**
  * Initializes the CAS root servlet context to make sure
- * SAML validation endpoint can be activated by the main CAS servlet.
+ * OpenID endpoint can be activated by the main CAS servlet.
  * @author Misagh Moayyed
  * @since 4.2
  */
 @WebListener
 @Component
-public class SamlServletContextListener extends AbstractServletContextInitializer {
+public class OpenIdServletContextListener extends AbstractServletContextInitializer {
 
     @Autowired
-    @Qualifier("samlArgumentExtractor")
-    private ArgumentExtractor samlArgumentExtractor;
+    @Qualifier("serviceTicketUniqueIdGenerator")
+    private UniqueTicketIdGenerator serviceTicketUniqueIdGenerator;
 
     @Autowired
-    @Qualifier("samlServiceTicketUniqueIdGenerator")
-    private UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator;
+    @Qualifier("openIdCredentialsAuthenticationHandler")
+    private AuthenticationHandler openIdCredentialsAuthenticationHandler;
 
-    @Override
-    public void initializeServletContext(final ServletContextEvent sce) {
-        addEndpointMappingToCasServlet(sce, SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
-    }
+    @Autowired
+    @Qualifier("openIdPrincipalResolver")
+    private PrincipalResolver openIdPrincipalResolver;
+
+    @Autowired
+    @Qualifier("openIdArgumentExtractor")
+    private ArgumentExtractor openIdArgumentExtractor;
 
     @Override
     protected void initializeRootApplicationContext() {
-        addArgumentExtractor(this.samlArgumentExtractor);
-        addServiceTicketUniqueIdGenerator(SamlService.class.getCanonicalName(),
-                this.samlServiceTicketUniqueIdGenerator);
+        addAuthenticationHandlerPrincipalResolver(openIdCredentialsAuthenticationHandler, openIdPrincipalResolver);
     }
 
     @Override
     protected void initializeServletApplicationContext() {
-        addControllerToCasServletHandlerMapping(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE,
-                "samlValidateController");
+        addControllerToCasServletHandlerMapping(OpenIdConstants.ENDPOINT_OPENID, "openIdProviderController");
+        addServiceTicketUniqueIdGenerator(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
+        addArgumentExtractor(this.openIdArgumentExtractor);
+    }
+
+    @Override
+    protected void initializeServletContext(final ServletContextEvent event) {
+        addEndpointMappingToCasServlet(event, OpenIdConstants.ENDPOINT_OPENID);
     }
 }

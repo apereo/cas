@@ -26,6 +26,9 @@ package org.jasig.cas.support.openid;
  */
 public final class OpenIdConstants {
 
+    /** OAuth 2 endpoint in CAS. */
+    public static final String ENDPOINT_OPENID = "/openid.0/*";
+
     /**
      * The application callback url.
      */
@@ -71,8 +74,12 @@ public final class OpenIdConstants {
      */
     public static final String ASSOCIATE = "associate";
 
+    /** Check authentication constant. */
+    public static final String CHECK_AUTHENTICATION = "check_authentication";
     /**
      * Private constructor.
      */
     private OpenIdConstants() {}
+
+
 }
