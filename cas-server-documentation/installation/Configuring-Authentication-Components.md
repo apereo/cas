@@ -127,6 +127,7 @@ interest.
 * [X.509](X509-Authentication.html) (client SSL certificate)
 * [Remote Address](Remote-Address-Authentication.html)
 * [YubiKey](YubiKey-Authentication.html)
+* [Apache Shiro](Shiro-Authentication.html)
 
 There are some additional handlers for small deployments and special cases:
 
