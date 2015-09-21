@@ -35,12 +35,10 @@
 
 
     <bean id="googleAppsPrivateKey" class="org.jasig.cas.util.PrivateKeyFactoryBean"
-          init-method="getObject"
       p:location="${cas.saml.googleapps.publickey.file:classpath:DSAPrivateKey01.key}"
       p:algorithm="${cas.saml.googleapps.publickey.alg:DSA}" />
 
-    <bean id="googleAppsPublicKey"	class="org.jasig.cas.util.PublicKeyFactoryBean"
-          init-method="getObject"
+    <bean id="googleAppsPublicKey" class="org.jasig.cas.util.PublicKeyFactoryBean"
           p:location="${cas.saml.googleapps.privatekey.file:classpath:DSAPublicKey01.key}"
           p:algorithm="${cas.saml.googleapps.privatekey.alg:DSA}" />
 
