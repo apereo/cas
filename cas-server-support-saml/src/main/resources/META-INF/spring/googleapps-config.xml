@@ -31,12 +31,12 @@
         references to other beans and whose changes can be configured externally.
     </description>
 
-    <bean id="googleAppsPublicKey" class="org.jasig.cas.util.PrivateKeyFactoryBean"
-      p:location="${cas.saml.googleapps.publickey.file:classpath:private.p8}"
-      p:algorithm="${cas.saml.googleapps.publickey.alg:RSA}" />
+    <bean id="googleAppsPrivateKey" class="org.jasig.cas.util.PrivateKeyFactoryBean"
+        p:location="${cas.saml.googleapps.publickey.file:classpath:DSAPrivateKey01.key}"
+        p:algorithm="${cas.saml.googleapps.publickey.alg:DSA}" />
 
-    <bean id="googleAppsPublicKey"	class="org.jasig.cas.util.PublicKeyFactoryBean"
-          p:location="${cas.saml.googleapps.privatekey.file:classpath:public.p8}"
-          p:algorithm="${cas.saml.googleapps.privatekey.alg:RSA}" />
+    <bean id="googleAppsPublicKey" class="org.jasig.cas.util.PublicKeyFactoryBean"
+        p:location="${cas.saml.googleapps.privatekey.file:classpath:DSAPublicKey01.key}"
+        p:algorithm="${cas.saml.googleapps.privatekey.alg:DSA}" />
 
 </beans>
