@@ -76,7 +76,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     private LockingStrategy lock = new NoOpLockingStrategy();
 
     @NotNull
-    private TicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
 
     /**
      * Instantiates a new Default ticket registry cleaner.
@@ -151,9 +151,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      * such as JPA, in a clustered CAS environment.  Use JPA locking strategies
      * for JPA-backed ticket registries in a clustered
      * CAS environment.
-     * @deprecated As of 4.1. Consider using constructors instead.
      */
-    @Deprecated
     public void setLock(final LockingStrategy strategy) {
         this.lock = strategy;
     }
