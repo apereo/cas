@@ -56,13 +56,7 @@
                 <bean class="org.jasig.cas.services.convert.Converters.PersonAttributesConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.jasig.cas.services.convert.Converters.MutableConfigurationConverter"/>
-            </mongo:converter>
-            <mongo:converter>
                 <bean class="org.jasig.cas.services.convert.Converters.CacheLoaderConverter"/>
-            </mongo:converter>
-            <mongo:converter>
-                <bean class="org.jasig.cas.services.convert.Converters.CacheWriterConverter"/>
             </mongo:converter>
             <mongo:converter>
                 <bean class="org.jasig.cas.services.convert.Converters.RunnableConverter"/>
@@ -77,12 +71,11 @@
                 <bean class="org.jasig.cas.services.convert.Converters.CertPathConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.jasig.cas.services.convert.Converters.CacheManagerConverter"/>
+                <bean class="org.jasig.cas.services.convert.Converters.CacheBuilderConverter"/>
             </mongo:converter>
             <mongo:converter>
                 <bean class="org.jasig.cas.services.convert.Converters.CacheConverter"/>
             </mongo:converter>
-
         </mongo:custom-converters>
     </mongo:mapping-converter>
 
