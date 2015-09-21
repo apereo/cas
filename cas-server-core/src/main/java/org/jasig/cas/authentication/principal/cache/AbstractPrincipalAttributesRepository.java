@@ -170,9 +170,15 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     @Override
     public final Map<String, Object> getAttributes(@NotNull final Principal p) {
-        final Map<String, Object> cachedAttributes = getPrincipalAttributesFromCache(p);
+        final Map<String, Object> cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
             logger.debug("Found [{}] cached attributes for principal [{}]", cachedAttributes.size(), p.getId());
+            return cachedAttributes;
+        }
+
+        if (this.attributeRepository == null) {
+            logger.debug("No attribute repository is defined for [{}]. Returning default principal attributes for {}",
+                    getClass().getName(), p.getId());
             return cachedAttributes;
         }
 
@@ -205,7 +211,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     private Map<String, Object> convertAttributesToPrincipalAttributesAndCache(final Principal p,
                                                         final Map<String, List<Object>>  sourceAttributes) {
         final Map<String, Object> finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
-        addPrincipalAttributesIntoCache(p.getId(), finalAttributes);
+        addPrincipalAttributes(p.getId(), finalAttributes);
         return finalAttributes;
     }
 
@@ -215,7 +221,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param attributes attributes to cache
      * @since 4.2
      */
-    protected abstract void addPrincipalAttributesIntoCache(String id, Map<String, Object> attributes);
+    protected abstract void addPrincipalAttributes(String id, Map<String, Object> attributes);
 
     /**
      * Gets principal attributes from cache.
@@ -223,7 +229,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @param p the principal
      * @return the principal attributes from cache
      */
-    protected abstract Map<String, Object> getPrincipalAttributesFromCache(Principal p);
+    protected abstract Map<String, Object> getPrincipalAttributes(Principal p);
 
     @Override
     public String toString() {
