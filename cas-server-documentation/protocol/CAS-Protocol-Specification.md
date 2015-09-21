@@ -937,6 +937,7 @@ Response on request failure:
     }
   }
 }
+{% endhighlight %}
 
 <a name="head2.7.3"/>
 
