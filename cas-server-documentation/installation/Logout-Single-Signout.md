@@ -26,7 +26,7 @@ user experience by creating symmetry between login and logout.
 
 ##CAS Logout
 
-Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session. Upon logout, it may also be desirable to redirect back to a service. This is controlled via specifying the redirect link via the `service` parameter. 
+Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session. Upon logout, it may also be desirable to redirect back to a service. This is controlled via specifying the redirect link via the `service` parameter.
 
 The redirect behavior is turned off by default, and is activated via the following setting in `cas.properties`:
 
@@ -80,7 +80,7 @@ Logout protocol is effectively managed by the `LogoutManagerImpl` component:
           c:servicesManager-ref="servicesManager"
           c:httpClient-ref="noRedirectHttpClient"
           c:logoutMessageBuilder-ref="logoutBuilder"
-          p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}" 
+          p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}"
           p:asynchronous="${slo.callbacks.asynchronous:true}"/>
 {% endhighlight %}
 
@@ -162,10 +162,10 @@ Furthermore, the default behavior is to issue single sign out callbacks in respo
 
 {% highlight xml %}
 <bean id="ticketRegistryCleaner"
-      class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+  class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+      c:centralAuthenticationService-ref="centralAuthenticationService"
       c:ticketRegistry-ref="ticketRegistry"
-      c:lockingStrategy-ref="cleanerLock"
-      c:logoutManager-ref="logoutManager" />
+      p:lock-ref="cleanerLock"/>
 {% endhighlight %}
 
 Note that certain ticket registries don't use or need a registry cleaner. For such registries, the option of having a ticker registry cleaner is entirely done away with and is currently not implemented. With that being absent, you will no longer receive automatic SLO callbacks upon TGT expiration. As such, the only thing that would reach back to the should then be explicit logout requests per the CAS protocol.
@@ -173,7 +173,7 @@ Note that certain ticket registries don't use or need a registry cleaner. For su
 
 ####With `TicketRegistryCleaner`
 1. Single Logout is turned on
-2. The cleaner runs to detect the ticket that are automatically expired. It will query the tickets in the ticket registry, and will accumulate those that are expired. 
+2. The cleaner runs to detect the ticket that are automatically expired. It will query the tickets in the ticket registry, and will accumulate those that are expired.
 3. For the collection of expired tickets, the cleaner will again ask them to "expire" which triggers the SLO callback to be issued.
 4. The cleaner subsequently removes the TGT from the registry. Note that simply removing a ticket by itself from the registry does not issue the SLO callback. A ticket needs to be explicitly told one way or another, to "expire" itself:
     - If the ticket is already expired, the mechanism will issue the SLO callback.
@@ -182,7 +182,7 @@ Note that certain ticket registries don't use or need a registry cleaner. For su
 
 ####Without `TicketRegistryCleaner`
 1. Single Logout is turned on
-2. There is no cleaner, so nothing runs in the background or otherwise to "expire" and delete tickets from the registry and thus, no SLO callbacks will be issued automatically. 
+2. There is no cleaner, so nothing runs in the background or otherwise to "expire" and delete tickets from the registry and thus, no SLO callbacks will be issued automatically.
 2. A logout request is received by CAS
 3. CAS will locate the TGT and will attempt to destroy the SSO session.
 4. In destroying the ticket, CAS will:
@@ -206,7 +206,7 @@ of the application session itself is entirely independent of CAS and may be loos
 and adjusted depending on the ideal user experience in the event that the application session expires.
 
 In the event that Single Logout is not activated, typically, application may expose a logout endpoint in order to destroy the session and next, redirect
-the agent to the CAS `logout` endpoint in order to completely destroy the SSO session as well. 
+the agent to the CAS `logout` endpoint in order to completely destroy the SSO session as well.
 
 Here's a brief diagram that demonstrates various application session configuration and interactions with CAS:
 
