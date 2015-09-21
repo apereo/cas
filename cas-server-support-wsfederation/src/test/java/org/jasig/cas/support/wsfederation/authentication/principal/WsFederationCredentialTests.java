@@ -21,12 +21,12 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensaml.saml.saml1.core.Assertion;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for {@link WsFederationCredential}.
