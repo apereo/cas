@@ -55,15 +55,15 @@ public final class WsFederationConfiguration implements Serializable {
     private String identityAttribute;
 
     @NotNull
-    @Value("${cas.wsfed.idp.id}")
+    @Value("${cas.wsfed.idp.id:https://adfs.example.org/adfs/services/trust}")
     private String identityProviderIdentifier;
 
     @NotNull
-    @Value("${cas.wsfed.idp.url}")
+    @Value("${cas.wsfed.idp.url:https://adfs.example.org/adfs/ls/}")
     private String identityProviderUrl;
 
     @NotNull
-    @Value("#{'${cas.wsfed.idp.signingcerts}'.split(',')}")
+    @Value("#{'${cas.wsfed.idp.signingcerts:classpath:adfs-signing.crt}'.split(',')}")
     private List<Resource> signingCertificateFiles;
 
     @NotNull
