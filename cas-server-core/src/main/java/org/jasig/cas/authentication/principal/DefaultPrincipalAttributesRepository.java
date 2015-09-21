@@ -36,17 +36,18 @@ public final class DefaultPrincipalAttributesRepository extends AbstractPrincipa
     private static final long serialVersionUID = -4535358847021241725L;
 
     @Override
-    protected void addPrincipalAttributesIntoCache(final String id, final Map<String, Object> attributes) {
+    protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
         logger.debug("Using {}, no caching takes place for {} to add attributes.", id,
                 this.getClass().getSimpleName());
     }
 
     @Override
-    protected Map<String, Object> getPrincipalAttributesFromCache(final Principal p) {
+    protected Map<String, Object> getPrincipalAttributes(final Principal p) {
         logger.debug("{} will return the collection of attributes directly associated with the principal object",
                 this.getClass().getSimpleName());
         return p.getAttributes();
     }
+
 
     @Override
     public String toString() {

@@ -74,13 +74,13 @@ public final class CachingPrincipalAttributesRepository extends AbstractPrincipa
     }
 
     @Override
-    protected void addPrincipalAttributesIntoCache(final String id, final Map<String, Object> attributes) {
+    protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
         this.cache.put(id, attributes);
         logger.debug("Cached attributes for {}", id);
     }
 
     @Override
-    protected Map<String, Object> getPrincipalAttributesFromCache(final Principal p) {
+    protected Map<String, Object> getPrincipalAttributes(final Principal p) {
         try {
             return this.cache.get(p.getId(), new Callable<Map<String, Object>>() {
                 @Override
