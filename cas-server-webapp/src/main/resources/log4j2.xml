@@ -36,6 +36,15 @@
                 <TimeBasedTriggeringPolicy />
             </Policies>
         </RollingFile>
+        <RollingFile name="auditlogfile" fileName="cas_audit.log" append="true"
+                     filePattern="cas_audit-%d{yyyy-MM-dd-HH}-%i.log">
+            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
         <RollingFile name="perfFileAppender" fileName="perfStats.log" append="true"
                      filePattern="perfStats-%d{yyyy-MM-dd-HH}-%i.log">
             <PatternLayout pattern="%m%n"/>
@@ -64,6 +73,7 @@
             <AppenderRef ref="file"/>
         </Logger>
         <Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+            <AppenderRef ref="auditlogfile"/>
             <AppenderRef ref="file"/>
         </Logger>
         <Root level="error">
