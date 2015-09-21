@@ -34,6 +34,7 @@ public class RememberMeUsernamePasswordCredential extends UsernamePasswordCreden
 
     private boolean rememberMe;
 
+    @Override
     public final boolean isRememberMe() {
         return this.rememberMe;
     }
@@ -64,6 +65,7 @@ public class RememberMeUsernamePasswordCredential extends UsernamePasswordCreden
         return true;
     }
 
+    @Override
     public final void setRememberMe(final boolean rememberMe) {
         this.rememberMe = rememberMe;
     }
