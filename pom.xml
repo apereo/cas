@@ -503,6 +503,7 @@
                         <yml>SCRIPT_STYLE</yml>
                         <conf>JAVADOC_STYLE</conf>
                         <less>JAVADOC_STYLE</less>
+                        <ini>SCRIPT_STYLE</ini>
                     </mapping>
                     <excludes>
                         <exclude>**/bin/**</exclude>
