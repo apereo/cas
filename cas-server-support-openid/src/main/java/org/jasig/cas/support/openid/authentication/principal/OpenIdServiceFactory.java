@@ -22,6 +22,7 @@ package org.jasig.cas.support.openid.authentication.principal;
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.openid4java.message.ParameterList;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Component("openIdServiceFactory")
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {
 
     /**
