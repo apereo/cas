@@ -5,7 +5,7 @@ title: CAS - JPA Ticket Registry
 
 
 # JPA Ticket Registry
-The JPA Ticket Registry allows CAS to store client authenticated state data (tickets) in a database back-end such as MySQL. 
+The JPA Ticket Registry allows CAS to store client authenticated state data (tickets) in a database back-end such as MySQL.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Using a RDBMS as the back-end persistence choice for Ticket Registry state management is a fairly unnecessary and complicated process. Ticket registries generally do not need the durability that comes with RDBMS and unless you are already outfitted with clustered RDBMS technology and the resources to manage it, the complexity is likely not worth the trouble. Given the proliferation of hardware virtualization and the redundancy and vertical scaling they often provide, more suitable recommendation would be the default in-memory ticket registry for a single node CAS deployment and distributed cache-based registries for higher availability.</p></div>
 
@@ -29,8 +29,8 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
     id="jpaVendorAdapter"
     p:generateDdl="true"
     p:showSql="true" />
-    
-<bean id="entityManagerFactory" 
+
+<bean id="entityManagerFactory"
     class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
     p:dataSource-ref="dataSource"
     p:jpaVendorAdapter-ref="jpaVendorAdapter"
@@ -49,10 +49,11 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 
 <tx:annotation-driven transaction-manager="transactionManager" />
 
-<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+<bean id="ticketRegistryCleaner"
+  class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+      c:centralAuthenticationService-ref="centralAuthenticationService"
       c:ticketRegistry-ref="ticketRegistry"
-      c:lockingStrategy-ref="cleanerLock"
-      c:logoutManager-ref="logoutManager" />
+      p:lock-ref="cleanerLock"/>
 
 <bean id="cleanerLock" class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy"
         p:uniqueId="${host.name}"
@@ -62,13 +63,13 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
        class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
         p:targetObject-ref="ticketRegistryCleaner"
         p:targetMethod="clean" />
- 
-<bean id="triggerJobDetailTicketRegistryCleaner" 
-    class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+
+<bean id="triggerJobDetailTicketRegistryCleaner"
+    class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
         p:jobDetail-ref="jobDetailTicketRegistryCleaner"
         p:startDelay="20000"
         p:repeatInterval="5000000" />
- 
+
 {% endhighlight %}
 
 The above snippet assumes that data source information and connection details are defined.
@@ -95,7 +96,7 @@ In the `pom.xml` file of the Maven overlay, adjust for the following dependencie
 ...
 {% endhighlight %}
 
-##Cleaner Locking Strategy 
+##Cleaner Locking Strategy
 The above shows a JPA 2.0 implementation of an exclusive, non-reentrant lock, `JpaLockingStrategy`, to be used with the JPA-backed ticket registry.
 
 This will configure the cleaner with the following defaults:
@@ -144,7 +145,7 @@ CREATE INDEX ST_TGT_FK_I ON TICKETGRANTINGTICKET (ticketGrantingTicket_ID);
 CREATE INDEX "ST_TGT_FK_I"
   ON SERVICETICKET ("TICKETGRANTINGTICKET_ID")
   COMPUTE STATISTICS;
- 
+
 /** Create index on TGT self-referential foreign-key constraint */
 CREATE INDEX "TGT_TGT_FK_I"
   ON TICKETGRANTINGTICKET ("TICKETGRANTINGTICKET_ID")
@@ -198,7 +199,7 @@ It is ***strongly*** recommended that database connection pooling be used in a p
 ...
 {% endhighlight %}
 
-The following pool configuration parameters are provided for information only and may serve as a reasonable starting point for configuring a production database connection pool. 
+The following pool configuration parameters are provided for information only and may serve as a reasonable starting point for configuring a production database connection pool.
 
 <div class="alert alert-info"><strong>Usage Tip</strong><p>Note the health check query is specific to PostgreSQL.</p></div>
 
@@ -211,35 +212,35 @@ database.user=somebody
 database.password=meaningless
 database.pool.minSize=6
 database.pool.maxSize=18
- 
+
 # Maximum amount of time to wait in ms for a connection to become
 # available when the pool is exhausted
 database.pool.maxWait=10000
- 
+
 # Amount of time in seconds after which idle connections
 # in excess of minimum size are pruned.
 database.pool.maxIdleTime=120
- 
+
 # Number of connections to obtain on pool exhaustion condition.
 # The maximum pool size is always respected when acquiring
 # new connections.
 database.pool.acquireIncrement=6
- 
+
 # == Connection testing settings ==
- 
+
 # Period in s at which a health query will be issued on idle
 # connections to determine connection liveliness.
 database.pool.idleConnectionTestPeriod=30
- 
+
 # Query executed periodically to test health
 database.pool.connectionHealthQuery=select 1
- 
+
 # == Database recovery settings ==
- 
+
 # Number of times to retry acquiring a _new_ connection
 # when an error is encountered during acquisition.
 database.pool.acquireRetryAttempts=5
- 
+
 # Amount of time in ms to wait between successive aquire retry attempts.
 database.pool.acquireRetryDelay=2000
 {% endhighlight %}
@@ -269,7 +270,7 @@ InnoDB tables are easily specified via the use of the following Hibernate dialec
 
 {% highlight xml %}
 <prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
- 
+
 <!-- OR for MySQL 5.x use the following instead -->
 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
 {% endhighlight %}
@@ -292,13 +293,3 @@ Adjust the `my.cnf` file to include the following:
 {% highlight bash %}
 lower-case-table-names = 1
 {% endhighlight %}
-
-
-
-
-
-
-
-
-
-
