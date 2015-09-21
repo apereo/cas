@@ -84,7 +84,7 @@
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/LockingStrategy.html">LockingStrategy</a> lock = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/NoOpLockingStrategy.html">NoOpLockingStrategy</a>();
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      @NotNull
-<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">private</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/TicketRegistry.html">TicketRegistry</a> ticketRegistry;
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/TicketRegistry.html">TicketRegistry</a> ticketRegistry;
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>  
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  <em class="jxr_javadoccomment">     * Instantiates a new Default ticket registry cleaner.</em>
@@ -159,33 +159,31 @@
 <a class="jxr_linenumber" name="L151" href="#L151">151</a> <em class="jxr_javadoccomment">     * such as JPA, in a clustered CAS environment.  Use JPA locking strategies</em>
 <a class="jxr_linenumber" name="L152" href="#L152">152</a> <em class="jxr_javadoccomment">     * for JPA-backed ticket registries in a clustered</em>
 <a class="jxr_linenumber" name="L153" href="#L153">153</a> <em class="jxr_javadoccomment">     * CAS environment.</em>
-<a class="jxr_linenumber" name="L154" href="#L154">154</a> <em class="jxr_javadoccomment">     * @deprecated As of 4.1. Consider using constructors instead.</em>
-<a class="jxr_linenumber" name="L155" href="#L155">155</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>     @Deprecated
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLock(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/LockingStrategy.html">LockingStrategy</a> strategy) {
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         <strong class="jxr_keyword">this</strong>.lock = strategy;
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>     }
-<a class="jxr_linenumber" name="L160" href="#L160">160</a> 
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L162" href="#L162">162</a> <em class="jxr_javadoccomment">     * @deprecated As of 4.1, single signout callbacks are entirely controlled by the {@link LogoutManager}.</em>
-<a class="jxr_linenumber" name="L163" href="#L163">163</a> <em class="jxr_javadoccomment">     * @param logUserOutOfServices whether to logger the user out of services or not.</em>
-<a class="jxr_linenumber" name="L164" href="#L164">164</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>     @Deprecated
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLogUserOutOfServices(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> logUserOutOfServices) {
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         logger.warn(<span class="jxr_string">"Invoking setLogUserOutOfServices() is deprecated and has no impact."</span>);
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
-<a class="jxr_linenumber" name="L169" href="#L169">169</a> 
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L171" href="#L171">171</a> <em class="jxr_javadoccomment">     * Set the logout manager.</em>
-<a class="jxr_linenumber" name="L172" href="#L172">172</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L173" href="#L173">173</a> <em class="jxr_javadoccomment">     * @param logoutManager the logout manager.</em>
-<a class="jxr_linenumber" name="L174" href="#L174">174</a> <em class="jxr_javadoccomment">     * @deprecated As of 4.1. Consider using constructors instead.</em>
-<a class="jxr_linenumber" name="L175" href="#L175">175</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>     @Deprecated
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLogoutManager(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/logout/LogoutManager.html">LogoutManager</a> logoutManager) {
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         logger.warn(<span class="jxr_string">"Invoking setLogoutManager() is deprecated and has no impact."</span>);
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>     }
-<a class="jxr_linenumber" name="L180" href="#L180">180</a> }
+<a class="jxr_linenumber" name="L154" href="#L154">154</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLock(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/support/LockingStrategy.html">LockingStrategy</a> strategy) {
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">this</strong>.lock = strategy;
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>     }
+<a class="jxr_linenumber" name="L158" href="#L158">158</a> 
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> <em class="jxr_javadoccomment">     * @deprecated As of 4.1, single signout callbacks are entirely controlled by the {@link LogoutManager}.</em>
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> <em class="jxr_javadoccomment">     * @param logUserOutOfServices whether to logger the user out of services or not.</em>
+<a class="jxr_linenumber" name="L162" href="#L162">162</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     @Deprecated
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLogUserOutOfServices(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> logUserOutOfServices) {
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         logger.warn(<span class="jxr_string">"Invoking setLogUserOutOfServices() is deprecated and has no impact."</span>);
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>     }
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> 
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> <em class="jxr_javadoccomment">     * Set the logout manager.</em>
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> <em class="jxr_javadoccomment">     * @param logoutManager the logout manager.</em>
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> <em class="jxr_javadoccomment">     * @deprecated As of 4.1. Consider using constructors instead.</em>
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>     @Deprecated
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLogoutManager(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/logout/LogoutManager.html">LogoutManager</a> logoutManager) {
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>         logger.warn(<span class="jxr_string">"Invoking setLogoutManager() is deprecated and has no impact."</span>);
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>     }
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

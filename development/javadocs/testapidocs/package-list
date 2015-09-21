@@ -12,6 +12,7 @@ org.jasig.cas.adaptors.x509.authentication.handler.support.ldap
 org.jasig.cas.adaptors.x509.authentication.principal
 org.jasig.cas.adaptors.x509.util
 org.jasig.cas.adaptors.x509.web.flow
+org.jasig.cas.adaptors.yubikey
 org.jasig.cas.audit.spi
 org.jasig.cas.authentication
 org.jasig.cas.authentication.handler
@@ -49,6 +50,8 @@ org.jasig.cas.support.spnego
 org.jasig.cas.support.spnego.authentication.handler.support
 org.jasig.cas.support.spnego.authentication.principal
 org.jasig.cas.support.spnego.web.flow.client
+org.jasig.cas.support.wsfederation
+org.jasig.cas.support.wsfederation.authentication.principal
 org.jasig.cas.ticket
 org.jasig.cas.ticket.proxy.support
 org.jasig.cas.ticket.registry
