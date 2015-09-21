@@ -19,19 +19,11 @@
 
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.PrivateKeyFactoryBean;
-import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertNull;
 
 /**
  * Test cases for {@link GoogleAccountsServiceFactory}.
@@ -43,26 +35,7 @@ public class GoogleAccountsServiceFactoryTests {
 
     @Before
     public void setUp() throws Exception {
-        final PublicKeyFactoryBean pubKeyFactoryBean = new PublicKeyFactoryBean();
-        final PrivateKeyFactoryBean privKeyFactoryBean = new PrivateKeyFactoryBean();
-
-        pubKeyFactoryBean.setAlgorithm("DSA");
-        privKeyFactoryBean.setAlgorithm("DSA");
-
-        final ClassPathResource pubKeyResource = new ClassPathResource("DSAPublicKey01.key");
-        final ClassPathResource privKeyResource = new ClassPathResource("DSAPrivateKey01.key");
-
-        pubKeyFactoryBean.setLocation(pubKeyResource);
-        privKeyFactoryBean.setLocation(privKeyResource);
-        assertTrue(privKeyFactoryBean.getObjectType().equals(PrivateKey.class));
-        assertTrue(pubKeyFactoryBean.getObjectType().equals(PublicKey.class));
-        pubKeyFactoryBean.afterPropertiesSet();
-        privKeyFactoryBean.afterPropertiesSet();
-
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-
-        this.factory = new GoogleAccountsServiceFactory(pubKeyFactoryBean.getObject(),
-                privKeyFactoryBean.getObject(), servicesManager);
+        this.factory = new GoogleAccountsServiceFactory();
     }
     @Test
     public void verifyNoService() {

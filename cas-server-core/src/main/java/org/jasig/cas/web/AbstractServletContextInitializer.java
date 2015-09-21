@@ -21,6 +21,8 @@ package org.jasig.cas.web;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
@@ -199,6 +201,18 @@ public abstract class AbstractServletContextInitializer implements ServletContex
     protected final void addArgumentExtractor(final ArgumentExtractor ext) {
         final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
         list.add(ext);
+    }
+
+
+    /**
+     * Add service factory.
+     *
+     * @param factory the factory
+     */
+    protected void addServiceFactory(final ServiceFactory<? extends Service> factory) {
+        final List<ServiceFactory<? extends Service>> list =
+                applicationContext.getBean("serviceFactoryList", List.class);
+        list.add(factory);
     }
 
     /**

@@ -22,6 +22,7 @@ package org.jasig.cas.support.openid;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -55,8 +56,8 @@ public class OpenIdServletContextListener extends AbstractServletContextInitiali
     private PrincipalResolver openIdPrincipalResolver;
 
     @Autowired
-    @Qualifier("openIdArgumentExtractor")
-    private ArgumentExtractor openIdArgumentExtractor;
+    @Qualifier("openIdServiceFactory")
+    private OpenIdServiceFactory openIdServiceFactory;
 
     @Override
     protected void initializeRootApplicationContext() {
@@ -67,7 +68,7 @@ public class OpenIdServletContextListener extends AbstractServletContextInitiali
     protected void initializeServletApplicationContext() {
         addControllerToCasServletHandlerMapping(OpenIdProtocolConstants.ENDPOINT_OPENID, "openIdProviderController");
         addServiceTicketUniqueIdGenerator(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
-        addArgumentExtractor(this.openIdArgumentExtractor);
+        addServiceFactory(openIdServiceFactory);
     }
 
     @Override

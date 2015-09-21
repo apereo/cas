@@ -32,7 +32,7 @@
     </description>
 
     <bean id="defaultArgumentExtractor" 
-    	class="org.jasig.cas.web.support.DefaultArgumentExtractor"
+        class="org.jasig.cas.web.support.DefaultArgumentExtractor"
         c:serviceFactoryList-ref="serviceFactoryList" />
 
     <util:list id="serviceFactoryList">

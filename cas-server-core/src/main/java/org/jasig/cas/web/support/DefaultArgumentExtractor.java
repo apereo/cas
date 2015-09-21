@@ -20,6 +20,7 @@ package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
@@ -33,6 +34,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Component("defaultArgumentExtractor")
 public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 
     /**
