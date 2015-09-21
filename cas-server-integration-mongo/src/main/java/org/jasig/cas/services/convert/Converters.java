@@ -27,10 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.converter.Converter;
 
-import javax.cache.Cache;
-import javax.cache.CacheManager;
-import javax.cache.configuration.MutableConfiguration;
-import javax.cache.integration.CacheWriter;
 import java.lang.ref.ReferenceQueue;
 import java.security.cert.CertPath;
 
@@ -91,27 +87,11 @@ public final class Converters {
     }
 
     /**
-     * The type Mutable configuration converter.
-     * @since 4.1
-     */
-    public static class MutableConfigurationConverter
-            extends NullConverter<MutableConfiguration, DBObject> {
-    }
-
-    /**
      * The type Cache loader converter.
      * @since 4.1
      */
     public static class CacheLoaderConverter
             extends NullConverter<CacheLoader, DBObject> {
-    }
-
-    /**
-     * The type Cache writer converter.
-     * @since 4.1
-     */
-    public static class CacheWriterConverter
-            extends NullConverter<CacheWriter, DBObject> {
     }
 
     /**
@@ -145,20 +125,5 @@ public final class Converters {
     public static class CertPathConverter
             extends NullConverter<CertPath, DBObject> {
     }
-
-    /**
-     * The type Cache manager converter.
-     * @since 4.1
-     */
-    public static class CacheManagerConverter
-            extends NullConverter<CacheManager, DBObject> {
-    }
-
-    /**
-     * The type Cache converter.
-     * @since 4.1
-     */
-    public static class CacheConverter
-            extends NullConverter<Cache, DBObject> {
-    }
+    
 }
