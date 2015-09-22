@@ -231,7 +231,6 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
     }
 
     /**
-     * {@inheritDoc}
      * @see Cache#getKeysWithExpiryCheck()
      */
     @Override
@@ -241,7 +240,6 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
     }
 
     /**
-     * {@inheritDoc}
      * @see Cache#getKeysWithExpiryCheck()
      */
     @Override
