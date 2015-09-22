@@ -73,7 +73,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
     public GoogleAccountsService createService(final HttpServletRequest request) {
 
         if (this.publicKey == null || this.privateKey == null) {
-            logger.debug("{} is will not turn on because private/public keys are not configured",
+            logger.debug("{} will not turn on because private/public keys are not configured",
                     getClass().getName());
             return null;
         }
