@@ -36,7 +36,7 @@
                                   ignore-resource-not-found="false"
                                   ignore-unresolvable="false"/>
 
-    <context:component-scan base-package="org.jasig.cas.support"
+    <context:component-scan base-package="org.jasig.cas.support.wsfederation"
                             annotation-config="true" />
     <context:annotation-config />
 
