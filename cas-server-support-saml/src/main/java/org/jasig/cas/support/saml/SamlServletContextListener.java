@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
@@ -112,8 +113,10 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
 
             }
             final PrivateKeyFactoryBean bean = new PrivateKeyFactoryBean();
-            bean.setLocation(new FileSystemResource(this.publicKeyLocation));
+            bean.setLocation(new FileSystemResource(ResourceUtils.getFile(this.privateKeyLocation).getCanonicalPath()));
             bean.setAlgorithm(this.keyAlgorithm);
+            bean.afterPropertiesSet();
+
             logger.debug("Creating Google Apps private key instance via {}", this.publicKeyLocation);
             return bean.getObject();
         }
@@ -126,8 +129,9 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
             }
 
             final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
-            bean.setLocation(new FileSystemResource(this.publicKeyLocation));
+            bean.setLocation(new FileSystemResource(ResourceUtils.getFile(this.publicKeyLocation).getCanonicalPath()));
             bean.setAlgorithm(this.keyAlgorithm);
+            bean.afterPropertiesSet();
 
             logger.debug("Creating Google Apps public key instance via {}", this.publicKeyLocation);
             return bean.getObject();
