@@ -24,7 +24,7 @@ package org.jasig.cas.support.openid;
  * @author Jerome Leleu
  * @since 4.1.0
  */
-public final class OpenIdConstants {
+public final class OpenIdProtocolConstants {
 
     /** OAuth 2 endpoint in CAS. */
     public static final String ENDPOINT_OPENID = "/openid.0/*";
@@ -79,7 +79,7 @@ public final class OpenIdConstants {
     /**
      * Private constructor.
      */
-    private OpenIdConstants() {}
+    private OpenIdProtocolConstants() {}
 
 
 }

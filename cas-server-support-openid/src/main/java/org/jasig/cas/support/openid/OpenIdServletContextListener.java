@@ -22,9 +22,9 @@ package org.jasig.cas.support.openid;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
+import org.jasig.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
-import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -55,8 +55,8 @@ public class OpenIdServletContextListener extends AbstractServletContextInitiali
     private PrincipalResolver openIdPrincipalResolver;
 
     @Autowired
-    @Qualifier("openIdArgumentExtractor")
-    private ArgumentExtractor openIdArgumentExtractor;
+    @Qualifier("openIdServiceFactory")
+    private OpenIdServiceFactory openIdServiceFactory;
 
     @Override
     protected void initializeRootApplicationContext() {
@@ -65,13 +65,13 @@ public class OpenIdServletContextListener extends AbstractServletContextInitiali
 
     @Override
     protected void initializeServletApplicationContext() {
-        addControllerToCasServletHandlerMapping(OpenIdConstants.ENDPOINT_OPENID, "openIdProviderController");
+        addControllerToCasServletHandlerMapping(OpenIdProtocolConstants.ENDPOINT_OPENID, "openIdProviderController");
         addServiceTicketUniqueIdGenerator(OpenIdService.class.getCanonicalName(), this.serviceTicketUniqueIdGenerator);
-        addArgumentExtractor(this.openIdArgumentExtractor);
+        addServiceFactory(openIdServiceFactory);
     }
 
     @Override
     protected void initializeServletContext(final ServletContextEvent event) {
-        addEndpointMappingToCasServlet(event, OpenIdConstants.ENDPOINT_OPENID);
+        addEndpointMappingToCasServlet(event, OpenIdProtocolConstants.ENDPOINT_OPENID);
     }
 }

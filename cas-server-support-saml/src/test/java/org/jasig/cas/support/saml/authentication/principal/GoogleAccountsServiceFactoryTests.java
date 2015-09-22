@@ -17,28 +17,26 @@
  * under the License.
  */
 
-package org.jasig.cas.web.support;
+package org.jasig.cas.support.saml.authentication.principal;
 
+import org.jasig.cas.support.saml.AbstractOpenSamlTests;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
 
-import org.apache.commons.lang3.NotImplementedException;
-import org.jasig.cas.authentication.principal.WebApplicationService;
-
-import javax.servlet.http.HttpServletRequest;
+import static org.junit.Assert.assertNull;
 
 /**
- * @deprecated As of 4.2, use {@link DefaultArgumentExtractor}.
- * Implements the traditional CAS2 protocol.
- *
- * @author Scott Battaglia
- * @since 3.1
+ * Test cases for {@link GoogleAccountsServiceFactory}.
+ * @author Misagh Moayyed
+ * @since 4.2
  */
-@Deprecated
-public final class CasArgumentExtractor extends AbstractArgumentExtractor {
-    @Override
-    public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        throw new NotImplementedException("This operation is not supported. "
-                + "The class is deprecated and will be removed in future versions");
+public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
+    @Autowired
+    private GoogleAccountsServiceFactory factory;
+
+    @Test
+    public void verifyNoService() {
+        assertNull(factory.createService(new MockHttpServletRequest()));
     }
 }
-
-
