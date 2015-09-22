@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
@@ -113,7 +114,14 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
 
             }
             final PrivateKeyFactoryBean bean = new PrivateKeyFactoryBean();
-            bean.setLocation(new FileSystemResource(ResourceUtils.getFile(this.privateKeyLocation).getCanonicalPath()));
+
+            if (this.privateKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                bean.setLocation(new ClassPathResource(
+                    StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            } else {
+                bean.setLocation(new FileSystemResource(this.privateKeyLocation));
+            }
+
             bean.setAlgorithm(this.keyAlgorithm);
             bean.afterPropertiesSet();
 
@@ -129,7 +137,13 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
             }
 
             final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
-            bean.setLocation(new FileSystemResource(ResourceUtils.getFile(this.publicKeyLocation).getCanonicalPath()));
+            if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                bean.setLocation(new ClassPathResource(
+                    StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            } else {
+                bean.setLocation(new FileSystemResource(this.publicKeyLocation));
+            }
+
             bean.setAlgorithm(this.keyAlgorithm);
             bean.afterPropertiesSet();
 
