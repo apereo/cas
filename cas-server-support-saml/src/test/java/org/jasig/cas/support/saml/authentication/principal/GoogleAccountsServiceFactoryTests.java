@@ -20,7 +20,6 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -36,14 +35,8 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
     private GoogleAccountsServiceFactory factory;
 
-    @Before
-    public void setUp() throws Exception {
-        this.factory = new GoogleAccountsServiceFactory();
-    }
     @Test
     public void verifyNoService() {
         assertNull(factory.createService(new MockHttpServletRequest()));
     }
-
-
 }
