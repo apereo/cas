@@ -25,8 +25,6 @@ import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceTests;
 import org.jasig.cas.support.saml.util.SamlCompliantUniqueTicketIdGeneratorTests;
 import org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserActionTests;
-import org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractorTests;
-import org.jasig.cas.support.saml.web.support.SamlArgumentExtractorTests;
 import org.jasig.cas.support.saml.web.support.WebUtilTests;
 import org.jasig.cas.support.saml.web.view.Saml10FailureResponseViewTests;
 import org.jasig.cas.support.saml.web.view.Saml10SuccessResponseViewTests;
@@ -46,8 +44,6 @@ import org.junit.runners.Suite;
         SamlAuthenticationRequestTests.class,
         SamlCompliantUniqueTicketIdGeneratorTests.class,
         SamlMetadataUIParserActionTests.class,
-        GoogleAccountsArgumentExtractorTests.class,
-        SamlArgumentExtractorTests.class,
         WebUtilTests.class,
         Saml10FailureResponseViewTests.class,
         Saml10SuccessResponseViewTests.class

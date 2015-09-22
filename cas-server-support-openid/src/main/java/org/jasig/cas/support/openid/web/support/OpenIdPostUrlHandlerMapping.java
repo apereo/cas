@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.support.openid.web.support;
 
-import org.jasig.cas.support.openid.OpenIdConstants;
+import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,8 +56,10 @@ public final class OpenIdPostUrlHandlerMapping extends SimpleUrlHandlerMapping {
     @Override
     protected Object lookupHandler(final String urlPath, final HttpServletRequest request) throws Exception {
         if (HttpMethod.POST.name().equals(request.getMethod())
-                && (OpenIdConstants.CHECK_AUTHENTICATION.equals(request.getParameter(OpenIdConstants.OPENID_MODE))
-                    || OpenIdConstants.ASSOCIATE.equals(request.getParameter(OpenIdConstants.OPENID_MODE)))) {
+                && (OpenIdProtocolConstants.CHECK_AUTHENTICATION
+                .equals(request.getParameter(OpenIdProtocolConstants.OPENID_MODE))
+                    || OpenIdProtocolConstants.ASSOCIATE
+                .equals(request.getParameter(OpenIdProtocolConstants.OPENID_MODE)))) {
             return super.lookupHandler(urlPath, request);
         }
 
