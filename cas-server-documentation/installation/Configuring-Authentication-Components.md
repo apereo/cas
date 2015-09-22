@@ -140,35 +140,27 @@ Extractors are responsible to examine the http request received for parameters t
 Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml`. Here's a brief sample:
 
 {% highlight xml %}
-<bean id="casArgumentExtractor"	class="org.jasig.cas.web.support.CasArgumentExtractor" />
+<bean id="defaultArgumentExtractor" 
+	class="org.jasig.cas.web.support.DefaultArgumentExtractor"
+    c:serviceFactoryList-ref="serviceFactoryList" />
+
+<util:list id="serviceFactoryList">
+    <bean class="org.jasig.cas.authentication.principal.WebApplicationServiceFactory" />
+</util:list>
 
 <util:list id="argumentExtractors">
-    <ref bean="casArgumentExtractor" />
+    <ref bean="defaultArgumentExtractor"/>
 </util:list>
 {% endhighlight %}
-
 
 ###Components
 
 ####`ArgumentExtractor`
 Strategy parent interface that defines operations needed to extract arguments from the http request.
 
-
-####`CasArgumentExtractor`
-Argument extractor that maps the request based on the specifications of the CAS protocol.
-
-
-####`GoogleAccountsArgumentExtractor`
-Argument extractor to be used to enable Google Apps integration and SAML v2 specification.
-
-
-####`SamlArgumentExtractor`
-Argument extractor compliant with SAML v1.1 specification.
-
-
-####`OpenIdArgumentExtractor`
-Argument extractor compliant with OpenId protocol.
-
+####`DefaultArgumentExtractor`
+Argument extractor implementation that maps the request. When the request is processed, it is handed off
+to one of the service factories listed above to actually create the CAS `WebApplicationService` object.
 
 ## Principal Resolution
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
