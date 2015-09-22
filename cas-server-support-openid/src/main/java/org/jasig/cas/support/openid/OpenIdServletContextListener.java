@@ -25,7 +25,6 @@ import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
-import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

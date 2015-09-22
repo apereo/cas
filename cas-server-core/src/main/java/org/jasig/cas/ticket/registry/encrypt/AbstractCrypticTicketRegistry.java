@@ -28,7 +28,6 @@ import org.jasig.cas.util.CipherExecutor;
 import org.jasig.cas.util.CompressionUtils;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.Null;
 import java.util.Collection;
 import java.util.HashSet;
 
