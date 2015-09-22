@@ -18,10 +18,11 @@
  */
 package org.jasig.cas.support.rest;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Formatter;
@@ -105,7 +107,7 @@ public class TicketsResource {
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
             final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
-                    new SimpleWebApplicationServiceImpl(requestBody.getFirst("service")));
+                    new WebApplicationServiceFactory().createService(requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE)));
             return new ResponseEntity<String>(serviceTicketId.getId(), HttpStatus.OK);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<String>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
