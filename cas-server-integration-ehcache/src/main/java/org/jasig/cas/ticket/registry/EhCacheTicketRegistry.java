@@ -205,6 +205,8 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        logger.info("Setting up Ehcache Ticket Registry...");
+
         if (this.serviceTicketsCache == null || this.ticketGrantingTicketsCache == null) {
             throw new BeanInstantiationException(this.getClass(),
                     "Both serviceTicketsCache and ticketGrantingTicketsCache are required properties.");
