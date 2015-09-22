@@ -22,6 +22,7 @@ package org.jasig.cas.support.openid.authentication.principal;
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.openid4java.message.ParameterList;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -41,6 +42,7 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
      * The prefix url for OpenID (without the trailing slash).
      */
     @NotNull
+    @Value("${server.prefix}/openid")
     private String openIdPrefixUrl;
 
     public String getOpenIdPrefixUrl() {
