@@ -71,6 +71,8 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
      */
     public MemCacheTicketRegistry(final String[] hostnames, final int ticketGrantingTicketTimeOut,
                                   final int serviceTicketTimeOut) {
+        logger.info("Setting up Memcached Ticket Registry...");
+
         try {
             this.client = new MemcachedClient(AddrUtil.getAddresses(Arrays.asList(hostnames)));
         } catch (final IOException e) {
@@ -185,6 +187,7 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
      *
      * @throws Exception the exception
      */
+    @Override
     public void destroy() throws Exception {
         this.client.shutdown();
     }
