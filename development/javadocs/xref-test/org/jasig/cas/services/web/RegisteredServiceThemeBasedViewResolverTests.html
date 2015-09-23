@@ -26,8 +26,8 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.services.web;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.WebApplicationService;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.WebApplicationService;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.DefaultServicesManagerImpl;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegisteredServiceImpl;
@@ -76,7 +76,7 @@
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">final</strong> MockRequestContext requestContext = <strong class="jxr_keyword">new</strong> MockRequestContext();
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          RequestContextHolder.setRequestContext(requestContext);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>  
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">final</strong> WebApplicationService webApplicationService = <strong class="jxr_keyword">new</strong> SimpleWebApplicationServiceImpl(<span class="jxr_string">"myServiceId"</span>);
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">final</strong> WebApplicationService webApplicationService = <strong class="jxr_keyword">new</strong> WebApplicationServiceFactory().createService(<span class="jxr_string">"myServiceId"</span>);
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>          requestContext.getFlowScope().put(<span class="jxr_string">"service"</span>, webApplicationService);
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>  
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          assertEquals(<span class="jxr_string">"/WEB-INF/view/jsp/myTheme/ui/casLoginView"</span>,
@@ -88,7 +88,7 @@
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">final</strong> MockRequestContext requestContext = <strong class="jxr_keyword">new</strong> MockRequestContext();
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>          RequestContextHolder.setRequestContext(requestContext);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  
-<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> WebApplicationService webApplicationService = <strong class="jxr_keyword">new</strong> SimpleWebApplicationServiceImpl(<span class="jxr_string">"myDefaultId"</span>);
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          <strong class="jxr_keyword">final</strong> WebApplicationService webApplicationService = <strong class="jxr_keyword">new</strong> WebApplicationServiceFactory().createService(<span class="jxr_string">"myDefaultId"</span>);
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          requestContext.getFlowScope().put(<span class="jxr_string">"service"</span>, webApplicationService);
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>  
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          assertEquals(<span class="jxr_string">"/WEB-INF/view/jsp/defaultTheme/ui/casLoginView"</span>,

@@ -213,43 +213,43 @@
 <a class="jxr_linenumber" name="L205" href="#L205">205</a> 
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>     @Override
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> afterPropertiesSet() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.serviceTicketsCache == <strong class="jxr_keyword">null</strong> || <strong class="jxr_keyword">this</strong>.ticketGrantingTicketsCache == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> BeanInstantiationException(<strong class="jxr_keyword">this</strong>.getClass(),
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>                     <span class="jxr_string">"Both serviceTicketsCache and ticketGrantingTicketsCache are required properties."</span>);
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>         }
-<a class="jxr_linenumber" name="L212" href="#L212">212</a> 
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">if</strong> (logger.isDebugEnabled()) {
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>             CacheConfiguration config = <strong class="jxr_keyword">this</strong>.serviceTicketsCache.getCacheConfiguration();
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.maxElementsInMemory={}"</span>, config.getMaxEntriesLocalHeap());
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.maxElementsOnDisk={}"</span>, config.getMaxElementsOnDisk());
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.isOverflowToDisk={}"</span>, config.isOverflowToDisk());
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.timeToLive={}"</span>, config.getTimeToLiveSeconds());
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.timeToIdle={}"</span>, config.getTimeToIdleSeconds());
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.cacheManager={}"</span>, <strong class="jxr_keyword">this</strong>.serviceTicketsCache.getCacheManager().getName());
-<a class="jxr_linenumber" name="L221" href="#L221">221</a> 
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>             config = <strong class="jxr_keyword">this</strong>.ticketGrantingTicketsCache.getCacheConfiguration();
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.maxElementsInMemory={}"</span>, config.getMaxEntriesLocalHeap());
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.maxElementsOnDisk={}"</span>, config.getMaxElementsOnDisk());
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.isOverflowToDisk={}"</span>, config.isOverflowToDisk());
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.timeToLive={}"</span>, config.getTimeToLiveSeconds());
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.timeToIdle={}"</span>, config.getTimeToIdleSeconds());
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.cacheManager={}"</span>, <strong class="jxr_keyword">this</strong>.ticketGrantingTicketsCache.getCacheManager()
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>                     .getName());
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>         }
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>     }
-<a class="jxr_linenumber" name="L232" href="#L232">232</a> 
-<a class="jxr_linenumber" name="L233" href="#L233">233</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L235" href="#L235">235</a> <em class="jxr_javadoccomment">     * @see Cache#getKeysWithExpiryCheck()</em>
-<a class="jxr_linenumber" name="L236" href="#L236">236</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>     @Override
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> sessionCount() {
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>         <strong class="jxr_keyword">return</strong> BooleanUtils.toInteger(<strong class="jxr_keyword">this</strong>.supportRegistryState, <strong class="jxr_keyword">this</strong>.ticketGrantingTicketsCache
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>                 .getKeysWithExpiryCheck().size(), <strong class="jxr_keyword">super</strong>.sessionCount());
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>     }
-<a class="jxr_linenumber" name="L242" href="#L242">242</a> 
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L244" href="#L244">244</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>         logger.info(<span class="jxr_string">"Setting up Ehcache Ticket Registry..."</span>);
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> 
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.serviceTicketsCache == <strong class="jxr_keyword">null</strong> || <strong class="jxr_keyword">this</strong>.ticketGrantingTicketsCache == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>             <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> BeanInstantiationException(<strong class="jxr_keyword">this</strong>.getClass(),
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>                     <span class="jxr_string">"Both serviceTicketsCache and ticketGrantingTicketsCache are required properties."</span>);
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>         }
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> 
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>         <strong class="jxr_keyword">if</strong> (logger.isDebugEnabled()) {
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>             CacheConfiguration config = <strong class="jxr_keyword">this</strong>.serviceTicketsCache.getCacheConfiguration();
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.maxElementsInMemory={}"</span>, config.getMaxEntriesLocalHeap());
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.maxElementsOnDisk={}"</span>, config.getMaxElementsOnDisk());
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.isOverflowToDisk={}"</span>, config.isOverflowToDisk());
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.timeToLive={}"</span>, config.getTimeToLiveSeconds());
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.timeToIdle={}"</span>, config.getTimeToIdleSeconds());
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>             logger.debug(<span class="jxr_string">"serviceTicketsCache.cacheManager={}"</span>, <strong class="jxr_keyword">this</strong>.serviceTicketsCache.getCacheManager().getName());
+<a class="jxr_linenumber" name="L223" href="#L223">223</a> 
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>             config = <strong class="jxr_keyword">this</strong>.ticketGrantingTicketsCache.getCacheConfiguration();
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.maxElementsInMemory={}"</span>, config.getMaxEntriesLocalHeap());
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.maxElementsOnDisk={}"</span>, config.getMaxElementsOnDisk());
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.isOverflowToDisk={}"</span>, config.isOverflowToDisk());
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.timeToLive={}"</span>, config.getTimeToLiveSeconds());
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.timeToIdle={}"</span>, config.getTimeToIdleSeconds());
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>             logger.debug(<span class="jxr_string">"ticketGrantingTicketsCache.cacheManager={}"</span>, <strong class="jxr_keyword">this</strong>.ticketGrantingTicketsCache.getCacheManager()
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>                     .getName());
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>         }
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>     }
+<a class="jxr_linenumber" name="L234" href="#L234">234</a> 
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L236" href="#L236">236</a> <em class="jxr_javadoccomment">     * @see Cache#getKeysWithExpiryCheck()</em>
+<a class="jxr_linenumber" name="L237" href="#L237">237</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>     @Override
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> sessionCount() {
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>         <strong class="jxr_keyword">return</strong> BooleanUtils.toInteger(<strong class="jxr_keyword">this</strong>.supportRegistryState, <strong class="jxr_keyword">this</strong>.ticketGrantingTicketsCache
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>                 .getKeysWithExpiryCheck().size(), <strong class="jxr_keyword">super</strong>.sessionCount());
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>     }
+<a class="jxr_linenumber" name="L243" href="#L243">243</a> 
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L245" href="#L245">245</a> <em class="jxr_javadoccomment">     * @see Cache#getKeysWithExpiryCheck()</em>
 <a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L247" href="#L247">247</a>     @Override

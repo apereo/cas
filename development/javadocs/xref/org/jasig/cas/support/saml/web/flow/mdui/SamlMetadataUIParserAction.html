@@ -28,8 +28,8 @@
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.support.saml.web.flow.mdui;
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.lang3.StringUtils;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.WebApplicationService;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.WebApplicationService;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegisteredService;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ServicesManager;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.UnauthorizedServiceException;
@@ -119,7 +119,7 @@
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>             <strong class="jxr_keyword">return</strong> success();
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         }
 <a class="jxr_linenumber" name="L113" href="#L113">113</a> 
-<a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> service = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/jasig/cas/authentication/principal/SimpleWebApplicationServiceImpl.html">SimpleWebApplicationServiceImpl</a>(entityId);
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../../org/jasig/cas/authentication/principal/WebApplicationService.html">WebApplicationService</a> service = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../../org/jasig/cas/authentication/principal/WebApplicationServiceFactory.html">WebApplicationServiceFactory</a>().createService(entityId);
 <a class="jxr_linenumber" name="L115" href="#L115">115</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> registeredService = <strong class="jxr_keyword">this</strong>.servicesManager.findServiceBy(service);
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>         <strong class="jxr_keyword">if</strong> (registeredService == <strong class="jxr_keyword">null</strong> || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>             logger.debug(<span class="jxr_string">"Entity id [{}] is not recognized/allowed by the CAS service registry"</span>, entityId);

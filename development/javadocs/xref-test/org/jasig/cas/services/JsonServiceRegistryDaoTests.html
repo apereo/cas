@@ -28,8 +28,8 @@
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> com.google.common.collect.Sets;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.FileUtils;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.services.persondir.support.StubPersonAttributeDao;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
@@ -290,64 +290,94 @@
 <a class="jxr_linenumber" name="L282" href="#L282">282</a>     }
 <a class="jxr_linenumber" name="L283" href="#L283">283</a> 
 <a class="jxr_linenumber" name="L284" href="#L284">284</a>     @Test
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyServiceRemovals() <strong class="jxr_keyword">throws</strong> Exception{
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; list = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(5);
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 1; i &lt; 5; i++) {
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>             <strong class="jxr_keyword">final</strong> RegexRegisteredService r = <strong class="jxr_keyword">new</strong> RegexRegisteredService();
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>             r.setServiceId(<span class="jxr_string">"^https://.+"</span>);
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>             r.setName(<span class="jxr_string">"testServiceType"</span>);
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>             r.setTheme(<span class="jxr_string">"testtheme"</span>);
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>             r.setEvaluationOrder(1000);
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>             r.setId(i * 100);
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>             list.add(<strong class="jxr_keyword">this</strong>.dao.save(r));
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>         }
-<a class="jxr_linenumber" name="L296" href="#L296">296</a> 
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> RegisteredService r2 : list) {
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>             <strong class="jxr_keyword">this</strong>.dao.delete(r2);
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>             Thread.sleep(1);
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>             assertNull(<strong class="jxr_keyword">this</strong>.dao.findServiceById(r2.getId()));
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>         }
-<a class="jxr_linenumber" name="L302" href="#L302">302</a> 
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>     }
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifySaveAttributeReleasePolicyAllowedAttrRulesWithGuavaCaching() {
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>         <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>         r.setName(<span class="jxr_string">"verifySaveAttributeReleasePolicyAllowedAttrRulesWithGuavaCaching"</span>);
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>         r.setServiceId(<span class="jxr_string">"testId"</span>);
+<a class="jxr_linenumber" name="L289" href="#L289">289</a> 
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>         <strong class="jxr_keyword">final</strong> ReturnAllowedAttributeReleasePolicy policy = <strong class="jxr_keyword">new</strong> ReturnAllowedAttributeReleasePolicy();
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>         policy.setAllowedAttributes(Arrays.asList(<span class="jxr_string">"1"</span>, <span class="jxr_string">"2"</span>, <span class="jxr_string">"3"</span>));
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> 
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, List&lt;Object&gt;&gt; attributes = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>         attributes.put(<span class="jxr_string">"values"</span>, Arrays.asList(<strong class="jxr_keyword">new</strong> Object[]{<span class="jxr_string">"v1"</span>, <span class="jxr_string">"v2"</span>, <span class="jxr_string">"v3"</span>}));
+<a class="jxr_linenumber" name="L295" href="#L295">295</a> 
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>         <strong class="jxr_keyword">final</strong> CachingPrincipalAttributesRepository repository =
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>                 <strong class="jxr_keyword">new</strong> CachingPrincipalAttributesRepository(
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>                         <strong class="jxr_keyword">new</strong> StubPersonAttributeDao(attributes),
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>                         TimeUnit.MILLISECONDS, 100);
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>         repository.setMergingStrategy(<strong class="jxr_keyword">new</strong> ReplacingAttributeAdder());
+<a class="jxr_linenumber" name="L301" href="#L301">301</a> 
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>         policy.setPrincipalAttributesRepository(repository);
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>         r.setAttributeReleasePolicy(policy);
 <a class="jxr_linenumber" name="L304" href="#L304">304</a> 
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>     @Test
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkForAuthorizationStrategy() {
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>         <strong class="jxr_keyword">final</strong> RegexRegisteredService r = <strong class="jxr_keyword">new</strong> RegexRegisteredService();
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>         r.setServiceId(<span class="jxr_string">"^https://.+"</span>);
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>         r.setName(<span class="jxr_string">"checkForAuthorizationStrategy"</span>);
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>         r.setId(42);
-<a class="jxr_linenumber" name="L311" href="#L311">311</a> 
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(false, false);
-<a class="jxr_linenumber" name="L314" href="#L314">314</a> 
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Set&lt;String&gt;&gt; attrs = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>         attrs.put(<span class="jxr_string">"cn"</span>, Sets.newHashSet(<span class="jxr_string">"v1, v2, v3"</span>));
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>         attrs.put(<span class="jxr_string">"memberOf"</span>, Sets.newHashSet(Arrays.asList(<span class="jxr_string">"v4, v5, v6"</span>)));
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>         authz.setRequiredAttributes(attrs);
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>         r.setAccessStrategy(authz);
-<a class="jxr_linenumber" name="L320" href="#L320">320</a> 
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>         <strong class="jxr_keyword">final</strong> RegisteredService r2 = <strong class="jxr_keyword">this</strong>.dao.save(r);
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <strong class="jxr_keyword">final</strong> RegisteredService r3 = <strong class="jxr_keyword">this</strong>.dao.findServiceById(r2.getId());
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>         assertEquals(r2, r3);
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>     }
-<a class="jxr_linenumber" name="L325" href="#L325">325</a> 
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>     @Test
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> serializePublicKeyForServiceAndVerify() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>         <strong class="jxr_keyword">final</strong> RegisteredServicePublicKey publicKey = <strong class="jxr_keyword">new</strong> RegisteredServicePublicKeyImpl(
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>                 <span class="jxr_string">"classpath:RSA1024Public.key"</span>, <span class="jxr_string">"RSA"</span>);
-<a class="jxr_linenumber" name="L330" href="#L330">330</a> 
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>         <strong class="jxr_keyword">final</strong> RegexRegisteredService r = <strong class="jxr_keyword">new</strong> RegexRegisteredService();
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>         r.setServiceId(<span class="jxr_string">"^https://.+"</span>);
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>         r.setName(<span class="jxr_string">"serializePublicKeyForServiceAndVerify"</span>);
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>         r.setId(4245);
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>         r.setPublicKey(publicKey);
-<a class="jxr_linenumber" name="L336" href="#L336">336</a> 
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <strong class="jxr_keyword">this</strong>.dao.save(r);
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; list = <strong class="jxr_keyword">this</strong>.dao.load();
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>         assertNotNull(<strong class="jxr_keyword">this</strong>.dao.findServiceById(r.getId()));
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>     }
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>         <strong class="jxr_keyword">final</strong> RegisteredService r2 = <strong class="jxr_keyword">this</strong>.dao.save(r);
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>         <strong class="jxr_keyword">final</strong> RegisteredService r3 = <strong class="jxr_keyword">this</strong>.dao.findServiceById(r2.getId());
+<a class="jxr_linenumber" name="L307" href="#L307">307</a> 
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>         assertEquals(r, r2);
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>         assertEquals(r2, r3);
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>         assertNotNull(r3.getAttributeReleasePolicy());
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>         assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>     }
+<a class="jxr_linenumber" name="L313" href="#L313">313</a> 
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>     @Test
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyServiceRemovals() <strong class="jxr_keyword">throws</strong> Exception{
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; list = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;(5);
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 1; i &lt; 5; i++) {
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>             <strong class="jxr_keyword">final</strong> RegexRegisteredService r = <strong class="jxr_keyword">new</strong> RegexRegisteredService();
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>             r.setServiceId(<span class="jxr_string">"^https://.+"</span>);
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>             r.setName(<span class="jxr_string">"testServiceType"</span>);
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>             r.setTheme(<span class="jxr_string">"testtheme"</span>);
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>             r.setEvaluationOrder(1000);
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>             r.setId(i * 100);
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>             list.add(<strong class="jxr_keyword">this</strong>.dao.save(r));
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>         }
+<a class="jxr_linenumber" name="L326" href="#L326">326</a> 
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> RegisteredService r2 : list) {
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>             <strong class="jxr_keyword">this</strong>.dao.delete(r2);
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>             Thread.sleep(500);
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>             assertNull(<strong class="jxr_keyword">this</strong>.dao.findServiceById(r2.getId()));
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>         }
+<a class="jxr_linenumber" name="L332" href="#L332">332</a> 
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>     }
+<a class="jxr_linenumber" name="L334" href="#L334">334</a> 
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>     @Test
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkForAuthorizationStrategy() {
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>         <strong class="jxr_keyword">final</strong> RegexRegisteredService r = <strong class="jxr_keyword">new</strong> RegexRegisteredService();
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>         r.setServiceId(<span class="jxr_string">"^https://.+"</span>);
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>         r.setName(<span class="jxr_string">"checkForAuthorizationStrategy"</span>);
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>         r.setId(42);
 <a class="jxr_linenumber" name="L341" href="#L341">341</a> 
-<a class="jxr_linenumber" name="L342" href="#L342">342</a> }
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(false, false);
+<a class="jxr_linenumber" name="L344" href="#L344">344</a> 
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Set&lt;String&gt;&gt; attrs = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>         attrs.put(<span class="jxr_string">"cn"</span>, Sets.newHashSet(<span class="jxr_string">"v1, v2, v3"</span>));
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>         attrs.put(<span class="jxr_string">"memberOf"</span>, Sets.newHashSet(Arrays.asList(<span class="jxr_string">"v4, v5, v6"</span>)));
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>         authz.setRequiredAttributes(attrs);
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>         r.setAccessStrategy(authz);
+<a class="jxr_linenumber" name="L350" href="#L350">350</a> 
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>         <strong class="jxr_keyword">final</strong> RegisteredService r2 = <strong class="jxr_keyword">this</strong>.dao.save(r);
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>         <strong class="jxr_keyword">final</strong> RegisteredService r3 = <strong class="jxr_keyword">this</strong>.dao.findServiceById(r2.getId());
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>         assertEquals(r2, r3);
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>     }
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> 
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>     @Test
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> serializePublicKeyForServiceAndVerify() <strong class="jxr_keyword">throws</strong> Exception {
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>         <strong class="jxr_keyword">final</strong> RegisteredServicePublicKey publicKey = <strong class="jxr_keyword">new</strong> RegisteredServicePublicKeyImpl(
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>                 <span class="jxr_string">"classpath:RSA1024Public.key"</span>, <span class="jxr_string">"RSA"</span>);
+<a class="jxr_linenumber" name="L360" href="#L360">360</a> 
+<a class="jxr_linenumber" name="L361" href="#L361">361</a>         <strong class="jxr_keyword">final</strong> RegexRegisteredService r = <strong class="jxr_keyword">new</strong> RegexRegisteredService();
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>         r.setServiceId(<span class="jxr_string">"^https://.+"</span>);
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>         r.setName(<span class="jxr_string">"serializePublicKeyForServiceAndVerify"</span>);
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>         r.setId(4245);
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>         r.setPublicKey(publicKey);
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> 
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>         <strong class="jxr_keyword">this</strong>.dao.save(r);
+<a class="jxr_linenumber" name="L368" href="#L368">368</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; list = <strong class="jxr_keyword">this</strong>.dao.load();
+<a class="jxr_linenumber" name="L369" href="#L369">369</a>         assertNotNull(<strong class="jxr_keyword">this</strong>.dao.findServiceById(r.getId()));
+<a class="jxr_linenumber" name="L370" href="#L370">370</a>     }
+<a class="jxr_linenumber" name="L371" href="#L371">371</a> 
+<a class="jxr_linenumber" name="L372" href="#L372">372</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

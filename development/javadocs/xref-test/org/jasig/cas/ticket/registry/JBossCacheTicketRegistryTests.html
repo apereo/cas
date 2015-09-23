@@ -28,7 +28,7 @@
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.apache.commons.io.IOUtils;
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.TestUtils;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ServiceTicket;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.Ticket;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketGrantingTicket;
@@ -241,7 +241,7 @@
 <a class="jxr_linenumber" name="L233" href="#L233">233</a>                     <span class="jxr_string">"TEST"</span> + i, TestUtils.getAuthentication(),
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>                     <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy());
 <a class="jxr_linenumber" name="L235" href="#L235">235</a>             <strong class="jxr_keyword">final</strong> ServiceTicket st = ticketGrantingTicket.grantServiceTicket(
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>                     <span class="jxr_string">"tests"</span> + i, SimpleWebApplicationServiceImpl.createServiceFrom(request),
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>                     <span class="jxr_string">"tests"</span> + i, <strong class="jxr_keyword">new</strong> WebApplicationServiceFactory().createService(request),
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>                     <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), false);
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>             tickets.add(ticketGrantingTicket);
 <a class="jxr_linenumber" name="L239" href="#L239">239</a>             tickets.add(st);
