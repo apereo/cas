@@ -20,27 +20,9 @@ package org.jasig.cas.support.saml.authentication.principal;
 
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
-import org.jasig.cas.authentication.principal.DefaultResponse;
-import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.authentication.principal.ResponseBuilder;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
-import org.jasig.cas.util.ISOStandardDateFormat;
-import org.joda.time.DateTime;
-import org.opensaml.saml.saml2.core.Assertion;
-import org.opensaml.saml.saml2.core.AuthnContext;
-import org.opensaml.saml.saml2.core.AuthnStatement;
-import org.opensaml.saml.saml2.core.Conditions;
-import org.opensaml.saml.saml2.core.NameID;
-import org.opensaml.saml.saml2.core.StatusCode;
-import org.opensaml.saml.saml2.core.Subject;
-
-import java.io.StringWriter;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.HashMap;
-import java.util.Map;
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
@@ -56,27 +38,19 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private final String relayState;
 
-    private final PublicKey publicKey;
-
-    private final PrivateKey privateKey;
-
     private final String requestId;
 
-    private final ServicesManager servicesManager;
-    
     /**
      * Instantiates a new google accounts service.
      *
      * @param id the id
      * @param relayState the relay state
      * @param requestId the request id
-     * @param privateKey the private key
-     * @param publicKey the public key
-     * @param servicesManager the services manager
+     * @param responseBuilder the response builder
      */
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey, final ServicesManager servicesManager) {
-        this(id, id, null, relayState, requestId, privateKey, publicKey, servicesManager);
+                                    final ResponseBuilder<WebApplicationService> responseBuilder) {
+        this(id, id, null, relayState, requestId, responseBuilder);
     }
 
     /**
@@ -87,35 +61,15 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @param artifactId the artifact id
      * @param relayState the relay state
      * @param requestId the request id
-     * @param privateKey the private key
-     * @param publicKey the public key
-     * @param servicesManager the services manager
+     * @param responseBuilder the response builder
      */
     protected GoogleAccountsService(final String id, final String originalUrl,
-            final String artifactId, final String relayState, final String requestId,
-            final PrivateKey privateKey, final PublicKey publicKey,
-            final ServicesManager servicesManager) {
-        super(id, originalUrl, artifactId);
+                                    final String artifactId, final String relayState,
+                                    final String requestId,
+                                    final ResponseBuilder<WebApplicationService> responseBuilder) {
+        super(id, originalUrl, artifactId, responseBuilder);
         this.relayState = relayState;
-        this.privateKey = privateKey;
-        this.publicKey = publicKey;
         this.requestId = requestId;
-        this.servicesManager = servicesManager;
-
-
-    }
-
-
-    @Override
-    public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<>();
-        final String samlResponse = constructSamlResponse();
-        final String signedResponse = BUILDER.signSamlResponse(samlResponse,
-                this.privateKey, this.publicKey);
-        parameters.put(SamlProtocolConstants.PARAMETER_SAML_RESPONSE, signedResponse);
-        parameters.put(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, this.relayState);
-
-        return DefaultResponse.getPostResponse(getOriginalUrl(), parameters);
     }
 
     /**
@@ -128,45 +82,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         return true;
     }
 
-    /**
-     * Construct SAML response.
-     * <a href="http://bit.ly/1uI8Ggu">See this reference for more info.</a>
-     * @return the SAML response
-     */
-    private String constructSamlResponse() {
-        final DateTime currentDateTime = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
-        final DateTime notBeforeIssueInstant = DateTime.parse("2003-04-17T00:46:02Z");
+    public String getRelayState() {
+        return relayState;
+    }
 
-        final RegisteredService svc = this.servicesManager.findServiceBy(this);
-        final String userId = svc.getUsernameAttributeProvider().resolveUsername(getPrincipal(), this);
-
-        final org.opensaml.saml.saml2.core.Response response = BUILDER.newResponse(
-                BUILDER.generateSecureRandomId(),
-                currentDateTime,
-                getId(), this);
-        response.setStatus(BUILDER.newStatus(StatusCode.SUCCESS, null));
-
-        final AuthnStatement authnStatement = BUILDER.newAuthnStatement(
-                AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime);
-        final Assertion assertion = BUILDER.newAssertion(authnStatement,
-                "https://www.opensaml.org/IDP",
-                notBeforeIssueInstant, BUILDER.generateSecureRandomId());
-
-        final Conditions conditions = BUILDER.newConditions(notBeforeIssueInstant,
-                currentDateTime, getId());
-        assertion.setConditions(conditions);
-
-        final Subject subject = BUILDER.newSubject(NameID.EMAIL, userId,
-                getId(), currentDateTime, this.requestId);
-        assertion.setSubject(subject);
-
-        response.getAssertions().add(assertion);
-
-        final StringWriter writer = new StringWriter();
-        BUILDER.marshalSamlXmlObject(response, writer);
-
-        final String result = writer.toString();
-        logger.debug("Generated Google SAML response: {}", result);
-        return result;
+    public String getRequestId() {
+        return requestId;
     }
 }

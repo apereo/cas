@@ -19,14 +19,10 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
-import org.jasig.cas.authentication.principal.DefaultResponse;
-import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.authentication.principal.ResponseBuilder;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in
@@ -53,7 +49,7 @@ public final class SamlService extends AbstractWebApplicationService {
      * @param id the service id
      */
     protected SamlService(final String id) {
-        super(id, id, null);
+        super(id, id, null, null);
     }
 
     /**
@@ -63,22 +59,16 @@ public final class SamlService extends AbstractWebApplicationService {
      * @param originalUrl the original url
      * @param artifactId the artifact id
      * @param requestId the request id
+     * @param responseBuilder the response builder
      */
     protected SamlService(final String id, final String originalUrl,
-            final String artifactId, final String requestId) {
-        super(id, originalUrl, artifactId);
+                          final String artifactId, final String requestId,
+                          final ResponseBuilder<WebApplicationService> responseBuilder) {
+        super(id, originalUrl, artifactId, responseBuilder);
         this.requestId = requestId;
     }
 
     public String getRequestID() {
         return this.requestId;
     }
-
-    @Override
-    public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put(SamlProtocolConstants.CONST_PARAM_ARTIFACT, ticketId);
-        return DefaultResponse.getRedirectResponse(getOriginalUrl(), parameters);
-    }
-
 }
