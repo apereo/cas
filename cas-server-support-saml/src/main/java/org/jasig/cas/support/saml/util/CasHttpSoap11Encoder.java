@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Override OpenSAML {@link HTTPSOAP11Encoder} such that SOAP-ENV XML namespace prefix is used for SOAP envelope
- * elements.  This is needed for backward compatibility with certain CAS clients (e.g. Java CAS client).
+ * elements. This is needed for backward compatibility with certain CAS clients (e.g. Java CAS client).
  *
  * @author Marvin S. Addison
  * @since 4.2.0
