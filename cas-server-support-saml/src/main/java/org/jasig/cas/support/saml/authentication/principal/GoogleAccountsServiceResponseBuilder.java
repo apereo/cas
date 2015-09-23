@@ -19,7 +19,7 @@
 
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.jasig.cas.authentication.principal.AbstractServiceResponseBuilder;
+import org.jasig.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
@@ -47,7 +47,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class GoogleAccountsServiceResponseBuilder extends AbstractServiceResponseBuilder {
+public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private final PrivateKey privateKey;
     private final PublicKey publicKey;

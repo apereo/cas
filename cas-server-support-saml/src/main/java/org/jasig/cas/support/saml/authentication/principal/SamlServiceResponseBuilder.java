@@ -19,7 +19,7 @@
 
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.jasig.cas.authentication.principal.AbstractServiceResponseBuilder;
+import org.jasig.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
@@ -32,7 +32,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class SamlServiceResponseBuilder extends AbstractServiceResponseBuilder {
+public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     @Override
     public Response build(final WebApplicationService service, final String ticketId) {
