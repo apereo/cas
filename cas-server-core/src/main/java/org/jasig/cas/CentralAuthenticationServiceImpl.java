@@ -499,7 +499,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             throws AuthenticationException, AbstractTicketException {
 
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
-        if (sanitizedCredentials.size() > 0) {
+        if (!sanitizedCredentials.isEmpty()) {
             final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
