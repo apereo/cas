@@ -49,6 +49,7 @@ import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
@@ -56,7 +57,6 @@ import org.mockito.ArgumentMatcher;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +104,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     @Before
     public void prepareNewCAS() {
         this.authentication = mock(Authentication.class);
-        when(this.authentication.getAuthenticationDate()).thenReturn(new Date());
+        when(this.authentication.getAuthenticationDate()).thenReturn(DateTime.now());
         final CredentialMetaData metadata = new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         final Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("handler1", new DefaultHandlerResult(mock(AuthenticationHandler.class), metadata));
