@@ -121,29 +121,6 @@ public final class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostPr
     }
 
     /**
-     * @deprecated As of 4.1. Use {@link #getPrincipal(String, boolean)}
-     * Gets the simple principal from the given name.
-     *
-     * @param name the name
-     * @param isNtlm the is ntlm
-     * @return the simple principal
-     */
-    @Deprecated
-    protected SimplePrincipal getSimplePrincipal(final String name, final boolean isNtlm) {
-        logger.warn("getSimplePrincipal() is deprecated and will be removed. Consider getPrincipal() instead.");
-
-        if (this.principalWithDomainName) {
-            return (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name);
-        }
-        if (isNtlm) {
-            return Pattern.matches("\\S+\\\\\\S+", name)
-                    ? (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name.split("\\\\")[1])
-                    : (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name);
-        }
-        return (SimplePrincipal) new DefaultPrincipalFactory().createPrincipal(name.split("@")[0]);
-    }
-
-    /**
      * Gets the principal from the given name. The principal
      * is created by the factory instance.
      *

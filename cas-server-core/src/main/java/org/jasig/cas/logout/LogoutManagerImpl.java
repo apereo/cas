@@ -98,18 +98,7 @@ public final class LogoutManagerImpl implements LogoutManager {
         this.asynchronous = asyncCallbacks;
     }
     
-    /**
-     * Set if messages are sent in an asynchronous fashion.
-     *
-     * @param asyncCallbacks if message is synchronously sent
-     * @deprecated As of 4.1. Use {@link #setAsynchronous(boolean)} instead
-     */
-    @Deprecated
-    public void setIssueAsynchronousCallbacks(final boolean asyncCallbacks) {
-        this.asynchronous = asyncCallbacks;
-        LOGGER.warn("setIssueAsynchronousCallbacks() is deprecated. Use setAsynchronous() instead.");
-    }
-    
+
     /**
      * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
      *
