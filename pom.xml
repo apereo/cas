@@ -1352,7 +1352,6 @@
         <module>cas-server-support-generic</module>
         <module>cas-server-support-jdbc</module>
         <module>cas-server-support-ldap</module>
-        <module>cas-server-support-legacy</module>
         <module>cas-server-support-openid</module>
         <module>cas-server-support-wsfederation</module>
         <module>cas-server-support-radius</module>
