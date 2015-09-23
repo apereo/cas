@@ -1362,11 +1362,8 @@
         <module>cas-server-support-oauth</module>
         <module>cas-server-support-pac4j</module>
         <module>cas-server-support-saml</module>
-        <module>cas-server-integration-jboss</module>
         <module>cas-server-integration-memcached</module>
         <module>cas-server-integration-ehcache</module>
-        <module>cas-server-integration-restlet</module>
-        <module>cas-server-uber-webapp</module>
         <module>cas-server-extension-clearpass</module>
         <module>cas-management-webapp</module>
         <module>cas-server-support-rest</module>
