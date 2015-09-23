@@ -24,20 +24,20 @@ import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
-import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
-import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.SAMLObjectBuilder;
-import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
-
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.SAMLObjectBuilder;
+import org.opensaml.saml.common.xml.SAMLConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
 
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
@@ -68,8 +68,6 @@ import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.interfaces.DSAPublicKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Collections;
 import java.util.List;
 /**
@@ -278,14 +276,18 @@ public abstract class AbstractSamlObjectBuilder {
 
             // Create the SignatureMethod based on the type of key
             final SignatureMethod signatureMethod;
-            if (pubKey instanceof DSAPublicKey) {
-                signatureMethod = sigFactory.newSignatureMethod(
-                        SignatureMethod.DSA_SHA1, null);
-            } else if (pubKey instanceof RSAPublicKey) {
-                signatureMethod = sigFactory.newSignatureMethod(
-                        SignatureMethod.RSA_SHA1, null);
-            } else {
-                throw new RuntimeException("Error signing SAML element: Unsupported type of key");
+            final String algorithm = pubKey.getAlgorithm();
+            switch (algorithm) {
+                case "DSA":
+                    signatureMethod = sigFactory.newSignatureMethod(
+                            SignatureMethod.DSA_SHA1, null);
+                    break;
+                case "RSA":
+                    signatureMethod = sigFactory.newSignatureMethod(
+                            SignatureMethod.RSA_SHA1, null);
+                    break;
+                default:
+                    throw new RuntimeException("Error signing SAML element: Unsupported type of key");
             }
 
             final CanonicalizationMethod canonicalizationMethod = sigFactory
