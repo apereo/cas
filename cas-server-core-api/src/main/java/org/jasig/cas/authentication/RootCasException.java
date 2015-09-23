@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.ticket.AbstractTicketException;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -27,7 +29,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Misagh Moayyed
  * see org.jasig.cas.authentication.handler.AuthenticationException
- * @see org.jasig.cas.ticket.TicketException
+ * @see AbstractTicketException
  * @since 4.0.0
  */
 public abstract class RootCasException extends Exception {
