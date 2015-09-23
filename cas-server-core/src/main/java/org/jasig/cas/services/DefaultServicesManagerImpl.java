@@ -59,10 +59,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         load();
     }
 
-     * @deprecated As of 4.1. Use {@link #DefaultServicesManagerImpl(ServiceRegistryDao)}
-     * instead. The <code>defaultAttributes</code> parameter is no longer used. Attributes are configured
-     * per service definition in the services registry. See {@link RegisteredService#getAttributeReleasePolicy()}
-     * for more details.
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
