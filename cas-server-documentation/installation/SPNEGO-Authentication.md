@@ -172,7 +172,7 @@ Update `deployerConfigContext.xml` according to the following template:
 <bean id="spnegoAuthentication" class="jcifs.spnego.Authentication" />
 
 <bean id="spnegoHandler"
-      class="org.jasig.cas.support.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler"
+      class="org.jasig.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler"
       p:authentication-ref="spnegoAuthentication"
       p:principalWithDomainName="false"
       p:NTLMallowed="true" />
