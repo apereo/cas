@@ -22,7 +22,6 @@ package org.jasig.cas.support.saml.authentication.principal;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.ResponseBuilder;
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
@@ -33,8 +32,6 @@ import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
-
-    private static final GoogleSaml20ObjectBuilder BUILDER = new GoogleSaml20ObjectBuilder();
 
     private final String relayState;
 
@@ -50,24 +47,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      */
     protected GoogleAccountsService(final String id, final String relayState, final String requestId,
                                     final ResponseBuilder<WebApplicationService> responseBuilder) {
-        this(id, id, null, relayState, requestId, responseBuilder);
-    }
-
-    /**
-     * Instantiates a new google accounts service.
-     *
-     * @param id the id
-     * @param originalUrl the original url
-     * @param artifactId the artifact id
-     * @param relayState the relay state
-     * @param requestId the request id
-     * @param responseBuilder the response builder
-     */
-    protected GoogleAccountsService(final String id, final String originalUrl,
-                                    final String artifactId, final String relayState,
-                                    final String requestId,
-                                    final ResponseBuilder<WebApplicationService> responseBuilder) {
-        super(id, originalUrl, artifactId, responseBuilder);
+        super(id, id, null, responseBuilder);
         this.relayState = relayState;
         this.requestId = requestId;
     }
@@ -81,6 +61,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     public boolean isLoggedOutAlready() {
         return true;
     }
+
 
     public String getRelayState() {
         return relayState;

@@ -21,8 +21,6 @@ package org.jasig.cas.support.saml.authentication.principal;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.ResponseBuilder;
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in
@@ -34,23 +32,13 @@ import org.slf4j.LoggerFactory;
  */
 public final class SamlService extends AbstractWebApplicationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlService.class);
-
     /**
      * Unique Id for serialization.
      */
     private static final long serialVersionUID = -6867572626767140223L;
 
-    private String requestId;
+    private final String requestId;
 
-    /**
-     * Instantiates a new SAML service.
-     *
-     * @param id the service id
-     */
-    protected SamlService(final String id) {
-        super(id, id, null, null);
-    }
 
     /**
      * Instantiates a new SAML service.
