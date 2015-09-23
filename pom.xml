@@ -1009,6 +1009,13 @@
             </dependency>
 
             <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.hibernate.java-persistence</groupId>
                 <artifactId>jpa-api</artifactId>
                 <version>${jpa.version}</version>
@@ -1566,6 +1573,7 @@
         <bouncycastle.version>1.51</bouncycastle.version>
         <dbcp.version>2.1.1</dbcp.version>
         <hazelcast.version>3.5.2</hazelcast.version>
+        <c3p0.version>0.9.5.1</c3p0.version>
 
         <!-- Plugin Versions -->
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
