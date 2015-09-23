@@ -110,7 +110,7 @@
 
     <util:map id="metadataResources">
         <!-- http://md.incommon.org/InCommon/InCommon-metadata.xml -->
-        <entry key="classpath:/sample-metadata.xml"
+        <entry key="${cas.saml.metadata.resource:classpath:/sample-metadata.xml}"
                value-ref="inCommonMetadataFilters" />
     </util:map>
 
@@ -147,8 +147,10 @@
 
     <bean id="credentialFactoryBean"
           class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialFactoryBean"
-          p:publicKeyInfo="classpath:inc-md-pub.pem" >
-    </bean>
+          p:publicKeyInfo-ref="publicKeyInfo" />
+
+    <bean id="publicKeyInfo" class="org.springframework.core.io.ClassPathResource"
+          c:path="/inc-md-pub.pem" />
 
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
             c:serviceRegistryDao-ref="serviceRegistryDao" />
