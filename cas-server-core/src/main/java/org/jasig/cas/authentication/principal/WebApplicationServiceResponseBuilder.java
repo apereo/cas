@@ -31,7 +31,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class WebApplicationServiceResponseBuilder extends AbstractServiceResponseBuilder {
+public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
     private final Response.ResponseType responseType;
 
     /**

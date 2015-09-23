@@ -1,0 +1,165 @@
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:property-placeholder location="classpath:cas.properties"
+                                  ignore-resource-not-found="true"
+                                  ignore-unresolvable="false"/>
+
+    <context:component-scan base-package="org.jasig.cas.support.openid"/>
+    <context:annotation-config/>
+
+    <bean id="serverManager"
+          class="org.openid4java.server.ServerManager"
+          p:oPEndpointUrl="${server.prefix}/login"
+          p:sharedAssociations-ref="serverAssociations"
+          p:enforceRpId="${cas.openid.enforce.rpid:false}"/>
+
+    <bean id="serverAssociations" class="org.openid4java.server.InMemoryServerAssociationStore"/>
+
+    <bean name="centralAuthenticationService" class="org.jasig.cas.CentralAuthenticationServiceImpl"
+          c:authenticationManager-ref="authenticationManager"
+          c:logoutManager-ref="logoutManager"
+          c:servicesManager-ref="servicesManager"
+          c:serviceTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
+          c:serviceTicketRegistry-ref="ticketRegistry"
+          c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
+          c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
+          c:ticketRegistry-ref="ticketRegistry"
+          c:uniqueTicketIdGeneratorsForService-ref="uniqueIdGeneratorsMap"/>
+
+    <bean id="attributeRepository"
+          class="org.jasig.services.persondir.support.StubPersonAttributeDao">
+        <property name="backingMap">
+            <map/>
+        </property>
+    </bean>
+
+    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
+          p:readTimeout="5000" p:connectionTimeout="5000"/>
+
+    <bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
+          c:servicesManager-ref="servicesManager"
+          c:httpClient-ref="httpClient"
+          c:logoutMessageBuilder-ref="logoutBuilder"/>
+
+    <bean id="logoutBuilder" class="org.jasig.cas.logout.SamlCompliantLogoutMessageCreator"/>
+
+
+    <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
+          c:map-ref="authenticationHandlersResolvers"/>
+
+    <util:map id="authenticationHandlersResolvers">
+
+        <entry key-ref="simpleTestUsernamePasswordAuthenticationHandler"
+               value-ref="usernamePasswordCredentialsToPrincipalResolver"/>
+    </util:map>
+
+    <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
+          c:serviceRegistryDao-ref="serviceRegistryDao"/>
+
+    <bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
+        <property name="registeredServices">
+            <list>
+                <bean class="org.jasig.cas.services.RegexRegisteredService"
+                      p:name="servicename"
+                      p:description="description"
+                      p:serviceId=".+"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="usernamePasswordCredentialsToPrincipalResolver"
+          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver">
+        <property name="attributeRepository" ref="attributeRepository"/>
+    </bean>
+
+    <bean id="simpleTestUsernamePasswordAuthenticationHandler"
+          class="org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler"/>
+
+    <bean id="neverExpiresExpirationPolicy"
+          class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy"/>
+
+    <bean id="ticketRegistry"
+          class="org.jasig.cas.ticket.registry.DefaultTicketRegistry"/>
+
+    <bean id="uniqueTicketIdGenerator"
+          class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"/>
+
+    <util:list id="argumentExtractors"/>
+    <util:map id="uniqueIdGeneratorsMap"/>
+
+    <bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
+          c:maxLength="20" c:suffix="${host.name}"/>
+
+    <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
+
+    <bean id="openIdValidateController" class="org.jasig.cas.web.ServiceValidateController"
+          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
+          p:centralAuthenticationService-ref="centralAuthenticationService"
+          p:proxyHandler-ref="proxy10Handler"
+          p:servicesManager-ref="servicesManager"
+          p:argumentExtractor-ref="openIdArgumentExtractor"
+          p:successView="casOpenIdServiceSuccessView"
+          p:failureView="casOpenIdServiceFailureView"/>
+
+    <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
+          p:delegates-ref="delegateControllers"/>
+
+    <util:list id="delegateControllers">
+        <ref bean="smartOpenIdAssociationController"/>
+        <ref bean="openIdValidateController"/>
+    </util:list>
+
+    <!-- OpenId View -->
+
+    <!-- OpenId Service Views -->
+
+    <!-- Failure Validation Views -->
+    <bean id="casOpenIdServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdServiceFailureView.jsp"/>
+
+    <!-- Successful Views -->
+    <bean id="casOpenIdServiceSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdServiceSuccessView.jsp"/>
+
+    <!-- OpenId Association Views -->
+
+    <!-- Failure Validation Views -->
+    <bean id="casOpenIdAssociationFailureView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdAssociationFailureView.jsp"/>
+
+    <!-- Successful Views -->
+    <bean id="casOpenIdAssociationSuccessView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/casOpenIdAssociationSuccessView.jsp"/>
+
+    <!-- OpenId Provider Views -->
+    <bean id="openIdProviderView" class="org.springframework.web.servlet.view.JstlView"
+          c:url="/WEB-INF/view/jsp/protocol/openid/user.jsp"/>
+</beans>
