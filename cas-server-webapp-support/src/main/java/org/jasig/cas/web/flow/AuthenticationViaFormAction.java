@@ -207,8 +207,10 @@ public class AuthenticationViaFormAction {
             }
             return newEvent(SUCCESS);
         } catch (final AuthenticationException e) {
+            logger.debug(e.getMessage(), e);
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final Exception e) {
+            logger.debug(e.getMessage(), e);
             return newEvent(ERROR, e);
         }
     }
