@@ -17,61 +17,65 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.jasig.cas</groupId>
-		<artifactId>cas-server</artifactId>
-		<version>4.0.6-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.jasig.cas</groupId>
-	<artifactId>cas-server-support-radius</artifactId>
-	<packaging>jar</packaging>
-	<name>Jasig CAS RADIUS Support</name>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.jasig.cas</groupId>
+        <artifactId>cas-server</artifactId>
+        <version>4.0.6-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-radius</artifactId>
+    <packaging>jar</packaging>
+    <name>Jasig CAS RADIUS Support</name>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
-            <groupId>net.jradius</groupId>
-            <artifactId>jradius-core</artifactId>
-            <version>1.0.0</version>
+            <groupId>com.github.coova</groupId>
+            <artifactId>jradius</artifactId>
+            <version>${radius.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-collections</artifactId>
+                    <groupId>commons-collections</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>net.jradius</groupId>
-            <artifactId>jradius-dictionary</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-<!--
-        <dependency>
-            <groupId>net.jradius</groupId>
-            <artifactId>jradius-extended</artifactId>
-            <version>1.0.0</version>
-        </dependency>
--->
-
-	</dependencies>
+    </dependencies>
 
     <repositories>
+        <!--
+        The JRadius artifacts above are not available in Maven Central yet.
+        So the following alternative is provided.
+        -->
         <repository>
-          <id>coova</id>
-          <name>Coova Repository</name>
-          <url>http://coova-dev.s3.amazonaws.com/mvn</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
-  </repositories>
+    </repositories>
 
-  <properties>
-    <cs.dir>${project.parent.basedir}</cs.dir>
-  </properties>
+    <properties>
+        <cs.dir>${project.parent.basedir}</cs.dir>
+        <radius.version>jradius-1.1.5</radius.version>
+    </properties>
 </project>
