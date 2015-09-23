@@ -22,7 +22,6 @@ org.jasig.cas.authentication.principal
 org.jasig.cas.authentication.principal.cache
 org.jasig.cas.authentication.support
 org.jasig.cas.extension.clearpass
-org.jasig.cas.integration.restlet
 org.jasig.cas.logout
 org.jasig.cas.monitor
 org.jasig.cas.persondir

@@ -12,7 +12,8 @@ There are two core configurable ticketing components:
 
 ## Ticket Registry
 The deployment environment and technology expertise generally determine the particular `TicketRegistry` component.
-A cache-backed implementation is recommended for HA deployments, while the default `DefaultTicketRegistry` in-memory component may be suitable for small deployments.
+A cache-backed implementation is recommended for HA deployments, while the default 
+`DefaultTicketRegistry` in-memory component may be suitable for small deployments.
 
 
 ### Default (In-Memory) Ticket Registry
@@ -39,7 +40,6 @@ deployments. Components for the following caching technologies are provided:
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
 * [Ehcache](Ehcache-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
-* [JBoss Cache](JBoss-Cache-Ticket-Registry.html)
 
 #### Secure Cache Replication
 A number of cache-based ticket registries support secure replication of ticket data across the wire,
