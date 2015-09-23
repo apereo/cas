@@ -26,7 +26,6 @@ import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuth
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
-import java.util.List;
 import java.util.Set;
 
 /**

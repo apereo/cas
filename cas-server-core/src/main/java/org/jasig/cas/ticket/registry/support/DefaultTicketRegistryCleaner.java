@@ -20,7 +20,6 @@ package org.jasig.cas.ticket.registry.support;
 
 import org.apache.commons.collections4.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
