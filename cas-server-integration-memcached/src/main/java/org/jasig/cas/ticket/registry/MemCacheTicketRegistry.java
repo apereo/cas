@@ -83,23 +83,6 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
     }
 
     /**
-     * This alternative constructor takes time in milliseconds.
-     * It has the timeout parameters in order to create a unique method signature.
-     *
-     * @param ticketGrantingTicketTimeOut TGT timeout in milliseconds.
-     * @param serviceTicketTimeOut ST timeout in milliseconds.
-     * @param hostnames  Array of memcached hosts where each element is of the form host:port.
-     * @see MemCacheTicketRegistry#MemCacheTicketRegistry(String[], int, int)
-     * @deprecated This has been deprecated
-     */
-    @Deprecated
-    public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut,
-            final String[] hostnames) {
-        this(hostnames, (int) TimeUnit.MILLISECONDS.toSeconds(ticketGrantingTicketTimeOut),
-                (int) TimeUnit.MILLISECONDS.toSeconds(serviceTicketTimeOut));
-    }
-
-    /**
      * Creates a new instance using the given memcached client instance, which is presumably configured via
      * <code>net.spy.memcached.spring.MemcachedClientFactoryBean</code>.
      *
@@ -192,12 +175,6 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
         this.client.shutdown();
     }
 
-    /**
-     * @param sync set to true, if updates to registry are to be synchronized
-     * @deprecated As of version 3.5, this operation has no effect since async writes can cause registry consistency issues.
-     */
-    @Deprecated
-    public void setSynchronizeUpdatesToRegistry(final boolean sync) {}
 
     @Override
     protected boolean needsCallback() {

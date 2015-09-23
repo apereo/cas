@@ -162,7 +162,7 @@ Update `deployerConfigContext.xml` according to the following template:
 
 {% highlight xml %}
 <bean id="jcifsConfig"
-      class="org.jasig.cas.support.spnego.authentication.handler.support.JCIFSConfig"
+      class="org.jasig.cas.support.spnego.authentication.handler.support.JcifsConfig"
       p:jcifsServicePrincipal="HTTP/cas.example.com@EXAMPLE.COM"
       p:kerberosDebug="false"
       p:kerberosRealm="EXAMPLE.COM"

@@ -61,26 +61,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         load();
     }
 
-    /**
-     * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService
-     * can include a set of default attributes to use if no services are defined in the registry.
-     *
-     * @deprecated
-     * <p>As of 4.1. Use {@link #DefaultServicesManagerImpl(ServiceRegistryDao)}
-     * instead. The <code>defaultAttributes</code> parameter is no longer used. Attributes are configured
-     * per service definition in the services registry. See {@link RegisteredService#getAttributeReleasePolicy()}
-     * for more details.</p>
-     *
-     * @param serviceRegistryDao the Service Registry Dao.
-     * @param defaultAttributes the list of default attributes to use.
-     */
-    @Deprecated
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao,
-            final List<String> defaultAttributes) {
-        this(serviceRegistryDao);
-        LOGGER.warn("This constructor is deprecated and will be removed in future CAS versions");
-    }
-
     @Transactional(readOnly = false)
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
