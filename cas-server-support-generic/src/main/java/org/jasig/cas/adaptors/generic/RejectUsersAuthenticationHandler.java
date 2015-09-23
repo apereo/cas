@@ -61,17 +61,6 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     /**
-     * @deprecated As of 4.1. Use {@link #setUsers(Set)} instead.
-     * Set the Collection of usernames which we will fail to authenticate.
-     *
-     * @param users The Collection of usernames we should not authenticate.
-     */
-    @Deprecated
-    public final void setUsers(final List<String> users) {
-        logger.warn("setUsers(List) is deprecated and has no effect. Consider defining a set instead");
-    }
-
-    /**
      * Set the Collection of usernames which we will fail to authenticate.
      *
      * @param users The Collection of usernames we should not authenticate.

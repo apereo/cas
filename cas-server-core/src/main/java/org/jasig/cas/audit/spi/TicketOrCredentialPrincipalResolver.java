@@ -53,19 +53,6 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     private final CentralAuthenticationService centralAuthenticationService;
 
     /**
-     * Instantiates a new ticket or credential principal resolver.
-     *
-     * @deprecated As of 4.1 access to the registry is no longer relevant
-     * Consider using alternative constructors instead.
-     * @param ticketRegistry the ticket registry
-     */
-    @Deprecated
-    public TicketOrCredentialPrincipalResolver(final TicketRegistry ticketRegistry) {
-        LOGGER.warn("The constructor is deprecated and will be removed. Consider an alternate constructor");
-        this.centralAuthenticationService = null;
-    }
-
-    /**
      * Instantiates a new Ticket or credential principal resolver.
      *
      * @param centralAuthenticationService the central authentication service

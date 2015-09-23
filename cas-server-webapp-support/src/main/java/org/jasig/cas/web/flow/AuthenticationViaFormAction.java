@@ -289,18 +289,6 @@ public class AuthenticationViaFormAction {
     }
 
     /**
-     * Sets ticket registry.
-     *
-     * @param ticketRegistry the ticket registry. No longer needed as the core service layer
-     *                       returns the correct object type. Will be removed in future versions.
-     * @deprecated As of 4.1
-     */
-    @Deprecated
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        logger.warn("setTicketRegistry() has no effect and will be removed in future CAS versions.");
-    }
-
-    /**
      * Adds a warning message to the message context.
      *
      * @param context Message context.

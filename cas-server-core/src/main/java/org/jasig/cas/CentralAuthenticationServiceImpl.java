@@ -580,17 +580,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
     }
 
-    /**
-     * @deprecated
-     * Sets persistent id generator.
-     *
-     * @param persistentIdGenerator the persistent id generator
-     */
-    @Deprecated
-    public void setPersistentIdGenerator(final PersistentIdGenerator persistentIdGenerator) {
-        logger.warn("setPersistentIdGenerator() is deprecated and no longer available. Consider "
-                + "configuring the an attribute provider for service definitions.");
-    }
 
     /**
      * Sets principal factory to create principal objects.
