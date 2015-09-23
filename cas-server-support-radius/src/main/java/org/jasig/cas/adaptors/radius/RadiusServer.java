@@ -28,6 +28,15 @@ import org.jasig.cas.authentication.PreventedException;
  */
 public interface RadiusServer {
 
+    /** The default port for accounting.
+     **/
+    int DEFAULT_PORT_ACCOUNTING = 1813;
+
+    /** The default port for authentication.
+     **/
+    int DEFAULT_PORT_AUTHENTICATION = 1812;
+
+
     /**
      * Method to authenticate a set of credentials.
      *
