@@ -18,23 +18,20 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
-
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Key-value ticket registry implementation that stores tickets in memcached keyed on the ticket ID.
