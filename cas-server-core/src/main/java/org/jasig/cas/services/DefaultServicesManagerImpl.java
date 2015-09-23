@@ -62,14 +62,13 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     /**
+     * @deprecated As of 4.1. Use {@link #DefaultServicesManagerImpl(ServiceRegistryDao)}
+     * instead. The <code>defaultAttributes</code> parameter is no longer used. Attributes are configured
+     * per service definition in the services registry. See {@link RegisteredService#getAttributeReleasePolicy()}
+     * for more details.
      * Constructs an instance of the {@link DefaultServicesManagerImpl} where the default RegisteredService
      * can include a set of default attributes to use if no services are defined in the registry.
      *
-     * @deprecated
-     * <p>As of 4.1. Use {@link #DefaultServicesManagerImpl(ServiceRegistryDao)}
-     * instead. The <code>defaultAttributes</code> parameter is no longer used. Attributes are configured
-     * per service definition in the services registry. See {@link RegisteredService#getAttributeReleasePolicy()}
-     * for more details.</p>
      *
      * @param serviceRegistryDao the Service Registry Dao.
      * @param defaultAttributes the list of default attributes to use.
@@ -81,7 +80,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         LOGGER.warn("This constructor is deprecated and will be removed in future CAS versions");
     }
 
-    @Transactional(readOnly = false)
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
@@ -97,9 +95,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         return r;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public RegisteredService findServiceBy(final Service service) {
         final Collection<RegisteredService> c = convertToTreeSet();
@@ -130,9 +126,10 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * @return the tree set
      */
     protected TreeSet<RegisteredService> convertToTreeSet() {
-        return new TreeSet<RegisteredService>(this.services.values());
+        return new TreeSet<>(this.services.values());
     }
 
+    @Override
     public Collection<RegisteredService> getAllServices() {
         return Collections.unmodifiableCollection(convertToTreeSet());
     }
@@ -142,7 +139,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         return findServiceBy(service) != null;
     }
 
-    @Transactional(readOnly = false)
     @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
