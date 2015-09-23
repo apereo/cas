@@ -18,11 +18,10 @@
  */
 package org.jasig.cas.services;
 
-import org.jasig.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
