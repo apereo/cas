@@ -10,6 +10,19 @@ in order to configure settings for retrieval, search and persistence of service 
 By default, entries are assigned the `objectclass` `casRegisteredService` 
 attribute and are looked up by the `uid` attribute.
 
+Support is enabled by adding the following module into the Maven overlay:
+
+{% highlight xml %}
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-ldap</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
+
+
+## Configuration
+
 {% highlight xml %}
 
 <context:component-scan base-package="org.jasig.cas" />
@@ -28,7 +41,7 @@ Note that the configuration of the mapper is optional and need not explicitly ex
 
 <p/>
 
-######`DefaultLdapRegisteredServiceMapper`
+##`DefaultLdapRegisteredServiceMapper`
 The default mapper has support for the following optional items:
 
 | Field                             | Default Value
