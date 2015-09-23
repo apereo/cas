@@ -62,12 +62,7 @@ public class ImmutableAuthenticationTests {
                 attributes,
                 successes,
                 failures);
-        try {
-            auth.getAuthenticationDate().setTime(100);
-            fail("Should have failed");
-        } catch (final RuntimeException e) {
-            logger.debug("Setting authenticate date/time failed correctly");
-        }
+
         try {
             auth.getCredentials().add(new BasicCredentialMetaData(new UsernamePasswordCredential()));
             fail("Should have failed");
