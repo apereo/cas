@@ -24,7 +24,7 @@ import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
-import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.validation.Assertion;
 import org.openid4java.association.Association;
@@ -130,7 +130,7 @@ public final class OpenIdService extends AbstractWebApplicationService {
                         successFullAuthentication = false;
                     }
                 }
-            } catch (final TicketException te) {
+            } catch (final AbstractTicketException te) {
                 LOGGER.error("Could not validate ticket : {}", te.getMessage(), te);
                 successFullAuthentication = false;
             }
