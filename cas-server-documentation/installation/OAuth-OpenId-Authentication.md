@@ -40,6 +40,6 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
 ...
 {% endhighlight %}
 
-# OAuth Authentication
+# OpenID Authentication
 
 To configure CAS to act as an OpenID provider, please [see this page](../protocol/OpenID-Protocol.html).
