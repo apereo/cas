@@ -20,6 +20,8 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/util
@@ -28,37 +30,36 @@
 
     <bean id="hazelcast" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
         <constructor-arg name="config">
-            <bean class="com.hazelcast.config.Config">
+            <bean class="com.hazelcast.config.Config"
+                  p:instanceName="${hz.cluster.instance.name:localhost}">
                 <property name="properties">
                     <util:properties>
                         <prop key="hazelcast.logging.type">slf4j</prop>
-                        <prop key="hazelcast.max.no.heartbeat.seconds">5</prop>
+                        <prop key="hazelcast.max.no.heartbeat.seconds">${hz.cluster.max.heartbeat.seconds:5}</prop>
                     </util:properties>
                 </property>
                 <property name="mapConfigs">
                     <util:map>
                         <entry key="tickets">
-                            <bean class="com.hazelcast.config.MapConfig">
-                                <property name="name" value="tickets"/>
-                                <property name="maxIdleSeconds" value="${tgt.maxTimeToLiveInSeconds:28800}"/>
+                            <bean class="com.hazelcast.config.MapConfig"
+                                p:name="tickets"
+                                p:maxIdleSeconds="${tgt.maxTimeToLiveInSeconds:28800}"
+                                p:evictionPolicy="${hz.cluster.eviction.policy:LRU}"
+                                p:evictionPercentage="${hz.cluster.eviction.percentage:10}" >
                                 <property name="maxSizeConfig">
-                                    <bean class="com.hazelcast.config.MaxSizeConfig">
-                                        <property name="maxSizePolicy" value="USED_HEAP_PERCENTAGE"/>
-                                        <property name="size" value="85"/>
-                                    </bean>
+                                    <bean class="com.hazelcast.config.MaxSizeConfig"
+                                          p:maxSizePolicy="USED_HEAP_PERCENTAGE"
+                                          p:size="${hz.cluster.max.heapsize.percentage:85}"/>
                                 </property>
-                                <property name="evictionPolicy" value="LRU"/>
-                                <property name="evictionPercentage" value="10"/>
                             </bean>
                         </entry>
                     </util:map>
                 </property>
                 <property name="networkConfig">
-                    <bean class="com.hazelcast.config.NetworkConfig">
-                        <property name="port" value="${hz.cluster.port:5701}"/>
-                        <property name="portAutoIncrement" value="${hz.cluster.portAutoIncrement:true}"/>
-                        <property name="join" ref="tcpIpHazelcastJoinConfig"/>
-                    </bean>
+                    <bean class="com.hazelcast.config.NetworkConfig"
+                          p:port="${hz.cluster.port:5701}"
+                          p:portAutoIncrement="${hz.cluster.portAutoIncrement:true}"
+                          p:join-ref="tcpIpHazelcastJoinConfig" />
                 </property>
             </bean>
         </constructor-arg>
@@ -66,24 +67,21 @@
 
     <bean id="tcpIpHazelcastJoinConfig" class="com.hazelcast.config.JoinConfig">
         <property name="multicastConfig">
-            <bean class="com.hazelcast.config.MulticastConfig">
-                <property name="enabled" value="false"/>
-            </bean>
+            <bean class="com.hazelcast.config.MulticastConfig"
+                  p:enabled="${hz.cluster.multicast.enabled:false}"/>
         </property>
         <property name="tcpIpConfig">
-            <bean class="com.hazelcast.config.TcpIpConfig">
-                <property name="enabled" value="true"/>
-                <property name="members" value="${hz.cluster.members:localhost}"/>
-            </bean>
+            <bean class="com.hazelcast.config.TcpIpConfig"
+                p:enabled="${hz.cluster.tcpip.enabled:true}"
+                p:members="${hz.cluster.members:localhost}"/>
         </property>
     </bean>
 
     <bean id="ticketRegistry" destroy-method="shutdown"
-          class="org.jasig.cas.ticket.registry.HazelcastTicketRegistry">
-        <constructor-arg name="hz" ref="hazelcast"/>
-        <constructor-arg name="mapName" value="tickets"/>
-        <constructor-arg name="ticketGrantingTicketTimoutInSeconds" value="${tgt.maxTimeToLiveInSeconds:28800}"/>
-        <constructor-arg name="serviceTicketTimeoutInSeconds" value="${st.timeToKillInSeconds:10}"/>
-    </bean>
+          class="org.jasig.cas.ticket.registry.HazelcastTicketRegistry"
+          c:hz-ref="hazelcast"
+          c:mapName="tickets"
+          c:ticketGrantingTicketTimoutInSeconds="${tgt.maxTimeToLiveInSeconds:28800}"
+          c:serviceTicketTimeoutInSeconds="${st.timeToKillInSeconds:10}" />
 
 </beans>
