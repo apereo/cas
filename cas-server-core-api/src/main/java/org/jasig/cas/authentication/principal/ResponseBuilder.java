@@ -22,8 +22,8 @@ package org.jasig.cas.authentication.principal;
 /**
  * Represents the task of building a CAS response
  * that is returned by a service.
- * @param <T>   the type parameter
  * @author Misagh Moayyed
+ * @param <T>   the type parameter
  * @since 4.2.0
  */
 public interface ResponseBuilder<T extends WebApplicationService> {

@@ -30,7 +30,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public abstract class AbstractServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
+public abstract class AbstractWebApplicationServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
