@@ -34,17 +34,6 @@ Support is enabled by including the following in your `pom.xml` file:
 
 REST support is currently provided internally by the [Spring framework](http://spring.io/guides/gs/rest-service/‎).
 
-
-#Configuration
-To turn on the protocol, add the following to the `web.xml`:
-
-{% highlight xml %}
-<servlet-mapping>
-    <servlet-name>cas</servlet-name>
-    <url-pattern>/v1/*</url-pattern>
-</servlet-mapping>
-{% endhighlight %}
-
 #Protocol
 
 ##Request a Ticket Granting Ticket
