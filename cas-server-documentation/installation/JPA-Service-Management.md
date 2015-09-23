@@ -144,16 +144,16 @@ adjust the version elements for the appropriate version number.
 {% highlight xml %}
 
 <dependency>
-  	<groupId>org.jasig.cas</groupId>
-  	<artifactId>cas-server-support-jdbc</artifactId>
-  	<version>${cas.version}</version>
-  	<scope>runtime</scope>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-jdbc</artifactId>
+    <version>${cas.version}</version>
+    <scope>runtime</scope>
 </dependency>
 
 <dependency>
-  	<groupId>org.apache.commons</groupId>
-  	<artifactId>commons-dbcp2</artifactId>
-	<version>${commons.dbcp.version}</version>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-dbcp2</artifactId>
+    <version>${commons.dbcp.version}</version>
     <scope>runtime</scope>
 </dependency>
 

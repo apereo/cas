@@ -15,7 +15,7 @@ Support is enabled by adding the following module into the Maven overlay:
 </dependency>
 {% endhighlight %}
 
-###### Configuration
+## Configuration
 
 This implementation auto-configures most of the internal details.
 The following configuration in `cas.properties` is required.
