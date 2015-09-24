@@ -86,6 +86,9 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
 
     @Override
     public OpenIdService createService(final String id) {
-        return new OpenIdService(id, id, null, this.openIdPrefixUrl, null);
+        final ParameterList paramList = new ParameterList();
+        final OpenIdServiceResponseBuilder builder = new OpenIdServiceResponseBuilder(serverManager,
+            centralAuthenticationService, paramList, this.openIdPrefixUrl);
+        return new OpenIdService(id, id, null, this.openIdPrefixUrl, builder);
     }
 }
