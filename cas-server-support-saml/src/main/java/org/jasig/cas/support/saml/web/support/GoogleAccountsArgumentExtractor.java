@@ -18,37 +18,30 @@
  */
 package org.jasig.cas.support.saml.web.support;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService;
 import org.jasig.cas.web.support.AbstractArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.NotNull;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
 /**
+ * @deprecated As of 4.2, use {@link org.jasig.cas.web.support.DefaultArgumentExtractor}.
  * Constructs a GoogleAccounts compatible service and provides the public and
  * private keys.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
+@Deprecated
 public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtractor {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsArgumentExtractor.class);
 
-    @NotNull
-    private final PublicKey publicKey;
-
-    @NotNull
-    private final PrivateKey privateKey;
-
-    @NotNull
-    private final ServicesManager servicesManager;
 
     /**
      * Instantiates a new google accounts argument extractor.
@@ -58,16 +51,16 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
      * @param servicesManager the services manager
      */
     public GoogleAccountsArgumentExtractor(final PublicKey publicKey,
-                                           final PrivateKey privateKey, final ServicesManager servicesManager) {
-        this.publicKey = publicKey;
-        this.privateKey = privateKey;
-        this.servicesManager = servicesManager;
+                                           final PrivateKey privateKey,
+                                           final ServicesManager servicesManager) {
+        throw new NotImplementedException("This operation is not supported. "
+                + "The class is deprecated and will be removed in future versions");
     }
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return GoogleAccountsService.createServiceFrom(request,
-                this.privateKey, this.publicKey, this.servicesManager);
+        throw new NotImplementedException("This operation is not supported. "
+                + "The class is deprecated and will be removed in future versions");
     }
 
     /**
