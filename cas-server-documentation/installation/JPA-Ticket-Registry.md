@@ -117,21 +117,20 @@ registries for higher availability.</p></div>
 {% endhighlight %}
 
 
-- Configure other JPA dependencies:
-
-
 ##Cleaner Locking Strategy
 The above shows a JPA 2.0 implementation of an exclusive, non-reentrant lock, 
 `JpaLockingStrategy`, to be used with the JPA-backed ticket registry.
 
 This will configure the cleaner with the following defaults:
 
-* tableName = "LOCKS"
-* uniqueIdColumnName = "UNIQUE_ID"
-* applicationIdColumnName = "APPLICATION_ID"
-* expirationDataColumnName = "EXPIRATION_DATE"
-* platform = SQL92
-* lockTimeout = 3600 (1 hour)
+| Field                             | Default
+|-----------------------------------+---------------------------------------+
+| `tableName`                       | `LOCKS`
+| `uniqueIdColumnName`              | `UNIQUE_ID`
+| `applicationIdColumnName`         | `APPLICATION_ID`
+| `expirationDataColumnName`        | `EXPIRATION_DATE`
+| `platform`                        | SQL92
+| `lockTimeout`                     | 3600 (1 hour)
 
 
 # Database Configuration
@@ -218,7 +217,7 @@ for information only and may serve as a reasonable starting point for configurin
 
 <div class="alert alert-info"><strong>Usage Tip</strong><p>Note the health check query is specific to PostgreSQL.</p></div>
 
-{% highlight bash %}
+{% highlight properties %}
 # == Basic database connection pool configuration ==
 database.dialect=org.hibernate.dialect.PostgreSQLDialect
 database.driverClass=org.postgresql.Driver

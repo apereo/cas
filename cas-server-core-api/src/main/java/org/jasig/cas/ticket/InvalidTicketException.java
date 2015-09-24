@@ -19,12 +19,12 @@
 package org.jasig.cas.ticket;
 
 /**
- * TicketException to alert that a Ticket was not found or that it is expired.
+ * AbstractTicketException to alert that a Ticket was not found or that it is expired.
  *
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class InvalidTicketException extends TicketException {
+public class InvalidTicketException extends AbstractTicketException {
 
     private static final long serialVersionUID = 9141891414482490L;
 

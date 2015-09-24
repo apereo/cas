@@ -24,7 +24,7 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -97,7 +97,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
             } catch (final AuthenticationException e) {
                 onError(context, credential);
                 return error();
-            } catch (final TicketException e) {
+            } catch (final AbstractTicketException e) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
                 logger.debug("Attempted to generate a ServiceTicket using renew=true with different credential", e);
             }
