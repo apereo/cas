@@ -18,12 +18,6 @@
  */
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.CasProtocolConstants;
-import org.springframework.util.StringUtils;
-
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Represents a service which wishes to use the CAS protocol.
  *
@@ -34,7 +28,6 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
 
     private static final long serialVersionUID = 8334068957483758042L;
 
-    private final Response.ResponseType responseType;
 
     /**
      * Instantiates a new simple web application service impl.
@@ -42,26 +35,11 @@ public final class SimpleWebApplicationServiceImpl extends AbstractWebApplicatio
      * @param id the id
      * @param originalUrl the original url
      * @param artifactId the artifact id
-     * @param responseType the response type
+     * @param responseBuilder the response builder
      */
-    protected SimpleWebApplicationServiceImpl(final String id,
-        final String originalUrl, final String artifactId,
-        final Response.ResponseType responseType) {
-        super(id, originalUrl, artifactId);
-        this.responseType = responseType;
-    }
-
-    @Override
-    public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<>();
-
-        if (StringUtils.hasText(ticketId)) {
-            parameters.put(CasProtocolConstants.PARAMETER_TICKET, ticketId);
-        }
-
-        if (Response.ResponseType.POST == this.responseType) {
-            return DefaultResponse.getPostResponse(getOriginalUrl(), parameters);
-        }
-        return DefaultResponse.getRedirectResponse(getOriginalUrl(), parameters);
+    protected SimpleWebApplicationServiceImpl(final String id, final String originalUrl, final String artifactId,
+                                              final ResponseBuilder<WebApplicationService> responseBuilder) {
+        super(id, originalUrl, artifactId, responseBuilder);
     }
 }
+
