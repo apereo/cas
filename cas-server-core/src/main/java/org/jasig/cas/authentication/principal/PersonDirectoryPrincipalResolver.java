@@ -85,7 +85,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
         if (attributes == null || attributes.isEmpty()) {
             if (!this.returnNullIfNoAttributes) {
-                return this.principalFactory.createPrincipal(principalId);
+                return new SimplePrincipal(principalId);
             }
             return null;
         }
