@@ -18,19 +18,16 @@
  */
 package org.jasig.cas.util.http;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.security.cert.X509Certificate;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.junit.Test;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.security.cert.X509Certificate;
 
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link SimpleHttpClient}.
@@ -72,6 +69,7 @@ public class SimpleHttpClientTests  {
 
     private SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
         final TrustManager trm = new X509TrustManager() {
+            @Override
             public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
