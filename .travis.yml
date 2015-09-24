@@ -33,7 +33,7 @@ cache:
   directories:
   - $HOME/.m2
 jdk:
-- openjdk6
+- oraclejdk6
 cache:
   directories:
     - '$HOME/.m2/repository'
