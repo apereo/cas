@@ -25,7 +25,7 @@ import org.jasig.cas.authentication.principal.AbstractWebApplicationServiceRespo
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
-import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.validation.Assertion;
 import org.openid4java.association.Association;
 import org.openid4java.message.AuthRequest;
@@ -44,6 +44,8 @@ import java.util.Map;
  * @since 4.2
  */
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
+
+    private static final long serialVersionUID = -4581238964007702423L;
 
     private final ServerManager serverManager;
     private final CentralAuthenticationService centralAuthenticationService;
@@ -104,7 +106,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
                 logger.warn("Association does not exist or is not valid");
                 successFullAuthentication = false;
             }
-        } catch (final TicketException te) {
+        } catch (final AbstractTicketException te) {
             logger.error("Could not validate ticket : {}", te.getMessage(), te);
             successFullAuthentication = false;
         }
