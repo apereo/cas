@@ -133,155 +133,143 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>         <strong class="jxr_keyword">this</strong>(id, <strong class="jxr_keyword">null</strong>, <strong class="jxr_keyword">null</strong>, authentication, policy);
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>     }
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> 
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L129" href="#L129">129</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L130" href="#L130">130</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>     @Override
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>     <strong class="jxr_keyword">public</strong> Authentication getAuthentication() {
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.authentication;
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>     }
-<a class="jxr_linenumber" name="L135" href="#L135">135</a> 
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">     * &lt;p&gt;The state of the ticket is affected by this operation and the</em>
-<a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">     * ticket will be considered used. The state update subsequently may</em>
-<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">     * impact the ticket expiration policy in that, depending on the policy</em>
-<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">     * configuration, the ticket may be considered expired.</em>
-<a class="jxr_linenumber" name="L142" href="#L142">142</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>     @Override
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> ServiceTicket grantServiceTicket(<strong class="jxr_keyword">final</strong> String id,
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>         <strong class="jxr_keyword">final</strong> Service service, <strong class="jxr_keyword">final</strong> ExpirationPolicy expirationPolicy,
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> credentialsProvided) {
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/ticket/ServiceTicketImpl.html">ServiceTicketImpl</a>(id, <strong class="jxr_keyword">this</strong>,
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>             service, <strong class="jxr_keyword">this</strong>.getCountOfUses() == 0 || credentialsProvided,
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>             expirationPolicy);
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> 
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>     @Override
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>     <strong class="jxr_keyword">public</strong> Authentication getAuthentication() {
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.authentication;
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>     }
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> 
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L136" href="#L136">136</a> <em class="jxr_javadoccomment">     * &lt;p&gt;The state of the ticket is affected by this operation and the</em>
+<a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">     * ticket will be considered used. The state update subsequently may</em>
+<a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">     * impact the ticket expiration policy in that, depending on the policy</em>
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">     * configuration, the ticket may be considered expired.</em>
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     @Override
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> ServiceTicket grantServiceTicket(<strong class="jxr_keyword">final</strong> String id,
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">final</strong> Service service, <strong class="jxr_keyword">final</strong> ExpirationPolicy expirationPolicy,
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">boolean</strong> credentialsProvided) {
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         <strong class="jxr_keyword">final</strong> ServiceTicket serviceTicket = <strong class="jxr_keyword">new</strong> <a href="../../../../org/jasig/cas/ticket/ServiceTicketImpl.html">ServiceTicketImpl</a>(id, <strong class="jxr_keyword">this</strong>,
+<a class="jxr_linenumber" name="L146" href="#L146">146</a>             service, <strong class="jxr_keyword">this</strong>.getCountOfUses() == 0 || credentialsProvided,
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>             expirationPolicy);
+<a class="jxr_linenumber" name="L148" href="#L148">148</a> 
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         updateState();
 <a class="jxr_linenumber" name="L150" href="#L150">150</a> 
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         updateState();
-<a class="jxr_linenumber" name="L152" href="#L152">152</a> 
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; authentications = getChainedAuthentications();
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; authentications = getChainedAuthentications();
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>         service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
+<a class="jxr_linenumber" name="L153" href="#L153">153</a> 
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">this</strong>.services.put(id, service);
 <a class="jxr_linenumber" name="L155" href="#L155">155</a> 
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">this</strong>.services.put(id, service);
-<a class="jxr_linenumber" name="L157" href="#L157">157</a> 
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         <strong class="jxr_keyword">return</strong> serviceTicket;
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>     }
-<a class="jxr_linenumber" name="L160" href="#L160">160</a> 
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L162" href="#L162">162</a> <em class="jxr_javadoccomment">     * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.</em>
-<a class="jxr_linenumber" name="L163" href="#L163">163</a> <em class="jxr_javadoccomment">     * Unlike {@link Collections#unmodifiableMap(java.util.Map)},</em>
-<a class="jxr_linenumber" name="L164" href="#L164">164</a> <em class="jxr_javadoccomment">     * which is a view of a separate map which can still change, an instance of {@link ImmutableMap}</em>
-<a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_javadoccomment">     * contains its own data and will never change.</em>
-<a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_javadoccomment">     * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.</em>
-<a class="jxr_linenumber" name="L168" href="#L168">168</a> <em class="jxr_javadoccomment">    */</em>
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>     @Override
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> Map&lt;String, Service&gt; getServices() {
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>         <strong class="jxr_keyword">return</strong> ImmutableMap.copyOf(<strong class="jxr_keyword">this</strong>.services);
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>     }
-<a class="jxr_linenumber" name="L173" href="#L173">173</a> 
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L175" href="#L175">175</a> <em class="jxr_javadoccomment">     * Remove all services of the TGT (at logout).</em>
-<a class="jxr_linenumber" name="L176" href="#L176">176</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>     @Override
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> removeAllServices() {
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         services.clear();
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>     }
-<a class="jxr_linenumber" name="L181" href="#L181">181</a> 
-<a class="jxr_linenumber" name="L182" href="#L182">182</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     * Return if the TGT has no parent.</em>
-<a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L185" href="#L185">185</a> <em class="jxr_javadoccomment">     * @return if the TGT has no parent.</em>
-<a class="jxr_linenumber" name="L186" href="#L186">186</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>     @Override
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isRoot() {
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.getGrantingTicket() == <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>     }
-<a class="jxr_linenumber" name="L191" href="#L191">191</a> 
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L193" href="#L193">193</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L194" href="#L194">194</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>     @Override
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> markTicketExpired() {
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>         <strong class="jxr_keyword">this</strong>.expired = Boolean.TRUE;
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>     }
-<a class="jxr_linenumber" name="L199" href="#L199">199</a> 
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L201" href="#L201">201</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L202" href="#L202">202</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>     @Override
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>     <strong class="jxr_keyword">public</strong> TicketGrantingTicket getRoot() {
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>         TicketGrantingTicket current = <strong class="jxr_keyword">this</strong>;
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>         TicketGrantingTicket parent = current.getGrantingTicket();
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>         <strong class="jxr_keyword">while</strong> (parent != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>             current = parent;
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>             parent = current.getGrantingTicket();
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>         }
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>         <strong class="jxr_keyword">return</strong> current;
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>     }
-<a class="jxr_linenumber" name="L213" href="#L213">213</a> 
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_javadoccomment">     * Return if the TGT is expired.</em>
-<a class="jxr_linenumber" name="L216" href="#L216">216</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L217" href="#L217">217</a> <em class="jxr_javadoccomment">     * @return if the TGT is expired.</em>
-<a class="jxr_linenumber" name="L218" href="#L218">218</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">return</strong> serviceTicket;
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>     }
+<a class="jxr_linenumber" name="L158" href="#L158">158</a> 
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> <em class="jxr_javadoccomment">     * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.</em>
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> <em class="jxr_javadoccomment">     * Unlike {@link Collections#unmodifiableMap(java.util.Map)},</em>
+<a class="jxr_linenumber" name="L162" href="#L162">162</a> <em class="jxr_javadoccomment">     * which is a view of a separate map which can still change, an instance of {@link ImmutableMap}</em>
+<a class="jxr_linenumber" name="L163" href="#L163">163</a> <em class="jxr_javadoccomment">     * contains its own data and will never change.</em>
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_javadoccomment">     * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.</em>
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_javadoccomment">    */</em>
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>     @Override
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> Map&lt;String, Service&gt; getServices() {
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">return</strong> ImmutableMap.copyOf(<strong class="jxr_keyword">this</strong>.services);
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>     }
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> 
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> <em class="jxr_javadoccomment">     * Remove all services of the TGT (at logout).</em>
+<a class="jxr_linenumber" name="L174" href="#L174">174</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>     @Override
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> removeAllServices() {
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>         services.clear();
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>     }
+<a class="jxr_linenumber" name="L179" href="#L179">179</a> 
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">     * Return if the TGT has no parent.</em>
+<a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     * @return if the TGT has no parent.</em>
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     @Override
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isRoot() {
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.getGrantingTicket() == <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     }
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> 
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> 
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>     @Override
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> markTicketExpired() {
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>         <strong class="jxr_keyword">this</strong>.expired = Boolean.TRUE;
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>     }
+<a class="jxr_linenumber" name="L195" href="#L195">195</a> 
+<a class="jxr_linenumber" name="L196" href="#L196">196</a> 
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>     @Override
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>     <strong class="jxr_keyword">public</strong> TicketGrantingTicket getRoot() {
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         TicketGrantingTicket current = <strong class="jxr_keyword">this</strong>;
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         TicketGrantingTicket parent = current.getGrantingTicket();
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         <strong class="jxr_keyword">while</strong> (parent != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>             current = parent;
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>             parent = current.getGrantingTicket();
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>         }
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         <strong class="jxr_keyword">return</strong> current;
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>     }
+<a class="jxr_linenumber" name="L207" href="#L207">207</a> 
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> <em class="jxr_javadoccomment">     * Return if the TGT is expired.</em>
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L211" href="#L211">211</a> <em class="jxr_javadoccomment">     * @return if the TGT is expired.</em>
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>     @Override
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isExpiredInternal() {
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.expired;
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
+<a class="jxr_linenumber" name="L217" href="#L217">217</a> 
+<a class="jxr_linenumber" name="L218" href="#L218">218</a> 
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>     @Override
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> isExpiredInternal() {
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.expired;
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>     <strong class="jxr_keyword">public</strong> List&lt;Authentication&gt; getSupplementalAuthentications() {
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.supplementalAuthentications;
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>     }
 <a class="jxr_linenumber" name="L223" href="#L223">223</a> 
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L225" href="#L225">225</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L226" href="#L226">226</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>     @Override
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>     <strong class="jxr_keyword">public</strong> List&lt;Authentication&gt; getSupplementalAuthentications() {
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.supplementalAuthentications;
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>     }
-<a class="jxr_linenumber" name="L231" href="#L231">231</a> 
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L233" href="#L233">233</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L234" href="#L234">234</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>     @Override
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>     <strong class="jxr_keyword">public</strong> List&lt;Authentication&gt; getChainedAuthentications() {
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; list = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
+<a class="jxr_linenumber" name="L224" href="#L224">224</a> 
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>     @Override
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>     <strong class="jxr_keyword">public</strong> List&lt;Authentication&gt; getChainedAuthentications() {
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; list = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
+<a class="jxr_linenumber" name="L228" href="#L228">228</a> 
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>         list.add(getAuthentication());
+<a class="jxr_linenumber" name="L230" href="#L230">230</a> 
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>         <strong class="jxr_keyword">if</strong> (getGrantingTicket() == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>             <strong class="jxr_keyword">return</strong> Collections.unmodifiableList(list);
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>         }
+<a class="jxr_linenumber" name="L234" href="#L234">234</a> 
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>         list.addAll(getGrantingTicket().getChainedAuthentications());
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>         <strong class="jxr_keyword">return</strong> Collections.unmodifiableList(list);
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>     }
 <a class="jxr_linenumber" name="L238" href="#L238">238</a> 
-<a class="jxr_linenumber" name="L239" href="#L239">239</a>         list.add(getAuthentication());
-<a class="jxr_linenumber" name="L240" href="#L240">240</a> 
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>         <strong class="jxr_keyword">if</strong> (getGrantingTicket() == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>             <strong class="jxr_keyword">return</strong> Collections.unmodifiableList(list);
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>         }
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>     @Override
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>     <strong class="jxr_keyword">public</strong> Service getProxiedBy() {
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.proxiedBy;
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>     }
+<a class="jxr_linenumber" name="L243" href="#L243">243</a> 
 <a class="jxr_linenumber" name="L244" href="#L244">244</a> 
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>         list.addAll(getGrantingTicket().getChainedAuthentications());
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <strong class="jxr_keyword">return</strong> Collections.unmodifiableList(list);
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>     }
-<a class="jxr_linenumber" name="L248" href="#L248">248</a> 
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>     @Override
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>     <strong class="jxr_keyword">public</strong> Service getProxiedBy() {
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.proxiedBy;
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>     }
-<a class="jxr_linenumber" name="L253" href="#L253">253</a> 
-<a class="jxr_linenumber" name="L254" href="#L254">254</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L255" href="#L255">255</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L256" href="#L256">256</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>     @Override
-<a class="jxr_linenumber" name="L258" href="#L258">258</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(<strong class="jxr_keyword">final</strong> Object object) {
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>         <strong class="jxr_keyword">if</strong> (object == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>         }
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>         <strong class="jxr_keyword">if</strong> (object == <strong class="jxr_keyword">this</strong>) {
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>         }
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>         <strong class="jxr_keyword">if</strong> (!(object instanceof TicketGrantingTicket)) {
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>             <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>         }
-<a class="jxr_linenumber" name="L268" href="#L268">268</a> 
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>         <strong class="jxr_keyword">final</strong> Ticket ticket = (Ticket) object;
-<a class="jxr_linenumber" name="L270" href="#L270">270</a> 
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> EqualsBuilder()
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>                 .append(ticket.getId(), <strong class="jxr_keyword">this</strong>.getId())
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>                 .isEquals();
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>     }
-<a class="jxr_linenumber" name="L275" href="#L275">275</a> 
-<a class="jxr_linenumber" name="L276" href="#L276">276</a> }
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>     @Override
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> equals(<strong class="jxr_keyword">final</strong> Object object) {
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>         <strong class="jxr_keyword">if</strong> (object == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>         }
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>         <strong class="jxr_keyword">if</strong> (object == <strong class="jxr_keyword">this</strong>) {
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>         }
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>         <strong class="jxr_keyword">if</strong> (!(object instanceof TicketGrantingTicket)) {
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>             <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>         }
+<a class="jxr_linenumber" name="L256" href="#L256">256</a> 
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         <strong class="jxr_keyword">final</strong> Ticket ticket = (Ticket) object;
+<a class="jxr_linenumber" name="L258" href="#L258">258</a> 
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> EqualsBuilder()
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>                 .append(ticket.getId(), <strong class="jxr_keyword">this</strong>.getId())
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>                 .isEquals();
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>     }
+<a class="jxr_linenumber" name="L263" href="#L263">263</a> 
+<a class="jxr_linenumber" name="L264" href="#L264">264</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

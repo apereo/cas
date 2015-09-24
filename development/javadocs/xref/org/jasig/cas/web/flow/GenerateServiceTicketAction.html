@@ -30,7 +30,7 @@
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.AuthenticationException;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.Credential;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Service;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketException;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.AbstractTicketException;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.InvalidTicketException;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ServiceTicket;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.support.WebUtils;
@@ -68,7 +68,7 @@
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>              <strong class="jxr_keyword">return</strong> success();
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AuthenticationException e) {
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>              logger.error(<span class="jxr_string">"Could not verify credentials to grant service ticket"</span>, e);
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TicketException e) {
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AbstractTicketException e) {
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>              <strong class="jxr_keyword">if</strong> (e instanceof InvalidTicketException) {
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>                  <strong class="jxr_keyword">this</strong>.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>              }

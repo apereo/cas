@@ -31,14 +31,14 @@
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Service;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Assertion;
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.view.AbstractView;
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.joda.time.DateTime;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.slf4j.Logger;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.slf4j.LoggerFactory;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.springframework.web.servlet.view.AbstractView;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.Collections;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> java.util.Enumeration;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> java.util.Iterator;
@@ -194,7 +194,7 @@
 <a class="jxr_linenumber" name="L186" href="#L186">186</a> <em class="jxr_javadoccomment">     * @return the authentication date</em>
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> <em class="jxr_javadoccomment">     * @since 4.1.0</em>
 <a class="jxr_linenumber" name="L188" href="#L188">188</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Date getAuthenticationDate(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> DateTime getAuthenticationDate(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>         <strong class="jxr_keyword">return</strong> getPrimaryAuthenticationFrom(model).getAuthenticationDate();
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>     }
 <a class="jxr_linenumber" name="L192" href="#L192">192</a> 
@@ -215,7 +215,7 @@
 <a class="jxr_linenumber" name="L207" href="#L207">207</a> <em class="jxr_javadoccomment">     * @return the chained authentications</em>
 <a class="jxr_linenumber" name="L208" href="#L208">208</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L209" href="#L209">209</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Collection&lt;Authentication&gt; getChainedAuthentications(<strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; model) {
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; chainedAuthenticationsToReturn = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>         <strong class="jxr_keyword">final</strong> Collection&lt;Authentication&gt; chainedAuthenticationsToReturn = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
 <a class="jxr_linenumber" name="L211" href="#L211">211</a> 
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>         <strong class="jxr_keyword">final</strong> Assertion assertion = getAssertionFrom(model);
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>         <strong class="jxr_keyword">final</strong> List&lt;Authentication&gt; chainedAuthentications = assertion.getChainedAuthentications();

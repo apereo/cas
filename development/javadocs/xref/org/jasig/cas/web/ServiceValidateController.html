@@ -37,9 +37,9 @@
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ServicesManager;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.UnauthorizedProxyingException;
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.UnauthorizedServiceException;
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketException;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.AbstractTicketException;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketGrantingTicket;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketValidationException;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.AbstractTicketValidationException;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.proxy.ProxyHandler;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Assertion;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
@@ -70,7 +70,7 @@
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <em class="jxr_javadoccomment"> * @author Misagh Moayyed</em>
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/web/ServiceValidateController.html">ServiceValidateController</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../org/jasig/cas/web/DelegateController.html">DelegateController</a> {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/web/ServiceValidateController.html">ServiceValidateController</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../org/jasig/cas/web/AbstractDelegateController.html">AbstractDelegateController</a> {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>      <em class="jxr_javadoccomment">/** View if Service Ticket Validation Fails. */</em>
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_SERVICE_FAILURE_VIEW_NAME = <span class="jxr_string">"cas2ServiceFailureView"</span>;
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
@@ -156,7 +156,7 @@
 <a class="jxr_linenumber" name="L148" href="#L148">148</a>                     proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AuthenticationException e) {
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>             logger.info(<span class="jxr_string">"Failed to authenticate service credential {}"</span>, serviceCredential);
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TicketException e) {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AbstractTicketException e) {
 <a class="jxr_linenumber" name="L152" href="#L152">152</a>             logger.error(<span class="jxr_string">"Failed to create proxy granting ticket for {}"</span>, serviceCredential, e);
 <a class="jxr_linenumber" name="L153" href="#L153">153</a>         }
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> 
@@ -206,11 +206,11 @@
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>             onSuccessfulValidation(serviceTicketId, assertion);
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>             logger.debug(<span class="jxr_string">"Successfully validated service ticket {} for service [{}]"</span>, serviceTicketId, service.getId());
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>             <strong class="jxr_keyword">return</strong> generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TicketValidationException e) {
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AbstractTicketValidationException e) {
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>             <strong class="jxr_keyword">final</strong> String code = e.getCode();
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>             <strong class="jxr_keyword">return</strong> generateErrorView(code, code,
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>                     <strong class="jxr_keyword">new</strong> Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TicketException te) {
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AbstractTicketException te) {
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>             <strong class="jxr_keyword">return</strong> generateErrorView(te.getCode(), te.getCode(),
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>                 <strong class="jxr_keyword">new</strong> Object[] {serviceTicketId});
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>         } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> UnauthorizedProxyingException e) {

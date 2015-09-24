@@ -28,9 +28,9 @@
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas.authentication;
 <a class="jxr_linenumber" name="L21" href="#L21">21</a>  
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.io.Serializable;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.joda.time.DateTime;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> java.io.Serializable;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment">/**</em>
@@ -100,7 +100,7 @@
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  <em class="jxr_javadoccomment">     * @return This builder instance.</em>
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L95" href="#L95">95</a>      <a href="../../../../org/jasig/cas/authentication/AuthenticationBuilder.html">AuthenticationBuilder</a> setAuthenticationDate(Date d);
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      <a href="../../../../org/jasig/cas/authentication/AuthenticationBuilder.html">AuthenticationBuilder</a> setAuthenticationDate(DateTime d);
 <a class="jxr_linenumber" name="L96" href="#L96">96</a>  
 <a class="jxr_linenumber" name="L97" href="#L97">97</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L98" href="#L98">98</a>  <em class="jxr_javadoccomment">     * Creates an immutable authentication instance from builder data.</em>

@@ -47,7 +47,7 @@
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ServicesManager;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.UnauthorizedProxyingException;
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.UnauthorizedServiceException;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketException;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.AbstractTicketException;
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ExpirationPolicy;
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.InvalidTicketException;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.ServiceTicket;
@@ -57,14 +57,14 @@
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.UniqueTicketIdGenerator;
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Assertion;
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> org.mockito.ArgumentMatcher;
-<a class="jxr_linenumber" name="L55" href="#L55">55</a>  
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
-<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
-<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> java.util.Date;
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> org.joda.time.DateTime;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <strong class="jxr_keyword">import</strong> org.mockito.ArgumentMatcher;
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">import</strong> java.util.Arrays;
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  <strong class="jxr_keyword">import</strong> java.util.Collection;
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  <strong class="jxr_keyword">import</strong> java.util.HashMap;
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>  <strong class="jxr_keyword">import</strong> java.util.List;
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>  <strong class="jxr_keyword">import</strong> java.util.Map;
@@ -112,7 +112,7 @@
 <a class="jxr_linenumber" name="L104" href="#L104">104</a>     @Before
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> prepareNewCAS() {
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>         <strong class="jxr_keyword">this</strong>.authentication = mock(Authentication.<strong class="jxr_keyword">class</strong>);
-<a class="jxr_linenumber" name="L107" href="#L107">107</a>         when(<strong class="jxr_keyword">this</strong>.authentication.getAuthenticationDate()).thenReturn(<strong class="jxr_keyword">new</strong> Date());
+<a class="jxr_linenumber" name="L107" href="#L107">107</a>         when(<strong class="jxr_keyword">this</strong>.authentication.getAuthenticationDate()).thenReturn(DateTime.now());
 <a class="jxr_linenumber" name="L108" href="#L108">108</a>         <strong class="jxr_keyword">final</strong> CredentialMetaData metadata = <strong class="jxr_keyword">new</strong> BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword(<span class="jxr_string">"principal"</span>));
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, HandlerResult&gt; successes = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>         successes.put(<span class="jxr_string">"handler1"</span>, <strong class="jxr_keyword">new</strong> DefaultHandlerResult(mock(AuthenticationHandler.<strong class="jxr_keyword">class</strong>), metadata));
@@ -189,7 +189,7 @@
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>     }
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> 
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>     @Test(expected=UnauthorizedProxyingException.<strong class="jxr_keyword">class</strong>)
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() <strong class="jxr_keyword">throws</strong> TicketException {
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() <strong class="jxr_keyword">throws</strong> AbstractTicketException {
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">this</strong>.cas.grantServiceTicket(TGT_ID, TestUtils.getService(SVC1_ID));
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
 <a class="jxr_linenumber" name="L187" href="#L187">187</a> 
@@ -210,7 +210,7 @@
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>     }
 <a class="jxr_linenumber" name="L203" href="#L203">203</a> 
 <a class="jxr_linenumber" name="L204" href="#L204">204</a>     @Test
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyChainedAuthenticationsOnValidation() <strong class="jxr_keyword">throws</strong> TicketException {
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyChainedAuthenticationsOnValidation() <strong class="jxr_keyword">throws</strong> AbstractTicketException {
 <a class="jxr_linenumber" name="L206" href="#L206">206</a>         <strong class="jxr_keyword">final</strong> Service svc = TestUtils.getService(SVC2_ID);
 <a class="jxr_linenumber" name="L207" href="#L207">207</a>         <strong class="jxr_keyword">final</strong> ServiceTicket st = <strong class="jxr_keyword">this</strong>.cas.grantServiceTicket(TGT2_ID, svc);
 <a class="jxr_linenumber" name="L208" href="#L208">208</a>         assertNotNull(st);

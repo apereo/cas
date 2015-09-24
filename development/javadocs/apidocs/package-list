@@ -24,8 +24,6 @@ org.jasig.cas.authentication.support
 org.jasig.cas.extension.clearpass
 org.jasig.cas.logout
 org.jasig.cas.monitor
-org.jasig.cas.persondir
-org.jasig.cas.remoting.server
 org.jasig.cas.services
 org.jasig.cas.services.convert
 org.jasig.cas.services.jmx

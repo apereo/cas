@@ -9,7 +9,6 @@ org.jasig.cas.authentication.support
 org.jasig.cas.logout
 org.jasig.cas.mock
 org.jasig.cas.monitor
-org.jasig.cas.remoting.server
 org.jasig.cas.services
 org.jasig.cas.services.support
 org.jasig.cas.ticket

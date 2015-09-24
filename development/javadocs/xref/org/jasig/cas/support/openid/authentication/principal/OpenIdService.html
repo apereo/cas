@@ -32,7 +32,7 @@
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.DefaultResponse;
 <a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Response;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.support.openid.OpenIdProtocolConstants;
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.TicketException;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.AbstractTicketException;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.ApplicationContextProvider;
 <a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Assertion;
 <a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> org.openid4java.association.Association;
@@ -138,7 +138,7 @@
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>                         successFullAuthentication = false;
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>                     }
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>                 }
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> TicketException te) {
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>             } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> AbstractTicketException te) {
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>                 LOGGER.error(<span class="jxr_string">"Could not validate ticket : {}"</span>, te.getMessage(), te);
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>                 successFullAuthentication = false;
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>             }

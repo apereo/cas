@@ -27,7 +27,7 @@ under the License.
     <item>
       <title>File: 66,
              Errors: 0,
-             Warnings: 1,
+             Warnings: 0,
              Infos: 1
       </title>
             <link>http://www.jasig.org/cas/cas-server-core-api//checkstyle.html</link>
@@ -123,20 +123,6 @@ under the License.
                 </td>
                 <td>
                   0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.ticket.TicketException.java">org/jasig/cas/ticket/TicketException.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  1
                 </td>
                 <td>
                   0
@@ -509,6 +495,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.authentication.Credential.java">org/jasig/cas/authentication/Credential.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core-api//checkstyle.html#org.jasig.cas.ticket.AbstractTicketException.java">org/jasig/cas/ticket/AbstractTicketException.java</a>
                 </td>
                 <td>
                   0

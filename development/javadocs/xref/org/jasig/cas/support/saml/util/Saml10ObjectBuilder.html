@@ -250,7 +250,7 @@
 <a class="jxr_linenumber" name="L242" href="#L242">242</a> 
 <a class="jxr_linenumber" name="L243" href="#L243">243</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L244" href="#L244">244</a> <em class="jxr_javadoccomment">     * Encode response and pass it onto the outbound transport.</em>
-<a class="jxr_linenumber" name="L245" href="#L245">245</a> <em class="jxr_javadoccomment">     * Uses {@link CasHTTPSOAP11Encoder} to handle encoding.</em>
+<a class="jxr_linenumber" name="L245" href="#L245">245</a> <em class="jxr_javadoccomment">     * Uses {@link CasHttpSoap11Encoder} to handle encoding.</em>
 <a class="jxr_linenumber" name="L246" href="#L246">246</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L247" href="#L247">247</a> <em class="jxr_javadoccomment">     * @param httpResponse the http response</em>
 <a class="jxr_linenumber" name="L248" href="#L248">248</a> <em class="jxr_javadoccomment">     * @param httpRequest the http request</em>
@@ -261,7 +261,7 @@
 <a class="jxr_linenumber" name="L253" href="#L253">253</a>                                    <strong class="jxr_keyword">final</strong> HttpServletRequest httpRequest,
 <a class="jxr_linenumber" name="L254" href="#L254">254</a>                                    <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/principal/Response.html">Response</a> samlMessage) <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L255" href="#L255">255</a> 
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>         <strong class="jxr_keyword">final</strong> HTTPSOAP11Encoder encoder = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/support/saml/util/CasHTTPSOAP11Encoder.html">CasHTTPSOAP11Encoder</a>();
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>         <strong class="jxr_keyword">final</strong> HTTPSOAP11Encoder encoder = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/support/saml/util/CasHttpSoap11Encoder.html">CasHttpSoap11Encoder</a>();
 <a class="jxr_linenumber" name="L257" href="#L257">257</a>         <strong class="jxr_keyword">final</strong> MessageContext&lt;SAMLObject&gt; context = <strong class="jxr_keyword">new</strong> MessageContext();
 <a class="jxr_linenumber" name="L258" href="#L258">258</a>         context.setMessage(samlMessage);
 <a class="jxr_linenumber" name="L259" href="#L259">259</a>         encoder.setHttpServletResponse(httpResponse);

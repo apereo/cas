@@ -133,7 +133,7 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>             <strong class="jxr_keyword">return</strong> success();
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         }
 <a class="jxr_linenumber" name="L127" href="#L127">127</a> 
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>         <strong class="jxr_keyword">final</strong> SPSSODescriptor spssoDescriptor = getSPSSODescriptor(entityDescriptor);
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         <strong class="jxr_keyword">final</strong> SPSSODescriptor spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
 <a class="jxr_linenumber" name="L129" href="#L129">129</a>         <strong class="jxr_keyword">if</strong> (spssoDescriptor == <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L130" href="#L130">130</a>             logger.debug(<span class="jxr_string">"SP SSO descriptor not found for [{}]"</span>, entityId);
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>             <strong class="jxr_keyword">return</strong> success();
@@ -164,9 +164,9 @@
 <a class="jxr_linenumber" name="L156" href="#L156">156</a> <em class="jxr_javadoccomment">     * Gets SP SSO descriptor.</em>
 <a class="jxr_linenumber" name="L157" href="#L157">157</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L158" href="#L158">158</a> <em class="jxr_javadoccomment">     * @param entityDescriptor the entity descriptor</em>
-<a class="jxr_linenumber" name="L159" href="#L159">159</a> <em class="jxr_javadoccomment">     * @return the sPSSO descriptor</em>
+<a class="jxr_linenumber" name="L159" href="#L159">159</a> <em class="jxr_javadoccomment">     * @return the SP SSO descriptor</em>
 <a class="jxr_linenumber" name="L160" href="#L160">160</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">private</strong> SPSSODescriptor getSPSSODescriptor(<strong class="jxr_keyword">final</strong> EntityDescriptor entityDescriptor) {
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">private</strong> SPSSODescriptor getSPSsoDescriptor(<strong class="jxr_keyword">final</strong> EntityDescriptor entityDescriptor) {
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>         logger.debug(<span class="jxr_string">"Locating SP SSO descriptor for SAML2 protocol..."</span>);
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>         SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>         <strong class="jxr_keyword">if</strong> (spssoDescriptor == <strong class="jxr_keyword">null</strong>) {
