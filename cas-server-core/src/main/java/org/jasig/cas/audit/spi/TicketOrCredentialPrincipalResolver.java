@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.audit.spi;
 
-import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
@@ -26,8 +25,8 @@ import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.AopUtils;
+import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -51,19 +50,6 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
 
     @NotNull
     private final CentralAuthenticationService centralAuthenticationService;
-
-    /**
-     * Instantiates a new ticket or credential principal resolver.
-     *
-     * @deprecated As of 4.1 access to the registry is no longer relevant
-     * Consider using alternative constructors instead.
-     * @param ticketRegistry the ticket registry
-     */
-    @Deprecated
-    public TicketOrCredentialPrincipalResolver(final TicketRegistry ticketRegistry) {
-        LOGGER.warn("The constructor is deprecated and will be removed. Consider an alternate constructor");
-        this.centralAuthenticationService = null;
-    }
 
     /**
      * Instantiates a new Ticket or credential principal resolver.

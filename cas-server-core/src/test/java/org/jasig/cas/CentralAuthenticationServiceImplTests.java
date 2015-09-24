@@ -27,8 +27,8 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.TicketCreationException;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -64,7 +64,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             assertNotNull(getCentralAuthenticationService()
                 .createTicketGrantingTicket(
                     TestUtils.getCredentialsWithSameUsernameAndPassword()));
-        } catch (final TicketException e) {
+        } catch (final AbstractTicketException e) {
             fail(TestUtils.CONST_EXCEPTION_NON_EXPECTED);
         }
     }
@@ -162,7 +162,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         assertTrue(pt.getId().startsWith(ServiceTicket.PROXY_TICKET_PREFIX));
     }
 
-    @Test(expected=TicketException.class)
+    @Test(expected=AbstractTicketException.class)
     public void verifyGrantServiceTicketWithInvalidTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
@@ -172,7 +172,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 TestUtils.getService());
     }
 
-    @Test(expected=TicketException.class)
+    @Test(expected=AbstractTicketException.class)
     public void verifyGrantServiceTicketWithExpiredTicketGrantingTicket() throws Exception {
         ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(
                 new ExpirationPolicy() {
@@ -206,7 +206,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         assertTrue(pgt.getId().startsWith(TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
     }
 
-    @Test(expected=TicketException.class)
+    @Test(expected=AbstractTicketException.class)
     public void verifyDelegateTicketGrantingTicketWithBadServiceTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
             .createTicketGrantingTicket(
@@ -281,7 +281,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             serviceTicket.getId(), TestUtils.getService("test2"));
     }
 
-    @Test(expected=TicketException.class)
+    @Test(expected=AbstractTicketException.class)
     public void verifyValidateServiceTicketWithInvalidServiceTicket() throws Exception {
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(
@@ -295,7 +295,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 serviceTicket.getId(), TestUtils.getService());
     }
 
-    @Test(expected=TicketException.class)
+    @Test(expected=AbstractTicketException.class)
     public void verifyValidateServiceTicketNonExistantTicket() throws Exception {
         getCentralAuthenticationService().validateServiceTicket("test",
                 TestUtils.getService());
@@ -444,11 +444,11 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the
      * chained authentications. Both concepts are orthogonal.
      *  
-     * @throws org.jasig.cas.ticket.TicketException
+     * @throws AbstractTicketException
      * @throws AuthenticationException
      */
     @Test
-    public void authenticateTwiceWithRenew() throws TicketException, AuthenticationException {
+    public void authenticateTwiceWithRenew() throws AbstractTicketException, AuthenticationException {
         final CentralAuthenticationService cas = getCentralAuthenticationService();
         final Service svc = TestUtils.getService("testDefault");
         final UsernamePasswordCredential goodCredential = TestUtils.getCredentialsWithSameUsernameAndPassword();
@@ -466,10 +466,10 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      * It previously failed when the deletion happens before the ticket was marked expired because an update was necessary for that.
      *
      * @throws AuthenticationException
-     * @throws org.jasig.cas.ticket.TicketException
+     * @throws AbstractTicketException
      */
     @Test
-    public void verifyDestroyRemoteRegistry() throws TicketException, AuthenticationException {
+    public void verifyDestroyRemoteRegistry() throws AbstractTicketException, AuthenticationException {
         final MockOnlyOneTicketRegistry registry = new MockOnlyOneTicketRegistry();
         final TicketGrantingTicketImpl tgt = new TicketGrantingTicketImpl("TGT-1", mock(Authentication.class),
                 mock(ExpirationPolicy.class));

@@ -242,7 +242,7 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
     /**
      * Encode response and pass it onto the outbound transport.
-     * Uses {@link CasHTTPSOAP11Encoder} to handle encoding.
+     * Uses {@link CasHttpSoap11Encoder} to handle encoding.
      *
      * @param httpResponse the http response
      * @param httpRequest the http request
@@ -253,7 +253,7 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                    final HttpServletRequest httpRequest,
                                    final Response samlMessage) throws Exception {
 
-        final HTTPSOAP11Encoder encoder = new CasHTTPSOAP11Encoder();
+        final HTTPSOAP11Encoder encoder = new CasHttpSoap11Encoder();
         final MessageContext<SAMLObject> context = new MessageContext();
         context.setMessage(samlMessage);
         encoder.setHttpServletResponse(httpResponse);
