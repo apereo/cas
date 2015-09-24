@@ -134,7 +134,6 @@ fault tolerance and are suitable for both active/passive and active/active setup
 
 * [Hazelcast](../installation/Hazelcast-Ticket-Registry.html)
 * [EhCache](../installation/Ehcache-Ticket-Registry.html)
-* [JBoss](../installation/JBoss-Cache-Ticket-Registry.html)
 * [MemCached](../installation/Memcached-Ticket-Registry.html)
 
 The particular choice of caching technology should be driven by infrastructure and expertise as much as performance
@@ -142,8 +141,8 @@ and availability considerations. It's hardly valuable to have a high-performance
 expertise to troubleshoot when problems invariably arise.
 
 The technology considerations of the various cache components merit some discussion since there are notable
-differences that impact availability and performance characteristics. Cache systems like Ehcache and JBoss Cache
-(and its offspring, Infinispan) offer a distributed cache that presents a single, consistent view of entries regardless
+differences that impact availability and performance characteristics. Cache systems like Ehcache and Hazelcast
+offer a distributed cache that presents a single, consistent view of entries regardless
 of the node contacted. Distributed caches rely on replication to provide for consistency. Cache systems like memcached
 store the ticket on exactly 1 node and use a deterministic algorithm to locate the node containing the ticket:
 

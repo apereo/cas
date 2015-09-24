@@ -107,7 +107,6 @@ in the overlay (1):
     |           |   cas-servlet.xml
     |           |   cas.properties
     |           |   deployerConfigContext.xml
-    |           |   restlet-servlet.xml
     |           |   web.xml
     |           |   
     |           +---spring-configuration
