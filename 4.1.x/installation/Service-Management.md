@@ -220,7 +220,7 @@ A proxy policy that only allows proxying to PGT urls that match the specified re
 ## Persisting Registered Service Data
 
 ######`InMemoryServiceRegistryDaoImpl`
-CAS uses in-memory services management by default, with the registry seeded from registration beans wired via Spring.
+This DAO is an in-memory services management seeded from registration beans wired via Spring beans.
 
 {% highlight xml %}
 <bean id="serviceRegistryDao"
