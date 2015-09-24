@@ -29,17 +29,15 @@ import javax.servlet.http.HttpServletResponse;
  * Abstract class to be extended by all controllers that may become a delegate.
  * All subclass must implement the canHandle method to say if they can handle a request or not.
  * @author Frederic Esnault
- * @since 3.5
- * @deprecated As of 4.1, the class is required to note its abstractness in the name and will be renamed in the future.
+ * @since 4.2.0
  */
-@Deprecated
-public abstract class DelegateController extends AbstractController {
+public abstract class AbstractDelegateController extends AbstractController {
     
     /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     /**
-     * Determine if a DelegateController subclass can handle the current request.
+     * Determine if a AbstractDelegateController subclass can handle the current request.
      * @param request the current request
      * @param response the response
      * @return true if the controller can handler the request, false otherwise

@@ -162,7 +162,7 @@ Update `deployerConfigContext.xml` according to the following template:
 
 {% highlight xml %}
 <bean id="jcifsConfig"
-      class="org.jasig.cas.support.spnego.authentication.handler.support.JCIFSConfig"
+      class="org.jasig.cas.support.spnego.authentication.handler.support.JcifsConfig"
       p:jcifsServicePrincipal="HTTP/cas.example.com@EXAMPLE.COM"
       p:kerberosDebug="false"
       p:kerberosRealm="EXAMPLE.COM"
@@ -172,7 +172,7 @@ Update `deployerConfigContext.xml` according to the following template:
 <bean id="spnegoAuthentication" class="jcifs.spnego.Authentication" />
 
 <bean id="spnegoHandler"
-      class="org.jasig.cas.support.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler"
+      class="org.jasig.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler"
       p:authentication-ref="spnegoAuthentication"
       p:principalWithDomainName="false"
       p:NTLMallowed="true" />
