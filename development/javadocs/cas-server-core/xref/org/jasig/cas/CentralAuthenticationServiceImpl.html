@@ -508,7 +508,7 @@
 <a class="jxr_linenumber" name="L500" href="#L500">500</a>             <strong class="jxr_keyword">throws</strong> AuthenticationException, TicketException {
 <a class="jxr_linenumber" name="L501" href="#L501">501</a> 
 <a class="jxr_linenumber" name="L502" href="#L502">502</a>         <strong class="jxr_keyword">final</strong> Set&lt;Credential&gt; sanitizedCredentials = sanitizeCredentials(credentials);
-<a class="jxr_linenumber" name="L503" href="#L503">503</a>         <strong class="jxr_keyword">if</strong> (sanitizedCredentials.size() &gt; 0) {
+<a class="jxr_linenumber" name="L503" href="#L503">503</a>         <strong class="jxr_keyword">if</strong> (!sanitizedCredentials.isEmpty()) {
 <a class="jxr_linenumber" name="L504" href="#L504">504</a>             <strong class="jxr_keyword">final</strong> Authentication authentication = <strong class="jxr_keyword">this</strong>.authenticationManager.authenticate(credentials);
 <a class="jxr_linenumber" name="L505" href="#L505">505</a> 
 <a class="jxr_linenumber" name="L506" href="#L506">506</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = <strong class="jxr_keyword">new</strong> <a href="../../../org/jasig/cas/ticket/TicketGrantingTicketImpl.html">TicketGrantingTicketImpl</a>(
