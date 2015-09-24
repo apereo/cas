@@ -49,6 +49,8 @@ import java.util.Map;
  */
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
+    private static final long serialVersionUID = -4584732364007702423L;
+
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
     private final GoogleSaml20ObjectBuilder samlObjectBuilder;

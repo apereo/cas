@@ -32,6 +32,7 @@ import java.util.Map;
  * @since 4.2
  */
 public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
+    private static final long serialVersionUID = -851233878780818494L;
     private final Response.ResponseType responseType;
 
     /**
