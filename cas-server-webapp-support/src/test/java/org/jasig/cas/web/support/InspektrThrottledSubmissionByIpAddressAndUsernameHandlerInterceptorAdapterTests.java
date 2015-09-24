@@ -102,7 +102,7 @@ AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
             getThrottle().postHandle(request, response, null, null);
             return response;
         }
-        fail("Expected AuthenticationException");
+        fail("Expected AbstractAuthenticationException");
         return null;
     }
 

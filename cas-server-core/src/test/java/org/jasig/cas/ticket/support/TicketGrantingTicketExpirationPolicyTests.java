@@ -25,6 +25,8 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author William G. Thompson, Jr.
 
@@ -44,9 +46,8 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     @Before
     public void setUp() throws Exception {
-        this.expirationPolicy = new TicketGrantingTicketExpirationPolicy();
-        this.expirationPolicy.setMaxTimeToLiveInMilliSeconds(HARD_TIMEOUT);
-        this.expirationPolicy.setTimeToKillInMilliSeconds(SLIDING_TIMEOUT);
+        this.expirationPolicy = new TicketGrantingTicketExpirationPolicy(HARD_TIMEOUT, SLIDING_TIMEOUT,
+            TimeUnit.MILLISECONDS);
         this.ticketGrantingTicket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 this.expirationPolicy);
     }
