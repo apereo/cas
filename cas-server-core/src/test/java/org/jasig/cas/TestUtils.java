@@ -18,6 +18,7 @@
  */
 package org.jasig.cas;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -44,6 +45,7 @@ import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -128,6 +130,15 @@ public final class TestUtils {
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public static IPersonAttributeDao getAttributeRepository() {
+        final Map<String, List<Object>>  attributes = new HashMap<>();
+        attributes.put("uid", (List) ImmutableList.of(CONST_USERNAME));
+        attributes.put("cn", (List) ImmutableList.of(CONST_USERNAME.toUpperCase()));
+        attributes.put("givenName", (List) ImmutableList.of(CONST_USERNAME));
+        attributes.put("memberOf", (List) ImmutableList.of("system", "admin", "cas"));
+        return new StubPersonAttributeDao(attributes);
     }
 
     public static Principal getPrincipal() {
