@@ -18,23 +18,20 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
-
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Key-value ticket registry implementation that stores tickets in memcached keyed on the ticket ID.
@@ -80,23 +77,6 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
         }
         this.tgtTimeout = ticketGrantingTicketTimeOut;
         this.stTimeout = serviceTicketTimeOut;
-    }
-
-    /**
-     * This alternative constructor takes time in milliseconds.
-     * It has the timeout parameters in order to create a unique method signature.
-     *
-     * @param ticketGrantingTicketTimeOut TGT timeout in milliseconds.
-     * @param serviceTicketTimeOut ST timeout in milliseconds.
-     * @param hostnames  Array of memcached hosts where each element is of the form host:port.
-     * @see MemCacheTicketRegistry#MemCacheTicketRegistry(String[], int, int)
-     * @deprecated This has been deprecated
-     */
-    @Deprecated
-    public MemCacheTicketRegistry(final long ticketGrantingTicketTimeOut, final long serviceTicketTimeOut,
-            final String[] hostnames) {
-        this(hostnames, (int) TimeUnit.MILLISECONDS.toSeconds(ticketGrantingTicketTimeOut),
-                (int) TimeUnit.MILLISECONDS.toSeconds(serviceTicketTimeOut));
     }
 
     /**
@@ -192,12 +172,6 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
         this.client.shutdown();
     }
 
-    /**
-     * @param sync set to true, if updates to registry are to be synchronized
-     * @deprecated As of version 3.5, this operation has no effect since async writes can cause registry consistency issues.
-     */
-    @Deprecated
-    public void setSynchronizeUpdatesToRegistry(final boolean sync) {}
 
     @Override
     protected boolean needsCallback() {

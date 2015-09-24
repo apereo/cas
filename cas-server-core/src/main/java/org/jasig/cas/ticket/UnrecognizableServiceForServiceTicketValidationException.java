@@ -28,7 +28,7 @@ import org.jasig.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class UnrecognizableServiceForServiceTicketValidationException extends TicketValidationException {
+public class UnrecognizableServiceForServiceTicketValidationException extends AbstractTicketValidationException {
     /** The code description. */
     protected static final String CODE = "INVALID_SERVICE";
 
