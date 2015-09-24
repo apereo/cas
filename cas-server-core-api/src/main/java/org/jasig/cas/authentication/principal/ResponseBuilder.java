@@ -19,6 +19,8 @@
 
 package org.jasig.cas.authentication.principal;
 
+import java.io.Serializable;
+
 /**
  * Represents the task of building a CAS response
  * that is returned by a service.
@@ -26,7 +28,7 @@ package org.jasig.cas.authentication.principal;
  * @param <T>   the type parameter
  * @since 4.2.0
  */
-public interface ResponseBuilder<T extends WebApplicationService> {
+public interface ResponseBuilder<T extends WebApplicationService> extends Serializable {
 
     /**
      * Build response. The implementation must produce

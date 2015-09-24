@@ -31,6 +31,8 @@ import java.util.Map;
  * @since 4.2
  */
 public abstract class AbstractWebApplicationServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
+    private static final long serialVersionUID = -4584738964007702423L;
+
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
