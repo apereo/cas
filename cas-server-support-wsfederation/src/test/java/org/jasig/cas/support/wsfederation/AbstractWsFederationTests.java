@@ -31,7 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @since 4.2
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="classpath:/applicationContext.xml")
+@ContextConfiguration(locations={"classpath:/applicationContext.xml", "classpath*:/META-INF/spring/*.xml"})
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {
 
     @Autowired

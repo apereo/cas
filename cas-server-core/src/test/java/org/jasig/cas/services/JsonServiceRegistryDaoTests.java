@@ -20,8 +20,8 @@ package org.jasig.cas.services;
 
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
-import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
@@ -282,6 +282,36 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
+    public void verifySaveAttributeReleasePolicyAllowedAttrRulesWithGuavaCaching() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("verifySaveAttributeReleasePolicyAllowedAttrRulesWithGuavaCaching");
+        r.setServiceId("testId");
+
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
+
+        final Map<String, List<Object>> attributes = new HashMap<>();
+        attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
+
+        final CachingPrincipalAttributesRepository repository =
+                new CachingPrincipalAttributesRepository(
+                        new StubPersonAttributeDao(attributes),
+                        TimeUnit.MILLISECONDS, 100);
+        repository.setMergingStrategy(new ReplacingAttributeAdder());
+
+        policy.setPrincipalAttributesRepository(repository);
+        r.setAttributeReleasePolicy(policy);
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+        assertNotNull(r3.getAttributeReleasePolicy());
+        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+    }
+
+    @Test
     public void verifyServiceRemovals() throws Exception{
         final List<RegisteredService> list = new ArrayList<>(5);
         for (int i = 1; i < 5; i++) {
@@ -296,7 +326,7 @@ public class JsonServiceRegistryDaoTests {
 
         for (final RegisteredService r2 : list) {
             this.dao.delete(r2);
-            Thread.sleep(1);
+            Thread.sleep(500);
             assertNull(this.dao.findServiceById(r2.getId()));
         }
 

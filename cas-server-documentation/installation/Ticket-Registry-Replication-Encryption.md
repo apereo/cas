@@ -10,7 +10,6 @@ by encrypting and signing tickets:
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
 * [Ehcache](Ehcache-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
-* [JBoss Cache](JBoss-Cache-Ticket-Registry.html)
 
 <div class="alert alert-info"><strong>Default Behavior</strong><p>Encryption by default is turned off
 when you use the above ticket registries. It requires explicit configuration before it can be used.</p></div>
