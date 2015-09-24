@@ -18,23 +18,12 @@
  */
 package org.jasig.cas.web.flow;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.zip.Inflater;
-
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.SingleLogoutService;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
+import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
-import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
@@ -44,7 +33,6 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.jasig.cas.web.support.WebUtils;
@@ -60,6 +48,17 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowExecutionKey;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.zip.Inflater;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Jerome Leleu
@@ -138,8 +137,9 @@ public class FrontChannelLogoutActionTests {
 
     @Test
     public void verifyLogoutOneLogoutRequestNotAttempted() throws Exception {
+        final SingleLogoutService service = new WebApplicationServiceFactory().createService(TEST_URL, SingleLogoutService.class);
         final LogoutRequest logoutRequest = new DefaultLogoutRequest(TICKET_ID,
-                new SimpleWebApplicationServiceImpl(TEST_URL),
+                service,
                 new URL(TEST_URL));
         final Event event = getLogoutEvent(Arrays.asList(logoutRequest));
 

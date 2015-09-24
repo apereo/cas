@@ -18,18 +18,11 @@
  */
 package org.jasig.cas.support.pac4j.web.flow;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Matchers.any;
-
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.support.pac4j.test.MockFacebookClient;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -46,6 +39,10 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 /**
  * This class tests the {@link ClientAction} class.
@@ -88,7 +85,7 @@ public final class ClientActionTests {
 
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
-        mockRequestContext.getFlowScope().put(ClientAction.SERVICE, new SimpleWebApplicationServiceImpl(MY_SERVICE));
+        mockRequestContext.getFlowScope().put(ClientAction.SERVICE, new WebApplicationServiceFactory().createService(MY_SERVICE));
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient(MY_KEY, MY_SECRET);
@@ -117,7 +114,7 @@ public final class ClientActionTests {
         mockSession.setAttribute(ClientAction.THEME, MY_THEME);
         mockSession.setAttribute(ClientAction.LOCALE, MY_LOCALE);
         mockSession.setAttribute(ClientAction.METHOD, MY_METHOD);
-        final Service service = new SimpleWebApplicationServiceImpl(MY_SERVICE);
+        final Service service = new WebApplicationServiceFactory().createService(MY_SERVICE);
         mockSession.setAttribute(ClientAction.SERVICE, service);
         mockRequest.setSession(mockSession);
 

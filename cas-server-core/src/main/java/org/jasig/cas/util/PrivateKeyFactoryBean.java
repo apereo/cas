@@ -54,6 +54,7 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey>
         }
     }
 
+    @Override
     public Class getObjectType() {
         return PrivateKey.class;
     }
