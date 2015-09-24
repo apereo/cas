@@ -69,18 +69,12 @@ public class SessionMonitor implements Monitor<SessionStatus> {
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public String getName() {
         return SessionMonitor.class.getSimpleName();
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public SessionStatus observe() {
         try {

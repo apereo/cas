@@ -47,6 +47,9 @@
     <entry key="AUTHENTICATION_RESOLVER">
       <ref bean="authenticationActionResolver" />
     </entry>
+    <entry key="SAVE_SERVICE_ACTION_RESOLVER">
+      <ref bean="authenticationActionResolver" />
+    </entry>
     <entry key="CREATE_TICKET_GRANTING_TICKET_RESOLVER">
       <ref bean="ticketCreationActionResolver" />
     </entry>
@@ -82,6 +85,9 @@
     </entry>
     <entry key="VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER">
       <ref bean="ticketResourceResolver" />
+    </entry>
+    <entry key="SAVE_SERVICE_RESOURCE_RESOLVER">
+      <ref bean="returnValueResourceResolver" />
     </entry>
   </util:map>
       

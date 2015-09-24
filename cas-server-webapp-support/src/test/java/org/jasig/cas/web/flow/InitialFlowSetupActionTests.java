@@ -22,7 +22,7 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.ArgumentExtractor;
-import org.jasig.cas.web.support.CasArgumentExtractor;
+import org.jasig.cas.web.support.DefaultArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -64,7 +64,7 @@ public class InitialFlowSetupActionTests {
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
-        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new CasArgumentExtractor()};
+        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new DefaultArgumentExtractor()};
         this.action.setArgumentExtractors(Arrays.asList(argExtractors));
 
         this.servicesManager = mock(ServicesManager.class);
