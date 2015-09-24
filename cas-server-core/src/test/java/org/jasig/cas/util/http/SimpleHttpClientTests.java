@@ -29,6 +29,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -74,7 +75,9 @@ public class SimpleHttpClientTests  {
             public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
+            @Override
             public void checkClientTrusted(final X509Certificate[] certs, final String authType) {}
+            @Override
             public void checkServerTrusted(final X509Certificate[] certs, final String authType) {}
         };
         final SSLContext sc = SSLContext.getInstance("SSL");

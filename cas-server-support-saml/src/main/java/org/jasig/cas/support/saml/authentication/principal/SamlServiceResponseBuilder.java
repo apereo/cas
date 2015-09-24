@@ -34,6 +34,8 @@ import java.util.Map;
  */
 public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
+    private static final long serialVersionUID = -4584738964007702003L;
+
     @Override
     public Response build(final WebApplicationService service, final String ticketId) {
         final Map<String, String> parameters = new HashMap<>();
