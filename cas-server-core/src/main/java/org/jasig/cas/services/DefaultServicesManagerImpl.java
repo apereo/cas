@@ -22,7 +22,6 @@ import org.jasig.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -81,7 +80,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         LOGGER.warn("This constructor is deprecated and will be removed in future CAS versions");
     }
 
-    @Transactional(readOnly = false)
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
@@ -142,7 +140,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         return findServiceBy(service) != null;
     }
 
-    @Transactional(readOnly = false)
     @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
             resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
