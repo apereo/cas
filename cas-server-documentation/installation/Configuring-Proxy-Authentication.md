@@ -43,7 +43,7 @@ below and the aspects related to proxy authentication may either be commented ou
 <bean id="proxyValidateController" class="org.jasig.cas.web.ServiceValidateController"
       p:centralAuthenticationService-ref="centralAuthenticationService"
       p:proxyHandler-ref="proxy20Handler"
-      p:argumentExtractor-ref="casArgumentExtractor"/>
+      p:argumentExtractor-ref="defaultArgumentExtractor"/>
 {% endhighlight %}
 
 

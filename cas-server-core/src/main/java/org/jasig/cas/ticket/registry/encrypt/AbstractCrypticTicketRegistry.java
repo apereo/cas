@@ -27,7 +27,7 @@ import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
 import org.jasig.cas.util.CipherExecutor;
 import org.jasig.cas.util.CompressionUtils;
 
-import javax.validation.constraints.Null;
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -44,7 +44,7 @@ import java.util.HashSet;
  */
 public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedTicketRegistry {
 
-    @Null
+    @Nullable
     private CipherExecutor<byte[], byte[]> cipherExecutor;
 
     /**

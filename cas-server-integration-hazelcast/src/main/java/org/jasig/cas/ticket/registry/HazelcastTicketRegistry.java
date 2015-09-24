@@ -69,17 +69,13 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         this.hz = hz;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     protected void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     protected boolean needsCallback() {
         return false;
@@ -102,9 +98,6 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         logger.debug("ST timeout: [{}s]", serviceTicketTimeoutInSeconds);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void addTicket(final Ticket ticket) {
         addTicket(ticket, getTimeout(ticket));
@@ -121,9 +114,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         this.registry.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
@@ -131,9 +122,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         return decodeTicket(ticket);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public boolean deleteTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
@@ -141,9 +130,6 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         return this.registry.remove(encTicketId) != null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Collection<Ticket> getTickets() {
         return decodeTickets(this.registry.values());
