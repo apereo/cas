@@ -19,26 +19,33 @@
 
 package org.jasig.cas.support.saml;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
+import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
+import org.jasig.cas.util.PrivateKeyFactoryBean;
+import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
-import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.servlet.mvc.Controller;
+import org.springframework.util.ResourceUtils;
 
 import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -48,54 +55,111 @@ import java.util.Map;
  */
 @WebListener
 @Component
-public class SamlServletContextListener implements ServletContextListener, ApplicationContextAware {
-    private static final String CAS_SERVLET_NAME = "cas";
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class SamlServletContextListener extends AbstractServletContextInitializer {
 
     @Autowired
-    @Qualifier("samlArgumentExtractor")
-    private ArgumentExtractor samlArgumentExtractor;
+    @Qualifier("samlServiceFactory")
+    private SamlServiceFactory samlServiceFactory;
+
+    @Autowired
+    @Qualifier("googleAccountsServiceFactory")
+    private GoogleAccountsServiceFactory googleAccountsServiceFactory;
 
     @Autowired
     @Qualifier("samlServiceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator;
 
     @Override
-    public void contextInitialized(final ServletContextEvent sce) {
-        logger.info("Initializing SAML servlet context...");
-
-        final ServletRegistration registration = sce.getServletContext().getServletRegistration(CAS_SERVLET_NAME);
-        registration.addMapping(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
-
-        logger.info("Added [{}] to {} servlet context", SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, CAS_SERVLET_NAME);
+    public void initializeServletContext(final ServletContextEvent sce) {
+        addEndpointMappingToCasServlet(sce, SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
     }
 
     @Override
-    public void contextDestroyed(final ServletContextEvent sce) {}
+    protected void initializeRootApplicationContext() {
+        addServiceFactory(samlServiceFactory);
+        addServiceFactory(googleAccountsServiceFactory);
+        addServiceTicketUniqueIdGenerator(SamlService.class.getCanonicalName(),
+                this.samlServiceTicketUniqueIdGenerator);
+    }
 
     @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        try {
-            if (applicationContext.getParent() == null) {
-                logger.info("Initializing Saml root application context");
-                final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
-                list.add(this.samlArgumentExtractor);
+    protected void initializeServletApplicationContext() {
+        addControllerToCasServletHandlerMapping(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE,
+                "samlValidateController");
+    }
 
-                final Map<String, UniqueTicketIdGenerator> map = applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
-                map.put(SamlService.class.getCanonicalName(), this.samlServiceTicketUniqueIdGenerator);
-                logger.info("Initialized Saml root application context successfully");
-            } else {
-                logger.info("Initializing Saml application context");
-                final SimpleUrlHandlerMapping handlerMappingC = applicationContext.getBean(SimpleUrlHandlerMapping.class);
-                final Controller samlValidateController = applicationContext.getBean("samlValidateController", Controller.class);
-                final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
-                urlMap.put(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, samlValidateController);
-                handlerMappingC.initApplicationContext();
-                logger.info("Initialized Saml application context successfully");
+    @Component
+    @Configuration
+    private static class GoogleAppsConfigurationInitializer {
+
+        private final Logger logger = LoggerFactory.getLogger(getClass());
+
+        @Value("${cas.saml.googleapps.publickey.file:}")
+        private String publicKeyLocation;
+
+        @Value("${cas.saml.googleapps.privatekey.file:}")
+        private String privateKeyLocation;
+
+
+        @Value("${cas.saml.googleapps.key.alg:}")
+        private String keyAlgorithm;
+
+        protected GoogleAppsConfigurationInitializer() {}
+
+        @Bean(name="googleAppsPrivateKey", autowire = Autowire.BY_NAME)
+        public PrivateKey getGoogleAppsPrivateKey() throws Exception {
+            if (!isValidConfiguration()) {
+                logger.debug("Google Apps private key bean will not be created, because it's not configured");
+                return null;
+
             }
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            final PrivateKeyFactoryBean bean = new PrivateKeyFactoryBean();
+
+            if (this.privateKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                bean.setLocation(new ClassPathResource(
+                    StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            } else {
+                bean.setLocation(new FileSystemResource(this.privateKeyLocation));
+            }
+
+            bean.setAlgorithm(this.keyAlgorithm);
+            bean.afterPropertiesSet();
+
+            logger.debug("Creating Google Apps private key instance via {}", this.publicKeyLocation);
+            return bean.getObject();
+        }
+
+        @Bean(name="googleAppsPublicKey", autowire = Autowire.BY_NAME)
+        public PublicKey getGoogleAppsPublicKey() throws Exception {
+            if (!isValidConfiguration()) {
+                logger.debug("Google Apps public key bean will not be created, because it's not configured");
+                return null;
+            }
+
+            final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
+            if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+                bean.setLocation(new ClassPathResource(
+                    StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            } else {
+                bean.setLocation(new FileSystemResource(this.publicKeyLocation));
+            }
+
+            bean.setAlgorithm(this.keyAlgorithm);
+            bean.afterPropertiesSet();
+
+            logger.debug("Creating Google Apps public key instance via {}", this.publicKeyLocation);
+            return bean.getObject();
+        }
+
+        @Bean(name="serviceFactoryList")
+        public List getServiceFactoryList() {
+            return new ArrayList();
+        }
+
+        private boolean isValidConfiguration() {
+            return StringUtils.isNotBlank(this.privateKeyLocation)
+                    || StringUtils.isNotBlank(this.publicKeyLocation)
+                    || StringUtils.isNotBlank(this.keyAlgorithm);
         }
     }
 

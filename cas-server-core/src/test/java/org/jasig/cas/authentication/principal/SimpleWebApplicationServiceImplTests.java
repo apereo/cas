@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- *
  * @author Scott Battaglia
  * @author Arnaud Lesueur
  * @since 3.1
@@ -36,7 +35,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void verifyResponse() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
-        final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
 
         final Response response = impl.getResponse("ticketId");
         assertNotNull(response);
@@ -47,7 +46,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void verifyCreateSimpleWebApplicationServiceImplFromServiceAttribute() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setAttribute("service", "service");
-        final SimpleWebApplicationServiceImpl impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
         assertNotNull(impl);
     }
 
@@ -55,7 +54,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void verifyResponseForJsession() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://www.cnn.com/;jsession=test");
-        final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
 
         assertEquals("http://www.cnn.com/", impl.getId());
     }
@@ -64,7 +63,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void verifyResponseWithNoTicket() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "service");
-        final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
@@ -76,7 +75,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void verifyResponseWithNoTicketAndNoParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/");
-        final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);
@@ -89,7 +88,7 @@ public class SimpleWebApplicationServiceImplTests {
     public void verifyResponseWithNoTicketAndOneParameterInServiceURL() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("service", "http://foo.com/?param=test");
-        final WebApplicationService impl = SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
 
         final Response response = impl.getResponse(null);
         assertNotNull(response);

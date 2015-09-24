@@ -12,7 +12,8 @@ There are two core configurable ticketing components:
 
 ## Ticket Registry
 The deployment environment and technology expertise generally determine the particular `TicketRegistry` component.
-A cache-backed implementation is recommended for HA deployments, while the default `DefaultTicketRegistry` in-memory component may be suitable for small deployments.
+A cache-backed implementation is recommended for HA deployments, while the default 
+`DefaultTicketRegistry` in-memory component may be suitable for small deployments.
 
 
 ### Default (In-Memory) Ticket Registry
@@ -39,12 +40,11 @@ deployments. Components for the following caching technologies are provided:
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
 * [Ehcache](Ehcache-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
-* [JBoss Cache](JBoss-Cache-Ticket-Registry.html)
 
 #### Secure Cache Replication
-A number of cache-based ticket registries support secure replication of ticket data across the wire, 
-so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops. 
-[See this guide](Ticket-Registry-Replication-Encryption.html) for more info. 
+A number of cache-based ticket registries support secure replication of ticket data across the wire,
+so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops.
+[See this guide](Ticket-Registry-Replication-Encryption.html) for more info.
 
 ### RDBMS Ticket Registries
 RDBMS-based ticket registries provide a distributed ticket store across multiple CAS nodes. Components for the following caching technologies are provided:
@@ -131,15 +131,18 @@ If you're using the default ticket registry configuration, your `/cas-server-web
 
 {% highlight xml %}
 <!-- TICKET REGISTRY CLEANER -->
-<bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-      c:ticketRegistry-ref="ticketRegistry"
-      c:logoutManager-ref="logoutManager" />
+<bean id="ticketRegistryCleaner" 
+  class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
+      c:centralAuthenticationService-ref="centralAuthenticationService"
+      c:ticketRegistry-ref="ticketRegistry"/>
 
-<bean id="jobDetailTicketRegistryCleaner"  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+<bean id="jobDetailTicketRegistryCleaner"  
+  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
     p:targetObject-ref="ticketRegistryCleaner"
     p:targetMethod="clean" />
 
-<bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+<bean id="triggerJobDetailTicketRegistryCleaner"
+  class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
     p:jobDetail-ref="jobDetailTicketRegistryCleaner"
     p:startDelay="20000"
     p:repeatInterval="5000000" />
@@ -147,5 +150,3 @@ If you're using the default ticket registry configuration, your `/cas-server-web
 
 ## Ticket Expiration Policies
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting tickets (TGT) and service tickets (ST). [See this guide](Configuring-Ticket-Expiration-Policy.html) for details on how to configure the expiration policies.
-
-
