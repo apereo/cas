@@ -18,16 +18,15 @@
  */
 package org.jasig.cas;
 
-import com.google.common.collect.ImmutableList;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
@@ -35,6 +34,7 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.services.persondir.IPersonAttributeDao;
+import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -45,7 +45,9 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -121,11 +123,11 @@ public final class TestUtils {
     }
 
     public static IPersonAttributeDao getAttributeRepository() {
-        final Map<String, List<Object>>  attributes = new HashMap<>();
-        attributes.put("uid", (List) ImmutableList.of(CONST_USERNAME));
-        attributes.put("cn", (List) ImmutableList.of(CONST_USERNAME.toUpperCase()));
-        attributes.put("givenName", (List) ImmutableList.of(CONST_USERNAME));
-        attributes.put("memberOf", (List) ImmutableList.of("system", "admin", "cas"));
+        final Map<String, List<Object>>  attributes = new HashMap<String, List<Object>>();
+        attributes.put("uid", (List) Arrays.asList(CONST_USERNAME));
+        attributes.put("cn", (List) Arrays.asList(CONST_USERNAME.toUpperCase()));
+        attributes.put("givenName", (List) Arrays.asList(CONST_USERNAME));
+        attributes.put("memberOf", (List) Arrays.asList("system", "admin", "cas"));
         return new StubPersonAttributeDao(attributes);
     }
 
