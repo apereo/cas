@@ -166,7 +166,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public final int hashCode() {
-        return new HashCodeBuilder().append(this.getId()).toHashCode();
+        return new HashCodeBuilder(13, 133).append(this.getId()).toHashCode();
     }
 
     @Override

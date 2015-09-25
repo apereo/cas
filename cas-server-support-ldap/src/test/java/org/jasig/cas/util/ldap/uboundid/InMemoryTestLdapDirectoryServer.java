@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.annotation.PreDestroy;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -165,16 +166,11 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
     }
 
     @Override
+    @PreDestroy
     public void close() throws IOException {
         LOGGER.debug("Shutting down LDAP server...");
         this.directoryServer.shutDown(true);
         LOGGER.debug("Shut down LDAP server.");
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        LOGGER.debug("Finalizing...");
-        close();
-        super.finalize();
-    }
 }

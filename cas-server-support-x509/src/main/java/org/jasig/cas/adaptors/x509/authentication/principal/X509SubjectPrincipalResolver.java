@@ -135,7 +135,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
          * @param name the name
          * @param values the values
          */
-        public AttributeContext(final String name, final String[] values) {
+        AttributeContext(final String name, final String[] values) {
             this.values = values;
         }
 
