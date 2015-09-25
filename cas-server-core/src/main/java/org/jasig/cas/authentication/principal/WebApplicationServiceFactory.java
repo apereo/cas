@@ -20,6 +20,7 @@
 package org.jasig.cas.authentication.principal;
 
 import org.jasig.cas.CasProtocolConstants;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +32,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public final class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
+@Component("webApplicationServiceFactory")
+public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
     @Override
     public WebApplicationService createService(final HttpServletRequest request) {
