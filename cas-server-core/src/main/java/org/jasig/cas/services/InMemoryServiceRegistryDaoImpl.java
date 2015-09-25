@@ -46,13 +46,12 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
      * Instantiates a new In memory service registry.
      */
     public InMemoryServiceRegistryDaoImpl() {
-        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime "
-                + "will be LOST upon container restarts.");
+
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
+        logWarning();
         return this.registeredServices.remove(registeredService);
     }
 
@@ -74,6 +73,8 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
+        logWarning();
+
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) registeredService).setId(findHighestId()+1);
         }
@@ -103,5 +104,11 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
         }
 
         return id;
+    }
+
+    private void logWarning() {
+        LOGGER.debug("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
+            + "Changes that are made to service definitions during runtime "
+            + "will be LOST upon container restarts.");
     }
 }
