@@ -32,7 +32,7 @@
     </description>
 
     <util:list id="serviceFactoryList" value-type="org.jasig.cas.authentication.principal.ServiceFactory">
-        <bean class="org.jasig.cas.authentication.principal.WebApplicationServiceFactory" />
+        <ref bean="webApplicationServiceFactory" />
     </util:list>
 
     <util:list id="argumentExtractors">

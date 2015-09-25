@@ -49,38 +49,8 @@
     -->
     <aop:aspectj-autoproxy/>
 
-    <!--
-        Job to periodically reload services from service registry.
-        This job is needed for a clustered CAS environment since service changes
-        in one CAS node are not known to the other until a reload.
-    -->
-    <bean id="serviceRegistryReloaderJobDetail"
-          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-          p:targetObject-ref="servicesManager"
-          p:targetMethod="reload"/>
-
-    <bean id="periodicServiceRegistryReloaderTrigger"
-          class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
-          p:jobDetail-ref="serviceRegistryReloaderJobDetail"
-          p:startDelay="${service.registry.quartz.reloader.startDelay:120000}"
-          p:repeatInterval="${service.registry.quartz.reloader.repeatInterval:120000}"/>
-
-    <!-- HTTP clients -->
-    <bean id="httpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" abstract="true"
-          p:readTimeout="${http.client.read.timeout:5000}"
-          p:connectionTimeout="${http.client.connection.timeout:5000}"/>
-
-    <bean id="noRedirectHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean" parent="httpClient"
-          p:redirectsEnabled="false" p:circularRedirectsAllowed="false"/>
-
-    <bean id="supportsTrustStoreSslSocketFactoryHttpClient" class="org.jasig.cas.util.http.SimpleHttpClientFactoryBean"
-          parent="httpClient" p:sslSocketFactory-ref="trustStoreSslSocketFactory"/>
-
     <!-- ADVISORS -->
     <bean id="advisorAutoProxyCreator"
           class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
-
-    <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
-    <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"/>
 
 </beans>

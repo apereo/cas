@@ -20,17 +20,30 @@ package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.inspektr.audit.annotation.Audit;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerFactory;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -42,7 +55,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.1
  */
 @Component("servicesManager")
-public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
+public final class DefaultServicesManagerImpl implements ReloadableServicesManager, Job {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
@@ -53,6 +66,12 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /** Map to store all services. */
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
+
+    @Value("${service.registry.quartz.reloader.repeatInterval:120000}")
+    private int refreshIntervalInMinutes;
+
+    @Value("${service.registry.quartz.reloader.startDelay:120000}")
+    private int startDelay;
 
     /**
      * Instantiates a new default services manager impl.
@@ -160,5 +179,35 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         this.services = localServices;
         LOGGER.info("Loaded {} services.", this.services.size());
         
+    }
+
+    /**
+     * Schedule reloader job.
+     */
+    @PostConstruct
+    public void scheduleReloaderJob()  {
+        try {
+            final JobDetail job = JobBuilder.newJob(this.getClass())
+                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString())).build();
+            final Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                    .withIntervalInMinutes(this.refreshIntervalInMinutes)
+                    .repeatForever()).build();
+
+            final SchedulerFactory schFactory = new StdSchedulerFactory();
+            final Scheduler sch = schFactory.getScheduler();
+            sch.start();
+            sch.scheduleJob(job, trigger);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void execute(final JobExecutionContext jobExecutionContext)
+                            throws JobExecutionException {
+        reload();
     }
 }
