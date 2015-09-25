@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
@@ -48,8 +49,8 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
      *
      * @param monitors Collection of monitors responsible for observing various aspects of CAS.
      */
-    @Autowired
-    public void setMonitors(@Qualifier("monitorsList") final Collection<Monitor> monitors) {
+    @Resource(name="monitorsList")
+    public void setMonitors(final Collection<Monitor> monitors) {
         this.monitors = monitors;
     }
 
@@ -58,9 +59,6 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
         return HealthCheckMonitor.class.getSimpleName();
     }
 
-    /**
-     * {@inheritDoc}
-     **/
     @Override
     public HealthStatus observe() {
         final Map<String, Status> results = new LinkedHashMap<>(this.monitors.size());

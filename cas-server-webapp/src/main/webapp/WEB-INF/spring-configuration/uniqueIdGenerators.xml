@@ -31,18 +31,6 @@
         the SAML ticket id generator.
     </description>
 
-    <!-- ID Generators -->
-    <bean id="ticketGrantingTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-          c:maxLength="50" c:suffix="${host.name}" />
-
-    <bean id="serviceTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-          c:maxLength="20" c:suffix="${host.name}" />
-
-    <bean id="loginTicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-          c:maxLength="30" c:suffix="${host.name}" />
-
-    <bean id="proxy20TicketUniqueIdGenerator" class="org.jasig.cas.util.DefaultUniqueTicketIdGenerator"
-          c:maxLength="20" c:suffix="${host.name}" />
 
     <util:map id="uniqueIdGeneratorsMap">
         <entry
