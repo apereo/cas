@@ -20,6 +20,8 @@ package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,7 +60,9 @@ public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
      *
      * @param serviceFactoryList the service factory list
      */
+    @Autowired
     public DefaultArgumentExtractor(@Min(1)
+                                    @Qualifier("serviceFactoryList")
                                     final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
         super(serviceFactoryList);
     }

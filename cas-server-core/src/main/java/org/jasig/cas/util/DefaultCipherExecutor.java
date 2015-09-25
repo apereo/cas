@@ -19,11 +19,14 @@
 
 package org.jasig.cas.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
-import org.jose4j.jws.AlgorithmIdentifiers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.security.Key;
@@ -38,12 +41,11 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("defaultCookieCipherExecutor")
 public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, String> {
-    private final String contentEncryptionAlgorithmIdentifier;
+    private String contentEncryptionAlgorithmIdentifier;
 
-    private final String signingAlgorithm;
-
-    private final Key secretKeyEncryptionKey;
+    private Key secretKeyEncryptionKey;
 
     /**
      * Instantiates a new cipher.
@@ -54,11 +56,13 @@ public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, 
      * @param secretKeyEncryption the secret key encryption; must be represented as a octet sequence JSON Web Key (JWK)
      * @param secretKeySigning the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
      */
-    public DefaultCipherExecutor(final String secretKeyEncryption,
+    @Autowired
+    public DefaultCipherExecutor(@Value("${tgc.encryption.key}")
+                                 final String secretKeyEncryption,
+                                 @Value("${tgc.signing.key}")
                                  final String secretKeySigning) {
         this(secretKeyEncryption, secretKeySigning,
-                ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
-                AlgorithmIdentifiers.HMAC_SHA512);
+                ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
     }
 
     /**
@@ -67,23 +71,32 @@ public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, 
      * @param secretKeyEncryption the key for encryption
      * @param secretKeySigning the key for signing
      * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
-     * @param signingAlgorithm the signing algorithm
      */
     public DefaultCipherExecutor(final String secretKeyEncryption,
                                  final String secretKeySigning,
-                                 final String contentEncryptionAlgorithmIdentifier,
-                                 final String signingAlgorithm) {
+                                 final String contentEncryptionAlgorithmIdentifier) {
 
-        super(secretKeySigning);
+        super();
+
+        if (StringUtils.isBlank(secretKeyEncryption)) {
+            logger.debug("secretKeyEncryption is not defined");
+            return;
+        }
+        if (StringUtils.isBlank(secretKeySigning)) {
+            logger.debug("secretKeySigning is not defined");
+            return;
+        }
+        if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
+            logger.debug("contentEncryptionAlgorithmIdentifier is not defined");
+            return;
+        }
+
+        setSigningKey(secretKeySigning);
         this.secretKeyEncryptionKey =  prepareJsonWebTokenKey(secretKeyEncryption);
         this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
 
         logger.debug("Initialized cipher encryption sequence via [{}]",
                  contentEncryptionAlgorithmIdentifier);
-
-        this.signingAlgorithm = signingAlgorithm;
-        logger.debug("Initialized cipher signing sequence via [{}]",
-                signingAlgorithm);
 
     }
 
