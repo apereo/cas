@@ -45,17 +45,17 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
-            c:map-ref="authenticationHandlersResolvers"
-            p:authenticationMetaDataPopulators-ref="authenticationMetadataPopulators"
-            p:authenticationPolicy-ref="anyAuthenticationPolicy" />
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
 
-    <util:map id="authenticationHandlersResolvers">
+    <util:map id="authenticationHandlersResolvers"
+              key-type="org.jasig.cas.authentication.AuthenticationHandler"
+              value-type="org.jasig.cas.authentication.principal.PrincipalResolver">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
     </util:map>
 
-    <util:list id="authenticationMetadataPopulators">
+    <util:list id="authenticationMetadataPopulators"
+               value-type="org.jasig.cas.authentication.AuthenticationMetaDataPopulator">
         <!--
         <ref bean="cacheCredentialsMetaDataPopulator" />
         -->
@@ -87,6 +87,7 @@
         </entry>
     </util:map>
 
+    <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
 
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"

@@ -40,7 +40,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Repository
+@Repository("mongoServiceRegistryDao")
 public final class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
