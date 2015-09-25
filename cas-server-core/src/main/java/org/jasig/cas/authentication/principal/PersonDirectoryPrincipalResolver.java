@@ -24,6 +24,10 @@ import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
@@ -41,6 +45,7 @@ import java.util.Map;
  * @since 4.0.0
  *
  */
+@Component("primaryPrincipalResolver")
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /** Log instance. */
@@ -114,7 +119,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return this.principalFactory.createPrincipal(principalId, convertedAttributes);
     }
 
-    public final void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
+    @Autowired
+    public final void setAttributeRepository(@Qualifier("attributeRepository")
+                                                 final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;
     }
 
@@ -127,7 +134,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      *
      * @param attribute Name of attribute containing principal ID.
      */
-    public void setPrincipalAttributeName(final String attribute) {
+    @Autowired
+    public void setPrincipalAttributeName(@Value("cas.principal.resolver.persondir.principal.attribute:")
+                                              final String attribute) {
         this.principalAttributeName = attribute;
     }
 
@@ -136,7 +145,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      *
      * @param principalFactory the principal factory
      */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+    @Autowired
+    public void setPrincipalFactory(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 

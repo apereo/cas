@@ -27,6 +27,10 @@ import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -50,6 +54,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("initialFlowSetupAction")
 public final class InitialFlowSetupAction extends AbstractAction {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -117,16 +122,22 @@ public final class InitialFlowSetupAction extends AbstractAction {
         return result("success");
     }
 
+    @Autowired
     public void setTicketGrantingTicketCookieGenerator(
+        @Qualifier("ticketGrantingTicketCookieGenerator")
         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
     }
 
-    public void setWarnCookieGenerator(final CookieRetrievingCookieGenerator warnCookieGenerator) {
+    @Autowired
+    public void setWarnCookieGenerator(@Qualifier("warnCookieGenerator")
+                                           final CookieRetrievingCookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
+    @Autowired
+    public void setArgumentExtractors(@Qualifier("argumentExtractors")
+                                          final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     }
 
@@ -137,7 +148,8 @@ public final class InitialFlowSetupAction extends AbstractAction {
      * Since 4.1
      * @param servicesManager the services manager
      */
-    public void setServicesManager(final ServicesManager servicesManager) {
+    @Autowired
+    public void setServicesManager(@Qualifier("servicesManager") final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 
@@ -147,7 +159,9 @@ public final class InitialFlowSetupAction extends AbstractAction {
      *
      * @param enableFlowOnAbsentServiceRequest the enable flow on absent service request
      */
-    public void setEnableFlowOnAbsentServiceRequest(final boolean enableFlowOnAbsentServiceRequest) {
+    @Autowired
+    public void setEnableFlowOnAbsentServiceRequest(@Value("${create.sso.missing.service:true}")
+                                                        final boolean enableFlowOnAbsentServiceRequest) {
         this.enableFlowOnAbsentServiceRequest = enableFlowOnAbsentServiceRequest;
     }
 }

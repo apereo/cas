@@ -34,6 +34,7 @@ import org.ldaptive.auth.ext.PasswordExpirationAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
@@ -52,6 +53,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("accountStateHandler")
 public class DefaultAccountStateHandler implements AccountStateHandler {
     /** Map of account state error to CAS authentication exception. */
     protected final Map<AccountState.Error, LoginException> errorMap;
