@@ -154,19 +154,19 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
         this.supportedBrowser = supportedBrowser;
     }
 
-   /**
-    * Sets whether mixed mode authentication should be enabled. If it is
-    * enabled then control is allowed to pass back to the Spring Webflow
-    * instead of immediately terminating the page after issuing the
-    * unauthorized (401) header. This has the effect of displaying the login
-    * page on unsupported/configured browsers.
-    * <p>
-    * If this is set to false then the page is immediately closed after the
-    * unauthorized header is sent. This is ideal in environments that only
-    * want to use Windows Integrated Auth/SPNEGO and not forms auth.
-    *
-    * @param enabled should mixed mode authentication be allowed. Default is false.
-    */
+    /**
+     * Sets whether mixed mode authentication should be enabled. If it is
+     * enabled then control is allowed to pass back to the Spring Webflow
+     * instead of immediately terminating the page after issuing the
+     * unauthorized (401) header. This has the effect of displaying the login
+     * page on unsupported/configured browsers.
+     * <p>
+     * If this is set to false then the page is immediately closed after the
+     * unauthorized header is sent. This is ideal in environments that only
+     * want to use Windows Integrated Auth/SPNEGO and not forms auth.
+     *
+     * @param enabled should mixed mode authentication be allowed. Default is false.
+     */
     public void setMixedModeAuthentication(final boolean enabled) {
         this.mixedModeAuthentication = enabled;
     }

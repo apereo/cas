@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 
+import javax.annotation.PreDestroy;
 import javax.security.auth.x500.X500Principal;
 import javax.validation.constraints.Min;
 import java.security.cert.X509CRL;
@@ -180,9 +181,11 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
         return Collections.singleton(this.crlIssuerMap.get(cert.getIssuerX500Principal()));
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
+    /**
+     * Shutdown scheduler.
+     */
+    @PreDestroy
+    public void shutdown() {
         this.scheduler.shutdown();
     }
 

@@ -30,9 +30,9 @@
     </description>
 
     <bean id="warnCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-          p:cookieSecure="true"
-          p:cookieMaxAge="-1"
-          p:cookieName="CASPRIVACY"
-          p:cookiePath="/cas"/>
+          p:cookieSecure="${warn.cookie.secure:true}"
+          p:cookieMaxAge="${warn.cookie.maxAge:-1}"
+          p:cookieName="${warn.cookie.name:CASPRIVACY}"
+          p:cookiePath="${warn.cookie.path:/cas}"/>
 
 </beans>

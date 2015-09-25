@@ -38,7 +38,6 @@ import java.security.GeneralSecurityException;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.0.0
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends
@@ -125,10 +124,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
         this.passwordPolicyConfiguration = passwordPolicyConfiguration;
     }
 
-    /**
-     * {@inheritDoc}
-     * @return True if credential is a {@link UsernamePasswordCredential}, false otherwise.
-     */
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof UsernamePasswordCredential;
