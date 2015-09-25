@@ -28,6 +28,7 @@ import org.jasig.cas.web.view.CasViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,15 +41,21 @@ import java.util.Map;
  * @since 4.1
  */
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
-
     /** The Services manager. */
     @NotNull
-    protected final ServicesManager servicesManager;
+    @Resource(name="servicesManager")
+    protected ServicesManager servicesManager;
 
     /** The Logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Resource(name="registeredServiceCipherExecutor")
     private RegisteredServiceCipherExecutor cipherExecutor;
+
+    /**
+     * Instantiates a new abstract cas attribute encoder.
+     */
+    protected AbstractCasAttributeEncoder() {}
 
     /**
      * Instantiates a new attribute encoder with the default

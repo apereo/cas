@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
@@ -47,19 +48,24 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     /** Instance of ServiceRegistryDao. */
     @NotNull
-    private final ServiceRegistryDao serviceRegistryDao;
+    @Resource(name="serviceRegistryDao")
+    private ServiceRegistryDao serviceRegistryDao;
 
     /** Map to store all services. */
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
     /**
      * Instantiates a new default services manager impl.
+     */
+    protected DefaultServicesManagerImpl() {}
+
+    /**
+     * Instantiates a new default services manager impl.
      *
      * @param serviceRegistryDao the service registry dao
      */
-    @Autowired
-    public DefaultServicesManagerImpl(@Qualifier("serviceRegistryDao")
-                                      final ServiceRegistryDao serviceRegistryDao) {
+
+    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
 
         load();

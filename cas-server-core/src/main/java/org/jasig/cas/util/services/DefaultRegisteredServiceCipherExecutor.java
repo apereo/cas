@@ -23,6 +23,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.util.CompressionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
 import java.security.PublicKey;
@@ -33,6 +34,7 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("registeredServiceCipherExecutor")
 public class DefaultRegisteredServiceCipherExecutor implements RegisteredServiceCipherExecutor {
     private static final String UTF8_ENCODING = "UTF-8";
 
