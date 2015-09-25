@@ -69,7 +69,8 @@ used to support a multi-factor authentication situation, for example, where user
 required but an additional OTP is optional.
 
 The following configuration snippet demonstrates how to configure `PolicyBasedAuthenticationManager` for a
-straightforward multi-factor authentication case where username/password authentication is required and an additional OTP credential is optional; in both cases principals are resolved from LDAP.
+straightforward multi-factor authentication case where username/password authentication is required 
+and an additional OTP credential is optional; in both cases principals are resolved from LDAP.
 
 {% highlight xml %}
 <bean id="passwordHandler"
@@ -85,19 +86,21 @@ straightforward multi-factor authentication case where username/password authent
       class="org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory"
       c:requiredHandlerName="passwordHandler"
       p:tryAll="true" />
+      
 
-<bean id="ldapPrincipalResolver"
-      class="org.jasig.cas.authentication.principal.CredentialsToLdapAttributePrincipalResolver">
-      <!-- Details elided for simplicity -->
-</bean>
-
+<bean id="principalResolver"
+      class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver"
+      p:principalAttributeName="username"
+      p:attributeRepository-ref="attributeRepository"
+      p:returnNullIfNoAttributes="true" />
+      
 <bean id="authenticationManager"
       class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
       p:authenticationPolicy-ref="authenticationPolicy">
   <constructor-arg>
     <map>
-      <entry key-ref="passwordHandler" value-ref="ldapPrincipalResolver"/>
-      <entry key-ref="oneTimePasswordHandler" value-ref="ldapPrincipalResolver" />
+      <entry key-ref="passwordHandler" value-ref="principalResolver"/>
+      <entry key-ref="oneTimePasswordHandler" value-ref="principalResolver" />
     </map>
   </constructor-arg>
   <property name="authenticationMetaDataPopulators">
@@ -116,20 +119,19 @@ interest.
 * [Database](Database-Authentication.html)
 * [JAAS](JAAS-Authentication.html)
 * [LDAP](LDAP-Authentication.html)
-* [Legacy](Legacy-Authentication.html)
 * [OAuth 1.0/2.0, OpenID](OAuth-OpenId-Authentication.html)
 * [RADIUS](RADIUS-Authentication.html)
 * [SPNEGO](SPNEGO-Authentication.html) (Windows)
 * [Trusted](Trusted-Authentication.html) (REMOTE_USER)
 * [X.509](X509-Authentication.html) (client SSL certificate)
 * [Remote Address](Remote-Address-Authentication.html)
-
+* [YubiKey](YubiKey-Authentication.html)
+* [Apache Shiro](Shiro-Authentication.html)
 
 There are some additional handlers for small deployments and special cases:
 
 * [Whilelist](Whitelist-Authentication.html)
 * [Blacklist](Blacklist-Authentication.html)
-
 
 ##Argument Extractors
 Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction. 
@@ -137,35 +139,27 @@ Extractors are responsible to examine the http request received for parameters t
 Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml`. Here's a brief sample:
 
 {% highlight xml %}
-<bean id="casArgumentExtractor"	class="org.jasig.cas.web.support.CasArgumentExtractor" />
+<bean id="defaultArgumentExtractor" 
+	class="org.jasig.cas.web.support.DefaultArgumentExtractor"
+    c:serviceFactoryList-ref="serviceFactoryList" />
+
+<util:list id="serviceFactoryList">
+    <bean class="org.jasig.cas.authentication.principal.WebApplicationServiceFactory" />
+</util:list>
 
 <util:list id="argumentExtractors">
-    <ref bean="casArgumentExtractor" />
+    <ref bean="defaultArgumentExtractor"/>
 </util:list>
 {% endhighlight %}
-
 
 ###Components
 
 ####`ArgumentExtractor`
 Strategy parent interface that defines operations needed to extract arguments from the http request.
 
-
-####`CasArgumentExtractor`
-Argument extractor that maps the request based on the specifications of the CAS protocol.
-
-
-####`GoogleAccountsArgumentExtractor`
-Argument extractor to be used to enable Google Apps integration and SAML v2 specification.
-
-
-####`SamlArgumentExtractor`
-Argument extractor compliant with SAML v1.1 specification.
-
-
-####`OpenIdArgumentExtractor`
-Argument extractor compliant with OpenId protocol.
-
+####`DefaultArgumentExtractor`
+Argument extractor implementation that maps the request. When the request is processed, it is handed off
+to one of the service factories listed above to actually create the CAS `WebApplicationService` object.
 
 ## Principal Resolution
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
@@ -181,8 +175,9 @@ Default transformer, that actually does no transformation on the user id.
 Transforms the user id by adding a postfix or suffix.
 
 ######`ConvertCasePrincipalNameTransformer`
-A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed. The transformer is also able
-to accept and work on the result of a previous transformer that might have modified the uid, such that the two can be chained.
+A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed.
+The transformer is also able to accept and work on the result of 
+a previous transformer that might have modified the uid, such that the two can be chained.
 
 #### Configuration
 Here is an example configuration based for the `AcceptUsersAuthenticationHandler`:
@@ -198,8 +193,9 @@ Here is an example configuration based for the `AcceptUsersAuthenticationHandler
     </property>
 </bean>
 
-<bean id="convertCasePrincipalNameTransformer" class="org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer"
-p:toUpperCase="true" />
+<bean id="convertCasePrincipalNameTransformer" 
+    class="org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer"
+    p:toUpperCase="true" />
 
 {% endhighlight %}
 

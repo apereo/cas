@@ -54,18 +54,23 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private boolean loggedOutAlready;
 
+    private final ResponseBuilder<WebApplicationService> responseBuilder;
+
+
     /**
      * Instantiates a new abstract web application service.
      *
      * @param id the id
      * @param originalUrl the original url
      * @param artifactId the artifact id
+     * @param responseBuilder the response builder
      */
     protected AbstractWebApplicationService(final String id, final String originalUrl,
-            final String artifactId) {
+            final String artifactId, final ResponseBuilder<WebApplicationService> responseBuilder) {
         this.id = id;
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
+        this.responseBuilder = responseBuilder;
     }
 
     @Override
@@ -73,43 +78,19 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
         return this.id;
     }
 
+    @Override
     public final String getId() {
         return this.id;
     }
 
+    @Override
     public final String getArtifactId() {
         return this.artifactId;
     }
 
+    @Override
     public final Map<String, Object> getAttributes() {
         return EMPTY_MAP;
-    }
-
-    /**
-     * Cleanup the url. Removes jsession ids and query strings.
-     *
-     * @param url the url
-     * @return sanitized url.
-     */
-    protected static String cleanupUrl(final String url) {
-        if (url == null) {
-            return null;
-        }
-
-        final int jsessionPosition = url.indexOf(";jsession");
-
-        if (jsessionPosition == -1) {
-            return url;
-        }
-
-        final int questionMarkPosition = url.indexOf('?');
-
-        if (questionMarkPosition < jsessionPosition) {
-            return url.substring(0, url.indexOf(";jsession"));
-        }
-
-        return url.substring(0, jsessionPosition)
-            + url.substring(questionMarkPosition);
     }
 
     /**
@@ -118,6 +99,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
      *
      * @return the original url provided.
      */
+    @Override
     public final String getOriginalUrl() {
         return this.originalUrl;
     }
@@ -144,10 +126,11 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
                 .toHashCode();
     }
 
-    protected Principal getPrincipal() {
+    public Principal getPrincipal() {
         return this.principal;
     }
 
+    @Override
     public void setPrincipal(final Principal principal) {
         this.principal = principal;
     }
@@ -171,6 +154,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
      *
      * @return if the service is already logged out.
      */
+    @Override
     public boolean isLoggedOutAlready() {
         return loggedOutAlready;
     }
@@ -180,7 +164,18 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
      *
      * @param loggedOutAlready if the service is already logged out.
      */
+    @Override
     public final void setLoggedOutAlready(final boolean loggedOutAlready) {
         this.loggedOutAlready = loggedOutAlready;
+    }
+
+    protected ResponseBuilder<? extends WebApplicationService> getResponseBuilder() {
+        return responseBuilder;
+    }
+
+    @Override
+    public Response getResponse(final String ticketId) {
+        return this.responseBuilder.build(this, ticketId);
+
     }
 }

@@ -123,7 +123,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
          *
          * @param monitor the monitor
          */
-        public Validator(final AbstractPoolMonitor monitor) {
+        Validator(final AbstractPoolMonitor monitor) {
             this.monitor = monitor;
         }
 

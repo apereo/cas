@@ -58,9 +58,3 @@ Add an additional state to `login-webflow.xml`:
 
 Replace references to `viewLoginForm` in existing states with `remoteAuthenticate`.
 
-Install the Webflow action into the Spring context by adding the following bean to `cas-servlet.xml`:
-{% highlight xml %}
-<bean id="principalFromRemoteAction"
-      class="org.jasig.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction"
-      p:centralAuthenticationService-ref="centralAuthenticationService" />
-{% endhighlight %}

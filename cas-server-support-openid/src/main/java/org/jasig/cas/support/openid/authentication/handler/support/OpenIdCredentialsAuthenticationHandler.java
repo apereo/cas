@@ -29,6 +29,9 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
@@ -40,9 +43,12 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("openIdCredentialsAuthenticationHandler")
 public final class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     @NotNull
+    @Autowired
+    @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Override

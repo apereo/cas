@@ -112,7 +112,7 @@ It is convenient to place Spring configuration for login throttling components i
 
 <!-- A scheduler that drives all configured triggers is provided by default in applicationContext.xml. -->
 <bean id="loginThrottleTrigger"
-      class="org.springframework.scheduling.quartz.SimpleTriggerBean"
+      class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
       p:jobDetail-ref="loginThrottleJobDetail"
       p:startDelay="1000"
       p:repeatInterval="1000"/>
