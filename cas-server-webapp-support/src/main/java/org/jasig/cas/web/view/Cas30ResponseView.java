@@ -21,13 +21,12 @@ package org.jasig.cas.web.view;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import javax.annotation.Resource;
@@ -179,6 +178,9 @@ public class Cas30ResponseView extends Cas20ResponseView {
     }
 
 
+    /**
+     * The type Success.
+     */
     @Component("cas3ServiceSuccessView")
     public static class Success extends Cas30ResponseView {
         /**

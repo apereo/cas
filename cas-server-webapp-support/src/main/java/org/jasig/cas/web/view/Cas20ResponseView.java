@@ -54,6 +54,9 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
     }
 
 
+    /**
+     * The type Success.
+     */
     @Component("cas2ServiceSuccessView")
     public static class Success extends Cas20ResponseView {
         /**
