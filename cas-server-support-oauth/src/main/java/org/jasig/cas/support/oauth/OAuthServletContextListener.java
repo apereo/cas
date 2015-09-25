@@ -38,7 +38,7 @@ import java.security.SecureRandom;
 @Component
 public class OAuthServletContextListener extends AbstractServletContextInitializer {
 
-    @Value("${server.prefix}" + OAuthConstants.ENDPOINT_OAUTH2_CALLBACK_AUTHORIZE)
+    @Value("${server.prefix:http://localhost:8080/cas}" + OAuthConstants.ENDPOINT_OAUTH2_CALLBACK_AUTHORIZE)
     private String callbackAuthorizeUrl;
 
 
