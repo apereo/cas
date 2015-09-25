@@ -90,15 +90,4 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
         this.httpClient = httpClient;
     }
 
-    /**
-     * @deprecated As of 4.1. Endpoint security is handled by service proxy policies
-     *
-     * <p>Set whether a secure url is required or not.</p>
-     *
-     * @param requireSecure true if its required, false if not. Default is true.
-     */
-    @Deprecated
-    public void setRequireSecure(final boolean requireSecure) {
-         logger.warn("setRequireSecure() is deprecated and will be removed. Callback url validation is controlled by the proxy policy");
-    }
 }

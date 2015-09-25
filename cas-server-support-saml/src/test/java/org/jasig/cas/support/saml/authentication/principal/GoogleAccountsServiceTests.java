@@ -28,21 +28,18 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.util.CompressionUtils;
-import org.jasig.cas.util.PrivateKeyFactoryBean;
-import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.IOException;
-import java.security.interfaces.DSAPrivateKey;
-import java.security.interfaces.DSAPublicKey;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -52,25 +49,12 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    private GoogleAccountsServiceFactory factory;
+
     private GoogleAccountsService googleAccountsService;
 
-    public static GoogleAccountsService getGoogleAccountsService() throws Exception {
-        final PublicKeyFactoryBean pubKeyFactoryBean = new PublicKeyFactoryBean();
-        pubKeyFactoryBean.setAlgorithm("DSA");
-        final PrivateKeyFactoryBean privKeyFactoryBean = new PrivateKeyFactoryBean();
-        privKeyFactoryBean.setAlgorithm("DSA");
-
-        final ClassPathResource pubKeyResource = new ClassPathResource("DSAPublicKey01.key");
-        final ClassPathResource privKeyResource = new ClassPathResource("DSAPrivateKey01.key");
-
-        pubKeyFactoryBean.setLocation(pubKeyResource);
-        privKeyFactoryBean.setLocation(privKeyResource);
-        pubKeyFactoryBean.afterPropertiesSet();
-        privKeyFactoryBean.afterPropertiesSet();
-
-        final DSAPrivateKey privateKey = (DSAPrivateKey) privKeyFactoryBean.getObject();
-        final DSAPublicKey publicKey = (DSAPublicKey) pubKeyFactoryBean.getObject();
-
+    public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
 
         final String samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
@@ -87,7 +71,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         final ServicesManager servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(regSvc);
         
-        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey, servicesManager);
+        return factory.createService(request);
     }
 
     @Before

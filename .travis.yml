@@ -32,7 +32,7 @@ branches:
   - master
 jdk:
 - oraclejdk7
-- oraclejdk8
+# - oraclejdk8
 cache:
   directories:
     - '$HOME/.m2/repository'

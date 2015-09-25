@@ -101,36 +101,8 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
         return success();
     }
 
-    /**
-     * @deprecated As of 4.1, use constructors instead.
-     * @param ticketGrantingTicketCookieGenerator the id generator
-     */
-    @Deprecated
-    public void setTicketGrantingTicketCookieGenerator(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        logger.warn("setTicketGrantingTicketCookieGenerator() is deprecated and has no effect. Use constructors instead.");
-    }
-
-    /**
-     * @deprecated As of 4.1, use constructors instead.
-     * @param centralAuthenticationService  cas instance
-     */
-    @Deprecated
-    public void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
-        logger.warn("setCentralAuthenticationService() is deprecated and has no effect. Use constructors instead.");
-    }
-
     public void setCreateSsoSessionCookieOnRenewAuthentications(final boolean createSsoSessionCookieOnRenewAuthentications) {
         this.createSsoSessionCookieOnRenewAuthentications = createSsoSessionCookieOnRenewAuthentications;
-    }
-
-    /**
-     * @deprecated As of 4.1, use constructors instead.
-     * @param servicesManager  the service manager
-     */
-    @Deprecated
-    public void setServicesManager(final ServicesManager servicesManager) {
-        logger.warn("setServicesManager() is deprecated and has no effect. Use constructors instead.");
     }
 
     /**
