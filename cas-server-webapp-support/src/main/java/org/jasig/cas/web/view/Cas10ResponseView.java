@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.web.view;
 
+import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -30,7 +32,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public final class Cas10ResponseView extends AbstractCasView {
+public class Cas10ResponseView extends AbstractCasView {
 
     @Override
     protected void renderMergedOutputModel(final Map model,
@@ -45,5 +47,24 @@ public final class Cas10ResponseView extends AbstractCasView {
         }
     }
 
+    @Component("cas1ServiceSuccessView")
+    public static class Success extends Cas10ResponseView {
+        /**
+         * Instantiates a new Success.
+         */
+        public Success() {
+            super.setSuccessResponse(true);
+        }
+    }
+
+    @Component("cas1ServiceFailureView")
+    public static class Failure extends Cas10ResponseView {
+        /**
+         * Instantiates a new Failure.
+         */
+        public Failure() {
+            super.setSuccessResponse(false);
+        }
+    }
 
 }
