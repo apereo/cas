@@ -18,6 +18,7 @@
  */
 package org.jasig.cas;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -28,11 +29,11 @@ import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
+import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.LogoutType;
@@ -44,6 +45,7 @@ import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
+import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -62,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Scott Battaglia
@@ -130,6 +133,15 @@ public final class TestUtils {
         }
     }
 
+    public static IPersonAttributeDao getAttributeRepository() {
+        final Map<String, List<Object>>  attributes = new HashMap<>();
+        attributes.put("uid", (List) ImmutableList.of(CONST_USERNAME));
+        attributes.put("cn", (List) ImmutableList.of(CONST_USERNAME.toUpperCase()));
+        attributes.put("givenName", (List) ImmutableList.of(CONST_USERNAME));
+        attributes.put("memberOf", (List) ImmutableList.of("system", "admin", "cas"));
+        return new StubPersonAttributeDao(attributes);
+    }
+
     public static Principal getPrincipal() {
         return getPrincipal(CONST_USERNAME);
     }
@@ -170,7 +182,7 @@ public final class TestUtils {
             policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
             final CachingPrincipalAttributesRepository repo =
-                    new CachingPrincipalAttributesRepository(new StubPersonAttributeDao(), 10);
+                    new CachingPrincipalAttributesRepository(new StubPersonAttributeDao(), TimeUnit.SECONDS , 10);
             repo.setMergingStrategy(new NoncollidingAttributeAdder());
             policy.setPrincipalAttributesRepository(repo);
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
@@ -190,7 +202,7 @@ public final class TestUtils {
     public static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        return new WebApplicationServiceFactory().createService(request);
     }
 
     public static Authentication getAuthentication() {

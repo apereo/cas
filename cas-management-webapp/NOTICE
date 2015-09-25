@@ -16,7 +16,6 @@ specific language governing permissions and limitations
 under the License.
 
 This project includes:
-  "Java Concurrency in Practice" book annotations under Creative Commons Attribution License
   Annotations for Metrics under Apache License 2.0
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
@@ -30,8 +29,6 @@ This project includes:
   Apache Log4j Core under The Apache Software License, Version 2.0
   Apache Log4j SLF4J Binding under The Apache Software License, Version 2.0
   Apache Log4j Web under The Apache Software License, Version 2.0
-  Apache Santuario under The Apache Software License, Version 2.0
-  Apache Velocity under The Apache Software License, Version 2.0
   Apereo CAS Core under Apache 2
   Apereo CAS Core APIs under Apache 2
   Apereo CAS Generic Support under Apache 2
@@ -48,11 +45,9 @@ This project includes:
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
-  commons-collections under Apache License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
   Cryptacular Library under Apache 2 or GNU Lesser General Public License
   dom4j under BSD License
-  ESAPI 2.0 under BSD or Creative Commons 3.0 BY-SA
   Expression Language 2.2 Implementation under CDDL + GPLv2 with classpath exception
   Expression Language 3.0 API under CDDL + GPLv2 with classpath exception
   fastinfoset under Apache License, Version 2.0
@@ -61,7 +56,6 @@ This project includes:
   Hamcrest Core under New BSD License
   Hibernate Commons Annotations under GNU Lesser General Public License
   Hibernate Validator Engine under Apache License, Version 2.0
-  HttpClient under Apache License
   Inspektr - Aspects under Apache 2.0 License
   Inspektr - Auditing API under Apache 2.0 License
   Inspektr - Common API under Apache 2.0 License
@@ -101,17 +95,13 @@ This project includes:
   JUL to SLF4J bridge under MIT License
   JUnit under Eclipse Public License 1.0
   JVM Integration for Metrics under Apache License 2.0
-  Lang under The Apache Software License, Version 2.0
   LDAPTIVE under Apache 2 or GNU Lesser General Public License
   Metrics Core under Apache License 2.0
   Metrics Health Checks under Apache License 2.0
   Metrics Utility Servlets under Apache License 2.0
   Mockito under The MIT License
-  Not Yet Commons SSL under Apache License v2
   Objenesis under Apache 2
   OGNL - Object Graph Navigation Library under Apache License, Version 2.0
-  OpenSAML-J under Apache 2
-  OpenWS under Apache 2
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
   quartz under The Apache Software License, Version 2.0
@@ -142,10 +132,5 @@ This project includes:
   Stax2 API under The BSD License
   Streaming API for XML under Sun Binary Code License
   Woodstox under The Apache Software License, Version 2.0
-  Xalan Java under The Apache Software License, Version 2.0
-  Xalan Java Serializer under The Apache Software License, Version 2.0
-  Xerces2-j under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
-  XML Commons Resolver Component under The Apache Software License, Version 2.0
-  XMLTooling-J under Apache 2
 

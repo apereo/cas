@@ -194,7 +194,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Entity(name="users")
     public static class UsersTable {
         @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
         private String username;
