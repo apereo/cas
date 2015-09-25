@@ -125,7 +125,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             return success();
         }
 
-        final SPSSODescriptor spssoDescriptor = getSPSSODescriptor(entityDescriptor);
+        final SPSSODescriptor spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
         if (spssoDescriptor == null) {
             logger.debug("SP SSO descriptor not found for [{}]", entityId);
             return success();
@@ -156,9 +156,9 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * Gets SP SSO descriptor.
      *
      * @param entityDescriptor the entity descriptor
-     * @return the sPSSO descriptor
+     * @return the SP SSO descriptor
      */
-    private SPSSODescriptor getSPSSODescriptor(final EntityDescriptor entityDescriptor) {
+    private SPSSODescriptor getSPSsoDescriptor(final EntityDescriptor entityDescriptor) {
         logger.debug("Locating SP SSO descriptor for SAML2 protocol...");
         SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (spssoDescriptor == null) {

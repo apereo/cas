@@ -24,7 +24,7 @@ import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationC
 import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.web.support.WebUtils;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.slf4j.Logger;
@@ -136,7 +136,7 @@ public final class WsFederationAction extends AbstractAction {
                         logger.info("Token validated and new {} created: {}", credential.getClass().getName(), credential);
                         return success();
 
-                    } catch (final TicketException e) {
+                    } catch (final AbstractTicketException e) {
                         logger.error(e.getMessage(), e);
                         return error();
                     }
