@@ -26,8 +26,8 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
-        <RollingFile name="file" fileName="target/ldap.log" append="true"
-                     filePattern="ldap-%d{yyyy-MM-dd-HH}-%i.log.gz">
+        <RollingFile name="file" fileName="target/openid.log" append="true"
+                     filePattern="openid-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />
@@ -37,15 +37,6 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="debug" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.ldaptive" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.springframework" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
         <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
