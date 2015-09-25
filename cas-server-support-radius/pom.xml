@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.jasig.cas</groupId>
         <artifactId>cas-server</artifactId>
-        <version>4.1.0-RC3-SNAPSHOT</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cas-server-support-radius</artifactId>
@@ -36,8 +36,8 @@
         </dependency>
 
         <dependency>
-            <groupId>net.jradius</groupId>
-            <artifactId>jradius-core</artifactId>
+            <groupId>com.github.coova</groupId>
+            <artifactId>jradius</artifactId>
             <version>${radius.version}</version>
             <exclusions>
                 <exclusion>
@@ -48,34 +48,31 @@
                     <groupId>log4j</groupId>
                     <artifactId>log4j</artifactId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-collections</artifactId>
+                    <groupId>commons-collections</groupId>
+                </exclusion>
             </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>net.jradius</groupId>
-            <artifactId>jradius-dictionary</artifactId>
-            <version>${radius.version}</version>
-        </dependency>
-        <!--
-                <dependency>
-                    <groupId>net.jradius</groupId>
-                    <artifactId>jradius-extended</artifactId>
-                    <version>1.0.0</version>
-                </dependency>
-        -->
-
+        </dependency>        
     </dependencies>
 
     <repositories>
+        <!-- 
+        The JRadius artifacts above are not available in Maven Central yet.
+        So the following alternative is provided.
+        -->
         <repository>
-            <id>coova</id>
-            <name>Coova Repository</name>
-            <url>http://coova-dev.s3.amazonaws.com/mvn</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
     <properties>
         <cs.dir>${project.parent.basedir}</cs.dir>
-        <radius.version>1.1.3</radius.version>
+        <radius.version>jradius-1.1.5</radius.version>
     </properties>
 </project>

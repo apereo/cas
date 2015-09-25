@@ -24,6 +24,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 
 /**
  * Serializer for {@link SimpleWebApplicationServiceImpl} class.
@@ -40,6 +41,7 @@ public final class SimpleWebApplicationServiceSerializer extends Serializer<Simp
 
     @Override
     public SimpleWebApplicationServiceImpl read(final Kryo kryo, final Input input, final Class<SimpleWebApplicationServiceImpl> type) {
-        return new SimpleWebApplicationServiceImpl(kryo.readObject(input, String.class));
+        final String id = kryo.readObject(input, String.class);
+        return new WebApplicationServiceFactory().createService(id, SimpleWebApplicationServiceImpl.class);
     }
 }

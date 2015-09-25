@@ -44,4 +44,7 @@ public interface SamlProtocolConstants {
     /** Constant representing service. */
     String CONST_PARAM_TARGET = "TARGET";
 
+    /** Indicates the endpoint for saml validation. */
+    String ENDPOINT_SAML_VALIDATE = "/samlValidate";
+
 }
