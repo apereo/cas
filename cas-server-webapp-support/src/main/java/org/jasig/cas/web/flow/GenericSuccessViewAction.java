@@ -25,12 +25,16 @@ import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * Action that should execute prior to rendering the generic-success login view.
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Component("genericSuccessViewAction")
 public final class GenericSuccessViewAction {
     /** Log instance for logging events, info, warnings, errors, etc. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -42,7 +46,9 @@ public final class GenericSuccessViewAction {
      *
      * @param centralAuthenticationService the central authentication service
      */
-    public GenericSuccessViewAction(final CentralAuthenticationService centralAuthenticationService) {
+    @Autowired
+    public GenericSuccessViewAction(@Qualifier("centralAuthenticationService")
+                                        final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 

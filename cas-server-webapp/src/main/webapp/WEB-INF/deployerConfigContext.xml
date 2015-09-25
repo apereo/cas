@@ -48,7 +48,7 @@
     <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
             c:map-ref="authenticationHandlersResolvers"
             p:authenticationMetaDataPopulators-ref="authenticationMetadataPopulators"
-            p:authenticationPolicy-ref="authenticationPolicy" />
+            p:authenticationPolicy-ref="anyAuthenticationPolicy" />
 
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
@@ -57,16 +57,9 @@
 
     <util:list id="authenticationMetadataPopulators">
         <!--
-        <bean class="org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator"/>
+        <ref bean="cacheCredentialsMetaDataPopulator" />
         -->
     </util:list>
-
-    <bean id="authenticationPolicy" class="org.jasig.cas.authentication.AnyAuthenticationPolicy" />
-
-    <!-- Required for proxy ticket mechanism. -->
-    <bean id="proxyAuthenticationHandler"
-          class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
-          p:httpClient-ref="supportsTrustStoreSslSocketFactoryHttpClient" />
 
     <bean id="primaryAuthenticationHandler"
           class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
@@ -76,15 +69,6 @@
             </map>
         </property>
     </bean>
-
-    <!-- Required for proxy ticket mechanism -->
-    <bean id="proxyPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
-
-    <bean id="primaryPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver"
-          p:principalFactory-ref="principalFactory"
-          p:attributeRepository-ref="attributeRepository" />
 
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
           p:backingMap-ref="attrRepoBackingMap" />
@@ -103,21 +87,18 @@
         </entry>
     </util:map>
 
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.JsonServiceRegistryDao"
-          c:configDirectory="${service.registry.config.location:classpath:services}" />
 
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
 
-    <bean id="healthCheckMonitor" class="org.jasig.cas.monitor.HealthCheckMonitor" p:monitors-ref="monitorsList" />
-
     <util:list id="monitorsList">
-        <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
+        <bean class="org.jasig.cas.monitor.MemoryMonitor"
+              p:freeMemoryWarnThreshold="${cas.monitor.free.mem.threshold:10}" />
         <bean class="org.jasig.cas.monitor.SessionMonitor"
               p:ticketRegistry-ref="ticketRegistry"
-              p:serviceTicketCountWarnThreshold="5000"
-              p:sessionCountWarnThreshold="100000" />
+              p:serviceTicketCountWarnThreshold="${cas.monitor.st.warn.threshold:5000}"
+              p:sessionCountWarnThreshold="${cas.monitor.tgt.warn.threshold:10000}" />
     </util:list>
 </beans>
