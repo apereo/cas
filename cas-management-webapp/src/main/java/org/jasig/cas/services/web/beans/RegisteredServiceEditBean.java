@@ -21,11 +21,12 @@ package org.jasig.cas.services.web.beans;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.services.AbstractAttributeReleasePolicy;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
@@ -58,7 +59,6 @@ import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.slf4j.Logger;
 import org.springframework.util.AntPathMatcher;
 
-import javax.cache.expiry.Duration;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -72,7 +72,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import static org.slf4j.LoggerFactory.*;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Defines the service bean that is produced by the webapp
@@ -226,33 +226,8 @@ public final class RegisteredServiceEditBean implements Serializable {
                 }
             }
 
-            final PrincipalAttributesRepository pr = attrPolicy.getPrincipalAttributesRepository();
-            if (pr instanceof DefaultPrincipalAttributesRepository) {
-                attrPolicyBean.setAttrOption(
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
-            } else if (pr instanceof CachingPrincipalAttributesRepository) {
-                attrPolicyBean.setAttrOption(
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
-                final CachingPrincipalAttributesRepository cc = (CachingPrincipalAttributesRepository) pr;
-                final Duration duration = cc.getDuration();
-                attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
-                attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
+            configurePrincipalRepository(attrPolicy, attrPolicyBean);
 
-                final IAttributeMerger merger = cc.getMergingStrategy();
-
-                if (merger != null) {
-                    if (merger instanceof NoncollidingAttributeAdder) {
-                        attrPolicyBean.setMergingStrategy(
-                                RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.ADD.toString());
-                    } else if (merger instanceof MultivaluedAttributeMerger) {
-                        attrPolicyBean.setMergingStrategy(
-                                RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.MULTIVALUED.toString());
-                    } else if (merger instanceof ReplacingAttributeAdder) {
-                        attrPolicyBean.setMergingStrategy(
-                                RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.REPLACE.toString());
-                    }
-                }
-            }
             final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
             if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
@@ -264,6 +239,48 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
                 sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString());
                 sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
+            }
+        }
+    }
+
+    /**
+     * Configure principal repository.
+     *
+     * @param attrPolicy the attr policy
+     * @param attrPolicyBean the attr policy bean
+     */
+    private static void configurePrincipalRepository(final AbstractAttributeReleasePolicy attrPolicy,
+                                                     final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean) {
+        final PrincipalAttributesRepository pr = attrPolicy.getPrincipalAttributesRepository();
+        if (pr instanceof DefaultPrincipalAttributesRepository) {
+            attrPolicyBean.setAttrOption(
+                    RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
+        } else {
+
+            if (pr instanceof AbstractPrincipalAttributesRepository) {
+                attrPolicyBean.setAttrOption(
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
+
+                final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
+
+                attrPolicyBean.setCachedExpiration(cc.getExpiration());
+                attrPolicyBean.setCachedTimeUnit(cc.getTimeUnit().name());
+            }
+
+            final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
+            final IAttributeMerger merger = cc.getMergingStrategy();
+
+            if (merger != null) {
+                if (merger instanceof NoncollidingAttributeAdder) {
+                    attrPolicyBean.setMergingStrategy(
+                            RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.ADD.toString());
+                } else if (merger instanceof MultivaluedAttributeMerger) {
+                    attrPolicyBean.setMergingStrategy(
+                            RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.MULTIVALUED.toString());
+                } else if (merger instanceof ReplacingAttributeAdder) {
+                    attrPolicyBean.setMergingStrategy(
+                            RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.REPLACE.toString());
+                }
             }
         }
     }
@@ -538,54 +555,89 @@ public final class RegisteredServiceEditBean implements Serializable {
                 regSvc.setEvaluationOrder(this.evalOrder);
                 regSvc.setRequiredHandlers(this.requiredHandlers);
 
-                if (StringUtils.equalsIgnoreCase(this.logoutType,
-                        RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
-                    regSvc.setLogoutType(LogoutType.BACK_CHANNEL);
-                } else if (StringUtils.equalsIgnoreCase(this.logoutType,
-                        RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
-                    regSvc.setLogoutType(LogoutType.FRONT_CHANNEL);
-                } else {
-                    regSvc.setLogoutType(LogoutType.NONE);
-                }
+                convertLogoutTypesToService(regSvc);
 
                 if (StringUtils.isNotBlank(this.logoutUrl)) {
                     regSvc.setLogoutUrl(new URL(this.logoutUrl));
                 }
 
                 final RegisteredServiceAccessStrategy accessStrategy = regSvc.getAccessStrategy();
+                convertAccessStrategyToService((DefaultRegisteredServiceAccessStrategy) accessStrategy);
 
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setEnabled(this.supportAccess.isCasEnabled());
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setSsoEnabled(this.supportAccess.isSsoEnabled());
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setRequireAllAttributes(this.supportAccess.isRequireAll());
+                convertProxyPolicyToService(regSvc);
 
-                final Map<String, Set<String>> requiredAttrs = this.supportAccess.getRequiredAttr();
-                final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
-                final Iterator<Map.Entry<String, Set<String>>> it = entries.iterator();
-                while (it.hasNext()) {
-                    final Map.Entry<String, Set<String>> entry = it.next();
-                    if (entry.getValue().isEmpty()) {
-                        it.remove();
-                    }
+                convertUsernameAttributeToService(regSvc);
+
+                if (this.publicKey != null && this.publicKey.isValid()) {
+                    final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
+                            this.publicKey.getLocation(), this.publicKey.getAlgorithm());
+                    regSvc.setPublicKey(publicKey);
                 }
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setRequiredAttributes(requiredAttrs);
 
-                final String proxyType = this.proxyPolicy.getType();
-                if (StringUtils.equalsIgnoreCase(proxyType,
-                        RegisteredServiceProxyPolicyBean.Types.REFUSE.toString())) {
-                    regSvc.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
-                } else if (StringUtils.equalsIgnoreCase(proxyType,
-                        RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
-                    final String value = this.proxyPolicy.getValue();
-                    if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
-                        regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(value));
-                    } else {
-                        throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
-                    }
+                final RegisteredServiceAttributeReleasePolicyStrategyEditBean policyBean =
+                        this.attrRelease.getAttrPolicy();
+                final String policyType = policyBean.getType();
+
+                AbstractAttributeReleasePolicy policy = null;
+                if (StringUtils.equalsIgnoreCase(policyType,
+                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
+                    policy = new ReturnAllAttributeReleasePolicy();
+                } else if (StringUtils.equalsIgnoreCase(policyType,
+                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString())) {
+                    policy = new ReturnAllowedAttributeReleasePolicy((List) policyBean.getAttributes());
+                } else if (StringUtils.equalsIgnoreCase(policyType,
+                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString())) {
+                    policy = new ReturnMappedAttributeReleasePolicy((Map) policyBean.getAttributes());
+                } else {
+                    policy = new ReturnAllowedAttributeReleasePolicy();
                 }
+
+                final String filter = this.attrRelease.getAttrFilter();
+                if (StringUtils.isNotBlank(filter)) {
+                    policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter(filter));
+                }
+
+                policy.setAuthorizedToReleaseCredentialPassword(this.attrRelease.isReleasePassword());
+                policy.setAuthorizedToReleaseProxyGrantingTicket(this.attrRelease.isReleaseTicket());
+
+                final String attrType = this.attrRelease.getAttrOption();
+                if (StringUtils.equalsIgnoreCase(attrType,
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
+                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
+                            TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
+                            this.attrRelease.getCachedExpiration()));
+                } else if (StringUtils.equalsIgnoreCase(attrType,
+                        RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString())) {
+                    policy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
+                }
+                regSvc.setAttributeReleasePolicy(policy);
+
+                return regSvc;
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        /**
+         * Convert proxy policy to service.
+         *
+         * @param regSvc the reg svc
+         */
+        private void convertProxyPolicyToService(final AbstractRegisteredService regSvc) {
+            final String proxyType = this.proxyPolicy.getType();
+            if (StringUtils.equalsIgnoreCase(proxyType,
+                    RegisteredServiceProxyPolicyBean.Types.REFUSE.toString())) {
+                regSvc.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
+            } else if (StringUtils.equalsIgnoreCase(proxyType,
+                    RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
+                final String value = this.proxyPolicy.getValue();
+                if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
+                    regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(value));
+                } else {
+                    throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
+                }
+            }
+        }
 
                 convertUsernameAttributeToRegisteredService(regSvc);
 
@@ -668,16 +720,13 @@ public final class RegisteredServiceEditBean implements Serializable {
             } else {
                 policy = new ReturnAllowedAttributeReleasePolicy();
             }
-
             final String filter = this.attrRelease.getAttrFilter();
             if (StringUtils.isNotBlank(filter)) {
                 policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter(filter));
             }
-
-            policy.setAuthorizedToReleaseCredentialPassword(this.attrRelease.isReleasePassword());
-            policy.setAuthorizedToReleaseProxyGrantingTicket(this.attrRelease.isReleaseTicket());
+            accessStrategy
+                    .setRequiredAttributes(requiredAttrs);
             policy.setAttributeConsentRequired(this.attrRelease.isRequireConsent());
-
             final String attrType = this.attrRelease.getAttrOption();
             if (StringUtils.equalsIgnoreCase(attrType,
                     RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
@@ -689,6 +738,20 @@ public final class RegisteredServiceEditBean implements Serializable {
                 policy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
             }
             regSvc.setAttributeReleasePolicy(policy);
+        /**
+         * Convert logout types to service.
+         *
+         * @param regSvc the reg svc
+         */
+        private void convertLogoutTypesToService(final AbstractRegisteredService regSvc) {
+            if (StringUtils.equalsIgnoreCase(this.logoutType,
+                    RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
+                regSvc.setLogoutType(LogoutType.BACK_CHANNEL);
+            } else if (StringUtils.equalsIgnoreCase(this.logoutType,
+                    RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
+                regSvc.setLogoutType(LogoutType.FRONT_CHANNEL);
+            } else {
+                regSvc.setLogoutType(LogoutType.NONE);
         }
 
         /**
@@ -721,7 +784,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         private boolean isValidRegex(final String pattern) {
             try {
                 Pattern.compile(serviceId);
-                LOGGER.debug("Pattern is a valid regex.", pattern);
+                LOGGER.debug("Pattern {} is a valid regex.", pattern);
                 return true;
             } catch (final PatternSyntaxException exception) {
                 return false;

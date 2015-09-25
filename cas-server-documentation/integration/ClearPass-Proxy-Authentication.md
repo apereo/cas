@@ -85,7 +85,6 @@ Uncomment the below element that is responsible for capturing and caching the pa
   <list>
     <bean class="org.jasig.cas.extension.clearpass.CacheCredentialsMetaDataPopulator"
       c:credentialCache-ref="encryptedMap" />
-    </bean>
   </list>
 </property>
 {% endhighlight %}

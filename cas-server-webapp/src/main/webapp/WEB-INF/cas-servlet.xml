@@ -75,20 +75,20 @@
 
   <!--
     <bean id="customXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
-          p:order="1"
+          p:order="1000"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
-
-
-    <bean id="samlXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
-          p:order="1"
-          p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/saml-protocol-views.xml}" />
   -->
     
+  <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+        p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
+        p:prefix="/WEB-INF/view/jsp/"
+        p:suffix=".jsp"
+        p:order="2000"/>
   <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
         p:viewClass="org.springframework.web.servlet.view.JstlView"
         p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
         p:suffix=".jsp"
-        p:order="100"/>
+        p:order="3000"/>
 
   <!-- Locale Resolver -->
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver" p:defaultLocale="en" />
@@ -102,19 +102,15 @@
   <bean
       id="handlerMappingC"
       class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
+      p:order="1000"
       p:alwaysUseFullPath="true">
     <property name="mappings">
       <util:properties>
         <prop key="/serviceValidate">serviceValidateController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
-
-        <!--
-        <prop key="/samlValidate">samlValidateController</prop>
-        -->
         <!--
         <prop key="/oauth2.0/*">oauth20WrapperController</prop>
         -->
-
         <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
         <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
         <prop key="/validate">legacyValidateController</prop>
@@ -254,7 +250,7 @@
   <bean id="abstractValidateController" class="org.jasig.cas.web.ServiceValidateController" abstract="true"
         p:centralAuthenticationService-ref="centralAuthenticationService"
         p:proxyHandler-ref="proxy20Handler"
-        p:argumentExtractor-ref="casArgumentExtractor"
+        p:argumentExtractor-ref="defaultArgumentExtractor"
         p:servicesManager-ref="servicesManager" />
   
   <bean id="proxyValidateController" parent="abstractValidateController"/>
@@ -354,13 +350,5 @@
         p:timeout="${tgt.timeToKillInSeconds:7200}" />
   -->
 
-  <!--
-  <bean id="samlValidateController" class="org.jasig.cas.web.ServiceValidateController"
-          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-          p:centralAuthenticationService-ref="centralAuthenticationService"
-          p:proxyHandler-ref="proxy20Handler"
-          p:argumentExtractor-ref="samlArgumentExtractor"
-          p:successView="casSamlServiceSuccessView"
-          p:failureView="casSamlServiceFailureView"/>
-  -->
+
 </beans>

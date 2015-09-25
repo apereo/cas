@@ -87,17 +87,6 @@ public class KryoTranscoder implements Transcoder<Object> {
     }
 
     /**
-     * @deprecated
-     * Creates a Kryo-based transcoder.
-     *
-     * @param initialBufferSize Initial size for buffer holding encoded object data.
-     */
-    @Deprecated
-    public KryoTranscoder(final int initialBufferSize) {
-        logger.warn("It's no longer necessary to define the initialBufferSize. Use the empty constructor.");
-    }
-
-    /**
      * Sets a map of additional types that should be regisetered with Kryo,
      * for example GoogleAccountsService and OpenIdService.
      *

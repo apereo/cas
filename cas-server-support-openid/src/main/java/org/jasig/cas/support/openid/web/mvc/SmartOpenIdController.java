@@ -19,13 +19,16 @@
 package org.jasig.cas.support.openid.web.mvc;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.support.openid.OpenIdConstants;
-import org.jasig.cas.web.DelegateController;
+import org.jasig.cas.support.openid.OpenIdProtocolConstants;
+import org.jasig.cas.web.AbstractDelegateController;
 import org.openid4java.message.Message;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +43,8 @@ import java.util.Map;
  * @author Frederic Esnault
  * @since 3.5
  */
-public class SmartOpenIdController extends DelegateController implements Serializable {
+@Component("smartOpenIdAssociationController")
+public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
 
     private static final long serialVersionUID = -594058549445950430L;
 
@@ -52,6 +56,8 @@ public class SmartOpenIdController extends DelegateController implements Seriali
 
     private final Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
+    @Autowired
+    @Qualifier("serverManager")
     private ServerManager serverManager;
 
     /** The view to redirect to on a successful validation. */
@@ -74,13 +80,13 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     public Map<String, String> getAssociationResponse(final HttpServletRequest request) {
         final ParameterList parameters = new ParameterList(request.getParameterMap());
 
-        final String mode = parameters.hasParameter(OpenIdConstants.OPENID_MODE)
-                ? parameters.getParameterValue(OpenIdConstants.OPENID_MODE)
+        final String mode = parameters.hasParameter(OpenIdProtocolConstants.OPENID_MODE)
+                ? parameters.getParameterValue(OpenIdProtocolConstants.OPENID_MODE)
                 : null;
 
         Message response = null;
 
-        if (StringUtils.equals(mode, OpenIdConstants.ASSOCIATE)) {
+        if (StringUtils.equals(mode, OpenIdProtocolConstants.ASSOCIATE)) {
             response = serverManager.associationResponse(parameters);
         }
         final Map<String, String> responseParams = new HashMap<>();
@@ -102,8 +108,8 @@ public class SmartOpenIdController extends DelegateController implements Seriali
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        final String openIdMode = request.getParameter(OpenIdConstants.OPENID_MODE);
-        if (StringUtils.equals(openIdMode, OpenIdConstants.ASSOCIATE)) {
+        final String openIdMode = request.getParameter(OpenIdProtocolConstants.OPENID_MODE);
+        if (StringUtils.equals(openIdMode, OpenIdProtocolConstants.ASSOCIATE)) {
             logger.info("Handling request. openid.mode : {}", openIdMode);
             return true;
         }
@@ -119,8 +125,7 @@ public class SmartOpenIdController extends DelegateController implements Seriali
         this.failureView = failureView;
     }
 
-    @NotNull
-    public void setServerManager(final ServerManager serverManager) {
+    public void setServerManager(@NotNull final ServerManager serverManager) {
         this.serverManager = serverManager;
     }
 }

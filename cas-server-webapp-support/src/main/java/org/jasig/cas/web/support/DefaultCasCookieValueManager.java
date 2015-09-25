@@ -29,7 +29,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * The {@link DefaultCasCookieValueManager} is responsible for...
+ * The {@link DefaultCasCookieValueManager} is responsible creating
+ * the CAS SSO sookie and encrypting and signing its value.
  *
  * @author Misagh Moayyed
  * @since 4.1
@@ -40,7 +41,7 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
     /** The cipher exec that is responsible for encryption and signing of the cookie. */
-    private final CipherExecutor cipherExecutor;
+    private final CipherExecutor<String, String> cipherExecutor;
 
     /**
      * Instantiates a new Cas cookie value manager.
@@ -55,7 +56,7 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
      *
      * @param cipherExecutor the cipher executor
      */
-    public DefaultCasCookieValueManager(final CipherExecutor cipherExecutor) {
+    public DefaultCasCookieValueManager(final CipherExecutor<String, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
         LOGGER.debug("Using cipher [{} to encrypt and decode the cookie",
                 this.cipherExecutor.getClass());
