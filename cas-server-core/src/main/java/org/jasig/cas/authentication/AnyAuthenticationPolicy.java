@@ -42,7 +42,7 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
      * @param tryAll True to force all credentials to be authenticated, false otherwise.
      */
     @Autowired
-    public void setTryAll(@Value("{cas.authn.policy.any.tryall:false}") final boolean tryAll) {
+    public void setTryAll(@Value("${cas.authn.policy.any.tryall:false}") final boolean tryAll) {
         this.tryAll = tryAll;
     }
 

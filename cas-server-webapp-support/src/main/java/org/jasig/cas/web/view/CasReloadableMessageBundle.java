@@ -18,8 +18,6 @@
  */
 package org.jasig.cas.web.view;
 
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +26,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
+
+import java.util.Locale;
 
 /**
  * An extension of the {@link ReloadableResourceBundleMessageSource} whose sole concern
@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Component("messageSource")
+@Component("casReloadableMessageBundle")
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
     private String[] basenames;
@@ -87,12 +87,11 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
 
     @Override
     @Autowired
-    public void setBasenames(@Qualifier("basenames")
-                             final String... basenames) {
+    public void setBasenames(@Value("#{T(java.util.Arrays).asList('${message.bundle.basenames:classpath:custom_messages,classpath:messages}')}")
+                                 final String... basenames) {
         this.basenames = basenames;
         super.setBasenames(basenames);
     }
-
 
     @Override
     @Autowired
