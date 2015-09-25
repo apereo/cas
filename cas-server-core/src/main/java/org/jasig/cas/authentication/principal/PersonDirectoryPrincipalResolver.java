@@ -86,11 +86,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             attributes = personAttributes.getAttributes();
         }
 
-        if (attributes == null & !this.returnNullIfNoAttributes) {
-            return this.principalFactory.createPrincipal(principalId);
-        }
-
-        if (attributes == null) {
+        if (attributes == null || attributes.isEmpty()) {
+            if (!this.returnNullIfNoAttributes) {
+                return this.principalFactory.createPrincipal(principalId);
+            }
             return null;
         }
 
