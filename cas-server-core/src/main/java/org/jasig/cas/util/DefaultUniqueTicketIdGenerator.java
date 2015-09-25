@@ -140,6 +140,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         this.numericGenerator = new DefaultLongNumericGenerator(1);
     }
 
+    /**
+     * The type Ticket granting ticket id generator.
+     */
     @Component("ticketGrantingTicketUniqueIdGenerator")
     public static class TicketGrantingTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
         @Autowired
@@ -155,6 +158,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         }
     }
 
+    /**
+     * The type Service ticket id generator.
+     */
     @Component("serviceTicketUniqueIdGenerator")
     public static class ServiceTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
         @Autowired
@@ -170,6 +176,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         }
     }
 
+    /**
+     * The type Login ticket id generator.
+     */
     @Component("loginTicketUniqueIdGenerator")
     public static class LoginTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
         @Autowired
@@ -185,6 +194,9 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         }
     }
 
+    /**
+     * The type Proxy ticket id generator.
+     */
     @Component("proxy20TicketUniqueIdGenerator")
     public static class ProxyTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
         @Autowired

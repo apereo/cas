@@ -47,6 +47,9 @@ public class Cas10ResponseView extends AbstractCasView {
         }
     }
 
+    /**
+     * The type Success.
+     */
     @Component("cas1ServiceSuccessView")
     public static class Success extends Cas10ResponseView {
         /**

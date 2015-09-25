@@ -445,9 +445,15 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         this.redirectsEnabled = redirectsEnabled;
     }
 
+    /**
+     * The type Default http client.
+     */
     @Component("httpClient")
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {}
 
+    /**
+     * The type No redirect http client.
+     */
     @Component("noRedirectHttpClient")
     public static class NoRedirectHttpClient extends DefaultHttpClient {
         /**
@@ -459,6 +465,9 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         }
     }
 
+    /**
+     * The type Ssl trust store aware http client.
+     */
     @Component("supportsTrustStoreSslSocketFactoryHttpClient")
     public static class SslTrustStoreAwareHttpClient extends DefaultHttpClient {
         @Override
