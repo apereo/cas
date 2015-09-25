@@ -69,9 +69,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -122,7 +122,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     private TicketRegistry ticketRegistry;
 
     /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
-    @Null
+    @Nullable
     @Resource(name="serviceTicketRegistry")
     private TicketRegistry serviceTicketRegistry;
 

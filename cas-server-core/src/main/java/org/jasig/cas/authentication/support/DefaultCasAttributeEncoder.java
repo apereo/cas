@@ -24,6 +24,8 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.services.RegisteredServiceCipherExecutor;
 import org.jasig.cas.web.view.CasViewConstants;
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 
 /**
@@ -36,7 +38,15 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("casAttributeEncoder")
 public class DefaultCasAttributeEncoder extends AbstractCasAttributeEncoder {
+
+    /**
+     * Instantiates a new Default cas attribute encoder.
+     */
+    protected DefaultCasAttributeEncoder() {
+        super();
+    }
 
     /**
      * Instantiates a new Default cas attribute encoder.
