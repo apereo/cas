@@ -69,6 +69,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.util.Arrays;
@@ -117,62 +118,53 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private final TicketRegistry ticketRegistry;
+    @Resource(name="ticketRegistry")
+    private TicketRegistry ticketRegistry;
 
     /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
     @Null
-    @Autowired(required = false)
-    @Qualifier("serviceTicketRegistry")
-    private final TicketRegistry serviceTicketRegistry;
+    @Resource(name="serviceTicketRegistry")
+    private TicketRegistry serviceTicketRegistry;
 
     /**
      * AuthenticationManager for authenticating credentials for purposes of
      * obtaining tickets.
      */
     @NotNull
-    @Autowired
-    @Qualifier("authenticationManager")
-    private final AuthenticationManager authenticationManager;
+    @Resource(name="authenticationManager")
+    private AuthenticationManager authenticationManager;
 
     /**
      * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
      * created.
      */
     @NotNull
-    @Autowired
-    @Qualifier("ticketGrantingTicketUniqueIdGenerator")
-    private final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+    @Resource(name="ticketGrantingTicketUniqueIdGenerator")
+    private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
     @NotNull
-    @Autowired
-    @Qualifier("uniqueIdGeneratorsMap")
-    private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+    @Resource(name="uniqueIdGeneratorsMap")
+    private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     /** Implementation of Service Manager. */
     @NotNull
-    @Autowired
-    @Qualifier("servicesManager")
-    private final ServicesManager servicesManager;
+    @Resource(name="servicesManager")
+    private ServicesManager servicesManager;
 
     /** The logout manager. **/
     @NotNull
-    @Autowired
-    @Qualifier("logoutManager")
-    private final LogoutManager logoutManager;
+    @Resource(name="logoutManager")
+    private LogoutManager logoutManager;
 
     /** Expiration policy for ticket granting tickets. */
     @NotNull
-    @Autowired
-    @Qualifier("grantingTicketExpirationPolicy")
+    @Resource(name="grantingTicketExpirationPolicy")
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     /** ExpirationPolicy for Service Tickets. */
     @NotNull
-    @Autowired
-    @Qualifier("serviceTicketExpirationPolicy")
+    @Resource(name="serviceTicketExpirationPolicy")
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /**
@@ -185,14 +177,15 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /** Factory to create the principal type. **/
     @NotNull
-    @Autowired
-    @Qualifier("principalFactory")
     private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Default instance for the ticket id generator. */
     @NotNull
     private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
             = new DefaultUniqueTicketIdGenerator();
+
+    protected CentralAuthenticationServiceImpl() {}
+
     /**
      * Build the central authentication service implementation.
      *
@@ -206,15 +199,17 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @param servicesManager the services manager.
      * @param logoutManager the logout manager.
      */
-    public CentralAuthenticationServiceImpl(final TicketRegistry ticketRegistry,
-                                            final TicketRegistry serviceTicketRegistry,
-                                            final AuthenticationManager authenticationManager,
-                                            final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
-                                            final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
-                                            final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
-                                            final ExpirationPolicy serviceTicketExpirationPolicy,
-                                            final ServicesManager servicesManager,
-                                            final LogoutManager logoutManager) {
+    public CentralAuthenticationServiceImpl(
+        final TicketRegistry ticketRegistry,
+        final TicketRegistry serviceTicketRegistry,
+        final AuthenticationManager authenticationManager,
+        final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
+        final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
+        final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
+        final ExpirationPolicy serviceTicketExpirationPolicy,
+        final ServicesManager servicesManager,
+        final LogoutManager logoutManager) {
+
         this.ticketRegistry = ticketRegistry;
         if (serviceTicketRegistry == null) {
             this.serviceTicketRegistry = ticketRegistry;
@@ -281,7 +276,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
 
         Authentication currentAuthentication = null;
-        if (sanitizedCredentials.size() > 0) {
+        if (sanitizedCredentials.isEmpty()) {
             currentAuthentication = this.authenticationManager.authenticate(
                     sanitizedCredentials.toArray(new Credential[] {}));
             final Authentication original = ticketGrantingTicket.getAuthentication();
@@ -610,7 +605,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      *
      * @param principalFactory the principal factory
      */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+    @Autowired
+    public void setPrincipalFactory(@Qualifier("principalFactory")
+                                    final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 

@@ -19,30 +19,22 @@
     under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     <description>
         This is the main Spring configuration file with some of the main "core" classes defined. You shouldn't really
         modify this unless you know what you're doing!
     </description>
 
+    <!--
+    | The base-package indicates where components stored. Spring will scan this
+    | folder and find out the annotated beans and register it in Spring container.
+    -->
     <context:component-scan base-package="org.jasig.cas" />
-    <mvc:annotation-driven />
-
-    <util:list id="basenames">
-        <value>classpath:custom_messages</value>
-        <value>classpath:messages</value>
-    </util:list>
+    <context:annotation-config/>
 </beans>

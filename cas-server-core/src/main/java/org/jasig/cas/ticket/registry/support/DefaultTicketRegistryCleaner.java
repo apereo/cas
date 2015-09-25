@@ -27,6 +27,9 @@ import org.jasig.cas.ticket.registry.RegistryCleaner;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -62,6 +65,7 @@ import java.util.Collections;
  * @see NoOpLockingStrategy
  * @since 3.0.0
  */
+@Component("ticketRegistryCleaner")
 public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
 
     /** The Commons Logging instance. */
@@ -83,8 +87,12 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
      * @param centralAuthenticationService the CAS interface acting as the service layer
      * @param ticketRegistry the ticket registry
      */
-    public DefaultTicketRegistryCleaner(final CentralAuthenticationService centralAuthenticationService,
-                                        final TicketRegistry ticketRegistry) {
+    @Autowired
+    public DefaultTicketRegistryCleaner(
+        @Qualifier("centralAuthenticationService")
+        final CentralAuthenticationService centralAuthenticationService,
+        @Qualifier("ticketRegistry")
+        final TicketRegistry ticketRegistry) {
         this.centralAuthenticationService = centralAuthenticationService;
         this.ticketRegistry = ticketRegistry;
     }
