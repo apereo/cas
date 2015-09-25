@@ -29,9 +29,9 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.TicketValidationException;
+import org.jasig.cas.ticket.AbstractTicketValidationException;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
@@ -62,7 +62,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-public class ServiceValidateController extends DelegateController {
+public class ServiceValidateController extends AbstractDelegateController {
     /** View if Service Ticket Validation Fails. */
     public static final String DEFAULT_SERVICE_FAILURE_VIEW_NAME = "cas2ServiceFailureView";
 
@@ -148,7 +148,7 @@ public class ServiceValidateController extends DelegateController {
                     proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
         } catch (final AuthenticationException e) {
             logger.info("Failed to authenticate service credential {}", serviceCredential);
-        } catch (final TicketException e) {
+        } catch (final AbstractTicketException e) {
             logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
         }
 
@@ -198,11 +198,11 @@ public class ServiceValidateController extends DelegateController {
             onSuccessfulValidation(serviceTicketId, assertion);
             logger.debug("Successfully validated service ticket {} for service [{}]", serviceTicketId, service.getId());
             return generateSuccessView(assertion, proxyIou, service, proxyGrantingTicketId);
-        } catch (final TicketValidationException e) {
+        } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
             return generateErrorView(code, code,
                     new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()});
-        } catch (final TicketException te) {
+        } catch (final AbstractTicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
                 new Object[] {serviceTicketId});
         } catch (final UnauthorizedProxyingException e) {
