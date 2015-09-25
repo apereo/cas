@@ -38,7 +38,7 @@ public class DelegatingController extends AbstractController {
     /** View if Service Ticket Validation Fails. */
     private static final String DEFAULT_ERROR_VIEW_NAME = "casServiceFailureView";
 
-    private List<DelegateController> delegates;
+    private List<AbstractDelegateController> delegates;
 
     /** The view to redirect if no delegate can handle the request. */
     @NotNull
@@ -57,7 +57,7 @@ public class DelegatingController extends AbstractController {
     @Override
     protected final ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
                                                     throws Exception {
-        for (final DelegateController delegate : delegates) {
+        for (final AbstractDelegateController delegate : delegates) {
             if (delegate.canHandle(request, response)) {
                 return delegate.handleRequest(request, response);
             }
@@ -86,7 +86,7 @@ public class DelegatingController extends AbstractController {
      * @param delegates the delegate controllers to set
      */
 
-    public void setDelegates(@NotNull final List<DelegateController> delegates) {
+    public void setDelegates(@NotNull final List<AbstractDelegateController> delegates) {
         this.delegates = delegates;
     }
 
