@@ -23,6 +23,9 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
@@ -46,7 +49,8 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public final class ProxyController extends AbstractController {
+@Component("proxyController")
+public class ProxyController extends AbstractController {
 
     /** View for if the creation of a "Proxy" Ticket Fails. */
     private static final String CONST_PROXY_FAILURE = "cas2ProxyFailureView";
@@ -131,7 +135,9 @@ public final class ProxyController extends AbstractController {
      * @param centralAuthenticationService The centralAuthenticationService to
      * set.
      */
+    @Autowired
     public void setCentralAuthenticationService(
+        @Qualifier("centralAuthenticationService")
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
