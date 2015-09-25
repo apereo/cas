@@ -66,7 +66,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler(false),
                 newMockHandler(false));
         manager.authenticate(mock(Credential.class), mock(Credential.class));
-        fail("Should have thrown AuthenticationException");
+        fail("Should have thrown authentication exception");
     }
 
     @Test
@@ -88,7 +88,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler(false));
         manager.setAuthenticationPolicy(new AllAuthenticationPolicy());
         manager.authenticate(mock(Credential.class), mock(Credential.class));
-        fail("Should have thrown AuthenticationException");
+        fail("Should have thrown authentication exception");
     }
 
     @Test
@@ -110,7 +110,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler("HandlerB", false));
         manager.setAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy("HandlerB"));
         manager.authenticate(mock(Credential.class), mock(Credential.class));
-        fail("Should have thrown AuthenticationException");
+        fail("Should have thrown AbstractAuthenticationException");
     }
 
     @Test
