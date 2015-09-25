@@ -88,7 +88,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         logger.debug("Extracted ArtifactId: {}", artifactId);
         logger.debug("Extracted Request Id: {}", requestId);
 
-        return new SamlService(id, service, artifactId, requestId);
+        return new SamlService(id, service, artifactId, requestId, new SamlServiceResponseBuilder());
     }
 
     @Override
