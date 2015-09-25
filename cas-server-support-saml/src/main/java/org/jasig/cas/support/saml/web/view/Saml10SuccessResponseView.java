@@ -82,7 +82,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
 
         final AuthenticationStatement authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
-                authentication.getAuthenticationDate(), authenticationMethod, getPrincipal(model).getId());
+                authentication.getAuthenticationDate().toDate(), authenticationMethod, getPrincipal(model).getId());
 
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt,
                 this.samlObjectBuilder.generateSecureRandomId());

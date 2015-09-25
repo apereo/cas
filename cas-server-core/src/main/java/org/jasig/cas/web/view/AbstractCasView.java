@@ -23,6 +23,7 @@ import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.validation.Assertion;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
@@ -30,7 +31,6 @@ import org.springframework.web.servlet.view.AbstractView;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -186,7 +186,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the authentication date
      * @since 4.1.0
      */
-    protected final Date getAuthenticationDate(final Map<String, Object> model) {
+    protected final DateTime getAuthenticationDate(final Map<String, Object> model) {
         return getPrimaryAuthenticationFrom(model).getAuthenticationDate();
     }
 
@@ -207,7 +207,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the chained authentications
      */
     protected final Collection<Authentication> getChainedAuthentications(final Map<String, Object> model) {
-        final List<Authentication> chainedAuthenticationsToReturn = new ArrayList<>();
+        final Collection<Authentication> chainedAuthenticationsToReturn = new ArrayList<>();
 
         final Assertion assertion = getAssertionFrom(model);
         final List<Authentication> chainedAuthentications = assertion.getChainedAuthentications();

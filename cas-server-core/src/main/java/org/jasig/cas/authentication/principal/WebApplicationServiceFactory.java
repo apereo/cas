@@ -55,9 +55,12 @@ public final class WebApplicationServiceFactory extends AbstractServiceFactory<W
         final String id = cleanupUrl(serviceToUse);
         final String artifactId = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
 
-        return new SimpleWebApplicationServiceImpl(id, serviceToUse,
-                artifactId, "POST".equalsIgnoreCase(method) ? Response.ResponseType.POST
-                : Response.ResponseType.REDIRECT);
+        final  Response.ResponseType type = "POST".equalsIgnoreCase(method) ? Response.ResponseType.POST
+                                                        : Response.ResponseType.REDIRECT;
+
+        final WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl(id, serviceToUse,
+                artifactId, new WebApplicationServiceResponseBuilder(type));
+        return webApplicationService;
     }
 
     @Override

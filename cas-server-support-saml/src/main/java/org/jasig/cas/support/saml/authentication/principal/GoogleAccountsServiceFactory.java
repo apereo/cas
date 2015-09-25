@@ -23,7 +23,6 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
-import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -86,7 +85,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
             return null;
         }
 
-        final Document document = AbstractSaml20ObjectBuilder.constructDocumentFromXml(xmlRequest);
+        final Document document = BUILDER.constructDocumentFromXml(xmlRequest);
 
         if (document == null) {
             return null;
@@ -96,8 +95,10 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         final String assertionConsumerServiceUrl = root.getAttributeValue("AssertionConsumerServiceURL");
         final String requestId = root.getAttributeValue("ID");
 
-        return new GoogleAccountsService(assertionConsumerServiceUrl,
-                relayState, requestId, privateKey, publicKey, servicesManager);
+        final GoogleAccountsServiceResponseBuilder builder =
+            new GoogleAccountsServiceResponseBuilder(this.privateKey, this.publicKey,
+                BUILDER, this.servicesManager);
+        return new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId, builder);
     }
 
     @Override
