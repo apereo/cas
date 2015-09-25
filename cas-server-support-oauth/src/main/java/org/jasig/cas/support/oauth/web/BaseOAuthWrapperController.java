@@ -49,7 +49,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
 
     /** The login url. */
     @NotNull
-    @Value("${server.prefix}/login")
+    @Value("${server.prefix:http://localhost:8080/cas}/login")
     protected String loginUrl;
 
     /** The services manager. */

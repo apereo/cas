@@ -31,10 +31,6 @@
         CAS, SAML, SAML2, OpenId, etc.). By default, only CAS is enabled.
     </description>
 
-    <bean id="defaultArgumentExtractor" 
-        class="org.jasig.cas.web.support.DefaultArgumentExtractor"
-        c:serviceFactoryList-ref="serviceFactoryList" />
-
     <util:list id="serviceFactoryList">
         <bean class="org.jasig.cas.authentication.principal.WebApplicationServiceFactory" />
     </util:list>
