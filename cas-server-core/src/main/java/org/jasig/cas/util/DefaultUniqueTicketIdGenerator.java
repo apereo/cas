@@ -21,6 +21,9 @@ package org.jasig.cas.util;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
@@ -39,16 +42,16 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The numeric generator to generate the static part of the id. */
-    private final NumericGenerator numericGenerator;
+    private NumericGenerator numericGenerator;
 
     /** The RandomStringGenerator to generate the secure random part of the id. */
-    private final RandomStringGenerator randomStringGenerator;
+    private RandomStringGenerator randomStringGenerator;
 
     /**
      * Optional suffix to ensure uniqueness across JVMs by specifying unique
      * values.
      */
-    private final String suffix;
+    private String suffix;
 
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with default values
@@ -70,6 +73,21 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         this(maxLength, null);
     }
 
+
+    /**
+     * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
+     * maximum length for the random portion.
+     *
+     * @param maxLength the maximum length of the random string used to generate
+     * the id.
+     * @param suffix the value to append at the end of the unique id to ensure
+     * uniqueness across JVMs.
+     */
+    public DefaultUniqueTicketIdGenerator(final int maxLength, final String suffix) {
+        setMaxLength(maxLength);
+        setSuffix(suffix);
+    }
+
     /**
      * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
      * maximum length for the random portion.
@@ -83,26 +101,10 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator,
                                           final RandomStringGenerator randomStringGenerator,
                                           final String suffix) {
-
         this.randomStringGenerator = randomStringGenerator;
         this.numericGenerator = numericGenerator;
-        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : null;
+        setSuffix(suffix);
     }
-
-    /**
-     * Creates an instance of DefaultUniqueTicketIdGenerator with a specified
-     * maximum length for the random portion.
-     *
-     * @param maxLength the maximum length of the random string used to generate
-     * the id.
-     * @param suffix the value to append at the end of the unique id to ensure
-     * uniqueness across JVMs.
-     */
-    public DefaultUniqueTicketIdGenerator(final int maxLength, final String suffix) {
-        this(new DefaultLongNumericGenerator(1), new DefaultRandomStringGenerator(maxLength), suffix);
-    }
-
-
 
     @Override
     public final String getNewTicketId(final String prefix) {
@@ -123,4 +125,80 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
         return buffer.toString();
     }
+
+    public void setSuffix(final String suffix) {
+        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : null;
+    }
+
+    /**
+     * Sets max length of id generation.
+     *
+     * @param maxLength the max length
+     */
+    public void setMaxLength(final int maxLength) {
+        this.randomStringGenerator = new DefaultRandomStringGenerator(maxLength);
+        this.numericGenerator = new DefaultLongNumericGenerator(1);
+    }
+
+    @Component("ticketGrantingTicketUniqueIdGenerator")
+    public static class TicketGrantingTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
+        @Autowired
+        @Override
+        public void setSuffix(@Value("${host.name:cas01.example.org}") final String suffix) {
+            super.setSuffix(suffix);
+        }
+
+        @Autowired
+        @Override
+        public void setMaxLength(@Value("${tgt.ticket.maxlength:50}") final int maxLength) {
+            super.setMaxLength(maxLength);
+        }
+    }
+
+    @Component("serviceTicketUniqueIdGenerator")
+    public static class ServiceTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
+        @Autowired
+        @Override
+        public void setSuffix(@Value("${host.name:cas01.example.org}") final String suffix) {
+            super.setSuffix(suffix);
+        }
+
+        @Autowired
+        @Override
+        public void setMaxLength(@Value("${st.ticket.maxlength:20}") final int maxLength) {
+            super.setMaxLength(maxLength);
+        }
+    }
+
+    @Component("loginTicketUniqueIdGenerator")
+    public static class LoginTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
+        @Autowired
+        @Override
+        public void setSuffix(@Value("${host.name:cas01.example.org}") final String suffix) {
+            super.setSuffix(suffix);
+        }
+
+        @Autowired
+        @Override
+        public void setMaxLength(@Value("${lt.ticket.maxlength:20}") final int maxLength) {
+            super.setMaxLength(maxLength);
+        }
+    }
+
+    @Component("proxy20TicketUniqueIdGenerator")
+    public static class ProxyTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
+        @Autowired
+        @Override
+        public void setSuffix(@Value("${host.name:cas01.example.org}") final String suffix) {
+            super.setSuffix(suffix);
+        }
+
+        @Autowired
+        @Override
+        public void setMaxLength(@Value("${pgt.ticket.maxlength:50}") final int maxLength) {
+            super.setMaxLength(maxLength);
+        }
+    }
+
+
 }

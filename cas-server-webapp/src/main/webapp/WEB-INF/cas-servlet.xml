@@ -46,14 +46,6 @@
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
 
-  <!-- Theme Resolver -->
-  <util:map id="serviceThemeResolverSupportedBrowsers">
-    <entry key=".*iPhone.*" value="iphone"/>
-    <entry key=".*Android.*" value="iphone"/>
-    <entry key=".*Safari.*Pre.*" value="iphone"/>
-    <entry key=".*Nokia.*AppleWebKit.*" value="iphone"/>
-  </util:map>
-
   <bean id="themeChangeInterceptor" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"
         p:paramName="theme" />
 

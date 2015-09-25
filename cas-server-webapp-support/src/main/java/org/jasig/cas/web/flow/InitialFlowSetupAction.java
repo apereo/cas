@@ -37,6 +37,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -135,9 +136,8 @@ public final class InitialFlowSetupAction extends AbstractAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    @Autowired
-    public void setArgumentExtractors(@Qualifier("argumentExtractors")
-                                          final List<ArgumentExtractor> argumentExtractors) {
+    @Resource(name="argumentExtractors")
+    public void setArgumentExtractors(final List<ArgumentExtractor> argumentExtractors) {
         this.argumentExtractors = argumentExtractors;
     }
 

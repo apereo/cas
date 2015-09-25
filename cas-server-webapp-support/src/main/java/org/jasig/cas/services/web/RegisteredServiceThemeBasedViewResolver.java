@@ -25,12 +25,16 @@ import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
+
+import javax.annotation.Resource;
 
 /**
  * {@link RegisteredServiceThemeBasedViewResolver} is an alternate Spring View Resolver that utilizes a service's
@@ -56,17 +60,25 @@ import org.springframework.webflow.execution.RequestContextHolder;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Component("registeredServiceThemeBasedViewResolver")
 public final class RegisteredServiceThemeBasedViewResolver extends InternalResourceViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
     private static final String DEFAULT_PATH_PREFIX = "/WEB-INF/view/jsp";
 
     /** The ServiceRegistry to look up the service. */
-    private final ServicesManager servicesManager;
+    @Resource(name="servicesManager")
+    private ServicesManager servicesManager;
 
-    private final String defaultThemeId;
+    @Value("${cas.themeResolver.defaultThemeName:cas-theme-default}")
+    private String defaultThemeId;
 
+    @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp")
     private String pathPrefix = DEFAULT_PATH_PREFIX;
 
+    /**
+     * Instantiates a new Registered service theme based view resolver.
+     */
+    protected RegisteredServiceThemeBasedViewResolver() {}
     /**
      * The {@link RegisteredServiceThemeBasedViewResolver} constructor.
      * @param defaultThemeId the theme to apply if the service doesn't specific one or a service is not provided
