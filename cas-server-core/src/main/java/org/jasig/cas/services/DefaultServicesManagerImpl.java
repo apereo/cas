@@ -31,10 +31,17 @@ import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.spi.JobFactory;
+import org.quartz.spi.TriggerFiredBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -73,10 +80,13 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @Value("${service.registry.quartz.reloader.startDelay:120000}")
     private int startDelay;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     /**
      * Instantiates a new default services manager impl.
      */
-    protected DefaultServicesManagerImpl() {}
+    public DefaultServicesManagerImpl() {}
 
     /**
      * Instantiates a new default services manager impl.
@@ -135,7 +145,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      *
      * @return the tree set
      */
-    protected TreeSet<RegisteredService> convertToTreeSet() {
+    public TreeSet<RegisteredService> convertToTreeSet() {
         return new TreeSet<>(this.services.values());
     }
 
@@ -167,7 +177,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     /**
      * Load services that are provided by the DAO. 
      */
-    private void load() {
+    public void load() {
         final ConcurrentHashMap<Long, RegisteredService> localServices =
                 new ConcurrentHashMap<>();
 
@@ -187,27 +197,59 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @PostConstruct
     public void scheduleReloaderJob()  {
         try {
-            final JobDetail job = JobBuilder.newJob(this.getClass())
-                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString())).build();
-            final Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                .startAt(new Date(System.currentTimeMillis() + this.startDelay))
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                    .withIntervalInMinutes(this.refreshIntervalInMinutes)
-                    .repeatForever()).build();
+            if (this.startDelay > 0) {
 
-            final SchedulerFactory schFactory = new StdSchedulerFactory();
-            final Scheduler sch = schFactory.getScheduler();
-            sch.start();
-            sch.scheduleJob(job, trigger);
+                if (applicationContext.getParent() == null) {
+                    LOGGER.debug("Preparing to schedule reloader job");
+
+                    final JobDetail job = JobBuilder.newJob(this.getClass())
+                        .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                        .build();
+
+                    final Trigger trigger = TriggerBuilder.newTrigger()
+                        .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                        .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                        .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                            .withIntervalInMinutes(this.refreshIntervalInMinutes)
+                            .repeatForever()).build();
+
+                    final JobFactory jobFactory = new SpringBeanJobFactory() {
+                        private transient AutowireCapableBeanFactory beanFactory;
+
+                        @Override
+                        protected Object createJobInstance(final TriggerFiredBundle bundle) throws Exception {
+                            this.beanFactory = applicationContext.getAutowireCapableBeanFactory();
+                            final Object job = super.createJobInstance(bundle);
+                            LOGGER.debug("Created reloader job {}", job);
+                            beanFactory.autowireBean(job);
+                            LOGGER.debug("Autowired job per the application context");
+                            return job;
+                        }
+                    };
+
+
+                    final SchedulerFactory schFactory = new StdSchedulerFactory();
+                    final Scheduler sch = schFactory.getScheduler();
+                    sch.setJobFactory(jobFactory);
+
+                    sch.start();
+                    LOGGER.debug("Started {} scheduler", this.getClass().getName());
+                    sch.scheduleJob(job, trigger);
+                    LOGGER.info("Services manager will reload service definitions every {} minutes",
+                        this.refreshIntervalInMinutes);
+                }
+            } else {
+                LOGGER.info("{} will not schedule a reloader job. Configuration is disabled",
+                    this.getClass().getName());
+            }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
     }
 
     @Override
-    public void execute(final JobExecutionContext jobExecutionContext)
-                            throws JobExecutionException {
+    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
         reload();
     }
 }
