@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.quartz.Trigger;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -36,6 +37,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.3.4
  **/
+@Component("scheduler")
 public final class AutowiringSchedulerFactoryBean extends SchedulerFactoryBean {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());

@@ -46,8 +46,9 @@
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
 
-  <bean id="themeChangeInterceptor" class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"
-        p:paramName="theme" />
+  <bean id="themeChangeInterceptor"
+        class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"
+        p:paramName="${cas.themeResolver.param.name:theme}" />
 
   <!-- View Resolver  -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"

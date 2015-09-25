@@ -51,6 +51,10 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.validation.constraints.Min;
@@ -72,7 +76,7 @@ import java.util.concurrent.TimeUnit;
  * @author Jerome Leleu
  * @since 4.1.0
  */
-public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient> {
+public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient> {
 
     /** Max connections per route. */
     public static final int MAX_CONNECTIONS_PER_ROUTE = 50;
@@ -321,7 +325,9 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
         return this.connectionTimeout;
     }
 
-    public void setConnectionTimeout(final int connectionTimeout) {
+    @Autowired
+    public void setConnectionTimeout(@Value("${http.client.connection.timeout:5000}")
+                                     final int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
@@ -329,7 +335,9 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
         return this.readTimeout;
     }
 
-    public void setReadTimeout(final int readTimeout) {
+    @Autowired
+    public void setReadTimeout(@Value("${http.client.read.timeout:5000}")
+                               final int readTimeout) {
         this.readTimeout = readTimeout;
     }
 
@@ -435,5 +443,29 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
 
     public void setRedirectsEnabled(final boolean redirectsEnabled) {
         this.redirectsEnabled = redirectsEnabled;
+    }
+
+    @Component("httpClient")
+    public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {}
+
+    @Component("noRedirectHttpClient")
+    public static class NoRedirectHttpClient extends DefaultHttpClient {
+        /**
+         * Instantiates a new No redirect http client.
+         */
+        public NoRedirectHttpClient() {
+            super.setRedirectsEnabled(false);
+            super.setCircularRedirectsAllowed(false);
+        }
+    }
+
+    @Component("supportsTrustStoreSslSocketFactoryHttpClient")
+    public static class SslTrustStoreAwareHttpClient extends DefaultHttpClient {
+        @Override
+        @Autowired
+        public void setSslSocketFactory(@Qualifier("trustStoreSslSocketFactory")
+                                        final SSLConnectionSocketFactory sslSocketFactory) {
+            super.setSslSocketFactory(sslSocketFactory);
+        }
     }
 }
