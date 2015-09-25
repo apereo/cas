@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.services;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
@@ -29,6 +31,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("jpaServiceRegistryDao")
 public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     @NotNull

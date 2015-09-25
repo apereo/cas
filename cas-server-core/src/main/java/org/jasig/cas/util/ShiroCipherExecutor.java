@@ -20,8 +20,13 @@
 package org.jasig.cas.util;
 
 import org.apache.shiro.crypto.AesCipherService;
+import org.apache.shiro.crypto.CipherService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 
 /**
  * A {@link CipherExecutor} implementation that is based on algorithms
@@ -30,6 +35,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Component("ticketCipherExecutor")
 public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final String UTF8_ENCODING = "UTF-8";
 
@@ -44,22 +50,27 @@ public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> 
      * @param encryptionSecretKey the encryption secret key
      * @param signingSecretKey the signing key
      */
-    public ShiroCipherExecutor(final String encryptionSecretKey,
+    @Autowired
+    public ShiroCipherExecutor(@Value("${ticket.encryption.secretkey:N0$ecr3T}")
+                               final String encryptionSecretKey,
+                               @Value("${ticket.signing.secretkey:N0$ecr3T}")
                                final String signingSecretKey) {
         super(signingSecretKey);
         this.encryptionSecretKey = encryptionSecretKey;
     }
 
-    public void setSecretKeyAlgorithm(final String secretKeyAlgorithm) {
+    @Autowired
+    public void setSecretKeyAlgorithm(@Value("${ticket.secretkey.alg:AES}")
+                                          final String secretKeyAlgorithm) {
         this.secretKeyAlgorithm = secretKeyAlgorithm;
     }
 
     @Override
     public byte[] encode(final byte[] value) {
         try {
-            final SecretKeySpec key = new SecretKeySpec(this.encryptionSecretKey.getBytes(),
+            final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(),
                     this.secretKeyAlgorithm);
-            final AesCipherService cipher = new AesCipherService();
+            final CipherService cipher = new AesCipherService();
             final byte[] result = cipher.encrypt(value, key.getEncoded()).getBytes();
             return sign(result);
         } catch (final Exception e) {
@@ -71,9 +82,9 @@ public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> 
     public byte[] decode(final byte[] value) {
         try {
             final byte[] verifiedValue = verifySignature(value);
-            final SecretKeySpec key = new SecretKeySpec(this.encryptionSecretKey.getBytes(UTF8_ENCODING),
+            final Key key = new SecretKeySpec(this.encryptionSecretKey.getBytes(UTF8_ENCODING),
                     this.secretKeyAlgorithm);
-            final AesCipherService cipher = new AesCipherService();
+            final CipherService cipher = new AesCipherService();
             final byte[] result = cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
             return result;
         } catch (final Exception e) {
