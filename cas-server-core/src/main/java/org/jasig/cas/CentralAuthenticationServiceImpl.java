@@ -21,25 +21,23 @@ package org.jasig.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.jasig.cas.authentication.AuthenticationBuilder;
-import org.jasig.cas.logout.LogoutRequest;
-import org.jasig.inspektr.audit.annotation.Audit;
 import org.apache.commons.collections4.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
-import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.AttributeReleasePolicy;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceContext;
@@ -48,12 +46,12 @@ import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketCreationException;
-import org.jasig.cas.ticket.TicketException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
@@ -63,6 +61,7 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
+import org.jasig.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -248,7 +247,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId,
             final Service service, final Credential... credentials)
-            throws AuthenticationException, TicketException {
+            throws AuthenticationException, AbstractTicketException {
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
@@ -377,7 +376,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Counted(name="GRANT_SERVICE_TICKET_COUNTER", monotonic=true)
     @Override
     public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service) throws TicketException {
+        final Service service) throws AbstractTicketException {
         try {
             return this.grantServiceTicket(ticketGrantingTicketId, service, (Credential[]) null);
         } catch (final AuthenticationException e) {
@@ -394,7 +393,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Counted(name="GRANT_PROXY_GRANTING_TICKET_COUNTER", monotonic=true)
     @Override
     public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
-            throws AuthenticationException, TicketException {
+            throws AuthenticationException, AbstractTicketException {
 
         final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
@@ -434,7 +433,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Metered(name="VALIDATE_SERVICE_TICKET_METER")
     @Counted(name="VALIDATE_SERVICE_TICKET_COUNTER", monotonic=true)
     @Override
-    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws TicketException {
+    public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         verifyRegisteredServiceProperties(registeredService, service);
 
@@ -497,7 +496,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @Counted(name="CREATE_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
     @Override
     public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
-            throws AuthenticationException, TicketException {
+            throws AuthenticationException, AbstractTicketException {
 
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
         if (!sanitizedCredentials.isEmpty()) {
@@ -580,17 +579,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
     }
 
-    /**
-     * @deprecated
-     * Sets persistent id generator.
-     *
-     * @param persistentIdGenerator the persistent id generator
-     */
-    @Deprecated
-    public void setPersistentIdGenerator(final PersistentIdGenerator persistentIdGenerator) {
-        logger.warn("setPersistentIdGenerator() is deprecated and no longer available. Consider "
-                + "configuring the an attribute provider for service definitions.");
-    }
 
     /**
      * Sets principal factory to create principal objects.
@@ -608,10 +596,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @param ticket the ticket
      * @param context the context
      * @return the authentication satisfied by policy
-     * @throws org.jasig.cas.ticket.TicketException the ticket exception
+     * @throws AbstractTicketException the ticket exception
      */
     private Authentication getAuthenticationSatisfiedByPolicy(
-            final TicketGrantingTicket ticket, final ServiceContext context) throws TicketException {
+            final TicketGrantingTicket ticket, final ServiceContext context) throws AbstractTicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy =
                 serviceContextAuthenticationPolicyFactory.createPolicy(context);

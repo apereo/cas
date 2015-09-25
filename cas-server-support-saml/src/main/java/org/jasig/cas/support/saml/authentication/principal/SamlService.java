@@ -19,14 +19,8 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
-import org.jasig.cas.authentication.principal.DefaultResponse;
-import org.jasig.cas.authentication.principal.Response;
-import org.jasig.cas.support.saml.SamlProtocolConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.jasig.cas.authentication.principal.ResponseBuilder;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in
@@ -38,23 +32,13 @@ import java.util.Map;
  */
 public final class SamlService extends AbstractWebApplicationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlService.class);
-
     /**
      * Unique Id for serialization.
      */
     private static final long serialVersionUID = -6867572626767140223L;
 
-    private String requestId;
+    private final String requestId;
 
-    /**
-     * Instantiates a new SAML service.
-     *
-     * @param id the service id
-     */
-    protected SamlService(final String id) {
-        super(id, id, null);
-    }
 
     /**
      * Instantiates a new SAML service.
@@ -63,22 +47,16 @@ public final class SamlService extends AbstractWebApplicationService {
      * @param originalUrl the original url
      * @param artifactId the artifact id
      * @param requestId the request id
+     * @param responseBuilder the response builder
      */
     protected SamlService(final String id, final String originalUrl,
-            final String artifactId, final String requestId) {
-        super(id, originalUrl, artifactId);
+                          final String artifactId, final String requestId,
+                          final ResponseBuilder<WebApplicationService> responseBuilder) {
+        super(id, originalUrl, artifactId, responseBuilder);
         this.requestId = requestId;
     }
 
     public String getRequestID() {
         return this.requestId;
     }
-
-    @Override
-    public Response getResponse(final String ticketId) {
-        final Map<String, String> parameters = new HashMap<>();
-        parameters.put(SamlProtocolConstants.CONST_PARAM_ARTIFACT, ticketId);
-        return DefaultResponse.getRedirectResponse(getOriginalUrl(), parameters);
-    }
-
 }
