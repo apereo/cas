@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public interface CipherExecutor {
+public interface CipherExecutor<T, R> {
 
     /**
      * Encrypt the value. Implementations may
@@ -36,12 +36,12 @@ public interface CipherExecutor {
      * @param value the value
      * @return the encrypted value or null
      */
-    String encode(@NotNull String value);
+    R encode(@NotNull T value);
 
     /**
      * Decode the value. Signatures may also be verified.
      * @param value encrypted value
      * @return the decoded value. 
      */
-    String decode(@NotNull String value);
+    R decode(@NotNull T value);
 }

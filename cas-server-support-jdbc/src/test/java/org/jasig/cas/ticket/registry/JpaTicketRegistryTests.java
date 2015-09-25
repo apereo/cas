@@ -202,11 +202,11 @@ public class JpaTicketRegistryTests {
     }
 
     private static class ServiceTicketGenerator implements Callable<String> {
-        private PlatformTransactionManager txManager;
+        private final PlatformTransactionManager txManager;
         private final String parentTgtId;
         private final JpaTicketRegistry jpaTicketRegistry;
 
-        public ServiceTicketGenerator(final String tgtId, final JpaTicketRegistry jpaTicketRegistry,
+        ServiceTicketGenerator(final String tgtId, final JpaTicketRegistry jpaTicketRegistry,
                                       final PlatformTransactionManager txManager) {
             parentTgtId = tgtId;
             this.jpaTicketRegistry = jpaTicketRegistry;
