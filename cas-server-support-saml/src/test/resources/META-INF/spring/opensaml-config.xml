@@ -32,6 +32,10 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <context:property-placeholder location="classpath:cas.properties"
+                                  ignore-resource-not-found="false"
+                                  ignore-unresolvable="false"/>
+
     <context:component-scan base-package="org.jasig.cas.support.saml" annotation-config="true" />
     <context:annotation-config />
 
@@ -106,7 +110,7 @@
 
     <util:map id="metadataResources">
         <!-- http://md.incommon.org/InCommon/InCommon-metadata.xml -->
-        <entry key="classpath:/sample-metadata.xml"
+        <entry key="${cas.saml.metadata.resource:classpath:/sample-metadata.xml}"
                value-ref="inCommonMetadataFilters" />
     </util:map>
 
@@ -143,8 +147,10 @@
 
     <bean id="credentialFactoryBean"
           class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialFactoryBean"
-          p:publicKeyInfo="classpath:inc-md-pub.pem" >
-    </bean>
+          p:publicKeyInfo-ref="publicKeyInfo" />
+
+    <bean id="publicKeyInfo" class="org.springframework.core.io.ClassPathResource"
+          c:path="/inc-md-pub.pem" />
 
     <bean id="servicesManager" class="org.jasig.cas.services.DefaultServicesManagerImpl"
             c:serviceRegistryDao-ref="serviceRegistryDao" />
@@ -158,4 +164,7 @@
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
+
+    <util:list id="argumentExtractors" />
+    <util:map id="uniqueIdGeneratorsMap" />
 </beans>

@@ -93,7 +93,7 @@ public class AcceptUsersAuthenticationHandlerTests  {
         try {
             assertEquals("scott", this.authenticationHandler.authenticate(c).getPrincipal().getId());
         } catch (final GeneralSecurityException e) {
-            fail("AuthenticationException caught but it should not have been thrown.");
+            fail("Authentication exception caught but it should not have been thrown.");
         }
     }
 

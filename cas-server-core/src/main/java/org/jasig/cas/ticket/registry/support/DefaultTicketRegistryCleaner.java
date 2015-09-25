@@ -20,7 +20,6 @@ package org.jasig.cas.ticket.registry.support;
 
 import org.apache.commons.collections4.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -76,7 +75,7 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     private LockingStrategy lock = new NoOpLockingStrategy();
 
     @NotNull
-    private TicketRegistry ticketRegistry;
+    private final TicketRegistry ticketRegistry;
 
     /**
      * Instantiates a new Default ticket registry cleaner.
@@ -136,45 +135,14 @@ public final class DefaultTicketRegistryCleaner implements RegistryCleaner {
     }
 
     /**
-     * @param ticketRegistry The ticketRegistry to set.
-     * @deprecated As of 4.1. Consider using constructors instead.
-     */
-    @Deprecated
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        logger.warn("Invoking setTicketRegistry() is deprecated and has no impact.");
-    }
-
-
-    /**
      * @param  strategy  Ticket cleanup locking strategy.  An exclusive locking
      * strategy is preferable if not required for some ticket backing stores,
      * such as JPA, in a clustered CAS environment.  Use JPA locking strategies
      * for JPA-backed ticket registries in a clustered
      * CAS environment.
-     * @deprecated As of 4.1. Consider using constructors instead.
      */
-    @Deprecated
     public void setLock(final LockingStrategy strategy) {
         this.lock = strategy;
     }
 
-    /**
-     * @deprecated As of 4.1, single signout callbacks are entirely controlled by the {@link LogoutManager}.
-     * @param logUserOutOfServices whether to logger the user out of services or not.
-     */
-    @Deprecated
-    public void setLogUserOutOfServices(final boolean logUserOutOfServices) {
-        logger.warn("Invoking setLogUserOutOfServices() is deprecated and has no impact.");
-    }
-
-    /**
-     * Set the logout manager.
-     *
-     * @param logoutManager the logout manager.
-     * @deprecated As of 4.1. Consider using constructors instead.
-     */
-    @Deprecated
-    public void setLogoutManager(final LogoutManager logoutManager) {
-        logger.warn("Invoking setLogoutManager() is deprecated and has no impact.");
-    }
 }

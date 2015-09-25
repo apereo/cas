@@ -6,7 +6,7 @@ title: CAS - Upgrade Guide
 # Upgrade Guide
 In general, it is recommended that adopters try to keep their CAS deployment in alignment with the latest CAS version available.
 In particular, releases that are of `PATCH` or `SECURITY` nature should be immediately applied as they are drop-in replacements
-for their corresponding parent version. See CAS [Release Policy](../../Release-Policy.html) for more info. 
+for their corresponding parent version. See CAS [Release Policy](../../developer/Release-Policy.html) for more info. 
 
 The general objectives of a CAS upgrade could be:
 
@@ -17,7 +17,7 @@ affected by that vulnerability and/or bug?
 local changes, I can realize their benefit from CAS directly and end up with a smaller more-maintainable overlay? 
 
 This document attempts to describe, at a very high level, the scope and effort required to upgrade a given 
-[CAS Maven overlay](../Maven-Overlay-Installation.html). Rather than describing all steps/changes that would be required
+[CAS Maven overlay](../installation/Maven-Overlay-Installation.html). Rather than describing all steps/changes that would be required
 to review and adjust (which would be impossible), we describe a strategy by which the upgrade could be executed. 
 
 ## Change Log
@@ -33,12 +33,12 @@ evaluation to determine feasibility of the solution and the target version in wh
 
 ## Scope Review
 Once you decide your ideal CAS version for the upgrade, before attempting to upgrade, 
-please review the CAS [Release Policy](../../Release-Policy.html). This will provide you
+please review the CAS [Release Policy](../../developer/Release-Policy.html). This will provide you
 with an understanding of what changes you may expect from new version and what the required effort
 may be for the upgrade.
 
 ## Evaluate Local Overlay
-As a best practice, it is recommended that you deploy CAS via a [Maven overlay method](../Maven-Overlay-Installation.html).
+As a best practice, it is recommended that you deploy CAS via a [Maven overlay method](../installation/Maven-Overlay-Installation.html).
 If you have, the task here would be to identify the number of files your overlay has touched and modified. Catalog the 
 what and why of the changes applied, and cross-check those changes with the CAS change log. Chances are, many of the
 local changes that are present within your overlay are provided by default via CAS as a result of that upgrade which will
@@ -64,7 +64,7 @@ the software dependencies and platform requirements of the new upgrade (i.e. Jav
 and make sure you have everything installed and configured correctly before you attempt. 
 
 ## Clean Maven Overlay
-We recommend that you first start out with a separate clean [CAS Maven overlay](../Maven-Overlay-Installation.html) targeted
+We recommend that you first start out with a separate clean [CAS Maven overlay](../installation/Maven-Overlay-Installation.html) targeted
 at the version to which you want to upgrade. This has the advantage of guaranteeing that your new CAS deployment 
 will be functional without any local changes. Build and deploy the clean CAS overlay once to make sure
 your build/deployment process is functional.

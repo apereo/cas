@@ -24,11 +24,13 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -56,6 +58,8 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     /**
@@ -93,7 +97,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
             } catch (final AuthenticationException e) {
                 onError(context, credential);
                 return error();
-            } catch (final TicketException e) {
+            } catch (final AbstractTicketException e) {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
                 logger.debug("Attempted to generate a ServiceTicket using renew=true with different credential", e);
             }

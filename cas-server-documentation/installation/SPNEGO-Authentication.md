@@ -29,11 +29,13 @@ ticket expires.
 ## SPNEGO Components
 SPNEGO support is enabled by including the following dependency in the Maven WAR overlay:
 
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-spnego</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-spnego</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
 
 
 ######`JCIFSSpnegoAuthenticationHandler`
@@ -126,10 +128,12 @@ Then verify that your are able to read the keytab file:
 * Internet Explorer - Enable _Integrated Windows Authentication_ and add the CAS server URL to the _Local Intranet_
 zone.
 * Firefox - Set the `network.negotiate-auth.trusted-uris` configuration parameter in `about:config` to the CAS server
-URL, e.g. https://cas.example.com.
+URL, e.g. `https://cas.example.com`.
 
 
-### CAS Component Configuration
+### Configuration
+
+####Webflow Configuration
 Define two new action states in `login-webflow.xml` before the `viewLoginForm` state:
 
 {% highlight xml %}
@@ -147,33 +151,27 @@ Define two new action states in `login-webflow.xml` before the `viewLoginForm` s
 
 Additionally, find action `generateLoginTicket` - replace `viewLoginForm` with `startAuthenticate`.
 
-Add two bean definitions in `cas-servlet.xml`:
+Insert the appropriate action before SPNEGO initiation, assigning a `yes` response route to SPNEGO,
+ and a `no` response to route to viewing the login form.
 
 {% highlight xml %}
-<bean id="negociateSpnego" class="org.jasig.cas.support.spnego.web.flow.SpnegoNegociateCredentialsAction" />
- 
-<bean id="spnego" class="org.jasig.cas.support.spnego.web.flow.SpnegoCredentialsAction"
-      p:centralAuthenticationService-ref="centralAuthenticationService" />
+<action-state id="eveluateClientRequest">
+  <evaluate expression="hostnameSpnegoClientAction" />
+  <transition on="yes" to="startAuthenticate" />
+  <transition on="no" to="generateLoginTicket" />
+</action-state>
 {% endhighlight %}
+
+####Authentication Configuration
 
 Update `deployerConfigContext.xml` according to the following template:
 
 {% highlight xml %}
-<bean id="jcifsConfig"
-      class="org.jasig.cas.support.spnego.authentication.handler.support.JCIFSConfig"
-      p:jcifsServicePrincipal="HTTP/cas.example.com@EXAMPLE.COM"
-      p:kerberosDebug="false"
-      p:kerberosRealm="EXAMPLE.COM"
-      p:kerberosKdc="172.10.1.10"
-      p:loginConf="/path/to/login.conf" />
-
-<bean id="spnegoAuthentication" class="jcifs.spnego.Authentication" />
-
 <bean id="spnegoHandler"
-      class="org.jasig.cas.support.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler"
+      class="org.jasig.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler"
       p:authentication-ref="spnegoAuthentication"
-      p:principalWithDomainName="false"
-      p:NTLMallowed="true" />
+      p:principalWithDomainName="${cas.spengo.use.principal.domain:false}"
+      p:NTLMallowed="${cas.spnego.ntlm.allowed:true}" />
 
 <bean id="spnegoPrincipalResolver"
       class="org.jasig.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver" />
@@ -193,8 +191,7 @@ Update `deployerConfigContext.xml` according to the following template:
 </bean>
 {% endhighlight %}
 
-Provide a JAAS `login.conf` file in a location that agrees with the `loginConf` property of the `JCIFSConfig` bean
-above.
+Provide a JAAS `login.conf` file:
 
     jcifs.spnego.initiate {
        com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
@@ -203,67 +200,79 @@ above.
        com.sun.security.auth.module.Krb5LoginModule required storeKey=true useKeyTab=true keyTab="/home/cas/kerberos/myspnaccount.keytab";
     };
 
-## Client Selection Strategy
-CAS provides a set of components that attempt to activate the SPNEGO flow conditionally, in case deployers need a configurable way to decide whether SPNEGO should be applied to the current authentication/browser request. The components provided are webflow actions that return either `yes` or `no` to the webflow and allow you to reroute the webflow conditionally based the outcome, to either SPNEGO or the normal CAS login flow. 
+You may use the following configuration in `cas.properties`:
 
-The activation strategies are as follows:
+{% highlight properties %}
+# cas.spnego.ldap.attribute=spnegoattribute
+# cas.spnego.ldap.filter=host={0}
+# cas.spnego.ldap.basedn=
+# cas.spnego.hostname.pattern=.+
+# cas.spnego.ip.pattern=
+# cas.spnego.alt.remote.host.attribute
+# cas.spengo.use.principal.domain=false
+# cas.spnego.ntlm.allowed=true
+# cas.spnego.kerb.debug=false
+# cas.spnego.kerb.realm=EXAMPLE.COM
+# cas.spnego.kerb.kdc=172.10.1.10
+# cas.spnego.login.conf.file=/path/to/login.conf
+# cas.spnego.jcifs.domain=
+# cas.spnego.jcifs.domaincontroller=
+# cas.spnego.jcifs.netbios.cache.policy:600
+# cas.spnego.jcifs.netbios.wins=
+# cas.spnego.jcifs.password=
+# cas.spnego.jcifs.service.password=
+# cas.spnego.jcifs.socket.timeout:300000
+# cas.spnego.jcifs.username=
+# cas.spnego.kerb.conf=
+# cas.spnego.ntlm=false
+# cas.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
+# cas.spnego.mixed.mode.authn=false
+# cas.spnego.send.401.authn.failure=false
+{% endhighlight %}
+
+## Client Selection Strategy
+CAS provides a set of components that attempt to activate the SPNEGO flow conditionally, 
+in case deployers need a configurable way to decide whether SPNEGO should be applied to the 
+current authentication/browser request. 
 
 ### By Remote IP
 Checks to see if the request's remote ip address matches a predefine pattern.
 
-```xml
-<bean id="baseSpnegoClientAction" 
-      class="org.jasig.cas.support.spnego.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction"
-      c:ipsToCheckPattern="127.+"
-      c:alternativeRemoteHostAttribute="alternateRemoteHeader" />
-```
+{% highlight xml %}
+...
+<evaluate expression="baseSpnegoClientAction" />
+...
+{% endhighlight %}
+
 
 ### By Hostname
-Checks to see if the request's remote hostname matches a predefine pattern. This action supports all functionality provided by `BaseSpnegoKnownClientSystemsFilterAction`. 
+Checks to see if the request's remote hostname matches a predefine pattern. 
 
-```xml
-<bean id="hostnameSpnegoClientAction" 
-      class="org.jasig.cas.support.spnego.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction"
-      c:hostNamePatternString="something.+" />
-```
+{% highlight xml %}
+...
+<evaluate expression="hostnameSpnegoClientAction" />
+...
+{% endhighlight %}
 
 ### By LDAP Attribute
-Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence would allow the webflow to resume to SPNEGO. This action supports all functionality provided by `BaseSpnegoKnownClientSystemsFilterAction`. 
+Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence 
+would allow the webflow to resume to SPNEGO. 
 
-
-```xml
+{% highlight xml %}
 <bean id="ldapSpnegoClientAction" 
       class="org.jasig.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction"
       c:connectionFactory-ref="connectionFactory"
       c:searchRequest-ref="searchRequest"
-      c:spnegoAttributeName="spnegoAttribute" />
-```
+      c:spnegoAttributeName="${cas.spnego.ldap.attribute:spnegoAttribute}" />
 
-Sample search request and filer:
-
-```xml
 <bean id="searchRequest" class="org.ldaptive.SearchRequest"
       p:baseDn-ref="baseDn"
       p:searchFilter-ref="searchFilter"/>
 
 <bean id="searchFilter" class="org.ldaptive.SearchFilter"
-      c:filter="host={0}" />
+      c:filter="${cas.spnego.ldap.filter:host={0}}" />
 
 <bean id="baseDn" class="java.lang.String">
-    <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
+    <constructor-arg type="java.lang.String" value="${cas.spnego.ldap.basedn:}" />
 </bean>
-```
-
-### Webflow Configuration
-
-Insert the appropriate action before SPNEGO initiation, assigning a `yes` response route to SPNEGO, and a `no` response to route to viewing the login form.
-
-```xml
-<action-state id="eveluateClientRequest">
-  <evaluate expression="hostnameSpnegoClientAction" />
-  <transition on="yes" to="startAuthenticate" />
-  <transition on="no" to="generateLoginTicket" />
-</action-state>
-
-...
-```
+{% endhighlight %}

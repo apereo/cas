@@ -28,7 +28,7 @@ import org.jasig.cas.authentication.Credential;
 /**
  * Delegates to one or more principal resolves in series to resolve a principal. The input to first configured resolver
  * is the authenticated credential; for every subsequent resolver, the input is a {@link Credential} whose ID is the
- * resolved princpial ID of the previous resolver.
+ * resolved principal ID of the previous resolver.
  * <p>
  * A common use case for this component is resolving a temporary principal ID from an X.509 credential followed by
  * a search (e.g. LDAP, database) for the final principal based on the temporary ID.
@@ -88,7 +88,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     }
 
     /** Credential that stores only an ID. */
-    static class IdentifiableCredential implements Credential {
+    private static class IdentifiableCredential implements Credential {
         /** Credential identifier. */
         private final String id;
 
@@ -97,7 +97,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
          *
          * @param id the credential id
          */
-        public IdentifiableCredential(final String id) {
+        IdentifiableCredential(final String id) {
             this.id = id;
         }
 
