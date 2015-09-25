@@ -19,6 +19,7 @@
 package org.jasig.cas.support.spnego.authentication.handler.support;
 
 import jcifs.Config;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -59,6 +60,10 @@ public final class JcifsConfig implements InitializingBean {
 
     private static final String JCIFS_PROP_CLIENT_PASSWORD = "jcifs.smb.client.password";
 
+    private static final String JCIFS_PROP_CLIENT_SOTIMEOUT = "jcifs.smb.client.soTimeout";
+
+    private static final String JCIFS_PROP_NETBIOS_CACHE_POLICY = "jcifs.netbios.cachePolicy";
+
     /**
      * -- the service principal you just created. Using the previous example,
      * this would be "HTTP/mybox at DOMAIN.COM".
@@ -80,19 +85,19 @@ public final class JcifsConfig implements InitializingBean {
      * Instantiates a new jCIFS config.
      */
     public JcifsConfig() {
-        Config.setProperty("jcifs.smb.client.soTimeout", "300000");
-        Config.setProperty("jcifs.netbios.cachePolicy", "600");
+        Config.setProperty(JCIFS_PROP_CLIENT_SOTIMEOUT, "300000");
+        Config.setProperty(JCIFS_PROP_NETBIOS_CACHE_POLICY, "600");
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
         final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
         if (propValue != null) {
-            logger.warn("found login config in system property, may overide : {}", propValue);
+            logger.warn("found login config in system property, may override : {}", propValue);
         }
 
         URL url = getClass().getResource(
-                this.loginConf == null ? DEFAULT_LOGIN_CONFIG : this.loginConf);
+            this.loginConf == null ? DEFAULT_LOGIN_CONFIG : this.loginConf);
         if (url != null) {
             this.loginConf = url.toExternalForm();
         }
@@ -107,15 +112,19 @@ public final class JcifsConfig implements InitializingBean {
         logger.debug("configured login configuration path : {}", propValue);
     }
 
+
     /**
      * Sets the jcifs service password.
      *
      * @param jcifsServicePassword the new jcifs service password
      */
     public void setJcifsServicePassword(final String jcifsServicePassword) {
-        logger.debug("jcifsServicePassword is set to *****");
-        Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
+        if (StringUtils.isNotBlank(jcifsServicePassword)) {
+            logger.debug("jcifsServicePassword is set to *****");
+            Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
+        }
     }
+
 
     /**
      * Sets the jcifs service principal.
@@ -123,8 +132,10 @@ public final class JcifsConfig implements InitializingBean {
      * @param jcifsServicePrincipal the new jcifs service principal
      */
     public void setJcifsServicePrincipal(final String jcifsServicePrincipal) {
-        logger.debug("jcifsServicePrincipal is set to {}", jcifsServicePrincipal);
-        Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
+        if (StringUtils.isNotBlank(jcifsServicePrincipal)) {
+            logger.debug("jcifsServicePrincipal is set to {}", jcifsServicePrincipal);
+            Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
+        }
     }
 
     /**
@@ -133,8 +144,11 @@ public final class JcifsConfig implements InitializingBean {
      * @param kerberosConf the new kerberos conf
      */
     public void setKerberosConf(final String kerberosConf) {
-        logger.debug("kerberosConf is set to :{}", kerberosConf);
-        System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
+        if (StringUtils.isNotBlank(kerberosConf)) {
+
+            logger.debug("kerberosConf is set to :{}", kerberosConf);
+            System.setProperty(SYS_PROP_KERBEROS_CONF, kerberosConf);
+        }
     }
 
     /**
@@ -143,8 +157,11 @@ public final class JcifsConfig implements InitializingBean {
      * @param kerberosKdc the new kerberos kdc
      */
     public void setKerberosKdc(final String kerberosKdc) {
-        logger.debug("kerberosKdc is set to : {}", kerberosKdc);
-        System.setProperty(SYS_PROP_KERBEROS_KDC, kerberosKdc);
+        if (StringUtils.isNotBlank(kerberosKdc)) {
+
+            logger.debug("kerberosKdc is set to : {}", kerberosKdc);
+            System.setProperty(SYS_PROP_KERBEROS_KDC, kerberosKdc);
+        }
     }
 
     /**
@@ -153,8 +170,10 @@ public final class JcifsConfig implements InitializingBean {
      * @param kerberosRealm the new kerberos realm
      */
     public void setKerberosRealm(final String kerberosRealm) {
-        logger.debug("kerberosRealm is set to :{}", kerberosRealm);
-        System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
+        if (StringUtils.isNotBlank(kerberosRealm)) {
+            logger.debug("kerberosRealm is set to :{}", kerberosRealm);
+            System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
+        }
     }
 
     public void setLoginConf(final String loginConf) {
@@ -177,47 +196,83 @@ public final class JcifsConfig implements InitializingBean {
      * @param kerberosDebug the new kerberos debug
      */
     public void setKerberosDebug(final String kerberosDebug) {
-        logger.debug("kerberosDebug is set to : {}", kerberosDebug);
-        System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);
+        if (StringUtils.isNotBlank(kerberosDebug)) {
+            logger.debug("kerberosDebug is set to : {}", kerberosDebug);
+            System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);
+        }
     }
 
     /**
      * @param jcifsDomain the jcifsDomain to set
      */
     public void setJcifsDomain(final String jcifsDomain) {
-        logger.debug("jcifsDomain is set to {}", jcifsDomain);
-        Config.setProperty(JCIFS_PROP_CLIENT_DOMAIN, jcifsDomain);
+        if (StringUtils.isNotBlank(jcifsDomain)) {
+            logger.debug("jcifsDomain is set to {}", jcifsDomain);
+            Config.setProperty(JCIFS_PROP_CLIENT_DOMAIN, jcifsDomain);
+        }
     }
 
     /**
      * @param jcifsDomainController the jcifsDomainController to set
      */
     public void setJcifsDomainController(final String jcifsDomainController) {
-        logger.debug("jcifsDomainController is set to {}", jcifsDomainController);
-        Config.setProperty(JCIFS_PROP_DOMAIN_CONTROLLER, jcifsDomainController);
+        if (StringUtils.isNotBlank(jcifsDomainController)) {
+            logger.debug("jcifsDomainController is set to {}", jcifsDomainController);
+            Config.setProperty(JCIFS_PROP_DOMAIN_CONTROLLER, jcifsDomainController);
+        }
     }
 
     /**
      * @param jcifsPassword the jcifsPassword to set
      */
     public void setJcifsPassword(final String jcifsPassword) {
-        Config.setProperty(JCIFS_PROP_CLIENT_PASSWORD, jcifsPassword);
-        logger.debug("jcifsPassword is set to *****");
+        if (StringUtils.isNotBlank(jcifsPassword)) {
+            Config.setProperty(JCIFS_PROP_CLIENT_PASSWORD, jcifsPassword);
+            logger.debug("jcifsPassword is set to *****");
+        }
     }
 
     /**
      * @param jcifsUsername the jcifsUsername to set
      */
     public void setJcifsUsername(final String jcifsUsername) {
-        logger.debug("jcifsUsername is set to {}", jcifsUsername);
-        Config.setProperty(JCIFS_PROP_CLIENT_USERNAME, jcifsUsername);
+        if (StringUtils.isNotBlank(jcifsUsername)) {
+            logger.debug("jcifsUsername is set to {}", jcifsUsername);
+            Config.setProperty(JCIFS_PROP_CLIENT_USERNAME, jcifsUsername);
+        }
     }
 
     /**
      * @param jcifsNetbiosWins the jcifsNetbiosWins to set
      */
     public void setJcifsNetbiosWins(final String jcifsNetbiosWins) {
-        logger.debug("jcifsNetbiosWins is set to {}", jcifsNetbiosWins);
-        Config.setProperty(JCIFS_PROP_NETBIOS_WINS, jcifsNetbiosWins);
+        if (StringUtils.isNotBlank(jcifsNetbiosWins)) {
+            logger.debug("jcifsNetbiosWins is set to {}", jcifsNetbiosWins);
+            Config.setProperty(JCIFS_PROP_NETBIOS_WINS, jcifsNetbiosWins);
+        }
+    }
+
+    /**
+     * Sets jcifs netbios cache policy.
+     *
+     * @param policy the policy
+     */
+    public void setJcifsNetbiosCachePolicy(final String policy) {
+        if (StringUtils.isNotBlank(policy)) {
+            logger.debug("jcifsNetbiosCachePolicy is set to {}", policy);
+            Config.setProperty(JCIFS_PROP_NETBIOS_CACHE_POLICY, policy);
+        }
+    }
+
+    /**
+     * Sets jcifs socket timeout.
+     *
+     * @param timeout the timeout
+     */
+    public void setJcifsSocketTimeout(final String timeout) {
+        if (StringUtils.isNotBlank(timeout)) {
+            logger.debug("jcifsSocketTimeout is set to {}", timeout);
+            Config.setProperty(JCIFS_PROP_CLIENT_SOTIMEOUT, timeout);
+        }
     }
 }
