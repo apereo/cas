@@ -16,23 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.cas.web.support;
+
+
+import org.apache.commons.lang3.NotImplementedException;
+import org.jasig.cas.authentication.principal.WebApplicationService;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.authentication.principal.WebApplicationService;
-
 /**
+ * @deprecated As of 4.2, use {@link DefaultArgumentExtractor}.
  * Implements the traditional CAS2 protocol.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
+@Deprecated
 public final class CasArgumentExtractor extends AbstractArgumentExtractor {
-
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return SimpleWebApplicationServiceImpl.createServiceFrom(request);
+        throw new NotImplementedException("This operation is not supported. "
+                + "The class is deprecated and will be removed in future versions");
     }
 }
+
+

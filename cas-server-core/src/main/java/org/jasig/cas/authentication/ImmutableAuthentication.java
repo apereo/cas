@@ -25,7 +25,6 @@ import org.joda.time.DateTime;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +44,7 @@ public final class ImmutableAuthentication implements Authentication {
     private static final long serialVersionUID = 3206127526058061391L;
 
     /** Authentication date stamp. */
-    private final long authenticationDate;
+    private final DateTime authenticationDate;
 
     /** List of metadata about credentials presented at authentication. */
     private final List<CredentialMetaData> credentials;
@@ -64,7 +63,7 @@ public final class ImmutableAuthentication implements Authentication {
 
     /** No-arg constructor for serialization support. */
     private ImmutableAuthentication() {
-        this.authenticationDate = 0;
+        this.authenticationDate = null;
         this.credentials = null;
         this.principal = null;
         this.attributes = null;
@@ -97,7 +96,7 @@ public final class ImmutableAuthentication implements Authentication {
         Assert.notEmpty(credentials, "Credential cannot be empty");
         Assert.notEmpty(successes, "Successes cannot be empty");
 
-        this.authenticationDate = date.toDate().getTime();
+        this.authenticationDate = date;
         this.credentials = credentials;
         this.principal = principal;
         this.attributes = attributes.isEmpty() ? null : attributes;
@@ -110,8 +109,9 @@ public final class ImmutableAuthentication implements Authentication {
         return this.principal;
     }
 
-    public Date getAuthenticationDate() {
-        return new ImmutableDate(this.authenticationDate);
+    @Override
+    public DateTime getAuthenticationDate() {
+        return authenticationDate;
     }
 
     @Override
@@ -159,7 +159,7 @@ public final class ImmutableAuthentication implements Authentication {
         builder.append(this.principal, other.getPrincipal());
         builder.append(this.credentials, other.getCredentials());
         builder.append(this.successes, other.getSuccesses());
-        builder.append(this.authenticationDate, other.getAuthenticationDate().getTime());
+        builder.append(this.authenticationDate, other.getAuthenticationDate());
         builder.append(wrap(this.attributes), other.getAttributes());
         builder.append(wrap(this.failures), other.getFailures());
         return builder.isEquals();
@@ -179,55 +179,5 @@ public final class ImmutableAuthentication implements Authentication {
             return Collections.unmodifiableMap(source);
         }
         return Collections.emptyMap();
-    }
-
-    /**
-     * Immutable date implementation that throws {@link UnsupportedOperationException} for setter methods.
-     */
-    private static final class ImmutableDate extends Date {
-
-        private static final long serialVersionUID = 6275827030191703183L;
-
-        /** No-arg constructor for serialization support. */
-        private ImmutableDate() {}
-
-        /**
-         * Creates a new instance with the given epoch time in milliseconds.
-         *
-         * @param instant Milliseconds since the Unix epoch.
-         */
-        public ImmutableDate(final long instant) {
-            super(instant);
-        }
-
-        @Override
-        public void setYear(final int year) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setDate(final int date) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setHours(final int hours) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setMinutes(final int minutes) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setSeconds(final int seconds) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setTime(final long time) {
-            throw new UnsupportedOperationException();
-        }
     }
 }
