@@ -20,6 +20,7 @@ package org.jasig.cas.logout;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
@@ -33,10 +34,10 @@ import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.net.URL;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -83,7 +84,7 @@ public class LogoutManagerImplTests {
         this.logoutManager = new LogoutManagerImpl(servicesManager, client, new SamlCompliantLogoutMessageCreator());
 
         this.services = new HashMap<>();
-        this.simpleWebApplicationServiceImpl = new SimpleWebApplicationServiceImpl(URL);
+        this.simpleWebApplicationServiceImpl = (SimpleWebApplicationServiceImpl) new WebApplicationServiceFactory().createService(URL);
         this.services.put(ID, this.simpleWebApplicationServiceImpl);
         when(this.tgt.getServices()).thenReturn(this.services);
 

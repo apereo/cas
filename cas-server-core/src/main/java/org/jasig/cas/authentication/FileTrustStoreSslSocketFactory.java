@@ -178,7 +178,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
          * Represents an ordered list of {@link X509KeyManager}s with most-preferred managers first.
          * @param keyManagers list of key managers
          */
-        public CompositeX509KeyManager(final List<X509KeyManager> keyManagers) {
+        CompositeX509KeyManager(final List<X509KeyManager> keyManagers) {
             this.keyManagers = keyManagers;
         }
 
@@ -266,7 +266,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
          *
          * @param trustManagers the trust managers
          */
-        public CompositeX509TrustManager(final List<X509TrustManager> trustManagers) {
+        CompositeX509TrustManager(final List<X509TrustManager> trustManagers) {
             this.trustManagers = trustManagers;
         }
 

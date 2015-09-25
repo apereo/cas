@@ -48,4 +48,16 @@
           p:jobDetail-ref="jobDetailTicketRegistryCleaner"
           p:startDelay="20000"
           p:repeatInterval="5000000"/>
+
+    <!--
+    Uncomment this element to enable ticket encryption in the registry.
+    A number of distributed ticket registries support this operation. Check docs
+    for more info.
+    -->
+    <!--
+    <bean id="ticketCipherExecutor" class="org.jasig.cas.util.ShiroCipherExecutor
+          c:encryptionSecretKey="${ticket.encryption.secretkey}"
+          c:encryptionSeed="${ticket.encryption.seed}"
+          c:signingSecretKey-ref="${ticket.signing.secretkey}"/>
+    -->
 </beans>

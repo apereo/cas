@@ -20,8 +20,8 @@
 package org.jasig.cas.support.saml.web.flow.mdui;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -111,7 +111,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             return success();
         }
 
-        final WebApplicationService service = new SimpleWebApplicationServiceImpl(entityId);
+        final WebApplicationService service = new WebApplicationServiceFactory().createService(entityId);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);
@@ -125,7 +125,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             return success();
         }
 
-        final SPSSODescriptor spssoDescriptor = getSPSSODescriptor(entityDescriptor);
+        final SPSSODescriptor spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
         if (spssoDescriptor == null) {
             logger.debug("SP SSO descriptor not found for [{}]", entityId);
             return success();
@@ -156,9 +156,9 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * Gets SP SSO descriptor.
      *
      * @param entityDescriptor the entity descriptor
-     * @return the sPSSO descriptor
+     * @return the SP SSO descriptor
      */
-    private SPSSODescriptor getSPSSODescriptor(final EntityDescriptor entityDescriptor) {
+    private SPSSODescriptor getSPSsoDescriptor(final EntityDescriptor entityDescriptor) {
         logger.debug("Locating SP SSO descriptor for SAML2 protocol...");
         SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (spssoDescriptor == null) {
