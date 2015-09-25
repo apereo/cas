@@ -54,7 +54,7 @@ public class SessionStatus extends Status {
      *
      * @see #getCode()
      */
-     public SessionStatus(final StatusCode code, final String desc, final int sessions, final int serviceTickets) {
+    public SessionStatus(final StatusCode code, final String desc, final int sessions, final int serviceTickets) {
         super(code, desc);
         this.sessionCount = sessions;
         this.serviceTicketCount = serviceTickets;
