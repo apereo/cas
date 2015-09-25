@@ -46,7 +46,7 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Component("casReloadableMessageBundle")
+@Component("messageSource")
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
     private String[] basenames;
