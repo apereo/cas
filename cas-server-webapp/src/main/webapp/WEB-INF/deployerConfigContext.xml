@@ -94,12 +94,8 @@
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
 
-    <util:list id="monitorsList">
-        <bean class="org.jasig.cas.monitor.MemoryMonitor"
-              p:freeMemoryWarnThreshold="${cas.monitor.free.mem.threshold:10}" />
-        <bean class="org.jasig.cas.monitor.SessionMonitor"
-              p:ticketRegistry-ref="ticketRegistry"
-              p:serviceTicketCountWarnThreshold="${cas.monitor.st.warn.threshold:5000}"
-              p:sessionCountWarnThreshold="${cas.monitor.tgt.warn.threshold:10000}" />
+    <util:list id="monitorsList" value-type="org.jasig.cas.monitor.Monitor">
+        <ref bean="memoryMonitor" />
+        <ref bean="sessionMonitor" />
     </util:list>
 </beans>

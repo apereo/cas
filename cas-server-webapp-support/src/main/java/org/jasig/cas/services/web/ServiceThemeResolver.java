@@ -26,7 +26,6 @@ import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
@@ -34,6 +33,7 @@ import org.springframework.web.servlet.theme.AbstractThemeResolver;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
@@ -127,9 +127,8 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
      *
      * @param mobileOverrides the list of mobile browsers.
      */
-    @Autowired
-    public void setMobileBrowsers(@Qualifier("serviceThemeResolverSupportedBrowsers")
-                                      final Map<String, String> mobileOverrides) {
+    @Resource(name="serviceThemeResolverSupportedBrowsers")
+    public void setMobileBrowsers(final Map<String, String> mobileOverrides) {
         // initialize the overrides variable to an empty map
         this.overrides = new HashMap<>();
 

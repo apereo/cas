@@ -64,18 +64,18 @@ public final class LogoutManagerImpl implements LogoutManager {
     @NotNull
     @Autowired
     @Qualifier("servicesManager")
-    private final ServicesManager servicesManager;
+    private ServicesManager servicesManager;
 
     /** An HTTP client. */
     @NotNull
     @Autowired
     @Qualifier("noRedirectHttpClient")
-    private final HttpClient httpClient;
+    private HttpClient httpClient;
 
     @NotNull
     @Autowired
     @Qualifier("logoutBuilder")
-    private final LogoutMessageCreator logoutMessageBuilder;
+    private LogoutMessageCreator logoutMessageBuilder;
     
     /** Whether single sign out is disabled or not. */
     @Value("${slo.callbacks.disabled:false}")
@@ -87,7 +87,12 @@ public final class LogoutManagerImpl implements LogoutManager {
      **/
     @Value("${slo.callbacks.asynchronous:true}")
     private boolean asynchronous = true;
-    
+
+    /**
+     * Instantiates a new Logout manager.
+     */
+    protected LogoutManagerImpl() {}
+
     /**
      * Build the logout manager.
      * @param servicesManager the services manager.

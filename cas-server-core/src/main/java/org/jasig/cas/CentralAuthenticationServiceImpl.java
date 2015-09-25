@@ -184,6 +184,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
             = new DefaultUniqueTicketIdGenerator();
 
+    /**
+     * Instantiates a new Central authentication service impl.
+     */
     protected CentralAuthenticationServiceImpl() {}
 
     /**
