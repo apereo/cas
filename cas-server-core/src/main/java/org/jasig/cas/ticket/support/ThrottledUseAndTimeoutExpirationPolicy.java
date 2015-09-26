@@ -19,6 +19,8 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -28,15 +30,18 @@ import org.jasig.cas.ticket.TicketState;
  * @author Scott Battaglia
  * @since 3.0.0.5
  */
+@Component("throttledUseAndTimeoutExpirationPolicy")
 public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 205979491183779408L;
 
     /** The time to kill in milliseconds. */
+    @Value("${tgt.maxTimeToLiveInSeconds:28800}*1000")
     private long timeToKillInMilliSeconds;
 
     /** Time time between which a ticket must wait to be used again. */
+    @Value("${tgt.timeInBetweenUsesInSeconds:5}*1000")
     private long timeInBetweenUsesInMilliSeconds;
 
     public void setTimeInBetweenUsesInMilliSeconds(

@@ -20,6 +20,8 @@ package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.util.concurrent.TimeUnit;
@@ -31,15 +33,18 @@ import java.util.concurrent.TimeUnit;
  * @author William G. Thompson, Jr.
  * @since 3.4.10
  */
+@Component("ticketGrantingTicketExpirationPolicy")
 public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy implements InitializingBean {
 
     /** Serialization support. */
     private static final long serialVersionUID = 7670537200691354820L;
 
     /** Maximum time this ticket is valid.  */
+    @Value("${tgt.maxTimeToLiveInSeconds:28800}*1000")
     private final long maxTimeToLiveInMilliSeconds;
 
     /** Time to kill in milliseconds. */
+    @Value("${tgt.timeToKillInSeconds:7200}*1000")
     private final long timeToKillInMilliSeconds;
 
     /**

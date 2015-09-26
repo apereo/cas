@@ -45,6 +45,7 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
 
     <util:map id="authenticationHandlersResolvers"
@@ -88,6 +89,9 @@
     </util:map>
 
     <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
+
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
 
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
