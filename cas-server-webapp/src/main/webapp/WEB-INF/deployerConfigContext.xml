@@ -37,11 +37,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
@@ -53,6 +55,8 @@
 
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
           p:backingMap-ref="attrRepoBackingMap" />
+
+    <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
 
     <util:map id="attrRepoBackingMap">
         <entry key="uid" value="uid" />
@@ -69,13 +73,15 @@
     </util:map>
 
     <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
+
     <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
     <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-    <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
-
-
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
@@ -85,4 +91,5 @@
         <ref bean="memoryMonitor" />
         <ref bean="sessionMonitor" />
     </util:list>
+
 </beans>

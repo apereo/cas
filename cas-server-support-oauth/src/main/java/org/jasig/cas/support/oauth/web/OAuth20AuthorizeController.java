@@ -42,9 +42,6 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
 
     /**
      * Instantiates a new o auth20 authorize controller.
-     *
-     * @param servicesManager the services manager
-     * @param loginUrl the login url
      */
     public OAuth20AuthorizeController() {}
 
