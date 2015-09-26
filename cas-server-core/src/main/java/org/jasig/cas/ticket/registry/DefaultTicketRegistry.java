@@ -55,6 +55,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
@@ -202,7 +203,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
                 sch.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} milliseconds",
                     this.getClass().getSimpleName(),
-                    this.refreshInterval);
+                    TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
             }
         } catch (final Exception e){
             logger.warn(e.getMessage(), e);
@@ -247,7 +248,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
                 logger.debug("Found CAS servlet application context for OAuth");
                 final String[] aliases =
                     this.applicationContext.getAutowireCapableBeanFactory().getAliases("defaultTicketRegistry");
-                logger.debug("{} is used as the active current ticke registry", this.getClass().getSimpleName());
+                logger.debug("{} is used as the active current ticket registry", this.getClass().getSimpleName());
                 return aliases.length > 0;
             }
         }

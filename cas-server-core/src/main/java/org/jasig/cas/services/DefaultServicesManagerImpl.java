@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -203,7 +202,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @PostConstruct
     public void scheduleReloaderJob() {
         try {
-            if (shouldScheduleCleanerJob()) {
+            if (shouldScheduleLoaderJob()) {
                 LOGGER.debug("Preparing to schedule reloader job");
 
                 final JobDetail job = JobBuilder.newJob(this.getClass())
@@ -240,7 +239,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         reload();
     }
 
-    private boolean shouldScheduleCleanerJob() {
+    private boolean shouldScheduleLoaderJob() {
         if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
             if (WebUtils.isCasServletInitializing(this.applicationContext)) {
                 LOGGER.debug("Found CAS servlet application context for service management");
