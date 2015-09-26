@@ -173,6 +173,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * authenticating credentials.
      */
     @NotNull
+    @Autowired
+    @Qualifier("authenticationPolicyFactory")
     private ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
 

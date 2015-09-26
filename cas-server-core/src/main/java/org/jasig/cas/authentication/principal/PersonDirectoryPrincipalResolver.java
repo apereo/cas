@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -51,6 +52,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /** Log instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Value("cas.principal.resolver.persondir.return.null:false")
     private boolean returnNullIfNoAttributes;
 
     /** Repository of principal attributes to be retrieved. */
@@ -102,7 +104,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
             final String key = entry.getKey();
             final List<Object> values = entry.getValue();
-            if (key.equalsIgnoreCase(this.principalAttributeName)) {
+            if (StringUtils.isNotBlank(this.principalAttributeName)
+                        && key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     logger.debug("{} is empty, using {} for principal", this.principalAttributeName, principalId);
                 } else {
@@ -151,7 +154,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     /**
-     * Extracts the id of the user from the provided credential. This method should be overridded by subclasses to
+     * Extracts the id of the user from the provided credential. This method should be overridden by subclasses to
      * achieve more sophisticated strategies for producing a principal ID from a credential.
      *
      * @param credential the credential provided by the user.

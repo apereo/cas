@@ -27,7 +27,6 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,10 +44,6 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
     /**
      * Instantiates a new o auth20 access token controller.
-     *
-     * @param servicesManager the services manager
-     * @param ticketRegistry the ticket registry
-     * @param timeout the timeout
      */
     public OAuth20AccessTokenController() {}
 

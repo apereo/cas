@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,7 +56,6 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
     /**
      * Instantiates a new o auth20 profile controller.
      *
-     * @param ticketRegistry the ticket registry
      */
     public OAuth20ProfileController() { }
 
