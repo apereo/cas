@@ -35,6 +35,11 @@ public final class NeverExpiresExpirationPolicy extends AbstractCasExpirationPol
     /** Serializable Unique ID. */
     private static final long serialVersionUID = 3833747698242303540L;
 
+    /**
+     * Instantiates a new Never expires expiration policy.
+     */
+    public NeverExpiresExpirationPolicy() {}
+
     @Override
     public boolean isExpired(final TicketState ticketState) {
         return false;

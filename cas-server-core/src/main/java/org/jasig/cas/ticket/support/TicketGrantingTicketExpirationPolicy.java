@@ -40,12 +40,14 @@ public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpir
     private static final long serialVersionUID = 7670537200691354820L;
 
     /** Maximum time this ticket is valid.  */
-    @Value("${tgt.maxTimeToLiveInSeconds:28800}*1000")
-    private final long maxTimeToLiveInMilliSeconds;
+    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
+    private long maxTimeToLiveInMilliSeconds;
 
     /** Time to kill in milliseconds. */
-    @Value("${tgt.timeToKillInSeconds:7200}*1000")
-    private final long timeToKillInMilliSeconds;
+    @Value("#{${tgt.timeToKillInSeconds:7200}*1000}")
+    private long timeToKillInMilliSeconds;
+
+    private TicketGrantingTicketExpirationPolicy() {}
 
     /**
      * Instantiates a new Ticket granting ticket expiration policy.

@@ -21,6 +21,8 @@ package org.jasig.cas.ticket.support;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
@@ -41,10 +43,16 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
     private static final long serialVersionUID = -2735975347698196127L;
 
     @Nullable
+    @Autowired(required=false)
+    @Qualifier("rememberMeExpirationPolicy")
     private ExpirationPolicy rememberMeExpirationPolicy;
 
     @Nullable
+    @Autowired(required=false)
+    @Qualifier("sessionExpirationPolicy")
     private ExpirationPolicy sessionExpirationPolicy;
+
+    public RememberMeDelegatingExpirationPolicy() {}
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
@@ -64,13 +72,11 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
         return false;
     }
 
-    @Resource(name="rememberMeExpirationPolicy")
     public void setRememberMeExpirationPolicy(
         final ExpirationPolicy rememberMeExpirationPolicy) {
         this.rememberMeExpirationPolicy = rememberMeExpirationPolicy;
     }
 
-    @Resource(name="sessionExpirationPolicy")
     public void setSessionExpirationPolicy(final ExpirationPolicy sessionExpirationPolicy) {
         this.sessionExpirationPolicy = sessionExpirationPolicy;
     }
