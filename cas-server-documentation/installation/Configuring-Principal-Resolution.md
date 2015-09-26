@@ -60,7 +60,7 @@ suffices, then a `null` value may be passed in place of the resolver bean id:
 
 {% highlight xml %}
 <util:map id="authenticationHandlersResolvers">
-    <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
-    <entry key-ref="primaryAuthenticationHandler" value-ref="#{null}" />
+    ...
+    <entry key-ref="primaryAuthenticationHandler" value="#{null}" />
 </util:map>
 {% endhighlight %}
