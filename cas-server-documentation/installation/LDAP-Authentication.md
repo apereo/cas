@@ -26,7 +26,7 @@ or OpenLDAP. There are numerous directory architectures and we provide configura
 See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
 ## Ldap Authentication Principal Attributes
-The `LdapAuthenticationHandler` is capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html). 
+The `LdapAuthenticationHandler` is capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html).
 
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
@@ -467,7 +467,7 @@ Here's an example for configuring an UnboundID provider for a given connection f
 {% endhighlight %}
 
 Note that additional dependencies must be available to CAS at runtime, so it's able to locate
-the provider implementation and supply that to connections. 
+the provider implementation and supply that to connections.
 
 ## LDAP Properties Starter
 The following LDAP configuration properties provide a reasonable starting point for configuring the LDAP
@@ -525,7 +525,7 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
     # Search filter used for configurations that require searching for DNs
     #ldap.authn.searchFilter=(&(uid={user})(accountState=active))
     ldap.authn.searchFilter=(uid={user})
-    
+
     # Search filter used for configurations that require searching for DNs
     #ldap.authn.format=uid=%s,ou=Users,dc=example,dc=org
     ldap.authn.format=%s@example.com
@@ -533,12 +533,12 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
 
 ## LDAP Password Policy Enforcement
 The purpose of the LPPE is twofold:
- 
+
 - Detect a number of scenarios that would otherwise prevent user authentication, specifically using an Ldap instance as the primary source of user accounts.
 - Warn users whose account status is near a configurable expiration date and redirect the flow to an external identity management system.
 
 ### Reflecting LDAP Account Status
-The below scenarios are by default considered errors preventing authentication in a generic manner through the normal CAS login flow. LPPE intercepts the authentication flow, detecting the above standard error codes. Error codes are then translated into proper messages in the CAS login flow and would allow the user to take proper action, fully explaining the nature of the problem. 
+The below scenarios are by default considered errors preventing authentication in a generic manner through the normal CAS login flow. LPPE intercepts the authentication flow, detecting the above standard error codes. Error codes are then translated into proper messages in the CAS login flow and would allow the user to take proper action, fully explaining the nature of the problem.
 
 - `ACCOUNT_LOCKED`         
 - `ACCOUNT_DISABLED`        
@@ -583,10 +583,10 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
       ...
 </bean>
 {% endhighlight %}  
- 
-Next, you have to explicitly define an LDAP-specific response handler in your `Authenticator`. 
 
-### Generic 
+Next, you have to explicitly define an LDAP-specific response handler in your `Authenticator`.
+
+### Generic
 
 {% highlight xml %}
 <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
@@ -612,7 +612,7 @@ Also, you have to handle the `PasswordPolicy` controls in the `BindAuthenticatio
         </util:list>
     </property>
 </bean>
-{% endhighlight %} 
+{% endhighlight %}
 
 ### Active Directory
 
@@ -626,7 +626,7 @@ Also, you have to handle the `PasswordPolicy` controls in the `BindAuthenticatio
         </util:list>
 </property>
 </bean>
-{% endhighlight %} 
+{% endhighlight %}
 
 ### Components
 
@@ -656,5 +656,4 @@ To enable additional logging, modify the log4j configuration file to add the fol
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </Logger>
-{% endhighlight %} 
-
+{% endhighlight %}
