@@ -48,44 +48,44 @@ defined in `deployerConfigContext.xml`.
 The following properties may be used as a starting point for connection pool configuration/tuning.
 
 {% highlight properties %}
-  # == Basic database connection pool configuration ==
-  database.driverClass=org.postgresql.Driver
-  database.url=jdbc:postgresql://database.example.com/cas?ssl=true
-  database.user=somebody
-  database.password=meaningless
-  database.pool.minSize=6
-  database.pool.maxSize=18
+# == Basic database connection pool configuration ==
+database.driverClass=org.postgresql.Driver
+database.url=jdbc:postgresql://database.example.com/cas?ssl=true
+database.user=somebody
+database.password=meaningless
+database.pool.minSize=6
+database.pool.maxSize=18
 
-  # Maximum amount of time to wait in ms for a connection to become
-  # available when the pool is exhausted
-  database.pool.maxWait=10000
+# Maximum amount of time to wait in ms for a connection to become
+# available when the pool is exhausted
+database.pool.maxWait=10000
 
-  # Amount of time in seconds after which idle connections
-  # in excess of minimum size are pruned.
-  database.pool.maxIdleTime=120
+# Amount of time in seconds after which idle connections
+# in excess of minimum size are pruned.
+database.pool.maxIdleTime=120
 
-  # Number of connections to obtain on pool exhaustion condition.
-  # The maximum pool size is always respected when acquiring
-  # new connections.
-  database.pool.acquireIncrement=6
+# Number of connections to obtain on pool exhaustion condition.
+# The maximum pool size is always respected when acquiring
+# new connections.
+database.pool.acquireIncrement=6
 
-  # == Connection testing settings ==
+# == Connection testing settings ==
 
-  # Period in s at which a health query will be issued on idle
-  # connections to determine connection liveliness.
-  database.pool.idleConnectionTestPeriod=30
+# Period in s at which a health query will be issued on idle
+# connections to determine connection liveliness.
+database.pool.idleConnectionTestPeriod=30
 
-  # Query executed periodically to test health
-  database.pool.connectionHealthQuery=select 1
+# Query executed periodically to test health
+database.pool.connectionHealthQuery=select 1
 
-  # == Database recovery settings ==
+# == Database recovery settings ==
 
-  # Number of times to retry acquiring a _new_ connection
-  # when an error is encountered during acquisition.
-  database.pool.acquireRetryAttempts=5
+# Number of times to retry acquiring a _new_ connection
+# when an error is encountered during acquisition.
+database.pool.acquireRetryAttempts=5
 
-  # Amount of time in ms to wait between successive aquire retry attempts.
-  database.pool.acquireRetryDelay=2000
+# Amount of time in ms to wait between successive aquire retry attempts.
+database.pool.acquireRetryDelay=2000
 {% endhighlight %}
 
 
