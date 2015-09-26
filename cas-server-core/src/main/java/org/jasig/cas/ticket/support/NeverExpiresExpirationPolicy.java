@@ -19,6 +19,7 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+import org.springframework.stereotype.Component;
 
 /**
  * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
@@ -28,6 +29,7 @@ import org.jasig.cas.ticket.TicketState;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Component("neverExpiresExpirationPolicy")
 public final class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serializable Unique ID. */
