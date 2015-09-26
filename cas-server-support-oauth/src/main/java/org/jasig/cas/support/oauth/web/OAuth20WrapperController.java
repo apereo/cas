@@ -22,10 +22,13 @@ import org.apache.http.HttpStatus;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,23 +41,19 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Component("oauth20WrapperController")
-public final class OAuth20WrapperController extends BaseOAuthWrapperController implements InitializingBean {
+public final class OAuth20WrapperController extends BaseOAuthWrapperController {
 
-    private AbstractController authorizeController;
+    @Resource(name="authorizeController")
+    private OAuth20AuthorizeController authorizeController;
 
-    private AbstractController callbackAuthorizeController;
+    @Resource(name="callbackAuthorizeController")
+    private OAuth20CallbackAuthorizeController callbackAuthorizeController;
 
-    private AbstractController accessTokenController;
+    @Resource(name="accessTokenController")
+    private OAuth20AccessTokenController accessTokenController;
 
-    private AbstractController profileController;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        authorizeController = new OAuth20AuthorizeController(servicesManager, loginUrl);
-        callbackAuthorizeController = new OAuth20CallbackAuthorizeController();
-        accessTokenController = new OAuth20AccessTokenController(servicesManager, ticketRegistry, timeout);
-        profileController = new OAuth20ProfileController(ticketRegistry);
-    }
+    @Resource(name="profileController")
+    private OAuth20ProfileController profileController;
 
     @Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,

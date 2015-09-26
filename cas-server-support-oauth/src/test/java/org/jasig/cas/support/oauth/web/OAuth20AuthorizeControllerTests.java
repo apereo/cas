@@ -76,7 +76,7 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.afterPropertiesSet();
+
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
     }
@@ -88,7 +88,7 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.afterPropertiesSet();
+
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
     }
@@ -104,7 +104,7 @@ public final class OAuth20AuthorizeControllerTests {
         when(servicesManager.getAllServices()).thenReturn(new ArrayList<RegisteredService>());
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
-        oauth20WrapperController.afterPropertiesSet();
+
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
     }
@@ -122,7 +122,6 @@ public final class OAuth20AuthorizeControllerTests {
         when(servicesManager.getAllServices()).thenReturn(services);
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setServicesManager(servicesManager);
-        oauth20WrapperController.afterPropertiesSet();
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.ERROR_VIEW, modelAndView.getViewName());
     }
@@ -144,7 +143,7 @@ public final class OAuth20AuthorizeControllerTests {
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setLoginUrl(CAS_URL);
         oauth20WrapperController.setServicesManager(servicesManager);
-        oauth20WrapperController.afterPropertiesSet();
+
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         final HttpSession session = mockRequest.getSession();
         assertEquals(REDIRECT_URI, session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL));
@@ -181,7 +180,6 @@ public final class OAuth20AuthorizeControllerTests {
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.setLoginUrl(CAS_URL);
         oauth20WrapperController.setServicesManager(servicesManager);
-        oauth20WrapperController.afterPropertiesSet();
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         final HttpSession session = mockRequest.getSession();
         assertEquals(REDIRECT_URI, session.getAttribute(OAuthConstants.OAUTH20_CALLBACKURL));

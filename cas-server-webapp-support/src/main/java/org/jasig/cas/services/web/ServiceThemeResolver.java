@@ -26,6 +26,7 @@ import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
@@ -58,6 +59,8 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThemeResolver.class);
 
     /** The ServiceRegistry to look up the service. */
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     private Map<Pattern, String> overrides = new HashMap<>();
@@ -114,7 +117,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     @Override
     @Autowired
-    public void setDefaultThemeName(@Value("${cas.themeResolver.defaultThemeName}")
+    public void setDefaultThemeName(@Value("${cas.themeResolver.defaultThemeName:cas-theme-default}")
                                         final String defaultThemeName) {
         super.setDefaultThemeName(defaultThemeName);
     }

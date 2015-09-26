@@ -139,10 +139,17 @@ public final class CasLoggerContextInitializer implements ServletContextAware {
         try {
             if (StringUtils.isNotBlank(this.loggerContextPackageName)) {
                 final Collection<URL> set = ClasspathHelper.forPackage(this.loggerContextPackageName);
-                final Reflections reflections = new Reflections(new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
-                final Set<Class<? extends ServletContextListener>> subTypesOf = reflections.getSubTypesOf(ServletContextListener.class);
+                final Reflections reflections = new Reflections(
+                    new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
+                final Set<Class<? extends ServletContextListener>> subTypesOf =
+                    reflections.getSubTypesOf(ServletContextListener.class);
+                if (subTypesOf.isEmpty()) {
+                    throw new IllegalArgumentException("No context listeners could be found for "
+                        + this.loggerContextPackageName);
+                }
                 final ServletContextListener loggingContext = subTypesOf.iterator().next().newInstance();
-                this.context.setInitParameter(this.logConfigurationField, this.logConfigurationFile.getURI().toString());
+                this.context.setInitParameter(this.logConfigurationField,
+                    this.logConfigurationFile.getURI().toString());
                 return loggingContext;
             }
             return null;

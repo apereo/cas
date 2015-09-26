@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.services.web.view;
+package org.jasig.cas.web.view;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
