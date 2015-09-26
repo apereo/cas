@@ -19,6 +19,9 @@
 
 package org.jasig.cas.support.spnego.web.flow.client;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import javax.validation.constraints.NotNull;
 import java.util.regex.Pattern;
 
@@ -31,7 +34,10 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("hostnameSpnegoClientAction")
 public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
+
+    @Value("${cas.spnego.hostname.pattern:something.+}")
     private final Pattern hostNamePatternString;
 
     /**
