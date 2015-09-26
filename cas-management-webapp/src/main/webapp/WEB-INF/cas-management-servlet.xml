@@ -73,8 +73,6 @@
 
   <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 
-  <bean id="messageInterpolator" class="org.jasig.cas.util.SpringAwareMessageMessageInterpolator"/>
-
   <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
         p:messageInterpolator-ref="messageInterpolator"/>
 </beans>

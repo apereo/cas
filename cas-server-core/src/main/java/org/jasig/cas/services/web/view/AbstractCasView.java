@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.web.view;
+package org.jasig.cas.services.web.view;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;

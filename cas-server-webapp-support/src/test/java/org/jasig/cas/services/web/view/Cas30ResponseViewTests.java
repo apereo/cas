@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.web.view;
+package org.jasig.cas.services.web.view;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.TestUtils;
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Unit tests for {@link org.jasig.cas.web.view.Cas20ResponseView}.
+ * Unit tests for {@link Cas20ResponseView}.
  * @author Misagh Moayyed
  * @since 4.0.0
  */

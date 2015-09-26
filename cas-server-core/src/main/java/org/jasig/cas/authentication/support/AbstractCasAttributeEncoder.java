@@ -24,7 +24,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.services.RegisteredServiceCipherExecutor;
 import org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor;
-import org.jasig.cas.web.view.CasViewConstants;
+import org.jasig.cas.services.web.view.CasViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,9 +116,9 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
 
     /**
      * Initialize the encoding process. Removes the
-     * {@link org.jasig.cas.web.view.CasViewConstants#MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL}
+     * {@link CasViewConstants#MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL}
      * and
-     * {@link org.jasig.cas.web.view.CasViewConstants#MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET}
+     * {@link CasViewConstants#MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET}
      * from the authentication attributes originally and into a cache object, so it
      * can later on be encrypted if needed.
      * @param attributes the new encoded attributes

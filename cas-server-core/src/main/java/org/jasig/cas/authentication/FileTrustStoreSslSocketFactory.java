@@ -99,7 +99,8 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
         try {
 
             if (!trustStoreFile.exists() || !trustStoreFile.canRead()) {
-                throw new FileNotFoundException("Truststore file cannot be located at " + trustStoreFile.getCanonicalPath());
+                throw new FileNotFoundException("Truststore file cannot be located at "
+                    + trustStoreFile.getCanonicalPath());
             }
 
             final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);

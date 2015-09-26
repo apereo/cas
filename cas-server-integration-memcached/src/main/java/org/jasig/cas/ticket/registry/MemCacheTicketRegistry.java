@@ -26,8 +26,11 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Arrays;
@@ -40,24 +43,26 @@ import java.util.Collection;
  * @author Marvin S. Addison
  * @since 3.3
  */
+@Component("memcachedTicketRegistry")
 public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry implements DisposableBean {
 
     /** Memcached client. */
     @NotNull
+    @Autowired
+    @Qualifier("memcachedClient")
     private final MemcachedClientIF client;
 
     /**
      * TGT cache entry timeout in seconds.
      */
-    @Min(0)
+    @Value("${tgt.maxTimeToLiveInSeconds:7200}")
     private final int tgtTimeout;
 
     /**
      * ST cache entry timeout in seconds.
      */
-    @Min(0)
+    @Value("${st.timeToKillInSeconds:10}")
     private final int stTimeout;
-
 
     /**
      * Creates a new instance that stores tickets in the given memcached hosts.

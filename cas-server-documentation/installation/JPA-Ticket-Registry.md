@@ -93,27 +93,6 @@ registries for higher availability.</p></div>
     <aop:advisor advice-ref="txAdvice" pointcut-ref="ticketRegistryLockingOperations"/>
 </aop:config>
 
-
-<bean id="ticketRegistryCleaner"
-      class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-      c:centralAuthenticationService-ref="centralAuthenticationService"
-      c:ticketRegistry-ref="ticketRegistry"
-      p:lock-ref="cleanerLock"/>
-
-<bean id="cleanerLock" class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy"
-      p:uniqueId="${host.name}"
-      p:applicationId="cas-ticket-registry-cleaner" />
-
-<bean id="jobDetailTicketRegistryCleaner"
-      class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-      p:targetObject-ref="ticketRegistryCleaner"
-      p:targetMethod="clean" />
-
-<bean id="triggerJobDetailTicketRegistryCleaner"
-      class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
-      p:jobDetail-ref="jobDetailTicketRegistryCleaner"
-      p:startDelay="20000"
-      p:repeatInterval="5000000" />
 {% endhighlight %}
 
 

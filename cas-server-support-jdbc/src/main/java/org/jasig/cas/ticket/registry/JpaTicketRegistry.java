@@ -31,7 +31,9 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.springframework.stereotype.Component;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -43,6 +45,7 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
  * @since 3.2.1
  *
  */
+@Component("jpaTicketRegistry")
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @NotNull
@@ -50,7 +53,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     private EntityManager entityManager;
 
     @NotNull
-    private String ticketGrantingTicketPrefix = "TGT";
+    private String ticketGrantingTicketPrefix = TicketGrantingTicket.PREFIX;
 
     @Override
     protected void updateTicket(final Ticket ticket) {

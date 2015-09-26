@@ -156,39 +156,6 @@ By default, backchannel logout messages are sent to endpoint in an asynchronous 
 # slo.callbacks.asynchronous=true
 {% endhighlight %}
 
-
-###Ticket Registry Cleaner Behavior
-Furthermore, the default behavior is to issue single sign out callbacks in response to a logout request or when a TGT is expired via expiration policy when a `TicketRegistryCleaner` runs.  If you are using ticket registry cleaner and you want to enable the single sign out callback only when CAS receives a logout request, you can configure your `TicketRegistryCleaner` as such:
-
-{% highlight xml %}
-<bean id="ticketRegistryCleaner"
-  class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-      c:centralAuthenticationService-ref="centralAuthenticationService"
-      c:ticketRegistry-ref="ticketRegistry"
-      p:lock-ref="cleanerLock"/>
-{% endhighlight %}
-
-Note that certain ticket registries don't use or need a registry cleaner. For such registries, the option of having a ticker registry cleaner is entirely done away with and is currently not implemented. With that being absent, you will no longer receive automatic SLO callbacks upon TGT expiration. As such, the only thing that would reach back to the should then be explicit logout requests per the CAS protocol.
-
-
-####With `TicketRegistryCleaner`
-1. Single Logout is turned on
-2. The cleaner runs to detect the ticket that are automatically expired. It will query the tickets in the ticket registry, and will accumulate those that are expired.
-3. For the collection of expired tickets, the cleaner will again ask them to "expire" which triggers the SLO callback to be issued.
-4. The cleaner subsequently removes the TGT from the registry. Note that simply removing a ticket by itself from the registry does not issue the SLO callback. A ticket needs to be explicitly told one way or another, to "expire" itself:
-    - If the ticket is already expired, the mechanism will issue the SLO callback.
-    - If the ticket is not already expired, it will be marked as expired and the SLO callback will be issued.
-
-
-####Without `TicketRegistryCleaner`
-1. Single Logout is turned on
-2. There is no cleaner, so nothing runs in the background or otherwise to "expire" and delete tickets from the registry and thus, no SLO callbacks will be issued automatically.
-2. A logout request is received by CAS
-3. CAS will locate the TGT and will attempt to destroy the SSO session.
-4. In destroying the ticket, CAS will:
-    - Ask the ticket to expire itself, which will issue SLO callbacks.
-    - Delete the ticket from the registry
-
 ## SSO Session vs. Application Session
 In order to better understand the SSO session management of CAS and how it regards application sessions, one important note is to be first and foremost considered:
 

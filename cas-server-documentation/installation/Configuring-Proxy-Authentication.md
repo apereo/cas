@@ -173,7 +173,7 @@ which attributes can be encoded. Attributes will be encoded via a `RegisteredSer
 
 {% highlight xml %}
 <bean id="cas3ServiceSuccessView" 
-    class="org.jasig.cas.web.view.Cas30ResponseView"
+    class="Cas30ResponseView"
     c:view-ref="cas3JstlSuccessView"
     p:successResponse="true"
     p:servicesManager-ref="servicesManager"

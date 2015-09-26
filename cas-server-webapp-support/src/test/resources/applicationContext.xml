@@ -31,21 +31,6 @@
     <!-- Ticket Registry -->
     <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.DefaultTicketRegistry"/>
 
-    <!--Quartz -->
-    <!-- TICKET REGISTRY CLEANER -->
-    <bean id="ticketRegistryCleaner" class="org.jasig.cas.ticket.registry.support.DefaultTicketRegistryCleaner"
-          c:centralAuthenticationService-ref="centralAuthenticationService"
-          c:ticketRegistry-ref="ticketRegistry"  />
-
-    <bean id="jobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-        p:targetObject-ref="ticketRegistryCleaner"
-        p:targetMethod="clean" />
-
-    <bean id="triggerJobDetailTicketRegistryCleaner" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
-        p:jobDetail-ref="jobDetailTicketRegistryCleaner"
-        p:startDelay="20000"
-        p:repeatInterval="5000000" />
-
     <bean name="autowiringSchedulerFactoryBean" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean" />
 
 </beans>

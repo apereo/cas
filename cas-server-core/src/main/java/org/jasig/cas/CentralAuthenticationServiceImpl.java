@@ -123,7 +123,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
     @Nullable
-    @Resource(name="serviceTicketRegistry")
+    @Autowired(required = false)
+    @Qualifier("serviceTicketRegistry")
     private TicketRegistry serviceTicketRegistry;
 
     /**
