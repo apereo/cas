@@ -312,7 +312,7 @@ they may also be formatted under `custom_messages.properties` files.
 Messages are parsed and loaded via the following configuration:
 
 {% highlight xml %}
-<bean id="messageSource" class="org.jasig.cas.web.view.CasReloadableMessageBundle"
+<bean id="messageSource" class="CasReloadableMessageBundle"
           p:basenames-ref="basenames" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
           p:cacheSeconds="180" p:useCodeAsDefaultMessage="true" />
     
