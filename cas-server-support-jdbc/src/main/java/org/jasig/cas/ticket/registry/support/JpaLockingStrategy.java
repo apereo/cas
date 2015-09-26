@@ -21,6 +21,8 @@ package org.jasig.cas.ticket.registry.support;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,6 +44,7 @@ import java.util.Date;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Component("jpaLockingStrategy")
 public class JpaLockingStrategy implements LockingStrategy {
 
     /** Default lock timeout is 1 hour. */
@@ -61,10 +64,12 @@ public class JpaLockingStrategy implements LockingStrategy {
      * a single application.
      */
     @NotNull
+    @Value(("${database.cleaner.appid:cas-ticket-registry-cleaner}"))
     private String applicationId;
 
     /** Unique identifier that identifies the client using this lock instance. */
     @NotNull
+    @Value(("${host.name}"))
     private String uniqueId;
 
     /** Amount of time in seconds lock may be held. */
