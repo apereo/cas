@@ -44,6 +44,9 @@ public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExp
     @Value("#{${tgt.timeInBetweenUsesInSeconds:5}*1000}")
     private long timeInBetweenUsesInMilliSeconds;
 
+    /**
+     * Instantiates a new Throttled use and timeout expiration policy.
+     */
     public ThrottledUseAndTimeoutExpirationPolicy(){}
 
     public void setTimeInBetweenUsesInMilliSeconds(
