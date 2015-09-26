@@ -75,10 +75,10 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 @Component("jpaTicketRegistry")
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
 
-    @Value("${service.registry.quartz.reloader.repeatInterval:5000000}")
+    @Value("${ticket.registry.cleaner.repeatinterval:5000000}")
     private int refreshInterval;
 
-    @Value("${service.registry.quartz.reloader.startDelay:20000}")
+    @Value("${ticket.registry.cleaner.startdelay:20000}")
     private int startDelay;
 
     @Autowired

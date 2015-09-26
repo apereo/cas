@@ -3,8 +3,6 @@ layout: default
 title: CAS - Logout & Single Logout
 ---
 
-
-
 #Logout and Single Logout (SLO)
 
 There are potentially many active application sessions during a CAS single sign-on session, and the distinction between
@@ -72,18 +70,6 @@ A sample SLO message:
 The session identifier is the CAS service ticket ID that was provided to the service when it originally authenticated
 to CAS. The session identifier is used to correlate a CAS session with an application session; for example, the SLO
 session identifier maps to a servlet session that can subsequently be destroyed to terminate the application session.
-
-Logout protocol is effectively managed by the `LogoutManagerImpl` component:
-
-{% highlight xml %}
-<bean id="logoutManager" class="org.jasig.cas.logout.LogoutManagerImpl"
-          c:servicesManager-ref="servicesManager"
-          c:httpClient-ref="noRedirectHttpClient"
-          c:logoutMessageBuilder-ref="logoutBuilder"
-          p:singleLogoutCallbacksDisabled="${slo.callbacks.disabled:false}"
-          p:asynchronous="${slo.callbacks.asynchronous:true}"/>
-{% endhighlight %}
-
 
 ###Turning Off Single Logout
 To disable single logout, adjust the following setting in `cas.properties` file:
