@@ -26,7 +26,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
-import javax.annotation.Resource;
 
 /**
  * Delegates to different expiration policies depending on whether remember me
@@ -52,6 +51,9 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
     @Qualifier("sessionExpirationPolicy")
     private ExpirationPolicy sessionExpirationPolicy;
 
+    /**
+     * Instantiates a new Remember me delegating expiration policy.
+     */
     public RememberMeDelegatingExpirationPolicy() {}
 
     @Override
