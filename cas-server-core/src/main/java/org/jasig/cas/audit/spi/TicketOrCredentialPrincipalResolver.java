@@ -33,7 +33,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -43,13 +45,17 @@ import javax.validation.constraints.NotNull;
  * @since 3.1.2
  *
  */
+@Component("auditablePrincipalResolver")
 public final class TicketOrCredentialPrincipalResolver implements PrincipalResolver {
 
     /** Logger instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketOrCredentialPrincipalResolver.class);
 
     @NotNull
-    private final CentralAuthenticationService centralAuthenticationService;
+    @Resource(name="centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    private TicketOrCredentialPrincipalResolver() {}
 
     /**
      * Instantiates a new Ticket or credential principal resolver.

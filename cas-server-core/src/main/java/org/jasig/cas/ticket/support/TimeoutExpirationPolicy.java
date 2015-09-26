@@ -19,6 +19,8 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,12 +35,14 @@ import java.util.concurrent.TimeUnit;
 
  * @since 3.0.0
  */
+@Component("timeoutExpirationPolicy")
 public final class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = -7636642464326939536L;
 
     /** The time to kill in milliseconds. */
+    @Value("${tgt.maxTimeToLiveInSeconds:28800}*1000")
     private final long timeToKillInMilliSeconds;
 
 

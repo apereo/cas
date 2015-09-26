@@ -49,6 +49,21 @@
     -->
     <aop:aspectj-autoproxy/>
 
+
+    <util:list id="serviceFactoryList" value-type="org.jasig.cas.authentication.principal.ServiceFactory">
+        <ref bean="webApplicationServiceFactory" />
+    </util:list>
+
+    <util:list id="argumentExtractors">
+        <ref bean="defaultArgumentExtractor"/>
+    </util:list>
+
+    <util:map id="uniqueIdGeneratorsMap">
+        <entry
+            key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+            value-ref="serviceTicketUniqueIdGenerator" />
+    </util:map>
+
     <!-- ADVISORS -->
     <bean id="advisorAutoProxyCreator"
           class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
