@@ -90,9 +90,6 @@
 
     <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
 
-    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"

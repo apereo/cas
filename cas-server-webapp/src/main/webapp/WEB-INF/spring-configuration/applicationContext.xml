@@ -49,6 +49,15 @@
     -->
     <aop:aspectj-autoproxy/>
 
+    <!-- ADVISORS -->
+    <bean id="advisorAutoProxyCreator"
+          class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <!-- CAS Application Context Configuration -->
+
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+
 
     <util:list id="serviceFactoryList" value-type="org.jasig.cas.authentication.principal.ServiceFactory">
         <ref bean="webApplicationServiceFactory" />
@@ -64,8 +73,6 @@
             value-ref="serviceTicketUniqueIdGenerator" />
     </util:map>
 
-    <!-- ADVISORS -->
-    <bean id="advisorAutoProxyCreator"
-          class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
 
 </beans>
