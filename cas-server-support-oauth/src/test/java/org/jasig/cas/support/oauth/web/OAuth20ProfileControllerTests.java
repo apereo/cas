@@ -66,7 +66,6 @@ public final class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -83,7 +82,6 @@ public final class OAuth20ProfileControllerTests {
         final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.getTicket(TGT_ID)).thenReturn(null);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
-        oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -102,7 +100,6 @@ public final class OAuth20ProfileControllerTests {
         when(ticketGrantingTicket.isExpired()).thenReturn(true);
         when(ticketRegistry.getTicket(TGT_ID)).thenReturn(ticketGrantingTicket);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
-        oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -131,7 +128,6 @@ public final class OAuth20ProfileControllerTests {
         when(authentication.getPrincipal()).thenReturn(principal);
         when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
-        oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
@@ -173,7 +169,6 @@ public final class OAuth20ProfileControllerTests {
         when(authentication.getPrincipal()).thenReturn(principal);
         when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
         oauth20WrapperController.setTicketRegistry(ticketRegistry);
-        oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());

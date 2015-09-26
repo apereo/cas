@@ -60,7 +60,7 @@ public final class OAuth20CallbackAuthorizeControllerTests {
         mockRequest.setSession(mockSession);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.afterPropertiesSet();
+
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.CONFIRM_VIEW, modelAndView.getViewName());
         final Map<String, Object> map = modelAndView.getModel();
@@ -82,7 +82,7 @@ public final class OAuth20CallbackAuthorizeControllerTests {
         mockRequest.setSession(mockSession);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.afterPropertiesSet();
+
         final ModelAndView modelAndView = oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuthConstants.CONFIRM_VIEW, modelAndView.getViewName());
         final Map<String, Object> map = modelAndView.getModel();

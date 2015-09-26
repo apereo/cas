@@ -41,11 +41,11 @@ import javax.validation.constraints.NotNull;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Component
+@Component("baseOAuthWrapperController")
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
     /** The logger. */
-    protected final Logger logger = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The login url. */
     @NotNull

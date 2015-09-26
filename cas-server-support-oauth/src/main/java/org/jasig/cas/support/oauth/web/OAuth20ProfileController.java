@@ -25,11 +25,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -42,15 +43,14 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuth20ProfileController extends AbstractController {
+@Component("profileController")
+public final class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20ProfileController.class);
 
     private static final String ID = "id";
 
     private static final String ATTRIBUTES = "attributes";
-
-    private final TicketRegistry ticketRegistry;
 
     private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
@@ -59,12 +59,12 @@ public final class OAuth20ProfileController extends AbstractController {
      *
      * @param ticketRegistry the ticket registry
      */
-    public OAuth20ProfileController(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
+    public OAuth20ProfileController() { }
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
+
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader("Authorization");
@@ -112,4 +112,5 @@ public final class OAuth20ProfileController extends AbstractController {
             response.flushBuffer();
         }
     }
+
 }
