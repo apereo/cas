@@ -43,6 +43,8 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -64,6 +66,8 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
+    @Autowired(required=false)
+    @Qualifier("ldapServiceRegistryConnectionFactory")
     private ConnectionFactory connectionFactory;
 
     @NotNull
@@ -76,8 +80,9 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     private String loadFilter;
 
     @NotNull
+    @Autowired(required=false)
+    @Qualifier("ldapServiceRegistrySearchRequest")
     private SearchRequest searchRequest;
-
 
     /**
      * Inits the dao with the search filter and load filters.
