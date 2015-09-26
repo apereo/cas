@@ -22,18 +22,45 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.registry.support.LockingStrategy;
+import org.jasig.cas.util.CasSpringBeanJobFactory;
+import org.jasig.cas.web.support.WebUtils;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerFactory;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.spi.JobFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -46,7 +73,25 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component("jpaTicketRegistry")
-public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
+public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
+
+    @Value("${service.registry.quartz.reloader.repeatInterval:5000000}")
+    private int refreshInterval;
+
+    @Value("${service.registry.quartz.reloader.startDelay:20000}")
+    private int startDelay;
+
+    @Autowired
+    @NotNull
+    private WebApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("logoutManager")
+    private LogoutManager logoutManager;
+
+    @Autowired
+    @Qualifier("jpaLockingStrategy")
+    private LockingStrategy jpaLockingStrategy;
 
     @NotNull
     @PersistenceContext
@@ -209,5 +254,101 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
             intval = ((Number) result).intValue();
         }
         return intval;
+    }
+
+    private boolean shouldScheduleCleanerJob() {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
+            if (WebUtils.isCasServletInitializing(this.applicationContext)) {
+                logger.debug("Found CAS servlet application context for OAuth");
+                final String[] aliases =
+                    this.applicationContext.getAutowireCapableBeanFactory().getAliases("jpaTicketRegistry");
+                logger.debug("{} is used as the active current ticket registry", this.getClass().getSimpleName());
+                return aliases.length > 0;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Schedule reloader job.
+     */
+    @PostConstruct
+    public void scheduleCleanerJob() {
+        try {
+            if (shouldScheduleCleanerJob()) {
+                logger.info("Preparing to schedule cleaner job");
+
+                final JobDetail job = JobBuilder.newJob(this.getClass())
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .build();
+
+                final Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInMinutes(this.refreshInterval)
+                        .repeatForever()).build();
+
+                final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
+                final SchedulerFactory schFactory = new StdSchedulerFactory();
+                final Scheduler sch = schFactory.getScheduler();
+                sch.setJobFactory(jobFactory);
+                sch.start();
+                logger.debug("Started {} scheduler", this.getClass().getName());
+                sch.scheduleJob(job, trigger);
+                logger.info("{} will clean tickets every {} seconds",
+                    this.getClass().getSimpleName(),
+                    TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
+            }
+        } catch (final Exception e){
+            logger.warn(e.getMessage(), e);
+        }
+
+    }
+
+    @Override
+    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+
+        try {
+
+            logger.info("Beginning ticket cleanup.");
+            logger.debug("Attempting to acquire ticket cleanup lock.");
+            if (!this.jpaLockingStrategy.acquire()) {
+                logger.info("Could not obtain lock.  Aborting cleanup.");
+                return;
+            }
+            logger.debug("Acquired lock.  Proceeding with cleanup.");
+
+            logger.info("Beginning ticket cleanup...");
+            final Collection<Ticket> ticketsToRemove = Collections2.filter(this.getTickets(), new Predicate<Ticket>() {
+                @Override
+                public boolean apply(@Nullable final Ticket ticket) {
+                    if (ticket.isExpired()) {
+                        if (ticket instanceof TicketGrantingTicket) {
+                            logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                            logoutManager.performLogout((TicketGrantingTicket) ticket);
+                            deleteTicket(ticket.getId());
+                        } else if (ticket instanceof ServiceTicket) {
+                            logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
+                            deleteTicket(ticket.getId());
+                        } else {
+                            logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            logger.info("{} expired tickets found and removed.", ticketsToRemove.size());
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            logger.debug("Releasing ticket cleanup lock.");
+            this.jpaLockingStrategy.release();
+            logger.info("Finished ticket cleanup.");
+        }
+
     }
 }
