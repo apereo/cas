@@ -37,39 +37,6 @@ SPNEGO support is enabled by including the following dependency in the Maven WAR
 </dependency>
 {% endhighlight %}
 
-
-######`JCIFSSpnegoAuthenticationHandler`
-The authentication handler that provides SPNEGO support in both Kerberos and NTLM flavors. NTLM is disabled by default.
-Configuration properties:
-
-* `principalWithDomainName` - True to include the domain name in the CAS principal ID, false otherwise.
-* `NTLMallowed` - True to enable NTLM support, false otherwise. (Disabled by default.)
-
-
-######`JCIFSConfig`
-Configuration helper for JCIFS and the Spring framework. Configuration properties:
-
-* `jcifsServicePrincipal` - service principal name.
-* `jcifsServicePassword` - service principal password.
-* `kerberosDebug` - True to enable kerberos debugging, false otherwise.
-* `kerberosRealm` - Kerberos realm name.
-* `kerberosKdc` - Kerberos KDC address.
-* `loginConf` - Path to the login.conf JAAS configuration file.
-
-
-
-######`SpnegoNegociateCredentialsAction`
-CAS login Webflow action that begins the SPNEGO authenticaiton process. The action checks the `Authorization` request
-header for a suitable value (`Negotiate` for Kerberos or `NTLM`). If the check is successful, flow continues to the
-`SpnegoCredentialsAction` state; otherwise a 401 (not authorized) response is returned.
-
-
-######`SpnegoCredentialsAction`
-Constructs CAS credentials from the encoded GSSAPI data in the `Authorization` request header. The standard CAS
-authentication process proceeds as usual after this step: authentication is attempted with a suitable handler,
-`JCIFSSpnegoAuthenticationHandler` in this case. The action also sets response headers accordingly based on whether
-authentication succeeded or failed.
-
 ## SPNEGO Configuration
 
 ### Create SPN Account
@@ -164,19 +131,12 @@ Insert the appropriate action before SPNEGO initiation, assigning a `yes` respon
 Update `deployerConfigContext.xml` according to the following template:
 
 {% highlight xml %}
-<bean id="authenticationManager"
-      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
-  <constructor-arg>
-    <map>
-      <entry key-ref="spnegoHandler" value-ref="spnegoPrincipalResolver"/>
-    </map>
-  </constructor-arg>
-  <property name="authenticationMetaDataPopulators">
-    <list>
-      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
-    </list>
-  </property>
-</bean>
+...
+<entry key-ref="spnegoHandler" value-ref="spnegoPrincipalResolver" />
+<util:list id="authenticationMetadataPopulators">
+  <ref bean="successfulHandlerMetaDataPopulator" />
+</util:list>
+...
 {% endhighlight %}
 
 Provide a JAAS `login.conf` file:
@@ -202,7 +162,7 @@ You may use the following configuration in `cas.properties`:
 # cas.spnego.kerb.debug=false
 # cas.spnego.kerb.realm=EXAMPLE.COM
 # cas.spnego.kerb.kdc=172.10.1.10
-# cas.spnego.login.conf.file=/path/to/login.conf
+# cas.spnego.login.conf.file=/path/to/login
 # cas.spnego.jcifs.domain=
 # cas.spnego.jcifs.domaincontroller=
 # cas.spnego.jcifs.netbios.cache.policy:600
@@ -216,6 +176,8 @@ You may use the following configuration in `cas.properties`:
 # cas.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
 # cas.spnego.mixed.mode.authn=false
 # cas.spnego.send.401.authn.failure=false
+# cas.spnego.principal.resolver.transform=NONE
+# cas.spnego.service.principal=HTTP/cas.example.com@EXAMPLE.COM
 {% endhighlight %}
 
 ## Client Selection Strategy
