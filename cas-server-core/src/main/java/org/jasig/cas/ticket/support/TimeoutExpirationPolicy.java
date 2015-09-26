@@ -42,7 +42,7 @@ public final class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = -7636642464326939536L;
 
     /** The time to kill in milliseconds. */
-    @Value("${tgt.maxTimeToLiveInSeconds:28800}*1000")
+    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
     private final long timeToKillInMilliSeconds;
 
 

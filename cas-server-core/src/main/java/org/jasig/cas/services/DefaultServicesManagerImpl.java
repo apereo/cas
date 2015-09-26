@@ -74,10 +74,10 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     /** Map to store all services. */
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
-    @Value("${service.registry.quartz.reloader.repeatInterval:120000}")
+    @Value("#{${service.registry.quartz.reloader.repeatInterval:120000}/1000/60}")
     private int refreshIntervalInMinutes;
 
-    @Value("${service.registry.quartz.reloader.startDelay:120000}")
+    @Value("#{${service.registry.quartz.reloader.startDelay:120000}/1000/60}")
     private int startDelay;
 
     @Autowired
