@@ -41,7 +41,7 @@
     <context:component-scan base-package="org.jasig.cas.services.web" />
     <mvc:annotation-driven />
 
-    <bean id="messageSource" class="org.jasig.cas.web.view.CasReloadableMessageBundle"
+    <bean id="messageSource" class="org.jasig.cas.services.web.view.CasReloadableMessageBundle"
           p:basenames-ref="basenames" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
           p:cacheSeconds="180" p:useCodeAsDefaultMessage="true" />
     

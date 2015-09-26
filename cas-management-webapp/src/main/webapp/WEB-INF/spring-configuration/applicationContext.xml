@@ -41,8 +41,12 @@
     <context:component-scan base-package="org.jasig.cas" />
     <mvc:annotation-driven />
 
-    <util:list id="basenames">
-        <value>classpath:custom_messages</value>
-        <value>classpath:messages</value>
-    </util:list>
+    <!-- Never used, but required for auto-wiring! -->
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+
 </beans>

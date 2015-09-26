@@ -85,7 +85,9 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     @PostConstruct
     public void init() {
         this.searchFilter = '(' + this.ldapServiceMapper.getIdAttribute() +  "={0})";
+        logger.debug("Configured search filter to {}", this.searchFilter);
         this.loadFilter = "(objectClass=" + this.ldapServiceMapper.getObjectClass() + ')';
+        logger.debug("Configured load filter to {}", this.loadFilter);
     }
 
     @Override
