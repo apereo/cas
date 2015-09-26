@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -46,6 +47,7 @@ import javax.validation.constraints.NotNull;
 
  * @since 3.0.0.4
  */
+@Component
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
 
     /** The logger instance. */
@@ -54,6 +56,8 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     /**
      * The Principal factory.
      */
+    @Autowired
+    @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Instance of CentralAuthenticationService. */
