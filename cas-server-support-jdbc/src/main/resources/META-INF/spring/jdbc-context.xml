@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Apereo under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Apereo licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<!--
+| deployerConfigContext.xml centralizes into one file some of the declarative configuration that
+| all CAS deployers will need to modify.
+|
+| This file declares some of the Spring-managed JavaBeans that make up a CAS deployment.
+| The beans declared in this file are instantiated at context initialization time by the Spring
+| ContextLoaderListener declared in web.xml.  It finds this file because this
+| file is among those declared in the context parameter "contextConfigLocation".
+|
+| By far the most common change you will need to make in this file is to change the last bean
+| declaration to replace the default authentication handler with
+| one implementing your approach for authenticating usernames and passwords.
++-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+
+    <util:list id="packagesToScan">
+        <value>org.jasig.cas.services</value>
+        <value>org.jasig.cas.ticket</value>
+        <value>org.jasig.cas.adaptors.jdbc</value>
+    </util:list>
+
+    <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+          id="jpaVendorAdapter"
+          p:generateDdl="${database.gen.ddl:true}"
+          p:showSql="${database.show.sql:true}" />
+
+    <bean id="abstractJpaEntityManagerFactory" abstract="true"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:jpaVendorAdapter-ref="jpaVendorAdapter"
+          p:packagesToScan-ref="packagesToScan">
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${database.ddl.auto:create-drop}</prop>
+                <prop key="hibernate.jdbc.batch_size">${database.batchSize:1}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+            abstract="true"/>
+
+    <tx:advice id="txAdvice">
+        <tx:attributes>
+
+            <tx:method name="delete*" read-only="false"/>
+            <tx:method name="save*" read-only="false"/>
+            <tx:method name="update*" read-only="false"/>
+            <tx:method name="*" />
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="servicesManagerOperations" expression="execution(* org.jasig.cas.services.JpaServiceRegistryDaoImpl.*(..))"/>
+        <aop:pointcut id="ticketRegistryOperations" expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
+        <aop:pointcut id="ticketRegistryLockingOperations" expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="servicesManagerOperations"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="ticketRegistryOperations"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="ticketRegistryLockingOperations"/>
+    </aop:config>
+
+</beans>
