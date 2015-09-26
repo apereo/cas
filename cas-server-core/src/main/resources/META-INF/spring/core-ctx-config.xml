@@ -18,13 +18,16 @@
     under the License.
 
 -->
-<html>
-<body>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-<p>This package contains the supporting versions of the interfaces
-defined in the ticket package. Specifically, there are alternative
-implementations of the TicketRegistry (such as the EhCache backed one)
-and the Registry Cleaner.</p>
 
-</body>
-</html>
+
+</beans>

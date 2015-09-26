@@ -19,6 +19,7 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -32,14 +33,11 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.spi.JobFactory;
-import org.quartz.spi.TriggerFiredBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
@@ -213,21 +211,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
                             .withIntervalInMinutes(this.refreshIntervalInMinutes)
                             .repeatForever()).build();
 
-                    final JobFactory jobFactory = new SpringBeanJobFactory() {
-                        private transient AutowireCapableBeanFactory beanFactory;
-
-                        @Override
-                        protected Object createJobInstance(final TriggerFiredBundle bundle) throws Exception {
-                            this.beanFactory = applicationContext.getAutowireCapableBeanFactory();
-                            final Object job = super.createJobInstance(bundle);
-                            LOGGER.debug("Created reloader job {}", job);
-                            beanFactory.autowireBean(job);
-                            LOGGER.debug("Autowired job per the application context");
-                            return job;
-                        }
-                    };
-
-
+                    final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
                     final SchedulerFactory schFactory = new StdSchedulerFactory();
                     final Scheduler sch = schFactory.getScheduler();
                     sch.setJobFactory(jobFactory);

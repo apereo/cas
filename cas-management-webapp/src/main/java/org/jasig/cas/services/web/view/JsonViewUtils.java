@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.web.view;
+package org.jasig.cas.services.web.view;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;

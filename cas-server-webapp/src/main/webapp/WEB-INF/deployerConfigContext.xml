@@ -48,28 +48,13 @@
 
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
 
-    <util:map id="authenticationHandlersResolvers"
-              key-type="org.jasig.cas.authentication.AuthenticationHandler"
-              value-type="org.jasig.cas.authentication.principal.PrincipalResolver">
+    <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
     </util:map>
+    <util:list id="authenticationMetadataPopulators" />
 
-    <util:list id="authenticationMetadataPopulators"
-               value-type="org.jasig.cas.authentication.AuthenticationMetaDataPopulator">
-        <!--
-        <ref bean="cacheCredentialsMetaDataPopulator" />
-        -->
-    </util:list>
-
-    <bean id="primaryAuthenticationHandler"
-          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
-        <property name="users">
-            <map>
-                <entry key="casuser" value="Mellon"/>
-            </map>
-        </property>
-    </bean>
+    <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
 
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
           p:backingMap-ref="attrRepoBackingMap" />
@@ -89,6 +74,9 @@
     </util:map>
 
     <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
 
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
