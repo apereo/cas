@@ -25,6 +25,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
+import org.jasig.cas.web.support.WebUtils;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -40,9 +41,9 @@ import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.Nullable;
@@ -72,7 +73,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
     @Autowired
     @NotNull
-    private ApplicationContext applicationContext;
+    private WebApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("logoutManager")
@@ -242,9 +243,13 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
     private boolean shouldScheduleCleanerJob() {
         if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
-            final String[] aliases =
-                this.applicationContext.getAutowireCapableBeanFactory().getAliases("defaultTicketRegistry");
-            return aliases.length > 0;
+            if (WebUtils.isCasServletInitializing(this.applicationContext)) {
+                logger.debug("Found CAS servlet application context for OAuth");
+                final String[] aliases =
+                    this.applicationContext.getAutowireCapableBeanFactory().getAliases("defaultTicketRegistry");
+                logger.debug("{} is used as the active current ticke registry", this.getClass().getSimpleName());
+                return aliases.length > 0;
+            }
         }
 
         return false;

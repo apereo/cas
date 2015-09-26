@@ -20,15 +20,12 @@ package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -43,15 +40,8 @@ import java.util.concurrent.TimeUnit;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuth20AccessTokenController extends AbstractController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenController.class);
-
-    private final ServicesManager servicesManager;
-
-    private final TicketRegistry ticketRegistry;
-
-    private final long timeout;
+@Component("accessTokenController")
+public final class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     /**
      * Instantiates a new o auth20 access token controller.
@@ -60,27 +50,22 @@ public final class OAuth20AccessTokenController extends AbstractController {
      * @param ticketRegistry the ticket registry
      * @param timeout the timeout
      */
-    public OAuth20AccessTokenController(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-            final long timeout) {
-        this.servicesManager = servicesManager;
-        this.ticketRegistry = ticketRegistry;
-        this.timeout = timeout;
-    }
+    public OAuth20AccessTokenController() {}
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
 
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        LOGGER.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
+        logger.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
 
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        LOGGER.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
+        logger.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
 
         final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
 
         final String code = request.getParameter(OAuthConstants.CODE);
-        LOGGER.debug("{} : {}", OAuthConstants.CODE, code);
+        logger.debug("{} : {}", OAuthConstants.CODE, code);
 
         final boolean isVerified = verifyAccessTokenRequest(response, redirectUri, clientId, clientSecret, code);
         if (!isVerified) {
@@ -90,7 +75,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
         final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
-            LOGGER.error("Code expired : {}", code);
+            logger.error("Code expired : {}", code);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
@@ -103,7 +88,7 @@ public final class OAuth20AccessTokenController extends AbstractController {
 
         final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, ticketGrantingTicket.getId(),
                                                     OAuthConstants.EXPIRES, expires);
-        LOGGER.debug("text : {}", text);
+        logger.debug("text : {}", text);
         return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
     }
 
@@ -123,39 +108,39 @@ public final class OAuth20AccessTokenController extends AbstractController {
 
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
-            LOGGER.error("Missing {}", OAuthConstants.CLIENT_ID);
+            logger.error("Missing {}", OAuthConstants.CLIENT_ID);
             return false;
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
-            LOGGER.error("Missing {}", OAuthConstants.REDIRECT_URI);
+            logger.error("Missing {}", OAuthConstants.REDIRECT_URI);
             return false;
         }
         // clientSecret is required
         if (StringUtils.isBlank(clientSecret)) {
-            LOGGER.error("Missing {}", OAuthConstants.CLIENT_SECRET);
+            logger.error("Missing {}", OAuthConstants.CLIENT_SECRET);
             return false;
         }
         // code is required
         if (StringUtils.isBlank(code)) {
-            LOGGER.error("Missing {}", OAuthConstants.CODE);
+            logger.error("Missing {}", OAuthConstants.CODE);
             return false;
         }
 
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         if (service == null) {
-            LOGGER.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
+            logger.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
             return false;
         }
 
         final String serviceId = service.getServiceId();
         if (!redirectUri.matches(serviceId)) {
-            LOGGER.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
+            logger.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
             return false;
         }
 
         if (!StringUtils.equals(service.getClientSecret(), clientSecret)) {
-            LOGGER.error("Wrong client secret for service {}", service);
+            logger.error("Wrong client secret for service {}", service);
             return false;
         }
         return true;

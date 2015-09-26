@@ -57,9 +57,9 @@ public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, 
      * @param secretKeySigning the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
      */
     @Autowired
-    public DefaultCipherExecutor(@Value("${tgc.encryption.key}")
+    public DefaultCipherExecutor(@Value("${tgc.encryption.key:}")
                                  final String secretKeyEncryption,
-                                 @Value("${tgc.signing.key}")
+                                 @Value("${tgc.signing.key:}")
                                  final String secretKeySigning) {
         this(secretKeyEncryption, secretKeySigning,
                 ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);

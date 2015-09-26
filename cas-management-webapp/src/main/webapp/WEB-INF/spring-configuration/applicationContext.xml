@@ -48,5 +48,8 @@
     <util:list id="monitorsList" />
     <alias name="defaultTicketRegistry" alias="ticketRegistry" />
     <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <util:list id="serviceFactoryList" />
 
 </beans>
