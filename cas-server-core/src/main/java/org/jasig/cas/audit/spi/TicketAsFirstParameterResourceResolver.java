@@ -21,6 +21,7 @@ package org.jasig.cas.audit.spi;
 import org.jasig.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.util.AopUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * Implementation of the ResourceResolver that can determine the Ticket Id from the first parameter of the method call.
@@ -29,6 +30,7 @@ import org.jasig.cas.util.AopUtils;
  * @since 3.1.2
  *
  */
+@Component("ticketResourceResolver")
 public final class TicketAsFirstParameterResourceResolver implements AuditResourceResolver {
 
     @Override
