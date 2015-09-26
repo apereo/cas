@@ -35,7 +35,7 @@ import java.security.Key;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("ticketCipherExecutor")
+@Component("shiroCipherExecutor")
 public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final String UTF8_ENCODING = "UTF-8";
 

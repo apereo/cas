@@ -59,7 +59,7 @@ cas.securityContext.statistics.access=hasIpAddress('127.0.0.1')
 ![](http://i.imgur.com/8CXPgOC.png)
 
 ##Performance Statistics
-CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics. 
+CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics.
 
 ###Configuration
 The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
@@ -68,31 +68,6 @@ The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring
 
 # Define how often should metric data be reported. Default is 30 seconds.
 # metrics.refresh.internal=30s
-
-{% endhighlight %}
-
-Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans. 
-
-{% highlight xml %}
-
-<metrics:reporter type="jmx" metric-registry="metrics" />
-
-{% endhighlight %}
-
-To explore this you can use VisualVM (which ships with most JDKs as jvisualvm) with the VisualVM-MBeans plugins installed or JConsole (which ships with most JDKs as jconsole):
-
-![](http://i.imgur.com/g8fmUlE.png)
-
-Additionally, various metrics on JVM performance and data are also reported. The metrics contain a number of reusable gauges and metric sets which allow you to easily instrument JVM internals.
-
-{% highlight xml %}
-
-<metrics:register metric-registry="metrics">
-    <bean metrics:name="jvm.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
-    <bean metrics:name="jvm.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
-    <bean metrics:name="jvm.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet" />
-    <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
-</metrics:register>
 
 {% endhighlight %}
 
@@ -213,7 +188,7 @@ You can also configure the remote destination output over SSL and specify the re
 {% endhighlight %}
 
 For additional logging functionality, please refer to the Log4j configuration url or view
-the [CAS Logging functionality](Logging.html). 
+the [CAS Logging functionality](Logging.html).
 
 ### SSO Sessions Report
 
@@ -232,4 +207,3 @@ By default, ticket-granting ticket ids are not shown. This behavior can be contr
 # sso.sessions.include.tgt=false
 
 {% endhighlight %}
-
