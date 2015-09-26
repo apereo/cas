@@ -66,10 +66,10 @@ import java.util.concurrent.TimeUnit;
 @Component("defaultTicketRegistry")
 public final class DefaultTicketRegistry extends AbstractTicketRegistry implements Job {
 
-    @Value("${service.registry.quartz.reloader.repeatInterval:5000000}")
+    @Value("${ticket.registry.cleaner.repeatinterval:5000000}")
     private int refreshInterval;
 
-    @Value("${service.registry.quartz.reloader.startDelay:20000}")
+    @Value("${ticket.registry.cleaner.startdelay:20000}")
     private int startDelay;
 
     @Autowired
@@ -105,13 +105,18 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
      *                         threads. The implementation performs internal sizing to try to
      *                         accommodate this many threads.
      */
-    public DefaultTicketRegistry(final int initialCapacity, final float loadFactor, final int concurrencyLevel) {
+    @Autowired
+    public DefaultTicketRegistry(@Value("${default.ticket.registry.initialcapacity:1000}")
+                                 final int initialCapacity,
+                                 @Value("${default.ticket.registry.loadfactor:1}")
+                                 final float loadFactor,
+                                 @Value("${default.ticket.registry.concurrency:20}")
+                                 final int concurrencyLevel) {
         this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
     /**
-     * {@inheritDoc}
-     *
+
      * @throws IllegalArgumentException if the Ticket is null.
      */
     @Override

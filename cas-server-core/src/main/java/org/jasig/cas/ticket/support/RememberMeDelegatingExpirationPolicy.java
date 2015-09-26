@@ -59,7 +59,7 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
     @Override
     public boolean isExpired(final TicketState ticketState) {
         if (this.rememberMeExpirationPolicy != null
-            && this.sessionExpirationPolicy != null){
+            && this.sessionExpirationPolicy != null) {
 
             final Boolean b = (Boolean) ticketState.getAuthentication().getAttributes().
                 get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
