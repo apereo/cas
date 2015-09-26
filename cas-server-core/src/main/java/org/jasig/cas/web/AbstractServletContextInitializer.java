@@ -27,12 +27,14 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ArgumentExtractor;
+import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -52,13 +54,10 @@ import java.util.Map;
 @Component
 public abstract class AbstractServletContextInitializer implements ServletContextListener, ApplicationContextAware {
 
-    /** Default CAS Servlet name. **/
-    private static final String CAS_SERVLET_NAME = "cas";
-
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Application context. */
-    protected ApplicationContext applicationContext;
+    protected WebApplicationContext applicationContext;
 
     private final String contextInitializerName = getClass().getSimpleName();
 
@@ -66,6 +65,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * Instantiates a new servlet context initializer.
      */
     protected AbstractServletContextInitializer() {}
+
 
     @Override
     public final void contextInitialized(final ServletContextEvent sce) {
@@ -83,7 +83,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
 
     @Override
     public final void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        this.applicationContext = (WebApplicationContext) applicationContext;
 
         try {
             if (applicationContext.getParent() == null) {
@@ -121,7 +121,8 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * @return the cas servlet registration
      */
     protected final ServletRegistration getCasServletRegistration(final ServletContextEvent sce) {
-        final ServletRegistration registration = sce.getServletContext().getServletRegistration(CAS_SERVLET_NAME);
+        final ServletRegistration registration = sce.
+            getServletContext().getServletRegistration(WebUtils.CAS_SERVLET_NAME);
         return registration;
     }
 
@@ -133,7 +134,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      */
     protected final void addRegisteredServiceToServicesManager(final RegisteredService svc) {
         final ServicesManager manager = this.applicationContext.getBean("servicesManager", ServicesManager.class);
-
+        manager.save(svc);
     }
 
     /**
@@ -189,8 +190,10 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      */
     protected final void addEndpointMappingToCasServlet(final ServletContextEvent sce, final String mapping) {
         final ServletRegistration registration = getCasServletRegistration(sce);
-        registration.addMapping(mapping);
-        logger.info("Added [{}] to {} servlet context", mapping, CAS_SERVLET_NAME);
+        if (registration != null) {
+            registration.addMapping(mapping);
+            logger.info("Added [{}] to {} servlet context", mapping, WebUtils.CAS_SERVLET_NAME);
+        }
     }
 
     /**
