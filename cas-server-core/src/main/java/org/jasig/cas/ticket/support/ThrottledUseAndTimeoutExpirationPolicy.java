@@ -37,12 +37,14 @@ public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExp
     private static final long serialVersionUID = 205979491183779408L;
 
     /** The time to kill in milliseconds. */
-    @Value("${tgt.maxTimeToLiveInSeconds:28800}*1000")
+    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
     private long timeToKillInMilliSeconds;
 
     /** Time time between which a ticket must wait to be used again. */
-    @Value("${tgt.timeInBetweenUsesInSeconds:5}*1000")
+    @Value("#{${tgt.timeInBetweenUsesInSeconds:5}*1000}")
     private long timeInBetweenUsesInMilliSeconds;
+
+    public ThrottledUseAndTimeoutExpirationPolicy(){}
 
     public void setTimeInBetweenUsesInMilliSeconds(
         final long timeInBetweenUsesInMilliSeconds) {
