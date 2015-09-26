@@ -70,14 +70,11 @@ authentication process proceeds as usual after this step: authentication is atte
 `JCIFSSpnegoAuthenticationHandler` in this case. The action also sets response headers accordingly based on whether
 authentication succeeded or failed.
 
-
 ## SPNEGO Configuration
-
 
 ### Create SPN Account
 Create an Active Directory account for the Service Principal Name (SPN) and record the username and password, which
 will be used subsequently to configure the `JCIFSConfig` component.
-
 
 ### Create Keytab File
 The keytab file enables a trust link between the CAS server and the Key Distribution Center (KDC); an Active Directory
@@ -95,7 +92,7 @@ as a reference.
      default = FILE:/var/log/krb5libs.log
      kdc = FILE:/var/log/krb5kdc.log
      admin_server = FILE:/var/log/kadmind.log
-     
+
     [libdefaults]
      ticket_lifetime = 24000
      default_realm = YOUR.REALM.HERE
@@ -104,12 +101,12 @@ as a reference.
      dns_lookup_kdc = false
      default_tkt_enctypes = rc4-hmac
      default_tgs_enctypes = rc4-hmac
-     
+
     [realms]
      YOUR.REALM.HERE = {
       kdc = your.kdc.your.realm.here:88
      }
-     
+
     [domain_realm]
      .your.realm.here = YOUR.REALM.HERE
      your.realm.here = YOUR.REALM.HERE
@@ -141,7 +138,7 @@ Define two new action states in `login-webflow.xml` before the `viewLoginForm` s
   <evaluate expression="negociateSpnego" />
   <transition on="success" to="spnego" />
 </action-state>
- 
+
 <action-state id="spnego">
   <evaluate expression="spnego" />
   <transition on="success" to="sendTicketGrantingTicket" />
@@ -167,15 +164,6 @@ Insert the appropriate action before SPNEGO initiation, assigning a `yes` respon
 Update `deployerConfigContext.xml` according to the following template:
 
 {% highlight xml %}
-<bean id="spnegoHandler"
-      class="org.jasig.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler"
-      p:authentication-ref="spnegoAuthentication"
-      p:principalWithDomainName="${cas.spengo.use.principal.domain:false}"
-      p:NTLMallowed="${cas.spnego.ntlm.allowed:true}" />
-
-<bean id="spnegoPrincipalResolver"
-      class="org.jasig.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver" />
-
 <bean id="authenticationManager"
       class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
   <constructor-arg>
@@ -231,9 +219,9 @@ You may use the following configuration in `cas.properties`:
 {% endhighlight %}
 
 ## Client Selection Strategy
-CAS provides a set of components that attempt to activate the SPNEGO flow conditionally, 
-in case deployers need a configurable way to decide whether SPNEGO should be applied to the 
-current authentication/browser request. 
+CAS provides a set of components that attempt to activate the SPNEGO flow conditionally,
+in case deployers need a configurable way to decide whether SPNEGO should be applied to the
+current authentication/browser request.
 
 ### By Remote IP
 Checks to see if the request's remote ip address matches a predefine pattern.
@@ -246,7 +234,7 @@ Checks to see if the request's remote ip address matches a predefine pattern.
 
 
 ### By Hostname
-Checks to see if the request's remote hostname matches a predefine pattern. 
+Checks to see if the request's remote hostname matches a predefine pattern.
 
 {% highlight xml %}
 ...
@@ -255,11 +243,11 @@ Checks to see if the request's remote hostname matches a predefine pattern.
 {% endhighlight %}
 
 ### By LDAP Attribute
-Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence 
-would allow the webflow to resume to SPNEGO. 
+Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
+would allow the webflow to resume to SPNEGO.
 
 {% highlight xml %}
-<bean id="ldapSpnegoClientAction" 
+<bean id="ldapSpnegoClientAction"
       class="org.jasig.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction"
       c:connectionFactory-ref="connectionFactory"
       c:searchRequest-ref="searchRequest"
