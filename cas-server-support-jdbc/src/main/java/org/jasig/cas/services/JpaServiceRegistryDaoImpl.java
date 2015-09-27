@@ -35,7 +35,7 @@ import java.util.List;
 public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     @NotNull
-    @PersistenceContext
+    @PersistenceContext(unitName = "jpaServiceRegistryContext")
     private EntityManager entityManager;
 
     @Override

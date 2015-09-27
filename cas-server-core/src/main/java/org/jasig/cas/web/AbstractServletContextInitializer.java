@@ -20,6 +20,7 @@
 package org.jasig.cas.web;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
@@ -113,6 +114,17 @@ public abstract class AbstractServletContextInitializer implements ServletContex
                 applicationContext.getBean("authenticationHandlersResolvers", Map.class);
         authenticationHandlersResolvers.put(handler, resolver);
     }
+
+    /**
+     * Add authentication metadata populator.
+     * @param populator the populator
+     */
+    protected final void addAuthenticationHandlerPrincipalResolver(final AuthenticationMetaDataPopulator populator) {
+        final List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators =
+            applicationContext.getBean("authenticationMetadataPopulators", List.class);
+        authenticationMetadataPopulators.add(populator);
+    }
+
 
     /**
      * Gets cas servlet registration.
