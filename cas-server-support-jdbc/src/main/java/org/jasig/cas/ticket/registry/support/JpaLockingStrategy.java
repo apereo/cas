@@ -22,6 +22,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
@@ -31,6 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -52,7 +54,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
     /** Transactional entity manager from Spring context. */
     @NotNull
-    @PersistenceContext(unitName = "jpaTicketRegistryContext")
+    @PersistenceContext(unitName = "ticketEntityManagerFactory")
     protected EntityManager entityManager;
 
     /** Logger instance. */
