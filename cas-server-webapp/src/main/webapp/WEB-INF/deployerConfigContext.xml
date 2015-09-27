@@ -81,7 +81,9 @@
 
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-    
+
+    <alias name="neverThrottle" alias="authenticationThrottle" />
+
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
