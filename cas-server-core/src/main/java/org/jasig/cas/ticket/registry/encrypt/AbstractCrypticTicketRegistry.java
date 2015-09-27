@@ -121,12 +121,12 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
             return result;
         }
 
-        logger.info("Attempting to decode [{}]",  result);
+        logger.info("Attempting to decode {}", result);
         final EncodedTicket encodedTicket = (EncodedTicket) result;
 
         final Ticket ticket = CompressionUtils.decodeAndSerializeObject(
                 encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
-        logger.info("Decoded [{}]",  ticket);
+        logger.info("Decoded {}",  ticket);
         return ticket;
     }
 

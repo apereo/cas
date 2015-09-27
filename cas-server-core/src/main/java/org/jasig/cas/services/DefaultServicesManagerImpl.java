@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.jasig.cas.web.support.WebUtils;
 import org.jasig.inspektr.audit.annotation.Audit;
+import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -37,17 +38,16 @@ import org.quartz.spi.JobFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +61,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.1
  */
 @Component("servicesManager")
-public final class DefaultServicesManagerImpl implements ReloadableServicesManager, Job {
+public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
@@ -78,10 +78,10 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      */
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
-    @Value("#{${service.registry.quartz.reloader.repeatInterval:120000}/1000/60}")
-    private int refreshIntervalInMinutes;
+    @Value("${service.registry.quartz.reloader.repeatInterval:20}")
+    private int refreshInterval;
 
-    @Value("#{${service.registry.quartz.reloader.startDelay:120000}/1000/60}")
+    @Value("${service.registry.quartz.reloader.startDelay:20}")
     private int startDelay;
 
     @Autowired
@@ -205,15 +205,15 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
             if (shouldScheduleLoaderJob()) {
                 LOGGER.debug("Preparing to schedule reloader job");
 
-                final JobDetail job = JobBuilder.newJob(this.getClass())
+                final JobDetail job = JobBuilder.newJob(ServiceRegistryReloaderJob.class)
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .build();
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(this.refreshIntervalInMinutes)
+                        .withIntervalInSeconds(this.refreshInterval)
                         .repeatForever()).build();
 
                 final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
@@ -224,19 +224,13 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
                 sch.start();
                 LOGGER.debug("Started {} scheduler", this.getClass().getName());
                 sch.scheduleJob(job, trigger);
-                LOGGER.info("Services manager will reload service definitions every {} minutes",
-                    this.refreshIntervalInMinutes);
+                LOGGER.info("Services manager will reload service definitions every {} seconds",
+                    this.refreshInterval);
             }
 
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-        reload();
     }
 
     private boolean shouldScheduleLoaderJob() {
@@ -248,5 +242,22 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
 
         return false;
+    }
+
+    public static class ServiceRegistryReloaderJob implements Job {
+
+        @Autowired
+        @Qualifier("servicesManager")
+        private ReloadableServicesManager servicesManager;
+
+        @Override
+        public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+            try {
+                servicesManager.reload();
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+
+        }
     }
 }

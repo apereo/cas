@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -74,13 +75,22 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         @Value("${st.timeToKillInSeconds:10}")
         final long serviceTicketTimeoutInSeconds) {
 
-        logInitialization(hz, mapName, ticketGrantingTicketTimoutInSeconds, serviceTicketTimeoutInSeconds);
         this.registry = hz.getMap(mapName);
         this.ticketGrantingTicketTimoutInSeconds = ticketGrantingTicketTimoutInSeconds;
         this.serviceTicketTimeoutInSeconds = serviceTicketTimeoutInSeconds;
         this.hz = hz;
     }
 
+    /**
+     * Init.
+     */
+    @PostConstruct
+    public void init() {
+        logger.info("Setting up Hazelcast Ticket Registry...");
+        logger.debug("Hazelcast instance: {} with name {}", this.hz, this.registry.getName());
+        logger.debug("TGT timeout: [{}s]", this.ticketGrantingTicketTimoutInSeconds);
+        logger.debug("ST timeout: [{}s]", this.serviceTicketTimeoutInSeconds);
+    }
 
     @Override
     protected void updateTicket(final Ticket ticket) {
@@ -93,22 +103,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         return false;
     }
 
-    /**
-     * @param hz                                  An instance of <code>HazelcastInstance</code>
-     * @param mapName                             Name of map to use
-     * @param ticketGrantingTicketTimoutInSeconds TTL for TGT entries
-     * @param serviceTicketTimeoutInSeconds       TTL for ST entries
-     */
-    private void logInitialization(final HazelcastInstance hz,
-                                   final String mapName,
-                                   final long ticketGrantingTicketTimoutInSeconds,
-                                   final long serviceTicketTimeoutInSeconds) {
 
-        logger.info("Setting up Hazelcast Ticket Registry...");
-        logger.debug("Hazelcast instance: {}", hz);
-        logger.debug("TGT timeout: [{}s]", ticketGrantingTicketTimoutInSeconds);
-        logger.debug("ST timeout: [{}s]", serviceTicketTimeoutInSeconds);
-    }
 
     @Override
     public void addTicket(final Ticket ticket) {
