@@ -74,6 +74,7 @@ public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> 
             final byte[] result = cipher.encrypt(value, key.getEncoded()).getBytes();
             return sign(result);
         } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
@@ -88,6 +89,7 @@ public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> 
             final byte[] result = cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
             return result;
         } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
     }
