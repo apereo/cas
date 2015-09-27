@@ -52,11 +52,13 @@ registered service storage. The configuration assumes a `dataSource` bean is def
 {% highlight xml %}
 <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao" />
 
+<import resource="classpath:jpa-svc-reg-context.xml" />
+
 <bean
-    id="dataSource"
+    id="dataSourceService"
     class="com.mchange.v2.c3p0.ComboPooledDataSource"
     p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
-    p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}"
+    p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-service-registry}"
     p:user="${database.user:sa}"
     p:password="${database.password:}"
     p:initialPoolSize="${database.pool.minSize:6}"
@@ -68,12 +70,6 @@ registered service storage. The configuration assumes a `dataSource` bean is def
     p:acquireRetryAttempts="${database.pool.acquireRetryAttempts:5}"
     p:acquireRetryDelay="${database.pool.acquireRetryDelay:2000}"
     p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod:30}"
-    p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"
-/>
+    p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"/>
 
-<bean id="entityManagerFactory" parent="abstractJpaEntityManagerFactory"
-      p:dataSource-ref="dataSource" />
-<bean id="transactionManager" parent="abstractTransactionManager"
-      p:entityManagerFactory-ref="entityManagerFactory" />
-      
 {% endhighlight %}

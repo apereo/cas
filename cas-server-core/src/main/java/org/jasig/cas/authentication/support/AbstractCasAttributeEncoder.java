@@ -27,6 +27,9 @@ import org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.jasig.cas.services.web.view.CasViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
@@ -40,16 +43,19 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("abstractCasAttributeEncoder")
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
     /** The Services manager. */
     @NotNull
-    @Resource(name="servicesManager")
+    @Autowired
+    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /** The Logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Resource(name="registeredServiceCipherExecutor")
+    @Autowired
+    @Qualifier("registeredServiceCipherExecutor")
     private RegisteredServiceCipherExecutor cipherExecutor;
 
     /**
