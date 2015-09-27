@@ -52,7 +52,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /** Log instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("cas.principal.resolver.persondir.return.null:false")
+    @Value("${cas.principal.resolver.persondir.return.null:false}")
     private boolean returnNullIfNoAttributes;
 
     /** Repository of principal attributes to be retrieved. */
@@ -65,6 +65,37 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /** Optional principal attribute name. */
     private String principalAttributeName;
+
+    @Autowired
+    public final void setAttributeRepository(@Qualifier("attributeRepository")
+                                             final IPersonAttributeDao attributeRepository) {
+        this.attributeRepository = attributeRepository;
+    }
+
+    public void setReturnNullIfNoAttributes(final boolean returnNullIfNoAttributes) {
+        this.returnNullIfNoAttributes = returnNullIfNoAttributes;
+    }
+
+    /**
+     * Sets the name of the attribute whose first non-null value should be used for the principal ID.
+     *
+     * @param attribute Name of attribute containing principal ID.
+     */
+    @Autowired
+    public void setPrincipalAttributeName(@Value("${cas.principal.resolver.persondir.principal.attribute:}")
+                                          final String attribute) {
+        this.principalAttributeName = attribute;
+    }
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    @Autowired
+    public void setPrincipalFactory(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
+    }
 
     @Override
     public boolean supports(final Credential credential) {
@@ -122,36 +153,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return this.principalFactory.createPrincipal(principalId, convertedAttributes);
     }
 
-    @Autowired
-    public final void setAttributeRepository(@Qualifier("attributeRepository")
-                                                 final IPersonAttributeDao attributeRepository) {
-        this.attributeRepository = attributeRepository;
-    }
 
-    public void setReturnNullIfNoAttributes(final boolean returnNullIfNoAttributes) {
-        this.returnNullIfNoAttributes = returnNullIfNoAttributes;
-    }
-
-    /**
-     * Sets the name of the attribute whose first non-null value should be used for the principal ID.
-     *
-     * @param attribute Name of attribute containing principal ID.
-     */
-    @Autowired
-    public void setPrincipalAttributeName(@Value("cas.principal.resolver.persondir.principal.attribute:")
-                                              final String attribute) {
-        this.principalAttributeName = attribute;
-    }
-
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
-    @Autowired
-    public void setPrincipalFactory(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
-        this.principalFactory = principalFactory;
-    }
 
     /**
      * Extracts the id of the user from the provided credential. This method should be overridden by subclasses to
