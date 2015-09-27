@@ -52,7 +52,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
     /** Transactional entity manager from Spring context. */
     @NotNull
-    @PersistenceContext
+    @PersistenceContext(unitName = "jpaTicketRegistryContext")
     protected EntityManager entityManager;
 
     /** Logger instance. */

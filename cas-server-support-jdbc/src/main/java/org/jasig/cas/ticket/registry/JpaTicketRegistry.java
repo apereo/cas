@@ -94,7 +94,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     private LockingStrategy jpaLockingStrategy;
 
     @NotNull
-    @PersistenceContext
+    @PersistenceContext(unitName = "jpaTicketRegistryContext")
     private EntityManager entityManager;
 
     @NotNull
