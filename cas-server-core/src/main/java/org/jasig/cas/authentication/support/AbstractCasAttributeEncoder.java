@@ -22,16 +22,15 @@ package org.jasig.cas.authentication.support;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.services.RegisteredServiceCipherExecutor;
-import org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.jasig.cas.services.web.view.CasViewConstants;
+import org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor;
+import org.jasig.cas.util.services.RegisteredServiceCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
