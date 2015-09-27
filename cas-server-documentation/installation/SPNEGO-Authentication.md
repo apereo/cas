@@ -128,17 +128,6 @@ Insert the appropriate action before SPNEGO initiation, assigning a `yes` respon
 
 ####Authentication Configuration
 
-Update `deployerConfigContext.xml` according to the following template:
-
-{% highlight xml %}
-...
-<entry key-ref="spnegoHandler" value-ref="spnegoPrincipalResolver" />
-<util:list id="authenticationMetadataPopulators">
-  <ref bean="successfulHandlerMetaDataPopulator" />
-</util:list>
-...
-{% endhighlight %}
-
 Provide a JAAS `login.conf` file:
 
     jcifs.spnego.initiate {
