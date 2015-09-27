@@ -19,20 +19,6 @@
     under the License.
 
 -->
-<!--
-| deployerConfigContext.xml centralizes into one file some of the declarative configuration that
-| all CAS deployers will need to modify.
-|
-| This file declares some of the Spring-managed JavaBeans that make up a CAS deployment.
-| The beans declared in this file are instantiated at context initialization time by the Spring
-| ContextLoaderListener declared in web.xml.  It finds this file because this
-| file is among those declared in the context parameter "contextConfigLocation".
-|
-| By far the most common change you will need to make in this file is to change the last bean
-| declaration to replace the default authentication handler with
-| one implementing your approach for authenticating usernames and passwords.
-+-->
-
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
@@ -49,31 +35,20 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!--
-        | The base-package indicates where components stored. Spring will scan this
-        | folder and find out the annotated beans and register it in Spring container.
-        -->
-    <context:component-scan base-package="org.jasig.cas" />
-    <context:annotation-config/>
-
-
-    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
-
-    <util:list id="packagesToScan">
+    <util:list id="jpaServicePackagesToScan">
         <value>org.jasig.cas.services</value>
-        <value>org.jasig.cas.ticket</value>
-        <value>org.jasig.cas.adaptors.jdbc</value>
     </util:list>
 
     <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-          id="jpaVendorAdapter"
+          id="jpaServiceVendorAdapter"
           p:generateDdl="${database.gen.ddl:true}"
           p:showSql="${database.show.sql:true}" />
 
-    <bean id="abstractJpaEntityManagerFactory" abstract="true"
+    <bean id="abstractServiceJpaEntityManagerFactory" abstract="true"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-          p:jpaVendorAdapter-ref="jpaVendorAdapter"
-          p:packagesToScan-ref="packagesToScan">
+          p:jpaVendorAdapter-ref="jpaServiceVendorAdapter"
+          p:persistenceUnitName="jpaServiceRegistryContext"
+          p:packagesToScan-ref="jpaServicePackagesToScan">
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.dialect">${database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
@@ -83,10 +58,16 @@
         </property>
     </bean>
 
-    <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+    <bean id="abstractTicketTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
             abstract="true"/>
 
-    <tx:advice id="txAdvice">
+    <bean id="serviceEntityManagerFactory" parent="abstractServiceJpaEntityManagerFactory"
+          p:dataSource-ref="dataSourceService"/>
+
+    <bean id="transactionManagerServiceReg" parent="abstractTicketTransactionManager"
+          p:entityManagerFactory-ref="serviceEntityManagerFactory" />
+
+    <tx:advice id="txAdviceServiceReg" transaction-manager="transactionManagerServiceReg">
         <tx:attributes>
             <tx:method name="delete*" read-only="false"/>
             <tx:method name="save*" read-only="false"/>
@@ -95,13 +76,12 @@
         </tx:attributes>
     </tx:advice>
 
+
     <aop:config>
         <aop:pointcut id="servicesManagerOperations" expression="execution(* org.jasig.cas.services.JpaServiceRegistryDaoImpl.*(..))"/>
-        <aop:pointcut id="ticketRegistryOperations" expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
-        <aop:pointcut id="ticketRegistryLockingOperations" expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="servicesManagerOperations"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="ticketRegistryOperations"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="ticketRegistryLockingOperations"/>
+        <aop:advisor advice-ref="txAdviceServiceReg" pointcut-ref="servicesManagerOperations"/>
     </aop:config>
+
+
 
 </beans>

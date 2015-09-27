@@ -21,8 +21,11 @@ registries for higher availability.</p></div>
 # Configuration
 
 {% highlight xml %}
+<alias name="jpaTicketRegistry" alias="ticketRegistry" />
+
+<import resource="classpath:jpa-ticket-reg-context.xml" />
 <bean
-    id="dataSource"
+    id="dataSourceTicket"
     class="com.mchange.v2.c3p0.ComboPooledDataSource"
     p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
     p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}"
@@ -37,15 +40,7 @@ registries for higher availability.</p></div>
     p:acquireRetryAttempts="${database.pool.acquireRetryAttempts:5}"
     p:acquireRetryDelay="${database.pool.acquireRetryDelay:2000}"
     p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod:30}"
-    p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"
-/>
-
-<bean id="entityManagerFactory" parent="abstractJpaEntityManagerFactory"
-      p:dataSource-ref="dataSource" />
-<bean id="transactionManager" parent="abstractTransactionManager"
-      p:entityManagerFactory-ref="entityManagerFactory" />
-
-
+    p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"/>
 {% endhighlight %}
 
 
