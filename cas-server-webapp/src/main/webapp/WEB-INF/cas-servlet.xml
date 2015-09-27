@@ -120,6 +120,7 @@
     <property name="interceptors">
         <array value-type="org.springframework.web.servlet.HandlerInterceptor">
             <ref bean="localeChangeInterceptor" />
+            <ref bean="authenticationThrottle" />
         </array>
     </property>
   </bean>

@@ -16,38 +16,32 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.cas.web.support;
 
-import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * Attempts to throttle by both IP Address and username.  Protects against instances where there is a NAT, such as
- * a local campus wireless network.
- *
- * @author Scott Battaglia
- * @since 3.3.5
+ * An interceptor that does no authentication throttling.
+ * @author Misagh Moayyed
+ * @since 4.2
  */
-@Component("inMemoryIpAddressUsernameThrottle")
-public final class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
-          extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
-
+@Component("neverThrottle")
+public class NeverThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
     @Override
-    protected String constructKey(final HttpServletRequest request) {
-        final String username = request.getParameter(getUsernameParameter());
-
-        if (username == null) {
-            return request.getRemoteAddr();
-        }
-
-        return ClientInfoHolder.getClientInfo().getClientIpAddress() + ';' + username.toLowerCase();
+    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,
+                             final Object handler) throws Exception {
+        return true;
     }
 
-
     @Override
-    protected String getName() {
-        return "inMemoryIpAddressUsernameThrottle";
+    public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
+                           final Object handler, final ModelAndView modelAndView) throws Exception {
+        super.postHandle(request, response, handler, modelAndView);
     }
 }
