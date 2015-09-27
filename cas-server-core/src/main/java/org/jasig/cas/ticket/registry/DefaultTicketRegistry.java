@@ -206,7 +206,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
                 sch.start();
                 logger.debug("Started {} scheduler", this.getClass().getName());
                 sch.scheduleJob(job, trigger);
-                logger.info("{} will clean tickets every {} milliseconds",
+                logger.info("{} will clean tickets every {} seconds",
                     this.getClass().getSimpleName(),
                     TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
             }

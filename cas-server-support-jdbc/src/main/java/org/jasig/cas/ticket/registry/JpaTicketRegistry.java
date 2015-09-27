@@ -30,6 +30,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 import javax.validation.constraints.NotNull;
 
 import com.google.common.base.Predicate;
@@ -58,6 +59,7 @@ import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -94,7 +96,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     private LockingStrategy jpaLockingStrategy;
 
     @NotNull
-    @PersistenceContext(unitName = "jpaTicketRegistryContext")
+    @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
     @NotNull
