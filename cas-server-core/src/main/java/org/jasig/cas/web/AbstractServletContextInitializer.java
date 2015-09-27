@@ -110,6 +110,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      */
     protected final void addAuthenticationHandlerPrincipalResolver(final AuthenticationHandler handler,
                                                               final PrincipalResolver resolver) {
+        logger.debug("Adding {} and {} to application context", handler, resolver);
         final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
                 applicationContext.getBean("authenticationHandlersResolvers", Map.class);
         authenticationHandlersResolvers.put(handler, resolver);
@@ -120,6 +121,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * @param populator the populator
      */
     protected final void addAuthenticationHandlerPrincipalResolver(final AuthenticationMetaDataPopulator populator) {
+        logger.debug("Adding {} to application context", populator);
         final List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators =
             applicationContext.getBean("authenticationMetadataPopulators", List.class);
         authenticationMetadataPopulators.add(populator);
@@ -135,6 +137,9 @@ public abstract class AbstractServletContextInitializer implements ServletContex
     protected final ServletRegistration getCasServletRegistration(final ServletContextEvent sce) {
         final ServletRegistration registration = sce.
             getServletContext().getServletRegistration(WebUtils.CAS_SERVLET_NAME);
+        if (registration == null) {
+            logger.debug("Servlet [{}] is not registered with this context", WebUtils.CAS_SERVLET_NAME);
+        }
         return registration;
     }
 
@@ -145,6 +150,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * @param svc the svc
      */
     protected final void addRegisteredServiceToServicesManager(final RegisteredService svc) {
+        logger.debug("Adding {} to application context services", svc);
         final ServicesManager manager = this.applicationContext.getBean("servicesManager", ServicesManager.class);
         manager.save(svc);
     }
@@ -167,6 +173,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * @param controller the controller
      */
     protected final void addControllerToCasServletHandlerMapping(final String path, final Controller controller) {
+        logger.debug("Adding {} to application context for {}", controller, path);
         final SimpleUrlHandlerMapping handlerMappingC = getCasServletHandlerMapping();
         final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
         urlMap.put(path, controller);
@@ -201,8 +208,10 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * @param mapping the mapping
      */
     protected final void addEndpointMappingToCasServlet(final ServletContextEvent sce, final String mapping) {
+        logger.info("Adding [{}] to {} servlet context", mapping, WebUtils.CAS_SERVLET_NAME);
         final ServletRegistration registration = getCasServletRegistration(sce);
         if (registration != null) {
+
             registration.addMapping(mapping);
             logger.info("Added [{}] to {} servlet context", mapping, WebUtils.CAS_SERVLET_NAME);
         }
@@ -214,6 +223,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * @param ext the ext
      */
     protected final void addArgumentExtractor(final ArgumentExtractor ext) {
+        logger.debug("Adding [{}] application context", ext);
         final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
         list.add(ext);
     }
@@ -225,6 +235,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * @param factory the factory
      */
     protected void addServiceFactory(final ServiceFactory<? extends Service> factory) {
+        logger.debug("Adding [{}] application context", factory);
         final List<ServiceFactory<? extends Service>> list =
                 applicationContext.getBean("serviceFactoryList", List.class);
         list.add(factory);
@@ -236,7 +247,9 @@ public abstract class AbstractServletContextInitializer implements ServletContex
      * @param serviceName the service name
      * @param gen the gen
      */
-    protected final void addServiceTicketUniqueIdGenerator(final String serviceName, final UniqueTicketIdGenerator gen) {
+    protected final void addServiceTicketUniqueIdGenerator(final String serviceName,
+                                                           final UniqueTicketIdGenerator gen) {
+        logger.debug("Adding [{}] for {} application context", serviceName, gen);
         final Map<String, UniqueTicketIdGenerator> map =
                 applicationContext.getBean("uniqueIdGeneratorsMap", Map.class);
         map.put(serviceName, gen);
