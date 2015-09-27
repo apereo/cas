@@ -183,7 +183,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
      * Schedule reloader job.
      */
     @PostConstruct
-    public void scheduleReloaderJob() {
+    public void scheduleCleanerJob() {
         try {
             if (shouldScheduleCleanerJob()) {
                 logger.info("Preparing to schedule cleaner job");
@@ -250,7 +250,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
     private boolean shouldScheduleCleanerJob() {
         if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
             if (WebUtils.isCasServletInitializing(this.applicationContext)) {
-                logger.debug("Found CAS servlet application context for OAuth");
+                logger.debug("Found CAS servlet application context");
                 final String[] aliases =
                     this.applicationContext.getAutowireCapableBeanFactory().getAliases("defaultTicketRegistry");
                 logger.debug("{} is used as the active current ticket registry", this.getClass().getSimpleName());
