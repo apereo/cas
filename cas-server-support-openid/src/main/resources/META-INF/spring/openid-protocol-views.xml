@@ -34,14 +34,10 @@
         references to other beans and whose changes can be configured externally.
     </description>
 
-    <bean id="openIdValidateController" class="org.jasig.cas.web.ServiceValidateController"
-          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-          p:centralAuthenticationService-ref="centralAuthenticationService"
-          p:proxyHandler-ref="proxy20Handler"
-          p:servicesManager-ref="servicesManager"
-          p:argumentExtractor-ref="openIdArgumentExtractor"
+
+    <bean id="openIdValidateController" parent="serviceValidateController"
           p:successView="casOpenIdServiceSuccessView"
-          p:failureView="casOpenIdServiceFailureView" />
+          p:failureView="casOpenIdServiceFailureView"/>
 
     <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
           p:delegates-ref="delegateControllers"/>
