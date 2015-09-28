@@ -60,7 +60,7 @@ public class RegisteredServiceThemeBasedViewResolverTests {
         r2.setServiceId("myDefaultId");
         this.servicesManager.save(r2);
 
-        this.registeredServiceThemeBasedViewResolver = new RegisteredServiceThemeBasedViewResolver("defaultTheme", this.servicesManager);
+        this.registeredServiceThemeBasedViewResolver = new RegisteredServiceThemeBasedViewResolver(this.servicesManager);
     }
 
     @Test
