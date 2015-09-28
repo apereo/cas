@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.services.web.view;
+package org.jasig.cas.web.view;
 
 import static org.junit.Assert.*;
 
@@ -28,6 +28,7 @@ import java.util.Map;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.validation.ImmutableAssertion;
+import org.jasig.cas.web.view.Cas10ResponseView;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.services.web.view;
+package org.jasig.cas.web.view;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.web.view.CasViewConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
