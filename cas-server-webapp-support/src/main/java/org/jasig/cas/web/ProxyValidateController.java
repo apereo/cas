@@ -36,9 +36,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("serviceValidateController")
+@Component("proxyValidateController")
 @Controller
-public class ServiceValidateController extends AbstractServiceValidateController {
+public class ProxyValidateController extends AbstractServiceValidateController {
     /**
      * Handle model and view.
      *
@@ -47,7 +47,7 @@ public class ServiceValidateController extends AbstractServiceValidateController
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path="/serviceValidate", method = RequestMethod.GET)
+    @RequestMapping(path="/proxyValidate", method = RequestMethod.GET)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
@@ -56,7 +56,7 @@ public class ServiceValidateController extends AbstractServiceValidateController
 
     @Override
     @Autowired
-    public void setValidationSpecificationClass(@Value("org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification")
+    public void setValidationSpecificationClass(@Value("org.jasig.cas.validation.Cas20ProtocolValidationSpecification")
                                                 final Class<?> validationSpecificationClass) {
         super.setValidationSpecificationClass(validationSpecificationClass);
     }

@@ -36,9 +36,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("serviceValidateController")
+@Component("legacyValidateController")
 @Controller
-public class ServiceValidateController extends AbstractServiceValidateController {
+public class LegacyValidateController extends AbstractServiceValidateController {
+
     /**
      * Handle model and view.
      *
@@ -47,35 +48,34 @@ public class ServiceValidateController extends AbstractServiceValidateController
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path="/serviceValidate", method = RequestMethod.GET)
-    @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
+    @RequestMapping(path="/validate", method = RequestMethod.GET)
+    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
+                throws Exception {
         return super.handleRequestInternal(request, response);
     }
 
     @Override
     @Autowired
-    public void setValidationSpecificationClass(@Value("org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification")
+    public void setValidationSpecificationClass(@Value("org.jasig.cas.validation.Cas10ProtocolValidationSpecification")
                                                 final Class<?> validationSpecificationClass) {
         super.setValidationSpecificationClass(validationSpecificationClass);
     }
 
     @Override
     @Autowired
-    public void setFailureView(@Value("cas2ServiceFailureView") final String failureView) {
+    public void setFailureView(@Value("cas1ServiceFailureView") final String failureView) {
         super.setFailureView(failureView);
     }
 
     @Override
     @Autowired
-    public void setSuccessView(@Value("cas2ServiceSuccessView") final String successView) {
+    public void setSuccessView(@Value("cas1ServiceSuccessView") final String successView) {
         super.setSuccessView(successView);
     }
 
     @Override
     @Autowired
-    public void setProxyHandler(@Qualifier("proxy20Handler") final ProxyHandler proxyHandler) {
+    public void setProxyHandler(@Qualifier("proxy10Handler") final ProxyHandler proxyHandler) {
         super.setProxyHandler(proxyHandler);
     }
 }

@@ -48,9 +48,9 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
+public abstract class ServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
 
-    protected ServiceValidateController serviceValidateController;
+    protected AbstractServiceValidateController serviceValidateController;
 
     @Autowired
     private ServicesManager servicesManager;
@@ -105,14 +105,14 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("service", TestUtils.getService().getId());
         request.addParameter("ticket", sId.getId());
 
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(request,
                         new MockHttpServletResponse()).getViewName());
     }
 
     @Test
     public void verifyValidServiceTicketInvalidSpec() throws Exception {
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(getHttpServletRequest(), new MockHttpServletResponse()).getViewName());
     }
 
@@ -120,7 +120,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
         this.serviceValidateController.setValidationSpecificationClass(MockValidationSpecification.class);
 
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(getHttpServletRequest(), new MockHttpServletResponse()).getViewName());
         fail(TestUtils.CONST_EXCEPTION_EXPECTED);
     }
@@ -137,7 +137,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("service", TestUtils.getService().getId());
         request.addParameter("ticket", sId.getId());
 
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(request,
                         new MockHttpServletResponse()).getViewName());
     }
@@ -155,7 +155,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("ticket", sId.getId());
         request.addParameter("pgtUrl", "https://www.github.com");
 
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(request,
                         new MockHttpServletResponse()).getViewName());
     }
@@ -164,7 +164,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicketWithSecurePgtUrl() throws Exception {
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final ModelAndView modelAndView = getModelAndViewUponServiceValidationWithSecurePgtUrl();
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
         
     }
 
@@ -181,7 +181,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("pgtUrl", "duh");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
     
@@ -197,7 +197,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("pgtUrl", "https://www.github.com");
 
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
         assertNotNull(modelAndView.getModel().get("pgtIou"));
     }
     
@@ -225,7 +225,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         });
         
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
     
@@ -245,7 +245,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("service", TestUtils.getService(reqSvc).getId());
         request.addParameter("ticket", sId.getId());
         
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(request,
                         new MockHttpServletResponse()).getViewName());
     }
@@ -266,7 +266,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("service", TestUtils.getService(reqSvc).getId());
         request.addParameter("ticket", sId.getId());
         
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
                 this.serviceValidateController.handleRequestInternal(request,
                         new MockHttpServletResponse()).getViewName());
     }
@@ -285,7 +285,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter("pgtUrl", "http://www.github.com");
         
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
+        assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
     }
 
