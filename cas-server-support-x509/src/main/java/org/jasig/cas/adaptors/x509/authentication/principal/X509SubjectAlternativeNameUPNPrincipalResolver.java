@@ -19,11 +19,12 @@
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERUTF8String;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -93,8 +94,20 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             final ASN1ObjectIdentifier id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
             if (id != null && UPN_OBJECTID.equals(id.getId())) {
                 final ASN1TaggedObject obj = (ASN1TaggedObject) seq.getObjectAt(1);
-                final DERUTF8String str = DERUTF8String.getInstance(obj.getObject());
-                return str.getString();
+                ASN1Primitive prim = obj.getObject();
+                
+                // Due to bug in java cert.getSubjectAltName, it can be tagged an extra time
+                if (prim instanceof ASN1TaggedObject) {
+                    prim = ASN1TaggedObject.getInstance(((ASN1TaggedObject) prim)).getObject();
+                }
+
+                if (prim instanceof ASN1OctetString) {
+                    return new String(((ASN1OctetString) prim).getOctets());
+                } else if (prim instanceof ASN1String) {
+                    return ((ASN1String) prim).getString();
+                } else{
+                    return null;
+                }
             }
         }
         return null;
@@ -137,7 +150,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      *     X509Certificate#getSubjectAlternativeNames</a>
      */
     private ASN1Sequence getAltnameSequence(final byte[] sanValue) {
-        ASN1Object oct = null;
+        ASN1Primitive oct = null;
         try (final ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
             try (final ASN1InputStream input = new ASN1InputStream(bInput)) {
                 oct = input.readObject();

@@ -200,17 +200,19 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
 
         final List<URI> urls = new ArrayList<>();
         
-        for (final DistributionPoint point : points) {
-            final DistributionPointName pointName = point.getDistributionPoint();
-            if(pointName != null){
-                final ASN1Sequence nameSequence = ASN1Sequence.getInstance(pointName.getName());
-                for (int i = 0; i < nameSequence.size(); i++) {
-                    final GeneralName name = GeneralName.getInstance(nameSequence.getObjectAt(i));
-                    logger.debug("Found CRL distribution point {}.", name);
-                    try {
-                        addURL(urls, DERIA5String.getInstance(name.getName()).getString());
-                    } catch (final Exception e) {
-                        logger.warn("{} not supported. String or GeneralNameList expected.", pointName);
+        if(points != null){
+            for (final DistributionPoint point : points) {
+                final DistributionPointName pointName = point.getDistributionPoint();
+                if(pointName != null){
+                    final ASN1Sequence nameSequence = ASN1Sequence.getInstance(pointName.getName());
+                    for (int i = 0; i < nameSequence.size(); i++) {
+                        final GeneralName name = GeneralName.getInstance(nameSequence.getObjectAt(i));
+                        logger.debug("Found CRL distribution point {}.", name);
+                        try {
+                            addURL(urls, DERIA5String.getInstance(name.getName()).getString());
+                        } catch (final Exception e) {
+                            logger.warn("{} not supported. String or GeneralNameList expected.", pointName);
+                        }
                     }
                 }
             }
