@@ -123,4 +123,20 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     public void setTimeout(final long timeout) {
         this.timeout = timeout;
     }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public ServicesManager getServicesManager() {
+        return servicesManager;
+    }
+
+    public TicketRegistry getTicketRegistry() {
+        return ticketRegistry;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
 }
