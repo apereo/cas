@@ -54,10 +54,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <artifactId>vt-crypt</artifactId>
-      <groupId>edu.vt.middleware</groupId>
-      <version>2.1.4</version>
-    </dependency>
+	  <groupId>org.cryptacular</groupId>
+	  <artifactId>cryptacular</artifactId>
+	  <version>1.0</version>
+	</dependency>
     <dependency>
       <groupId>org.springframework.webflow</groupId>
       <artifactId>spring-webflow</artifactId>
@@ -111,6 +111,7 @@
       <artifactId>hibernate-validator</artifactId>
       <scope>test</scope>
     </dependency>
+   
   </dependencies>
 
   <properties>
