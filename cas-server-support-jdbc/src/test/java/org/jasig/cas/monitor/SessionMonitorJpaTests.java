@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -53,7 +54,9 @@ public class SessionMonitorJpaTests {
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     @Autowired
-    private JpaTicketRegistry jpaRegistry;
+    @Qualifier("jpaTicketRegistry")
+    private TicketRegistry jpaRegistry;
+
     private SessionMonitor monitor;
 
     @Before
@@ -66,7 +69,7 @@ public class SessionMonitorJpaTests {
     public void verifyObserveOkJpaTicketRegistry() throws Exception {
         addTicketsToRegistry(this.jpaRegistry, 5, 5);
         assertEquals(10, this.jpaRegistry.getTickets().size());
-        this.monitor.setTicketRegistry(this.jpaRegistry);
+        this.monitor.setTicketRegistry((TicketRegistryState) this.jpaRegistry);
         final SessionStatus status = this.monitor.observe();
         assertEquals(5, status.getSessionCount());
         assertEquals(5, status.getServiceTicketCount());

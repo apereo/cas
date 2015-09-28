@@ -69,7 +69,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
     /** Unique identifier that identifies the client using this lock instance. */
     @NotNull
-    @Value(("${host.name}"))
+    @Value(("${host.name:cas01.example.org}"))
     private String uniqueId;
 
     /** Amount of time in seconds lock may be held. */
