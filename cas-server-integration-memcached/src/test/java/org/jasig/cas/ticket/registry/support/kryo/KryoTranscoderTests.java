@@ -235,7 +235,7 @@ public class KryoTranscoderTests {
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
     }
 
-    static class MockServiceTicket implements ServiceTicket {
+    private static class MockServiceTicket implements ServiceTicket {
 
         private static final long serialVersionUID = -206395373480723831L;
         private String id;
