@@ -204,7 +204,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
                 final Scheduler sch = schFactory.getScheduler();
                 sch.setJobFactory(jobFactory);
                 sch.start();
-                logger.debug("Started {} scheduler", this.getClass().getName());
+                logger.debug("Started {} scheduler", this.getClass().getSimpleName());
                 sch.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} seconds",
                     this.getClass().getSimpleName(),
