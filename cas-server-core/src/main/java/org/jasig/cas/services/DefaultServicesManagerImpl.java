@@ -244,6 +244,9 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         return false;
     }
 
+    /**
+     * The Service registry reloader job.
+     */
     public static class ServiceRegistryReloaderJob implements Job {
 
         @Autowired
