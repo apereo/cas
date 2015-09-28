@@ -25,7 +25,7 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.view.CasViewConstants;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
-import org.jasig.cas.web.ServiceValidateControllerTests;
+import org.jasig.cas.web.AbstractServiceValidateControllerTests;
 import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class Cas30ResponseViewTests extends ServiceValidateControllerTests {
+public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
     @Qualifier("protocolCas3ViewResolver")
