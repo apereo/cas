@@ -20,82 +20,95 @@
 
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:p="http://www.springframework.org/schema/p"
-  xmlns:util="http://www.springframework.org/schema/util"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                      http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
-  <!--
-  NOTE:
-  This bean supports testing JPA components on multiple platforms.
-  In order to test a particular database platform, do the following:
-   1. Place a database.properties at the root of the cas-server-core module directory
-   2. Copy the database driver jar to cas-server-core/target/test-lib/jdbc-driver.jar
-   3. OPTIONAL: Set cas.jpa.concurrent system property to invoke concurrent tests
-   4. Execute test goal as usual
-   -->
-  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-    p:location="file:database.properties"
-    p:ignoreResourceNotFound="true"
-    p:ignoreUnresolvablePlaceholders="true">
-    <property name="properties">
-      <props>
-        <prop key="database.driverClass">org.hsqldb.jdbcDriver</prop>
-        <prop key="database.user">sa</prop>
-        <prop key="database.password"></prop>
-        <prop key="database.url">jdbc:hsqldb:mem:cas-ticket-registry</prop>
-        <prop key="database.dialect">org.hibernate.dialect.HSQLDialect</prop>
-        <prop key="database.batchSize">1</prop>
-      </props>
-    </property>
-  </bean>
+
+  <context:property-placeholder properties-ref="casProperties"/>
+  <util:properties id="casProperties"/>
+
+
+  <context:component-scan base-package="org.jasig.cas" />
+  <context:annotation-config/>
+
+
+  <import resource="classpath:jpa-svc-reg-context.xml" />
+
+  <bean
+      id="dataSourceService"
+      class="com.mchange.v2.c3p0.ComboPooledDataSource"
+      p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
+      p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-service-registry}"
+      p:user="${database.user:sa}"
+      p:password="${database.password:}"
+      p:initialPoolSize="${database.pool.minSize:6}"
+      p:minPoolSize="${database.pool.minSize:6}"
+      p:maxPoolSize="${database.pool.maxSize:18}"
+      p:maxIdleTimeExcessConnections="${database.pool.maxIdleTime:1000}"
+      p:checkoutTimeout="${database.pool.maxWait:2000}"
+      p:acquireIncrement="${database.pool.acquireIncrement:16}"
+      p:acquireRetryAttempts="${database.pool.acquireRetryAttempts:5}"
+      p:acquireRetryDelay="${database.pool.acquireRetryDelay:2000}"
+      p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod:30}"
+      p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"/>
+
+  <alias name="jpaTicketRegistry" alias="ticketRegistry" />
+
+  <import resource="classpath:jpa-ticket-reg-context.xml" />
+
+  <bean
+      id="dataSourceTicket"
+      class="com.mchange.v2.c3p0.ComboPooledDataSource"
+      p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
+      p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}"
+      p:user="${database.user:sa}"
+      p:password="${database.password:}"
+      p:initialPoolSize="${database.pool.minSize:6}"
+      p:minPoolSize="${database.pool.minSize:6}"
+      p:maxPoolSize="${database.pool.maxSize:18}"
+      p:maxIdleTimeExcessConnections="${database.pool.maxIdleTime:1000}"
+      p:checkoutTimeout="${database.pool.maxWait:2000}"
+      p:acquireIncrement="${database.pool.acquireIncrement:16}"
+      p:acquireRetryAttempts="${database.pool.acquireRetryAttempts:5}"
+      p:acquireRetryDelay="${database.pool.acquireRetryDelay:2000}"
+      p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod:30}"
+      p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"/>
+
+  <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao" />
+
 
   <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource"
-    id="dataSource"
-    p:driverClass="${database.driverClass}"
-    p:username="${database.user}"
-    p:password="${database.password}"
-    p:url="${database.url}" />
+        id="dataSource"
+        p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
+        p:username="${database.user:sa}"
+        p:password="${database.password:}"
+        p:url="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}" />
 
-  <util:list id="packagesToScan">
-    <value>org.jasig.cas.services</value>
-    <value>org.jasig.cas.ticket</value>
-    <value>org.jasig.cas.adaptors.jdbc</value>
-  </util:list>
 
-  <bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-    id="factoryBean"
-    p:dataSource-ref="dataSource"
-    p:jpaVendorAdapter-ref="jpaVendorAdapter"
-    p:packagesToScan-ref="packagesToScan">
-    <property name="jpaProperties">
-      <props>
-        <prop key="hibernate.dialect">${database.dialect}</prop>
-        <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
-        <prop key="hibernate.jdbc.batch_size">${database.batchSize}</prop>
-      </props>
-    </property>
-  </bean>
-
-  <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-    id="jpaVendorAdapter"
-    p:generateDdl="true"
-    p:showSql="true" />
-
-  <bean class="org.jasig.cas.services.JpaServiceRegistryDaoImpl" id="dao"  />
-
-  <bean class="org.springframework.orm.jpa.JpaTransactionManager" id="transactionManager"
-    p:entityManagerFactory-ref="factoryBean" />
-
-  <bean id="ticketRegistry" class="org.jasig.cas.ticket.registry.JpaTicketRegistry" />
-
-  <!--
-    Injects EntityManager/Factory instances into beans with
-    @PersistenceUnit and @PersistenceContext
-  -->
-  <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+  <!-- CAS Context Core -->
+  <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+  <util:map id="authenticationHandlersResolvers"/>
+  <util:list id="authenticationMetadataPopulators" />
+  <util:list id="monitorsList" />
+  <util:map id="uniqueIdGeneratorsMap"/>
+  <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+  <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+  <util:list id="serviceFactoryList" />
+  <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+  <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
 
 </beans>
 

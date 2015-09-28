@@ -20,6 +20,7 @@ package org.jasig.cas.services;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 
@@ -37,7 +38,8 @@ import static org.junit.Assert.*;
 public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4SpringContextTests {
 
     @Autowired(required=true)
-    private JpaServiceRegistryDaoImpl dao;
+    @Qualifier("jpaServiceRegistryDao")
+    private ServiceRegistryDao dao;
 
     @Test
     public void verifySaveMethodWithNonExistentServiceAndNoAttributes() {
@@ -87,8 +89,6 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
         final RegisteredService r2 = services.get(0);
 
         r.setId(r2.getId());
-        r.setTheme("mytheme");
-
         this.dao.save(r);
 
         final RegisteredService r3 = this.dao.findServiceById(r.getId());
