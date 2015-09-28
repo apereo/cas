@@ -35,15 +35,20 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="info">
+        <Logger name="org.jasig" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="net.spy.memcached" level="warn">
+        <Logger name="net.spy.memcached" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="de.flapdoodle" level="warn">
+        <Logger name="de.flapdoodle" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.hibernate.validator" level="error" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+
+
         <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
