@@ -36,7 +36,7 @@
                                   ignore-resource-not-found="false"
                                   ignore-unresolvable="false"/>
 
-    <context:component-scan base-package="org.jasig.cas.support.saml" annotation-config="true" />
+    <context:component-scan base-package="org.jasig.cas" annotation-config="true" />
     <context:annotation-config />
 
     <bean id="shibboleth.OpenSAMLConfig" class="org.jasig.cas.support.saml.OpenSamlConfigBean"
@@ -166,5 +166,16 @@
           p:afterInitialization="true"/>
 
     <util:list id="argumentExtractors" />
-    <util:map id="uniqueIdGeneratorsMap" />
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <util:map id="authenticationHandlersResolvers"/>
+    <util:list id="authenticationMetadataPopulators" />
+    <util:list id="monitorsList" />
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+    <util:map id="uniqueIdGeneratorsMap"/>
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+    <util:list id="serviceFactoryList" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+    <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+
 </beans>
