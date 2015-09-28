@@ -94,7 +94,7 @@
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
 
-    <util:list id="monitorsList" value-type="org.jasig.cas.monitor.Monitor">
+    <util:list id="monitorsList">
         <ref bean="memoryMonitor" />
         <ref bean="sessionMonitor" />
     </util:list>
