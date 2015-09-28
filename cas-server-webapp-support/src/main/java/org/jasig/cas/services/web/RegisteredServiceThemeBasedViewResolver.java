@@ -62,7 +62,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public final class RegisteredServiceThemeBasedViewResolver extends InternalResourceViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
-    public static final String THEME_LOCATION_PATTERN = "%s/%s/ui/";
+    private static final String THEME_LOCATION_PATTERN = "%s/%s/ui/";
 
     /**
      * The ServiceRegistry to look up the service.
