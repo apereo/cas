@@ -18,26 +18,34 @@
  */
 package org.jasig.cas.support.oauth.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ServiceTicketImpl;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.TicketState;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.web.servlet.mvc.Controller;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * This class tests the {@link OAuth20AccessTokenController} class.
@@ -45,6 +53,9 @@ import org.springframework.mock.web.MockHttpServletResponse;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration("classpath:/oauth-context.xml")
+@DirtiesContext()
 public final class OAuth20AccessTokenControllerTests {
 
     private static final String CONTEXT = "/oauth2.0/";
@@ -65,6 +76,16 @@ public final class OAuth20AccessTokenControllerTests {
 
     private static final int TIMEOUT = 7200;
 
+    private static final String ID = "1234";
+
+    private static final String NAME = "attributeName";
+
+    private static final String NAME2 = "attributeName2";
+
+    private static final String VALUE = "attributeValue";
+
+    @Autowired
+    private Controller oauth20WrapperController;
     @Test
     public void verifyNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -73,7 +94,6 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
@@ -87,7 +107,6 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
@@ -101,7 +120,6 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
@@ -115,7 +133,6 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
@@ -123,6 +140,8 @@ public final class OAuth20AccessTokenControllerTests {
 
     @Test
     public void verifyNoCasService() throws Exception {
+        clearAllServices();
+
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -130,10 +149,8 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-        when(servicesManager.getAllServices()).thenReturn(new ArrayList<RegisteredService>());
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.setServicesManager(servicesManager);
+
+
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
@@ -141,6 +158,7 @@ public final class OAuth20AccessTokenControllerTests {
 
     @Test
     public void verifyRedirectUriDoesNotStartWithServiceId() throws Exception {
+        clearAllServices();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -148,12 +166,10 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<>();
-        services.add(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_SECRET));
-        when(servicesManager.getAllServices()).thenReturn(services);
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.setServicesManager(servicesManager);
+
+        ((OAuth20WrapperController) oauth20WrapperController)
+            .getServicesManager().save(getRegisteredService(OTHER_REDIRECT_URI, CLIENT_SECRET));
+
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
@@ -161,6 +177,7 @@ public final class OAuth20AccessTokenControllerTests {
 
     @Test
     public void verifyWrongSecret() throws Exception {
+        clearAllServices();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -168,12 +185,11 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<>();
-        services.add(getRegisteredService(REDIRECT_URI, WRONG_CLIENT_SECRET));
-        when(servicesManager.getAllServices()).thenReturn(services);
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.setServicesManager(servicesManager);
+
+        ((OAuth20WrapperController) oauth20WrapperController)
+            .getServicesManager().save(getRegisteredService(REDIRECT_URI, WRONG_CLIENT_SECRET));
+
+
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_REQUEST, mockResponse.getContentAsString());
@@ -181,6 +197,7 @@ public final class OAuth20AccessTokenControllerTests {
 
     @Test
     public void verifyNoServiceTicket() throws Exception {
+        clearAllServices();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -188,15 +205,10 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<>();
-        services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
-        when(servicesManager.getAllServices()).thenReturn(services);
-        final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
-        when(ticketRegistry.getTicket(CODE)).thenReturn(null);
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.setServicesManager(servicesManager);
-        oauth20WrapperController.setTicketRegistry(ticketRegistry);
+
+        ((OAuth20WrapperController) oauth20WrapperController)
+            .getServicesManager().save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
+
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
@@ -204,6 +216,7 @@ public final class OAuth20AccessTokenControllerTests {
 
     @Test
     public void verifyExpiredServiceTicket() throws Exception {
+        clearAllServices();
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
@@ -211,17 +224,30 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<>();
-        services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
-        when(servicesManager.getAllServices()).thenReturn(services);
-        final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
-        final ServiceTicket serviceTicket = mock(ServiceTicket.class);
-        when(serviceTicket.isExpired()).thenReturn(true);
-        when(ticketRegistry.getTicket(CODE)).thenReturn(serviceTicket);
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.setServicesManager(servicesManager);
-        oauth20WrapperController.setTicketRegistry(ticketRegistry);
+
+        ((OAuth20WrapperController) oauth20WrapperController)
+            .getServicesManager().save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
+
+        final Map<String, Object> map = new HashMap<>();
+        map.put(NAME, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
+        map.put(NAME2, list);
+
+        final Principal p = TestUtils.getPrincipal(ID, map);
+        final TicketGrantingTicketImpl impl = new TicketGrantingTicketImpl(TGT_ID,
+            TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
+
+        ((OAuth20WrapperController) oauth20WrapperController)
+            .getTicketRegistry().addTicket(new ServiceTicketImpl("ST1", impl, TestUtils.getService(), false,
+            new ExpirationPolicy() {
+                private static final long serialVersionUID = -7321055962209199811L;
+
+                @Override
+                public boolean isExpired(final TicketState ticketState) {
+                    return true;
+                }
+            }));
+
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(400, mockResponse.getStatus());
         assertEquals("error=" + OAuthConstants.INVALID_GRANT, mockResponse.getContentAsString());
@@ -236,36 +262,45 @@ public final class OAuth20AccessTokenControllerTests {
         mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
         mockRequest.setParameter(OAuthConstants.CODE, CODE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
-        final ServicesManager servicesManager = mock(ServicesManager.class);
-        final List<RegisteredService> services = new ArrayList<>();
-        services.add(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
-        when(servicesManager.getAllServices()).thenReturn(services);
-        final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
-        final ServiceTicket serviceTicket = mock(ServiceTicket.class);
-        final TicketGrantingTicket ticketGrantingTicket = mock(TicketGrantingTicket.class);
-        // 10 seconds
-        final int timeBefore = 10;
-        when(ticketGrantingTicket.getCreationTime()).thenReturn(System.currentTimeMillis() - timeBefore * 1000);
-        when(ticketGrantingTicket.getId()).thenReturn(TGT_ID);
-        when(serviceTicket.isExpired()).thenReturn(false);
-        when(serviceTicket.getId()).thenReturn(CODE);
-        when(serviceTicket.getGrantingTicket()).thenReturn(ticketGrantingTicket);
-        when(ticketRegistry.getTicket(CODE)).thenReturn(serviceTicket);
-        final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
-        oauth20WrapperController.setServicesManager(servicesManager);
-        oauth20WrapperController.setTicketRegistry(ticketRegistry);
-        oauth20WrapperController.setTimeout(TIMEOUT);
+
+        ((OAuth20WrapperController) oauth20WrapperController)
+            .getServicesManager().save(getRegisteredService(REDIRECT_URI, CLIENT_SECRET));
+
+
+        final Map<String, Object> map = new HashMap<>();
+        map.put(NAME, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
+        map.put(NAME2, list);
+
+        final Principal p = TestUtils.getPrincipal(ID, map);
+        final TicketGrantingTicketImpl impl = new TicketGrantingTicketImpl(TGT_ID,
+            TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
+
+        ((OAuth20WrapperController) oauth20WrapperController)
+            .getTicketRegistry().addTicket(new ServiceTicketImpl(CODE, impl, TestUtils.getService(), false,
+            new ExpirationPolicy() {
+                private static final long serialVersionUID = -7321055962209199811L;
+
+                @Override
+                public boolean isExpired(final TicketState ticketState) {
+                    return false;
+                }
+            }));
+
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
-        verify(ticketRegistry).deleteTicket(CODE);
+
+        ((OAuth20WrapperController) oauth20WrapperController)
+            .getTicketRegistry().deleteTicket(CODE);
+
         assertEquals("text/plain", mockResponse.getContentType());
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
+
         assertTrue(body.startsWith(OAuthConstants.ACCESS_TOKEN + "=" + TGT_ID + "&" + OAuthConstants.EXPIRES + "="));
         // delta = 2 seconds
         final int delta = 2;
         final int timeLeft = Integer.parseInt(StringUtils.substringAfter(body, "&" + OAuthConstants.EXPIRES + "="));
-        assertTrue(timeLeft >= TIMEOUT - timeBefore - delta);
-        assertTrue(timeLeft <= TIMEOUT - timeBefore + delta);
+        assertTrue(timeLeft >= TIMEOUT - 10 - delta);
     }
 
     private RegisteredService getRegisteredService(final String serviceId, final String secret) {
@@ -275,5 +310,15 @@ public final class OAuth20AccessTokenControllerTests {
         registeredServiceImpl.setClientId(CLIENT_ID);
         registeredServiceImpl.setClientSecret(secret);
         return registeredServiceImpl;
+    }
+
+    private void clearAllServices() {
+        final Collection<RegisteredService> col  =
+            ((OAuth20WrapperController) oauth20WrapperController).getServicesManager().getAllServices();
+
+        for (final RegisteredService r : col) {
+            ((OAuth20WrapperController) oauth20WrapperController).getServicesManager().delete(r.getId());
+        }
+
     }
 }

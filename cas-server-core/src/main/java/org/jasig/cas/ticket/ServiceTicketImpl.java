@@ -79,7 +79,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
      * @throws IllegalArgumentException if the TicketGrantingTicket or the
      * Service are null.
      */
-    protected ServiceTicketImpl(final String id,
+    public ServiceTicketImpl(final String id,
         @NotNull final TicketGrantingTicketImpl ticket, @NotNull final Service service,
         final boolean fromNewLogin, final ExpirationPolicy policy) {
         super(id, ticket, policy);
