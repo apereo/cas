@@ -17,9 +17,10 @@
  * under the License.
  */
 
-package org.jasig.cas.web;
+package org.jasig.cas.web.v3;
 
 import org.jasig.cas.ticket.proxy.ProxyHandler;
+import org.jasig.cas.web.AbstractServiceValidateController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,9 +37,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Component("serviceValidateController")
+@Component("v3ServiceValidateController")
 @Controller
-public class ServiceValidateController extends AbstractServiceValidateController {
+public class V3ServiceValidateController extends AbstractServiceValidateController {
     /**
      * Handle model and view.
      *
@@ -47,9 +48,8 @@ public class ServiceValidateController extends AbstractServiceValidateController
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path="/serviceValidate", method = RequestMethod.GET)
-    @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
+    @RequestMapping(path="/p3/serviceValidate", method = RequestMethod.GET)
+    protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response)
         throws Exception {
         return super.handleRequestInternal(request, response);
     }
@@ -63,13 +63,13 @@ public class ServiceValidateController extends AbstractServiceValidateController
 
     @Override
     @Autowired
-    public void setFailureView(@Value("cas2ServiceFailureView") final String failureView) {
+    public void setFailureView(@Value("cas3ServiceFailureView") final String failureView) {
         super.setFailureView(failureView);
     }
 
     @Override
     @Autowired
-    public void setSuccessView(@Value("cas2ServiceSuccessView") final String successView) {
+    public void setSuccessView(@Value("cas3ServiceSuccessView") final String successView) {
         super.setSuccessView(successView);
     }
 
