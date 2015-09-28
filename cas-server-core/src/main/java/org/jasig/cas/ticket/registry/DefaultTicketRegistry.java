@@ -42,6 +42,7 @@ import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
@@ -74,7 +75,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
     @Autowired
     @NotNull
-    private WebApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("logoutManager")
