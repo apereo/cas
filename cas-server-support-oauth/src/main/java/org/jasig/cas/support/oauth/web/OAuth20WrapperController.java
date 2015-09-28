@@ -23,6 +23,7 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.Controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -40,16 +41,16 @@ import javax.servlet.http.HttpServletResponse;
 public final class OAuth20WrapperController extends BaseOAuthWrapperController {
 
     @Resource(name="authorizeController")
-    private OAuth20AuthorizeController authorizeController;
+    private Controller authorizeController;
 
     @Resource(name="callbackAuthorizeController")
-    private OAuth20CallbackAuthorizeController callbackAuthorizeController;
+    private Controller callbackAuthorizeController;
 
     @Resource(name="accessTokenController")
-    private OAuth20AccessTokenController accessTokenController;
+    private Controller accessTokenController;
 
     @Resource(name="profileController")
-    private OAuth20ProfileController profileController;
+    private Controller profileController;
 
     @Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
@@ -76,5 +77,21 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController {
         logger.error("Unknown method : {}", method);
         OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_OK);
         return null;
+    }
+
+    public Controller getAuthorizeController() {
+        return authorizeController;
+    }
+
+    public Controller getCallbackAuthorizeController() {
+        return callbackAuthorizeController;
+    }
+
+    public Controller getAccessTokenController() {
+        return accessTokenController;
+    }
+
+    public Controller getProfileController() {
+        return profileController;
     }
 }
