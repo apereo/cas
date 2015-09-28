@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -54,6 +55,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
     private static final String SQL = "SELECT password FROM casusers where username=?";
 
     @Autowired
+    @Qualifier("dataSource")
     private DataSource dataSource;
 
     @Before
