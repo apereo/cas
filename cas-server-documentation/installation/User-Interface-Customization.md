@@ -335,11 +335,11 @@ using the `ServiceThemeResolver` is not practical to augment the default views. 
 
 Views associated with a particular theme by default are expected to be found at: `/WEB-INF/view/jsp/<theme-id>/ui/`
 
-{% highlight xml %}
-<bean id="themeBasedViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
-    c:defaultThemeName="${cas.themeResolver.defaultThemeName}"
-    c:servicesManager-ref="servicesManager"
-    p:pathPrefix="/WEB-INF/view/jsp" />
+{% highlight jsp %}
+<bean id="internalViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
+        c:servicesManager-ref="servicesManager"
+        p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp/}"
+        p:order="2001"/>
 {% endhighlight %}
 
 ####Configuration
