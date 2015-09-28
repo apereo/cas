@@ -73,6 +73,11 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.ryantenney.metrics</groupId>
+            <artifactId>metrics-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <properties>
