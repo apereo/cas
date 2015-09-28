@@ -173,7 +173,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                 logger.debug("Found CAS servlet application context");
                 final String[] aliases =
                     this.applicationContext.getAutowireCapableBeanFactory().getAliases("authenticationThrottle");
-                logger.debug("{} is used as the active current ticket registry", this.getClass().getSimpleName());
+                logger.debug("{} is used as the active authentication throttle", this.getClass().getSimpleName());
                 return aliases.length > 0 && aliases[0].equals(getName());
             }
         }

@@ -32,10 +32,6 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
-    <!-- Scan CAS artifacts to mvc annotations, such as controllers.
-         The scan is controlled by the application context config file -->
-    <mvc:annotation-driven/>
-
     <import resource="spring-configuration/propertyFileConfigurer.xml"/>
 
     <bean id="themeChangeInterceptor"
@@ -96,7 +92,6 @@
                 <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
                 <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
                 <prop key="/validate">legacyValidateController</prop>
-                <prop key="/proxy">proxyController</prop>
                 <prop key="/authorizationFailure.html">passThroughController</prop>
             </util:properties>
         </property>
