@@ -82,7 +82,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     
     private static final String PRINCIPAL = "principal";
 
-    private CentralAuthenticationService cas;
+    private CentralAuthenticationServiceImpl cas;
     private Authentication authentication;
     private TicketRegistry ticketRegMock;
 
@@ -146,6 +146,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, null, mock(AuthenticationManager.class),
                 mock(UniqueTicketIdGenerator.class), ticketIdGenForServiceMock, mock(ExpirationPolicy.class),
                 mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));
+        this.cas.afterPropertiesSet();
     }
 
     private ServicesManager getServicesManager(final Service service1, final Service service2) {

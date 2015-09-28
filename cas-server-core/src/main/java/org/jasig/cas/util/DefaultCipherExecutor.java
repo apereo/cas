@@ -135,7 +135,7 @@ public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, 
     }
 
     /**
-     * Encrypt the value based on the seed array whose length was given during init,
+     * Encrypt the value based on the seed array whose length was given during afterPropertiesSet,
      * and the key and content encryption ids.
      *
      * @param value the value
@@ -157,7 +157,7 @@ public final class DefaultCipherExecutor extends AbstractCipherExecutor<String, 
     }
 
     /**
-     * Decrypt value based on the key created during init.
+     * Decrypt value based on the key created during afterPropertiesSet.
      *
      * @param value the value
      * @return the decrypted value

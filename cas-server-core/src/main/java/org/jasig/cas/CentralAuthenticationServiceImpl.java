@@ -230,7 +230,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * Initialize ticket registry.
      */
     @PostConstruct
-    public void init() {
+    public void afterPropertiesSet() {
         if (serviceTicketRegistry == null) {
             this.serviceTicketRegistry = ticketRegistry;
         }
