@@ -37,8 +37,6 @@
     <context:component-scan base-package="org.jasig.cas" />
     <context:annotation-config/>
 
-    <bean name="autowiringSchedulerFactoryBean" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean" />
-
 
 
 </beans>
