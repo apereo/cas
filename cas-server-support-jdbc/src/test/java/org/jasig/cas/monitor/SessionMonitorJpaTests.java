@@ -22,7 +22,6 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.registry.JpaTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -37,7 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link org.jasig.cas.monitor.SessionMonitor} class that involves {@link JpaTicketRegistry}.
