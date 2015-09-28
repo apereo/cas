@@ -19,6 +19,7 @@
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,10 @@ import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
-
+import org.cryptacular.x509.dn.Attribute;
 import org.cryptacular.x509.dn.AttributeType;
 import org.cryptacular.x509.dn.NameReader;
+import org.cryptacular.x509.dn.RDN;
 import org.cryptacular.x509.dn.RDNSequence;
 import org.cryptacular.x509.dn.StandardAttributeType;
 
@@ -110,15 +112,14 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         final StringBuffer sb = new StringBuffer();
         final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
         final Map<String, AttributeContext> attrMap = new HashMap<>();
-        final RDNSequence rdnSequence = NameReader.readX500Principal(certificate.getSubjectX500Principal());
+        final RDNSequence rdnSequence = new NameReader(certificate).readSubject();
         String name;
         String[] values;
         AttributeContext context;
         while (m.find()) {
             name = m.group(1);
             if (!attrMap.containsKey(name)) {
-                values = getAttributeValues(
-                        rdnSequence,
+                values = getAttributeValues(rdnSequence,
                         StandardAttributeType.fromName(name));
                 attrMap.put(name, new AttributeContext(name, values));
             }
@@ -143,11 +144,19 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * appear would appear in the string representation of the DN or an empty
      * array if the given attribute does not exist.
      */
-    private static String[] getAttributeValues(
-            final RDNSequence rdnSequence,
+    private static String[] getAttributeValues(final RDNSequence rdnSequence,
             final AttributeType attribute) {
-         final List<String> values = rdnSequence.getValues(attribute);
-         return values.toArray(new String[values.size()]);
+        // Iterates sequence in reverse order as specified in section 2.1 of RFC 2253
+        final Iterable<RDN> it = rdnSequence.backward();
+        final List<String> values = new ArrayList<String>();
+        for (final RDN rdn : it) {
+            for (final Attribute attr : rdn.getAttributes().getAll()) {
+                if (attr.getType().equals(attribute)) {
+                    values.add(attr.getValue());
+                }
+            }
+        }
+        return values.toArray(new String[values.size()]);
     }
 
 
