@@ -35,7 +35,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -58,7 +57,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Application context. */
-    protected WebApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
 
     private final String contextInitializerName = getClass().getSimpleName();
 
@@ -84,7 +83,7 @@ public abstract class AbstractServletContextInitializer implements ServletContex
 
     @Override
     public final void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = (WebApplicationContext) applicationContext;
+        this.applicationContext = applicationContext;
 
         try {
             if (applicationContext.getParent() == null) {
