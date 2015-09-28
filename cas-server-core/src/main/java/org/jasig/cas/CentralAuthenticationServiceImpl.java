@@ -70,6 +70,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
@@ -216,11 +217,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final LogoutManager logoutManager) {
 
         this.ticketRegistry = ticketRegistry;
-        if (serviceTicketRegistry == null) {
-            this.serviceTicketRegistry = ticketRegistry;
-        } else {
-            this.serviceTicketRegistry = serviceTicketRegistry;
-        }
         this.authenticationManager = authenticationManager;
         this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
@@ -228,6 +224,16 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
+    }
+
+    /**
+     * Initialize ticket registry.
+     */
+    @PostConstruct
+    public void init() {
+        if (serviceTicketRegistry == null) {
+            this.serviceTicketRegistry = ticketRegistry;
+        }
     }
 
     /**
@@ -281,7 +287,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
 
         Authentication currentAuthentication = null;
-        if (sanitizedCredentials.isEmpty()) {
+        if (!sanitizedCredentials.isEmpty()) {
             currentAuthentication = this.authenticationManager.authenticate(
                     sanitizedCredentials.toArray(new Credential[] {}));
             final Authentication original = ticketGrantingTicket.getAuthentication();
