@@ -26,6 +26,7 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.jasig.cas.web.support.WebUtils;
+import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -51,7 +52,6 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,10 +66,10 @@ import java.util.concurrent.TimeUnit;
 @Component("defaultTicketRegistry")
 public final class DefaultTicketRegistry extends AbstractTicketRegistry implements Job {
 
-    @Value("${ticket.registry.cleaner.repeatinterval:5000000}")
+    @Value("${ticket.registry.cleaner.repeatinterval:120}")
     private int refreshInterval;
 
-    @Value("${ticket.registry.cleaner.startdelay:20000}")
+    @Value("${ticket.registry.cleaner.startdelay:20}")
     private int startDelay;
 
     @Autowired
@@ -194,9 +194,9 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(this.refreshInterval)
+                        .withIntervalInSeconds(this.refreshInterval)
                         .repeatForever()).build();
 
                 final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
@@ -206,9 +206,9 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
                 sch.start();
                 logger.debug("Started {} scheduler", this.getClass().getSimpleName());
                 sch.scheduleJob(job, trigger);
-                logger.info("{} will clean tickets every {} seconds",
+                logger.info("{} will clean tickets every {} minutes",
                     this.getClass().getSimpleName(),
-                    TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
+                    TimeUnit.SECONDS.toMinutes(this.refreshInterval));
             }
         } catch (final Exception e){
             logger.warn(e.getMessage(), e);
