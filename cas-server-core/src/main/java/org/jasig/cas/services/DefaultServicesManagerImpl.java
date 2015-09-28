@@ -44,7 +44,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
