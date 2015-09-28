@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Component("themeResolver")
+@Component("serviceThemeResolver")
 public final class ServiceThemeResolver extends AbstractThemeResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThemeResolver.class);

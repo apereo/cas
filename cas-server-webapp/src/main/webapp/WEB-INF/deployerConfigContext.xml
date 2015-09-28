@@ -47,6 +47,7 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
@@ -71,6 +72,8 @@
             </list>
         </entry>
     </util:map>
+
+    <alias name="serviceThemeResolver" alias="themeResolver" />
 
     <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
 
