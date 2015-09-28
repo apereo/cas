@@ -26,8 +26,7 @@ import org.springframework.context.NoSuchMessageException;
 
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Misagh Moayyed
@@ -35,6 +34,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(JUnit4.class)
 public class CasReloadableMessageBundleTests {
+
     private CasReloadableMessageBundle loader;
     
     @Before

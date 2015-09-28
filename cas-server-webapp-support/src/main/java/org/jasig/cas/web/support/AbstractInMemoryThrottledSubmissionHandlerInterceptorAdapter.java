@@ -33,6 +33,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -65,15 +66,15 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
-    @Value("${cas.throttle.inmemory.cleaner.repeatinterval:1000}")
+    @Value("${cas.throttle.inmemory.cleaner.repeatinterval:5000}")
     private int refreshInterval;
 
-    @Value("${cas.throttle.inmemory.cleaner.startdelay:1000}")
+    @Value("${cas.throttle.inmemory.cleaner.startdelay:5000}")
     private int startDelay;
 
     @Autowired
     @NotNull
-    private WebApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<>();
 
@@ -131,13 +132,13 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
 
     /**
-     * Schedule cleaner job.
+     * Schedule throttle job.
      */
     @PostConstruct
-    public void scheduleCleanerJob() {
+    public void scheduleThrottleJob() {
         try {
             if (shouldScheduleCleanerJob()) {
-                logger.info("Preparing to schedule cleaner job");
+                logger.info("Preparing to schedule throttle job");
 
                 final JobDetail job = JobBuilder.newJob(this.getClass())
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
@@ -157,7 +158,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                 sch.start();
                 logger.debug("Started {} scheduler", this.getClass().getName());
                 sch.scheduleJob(job, trigger);
-                logger.info("{} will clean tickets every {} milliseconds",
+                logger.info("{} will clean tickets every {} seconds",
                     this.getClass().getSimpleName(),
                     TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
             }
