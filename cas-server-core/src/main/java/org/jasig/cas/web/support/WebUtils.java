@@ -26,6 +26,9 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -46,12 +49,16 @@ import java.util.List;
  * @since 3.1
  */
 public final class WebUtils {
+
     /** Default CAS Servlet name. **/
     public static final String CAS_SERVLET_NAME = "cas";
 
 
     /** Request attribute that contains message key describing details of authorization failure.*/
     public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
+
 
     /**
      * Instantiates a new web utils instance.
@@ -102,6 +109,21 @@ public final class WebUtils {
      */
     public static boolean isCasServletInitializing(final WebApplicationContext sce) {
         return isCasServletInitializing(sce.getServletContext());
+    }
+
+    /**
+     * Is cas servlet initializing.
+     *
+     * @param sce the sce
+     * @return the boolean
+     */
+    public static boolean isCasServletInitializing(final ApplicationContext sce) {
+        if (sce instanceof WebApplicationContext) {
+            return isCasServletInitializing(((WebApplicationContext) sce).getServletContext());
+        }
+        LOGGER.debug("No CAS servlet is available because the given application context is not of type {}",
+            WebApplicationContext.class);
+        return false;
     }
 
 

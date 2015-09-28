@@ -39,7 +39,7 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
     private static final long serialVersionUID = -5704993954986738308L;
 
     /** The time to kill in milliseconds. */
-    @Value("${st.timeToKillInSeconds:10}")
+    @Value("#{${st.timeToKillInSeconds:10}*1000}")
     private final long timeToKillInMilliSeconds;
 
     /** The maximum number of uses before expiration. */
@@ -53,6 +53,7 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
         this.timeToKillInMilliSeconds = 0;
         this.numberOfUses = 0;
     }
+
 
     /**
      * Instantiates a new multi time use or timeout expiration policy.
@@ -83,8 +84,26 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        return (ticketState == null)
-            || (ticketState.getCountOfUses() >= this.numberOfUses)
-            || (System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
+        if (ticketState == null) {
+            logger.debug("Ticket state is null for {}", this.getClass().getSimpleName());
+            return true;
+        }
+        final long countUses = ticketState.getCountOfUses();
+        if (countUses >= this.numberOfUses) {
+            logger.debug("Ticket usage count {} is greater than or equal to {}", countUses, this.numberOfUses);
+            return true;
+        }
+
+        final long systemTime = System.currentTimeMillis();
+        final long lastTimeUsed = ticketState.getLastTimeUsed();
+        final long difference = systemTime - lastTimeUsed;
+
+        if (difference >= this.timeToKillInMilliSeconds) {
+            logger.debug("Ticket has expired because the difference between current time [{}] "
+                + "and ticket time [{}] is greater than or equal to [{}]", systemTime, lastTimeUsed,
+                this.timeToKillInMilliSeconds);
+            return true;
+        }
+        return false;
     }
 }

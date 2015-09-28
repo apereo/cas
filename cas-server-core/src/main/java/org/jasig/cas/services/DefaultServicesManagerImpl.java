@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -69,7 +69,6 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * Instance of ServiceRegistryDao.
      */
     @NotNull
-    @Resource(name = "serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
 
@@ -81,11 +80,11 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @Value("${service.registry.quartz.reloader.repeatInterval:60}")
     private int refreshInterval;
 
-    @Value("${service.registry.quartz.reloader.startDelay:20}")
+    @Value("${service.registry.quartz.reloader.startDelay:15}")
     private int startDelay;
 
     @Autowired
-    private WebApplicationContext applicationContext;
+    private ApplicationContext applicationContext;
 
     /**
      * Instantiates a new default services manager impl.
@@ -99,7 +98,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * @param serviceRegistryDao the service registry dao
      */
 
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
+    @Autowired
+    public DefaultServicesManagerImpl(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
 
         load();
