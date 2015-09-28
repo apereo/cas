@@ -19,11 +19,12 @@
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Object;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.bouncycastle.asn1.DERObject;
-import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.DERUTF8String;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateParsingException;
@@ -89,7 +90,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     private String getUPNStringFromSequence(final ASN1Sequence seq) {
         if (seq != null) {
             // First in sequence is the object identifier, that we must check
-            final DERObjectIdentifier id = DERObjectIdentifier.getInstance(seq.getObjectAt(0));
+            final ASN1ObjectIdentifier id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
             if (id != null && UPN_OBJECTID.equals(id.getId())) {
                 final ASN1TaggedObject obj = (ASN1TaggedObject) seq.getObjectAt(1);
                 final DERUTF8String str = DERUTF8String.getInstance(obj.getObject());
@@ -136,7 +137,7 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      *     X509Certificate#getSubjectAlternativeNames</a>
      */
     private ASN1Sequence getAltnameSequence(final byte[] sanValue) {
-        DERObject oct = null;
+        ASN1Object oct = null;
         try (final ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
             try (final ASN1InputStream input = new ASN1InputStream(bInput)) {
                 oct = input.readObject();
