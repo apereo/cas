@@ -19,7 +19,6 @@
 
 package org.jasig.cas.web.v3;
 
-import org.jasig.cas.web.ProxyValidateController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
