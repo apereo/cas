@@ -18,21 +18,20 @@
  */
 package org.jasig.cas.web.view;
 
-import static org.junit.Assert.*;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.validation.ImmutableAssertion;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.validation.ImmutableAssertion;
-import org.jasig.cas.web.view.Cas10ResponseView;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link Cas10ResponseView} class.
