@@ -1309,7 +1309,12 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>c3p0</artifactId>
+                        <groupId>c3p0</groupId>
+                    </exclusion>
                 </exclusions>
+
             </dependency>
 
             <dependency>

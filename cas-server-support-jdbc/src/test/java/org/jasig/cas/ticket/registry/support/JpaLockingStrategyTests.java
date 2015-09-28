@@ -22,16 +22,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.annotation.ProfileValueSourceConfiguration;
-import org.springframework.test.annotation.SystemProfileValueSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -60,8 +57,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:jpaTestApplicationContext.xml")
-@ProfileValueSourceConfiguration(SystemProfileValueSource.class)
-public class JpaLockingStrategyTests implements InitializingBean {
+public class JpaLockingStrategyTests {
     /** Number of clients contending for lock in concurrent test. */
     private static final int CONCURRENT_SIZE = 13;
 
@@ -69,29 +65,16 @@ public class JpaLockingStrategyTests implements InitializingBean {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
+    @Qualifier("ticketTransactionManager")
     private PlatformTransactionManager txManager;
 
     @Autowired
+    @Qualifier("ticketEntityManagerFactory")
     private EntityManagerFactory factory;
 
-    private JdbcTemplate simpleJdbcTemplate;
-
-    /**
-     * Set the dataSource.
-     */
     @Autowired
-    public void setDataSource(final DataSource dataSource) {
-        this.simpleJdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
-    /**
-     * One-time test initialization.
-     *
-     * @throws Exception On setup errors.
-     */
-    public void afterPropertiesSet() throws Exception {
-        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "locks");
-    }
+    @Qualifier("dataSourceTicket")
+    private DataSource dataSource;
 
     /**
      * Test basic acquire/release semantics.
@@ -163,7 +146,6 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * Test concurrent acquire/release semantics.
      */
     @Test
-    @IfProfileValue(name="cas.jpa.concurrent", value="true")
     public void verifyConcurrentAcquireAndRelease() throws Exception {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
@@ -180,7 +162,6 @@ public class JpaLockingStrategyTests implements InitializingBean {
      * Test concurrent acquire/release semantics for existing lock.
      */
     @Test
-    @IfProfileValue(name="cas.jpa.concurrent", value="true")
     public void verifyConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
         final LockingStrategy[] locks = getConcurrentLocks("concurrent-exists");
         locks[0].acquire();
@@ -217,9 +198,10 @@ public class JpaLockingStrategyTests implements InitializingBean {
     }
 
     private String getOwner(final String appId) {
+        final JdbcTemplate simpleJdbcTemplate = new JdbcTemplate(dataSource);
         final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList(
                 "SELECT unique_id FROM locks WHERE application_id=?", appId);
-        if (results.size() == 0) {
+        if (results.isEmpty()) {
             return null;
         }
         return (String) results.get(0).get("unique_id");

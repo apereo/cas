@@ -45,7 +45,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.Nullable;
@@ -254,8 +253,12 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
                 logger.debug("Found CAS servlet application context");
                 final String[] aliases =
                     this.applicationContext.getAutowireCapableBeanFactory().getAliases("defaultTicketRegistry");
-                logger.debug("{} is used as the active current ticket registry", this.getClass().getSimpleName());
-                return aliases.length > 0;
+
+                if (aliases.length > 0) {
+                    logger.debug("{} is used as the active current ticket registry", this.getClass().getSimpleName());
+                    return true;
+                }
+                return false;
             }
         }
 
