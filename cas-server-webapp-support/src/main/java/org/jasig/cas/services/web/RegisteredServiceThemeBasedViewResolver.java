@@ -25,8 +25,6 @@ import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 import org.springframework.web.servlet.view.InternalResourceView;
@@ -34,17 +32,19 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
-import javax.annotation.Resource;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * {@link RegisteredServiceThemeBasedViewResolver} is an alternate Spring View Resolver that utilizes a service's
  * associated theme to selectively choose which set of UI views will be used to generate
  * the standard views (casLoginView.jsp, casLogoutView.jsp etc).
- *
+ * <p/>
  * <p>Views associated with a particular theme by default are expected to be found at:
- * {@link #DEFAULT_PATH_PREFIX}/<code>themeId/ui</code>. A starting point may be to
+ * {@link #getPrefix()}/<code>themeId/ui</code>. A starting point may be to
  * clone the default set of view pages into a new directory based on the theme id.</p>
- *
+ * <p/>
  * <p>Note: There also exists a {@link org.jasig.cas.services.web.ServiceThemeResolver}
  * that attempts to resolve the view name based on the service theme id. The difference
  * however is that {@link org.jasig.cas.services.web.ServiceThemeResolver} only decorates
@@ -60,42 +60,33 @@ import javax.annotation.Resource;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Component("registeredServiceThemeBasedViewResolver")
 public final class RegisteredServiceThemeBasedViewResolver extends InternalResourceViewResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeBasedViewResolver.class);
-    private static final String DEFAULT_PATH_PREFIX = "/WEB-INF/view/jsp";
-
-    /** The ServiceRegistry to look up the service. */
-    @Resource(name="servicesManager")
-    private ServicesManager servicesManager;
-
-    @Value("${cas.themeResolver.defaultThemeName:cas-theme-default}")
-    private String defaultThemeId;
-
-    @Value("${cas.themeResolver.pathprefix:/WEB-INF/view/jsp")
-    private String pathPrefix = DEFAULT_PATH_PREFIX;
+    public static final String THEME_LOCATION_PATTERN = "%s/%s/ui/";
 
     /**
-     * Instantiates a new Registered service theme based view resolver.
+     * The ServiceRegistry to look up the service.
      */
-    protected RegisteredServiceThemeBasedViewResolver() {}
+    private final ServicesManager servicesManager;
+
+
     /**
      * The {@link RegisteredServiceThemeBasedViewResolver} constructor.
-     * @param defaultThemeId the theme to apply if the service doesn't specific one or a service is not provided
+     *
      * @param servicesManager the serviceManager implementation
      * @see #setCache(boolean)
      */
-    public RegisteredServiceThemeBasedViewResolver(final String defaultThemeId, final ServicesManager servicesManager) {
+    public RegisteredServiceThemeBasedViewResolver(final ServicesManager servicesManager) {
         super();
         super.setCache(false);
 
-        this.defaultThemeId = defaultThemeId;
         this.servicesManager = servicesManager;
     }
 
     /**
      * Uses the viewName and the theme associated with the service.
      * being requested and returns the appropriate view.
+     *
      * @param viewName the name of the view to be resolved
      * @return a theme-based UrlBasedView
      * @throws Exception an exception
@@ -106,17 +97,27 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
         final WebApplicationService service = WebUtils.getService(requestContext);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        final String themeId = service != null && registeredService != null
-                && registeredService.getAccessStrategy().isServiceAccessAllowed()
-                && StringUtils.hasText(registeredService.getTheme()) ? registeredService.getTheme() : defaultThemeId;
-
-        final String themePrefix = String.format("%s/%s/ui/", pathPrefix, themeId);
-        LOGGER.debug("Prefix {} set for service {} with theme {}", themePrefix, service, themeId);
-
-        //Build up the view like the base classes do, but we need to forcefully set the prefix for each request.
-        //From UrlBasedViewResolver.buildView
         final InternalResourceView view = (InternalResourceView) BeanUtils.instantiateClass(getViewClass());
-        view.setUrl(themePrefix + viewName + getSuffix());
+
+        final String defaultThemePrefix = String.format(THEME_LOCATION_PATTERN, getPrefix(), "default");
+        final String defaultViewUrl = defaultThemePrefix + viewName + getSuffix();
+        view.setUrl(defaultViewUrl);
+
+        if (service != null && registeredService != null
+            && registeredService.getAccessStrategy().isServiceAccessAllowed()
+            && StringUtils.hasText(registeredService.getTheme())) {
+
+            LOGGER.debug("Attempting to locate views for service [{}] with theme [{}]",
+                registeredService.getServiceId(), registeredService.getTheme());
+
+            final String themePrefix = String.format(THEME_LOCATION_PATTERN, getPrefix(), registeredService.getTheme());
+            LOGGER.debug("Prefix [{}] set for service [{}] with theme [{}]", themePrefix, service,
+                registeredService.getTheme());
+            final String viewUrl = themePrefix + viewName + getSuffix();
+            view.setUrl(viewUrl);
+
+        }
+
         final String contentType = getContentType();
         if (contentType != null) {
             view.setContentType(contentType);
@@ -137,6 +138,7 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
     /**
      * setCache is not supported in the {@link RegisteredServiceThemeBasedViewResolver} because each
      * request must be independently evaluated.
+     *
      * @param cache a value indicating whether the view should cache results.
      */
     @Override
@@ -145,14 +147,4 @@ public final class RegisteredServiceThemeBasedViewResolver extends InternalResou
         super.setCache(false);
     }
 
-    /**
-     * Sets path prefix. This is the location where
-     * views are expected to be found. The default
-     * prefix is {@link #DEFAULT_PATH_PREFIX}.
-     *
-     * @param pathPrefix the path prefix
-     */
-    public void setPathPrefix(final String pathPrefix) {
-        this.pathPrefix = pathPrefix;
-    }
 }
