@@ -18,12 +18,15 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
+import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.context.ContextConfiguration;
@@ -54,8 +57,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:jpaTestApplicationContext.xml")
 public class JpaLockingStrategyTests {
     /** Number of clients contending for lock in concurrent test. */
     private static final int CONCURRENT_SIZE = 13;
@@ -63,17 +64,23 @@ public class JpaLockingStrategyTests {
     /** Logger instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    @Qualifier("ticketTransactionManager")
+
     private PlatformTransactionManager txManager;
 
-    @Autowired
-    @Qualifier("ticketEntityManagerFactory")
+
     private EntityManagerFactory factory;
 
-    @Autowired
-    @Qualifier("dataSourceTicket")
+
     private DataSource dataSource;
+
+    @Before
+    public void setup() {
+        final ClassPathXmlApplicationContext ctx = new
+            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
+        this.factory = ctx.getBean("ticketEntityManagerFactory", EntityManagerFactory.class);
+        this.txManager = ctx.getBean("ticketTransactionManager", PlatformTransactionManager.class);
+        this.dataSource = ctx.getBean("dataSourceTicket", DataSource.class);
+    }
 
     /**
      * Test basic acquire/release semantics.
