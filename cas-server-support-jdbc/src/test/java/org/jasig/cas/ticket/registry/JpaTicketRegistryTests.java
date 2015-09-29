@@ -147,6 +147,7 @@ public class JpaTicketRegistryTests {
 
     void addTicketInTransaction(final Ticket ticket) {
         new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
+            @Override
             public Void doInTransaction(final TransactionStatus status) {
                 jpaTicketRegistry.addTicket(ticket);
                 return null;
@@ -156,6 +157,7 @@ public class JpaTicketRegistryTests {
 
     void deleteTicketInTransaction(final String ticketId) {
         new TransactionTemplate(txManager).execute(new TransactionCallback<Void>() {
+            @Override
             public Void doInTransaction(final TransactionStatus status) {
                 jpaTicketRegistry.deleteTicket(ticketId);
                 return null;
@@ -165,6 +167,7 @@ public class JpaTicketRegistryTests {
 
     Ticket getTicketInTransaction(final String ticketId) {
         return new TransactionTemplate(txManager).execute(new TransactionCallback<Ticket>() {
+            @Override
             public Ticket doInTransaction(final TransactionStatus status) {
                 return jpaTicketRegistry.getTicket(ticketId);
             }
@@ -173,6 +176,7 @@ public class JpaTicketRegistryTests {
 
     ServiceTicket grantServiceTicketInTransaction(final TicketGrantingTicket parent) {
         return new TransactionTemplate(txManager).execute(new TransactionCallback<ServiceTicket>() {
+            @Override
             public ServiceTicket doInTransaction(final TransactionStatus status) {
                 final ServiceTicket st = newST(parent);
                 jpaTicketRegistry.addTicket(st);

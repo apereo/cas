@@ -54,7 +54,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
 
     @NotNull
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Instance of CentralAuthenticationService. */
     @NotNull

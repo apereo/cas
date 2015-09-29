@@ -60,10 +60,12 @@ public final class DefaultRandomStringGenerator implements RandomStringGenerator
         this.maximumRandomLength = maxRandomLength;
     }
 
+    @Override
     public int getMinLength() {
         return this.maximumRandomLength;
     }
 
+    @Override
     public int getMaxLength() {
         return this.maximumRandomLength;
     }

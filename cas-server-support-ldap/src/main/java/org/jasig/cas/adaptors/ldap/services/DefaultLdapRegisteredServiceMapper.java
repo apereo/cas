@@ -108,6 +108,7 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
         }
     }
 
+    @Override
     public String getObjectClass() {
         return this.objectClass;
     }
@@ -116,6 +117,7 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
         this.objectClass = objectClass;
     }
 
+    @Override
     public String getIdAttribute() {
         return this.idAttribute;
     }
