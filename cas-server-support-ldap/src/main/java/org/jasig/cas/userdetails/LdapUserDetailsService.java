@@ -102,7 +102,7 @@ public class LdapUserDetailsService implements UserDetailsService {
      * {@link #roleAttributeName} per the normal Spring Security convention.
      **/
     @NotNull
-    @Value("${ldap.userdetails.service.role.prefix:}")
+    @Value("${ldap.userdetails.service.role.prefix:" + DEFAULT_ROLE_PREFIX + "}")
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
 
     /** Flag that indicates whether multiple search results are allowed for a given credential. */
