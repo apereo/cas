@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Component("pooledConnectionFactoryMonitor")
+@Component("pooledLdapConnectionFactoryMonitor")
 public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
 
     /** Source of connections to validate. */
