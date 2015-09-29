@@ -34,12 +34,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.stereotype.Component;
+import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.mvc.Controller;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +58,10 @@ import java.util.Map;
  * @since 4.2
  */
 @Component
-public abstract class AbstractServletContextInitializer implements ServletContextListener, ApplicationContextAware {
+public abstract class AbstractServletContextInitializer
+    implements ApplicationContextInitializer<ConfigurableApplicationContext>,
+    WebApplicationInitializer,
+    ServletContextListener, ApplicationContextAware {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -80,6 +89,32 @@ public abstract class AbstractServletContextInitializer implements ServletContex
         destroyServletContext(sce);
         logger.info("Destroyed {} context...", contextInitializerName);
     }
+
+    @Override
+    public final void initialize(final ConfigurableApplicationContext configurableApplicationContext) {
+        logger.info("Initializing application context...");
+        initializeApplicationContext(configurableApplicationContext);
+    }
+
+    @Override
+    public final void onStartup(final ServletContext servletContext) throws ServletException {
+        logger.info("Starting up servlet application context...");
+        onStartupServletContext(servletContext);
+    }
+
+    /**
+     * On startup servlet context.
+     *
+     * @param servletContext the servlet context
+     */
+    protected void onStartupServletContext(final ServletContext servletContext) {}
+
+    /**
+     * Instantiates a new Initialize application context.
+     *
+     * @param configurableApplicationContext the configurable application context
+     */
+    protected void initializeApplicationContext(final ConfigurableApplicationContext configurableApplicationContext) {}
 
     @Override
     public final void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
@@ -126,6 +161,9 @@ public abstract class AbstractServletContextInitializer implements ServletContex
         authenticationMetadataPopulators.add(populator);
     }
 
+    protected final ConfigurableEnvironment getEnvironment() {
+        return (ConfigurableEnvironment) this.applicationContext.getEnvironment();
+    }
 
     /**
      * Gets cas servlet registration.

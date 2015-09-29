@@ -53,7 +53,6 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     }
 
 
-
     /**
      * After properties set.
      */
@@ -141,5 +140,10 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
         LOGGER.debug("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
             + "Changes that are made to service definitions during runtime "
             + "will be LOST upon container restarts.");
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }
