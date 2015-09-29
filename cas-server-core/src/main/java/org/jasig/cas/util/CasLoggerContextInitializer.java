@@ -50,7 +50,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @Component("log4jInitialization")
 public final class CasLoggerContextInitializer implements ServletContextAware {
-    private static AtomicBoolean INITIALIZED = new AtomicBoolean(false);
+    private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CasLoggerContextInitializer.class);
 

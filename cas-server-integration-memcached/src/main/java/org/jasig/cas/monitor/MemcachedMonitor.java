@@ -68,6 +68,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
      *
      * @return Cache status descriptor.
      */
+    @Override
     public CacheStatus observe() {
         if (memcachedClient.getAvailableServers().isEmpty()) {
             return new CacheStatus(StatusCode.ERROR, "No memcached servers available.");
@@ -89,6 +90,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
      *
      * @return Statistics for all available hosts.
      */
+    @Override
     protected CacheStatistics[] getStatistics() {
 
 

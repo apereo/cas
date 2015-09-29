@@ -67,10 +67,12 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
         this.params = params;
     }
 
+    @Override
     public String getCode() {
         return this.code;
     }
 
+    @Override
     public String getDefaultMessage() {
         return this.defaultMessage;
     }
@@ -80,6 +82,7 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
      *
      * @return the serializable [ ]
      */
+    @Override
     public Serializable[] getParams() {
         if (this.params == null) {
             return null;
