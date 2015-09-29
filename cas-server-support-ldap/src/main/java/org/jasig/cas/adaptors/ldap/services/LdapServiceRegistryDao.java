@@ -45,8 +45,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -65,12 +67,14 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @NotNull
+    @Nullable
     @Autowired(required=false)
     @Qualifier("ldapServiceRegistryConnectionFactory")
     private ConnectionFactory connectionFactory;
 
-    @NotNull
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("ldapServiceRegistryMapper")
     private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapRegisteredServiceMapper();
 
     @NotNull
@@ -79,7 +83,7 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     @NotNull
     private String loadFilter;
 
-    @NotNull
+    @Nullable
     @Autowired(required=false)
     @Qualifier("ldapServiceRegistrySearchRequest")
     private SearchRequest searchRequest;

@@ -29,6 +29,8 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 
@@ -48,6 +50,7 @@ import java.util.regex.PatternSyntaxException;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Component("ldapServiceRegistryMapper")
 public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRegisteredServiceMapper.class);
@@ -56,12 +59,15 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
     private JsonSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
 
     @NotNull
+    @Value("${ldap.svc.reg.map.objclass:casRegisteredService}")
     private String objectClass = "casRegisteredService";
 
     @NotNull
+    @Value("${ldap.svc.reg.map.attr.id:uid}")
     private String idAttribute = "uid";
 
     @NotNull
+    @Value("${ldap.svc.reg.map.attr.svc:description}")
     private String serviceDefinitionAttribute = "description";
 
     @Override
