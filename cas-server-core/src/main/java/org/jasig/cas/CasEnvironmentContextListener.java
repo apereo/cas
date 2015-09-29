@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.util.Formatter;
@@ -101,11 +102,12 @@ public final class CasEnvironmentContextListener implements ServletContextListen
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {
+        final ServletContext servletContext = event.getServletContext();
         final ApplicationContext ctx =
-            WebApplicationContextUtils.getWebApplicationContext(event.getServletContext());
+            WebApplicationContextUtils.getWebApplicationContext(servletContext);
 
         LOGGER.info("[{}] has loaded the CAS servlet application context: {}",
-                event.getServletContext().getServerInfo(), ctx);
+            servletContext.getServerInfo(), ctx);
     }
 
     @Override
