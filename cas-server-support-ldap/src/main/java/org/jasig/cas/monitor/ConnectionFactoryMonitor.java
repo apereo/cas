@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Component("connectionFactoryMonitor")
+@Component("ldapConnectionFactoryMonitor")
 public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
 
     /** OK status. */
