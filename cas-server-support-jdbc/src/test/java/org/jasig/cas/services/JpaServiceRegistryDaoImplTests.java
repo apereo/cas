@@ -18,11 +18,9 @@
  */
 package org.jasig.cas.services;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.List;
 
@@ -32,14 +30,17 @@ import static org.junit.Assert.*;
  * Handles tests for {@link JpaServiceRegistryDaoImpl}
  * @author battags
  * @since 3.1.0
- *
  */
-@ContextConfiguration(locations= {"classpath:jpaTestApplicationContext.xml"})
-public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4SpringContextTests {
+public class JpaServiceRegistryDaoImplTests  {
 
-    @Autowired(required=true)
-    @Qualifier("jpaServiceRegistryDao")
-    private ServiceRegistryDao dao;
+    private ServiceRegistryDao  dao;
+
+    @Before
+    public void setup() {
+        final ClassPathXmlApplicationContext ctx = new
+            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
+        this.dao = ctx.getBean("jpaServiceRegistryDao", ServiceRegistryDao.class);
+    }
 
     @Test
     public void verifySaveMethodWithNonExistentServiceAndNoAttributes() {

@@ -22,6 +22,7 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.mock.MockService;
+import org.jasig.cas.monitor.SessionMonitor;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -31,12 +32,14 @@ import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -61,8 +64,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
 public class JpaTicketRegistryTests {
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
@@ -76,13 +77,17 @@ public class JpaTicketRegistryTests {
     /** Logger instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    @Qualifier("ticketTransactionManager")
     private PlatformTransactionManager txManager;
 
-    @Autowired
-    @Qualifier("jpaTicketRegistry")
     private TicketRegistry jpaTicketRegistry;
+
+    @Before
+    public void setup() {
+        final ClassPathXmlApplicationContext ctx = new
+            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
+        this.jpaTicketRegistry = ctx.getBean("jpaTicketRegistry", TicketRegistry.class);
+        this.txManager = ctx.getBean("ticketTransactionManager", PlatformTransactionManager.class);
+    }
 
     @Test
     public void verifyTicketCreationAndDeletion() throws Exception {
