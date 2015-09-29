@@ -34,6 +34,7 @@ public final class ApplicationContextProvider implements ApplicationContextAware
         return CONTEXT;
     }
 
+    @Override
     public void setApplicationContext(final ApplicationContext ctx) {
         CONTEXT = ctx;
     }

@@ -171,5 +171,5 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * from the request.
      */
     protected abstract Credential constructCredentialsFromRequest(
-        final RequestContext context);
+        RequestContext context);
 }

@@ -258,6 +258,7 @@ public class JpaLockingStrategyTests {
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
+                @Override
                 public Object doInTransaction(final TransactionStatus status) {
                     try {
                         final Object result = method.invoke(jpaLock, args);

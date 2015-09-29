@@ -90,10 +90,12 @@ public final class ServiceTicketImpl extends AbstractTicket implements
         this.fromNewLogin = fromNewLogin;
     }
 
+    @Override
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
     }
 
+    @Override
     public Service getService() {
         return this.service;
     }
@@ -150,6 +152,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements
                 this.getGrantingTicket(), authentication, expirationPolicy);
     }
 
+    @Override
     public Authentication getAuthentication() {
         return null;
     }
