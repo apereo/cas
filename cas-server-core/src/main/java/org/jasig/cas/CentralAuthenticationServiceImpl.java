@@ -229,7 +229,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final TicketGrantingTicket ticket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
             final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
+
+            // delete services directly, so caches are updated (no java references in case of cache)
+            for (final Map.Entry<String, Service> entry : ticket.getServices().entrySet()) {
+                this.serviceTicketRegistry.deleteTicket(entry.getKey());
+            }
             this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+
             return logoutRequests;
         } catch (final InvalidTicketException e) {
             logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
@@ -327,6 +333,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 service,
                 this.serviceTicketExpirationPolicy,
                 currentAuthentication != null);
+        // make sure cache is updated
+        this.ticketRegistry.addTicket(ticketGrantingTicket);
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
