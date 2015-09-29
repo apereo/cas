@@ -317,6 +317,11 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
     }
 
     @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
+
+    @Override
     public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

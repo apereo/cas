@@ -326,4 +326,9 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
         }
         return c;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
+    }
 }

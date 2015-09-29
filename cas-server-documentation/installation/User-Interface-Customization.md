@@ -57,24 +57,7 @@ Selecting CSS files per enabled locale would involve changing the `top.jsp` file
 
 
 ###Responsive Design
-CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `css/cas.css` file. Below follows an example:
-
-{% highlight css %}
-@media only screen and (max-width: 960px) {
-  footer { padding-left: 10px; }
-}
-
-@media only screen and (max-width: 799px) {
-  header h1 { font-size: 1em; }
-  #login { float: none; width: 100%; }
-  #fm1 .row input[type=text],
-  #fm1 .row input[type=password] { width: 100%; padding: 10px; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }
-  #fm1 .row .btn-submit { outline: none; -webkit-appearance: none; -webkit-border-radius: 0; border: 0; background: #210F7A; color: white; font-weight: bold; width: 100%; padding: 10px 20px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
-  #fm1 .row .btn-reset { display: none; }
-  #sidebar { margin-top: 20px; }
-  #sidebar .sidebar-content { padding: 0; }
-}
-{% endhighlight %}
+CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `css/cas.css` file.
 
 
 ##Javascript
@@ -98,18 +81,7 @@ The following Javascript libraries are utilized by CAS automatically:
 
 ###Asynchronous Script Loading
 CAS will attempt load the aforementioned script libraries asynchronously so as to not block the page rendering functionality.
-The loading of script files is handled by the [`head.js` library](http://headjs.com) and is the responsibility of `cas.js` file:
-
-{% highlight javascript %}
-var scripts = [ "...", "..."];
-head.ready(document, function() {
-    head.load(scripts, resourceLoadedSuccessfully);
-});
-
-function resourceLoadedSuccessfully() {
-    ...
-}
-{% endhighlight %}
+The loading of script files is handled by the [`head.js` library](http://headjs.com) and is the responsibility of `cas.js` file.
 
 The only script that is loaded synchronously is the `head.js` library itself.
 
@@ -283,19 +255,6 @@ For an accurate and complete list of localized messages, always refer to the Eng
 All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the
 English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views,
 they may also be formatted under `custom_messages.properties` files.
-
-Messages are parsed and loaded via the following configuration:
-
-{% highlight xml %}
-<bean id="messageSource" class="CasReloadableMessageBundle"
-          p:basenames-ref="basenames" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
-          p:cacheSeconds="180" p:useCodeAsDefaultMessage="true" />
-
-<util:list id="basenames">
-    <value>classpath:custom_messages</value>
-    <value>classpath:messages</value>
-</util:list>
-{% endhighlight %}
 
 Messages are then read on each JSP view via the following sample configuration:
 

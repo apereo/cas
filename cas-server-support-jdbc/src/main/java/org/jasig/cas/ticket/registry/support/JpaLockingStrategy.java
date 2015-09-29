@@ -18,10 +18,12 @@
  */
 package org.jasig.cas.ticket.registry.support;
 
+import org.jasig.cas.ticket.registry.JpaTicketRegistryCondition;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
@@ -45,6 +47,7 @@ import java.util.Date;
  * @since 3.0.0
  */
 @Component("jpaLockingStrategy")
+@Conditional(JpaTicketRegistryCondition.class)
 public class JpaLockingStrategy implements LockingStrategy {
 
     /** Default lock timeout is 1 hour. */
