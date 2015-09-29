@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class CasEnvironmentContextListener implements ServletContextListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasEnvironmentContextListener.class);
 
-    private static AtomicBoolean INITIALIZED = new AtomicBoolean(false);
+    private static final AtomicBoolean INITIALIZED = new AtomicBoolean(false);
 
     /**
      * Instantiates a new Cas environment context listener.

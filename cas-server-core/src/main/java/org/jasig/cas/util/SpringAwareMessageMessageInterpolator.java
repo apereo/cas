@@ -44,6 +44,7 @@ public final class SpringAwareMessageMessageInterpolator implements MessageInter
 
     private MessageSource messageSource;
 
+    @Override
     public void setMessageSource(final MessageSource messageSource) {
         this.messageSource = messageSource;
     }

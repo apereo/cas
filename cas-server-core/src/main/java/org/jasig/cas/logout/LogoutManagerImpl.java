@@ -255,6 +255,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param logoutRequest the logout request.
      * @return a front SAML logout message.
      */
+    @Override
     public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
         final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
         LOGGER.trace("Attempting to deflate the logout message [{}]", logoutMessage);

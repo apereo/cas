@@ -246,39 +246,48 @@ public class KryoTranscoderTests {
             this.id = id;
         }
 
+        @Override
         public Service getService() {
             return null;
         }
 
+        @Override
         public boolean isFromNewLogin() {
             return false;
         }
 
+        @Override
         public boolean isValidFor(final Service service) {
             return false;
         }
 
+        @Override
         public TicketGrantingTicket grantTicketGrantingTicket(final String id, final Authentication authentication,
-                final ExpirationPolicy expirationPolicy) {
+                                                              final ExpirationPolicy expirationPolicy) {
             return null;
         }
 
+        @Override
         public String getId() {
             return id;
         }
 
+        @Override
         public boolean isExpired() {
             return false;
         }
 
+        @Override
         public TicketGrantingTicket getGrantingTicket() {
             return null;
         }
 
+        @Override
         public long getCreationTime() {
             return 0;
         }
 
+        @Override
         public int getCountOfUses() {
             return 0;
         }

@@ -36,6 +36,7 @@ public class MockValidationSpecification implements ValidationSpecification {
         this.test = test;
     }
 
+    @Override
     public boolean isSatisfiedBy(final Assertion assertion) {
         return this.test;
     }

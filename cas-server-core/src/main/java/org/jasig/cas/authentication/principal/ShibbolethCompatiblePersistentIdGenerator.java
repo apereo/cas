@@ -53,7 +53,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
 
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
-    private byte[] salt;
+    private final byte[] salt;
 
     /**
      * Instantiates a new shibboleth compatible persistent id generator.
