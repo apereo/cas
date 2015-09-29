@@ -35,10 +35,6 @@
     </description>
 
 
-    <bean id="openIdValidateController" parent="serviceValidateController"
-          p:successView="casOpenIdServiceSuccessView"
-          p:failureView="casOpenIdServiceFailureView"/>
-
     <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
           p:delegates-ref="delegateControllers"/>
 

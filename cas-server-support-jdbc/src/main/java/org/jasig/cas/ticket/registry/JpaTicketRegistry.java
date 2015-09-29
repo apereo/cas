@@ -45,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
@@ -72,6 +73,7 @@ import java.util.concurrent.TimeUnit;
  *
  */
 @Component("jpaTicketRegistry")
+@Conditional(JpaTicketRegistryCondition.class)
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
 
     @Value("${ticket.registry.cleaner.repeatinterval:5000000}")

@@ -191,7 +191,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
 
         this.services = localServices;
-        LOGGER.info("Loaded {} services.", this.services.size());
+        LOGGER.info("Loaded {} services from {}.", this.services.size(),
+            this.serviceRegistryDao);
 
     }
 
