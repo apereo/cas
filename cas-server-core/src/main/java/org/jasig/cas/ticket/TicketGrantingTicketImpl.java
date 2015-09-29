@@ -137,6 +137,8 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         final List<Authentication> authentications = getChainedAuthentications();
         service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
 
+        // remove this service if it already exists to only keep the latest service ticket for a service
+        this.services.values().remove(service);
         this.services.put(id, service);
 
         return serviceTicket;

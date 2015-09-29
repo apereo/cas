@@ -14,5 +14,6 @@ bin/
 overlays/
 pom.xml.versionsBackup
 *.log
+*.log.gz
 
 **/.checkstyle

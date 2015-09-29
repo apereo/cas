@@ -143,6 +143,11 @@ public final class TestUtils {
         return getService(CONST_USERNAME);
     }
 
+
+    public static Service getService2() {
+        return getService(CONST_PASSWORD);
+    }
+
     public static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);

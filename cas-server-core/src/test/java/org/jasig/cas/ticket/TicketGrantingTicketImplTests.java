@@ -184,4 +184,42 @@ public class TicketGrantingTicketImplTests {
         t.markTicketExpired();
         assertTrue(t.isExpired());
     }
+
+    @Test
+    public void verifyDoubleGrantSameServiceTicket() {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(),
+                false);
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(),
+                false);
+
+        assertEquals(1, t.getServices().size());
+    }
+
+    @Test
+    public void verifyDoubleGrantDifferentServiceTicket() {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null,
+                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(),
+                false);
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService2(),
+                new NeverExpiresExpirationPolicy(),
+                false);
+
+        assertEquals(2, t.getServices().size());
+    }
 }
