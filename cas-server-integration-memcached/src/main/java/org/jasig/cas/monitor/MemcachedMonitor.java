@@ -18,15 +18,18 @@
  */
 package org.jasig.cas.monitor;
 
+import net.spy.memcached.MemcachedClientIF;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import javax.validation.constraints.NotNull;
-
-import net.spy.memcached.MemcachedClientIF;
 
 /**
  * Monitors the memcached hosts known to an instance of {@link net.spy.memcached.MemcachedClientIF}.
@@ -34,11 +37,19 @@ import net.spy.memcached.MemcachedClientIF;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
+@Component("memcachedMonitor")
 public class MemcachedMonitor extends AbstractCacheMonitor {
 
-    @NotNull
-    private final MemcachedClientIF memcachedClient;
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("memcachedMonitorClient")
+    private MemcachedClientIF memcachedClient;
 
+
+    /**
+     * Instantiates a new Memcached monitor.
+     */
+    public MemcachedMonitor() {}
 
     /**
      * Creates a new monitor that observes the given memcached client.
@@ -92,7 +103,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
                 final long capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
                 final long evictions = Long.parseLong(statsMap.get("evictions"));
 
-                String name;
+                final String name;
                 if (key instanceof InetSocketAddress) {
                     name = ((InetSocketAddress) key).getHostName();
                 } else {

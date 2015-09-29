@@ -28,12 +28,17 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,6 +58,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Component("ldapUserDetailsService")
 public class LdapUserDetailsService implements UserDetailsService {
 
     /** Default role prefix. */
@@ -65,33 +71,48 @@ public class LdapUserDetailsService implements UserDetailsService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Source of LDAP connections. */
-    @NotNull
-    private final ConnectionFactory connectionFactory;
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("ldapUserDetailsServiceConnectionFactory")
+    private ConnectionFactory connectionFactory;
 
     /** Executes the search query for user data. */
-    @NotNull
-    private final SearchExecutor userSearchExecutor;
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("ldapUserDetailsServiceUserSearchExecutor")
+    private SearchExecutor userSearchExecutor;
 
     /** Executes the search query for roles. */
-    @NotNull
-    private final SearchExecutor roleSearchExecutor;
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("ldapUserDetailsServiceRoleSearchExecutor")
+    private SearchExecutor roleSearchExecutor;
 
     /** Specify the name of LDAP attribute to use as principal identifier. */
     @NotNull
-    private final String userAttributeName;
+    @Value("${ldap.userdetails.service.user.attr:}")
+    private String userAttributeName;
 
     /** Specify the name of LDAP attribute to be used as the basis for role granted authorities. */
     @NotNull
-    private final String roleAttributeName;
+    @Value("${ldap.userdetails.service.role.attr:}")
+    private String roleAttributeName;
 
     /** Prefix appended to the uppercased
      * {@link #roleAttributeName} per the normal Spring Security convention.
      **/
     @NotNull
+    @Value("${ldap.userdetails.service.role.prefix:}")
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
 
     /** Flag that indicates whether multiple search results are allowed for a given credential. */
+    @Value("${ldap.userdetails.service.allow.multiple:false}")
     private boolean allowMultipleResults;
+
+    /**
+     * Instantiates a new Ldap user details service.
+     */
+    public LdapUserDetailsService() {}
 
     /**
      * Creates a new instance with the given required parameters.

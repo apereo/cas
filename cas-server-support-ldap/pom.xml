@@ -96,6 +96,13 @@
       <artifactId>unboundid-ldapsdk</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+
   </dependencies>
 
   <properties>
