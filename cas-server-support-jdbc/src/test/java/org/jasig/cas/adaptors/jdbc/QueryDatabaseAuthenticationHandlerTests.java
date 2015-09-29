@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -48,18 +49,21 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
+
 public class QueryDatabaseAuthenticationHandlerTests {
 
     private static final String SQL = "SELECT password FROM casusers where username=?";
 
-    @Autowired
-    @Qualifier("dataSource")
+
     private DataSource dataSource;
 
     @Before
     public void setup() throws Exception {
+
+        final ClassPathXmlApplicationContext ctx = new
+            ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
+
+        this.dataSource = ctx.getBean("dataSource", DataSource.class);
         final Connection c = this.dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);

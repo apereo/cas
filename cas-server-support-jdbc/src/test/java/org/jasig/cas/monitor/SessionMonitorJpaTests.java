@@ -20,6 +20,7 @@ package org.jasig.cas.monitor;
 
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockService;
+import org.jasig.cas.services.ServiceRegistryDao;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -31,6 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -44,22 +46,21 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:/jpaTestApplicationContext.xml"})
 @Transactional
 public class SessionMonitorJpaTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
 
-    @Autowired
-    @Qualifier("jpaTicketRegistry")
     private TicketRegistry jpaRegistry;
 
     private SessionMonitor monitor;
 
     @Before
-    public void setUp() {
+    public void setup() {
+        final ClassPathXmlApplicationContext ctx = new
+            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
+        this.jpaRegistry = ctx.getBean("jpaTicketRegistry", TicketRegistry.class);
         this.monitor = new SessionMonitor();
     }
 
