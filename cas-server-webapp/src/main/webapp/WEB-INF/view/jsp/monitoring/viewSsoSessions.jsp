@@ -34,6 +34,53 @@
             String(this.getMinutes()).padLeft(2, '0')].join(":");
         };
 
+
+        /* Formatting function for row details - modify as you need */
+        function format ( d ) {
+            // `d` is the original data object for the row
+
+
+            return '<table class="table table-bordered row-detail">' +
+                //'<thead><tr><th class="col-sm-4"></th><th class="col-sm-8"></th>' +
+                '<tbody>'+
+                '<tr>'+
+                    '<td class="field-label active">Ticket Granting Ticket:</td>'+
+                    '<td>'+d.ticket_granting_ticket+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="field-label active">Principal Attributes:</td>'+
+                    '<td>' +
+/*
+        '<ul class="list-unstyled">' +
+        '<li>eduPersonAffiliation: <strong>' + d.principal_attributes.eduPersonAffiliation + '</strong></li>' +
+        '<li>groupMembership: <strong>' + d.principal_attributes.groupMembership + '</strong></li>' +
+        '<li><strong>memberOf:</strong> ' + d.principal_attributes.memberOf.toString() + '</li>' +
+        '</ul>' +
+*/
+                        '<table class="table table-condensed principal_attributes"><tbody>' +
+                            '<tr><td class="field-label active">eduPersonAffiliation:</td><td>' + d.principal_attributes.eduPersonAffiliation + '</td></tr>' +
+                            '<tr><td class="field-label active">groupMembership:</td><td>' + d.principal_attributes.groupMembership + '</td></tr>' +
+                            '<tr><td class="field-label active">memberOf:</td><td>' + d.principal_attributes.memberOf.toString() + '</td></tr>' +
+                        '</tbody></table>'+
+//                        '<table class="table table-condensed">' +
+//                            '<tr><td class="col-sm-4">eduPersonAffiliation:</td><td class="col-sm-8">' + d.principal_attributes.eduPersonAffiliation + '</td></tr>' +
+//                            '<tr><td class="col-sm-4">groupMembership:</td><td class="col-sm-8">' + d.principal_attributes.groupMembership + '</td></tr>' +
+//                            '<tr><td class="col-sm-4">memberOf:</td><td class="col-sm-8">' + d.principal_attributes.memberOf.toString() + '</td></tr>' +
+//                        '</table>'+
+                    '</td>' +
+                '</tr>'+
+                '<tr>'+
+                    '<td class="field-label active">Authenticated Services:</td>'+
+                    '<td></td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="field-label active">Ticket Granting Service:</td>'+
+                    '<td></td>'+
+                '</tr>'+
+            '</tbody></table>';
+
+        }
+
         function updateAdminPanels( data ) {
             //$('#totalUsers').text(data.totalPrincipals);
             $('#totalUsers').text(data.activeSsoSessions.length);
@@ -214,6 +261,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-12">graph</div>
                     </div>
                 </div>
 
@@ -240,6 +288,7 @@
                         <thead>
                             <tr>
                                 <th>&nbsp;</th>
+                                <th>&nbsp;</th>
                                 <th><spring:message code="cas.ssosessions.table.header.principal" /></th>
                                 <th><spring:message code="cas.ssosessions.table.header.ticketgrantingticket" /></th>
                                 <th><spring:message code="cas.ssosessions.table.header.authenticationdate" /></th>
@@ -249,6 +298,7 @@
                         </thead>
                         <tbody>
                             <tr>
+                                <td></td>
                                 <td></td>
                                 <td>User</td>
                                 <td>TGT</td>
