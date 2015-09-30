@@ -52,13 +52,21 @@ var ssoSessions = (function () {
             },
             "processing": true,
             "ajax": {
-                "url": '/cas/statistics/ssosessions/getSsoSessions',
+                "url": '/cas/js/test-data-generated.json',
+                //"url": '/cas/statistics/ssosessions/getSsoSessions',
                 "dataSrc": "activeSsoSessions"
             },
 
             columnDefs: [
                 {
                     "targets": 0,
+                    "className":      'details-control',
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ''
+                },
+                {
+                    "targets": 1,
                     "data": 'is_proxied',
                     'className': 'col-xs-1',
                     "render" : function ( data, type, full, meta ) {
@@ -70,7 +78,7 @@ var ssoSessions = (function () {
                     }
                 },
                 {
-                    "targets": 1,
+                    "targets": 2,
                     "data": 'authenticated_principal',
                     "className": 'col-xs-2',
                     "render": function ( data, type, full, meta ) {
@@ -80,7 +88,7 @@ var ssoSessions = (function () {
                     }
                 },
                 {
-                    "targets": 2,
+                    "targets": 3,
                     "data": 'ticket_granting_ticket',
                     "className": 'col-xs-3',
                     "render": function ( data, type, full, meta ) {
@@ -90,7 +98,7 @@ var ssoSessions = (function () {
                     }
                 },
                 {
-                    "targets": 3,
+                    "targets": 4,
                     "data": 'authentication_date',
                     "className": 'col-xs-3',
                     "render": function ( data, type, full, meta ) {
@@ -99,16 +107,16 @@ var ssoSessions = (function () {
                     }
                 },
                 {
-                    "targets": 4,
+                    "targets": 5,
                     "data": 'number_of_uses',
                     "className": 'col-xs-2'
                 },
                 {
-                    "targets": 5,
+                    "targets": 6,
                     "data": "ticket_granting_ticket",
                     "className": 'col-xs-1',
                     "render": function (data, type, full, meta ) {
-                        return '<button class="btn btn-sm btn-danger" type="button" value="' + data + '">Destroy</button>';
+                        return '<button class="btn btn-xs btn-danger" type="button" value="' + data + '">Destroy</button>';
                     },
                     "orderable": false
                 },
@@ -161,6 +169,28 @@ var ssoSessions = (function () {
 
             $('#removeAllSessionsButton').val( deleteValue ).html(btnText.replace('xx', searchTerm.page.info().recordsDisplay ))
         });
+
+
+        // Add event listener for opening and closing details
+        $(document).on('click', '#ssoSessions tbody td.details-control', function () {
+        //$('#ssoSessions tbody').on('click', 'td.details-control', function () {
+            var table = $('#ssoSessions').DataTable();
+            var tr = $(this).closest('tr');
+            var row = table.row( tr );
+
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                // Open this row
+                row.child( format(row.data()), 'info' ).show();
+                tr.addClass('shown');
+            }
+        } );
+
+
 
     };
 
