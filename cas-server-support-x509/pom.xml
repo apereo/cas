@@ -56,7 +56,6 @@
     <dependency>
 	  <groupId>org.cryptacular</groupId>
 	  <artifactId>cryptacular</artifactId>
-	  <version>1.0</version>
 	</dependency>
     <dependency>
       <groupId>org.springframework.webflow</groupId>
