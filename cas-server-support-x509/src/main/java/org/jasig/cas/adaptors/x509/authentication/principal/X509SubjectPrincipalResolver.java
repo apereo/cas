@@ -147,10 +147,9 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     private static String[] getAttributeValues(final RDNSequence rdnSequence,
             final AttributeType attribute) {
         // Iterates sequence in reverse order as specified in section 2.1 of RFC 2253
-        final Iterable<RDN> it = rdnSequence.backward();
         final List<String> values = new ArrayList<String>();
-        for (final RDN rdn : it) {
-            for (final Attribute attr : rdn.getAttributes().getAll()) {
+        for (final RDN rdn : rdnSequence.backward()) {
+            for (final Attribute attr : rdn.getAttributes()) {
                 if (attr.getType().equals(attribute)) {
                     values.add(attr.getValue());
                 }
