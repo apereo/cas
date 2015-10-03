@@ -19,9 +19,16 @@
 
 package org.jasig.cas.support.oauth;
 
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.ServiceFactory;
+import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -42,23 +49,26 @@ public class OAuthServletContextListener extends AbstractServletContextInitializ
     @Value("${server.prefix:http://localhost:8080/cas}" + OAuthConstants.ENDPOINT_OAUTH2_CALLBACK_AUTHORIZE)
     private String callbackAuthorizeUrl;
 
-
-    @Override
-    protected void initializeRootApplicationContext() {
-        super.initializeRootApplicationContext();
-    }
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Override
     protected void initializeServletApplicationContext() {
         addControllerToCasServletHandlerMapping(OAuthConstants.ENDPOINT_OAUTH2, "oauth20WrapperController");
 
-        final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
-        service.setId(new SecureRandom().nextLong());
-        service.setName(service.getClass().getSimpleName());
-        service.setDescription("OAuth Wrapper Callback Url");
-        service.setServiceId(this.callbackAuthorizeUrl);
+        final ServicesManager servicesManager = getServicesManager();
+        final Service callbackService = webApplicationServiceFactory.createService(this.callbackAuthorizeUrl);
+        if (!servicesManager.matchesExistingService(callbackService))  {
+            final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
+            service.setId(new SecureRandom().nextLong());
+            service.setName(service.getClass().getSimpleName());
+            service.setDescription("OAuth Wrapper Callback Url");
+            service.setServiceId(this.callbackAuthorizeUrl);
 
-        addRegisteredServiceToServicesManager(service);
+            addRegisteredServiceToServicesManager(service);
+        }
+
     }
 
     @Override
