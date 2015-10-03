@@ -213,7 +213,7 @@ public abstract class AbstractServletContextInitializer
      * @param path the path
      * @param controller the controller
      */
-    protected final void addControllerToCasServletHandlerMapping(final String path, final Controller controller) {
+    protected final void addControllerToCasServletHandlerMapping(final String path, final Object controller) {
         logger.debug("Adding {} to application context for {}", controller, path);
         final SimpleUrlHandlerMapping handlerMappingC = getCasServletHandlerMapping();
         final Map<String, Object> urlMap = (Map<String, Object>) handlerMappingC.getUrlMap();
