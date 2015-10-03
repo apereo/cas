@@ -22,7 +22,6 @@ package org.jasig.cas.support.oauth;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.web.AbstractServletContextInitializer;
