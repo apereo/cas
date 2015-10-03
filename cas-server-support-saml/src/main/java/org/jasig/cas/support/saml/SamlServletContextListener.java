@@ -23,10 +23,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
+import org.jasig.cas.support.saml.web.SamlValidateController;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
+import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -69,9 +71,15 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
     @Qualifier("samlServiceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator;
 
+    @Autowired
+    @Qualifier("samlValidateController")
+    private SamlValidateController samlValidateController;
+
     @Override
-    public void initializeServletContext(final ServletContextEvent sce) {
-        addEndpointMappingToCasServlet(sce, SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
+    public void initializeServletContext(final ServletContextEvent event) {
+        if (WebUtils.isCasServletInitializing(event)) {
+            addEndpointMappingToCasServlet(event, SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
+        }
     }
 
     @Override
@@ -84,8 +92,7 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
 
     @Override
     protected void initializeServletApplicationContext() {
-        addControllerToCasServletHandlerMapping(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE,
-                "samlValidateController");
+        addControllerToCasServletHandlerMapping(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, samlValidateController);
     }
 
     @Component
