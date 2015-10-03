@@ -19,14 +19,12 @@
 
 package org.jasig.cas.support.openid.authentication.principal;
 
-import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.openid4java.message.ParameterList;
-import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -50,12 +48,7 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
     private String openIdPrefixUrl;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    @Qualifier("serverManager")
-    private ServerManager serverManager;
+    private ApplicationContext applicationContext;
 
     public String getOpenIdPrefixUrl() {
         return openIdPrefixUrl;
@@ -78,8 +71,9 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
         final String artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
         final ParameterList paramList = new ParameterList(request.getParameterMap());
 
-        final OpenIdServiceResponseBuilder builder = new OpenIdServiceResponseBuilder(serverManager,
-            centralAuthenticationService, paramList, this.openIdPrefixUrl);
+
+        final OpenIdServiceResponseBuilder builder = new OpenIdServiceResponseBuilder(
+                paramList, this.openIdPrefixUrl);
 
         return new OpenIdService(id, service, artifactId, openIdIdentity, builder);
     }
@@ -87,8 +81,8 @@ public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> 
     @Override
     public OpenIdService createService(final String id) {
         final ParameterList paramList = new ParameterList();
-        final OpenIdServiceResponseBuilder builder = new OpenIdServiceResponseBuilder(serverManager,
-            centralAuthenticationService, paramList, this.openIdPrefixUrl);
+        final OpenIdServiceResponseBuilder builder = new OpenIdServiceResponseBuilder(
+                paramList, this.openIdPrefixUrl);
         return new OpenIdService(id, id, null, this.openIdPrefixUrl, builder);
     }
 }
