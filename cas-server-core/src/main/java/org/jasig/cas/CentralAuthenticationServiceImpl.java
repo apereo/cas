@@ -73,6 +73,7 @@ import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -112,7 +113,9 @@ import java.util.Set;
  * @since 3.0.0
  */
 @Component("centralAuthenticationService")
-public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
+public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService, Serializable {
+
+    private static final long serialVersionUID = -8943828074939533986L;
 
     /** Log instance for logging events, info, warnings, errors, etc. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
