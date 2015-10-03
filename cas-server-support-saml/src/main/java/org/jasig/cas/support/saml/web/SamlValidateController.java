@@ -34,7 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@link SamlValidateController} is responsible for...
+ * The {@link SamlValidateController} is responsible for
+ * validating requests based on the saml1 protocol.
  *
  * @author Misagh Moayyed
  * @since 4.2
