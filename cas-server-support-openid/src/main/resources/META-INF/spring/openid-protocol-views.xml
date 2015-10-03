@@ -35,6 +35,9 @@
     </description>
 
 
+    <context:component-scan base-package="org.jasig.cas"/>
+    <context:annotation-config/>
+
     <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
           p:delegates-ref="delegateControllers"/>
 
@@ -48,8 +51,6 @@
           p:oPEndpointUrl="${server.prefix}/login"
           p:enforceRpId="${cas.openid.enforce.rpid:false}" />
 
-    <context:component-scan base-package="org.jasig.cas"/>
-    <context:annotation-config/>
 
     <!-- OpenId View -->
 
