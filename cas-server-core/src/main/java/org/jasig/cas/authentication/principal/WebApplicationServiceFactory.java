@@ -67,6 +67,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
     @Override
     public WebApplicationService createService(final String id) {
-        return new SimpleWebApplicationServiceImpl(id, id, null, null);
+        return new SimpleWebApplicationServiceImpl(id, id, null,
+                new WebApplicationServiceResponseBuilder(Response.ResponseType.REDIRECT));
     }
 }

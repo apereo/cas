@@ -188,8 +188,12 @@ public abstract class AbstractServletContextInitializer
      */
     protected final void addRegisteredServiceToServicesManager(final RegisteredService svc) {
         logger.debug("Adding {} to application context services", svc);
-        final ServicesManager manager = this.applicationContext.getBean("servicesManager", ServicesManager.class);
+        final ServicesManager manager = getServicesManager();
         manager.save(svc);
+    }
+
+    protected final ServicesManager getServicesManager() {
+        return this.applicationContext.getBean("servicesManager", ServicesManager.class);
     }
 
     /**
