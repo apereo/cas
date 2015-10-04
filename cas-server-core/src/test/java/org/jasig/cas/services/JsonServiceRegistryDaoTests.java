@@ -61,6 +61,24 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
+    public void checkSaveMethodWithAttributeConsent() {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("checkSaveMethodWithAttributeConsent");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+
+        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
+        policy.setAttributeConsentRequired(true);
+        r.setAttributeReleasePolicy(policy);
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+    }
+
+    @Test
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setName("testSaveMethodWithNonExistentServiceAndNoAttributes");

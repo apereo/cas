@@ -215,6 +215,7 @@ public final class RegisteredServiceEditBean implements Serializable {
 
             attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
             attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
+            attrPolicyBean.setRequireConsent(attrPolicy.isAttributeConsentRequired());
 
             final AttributeFilter filter = attrPolicy.getAttributeFilter();
             if (filter != null) {
@@ -638,12 +639,32 @@ public final class RegisteredServiceEditBean implements Serializable {
             }
         }
 
+                convertUsernameAttributeToRegisteredService(regSvc);
+
+                if (this.publicKey != null && this.publicKey.isValid()) {
+                    final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
+                            this.publicKey.getLocation(), this.publicKey.getAlgorithm());
+                    regSvc.setPublicKey(publicKey);
+                }
+
+                final RegisteredServiceAttributeReleasePolicyStrategyEditBean policyBean =
+                        this.attrRelease.getAttrPolicy();
+                final String policyType = policyBean.getType();
+
+                convertAttributeReleasePolicyToRegisteredService(dao, regSvc, policyBean, policyType);
+
+                return regSvc;
+            } catch (final Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         /**
-         * Convert username attribute to service.
+         * Convert username attribute to registered service.
          *
          * @param regSvc the reg svc
          */
-        private void convertUsernameAttributeToService(final AbstractRegisteredService regSvc) {
+        private void convertUsernameAttributeToRegisteredService(final AbstractRegisteredService regSvc) {
             final String uidType = this.userAttrProvider.getType();
             if (StringUtils.equalsIgnoreCase(uidType,
                     RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString())) {
@@ -674,31 +695,49 @@ public final class RegisteredServiceEditBean implements Serializable {
         }
 
         /**
-         * Convert access strategy to service.
+         * Convert attribute release policy to registered service.
          *
-         * @param accessStrategy the access strategy
+         * @param dao the dao
+         * @param regSvc the reg svc
+         * @param policyBean the policy bean
+         * @param policyType the policy type
          */
-        private void convertAccessStrategyToService(final DefaultRegisteredServiceAccessStrategy accessStrategy) {
-            accessStrategy
-                    .setEnabled(this.supportAccess.isCasEnabled());
-            accessStrategy
-                    .setSsoEnabled(this.supportAccess.isSsoEnabled());
-            accessStrategy
-                    .setRequireAllAttributes(this.supportAccess.isRequireAll());
+        private void convertAttributeReleasePolicyToRegisteredService(final IPersonAttributeDao dao,
+                final AbstractRegisteredService regSvc,
+                final RegisteredServiceAttributeReleasePolicyStrategyEditBean policyBean,
+                final String policyType) {
 
-            final Map<String, Set<String>> requiredAttrs = this.supportAccess.getRequiredAttr();
-            final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
-            final Iterator<Map.Entry<String, Set<String>>> it = entries.iterator();
-            while (it.hasNext()) {
-                final Map.Entry<String, Set<String>> entry = it.next();
-                if (entry.getValue().isEmpty()) {
-                    it.remove();
-                }
+            AbstractAttributeReleasePolicy policy = null;
+            if (StringUtils.equalsIgnoreCase(policyType,
+                    AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
+                policy = new ReturnAllAttributeReleasePolicy();
+            } else if (StringUtils.equalsIgnoreCase(policyType,
+                    AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString())) {
+                policy = new ReturnAllowedAttributeReleasePolicy((List) policyBean.getAttributes());
+            } else if (StringUtils.equalsIgnoreCase(policyType,
+                    AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString())) {
+                policy = new ReturnMappedAttributeReleasePolicy((Map) policyBean.getAttributes());
+            } else {
+                policy = new ReturnAllowedAttributeReleasePolicy();
+            }
+            final String filter = this.attrRelease.getAttrFilter();
+            if (StringUtils.isNotBlank(filter)) {
+                policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter(filter));
             }
             accessStrategy
                     .setRequiredAttributes(requiredAttrs);
-        }
-
+            policy.setAttributeConsentRequired(this.attrRelease.isRequireConsent());
+            final String attrType = this.attrRelease.getAttrOption();
+            if (StringUtils.equalsIgnoreCase(attrType,
+                    RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
+                policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
+                        TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
+                        this.attrRelease.getCachedExpiration()));
+            } else if (StringUtils.equalsIgnoreCase(attrType,
+                    RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString())) {
+                policy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
+            }
+            regSvc.setAttributeReleasePolicy(policy);
         /**
          * Convert logout types to service.
          *
@@ -713,7 +752,6 @@ public final class RegisteredServiceEditBean implements Serializable {
                 regSvc.setLogoutType(LogoutType.FRONT_CHANNEL);
             } else {
                 regSvc.setLogoutType(LogoutType.NONE);
-            }
         }
 
         /**

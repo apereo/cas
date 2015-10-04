@@ -74,17 +74,16 @@
   </bean>
 
   <!--
-  <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
+    <bean id="customXmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
           p:order="1000"
           p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
   -->
-
+    
   <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
         p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
         p:order="2000"/>
-
   <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
         p:viewClass="org.springframework.web.servlet.view.JstlView"
         p:prefix="${cas.viewResolver.defaultViewsPathPrefix:/WEB-INF/view/jsp/default/ui/}"
@@ -109,6 +108,9 @@
       <util:properties>
         <prop key="/serviceValidate">serviceValidateController</prop>
         <prop key="/proxyValidate">proxyValidateController</prop>
+        <!--
+        <prop key="/oauth2.0/*">oauth20WrapperController</prop>
+        -->
         <prop key="/p3/serviceValidate">v3ServiceValidateController</prop>
         <prop key="/p3/proxyValidate">v3ProxyValidateController</prop>
         <prop key="/validate">legacyValidateController</prop>
@@ -331,6 +333,22 @@
         c:warnCookieGenerator-ref="warnCookieGenerator"/>
 
   <bean id="acceptableUsagePolicyFormAction" class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
+
+  <bean id="authorizeAttributeReleaseAction"
+        class="org.jasig.cas.web.flow.ConsentAttributeReleaseAction"
+        c:attributeReleaseConsentStrategy-ref="attributeReleaseConsentStrategy"
+        c:centralAuthenticationService-ref="centralAuthenticationService"
+        c:servicesManager-ref="servicesManager"
+        p:alwaysRequireConsent="${cas.attrs.consent.always:false}"/>
+
+  <bean id="attributeReleaseConsentStrategy" class="org.jasig.cas.services.DefaultAttributeReleaseConsentStrategy" />
+
+  <!--
+  <bean id="oauth20WrapperController"
+        class="org.jasig.cas.support.oauth.web.OAuth20WrapperController"
+        p:loginUrl="${server.prefix}/login"
+        p:timeout="${tgt.timeToKillInSeconds:7200}" />
+  -->
 
 
 </beans>

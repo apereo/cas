@@ -20,6 +20,7 @@ package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.logout.LogoutRequest;
@@ -275,6 +276,17 @@ public final class WebUtils {
     }
 
     /**
+     * Puts an object into flow scope.
+     *
+     * @param context the context
+     * @param name the name
+     * @param value the value
+     */
+    public static void putIntoFlowScope(final RequestContext context, final String name, final Object value) {
+        context.getFlowScope().put(name, value);
+    }
+
+    /**
      * Put warning cookie value into flowscope.
      *
      * @param context the context
@@ -294,6 +306,18 @@ public final class WebUtils {
                                             final RegisteredService registeredService) {
         context.getFlowScope().put("registeredService", registeredService);
     }
+
+    /**
+     * Put principal into flowscope.
+     *
+     * @param context the context
+     * @param principal the principal
+     */
+    public static void putPrincipal(final RequestContext context,
+                                            final Principal principal) {
+        context.getFlowScope().put("principal", principal);
+    }
+
 
     /**
      * Gets credential from the context.

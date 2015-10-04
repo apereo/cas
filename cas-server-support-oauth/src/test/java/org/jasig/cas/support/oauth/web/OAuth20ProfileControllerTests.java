@@ -20,6 +20,7 @@ package org.jasig.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -44,7 +45,7 @@ import static org.mockito.Mockito.when;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-public final class OAuth20ProfileControllerTests {
+public final class OAuth20ProfileControllerTests extends AbstractCentralAuthenticationServiceTest {
 
     private static final String CONTEXT = "/oauth2.0/";
 
@@ -82,7 +83,7 @@ public final class OAuth20ProfileControllerTests {
         final OAuth20WrapperController oauth20WrapperController = new OAuth20WrapperController();
         final TicketRegistry ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.getTicket(TGT_ID)).thenReturn(null);
-        oauth20WrapperController.setTicketRegistry(ticketRegistry);
+        oauth20WrapperController.setCentralAuthenticationService(getCentralAuthenticationService());
         oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
@@ -101,7 +102,7 @@ public final class OAuth20ProfileControllerTests {
         final TicketGrantingTicket ticketGrantingTicket = mock(TicketGrantingTicket.class);
         when(ticketGrantingTicket.isExpired()).thenReturn(true);
         when(ticketRegistry.getTicket(TGT_ID)).thenReturn(ticketGrantingTicket);
-        oauth20WrapperController.setTicketRegistry(ticketRegistry);
+        oauth20WrapperController.setCentralAuthenticationService(getCentralAuthenticationService());
         oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
@@ -130,7 +131,7 @@ public final class OAuth20ProfileControllerTests {
         when(principal.getAttributes()).thenReturn(map);
         when(authentication.getPrincipal()).thenReturn(principal);
         when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
-        oauth20WrapperController.setTicketRegistry(ticketRegistry);
+        oauth20WrapperController.setCentralAuthenticationService(getCentralAuthenticationService());
         oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
@@ -172,7 +173,7 @@ public final class OAuth20ProfileControllerTests {
         when(principal.getAttributes()).thenReturn(map);
         when(authentication.getPrincipal()).thenReturn(principal);
         when(ticketGrantingTicket.getAuthentication()).thenReturn(authentication);
-        oauth20WrapperController.setTicketRegistry(ticketRegistry);
+        oauth20WrapperController.setCentralAuthenticationService(getCentralAuthenticationService());
         oauth20WrapperController.afterPropertiesSet();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());

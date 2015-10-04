@@ -444,6 +444,15 @@
                                         <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.releaseProxyTicket" />"></i>
                                     </label>
                                 </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="1"
+                                               ng-model="serviceFormCtrl.serviceData.attrRelease.requireConsent"
+                                               ng-checked="serviceFormCtrl.serviceData.attrRelease.requireConsent" />
+                                        <spring:message code="services.form.label.attrRelease.requireConsent" />
+                                        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top" title="<spring:message code="services.form.tooltip.attrRelease.requireConsent" />"></i>
+                                    </label>
+                                </div>
                             </div><%-- end .checkbox-group div --%>
 
                             <!-- Attribute Filter -->

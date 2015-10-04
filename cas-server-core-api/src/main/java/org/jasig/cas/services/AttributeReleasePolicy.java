@@ -32,6 +32,13 @@ import org.jasig.cas.authentication.principal.Principal;
 public interface AttributeReleasePolicy extends Serializable {
 
     /**
+     * Should CAS ask for consent before releasing attributes?
+     * @return the boolean
+     * @since 4.2
+     */
+    boolean isAttributeConsentRequired();
+
+    /**
      * Is authorized to release credential password?
      *
      * @return the boolean

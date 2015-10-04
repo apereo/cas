@@ -7,7 +7,7 @@
   "proxyPolicy" : {
     "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
   },
-  "evaluationOrder" : 0,
+  "evaluationOrder" : 1000,
   "usernameAttributeProvider" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
   },

@@ -19,8 +19,8 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,6 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     @NotNull
     @Autowired
     @Qualifier("ticketRegistry")
-    protected TicketRegistry ticketRegistry;
 
     /** The timeout. */
     @NotNull
@@ -108,19 +107,19 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         return method;
     }
 
-    public void setServicesManager(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
-
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
-
     public void setLoginUrl(final String loginUrl) {
         this.loginUrl = loginUrl;
     }
 
     public void setTimeout(final long timeout) {
         this.timeout = timeout;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 }
