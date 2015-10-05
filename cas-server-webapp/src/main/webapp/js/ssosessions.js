@@ -16,9 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/**
- * Created by Jeff Sittler 9/8/15.
- */
 
 var ssoSessions = (function () {
     var urls = {
@@ -52,8 +49,7 @@ var ssoSessions = (function () {
             },
             "processing": true,
             "ajax": {
-                "url": '/cas/js/test-data-generated.json',
-                //"url": '/cas/statistics/ssosessions/getSsoSessions',
+                "url": '/cas/statistics/ssosessions/getSsoSessions',
                 "dataSrc": "activeSsoSessions"
             },
 
@@ -165,7 +161,7 @@ var ssoSessions = (function () {
                 var btnText = 'Remove All Sessions';
             }
 
-            var searchTerm = table.column( 0 ).search(filterRegex, true, false).draw();
+            var searchTerm = table.column( 1 ).search(filterRegex, true, false).draw();
 
             $('#removeAllSessionsButton').val( deleteValue ).html(btnText.replace('xx', searchTerm.page.info().recordsDisplay ))
         });
@@ -173,7 +169,6 @@ var ssoSessions = (function () {
 
         // Add event listener for opening and closing details
         $(document).on('click', '#ssoSessions tbody td.details-control', function () {
-        //$('#ssoSessions tbody').on('click', 'td.details-control', function () {
             var table = $('#ssoSessions').DataTable();
             var tr = $(this).closest('tr');
             var row = table.row( tr );

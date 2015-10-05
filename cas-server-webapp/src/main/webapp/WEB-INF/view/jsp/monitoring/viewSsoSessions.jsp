@@ -34,79 +34,45 @@
             String(this.getMinutes()).padLeft(2, '0')].join(":");
         };
 
-// Todo: wire a method that loops over the object and outputs the key/value
+        function principalAttributes(obj) {
+            var output = '<table class="table table-condensed principal_attributes"><tbody>';
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    if (Array.isArray(obj[key])) {
+                        output = output.concat('<tr><td class="field-label active">'+ key +':</td><td>' + obj[key].toString() + '</td></tr>');
+                    } else {
+                        output = output.concat('<tr><td class="field-label active">'+ key +':</td><td>' + obj[key] + '</td></tr>');
+                    }
+                }
+            }
+            output = output.concat('</tbody></table>');
 
-// Todo: change the format for displaying the authenticated services. Use another nested table?
+            return output;
+        }
 
-        // Todo: clean up formatting. of DT?
-        function loopObject(d) {
-
+        function authenticatedServices(obj) {
+            var output = '';
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    output = output.concat('<h5>' + key + '</h5><table class="table table-condensed principal_attributes"><tbody>');
+                    for (foo in obj[key] ) {
+                        if (obj[key].hasOwnProperty(foo)) {
+                            if (Array.isArray(obj[key][foo])) {
+                                output = output.concat('<tr><td class="field-label active">'+ foo +':</td><td>' + obj[key][foo].toString() + '</td></tr>');
+                            } else {
+                                output = output.concat('<tr><td class="field-label active">'+ foo +':</td><td>' + obj[key][foo] + '</td></tr>');
+                            }
+                        }
+                    }
+                    output = output.concat('</tbody></table>');
+                }
+            }
+            return output;
         }
 
         /* Formatting function for row details - modify as you need */
         function format ( d ) {
-            // `d` is the original data object for the row
-        var authenticatedServices = d.authenticated_services;
-        var output = '<dl class="dl-horizontal">';
-        var authServices = '<dl class="dl-horizontal">';
-        for (var key in authenticatedServices) {
-            if (authenticatedServices.hasOwnProperty(key)) {
-/**
-    format:
-        <h4>authenticaion service id</h4>
-        <dl>
-            <dt>auth_service_key</dt>
-            <dd>property value</dt>
-        </dl>
-**/
-            console.warn(key);
-//                output = output.concat('<h5>' + key + '</h5><dl>');
-                output = output.concat('<h5>' + key + '</h5><table class="table table-condensed principal_attributes"><tbody>');
-/*
-'<table class="table table-condensed principal_attributes"><tbody>' +
-                            '<tr><td class="field-label active">eduPersonAffiliation:</td><td>' + d.principal_attributes.eduPersonAffiliation + '</td></tr>' +
-                            '<tr><td class="field-label active">groupMembership:</td><td>' + d.principal_attributes.groupMembership + '</td></tr>' +
-                            '<tr><td class="field-label active">memberOf:</td><td>' + d.principal_attributes.memberOf.toString() + '</td></tr>' +
-                        '</tbody></table>'+
-*/
-
-                for (foo in authenticatedServices[key] ) {
-                    if (authenticatedServices[key].hasOwnProperty(foo)) {
-                        //output = output.concat();
-                        if (Array.isArray(authenticatedServices[key][foo])) {
-                            output = output.concat('<tr><td class="field-label active">'+ foo +':</td><td>' + authenticatedServices[key][foo].toString() + '</td></tr>');
-                            //output = output.concat('<dt>'+foo+':</dt><dd>'+authenticatedServices[key][foo].toString()+'</dd>');
-                            //console.warn('its a trap!', authenticatedServices[key][foo].toString());
-                        } else {
-                            output = output.concat('<tr><td class="field-label active">'+ foo +':</td><td>' + authenticatedServices[key][foo] + '</td></tr>');
-                            //output = output.concat('<dt>'+foo+':</dt><dd>'+authenticatedServices[key][foo]+'</dd>');
-                            //console.log('foo: ', authenticatedServices[key][foo]);
-                        }
-                    }
-                }
-//                output = output.concat('</dl>');
-
-/*
-                for (var key2 in authenticatedServices[key]) {
-                    if (authenticatedServices[key].hasOwnProperty(key2)) {
-                        <%--authServices = authServices + '<dt>'+key+'</dt><dd>blah</dd>';--%>
-                        console.log(key2 + " -> " + authenticatedServices[key2]);
-                    }
-                }
-*/
-                //authServices = authServices + '<dt>'+key+'</dt><dd>blah</dd>';
-                //console.log(key + " -> " + authenticatedServices[key]);
-//                output = output.concat('</dl>');
-                output = output.concat('</tbody></table>');
-            }
-        }
-
-        authServices = authServices.concat('</dl>');
-        output = output.concat('</dl>');
-        console.log(output);
-
             return '<table class="table table-bordered row-detail">' +
-                //'<thead><tr><th class="col-sm-4"></th><th class="col-sm-8"></th>' +
                 '<tbody>'+
                 '<tr>'+
                     '<td class="field-label active">Ticket Granting Ticket:</td>'+
@@ -115,25 +81,13 @@
                 '<tr>'+
                     '<td class="field-label active">Principal Attributes:</td>'+
                     '<td>' +
-                        '<table class="table table-condensed principal_attributes"><tbody>' +
-                            '<tr><td class="field-label active">eduPersonAffiliation:</td><td>' + d.principal_attributes.eduPersonAffiliation + '</td></tr>' +
-                            '<tr><td class="field-label active">groupMembership:</td><td>' + d.principal_attributes.groupMembership + '</td></tr>' +
-                            '<tr><td class="field-label active">memberOf:</td><td>' + d.principal_attributes.memberOf.toString() + '</td></tr>' +
-                        '</tbody></table>'+
+principalAttributes(d.principal_attributes) +
                     '</td>' +
                 '</tr>'+
                 '<tr>'+
                     '<td class="field-label active">Authenticated Services:</td>'+
                     '<td>' +
-        output
-/*
-                        '<table class="table table-condensed principal_attributes"><tbody>' +
-                            '<tr><td class="field-label active">id:</td><td>' + d.authenticated_services.eduPersonAffiliation + '</td></tr>' +
-                            '<tr><td class="field-label active">originalUrl:</td><td>' + d.principal_attributes.groupMembership + '</td></tr>' +
-                            '<tr><td class="field-label active">originalUrl:</td><td>' + d.principal_attributes.groupMembership + '</td></tr>' +
-                            '<tr><td class="field-label active">attributes:</td><td>' + d.principal_attributes.memberOf.toString() + '</td></tr>' +
-*/
-                        '</tbody></table>'+
+                        authenticatedServices(d.authenticated_services);
                     '</td>' +
                 '</tr>'+
                 '<tr>'+
