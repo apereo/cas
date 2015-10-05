@@ -96,7 +96,8 @@ public class SessionMonitorTests {
                       GENERATOR.getNewTicketId("ST"),
                       new MockService("junit"),
                       TEST_EXP_POLICY,
-                      false));
+                      false,
+                      TestUtils.getDefaultRegisteredService()));
           }
         }
     }

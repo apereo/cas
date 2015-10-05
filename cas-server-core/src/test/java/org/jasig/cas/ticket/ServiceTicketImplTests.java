@@ -85,7 +85,7 @@ public class ServiceTicketImplTests {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(), new NeverExpiresExpirationPolicy(), false);
+                TestUtils.getService(), new NeverExpiresExpirationPolicy(), false, TestUtils.getDefaultRegisteredService());
         t.markTicketExpired();
 
         assertTrue(s.isExpired());
@@ -96,7 +96,7 @@ public class ServiceTicketImplTests {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(), new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false);
+                TestUtils.getService(), new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, TestUtils.getDefaultRegisteredService());
         assertFalse(s.isExpired());
     }
 
@@ -106,7 +106,7 @@ public class ServiceTicketImplTests {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(), new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false);
+                TestUtils.getService(), new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, TestUtils.getDefaultRegisteredService());
         final TicketGrantingTicket t1 = s.grantTicketGrantingTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
                 new NeverExpiresExpirationPolicy());
@@ -120,7 +120,7 @@ public class ServiceTicketImplTests {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(), new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false);
+                TestUtils.getService(), new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, TestUtils.getDefaultRegisteredService());
         s.grantTicketGrantingTicket(this.uniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
                 new NeverExpiresExpirationPolicy());
 
