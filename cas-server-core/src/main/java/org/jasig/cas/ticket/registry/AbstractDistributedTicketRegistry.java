@@ -38,13 +38,6 @@ import java.util.Map;
 public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRegistry {
 
     /**
-     * Update the received ticket.
-     *
-     * @param ticket the ticket
-     */
-    protected abstract void updateTicket(final Ticket ticket);
-
-    /**
      * Whether or not a callback to the TGT is required when checking for expiration.
      *
      * @return true, if successful

@@ -23,7 +23,9 @@ import com.hazelcast.core.IMap;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.authentication.principal.Service;
 
+import java.util.Map;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
@@ -71,7 +73,7 @@ public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
      * {@inheritDoc}
      */
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 
@@ -130,8 +132,40 @@ public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
      */
     @Override
     public boolean deleteTicket(final String ticketId) {
-        logger.debug("Removing ticket [{}]", ticketId);
-        return this.registry.remove(ticketId) != null;
+        if (ticketId == null) {
+            return false;
+        }
+
+        final Ticket ticket = getTicket(ticketId);
+        if (ticket == null) {
+            return false;
+        }
+
+        if (ticket instanceof TicketGrantingTicket) {
+            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
+            return deleteTicketAndChildren((TicketGrantingTicket) ticket);
+        }
+
+        logger.debug("Removing ticket [{}] from the registry.", ticket);
+        return (this.registry.remove(ticketId) != null);
+    }
+
+    /**
+     * Delete the TGT and all of its service tickets.
+     *
+     * @param ticket the ticket
+     * @return boolean indicating wether ticket was deleted or not
+     */
+    private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
+        // delete service tickets
+        final Map<String, Service> services = ticket.getServices();
+        if (services != null) {
+            for (final Map.Entry<String, Service> entry : services.entrySet()) {
+                this.registry.remove(entry.getKey());
+            }
+        }
+
+        return (this.registry.remove(ticket.getId()) != null);
     }
 
     /**
