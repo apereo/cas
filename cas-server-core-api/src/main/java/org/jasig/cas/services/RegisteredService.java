@@ -124,7 +124,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return true if they match, false otherwise.
      */
     boolean matches(Service service);
-    
+
     /**
      * Clone this service.
      *
@@ -139,7 +139,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return the logout type of the service.
      */
     LogoutType getLogoutType();
-    
+
     /**
      * Gets the attribute filtering policy to determine
      * how attributes are to be filtered and released for
@@ -168,7 +168,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @since 4.1
      */
     URL getLogoutUrl();
-    
+
     /**
      * Gets the public key associated with this service
      * that is used to authorize the request by
@@ -179,5 +179,11 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @since 4.1
      */
     RegisteredServicePublicKey getPublicKey();
-    
+
+    /**
+     * Whether we should only keep the latest service ticket for this service to save memory.
+     *
+     * @return whether we should only keep the latest service ticket for this service
+     */
+    boolean isOnlyKeepLatestST();
 }

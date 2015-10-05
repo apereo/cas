@@ -27,6 +27,7 @@ import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -83,7 +84,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     public ServiceTicket grantServiceTicket(final Service service) {
-        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, true);
+        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, true, TestUtils.getDefaultRegisteredService());
     }
 
     @Override
@@ -91,7 +92,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
             final String id,
             final Service service,
             final ExpirationPolicy expirationPolicy,
-            final boolean credentialsProvided) {
+            final boolean credentialsProvided,
+            final RegisteredService registeredService) {
         usageCount++;
         return new MockServiceTicket(id, service, this);
     }
