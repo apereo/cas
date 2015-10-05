@@ -134,6 +134,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "public_key", nullable = true)
     private RegisteredServicePublicKey publicKey;
 
+    @Column(name = "only_keep_latest_st", nullable = true)
+    private boolean onlyKeepLatestST = true;
+
     @Override
     public long getId() {
         return this.id;
@@ -233,6 +236,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey, that.publicKey)
                 .append(this.logoutUrl, that.logoutUrl)
                 .append(this.requiredHandlers, that.requiredHandlers)
+                .append(this.onlyKeepLatestST, that.onlyKeepLatestST)
                 .isEquals();
     }
 
@@ -253,6 +257,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey)
                 .append(this.logoutUrl)
                 .append(this.requiredHandlers)
+                .append(this.onlyKeepLatestST)
                 .toHashCode();
     }
 
@@ -359,7 +364,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setLogoutUrl(source.getLogoutUrl());
         this.setPublicKey(source.getPublicKey());
         this.setRequiredHandlers(source.getRequiredHandlers());
-
+        this.setOnlyKeepLatestST(source.isOnlyKeepLatestST());
     }
 
     /**
@@ -396,6 +401,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logo", this.logo);
         toStringBuilder.append("logoutUrl", this.logoutUrl);
         toStringBuilder.append("requiredHandlers", this.requiredHandlers);
+        toStringBuilder.append("onlyKeepLatestST", this.onlyKeepLatestST);
 
         return toStringBuilder.toString();
     }
@@ -460,5 +466,13 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setPublicKey(@NotNull final RegisteredServicePublicKey publicKey) {
         this.publicKey = publicKey;
+    }
+
+    public boolean isOnlyKeepLatestST() {
+        return onlyKeepLatestST;
+    }
+
+    public void setOnlyKeepLatestST(final boolean onlyKeepLatestST) {
+        this.onlyKeepLatestST = onlyKeepLatestST;
     }
 }
