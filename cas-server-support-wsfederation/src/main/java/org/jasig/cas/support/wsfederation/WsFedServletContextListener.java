@@ -22,19 +22,12 @@ package org.jasig.cas.support.wsfederation;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
+import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import java.util.Map;
 
 /**
  * Initializes the CAS root servlet context to make sure
@@ -44,9 +37,7 @@ import java.util.Map;
  */
 @WebListener
 @Component
-public class WsFedServletContextListener implements ServletContextListener, ApplicationContextAware {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class WsFedServletContextListener extends AbstractServletContextInitializer {
 
     @Autowired
     @Qualifier("adfsAuthNHandler")
@@ -56,32 +47,10 @@ public class WsFedServletContextListener implements ServletContextListener, Appl
     @Qualifier("adfsPrincipalResolver")
     private PrincipalResolver adfsPrincipalResolver;
 
-    @Override
-    public void contextInitialized(final ServletContextEvent sce) {
-        logger.info("Initializing WsFed servlet context...");
-    }
 
     @Override
-    public void contextDestroyed(final ServletContextEvent sce) {}
-
-    @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        try {
-            if (applicationContext.getParent() == null) {
-                logger.info("Initializing WsFed root application context");
-
-                final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
-                        applicationContext.getBean("authenticationHandlersResolvers", Map.class);
-                authenticationHandlersResolvers.put(adfsAuthNHandler, adfsPrincipalResolver);
-
-                logger.info("Initialized WsFed root application context successfully");
-            } else {
-                logger.info("Initializing WsFed application context");
-
-                logger.info("Initialized WsFed application context successfully");
-            }
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+    protected void initializeRootApplicationContext() {
+        addAuthenticationHandlerPrincipalResolver(adfsAuthNHandler, adfsPrincipalResolver);
     }
 }
+

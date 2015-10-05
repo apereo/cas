@@ -56,6 +56,15 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      */
     private boolean failoverOnAuthenticationFailure;
 
+
+    /**
+     * Instantiates a new Radius authentication handler.
+     */
+    public RadiusAuthenticationHandler() {
+        super();
+        logger.debug("Using {}", getClass().getSimpleName());
+    }
+
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {

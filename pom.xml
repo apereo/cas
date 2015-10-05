@@ -503,6 +503,7 @@
                         <yml>SCRIPT_STYLE</yml>
                         <conf>JAVADOC_STYLE</conf>
                         <less>JAVADOC_STYLE</less>
+                        <ini>SCRIPT_STYLE</ini>
                     </mapping>
                     <excludes>
                         <exclude>**/bin/**</exclude>
@@ -1008,6 +1009,13 @@
             </dependency>
 
             <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.hibernate.java-persistence</groupId>
                 <artifactId>jpa-api</artifactId>
                 <version>${jpa.version}</version>
@@ -1326,21 +1334,7 @@
                 <artifactId>cas-server-security-filter</artifactId>
                 <version>${cas-server-security-filter.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>javax.cache</groupId>
-                <artifactId>cache-api</artifactId>
-                <version>${jcache.version}</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.jsr107.ri</groupId>
-                <artifactId>cache-ri-impl</artifactId>
-                <version>${jcache.ri.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-
+            
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-web</artifactId>
@@ -1365,7 +1359,6 @@
         <module>cas-server-support-generic</module>
         <module>cas-server-support-jdbc</module>
         <module>cas-server-support-ldap</module>
-        <module>cas-server-support-legacy</module>
         <module>cas-server-support-openid</module>
         <module>cas-server-support-wsfederation</module>
         <module>cas-server-support-radius</module>
@@ -1375,11 +1368,8 @@
         <module>cas-server-support-oauth</module>
         <module>cas-server-support-pac4j</module>
         <module>cas-server-support-saml</module>
-        <module>cas-server-integration-jboss</module>
         <module>cas-server-integration-memcached</module>
         <module>cas-server-integration-ehcache</module>
-        <module>cas-server-integration-restlet</module>
-        <module>cas-server-uber-webapp</module>
         <module>cas-server-extension-clearpass</module>
         <module>cas-management-webapp</module>
         <module>cas-server-support-rest</module>
@@ -1571,10 +1561,8 @@
         <xml.apis.version>1.4.01</xml.apis.version>
         <jstl.version>1.2</jstl.version>
         <openid4java.version>0.9.8</openid4java.version>
-        <cas-server-security-filter.version>2.0.3</cas-server-security-filter.version>
+        <cas-server-security-filter.version>2.0.4</cas-server-security-filter.version>
         <google.guava.version>18.0</google.guava.version>
-        <jcache.version>1.0.0</jcache.version>
-        <jcache.ri.version>1.0.0</jcache.ri.version>
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <javax.el-impl.version>2.2.6</javax.el-impl.version>
         <jersey.version>1.19</jersey.version>
@@ -1584,6 +1572,7 @@
         <bouncycastle.version>1.51</bouncycastle.version>
         <dbcp.version>2.1.1</dbcp.version>
         <hazelcast.version>3.5.2</hazelcast.version>
+        <c3p0.version>0.9.5.1</c3p0.version>
 
         <!-- Plugin Versions -->
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
