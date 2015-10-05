@@ -71,19 +71,6 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
     }
 
     /**
-     * @deprecated As of 4.1.
-     * Sets salt.
-     *
-     * @param salt the salt
-     */
-    @Deprecated
-    public void setSalt(final String salt) {
-        this.salt = salt.getBytes(Charset.defaultCharset());
-        LOGGER.warn("setSalt() is deprecated and will be removed. Use the constructor instead.");
-    }
-
-
-    /**
      * Get salt.
      *
      * @return the byte[] for the salt or null

@@ -90,7 +90,7 @@ public final class WsFederationHelper {
      */
     public WsFederationCredential createCredentialFromToken(final Assertion assertion) {
         final DateTime retrievedOn = new DateTime().withZone(DateTimeZone.UTC);
-        LOGGER.debug("createCredentialFromToken: retrieved on {}", retrievedOn);
+        LOGGER.debug("Retrieved on {}", retrievedOn);
 
         final WsFederationCredential credential = new WsFederationCredential();
         credential.setRetrievedOn(retrievedOn);
@@ -112,7 +112,7 @@ public final class WsFederationHelper {
         //retrieve an attributes from the assertion
         final HashMap<String, Object> attributes = new HashMap<String, Object>();
         for (final Attribute item : assertion.getAttributeStatements().get(0).getAttributes()) {
-            LOGGER.debug("createCredentialFromToken: processed attribute: {}", item.getAttributeName());
+            LOGGER.debug("Processed attribute: {}", item.getAttributeName());
 
             if (item.getAttributeValues().size() == 1) {
                 attributes.put(item.getAttributeName(), ((XSAny) item.getAttributeValues().get(0)).getTextContent());
@@ -128,7 +128,7 @@ public final class WsFederationHelper {
             }
         }
         credential.setAttributes(attributes);
-        LOGGER.debug("createCredentialFromToken: {}", credential);
+        LOGGER.debug("Credential: {}", credential);
         return credential;
     }
 
@@ -158,9 +158,9 @@ public final class WsFederationHelper {
             final Assertion assertion = (Assertion) rst.get(0).getSecurityTokens().get(0);
 
             if (assertion == null) {
-                LOGGER.debug("parseTokenFromString: assertion null");
+                LOGGER.debug("Assertion is null");
             } else {
-                LOGGER.debug("parseTokenFromString: {}", assertion);
+                LOGGER.debug("Assertion: {}", assertion);
             }
             return assertion;
         } catch (final Exception ex) {
@@ -203,7 +203,7 @@ public final class WsFederationHelper {
                     LOGGER.warn(e.getMessage(), e);
                 } finally {
                     if (!valid) {
-                        LOGGER.warn("validateSignature: Signature doesn't match any signing credential.");
+                        LOGGER.warn("Signature doesn't match any signing credential.");
                     }
                 }
 

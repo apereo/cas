@@ -33,6 +33,12 @@
       <artifactId>cas-server-webapp-support</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
+        <exclusions>
+            <exclusion>
+                <artifactId>c3p0</artifactId>
+                <groupId>c3p0</groupId>
+            </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

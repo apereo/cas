@@ -26,11 +26,10 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.TicketException;
+import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,7 +178,7 @@ public class AuthenticationViaFormAction {
                     "Invalid attempt to access service using renew=true with different credential. "
                             + "Ending SSO session.");
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
-        } catch (final TicketException e) {
+        } catch (final AbstractTicketException e) {
             return newEvent(ERROR, e);
         }
         return newEvent(ERROR);
@@ -207,8 +206,10 @@ public class AuthenticationViaFormAction {
             }
             return newEvent(SUCCESS);
         } catch (final AuthenticationException e) {
+            logger.debug(e.getMessage(), e);
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final Exception e) {
+            logger.debug(e.getMessage(), e);
             return newEvent(ERROR, e);
         }
     }
@@ -286,18 +287,6 @@ public class AuthenticationViaFormAction {
 
     public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
-    }
-
-    /**
-     * Sets ticket registry.
-     *
-     * @param ticketRegistry the ticket registry. No longer needed as the core service layer
-     *                       returns the correct object type. Will be removed in future versions.
-     * @deprecated As of 4.1
-     */
-    @Deprecated
-    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
-        logger.warn("setTicketRegistry() has no effect and will be removed in future CAS versions.");
     }
 
     /**

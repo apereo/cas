@@ -54,7 +54,6 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
         this.action = new SendTicketGrantingTicketAction(ticketGrantingTicketCookieGenerator,
                 getCentralAuthenticationService(), getServicesManager());
-        this.action.setServicesManager(getServicesManager());
         this.action.setCreateSsoSessionCookieOnRenewAuthentications(true);
         this.action.afterPropertiesSet();
 
