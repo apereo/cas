@@ -242,6 +242,59 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
         }
     }
 
+    @Test
+    public void verifyUpdateTicket() {
+        try {
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+                    new NeverExpiresExpirationPolicy()));
+            final TicketGrantingTicket ticket = this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
+            assertFalse(ticket.isExpired());
+            ticket.markTicketExpired();
+            this.ticketRegistry.updateTicket(ticket);
+            final TicketGrantingTicket ticket2 = this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
+            assertTrue(ticket2.isExpired());
+        } catch (final Exception e) {
+            fail("Caught an exception. But no exception should have been thrown.");
+        }
+    }
+
+    @Test
+    public void verifyDeleteTicketWithChildren() {
+        try {
+            final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(
+                    "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+            this.ticketRegistry.addTicket(tgt);
+
+            final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+            final ServiceTicket st1 = tgt.grantServiceTicket(
+                    "ST1", service, new NeverExpiresExpirationPolicy(), true);
+            final ServiceTicket st2 = tgt.grantServiceTicket(
+                    "ST2", service, new NeverExpiresExpirationPolicy(), true);
+            final ServiceTicket st3 = tgt.grantServiceTicket(
+                    "ST3", service, new NeverExpiresExpirationPolicy(), true);
+
+            this.ticketRegistry.updateTicket(tgt);
+            this.ticketRegistry.addTicket(st1);
+            this.ticketRegistry.addTicket(st2);
+            this.ticketRegistry.addTicket(st3);
+
+            assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+            assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+            assertNotNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
+            assertNotNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
+
+            this.ticketRegistry.deleteTicket(tgt.getId());
+
+            assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+            assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+            assertNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
+            assertNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
+        } catch (final Exception e) {
+            fail("Caught an exception. But no exception should have been thrown.");
+        }
+    }
+
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
