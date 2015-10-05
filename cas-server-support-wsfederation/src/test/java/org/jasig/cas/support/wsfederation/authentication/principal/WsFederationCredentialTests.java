@@ -21,12 +21,12 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Before;
 import org.junit.Test;
-import org.opensaml.saml.saml1.core.Assertion;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for {@link WsFederationCredential}.
@@ -50,21 +50,6 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         standardCred.setAudience("urn:federation:cas");
         standardCred.setId("_6257b2bf-7361-4081-ae1f-ec58d4310f61");
         standardCred.setRetrievedOn(new DateTime().withZone(DateTimeZone.UTC).plusSeconds(1));
-    }
-
-    @Test
-    public void verifyToString() {
-        final String wresult = testTokens.get("goodToken");
-        final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
-        final WsFederationCredential instance = wsFederationHelper.createCredentialFromToken(assertion);
-        final String expResult =
-        "[ID=_6257b2bf-7361-4081-ae1f-ec58d4310f61,Issuer=http://adfs.example.com/adfs/services/trust,"
-        + "Audience=urn:federation:cas,Authentication Method=urn:federation:authentication:windows,"
-        + "Issued On=2014-02-26T22:51:16.504Z,Valid After=2014-02-26T22:51:16.474Z,Valid Before=2014-02-26T23:51:16.474Z,"
-        + "Attributes={Group=example.com\\Domain Users, upn=jgasper@example.com, "
-        + "surname=Gasper, givenname=John, emailaddress=jgasper@example.com}]";
-        final String result = instance.toString();
-        assertEquals("toString() not equal", expResult, result);
     }
 
     @Test

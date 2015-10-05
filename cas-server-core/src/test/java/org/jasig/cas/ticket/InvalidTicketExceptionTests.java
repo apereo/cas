@@ -30,7 +30,7 @@ public class InvalidTicketExceptionTests {
 
     @Test
     public void verifyCodeNoThrowable() {
-        final TicketException t = new InvalidTicketException("InvalidTicketId");
+        final AbstractTicketException t = new InvalidTicketException("InvalidTicketId");
         assertEquals("INVALID_TICKET", t.getCode());
     }
 }

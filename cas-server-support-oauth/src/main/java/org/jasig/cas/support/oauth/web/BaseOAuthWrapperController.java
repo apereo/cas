@@ -23,6 +23,10 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -37,6 +41,7 @@ import javax.validation.constraints.NotNull;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Component
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
     /** The logger. */
@@ -44,18 +49,24 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
 
     /** The login url. */
     @NotNull
+    @Value("${server.prefix}/login")
     protected String loginUrl;
 
     /** The services manager. */
     @NotNull
+    @Autowired
+    @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
 
     /** The ticket registry. */
     @NotNull
+    @Autowired
+    @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
     /** The timeout. */
     @NotNull
+    @Value("${tgt.timeToKillInSeconds:7200}")
     protected long timeout;
 
     @Override
