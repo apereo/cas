@@ -26,7 +26,6 @@ import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuth
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -58,17 +57,6 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         }
 
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
-    }
-
-    /**
-     * @deprecated As of 4.1. Use {@link #setUsers(Set)} instead.
-     * Set the Collection of usernames which we will fail to authenticate.
-     *
-     * @param users The Collection of usernames we should not authenticate.
-     */
-    @Deprecated
-    public final void setUsers(final List<String> users) {
-        logger.warn("setUsers(List) is deprecated and has no effect. Consider defining a set instead");
     }
 
     /**

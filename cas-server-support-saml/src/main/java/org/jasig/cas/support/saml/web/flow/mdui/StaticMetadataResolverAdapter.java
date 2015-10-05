@@ -36,6 +36,7 @@ import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * A {@link StaticMetadataResolverAdapter} that loads metadata from static xml files
@@ -88,8 +89,9 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
         thread.start();
 
         final JobDetail job = JobBuilder.newJob(this.getClass())
-                .withIdentity(this.getClass().getSimpleName()).build();
+                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString())).build();
         final Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule()
                         .withIntervalInMinutes(this.refreshIntervalInMinutes)
                         .repeatForever()).build();

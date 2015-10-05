@@ -18,25 +18,8 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import static org.junit.Assert.assertEquals;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.security.auth.login.AccountNotFoundException;
-import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
-
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import net.spy.memcached.CachedData;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -44,11 +27,11 @@ import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
-import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
@@ -63,10 +46,26 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -112,7 +111,7 @@ public class KryoTranscoderTests {
                 new DefaultPrincipalFactory()
                         .createPrincipal("user", Collections.unmodifiableMap(this.principalAttributes)));
         bldr.setAttributes(Collections.unmodifiableMap(this.principalAttributes));
-        bldr.setAuthenticationDate(new Date());
+        bldr.setAuthenticationDate(new DateTime());
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", AccountNotFoundException.class);
         bldr.addSuccess("authn", new DefaultHandlerResult(
@@ -324,9 +323,9 @@ public class KryoTranscoderTests {
         MockTicketGrantingTicket(final String id, final Credential credential, final Map<String, Object> principalAttributes) {
             this.id = id;
             final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credential);
-            final DefaultAuthenticationBuilder builder = new DefaultAuthenticationBuilder();
+            final AuthenticationBuilder builder = new DefaultAuthenticationBuilder();
             builder.setPrincipal(this.principalFactory.createPrincipal(USERNAME, principalAttributes));
-            builder.setAuthenticationDate(new Date());
+            builder.setAuthenticationDate(new DateTime());
             builder.addCredential(credentialMetaData);
             builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
             final AuthenticationHandler handler = new MockAuthenticationHandler();

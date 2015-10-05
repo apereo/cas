@@ -125,9 +125,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         this(id, null, null, authentication, policy);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public Authentication getAuthentication() {
         return this.authentication;
@@ -189,17 +187,13 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.getGrantingTicket() == null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void markTicketExpired() {
         this.expired = Boolean.TRUE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public TicketGrantingTicket getRoot() {
         TicketGrantingTicket current = this;
@@ -221,17 +215,13 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.expired;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public List<Authentication> getSupplementalAuthentications() {
         return this.supplementalAuthentications;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<>();
@@ -251,9 +241,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         return this.proxiedBy;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public boolean equals(final Object object) {
         if (object == null) {

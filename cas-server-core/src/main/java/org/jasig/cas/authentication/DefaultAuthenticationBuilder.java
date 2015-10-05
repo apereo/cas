@@ -23,7 +23,6 @@ import org.joda.time.DateTime;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,8 +87,8 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setAuthenticationDate(final Date d) {
-        this.authenticationDate = new DateTime(d);
+    public AuthenticationBuilder setAuthenticationDate(final DateTime d) {
+        this.authenticationDate = d;
         return this;
     }
 
