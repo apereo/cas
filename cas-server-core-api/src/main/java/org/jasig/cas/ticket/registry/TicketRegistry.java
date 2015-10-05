@@ -46,6 +46,13 @@ public interface TicketRegistry {
     void addTicket(Ticket ticket);
 
     /**
+     * Update the received ticket in the registry.
+     *
+     * @param ticket The ticket we wish to update.
+     */
+    void updateTicket(final Ticket ticket);
+
+    /**
      * Retrieve a ticket from the registry. If the ticket retrieved does not
      * match the expected class, an InvalidTicketException is thrown.
      *
@@ -66,6 +73,7 @@ public interface TicketRegistry {
 
     /**
      * Remove a specific ticket from the registry.
+     * If ticket to delete is TGT then related service tickets are removed as well.
      *
      * @param ticketId The id of the ticket to delete.
      * @return true if the ticket was removed and false if the ticket did not

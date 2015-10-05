@@ -126,7 +126,7 @@ public final class DistributedTicketRegistryTests {
             this.parent = parent;
         }
 
-        protected void updateTicket(final Ticket ticket) {
+        public void updateTicket(final Ticket ticket) {
             this.parent.setWasTicketUpdated(true);
         }
 

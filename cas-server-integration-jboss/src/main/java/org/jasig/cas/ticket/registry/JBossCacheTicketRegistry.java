@@ -50,7 +50,7 @@ public final class JBossCacheTicketRegistry extends AbstractDistributedTicketReg
     private Cache<String, Ticket> cache;
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         try {
             this.cache.put(FQN_TICKET, ticket.getId(), ticket);
         } catch (final CacheException e) {

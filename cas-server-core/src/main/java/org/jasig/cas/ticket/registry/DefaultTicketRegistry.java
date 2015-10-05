@@ -21,6 +21,7 @@ package org.jasig.cas.ticket.registry;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -75,6 +76,15 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         this.cache.put(ticket.getId(), ticket);
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws IllegalArgumentException if the Ticket is null.
+     */
+    @Override
+    public void updateTicket(final Ticket ticket) {
+        addTicket(ticket);
+    }
+
     @Override
     public Ticket getTicket(final String ticketId) {
         if (ticketId == null) {
@@ -96,8 +106,37 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         if (ticketId == null) {
             return false;
         }
-        logger.debug("Removing ticket [{}] from registry", ticketId);
+
+        final Ticket ticket = getTicket(ticketId);
+        if (ticket == null) {
+            return false;
+        }
+
+        if (ticket instanceof TicketGrantingTicket) {
+            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
+            return deleteTicketAndChildren((TicketGrantingTicket) ticket);
+        }
+
+        logger.debug("Removing ticket [{}] from the registry.", ticket);
         return (this.cache.remove(ticketId) != null);
+    }
+
+    /**
+     * Delete the TGT and all of its service tickets.
+     *
+     * @param ticket the ticket
+     * @return boolean indicating wether ticket was deleted or not
+     */
+    private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
+        // delete service tickets
+        final Map<String, Service> services = ticket.getServices();
+        if (services != null) {
+            for (final Map.Entry<String, Service> entry : services.entrySet()) {
+                this.cache.remove(entry.getKey());
+            }
+        }
+
+        return (this.cache.remove(ticket.getId()) != null);
     }
 
     public Collection<Ticket> getTickets() {
