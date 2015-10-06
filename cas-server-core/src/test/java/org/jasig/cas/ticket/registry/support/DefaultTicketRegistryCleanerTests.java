@@ -46,7 +46,7 @@ public class DefaultTicketRegistryCleanerTests extends AbstractRegistryCleanerTe
 
     @Override
     public RegistryCleaner getNewRegistryCleaner(final TicketRegistry ticketRegistry) {
-        this.centralAuthenticationService = new CentralAuthenticationServiceImpl(this.ticketRegistry, this.ticketRegistry,
+        this.centralAuthenticationService = new CentralAuthenticationServiceImpl(this.ticketRegistry,
                 mock(AuthenticationManager.class), mock(UniqueTicketIdGenerator.class), Collections.EMPTY_MAP,
                 new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(), mock(ServicesManager.class),
                 mock(LogoutManager.class));
