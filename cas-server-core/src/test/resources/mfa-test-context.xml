@@ -34,7 +34,6 @@
           c:logoutManager-ref="logoutManager"
           c:servicesManager-ref="servicesManager"
           c:serviceTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
-          c:serviceTicketRegistry-ref="ticketRegistry"
           c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
           c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
           c:ticketRegistry-ref="ticketRegistry"
