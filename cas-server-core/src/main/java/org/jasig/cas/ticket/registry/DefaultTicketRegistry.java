@@ -104,8 +104,8 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         }
 
         if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
-            return deleteTicketAndChildren((TicketGrantingTicket) ticket);
+            logger.debug("Removing children of ticket [{}] from the registry.", ticket);
+            deleteChildren((TicketGrantingTicket) ticket);
         }
 
         logger.debug("Removing ticket [{}] from the registry.", ticket);
@@ -113,21 +113,22 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
     }
 
     /**
-     * Delete the TGT and all of its service tickets.
+     * Delete TGT's service tickets.
      *
      * @param ticket the ticket
-     * @return boolean indicating wether ticket was deleted or not
      */
-    private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
+    private void deleteChildren(final TicketGrantingTicket ticket) {
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
-        if (services != null) {
+        if (services != null && !services.isEmpty()) {
             for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                this.cache.remove(entry.getKey());
+                if (this.cache.remove(entry.getKey()) != null) {
+                    logger.trace("Removed service ticket [{}]", entry.getKey());
+                } else {
+                    logger.trace("Unable to remove service ticket [{}]", entry.getKey());
+                }
             }
         }
-
-        return (this.cache.remove(ticket.getId()) != null);
     }
 
     public Collection<Ticket> getTickets() {

@@ -179,10 +179,11 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
     private void deleteChildren(final TicketGrantingTicket ticket) {
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
-        if (services != null) {
+        if (services != null && !services.isEmpty()) {
             for (final Map.Entry<String, Service> entry : services.entrySet()) {
                 try {
                     this.client.delete(entry.getKey());
+                    logger.trace("Scheduled deletion of service ticket [{}]", entry.getKey());
                 } catch (final Exception e) {
                     logger.error("Failed deleting {}", entry.getKey(), e);
                 }
