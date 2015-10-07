@@ -217,27 +217,12 @@ public abstract class AbstractTicketRegistryTests {
     }
 
     @Test
-    public void verifyUpdateTicket() {
-        try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
-            final TicketGrantingTicket ticket = this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
-            assertFalse(ticket.isExpired());
-            ticket.markTicketExpired();
-            this.ticketRegistry.updateTicket(ticket);
-            final TicketGrantingTicket ticket2 = this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
-            assertTrue(ticket2.isExpired());
-        } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
-
-    @Test
     public void verifyDeleteTicketWithChildren() {
         try {
-            final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(
-                    "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-            this.ticketRegistry.addTicket(tgt);
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
+                    "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+            final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
+                    "TGT", TicketGrantingTicket.class);
 
             final Service service = TestUtils.getService("TGT_DELETE_TEST");
 
@@ -248,7 +233,6 @@ public abstract class AbstractTicketRegistryTests {
             final ServiceTicket st3 = tgt.grantServiceTicket(
                     "ST3", service, new NeverExpiresExpirationPolicy(), true);
 
-            this.ticketRegistry.updateTicket(tgt);
             this.ticketRegistry.addTicket(st1);
             this.ticketRegistry.addTicket(st2);
             this.ticketRegistry.addTicket(st3);

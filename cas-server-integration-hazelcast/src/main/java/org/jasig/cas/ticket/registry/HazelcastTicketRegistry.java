@@ -73,7 +73,7 @@ public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
      * {@inheritDoc}
      */
     @Override
-    public void updateTicket(final Ticket ticket) {
+    protected void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 
@@ -124,7 +124,7 @@ public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry {
      */
     @Override
     public Ticket getTicket(final String ticketId) {
-        return this.registry.get(ticketId);
+        return getProxiedTicketInstance(this.registry.get(ticketId));
     }
 
     /**

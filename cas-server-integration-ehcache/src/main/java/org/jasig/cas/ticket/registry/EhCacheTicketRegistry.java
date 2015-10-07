@@ -199,7 +199,7 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     }
 
     @Override
-    public void updateTicket(final Ticket ticket) {
+    protected void updateTicket(final Ticket ticket) {
         addTicket(ticket);
     }
 
