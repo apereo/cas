@@ -402,6 +402,12 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         return proxyGrantingTicket;
     }
 
+    /**
+     * Note:
+     * Synchronization on ticket object in case of cache based registry doesn't serialize
+     * access to critical section. The reason is that cache pulls serialized data and
+     * builds new object, most likely for each pull. Is this synchronization needed here?
+     */
     @Audit(
         action="SERVICE_TICKET_VALIDATE",
         actionResolverName="VALIDATE_SERVICE_TICKET_RESOLVER",
@@ -494,6 +500,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /**
      * {@inheritDoc}
+     *
+     * Note:
+     * Synchronization on ticket object in case of cache based registry doesn't serialize
+     * access to critical section. The reason is that cache pulls serialized data and
+     * builds new object, most likely for each pull. Is this synchronization needed here?
      */
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
