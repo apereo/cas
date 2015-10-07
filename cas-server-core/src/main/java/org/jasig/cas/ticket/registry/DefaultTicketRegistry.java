@@ -76,15 +76,6 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry  {
         this.cache.put(ticket.getId(), ticket);
     }
 
-    /**
-     * {@inheritDoc}
-     * @throws IllegalArgumentException if the Ticket is null.
-     */
-    @Override
-    public void updateTicket(final Ticket ticket) {
-        addTicket(ticket);
-    }
-
     @Override
     public Ticket getTicket(final String ticketId) {
         if (ticketId == null) {

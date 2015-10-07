@@ -316,7 +316,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 this.serviceTicketExpirationPolicy,
                 currentAuthentication != null);
 
-        this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",

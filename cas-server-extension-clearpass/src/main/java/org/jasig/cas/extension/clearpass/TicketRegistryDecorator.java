@@ -75,11 +75,6 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
     }
 
     @Override
-    public void updateTicket(final Ticket ticket) {
-        this.ticketRegistry.addTicket(ticket);
-    }
-
-    @Override
     public Ticket getTicket(final String ticketId) {
         return this.ticketRegistry.getTicket(ticketId);
     }

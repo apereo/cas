@@ -46,13 +46,6 @@ public interface TicketRegistry {
     void addTicket(Ticket ticket);
 
     /**
-     * Update the received ticket in the registry.
-     *
-     * @param ticket The ticket we wish to update.
-     */
-    void updateTicket(final Ticket ticket);
-
-    /**
      * Retrieve a ticket from the registry. If the ticket retrieved does not
      * match the expected class, an InvalidTicketException is thrown.
      *

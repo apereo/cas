@@ -83,56 +83,36 @@ public class HazelcastTicketRegistryTests {
     }
 
     @Test
-    public void verifyUpdateTicket() {
-        try {
-            this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
-            final TicketGrantingTicket ticket = this.hzTicketRegistry1.getTicket("TEST", TicketGrantingTicket.class);
-            assertFalse(ticket.isExpired());
-            ticket.markTicketExpired();
-            this.hzTicketRegistry1.updateTicket(ticket);
-            final TicketGrantingTicket ticket2 = this.hzTicketRegistry1.getTicket("TEST", TicketGrantingTicket.class);
-            assertTrue(ticket2.isExpired());
-        } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
-    }
+    public void verifyDeleteTicketWithChildren() throws Exception {
+        this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
+                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
+                "TGT", TicketGrantingTicket.class);
 
-    @Test
-    public void verifyDeleteTicketWithChildren() {
-        try {
-            final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(
-                    "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-            this.hzTicketRegistry1.addTicket(tgt);
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
 
-            final Service service = TestUtils.getService("TGT_DELETE_TEST");
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true);
+        final ServiceTicket st2 = tgt.grantServiceTicket(
+                "ST2", service, new NeverExpiresExpirationPolicy(), true);
+        final ServiceTicket st3 = tgt.grantServiceTicket(
+                "ST3", service, new NeverExpiresExpirationPolicy(), true);
 
-            final ServiceTicket st1 = tgt.grantServiceTicket(
-                    "ST1", service, new NeverExpiresExpirationPolicy(), true);
-            final ServiceTicket st2 = tgt.grantServiceTicket(
-                    "ST2", service, new NeverExpiresExpirationPolicy(), true);
-            final ServiceTicket st3 = tgt.grantServiceTicket(
-                    "ST3", service, new NeverExpiresExpirationPolicy(), true);
+        this.hzTicketRegistry1.addTicket(st1);
+        this.hzTicketRegistry1.addTicket(st2);
+        this.hzTicketRegistry1.addTicket(st3);
 
-            this.hzTicketRegistry1.updateTicket(tgt);
-            this.hzTicketRegistry1.addTicket(st1);
-            this.hzTicketRegistry1.addTicket(st2);
-            this.hzTicketRegistry1.addTicket(st3);
+        assertNotNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
+        assertNotNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
 
-            assertNotNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
-            assertNotNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
-            assertNotNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
-            assertNotNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
+        this.hzTicketRegistry1.deleteTicket(tgt.getId());
 
-            this.hzTicketRegistry1.deleteTicket(tgt.getId());
-
-            assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
-            assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
-            assertNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
-            assertNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
-        } catch (final Exception e) {
-            fail("Caught an exception. But no exception should have been thrown.");
-        }
+        assertNull(this.hzTicketRegistry1.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("ST2", ServiceTicket.class));
+        assertNull(this.hzTicketRegistry1.getTicket("ST3", ServiceTicket.class));
     }
 
     private TicketGrantingTicket newTestTgt() {
