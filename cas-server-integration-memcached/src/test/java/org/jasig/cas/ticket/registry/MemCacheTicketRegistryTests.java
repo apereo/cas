@@ -148,9 +148,10 @@ public class MemCacheTicketRegistryTests {
 
     @Test
     public void verifyDeleteTicketWithChildren() throws Exception {
-        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(
-                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-        this.registry.addTicket(tgt);
+        this.registry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.registry.getTicket(
+                "TGT", TicketGrantingTicket.class);
 
         final Service service = TestUtils.getService("TGT_DELETE_TEST");
 
@@ -161,7 +162,6 @@ public class MemCacheTicketRegistryTests {
         final ServiceTicket st3 = tgt.grantServiceTicket(
                 "ST3", service, new NeverExpiresExpirationPolicy(), true);
 
-        this.registry.updateTicket(tgt);
         this.registry.addTicket(st1);
         this.registry.addTicket(st2);
         this.registry.addTicket(st3);

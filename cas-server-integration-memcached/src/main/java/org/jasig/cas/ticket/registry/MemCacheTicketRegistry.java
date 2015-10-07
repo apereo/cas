@@ -114,7 +114,7 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
     }
 
     @Override
-    public void updateTicket(final Ticket ticket) {
+    protected void updateTicket(final Ticket ticket) {
         logger.debug("Updating ticket {}", ticket);
         try {
             if (!this.client.replace(ticket.getId(), getTimeout(ticket), ticket).get()) {
