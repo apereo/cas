@@ -142,9 +142,13 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
     private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
-        if (services != null) {
+        if (services != null && !services.isEmpty()) {
             for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                this.serviceTicketsCache.remove(entry.getKey());
+                if (this.serviceTicketsCache.remove(entry.getKey())) {
+                    logger.trace("Removed service ticket [{}]", entry.getKey());
+                } else {
+                    logger.trace("Unable to remove service ticket [{}]", entry.getKey());
+                }
             }
         }
 
