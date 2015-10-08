@@ -64,7 +64,7 @@ var ssoSessions = (function () {
                 {
                     "targets": 1,
                     "data": 'is_proxied',
-                    'className': 'col-xs-1',
+                    'className': 'col-xs-2 col-md-1',
                     "render" : function ( data, type, full, meta ) {
                         if ( data === true) {
                             return '<span class="label label-primary">Proxy</span>';
@@ -76,7 +76,7 @@ var ssoSessions = (function () {
                 {
                     "targets": 2,
                     "data": 'authenticated_principal',
-                    "className": 'col-xs-2',
+                    "className": 'col-xs-4 col-md-2',
                     "render": function ( data, type, full, meta ) {
                         return type === 'display' && data.length > 20 ?
                         '<span title="'+data+'">'+data.substr( 0, 18 )+'...</span>' :
@@ -86,29 +86,29 @@ var ssoSessions = (function () {
                 {
                     "targets": 3,
                     "data": 'ticket_granting_ticket',
-                    "className": 'col-xs-3',
+                    "className": 'hidden-xs hidden-sm col-md-4',
                     "render": function ( data, type, full, meta ) {
                         return type === 'display' && data.length > 20 ?
-                        '<span title="'+data+'">'+data.substr( 0, 18 )+'...</span>' :
+                        '<span title="'+data+'">'+data.substr( 0, 40 )+'...</span>' :
                         data;
                     }
                 },
                 {
                     "targets": 4,
                     "data": 'authentication_date_formatted',
-                    "className": 'col-xs-3'
+                    "className": 'col-xs-4 col-sm-4 col-md-2'
                 },
                 {
                     "targets": 5,
                     "data": 'number_of_uses',
-                    "className": 'col-xs-2'
+                    "className": 'hidden-xs hidden-sm visible-md-* col-md-2'
                 },
                 {
                     "targets": 6,
                     "data": "ticket_granting_ticket",
-                    "className": 'col-xs-1',
+                    "className": 'col-xs-2 col-sm-2 col-md-1',
                     "render": function (data, type, full, meta ) {
-                        return '<button class="btn btn-xs btn-danger" type="button" value="' + data + '">Destroy</button>';
+                        return '<button class="btn btn-xs btn-block btn-danger" type="button" value="' + data + '">Destroy</button>';
                     },
                     "orderable": false
                 },
