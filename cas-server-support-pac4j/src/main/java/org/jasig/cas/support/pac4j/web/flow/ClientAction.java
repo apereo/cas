@@ -31,7 +31,7 @@ import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.client.Protocol;
+import org.pac4j.core.client.Mechanism;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
@@ -46,6 +46,10 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * This class represents an action to put at the beginning of the webflow.<br />
@@ -81,6 +85,11 @@ public final class ClientAction extends AbstractAction {
      * Constant for the method parameter.
      */
     public static final String METHOD = "method";
+    /**
+     * Supported protocols.
+     */
+    private static final List<Mechanism> SUPPORTED_PROTOCOLS = Arrays.asList(Mechanism.CAS_PROTOCOL, Mechanism.OAUTH_PROTOCOL,
+            Mechanism.OPENID_PROTOCOL, Mechanism.SAML_PROTOCOL, Mechanism.OPENID_CONNECT_PROTOCOL);
 
     /**
      * The clients used for authentication.
@@ -131,9 +140,10 @@ public final class ClientAction extends AbstractAction {
                     .findClient(clientName);
             logger.debug("client : {}", client);
 
-            // HTTP protocol not allowed
-            if (client.getProtocol() == Protocol.HTTP) {
-                throw new TechnicalException("HTTP protocol client not supported : " + client);
+            // Only supported protocols
+            final Mechanism mechanism = client.getMechanism();
+            if (!SUPPORTED_PROTOCOLS.contains(mechanism)) {
+                throw new TechnicalException("Only CAS, OAuth, OpenID and SAML protocols are supported: " + client);
             }
 
             // get credentials
@@ -152,6 +162,10 @@ public final class ClientAction extends AbstractAction {
             // retrieve parameters from web session
             final Service service = (Service) session.getAttribute(SERVICE);
             context.getFlowScope().put(SERVICE, service);
+            logger.debug("retrieve service: {}", service);
+            if (service != null) {
+                request.setAttribute(SERVICE, service.getId());
+            }
             restoreRequestAttribute(request, session, THEME);
             restoreRequestAttribute(request, session, LOCALE);
             restoreRequestAttribute(request, session, METHOD);
@@ -184,9 +198,8 @@ public final class ClientAction extends AbstractAction {
 
         // save parameters in web session
         final Service service = (Service) context.getFlowScope().get(SERVICE);
-        if (service != null) {
-            session.setAttribute(SERVICE, service);
-        }
+        logger.debug("save service: {}", service);
+        session.setAttribute(SERVICE, service);
         saveRequestParameter(request, session, THEME);
         saveRequestParameter(request, session, LOCALE);
         saveRequestParameter(request, session, METHOD);
@@ -194,7 +207,8 @@ public final class ClientAction extends AbstractAction {
         // for all clients, generate redirection urls
         for (final Client client : this.clients.findAllClients()) {
             final String key = client.getName() + "Url";
-            final String redirectionUrl = client.getRedirectionUrl(webContext);
+            final BaseClient baseClient = (BaseClient) client;
+            final String redirectionUrl = baseClient.getRedirectionUrl(webContext);
             logger.debug("{} -> {}", key, redirectionUrl);
             context.getFlowScope().put(key, redirectionUrl);
         }

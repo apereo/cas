@@ -89,7 +89,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
-        final Authentication authentication = getAssertionFrom(model).getChainedAuthentications().get(0);
+        final Authentication authentication = getAssertionFrom(model).getPrimaryAuthentication();
         final DateTime issuedAt = response.getIssueInstant();
         final Service service = getAssertionFrom(model).getService();
 

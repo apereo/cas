@@ -18,14 +18,9 @@
  */
 package org.jasig.cas.adaptors.radius;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-
 import net.jradius.client.RadiusClient;
 import net.jradius.dictionary.Attr_UserName;
 import net.jradius.dictionary.Attr_UserPassword;
-import net.jradius.exception.RadiusException;
-import net.jradius.exception.UnknownAttributeException;
 import net.jradius.packet.AccessAccept;
 import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusPacket;
@@ -34,6 +29,9 @@ import net.jradius.packet.attribute.AttributeList;
 import org.jasig.cas.authentication.PreventedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
@@ -81,8 +79,11 @@ public final class JRadiusServerImpl implements RadiusServer {
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
 
-        final RadiusClient client = this.radiusClientFactory.newInstance();
+        RadiusClient client = null;
         try {
+            client = this.radiusClientFactory.newInstance();
+            LOGGER.debug("Created RADIUS client instance {}", client);
+
             final AccessRequest request = new AccessRequest(client, attributeList);
             final RadiusPacket response = client.authenticate(
                     request,
@@ -96,13 +97,17 @@ public final class JRadiusServerImpl implements RadiusServer {
             if (response instanceof AccessAccept) {
                 return true;
             }
-        } catch (final UnknownAttributeException e) {
-            throw new PreventedException(e);
-        } catch (final RadiusException e) {
+        } catch (final Exception e) {
             throw new PreventedException(e);
         } finally {
-            client.close();
+            if (client != null) {
+                client.close();
+            }
         }
         return false;
+    }
+
+    public void setRetries(final int retries) {
+        this.retries = retries;
     }
 }

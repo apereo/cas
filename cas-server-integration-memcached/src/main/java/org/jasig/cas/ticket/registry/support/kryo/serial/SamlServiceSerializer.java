@@ -18,19 +18,21 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
-import java.lang.reflect.Constructor;
-import java.nio.ByteBuffer;
-
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.ticket.registry.support.kryo.FieldHelper;
 import org.jasig.cas.util.HttpClient;
 import org.jasig.cas.util.SimpleHttpClient;
 
+import java.lang.reflect.Constructor;
+
 /**
  * Serializer for {@link SamlService} class.
  *
  * @author Marvin S. Addison
+ * @since 3.0.0
  */
 public final class SamlServiceSerializer extends AbstractWebApplicationServiceSerializer<SamlService> {
     private static final Constructor CONSTRUCTOR;
@@ -45,24 +47,29 @@ public final class SamlServiceSerializer extends AbstractWebApplicationServiceSe
         }
     }
 
-    public SamlServiceSerializer(final Kryo kryo, final FieldHelper helper) {
-        super(kryo, helper);
+    /**
+     * Instantiates a new SAML service serializer.
+     *
+     * @param helper the helper
+     */
+    public SamlServiceSerializer(final FieldHelper helper) {
+        super(helper);
     }
 
-    public void write(final ByteBuffer buffer, final SamlService service) {
-        super.write(buffer, service);
-        kryo.writeObject(buffer, service.getRequestID());
+    @Override
+    public void write(final Kryo kryo, final Output output, final SamlService service) {
+        super.write(kryo, output, service);
+        kryo.writeObject(output, service.getRequestID());
     }
 
-    protected SamlService createService(
-            final ByteBuffer buffer,
-            final String id,
-            final String originalUrl,
-            final String artifactId) {
+    @Override
+    protected SamlService createService(final Kryo kryo, final Input input, final String id,
+            final String originalUrl, final String artifactId) {
 
-        final String requestId = kryo.readObject(buffer, String.class);
+        final String requestId = kryo.readObject(input, String.class);
         try {
-            return (SamlService) CONSTRUCTOR.newInstance(id, originalUrl, artifactId, new SimpleHttpClient(), requestId);
+            return (SamlService) CONSTRUCTOR.newInstance(id, originalUrl, artifactId,
+                    new SimpleHttpClient(), requestId);
         } catch (final Exception e) {
             throw new IllegalStateException("Error creating SamlService", e);
         }

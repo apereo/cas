@@ -18,12 +18,13 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.ByteBuffer;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.serialize.SimpleSerializer;
 
 /**
  * Kryo serializer for {@link URL}.
@@ -31,20 +32,11 @@ import com.esotericsoftware.kryo.serialize.SimpleSerializer;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-public final class URLSerializer extends SimpleSerializer<URL> {
+public final class URLSerializer extends Serializer<URL> {
 
-    private final Kryo kryo;
-    
-    /**
-     * @param kryo
-     */
-    public URLSerializer(final Kryo kryo) {
-        this.kryo = kryo;
-    }
-    
     @Override
-    public URL read(final ByteBuffer buffer) {
-        final String url = kryo.readObjectData(buffer, String.class);
+    public URL read(final Kryo kryo, final Input input, final  Class<URL> type) {
+        final String url = kryo.readObject(input, String.class);
         try {
             return new URL(url);
         } catch (final MalformedURLException e) {
@@ -53,7 +45,8 @@ public final class URLSerializer extends SimpleSerializer<URL> {
     }
 
     @Override
-    public void write(final ByteBuffer buffer, final URL url) {
-        kryo.writeObjectData(buffer, url.toExternalForm());
+    public void write(final Kryo kryo, final Output output, final URL url) {
+        kryo.writeObject(output, url.toExternalForm());
     }
 }
+
