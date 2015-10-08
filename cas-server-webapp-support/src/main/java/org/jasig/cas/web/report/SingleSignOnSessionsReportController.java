@@ -199,8 +199,8 @@ public final class SingleSignOnSessionsReportController {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
 
-        final Collection<Map<String, Object>> collection = getActiveSsoSessions(option);
-        sessionsMap.put("activeSsoSessions", collection);
+        final Collection<Map<String, Object>> activeSsoSessions = getActiveSsoSessions(option);
+        sessionsMap.put("activeSsoSessions", activeSsoSessions);
 
         long totalTicketGrantingTickets = 0;
         long totalProxyGrantingTickets = 0;
@@ -208,23 +208,23 @@ public final class SingleSignOnSessionsReportController {
 
         final Set<String> uniquePrincipals = new HashSet<>();
 
-        for (final Map<String, Object> entry : collection) {
+        for (final Map<String, Object> activeSsoSession : activeSsoSessions) {
 
-            if (entry.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
-                final Boolean isProxied = Boolean.valueOf(entry.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
+            if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
+                final Boolean isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
                 if (isProxied) {
                     totalProxyGrantingTickets++;
                 } else {
                     totalTicketGrantingTickets++;
-                    final String principal = entry.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                    final String principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                     uniquePrincipals.add(principal);
                 }
             } else {
                 totalTicketGrantingTickets++;
-                final String principal = entry.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                final String principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
                 uniquePrincipals.add(principal);
             }
-            totalUsageCount += Long.parseLong(entry.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
+            totalUsageCount += Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
 
         }
 
