@@ -74,6 +74,14 @@
         function format ( d ) {
             return '<table class="table table-bordered row-detail">' +
                 '<tbody>'+
+                '<tr class="hidden-md hidden-lg">'+
+                    '<td class="field-label active">Access Date:</td>'+
+                    '<td>'+d.authentication_date_formatted+'</td>'+
+                '</tr>'+
+                '<tr class="hidden-md hidden-lg">'+
+                    '<td class="field-label active">Usage Count:</td>'+
+                    '<td>'+d.number_of_uses+'</td>'+
+                '</tr>'+
                 '<tr>'+
                     '<td class="field-label active">Ticket Granting Ticket:</td>'+
                     '<td>'+d.ticket_granting_ticket+'</td>'+
@@ -233,7 +241,7 @@ principalAttributes(d.principal_attributes) +
             <div class="panel-body">
                 <div id="session-counts" class="container-fluid">
                     <div class="row adminPanels">
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-lg-3 col-md-6">
                             <div class="panel panel-info">
                                 <div class="panel-heading">
                                     <div class="row">
@@ -248,7 +256,7 @@ principalAttributes(d.principal_attributes) +
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-lg-3 col-md-6">
                             <div class="panel panel-success">
                                 <div class="panel-heading">
                                     <div class="row">
@@ -263,7 +271,7 @@ principalAttributes(d.principal_attributes) +
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-lg-3 col-md-6">
                             <div class="panel panel-warning">
                                 <div class="panel-heading">
                                     <div class="row">
