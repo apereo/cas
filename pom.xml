@@ -1347,6 +1347,12 @@
                 <artifactId>hazelcast</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.cryptacular</groupId>
+                <artifactId>cryptacular</artifactId>
+                <version>${cryptacular.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -1561,7 +1567,7 @@
         <xml.apis.version>1.4.01</xml.apis.version>
         <jstl.version>1.2</jstl.version>
         <openid4java.version>0.9.8</openid4java.version>
-        <cas-server-security-filter.version>2.0.3</cas-server-security-filter.version>
+        <cas-server-security-filter.version>2.0.4</cas-server-security-filter.version>
         <google.guava.version>18.0</google.guava.version>
         <javax.el-api.version>3.0.0</javax.el-api.version>
         <javax.el-impl.version>2.2.6</javax.el-impl.version>
@@ -1573,6 +1579,7 @@
         <dbcp.version>2.1.1</dbcp.version>
         <hazelcast.version>3.5.2</hazelcast.version>
         <c3p0.version>0.9.5.1</c3p0.version>
+        <cryptacular.version>1.0</cryptacular.version>
 
         <!-- Plugin Versions -->
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
