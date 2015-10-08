@@ -18,7 +18,7 @@
  */
 
 /*@import url(https://fonts.googleapis.com/css?family=Lato);*/
-@import url(https://fonts.googleapis.com/css?family=Lato:400,300,100);
+@import url(https://fonts.googleapis.com/css?family=Lato:700,400,300,100);
 
 html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr,
 address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var,
@@ -341,6 +341,46 @@ footer a:link, footer a:visited {
     content: "\f145";
 }
 
+
+.ssoSessions td.details-control {
+    cursor: pointer;
+    font-family: FontAwesome;
+    font-size: 10pt;
+    color: #337ab7;
+    vertical-align: middle;
+}
+.ssoSessions td.details-control:after {
+    content: "\f067";
+    /*content: "\002B";*/
+}
+.ssoSessions tr.shown td.details-control:after {
+    content: "\f068";
+    /*content: "\002D";*/
+}
+
+.row-detail-wrapper {
+    /*background-color: cornsilk;*/
+    background-color: #d9edf7;
+}
+.ssoSessions .row-detail thead {
+    display: none;
+}
+.ssoSessions .row-detail {
+    /*font-size: 8pt;*/
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.ssoSessions .field-label {
+    /*font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;*/
+    /*font-size: 8pt;*/
+    /*font-weight: bold;*/
+}
+
+.principal_attributes td:first-child {
+    width: 30%;
+}
+table.principal_attributes>tbody>tr>td {
+    border-top-color: #E6E6E6;
+}
 
 .adminPanels .panel-body {
     padding-top: 5px;
