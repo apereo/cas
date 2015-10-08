@@ -702,6 +702,12 @@
                 <groupId>org.bitbucket.b_c</groupId>
                 <artifactId>jose4j</artifactId>
                 <version>${jose.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -1346,6 +1352,12 @@
                 <artifactId>hazelcast</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.cryptacular</groupId>
+                <artifactId>cryptacular</artifactId>
+                <version>${cryptacular.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -1575,6 +1587,7 @@
         <bouncycastle.version>1.51</bouncycastle.version>
         <dbcp.version>2.1</dbcp.version>
         <hazelcast.version>3.5</hazelcast.version>
+        <cryptacular.version>1.0</cryptacular.version>
 
         <!-- Plugin Versions -->
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
