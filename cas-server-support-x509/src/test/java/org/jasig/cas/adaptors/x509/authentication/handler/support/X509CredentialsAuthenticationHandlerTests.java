@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import edu.vt.middleware.crypt.util.CryptReader;
+import org.cryptacular.util.CertUtil;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultHandlerResult;
@@ -276,7 +276,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         int i = 0;
         for (final String file : files) {
             try {
-                certs[i++] = (X509Certificate) CryptReader.readCertificate(
+                certs[i++] = (X509Certificate) CertUtil.readCertificate(
                         new ClassPathResource(file).getInputStream());
             } catch (final Exception e) {
                 throw new RuntimeException("Error creating certificate at " + file, e);
