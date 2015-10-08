@@ -18,20 +18,10 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.security.auth.login.FailedLoginException;
-
 import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serialize.FieldSerializer;
+import com.esotericsoftware.kryo.serializers.FieldSerializer;
+import net.spy.memcached.CachedData;
+import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -42,16 +32,32 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.SimplePrincipal;
+import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import static org.junit.Assert.assertEquals;
+import javax.security.auth.login.FailedLoginException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -63,10 +69,16 @@ public class KryoTranscoderTests {
 
     private final static String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
     private final static String TGT_ID = "TGT-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK-cas1";
-    
+    private final Map<String, Object> principalAttributes;
+
+
     private final KryoTranscoder transcoder;
 
     public KryoTranscoderTests(final int bufferSize) {
+
+        this.principalAttributes = new HashMap<String, Object>();
+        this.principalAttributes.put(ST_ID, TGT_ID);
+
         transcoder = new KryoTranscoder(bufferSize);
         final Map<Class<?>, Serializer> serializerMap = new HashMap<Class<?>, Serializer>();
         serializerMap.put(
@@ -75,8 +87,60 @@ public class KryoTranscoderTests {
         serializerMap.put(
                 MockTicketGrantingTicket.class,
                 new FieldSerializer(transcoder.getKryo(), MockTicketGrantingTicket.class));
+        serializerMap.put(
+                TicketGrantingTicketImpl.class,
+                new FieldSerializer(transcoder.getKryo(), TicketGrantingTicketImpl.class));
+        serializerMap.put(
+                ServiceTicketImpl.class,
+                new FieldSerializer(transcoder.getKryo(), ServiceTicketImpl.class));
         transcoder.setSerializerMap(serializerMap);
         transcoder.initialize();
+    }
+
+    @Test
+    public void verifyEncodeDecodeTGTImpl() throws Exception {
+
+
+        final AuthenticationBuilder bldr = new AuthenticationBuilder(new SimplePrincipal("user",
+                Collections.unmodifiableMap(this.principalAttributes) ));
+        bldr.setAttributes(Collections.unmodifiableMap(this.principalAttributes));
+        bldr.setAuthenticationDate(new Date());
+        final List l = new ArrayList();
+        l.add(new BasicCredentialMetaData(new UsernamePasswordCredential("a", "b")));
+
+        bldr.setCredentials(l);
+
+        Map map = new HashMap();
+        map.put("error", RuntimeException.class);
+        bldr.setFailures(Collections.unmodifiableMap(map));
+
+        map = new HashMap();
+        map.put("authn", new HandlerResult(new AcceptUsersAuthenticationHandler(),
+                new BasicCredentialMetaData(new UsernamePasswordCredential("a", "b"))));
+        bldr.setSuccesses(map);
+
+        final TicketGrantingTicket parent =
+                new TicketGrantingTicketImpl(TGT_ID, null, bldr.build(),
+                        new NeverExpiresExpirationPolicy());
+
+        final Principal p = new SimplePrincipal("casuser",
+                Collections.unmodifiableMap(this.principalAttributes));
+
+        final TicketGrantingTicket expectedTGT =
+                new TicketGrantingTicketImpl(TGT_ID, null, bldr.build(),
+                        new NeverExpiresExpirationPolicy());
+
+        final ServiceTicket ticket = expectedTGT.grantServiceTicket(ST_ID,
+                new SimpleWebApplicationServiceImpl("service"),
+                new NeverExpiresExpirationPolicy(), false);
+        CachedData result = transcoder.encode(expectedTGT);
+        final TicketGrantingTicket resultTicket = (TicketGrantingTicket) transcoder.decode(result);
+
+        assertEquals(expectedTGT, resultTicket);
+
+        result = transcoder.encode(ticket);
+        final ServiceTicket resultStTicket = (ServiceTicket) transcoder.decode(result);
+        assertEquals(ticket, resultStTicket);
     }
 
     @Parameterized.Parameters
