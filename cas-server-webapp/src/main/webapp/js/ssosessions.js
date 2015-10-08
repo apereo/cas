@@ -95,12 +95,8 @@ var ssoSessions = (function () {
                 },
                 {
                     "targets": 4,
-                    "data": 'authentication_date',
-                    "className": 'col-xs-3',
-                    "render": function ( data, type, full, meta ) {
-                        var timeStamp = new Date( data );
-                        return timeStamp.toFormattedString();
-                    }
+                    "data": 'authentication_date_formatted',
+                    "className": 'col-xs-3'
                 },
                 {
                     "targets": 5,
