@@ -17,5 +17,4 @@
     specific language governing permissions and limitations
     under the License.
 
---%>
-<%= "openid.mode:id_res\nis_valid:true\n" %>
+--%><%= "openid.mode:id_res\nis_valid:true\n" %>

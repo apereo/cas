@@ -83,11 +83,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             attributes = personAttributes.getAttributes();
         }
 
-        if (attributes == null & !this.returnNullIfNoAttributes) {
-            return new SimplePrincipal(principalId);
-        }
-
-        if (attributes == null) {
+        if (attributes == null || attributes.isEmpty()) {
+            if (!this.returnNullIfNoAttributes) {
+                return new SimplePrincipal(principalId);
+            }
             return null;
         }
 

@@ -18,25 +18,32 @@
  */
 package org.jasig.cas.ticket.registry.support.kryo.serial;
 
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceImpl;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 
 /**
- * Serializer for {@link SimpleWebApplicationServiceImpl} class.
- *
- * @author Marvin S. Addison
+ * Serializer for {@link org.jasig.cas.services.RegisteredService} instances.
+ * @author Misagh Moayyed
+ * @since 4.0.4
  */
-public final class SimpleWebApplicationServiceSerializer extends Serializer<SimpleWebApplicationServiceImpl> {
+public class RegisteredServiceSerializer  extends Serializer<RegisteredService> {
+    
     @Override
-    public void write(final Kryo kryo, final Output output, final SimpleWebApplicationServiceImpl service) {
-        kryo.writeObject(output, service.getId());
+    public void write(final Kryo kryo, final Output output, final RegisteredService service) {
+        kryo.writeObject(output, service.getServiceId());
     }
 
     @Override
-    public SimpleWebApplicationServiceImpl read(final Kryo kryo, final Input input, final Class<SimpleWebApplicationServiceImpl> type) {
-        return new SimpleWebApplicationServiceImpl(kryo.readObject(input, String.class));
+    public RegisteredService read(final Kryo kryo, final Input input, final Class<RegisteredService> type) {
+        final String id = kryo.readObject(input, String.class);
+        final AbstractRegisteredService svc = new RegisteredServiceImpl();
+        svc.setServiceId(id);
+        return svc;
     }
 }
