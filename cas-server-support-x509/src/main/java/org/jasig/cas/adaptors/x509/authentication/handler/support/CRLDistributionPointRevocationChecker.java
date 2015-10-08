@@ -31,12 +31,12 @@ import java.util.List;
 
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.springframework.core.io.ByteArrayResource;
-
-import edu.vt.middleware.crypt.x509.ExtensionReader;
-import edu.vt.middleware.crypt.x509.types.DistributionPoint;
-import edu.vt.middleware.crypt.x509.types.DistributionPointList;
-import edu.vt.middleware.crypt.x509.types.GeneralName;
-import edu.vt.middleware.crypt.x509.types.GeneralNameList;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.DERIA5String;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.cryptacular.x509.ExtensionReader;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
@@ -190,25 +190,31 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @return the url distribution points
      */
     private URI[] getDistributionPoints(final X509Certificate cert) {
-        final DistributionPointList points;
+        final List<DistributionPoint> points;
         try {
             points = new ExtensionReader(cert).readCRLDistributionPoints();
-        } catch (final Exception e) {
+        } catch (final RuntimeException e) {
             logger.error("Error reading CRLDistributionPoints extension field on {}", CertUtils.toString(cert), e);
             return new URI[0];
         }
 
         final List<URI> urls = new ArrayList<>();
-        for (final DistributionPoint point : points.getItems()) {
-            final Object location = point.getDistributionPoint();
-            if (location instanceof String) {
-                addURL(urls, (String) location);
-            } else if (location instanceof GeneralNameList) {
-                for (final GeneralName gn : ((GeneralNameList) location).getItems()) {
-                    addURL(urls, gn.getName());
+        
+        if(points != null){
+            for (final DistributionPoint point : points) {
+                final DistributionPointName pointName = point.getDistributionPoint();
+                if(pointName != null){
+                    final ASN1Sequence nameSequence = ASN1Sequence.getInstance(pointName.getName());
+                    for (int i = 0; i < nameSequence.size(); i++) {
+                        final GeneralName name = GeneralName.getInstance(nameSequence.getObjectAt(i));
+                        logger.debug("Found CRL distribution point {}.", name);
+                        try {
+                            addURL(urls, DERIA5String.getInstance(name.getName()).getString());
+                        } catch (final RuntimeException e) {
+                            logger.warn("{} not supported. String or GeneralNameList expected.", pointName);
+                        }
+                    }
                 }
-            } else {
-                logger.warn("{} not supported. String or GeneralNameList expected.", location);
             }
         }
 
