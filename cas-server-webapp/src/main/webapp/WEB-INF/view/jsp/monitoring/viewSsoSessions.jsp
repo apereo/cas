@@ -34,6 +34,70 @@
             String(this.getMinutes()).padLeft(2, '0')].join(":");
         };
 
+        function principalAttributes(obj) {
+            var output = '<table class="table table-condensed principal_attributes"><tbody>';
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    if (Array.isArray(obj[key])) {
+                        output = output.concat('<tr><td class="field-label active">'+ key +':</td><td>' + obj[key].toString() + '</td></tr>');
+                    } else {
+                        output = output.concat('<tr><td class="field-label active">'+ key +':</td><td>' + obj[key] + '</td></tr>');
+                    }
+                }
+            }
+            output = output.concat('</tbody></table>');
+
+            return output;
+        }
+
+        function authenticatedServices(obj) {
+            var output = '';
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    output = output.concat('<h5>' + key + '</h5><table class="table table-condensed principal_attributes"><tbody>');
+                    for (foo in obj[key] ) {
+                        if (obj[key].hasOwnProperty(foo)) {
+                            if (Array.isArray(obj[key][foo])) {
+                                output = output.concat('<tr><td class="field-label active">'+ foo +':</td><td>' + obj[key][foo].toString() + '</td></tr>');
+                            } else {
+                                output = output.concat('<tr><td class="field-label active">'+ foo +':</td><td>' + obj[key][foo] + '</td></tr>');
+                            }
+                        }
+                    }
+                    output = output.concat('</tbody></table>');
+                }
+            }
+            return output;
+        }
+
+        /* Formatting function for row details - modify as you need */
+        function format ( d ) {
+            return '<table class="table table-bordered row-detail">' +
+                '<tbody>'+
+                '<tr>'+
+                    '<td class="field-label active">Ticket Granting Ticket:</td>'+
+                    '<td>'+d.ticket_granting_ticket+'</td>'+
+                '</tr>'+
+                '<tr>'+
+                    '<td class="field-label active">Principal Attributes:</td>'+
+                    '<td>' +
+principalAttributes(d.principal_attributes) +
+                    '</td>' +
+                '</tr>'+
+                '<tr>'+
+                    '<td class="field-label active">Authenticated Services:</td>'+
+                    '<td>' +
+                        authenticatedServices(d.authenticated_services);
+                    '</td>' +
+                '</tr>'+
+                '<tr>'+
+                    '<td class="field-label active">Ticket Granting Service:</td>'+
+                    '<td></td>'+
+                '</tr>'+
+            '</tbody></table>';
+
+        }
+
         function updateAdminPanels( data ) {
             //$('#totalUsers').text(data.totalPrincipals);
             $('#totalUsers').text(data.activeSsoSessions.length);
@@ -214,6 +278,7 @@
                                 </div>
                             </div>
                         </div>
+                        <%--<div class="col-md-12">graph</div>--%>
                     </div>
                 </div>
 
@@ -240,6 +305,7 @@
                         <thead>
                             <tr>
                                 <th>&nbsp;</th>
+                                <th>&nbsp;</th>
                                 <th><spring:message code="cas.ssosessions.table.header.principal" /></th>
                                 <th><spring:message code="cas.ssosessions.table.header.ticketgrantingticket" /></th>
                                 <th><spring:message code="cas.ssosessions.table.header.authenticationdate" /></th>
@@ -249,6 +315,7 @@
                         </thead>
                         <tbody>
                             <tr>
+                                <td></td>
                                 <td></td>
                                 <td>User</td>
                                 <td>TGT</td>
