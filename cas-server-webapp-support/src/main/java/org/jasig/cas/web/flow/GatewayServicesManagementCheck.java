@@ -19,6 +19,7 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.web.support.WebUtils;
@@ -55,15 +56,23 @@ public class GatewayServicesManagementCheck extends AbstractAction {
     protected Event doExecute(final RequestContext context) throws Exception {
         final Service service = WebUtils.getService(context);
 
-        final boolean match = this.servicesManager.matchesExistingService(service);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        if (match) {
-            return success();
+        if (registeredService == null) {
+            final String msg = String.format("Service Management: Unauthorized Service Access. "
+                    + "Service [%s] does not match entries in service registry.", service.getId());
+            logger.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
 
-        final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                + "Service [%s] does not match entries in service registry.", service.getId());
-        logger.warn(msg);
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            final String msg = String.format("Service Management: Access to service [%s] "
+                    + "is disabled by the service registry.", service.getId());
+            logger.warn(msg);
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,
+                    registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+        return success();
     }
 }
