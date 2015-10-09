@@ -25,7 +25,7 @@ import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
-import edu.vt.middleware.crypt.util.CryptReader;
+import org.cryptacular.util.CertUtil;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.core.io.Resource;
@@ -80,7 +80,7 @@ public final class CertUtils {
      */
     public static X509Certificate readCertificate(final Resource resource) {
         try (final InputStream in = resource.getInputStream()) {
-            return (X509Certificate) CryptReader.readCertificate(in);
+            return CertUtil.readCertificate(in);
         } catch (final Exception e) {
             throw new RuntimeException("Error reading certificate " + resource, e);
         }

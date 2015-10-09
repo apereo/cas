@@ -17,15 +17,22 @@
  * under the License.
  */
 
-var scripts = [ "https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js",
-    "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js",
-    "https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js",
-    "https://rawgithub.com/cowboy/javascript-debug/master/ba-debug.min.js"];
 
 head.ready(document, function() {
-    head.load(scripts, resourceLoadedSuccessfully);
+    head.load("https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js", loadjQueryUI);
 });
 
+function loadjQueryUI() {
+    head.load("https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js", loadjQueryCookies);
+}
+
+function loadjQueryCookies() {
+    head.load("https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js", loadjQueryDebug);
+}
+
+function loadjQueryDebug() {
+    head.load("https://rawgithub.com/cowboy/javascript-debug/master/ba-debug.min.js", resourceLoadedSuccessfully);
+}
 
 function areCookiesEnabled() {
     $.cookie('cookiesEnabled', 'true');
@@ -39,18 +46,19 @@ function areCookiesEnabled() {
 
 function resourceLoadedSuccessfully() {
     $(document).ready(function() {
+
         if ($(":focus").length === 0){
             $("input:visible:enabled:first").focus();
         }
 
 
         if (areCookiesEnabled()) {
-           $('#cookiesDisabled').hide();
+            $('#cookiesDisabled').hide();
         } else {
-           $('#cookiesDisabled').show();   
-           $('#cookiesDisabled').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
+            $('#cookiesDisabled').show();
+            $('#cookiesDisabled').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
         }
-            
+
         //flash error box
         $('#msg.errors').animate({ backgroundColor: 'rgb(187,0,0)' }, 30).animate({ backgroundColor: 'rgb(255,238,221)' }, 500);
 
@@ -69,7 +77,6 @@ function resourceLoadedSuccessfully() {
                 $('#capslock-on').hide();
             }
         });
-
         if (typeof(jqueryReady) == "function") {
             jqueryReady();
         }
