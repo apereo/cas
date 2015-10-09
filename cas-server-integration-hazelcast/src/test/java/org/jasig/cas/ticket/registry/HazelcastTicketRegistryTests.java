@@ -20,6 +20,7 @@ package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -108,7 +109,8 @@ public class HazelcastTicketRegistryTests {
         public ServiceTicket grantServiceTicket(final String id,
                                                 final Service service,
                                                 final ExpirationPolicy expirationPolicy,
-                                                final boolean credentialsProvided) {
+                                                final boolean credentialsProvided,
+                                                final RegisteredService registeredService) {
             return null;
         }
 
