@@ -19,6 +19,7 @@
 package org.jasig.cas.util;
 
 import org.apache.commons.lang3.time.FastDateFormat;
+import org.joda.time.DateTime;
 
 import java.util.Date;
 import java.util.Locale;
@@ -43,6 +44,7 @@ public final class ISOStandardDateFormat extends FastDateFormat {
     public ISOStandardDateFormat() {
         super(DATE_FORMAT, TimeZone.getDefault(), Locale.getDefault());
     }
+
     
     /**
      * Gets the current date and time
@@ -52,5 +54,15 @@ public final class ISOStandardDateFormat extends FastDateFormat {
      */
     public String getCurrentDateAndTime() {
         return format(new Date());
+    }
+
+    /**
+     * Format the datetime given.
+     *
+     * @param dt the datetime
+     * @return the date and time
+     */
+    public String format(final DateTime dt) {
+        return format(dt.toDate());
     }
 }
