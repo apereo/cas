@@ -34,6 +34,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -219,6 +220,15 @@ public final class WebUtils {
      */
     public static void putLoginTicket(final RequestContext context, final String ticket) {
         context.getFlowScope().put("loginTicket", ticket);
+    }
+
+    /**
+     * Put unauthorized URL into flow scope.
+     * @param context request context
+     * @param url unauthorized url
+     */
+    public static void putUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context, final URI url) {
+        context.getFlowScope().put("unauthorizedRedirectUrl", url);
     }
 
     /**
