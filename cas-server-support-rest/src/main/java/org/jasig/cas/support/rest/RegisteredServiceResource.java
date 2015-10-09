@@ -51,8 +51,7 @@ import java.util.Set;
 
 /**
  * {@link org.springframework.web.bind.annotation.RestController} implementation of a REST API
- * that allows for registration of CAS services. Services will automatically be put in in the service registry,
- * but are always disabled by default until they are approved by the explicit permission of the CAS deployer.
+ * that allows for registration of CAS services.
  * @author Misagh Moayyed
  * @since 4.2
  */
