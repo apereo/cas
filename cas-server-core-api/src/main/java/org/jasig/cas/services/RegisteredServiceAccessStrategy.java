@@ -20,6 +20,8 @@
 package org.jasig.cas.services;
 
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URL;
 import java.util.Map;
 
 /**
@@ -57,4 +59,14 @@ public interface RegisteredServiceAccessStrategy extends Serializable {
      * @return true/false if service access can be granted to principal
      */
     boolean doPrincipalAttributesAllowServiceAccess(Map<String, Object> principalAttributes);
+
+    /**
+     * Redirect the request to a separate and possibly external URL
+     * in case authorization fails for this service. If no URL is
+     * specified, CAS shall redirect the request by default to a generic
+     * page that describes the authorization failed attempt.
+     * @return the redirect url
+     * @since 4.2
+     */
+    URI getUnauthorizedRedirectUrl();
 }
