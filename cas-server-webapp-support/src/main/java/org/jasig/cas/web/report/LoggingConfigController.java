@@ -81,7 +81,7 @@ public class LoggingConfigController {
      * @return the default view
      * @throws Exception the exception
      */
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value="/status/config/logging", method = RequestMethod.GET)
     public ModelAndView getDefaultView() throws Exception {
         final Map<String, Object> model = new HashMap<>();
         model.put("logConfigurationFile", logConfigurationFile.getURI());
