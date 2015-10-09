@@ -162,7 +162,8 @@ public class JpaTicketRegistryTests {
                ID_GENERATOR.getNewTicketId("ST"),
                new MockService("https://service.example.com"),
                EXP_POLICY_ST,
-               false, TestUtils.getDefaultRegisteredService());
+               false,
+               true);
     }
 
     void addTicketInTransaction(final Ticket ticket) {

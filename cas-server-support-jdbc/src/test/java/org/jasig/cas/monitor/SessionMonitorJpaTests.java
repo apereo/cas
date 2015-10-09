@@ -90,7 +90,7 @@ public class SessionMonitorJpaTests {
                       new MockService("junit"),
                       TEST_EXP_POLICY,
                       false,
-                      TestUtils.getDefaultRegisteredService()));
+                      true));
           }
         }
     }
