@@ -221,6 +221,11 @@
 
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
+        <url-pattern>/status/config/logging</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
         <url-pattern>/status/config/logging/*</url-pattern>
     </servlet-mapping>
 
