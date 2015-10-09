@@ -39,9 +39,9 @@
             for (var key in obj) {
                 if (obj.hasOwnProperty(key)) {
                     if (Array.isArray(obj[key])) {
-                        output = output.concat('<tr><td class="field-label active">'+ key +':</td><td>' + obj[key].toString() + '</td></tr>');
+                        output = output.concat('<tr><td class="field-label active">'+ key +'</td><td>' + obj[key].toString() + '</td></tr>');
                     } else {
-                        output = output.concat('<tr><td class="field-label active">'+ key +':</td><td>' + obj[key] + '</td></tr>');
+                        output = output.concat('<tr><td class="field-label active">'+ key +'</td><td>' + obj[key] + '</td></tr>');
                     }
                 }
             }
