@@ -33,9 +33,7 @@ Health: OK
 ## Internal Configuration Report
 
 CAS also provides a `/status/config` endpoint that produces a report of the runtime CAS configuration, which includes all components that are under the `org.jasig`
-package as well as settings defined in the `cas.properties` file. The output of this endpoint is a JSON representation of the runtime that is rendered into a modest visualization:
-
-![](https://cloud.githubusercontent.com/assets/1205228/7085296/35819ff0-df2a-11e4-9818-9119fd30588e.jpg)
+package as well as settings defined in the `cas.properties` file. The output of this endpoint is a JSON representation of the runtime that is rendered into a modest visualization.
 
 #Statistics
 Furthermore, the CAS web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance.
@@ -56,10 +54,8 @@ cas.securityContext.statistics.access=hasIpAddress('127.0.0.1')
 
 {% endhighlight %}
 
-![](http://i.imgur.com/8CXPgOC.png)
-
 ##Performance Statistics
-CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics. 
+CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics.
 
 ###Configuration
 The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
@@ -71,7 +67,7 @@ The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring
 
 {% endhighlight %}
 
-Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans. 
+Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
 
 {% highlight xml %}
 
@@ -146,8 +142,6 @@ type=METER, name=org.jasig.cas.CentralAuthenticationServiceImpl.DESTROY_TICKET_G
 
 type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.GRANT_SERVICE_TICKET_TIMER, count=0, min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
 
-type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.VALIDATE_SERVICE_TICKET_TIMER, count=0, min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
-
 {% endhighlight %}
 
 ###Viewing Metrics on the Web
@@ -213,23 +207,8 @@ You can also configure the remote destination output over SSL and specify the re
 {% endhighlight %}
 
 For additional logging functionality, please refer to the Log4j configuration url or view
-the [CAS Logging functionality](Logging.html). 
+the [CAS Logging functionality](Logging.html).
 
 ### SSO Sessions Report
 
-CAS also provides a `/statistics/ssosessions` endpoint that produces a report of all active non-expired SSO sessions. The output of this endpoint is a JSON representation of SSO sessions that is rendered into a modest visualization:
-
-![](https://cloud.githubusercontent.com/assets/1205228/6801195/fcf77186-d1e2-11e4-8059-cfa1d7e80d83.PNG)
-
-By default, ticket-granting ticket ids are not shown. This behavior can be controlled via `cas.properties`:
-
-{% highlight properties %}
-
-##
-# Reports
-#
-# Setting to whether include the ticket granting ticket id in the report
-# sso.sessions.include.tgt=false
-
-{% endhighlight %}
-
+CAS also provides a `/statistics/ssosessions` endpoint that produces a report of all active non-expired SSO sessions. The output of this endpoint is a JSON representation of SSO sessions that is rendered into a modest visualization.
