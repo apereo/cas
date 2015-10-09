@@ -69,16 +69,19 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
+            final String msg = String.format("Service Management: Unauthorized Service Access. "
                     + "Service [%s] is not found in service registry.", service.getId());
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service [%s] is not enabled in service registry.", service.getId());
+            final String msg = String.format("Service Management: Unauthorized Service Access. "
+                    + "Service [%s] is not allowed access via the service registry.", service.getId());
             
             logger.warn(msg);
+
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context,
+                    registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
 

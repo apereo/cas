@@ -115,6 +115,12 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);
+
+            if (registeredService != null) {
+                WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext,
+                        registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+            }
+
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                     "Entity " + entityId + " not recognized");
         }

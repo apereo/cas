@@ -20,6 +20,7 @@
 package org.jasig.cas.services;
 
 import com.google.common.collect.Sets;
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -143,6 +144,34 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
     }
 
+    @Test
+    public void checkAuthorizationByRangePass() {
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime(DateTime.now().toString());
+        authz.setEndingDateTime(DateTime.now().plusMinutes(10).toString());
+        assertTrue(authz.isServiceAccessAllowed());
+
+    }
+
+    @Test
+    public void checkAuthorizationByRangeFailStartTime() {
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime(DateTime.now().plusDays(1).toString());
+        authz.setEndingDateTime(DateTime.now().plusMinutes(10).toString());
+        assertFalse(authz.isServiceAccessAllowed());
+
+    }
+
+    @Test
+    public void checkAuthorizationByRangePassEndTime() {
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(true, true);
+        authz.setStartingDateTime(DateTime.now().toString());
+        authz.setEndingDateTime(DateTime.now().plusSeconds(30).toString());
+        assertTrue(authz.isServiceAccessAllowed());
+    }
 
     private Map<String, Set<String>> getRequiredAttributes() {
         final Map<String, Set<String>> map = new HashMap<>();
