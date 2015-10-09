@@ -181,9 +181,9 @@ public interface RegisteredService extends Cloneable, Serializable {
     RegisteredServicePublicKey getPublicKey();
 
     /**
-     * Whether we should only keep the latest service ticket for this service to save memory.
+     * Whether we should only track the most recent session (by only keeping the latest service ticket) to save memory.
      *
-     * @return whether we should only keep the latest service ticket for this service
+     * @return whether we should only track the most recent session
      */
-    boolean isOnlyKeepLatestST();
+    boolean isOnlyTrackMostRecentSession();
 }

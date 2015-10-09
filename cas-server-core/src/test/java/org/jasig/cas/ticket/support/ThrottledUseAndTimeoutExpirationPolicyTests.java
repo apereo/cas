@@ -65,7 +65,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
     @Test
     public void verifyTicketUsedButWithTimeout() throws InterruptedException {
         this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false,
-                TestUtils.getDefaultRegisteredService());
+                true);
         Thread.sleep(TIMEOUT - TIMEOUT_BUFFER);
         assertFalse(this.ticket.isExpired());
     }
@@ -73,7 +73,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
     @Test
     public void verifyNotWaitingEnoughTime() {
         this.ticket.grantServiceTicket("test", TestUtils.getService(), this.expirationPolicy, false,
-                TestUtils.getDefaultRegisteredService());
+                true);
         assertTrue(this.ticket.isExpired());
     }
 }
