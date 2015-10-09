@@ -19,7 +19,6 @@
 
 package org.jasig.cas.support.rest;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -36,13 +35,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,12 +77,12 @@ public class RegisteredServiceResource {
     /**
      * Create new service.
      *
-     * @param requestBody service application/x-www-form-urlencoded value
      * @param tgtId ticket granting ticket id URI path param
+     * @param serviceDataHolder the service to register and save in rest form
      * @return {@link ResponseEntity} representing RESTful response
      */
     @RequestMapping(value = "/services/add/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public final ResponseEntity<String> createService(@RequestBody final MultiValueMap<String, String> requestBody,
+    public final ResponseEntity<String> createService(@ModelAttribute final ServiceDataHolder serviceDataHolder,
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
 
@@ -110,7 +109,7 @@ public class RegisteredServiceResource {
                 }
 
                 if (attributeValuesToCompare.contains(this.attributeValue)) {
-                    final RegexRegisteredService service = parseRequestToExtractService(requestBody);
+                    final RegisteredService service = serviceDataHolder.getRegisteredService();
                     final RegisteredService savedService = this.servicesManager.save(service);
                     return new ResponseEntity<>(String.valueOf(savedService.getId()), HttpStatus.OK);
                 }
@@ -125,44 +124,6 @@ public class RegisteredServiceResource {
         }
     }
 
-    private RegexRegisteredService parseRequestToExtractService(@RequestBody final MultiValueMap<String, String> requestBody) {
-        final String serviceId = requestBody.getFirst("serviceId");
-        final String serviceName = requestBody.getFirst("name");
-        final String description = requestBody.getFirst("description");
-        final String evaluationOrder = requestBody.getFirst("evaluationOrder");
-        final String enabled = requestBody.getFirst("enabled");
-        final String ssoEnabled = requestBody.getFirst("ssoEnabled");
-
-        if (StringUtils.isBlank(serviceId) || StringUtils.isBlank(serviceName)
-            || StringUtils.isBlank(description)) {
-            throw new IllegalArgumentException("Service name/description/id is missing");
-        }
-
-
-        final RegexRegisteredService service = new RegexRegisteredService();
-        service.setServiceId(serviceId);
-        service.setDescription(description);
-        service.setName(serviceName);
-
-        if (StringUtils.isBlank(evaluationOrder)) {
-            service.setEvaluationOrder(Integer.MAX_VALUE);
-        } else {
-            service.setEvaluationOrder(Integer.parseInt(evaluationOrder));
-        }
-
-        boolean enabledService = false;
-        boolean ssoEnabledService = false;
-        if (!StringUtils.isBlank(enabled)) {
-            enabledService = BooleanUtils.toBoolean(enabled);
-        }
-        if (!StringUtils.isBlank(ssoEnabled)) {
-            ssoEnabledService = BooleanUtils.toBoolean(ssoEnabled);
-        }
-
-        service.setAccessStrategy(
-            new DefaultRegisteredServiceAccessStrategy(enabledService, ssoEnabledService));
-        return service;
-    }
 
     public void setAttributeName(final String attributeName) {
         this.attributeName = attributeName;
@@ -174,5 +135,58 @@ public class RegisteredServiceResource {
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    private static class ServiceDataHolder implements Serializable {
+
+        private static final long serialVersionUID = 3035541944428412672L;
+
+        private String serviceId;
+        private String name;
+        private String description;
+        private int evaluationOrder = Integer.MAX_VALUE;
+        private boolean enabled;
+        private boolean ssoEnabled;
+
+        public void setServiceId(final String serviceId) {
+            this.serviceId = serviceId;
+        }
+
+        public void setName(final String serviceName) {
+            this.name = serviceName;
+        }
+
+        public void setDescription(final String description) {
+            this.description = description;
+        }
+
+        public void setEvaluationOrder(final int evaluationOrder) {
+            this.evaluationOrder = evaluationOrder;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public void setSsoEnabled(final boolean ssoEnabled) {
+            this.ssoEnabled = ssoEnabled;
+        }
+
+        public RegisteredService getRegisteredService() {
+            if (StringUtils.isBlank(serviceId) || StringUtils.isBlank(name)
+                    || StringUtils.isBlank(description)) {
+                throw new IllegalArgumentException("Service name/description/id is missing");
+            }
+
+            final RegexRegisteredService service = new RegexRegisteredService();
+            service.setServiceId(serviceId);
+            service.setDescription(description);
+            service.setName(name);
+            service.setEvaluationOrder(evaluationOrder);
+            service.setAccessStrategy(
+                    new DefaultRegisteredServiceAccessStrategy(enabled, ssoEnabled));
+            return service;
+        }
+
     }
 }
