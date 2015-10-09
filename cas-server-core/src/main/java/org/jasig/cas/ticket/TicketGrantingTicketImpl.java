@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -141,7 +142,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     @Override
     public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
-        final boolean credentialsProvided) {
+        final boolean credentialsProvided, final RegisteredService registeredService) {
         final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
             service, this.getCountOfUses() == 0 || credentialsProvided,
             expirationPolicy);
@@ -151,8 +152,10 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         final List<Authentication> authentications = getChainedAuthentications();
         service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
 
-        // remove this service if it already exists to only keep the latest service ticket for a service
-        this.services.values().remove(service);
+        if (registeredService.isOnlyKeepLatestST()) {
+            // remove this service if it already exists to only keep the latest service ticket for a service
+            this.services.values().remove(service);
+        }
         this.services.put(id, service);
 
         return serviceTicket;

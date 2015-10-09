@@ -40,6 +40,7 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
@@ -294,5 +295,9 @@ public final class TestUtils {
         attributes.put("givenName", ImmutableSet.of("CASUser"));
         attributes.put("memberOf", ImmutableSet.of("system", "admin", "cas"));
         return attributes;
+    }
+
+    public static RegisteredService getDefaultRegisteredService() {
+        return getRegisteredService("^https?://.+");
     }
 }

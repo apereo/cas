@@ -73,7 +73,8 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     @Test
     public void verifyTicketIsExpiredByCount() {
         for (int i = 0; i < NUMBER_OF_USES; i++) {
-            this.ticket.grantServiceTicket("test", TestUtils.getService(), new NeverExpiresExpirationPolicy(), false);
+            this.ticket.grantServiceTicket("test", TestUtils.getService(), new NeverExpiresExpirationPolicy(), false,
+                    TestUtils.getDefaultRegisteredService());
         }
         assertTrue(this.ticket.isExpired());
     }
