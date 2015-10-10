@@ -21,7 +21,6 @@ package org.jasig.cas.services;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URL;
 import java.util.Map;
 
 /**
