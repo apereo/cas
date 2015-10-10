@@ -20,6 +20,7 @@
 package org.jasig.cas.adaptors.duo;
 
 import com.duosecurity.duoweb.DuoWeb;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +94,9 @@ public final class DuoAuthenticationService {
      * @throws Exception if response verification fails
      */
     public String authenticate(final String signedRequestToken) throws Exception {
+        if (StringUtils.isBlank(signedRequestToken)) {
+            throw new IllegalArgumentException("No signed request token was passed to verify");
+        }
         logger.debug("Calling DuoWeb.verifyResponse with signed request token '{}'", signedRequestToken);
         return DuoWeb.verifyResponse(this.duoIntegrationKey, this.duoSecretKey, this.duoApplicationKey, signedRequestToken);
     }
