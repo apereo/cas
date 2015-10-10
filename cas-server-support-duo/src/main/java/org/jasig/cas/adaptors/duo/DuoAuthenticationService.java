@@ -22,15 +22,19 @@ package org.jasig.cas.adaptors.duo;
 import com.duosecurity.duoweb.DuoWeb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * An abstraction that encapsulates interaction with Duo 2fa authentication service via its public API.
- * Derived from the fine work of @author Eric Pierce <epierce@usf.edu>
- * and @author Michael Kennedy <michael.kennedy@ucr.edu>
+ * @author Michael Kennedy
  * @author Misagh Moayyed
+ * @author Eric Pierce
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
+@Component("duoAuthenticationService")
 public final class DuoAuthenticationService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -46,8 +50,11 @@ public final class DuoAuthenticationService {
      * @param duoApplicationKey duo application key
      * @param duoApiHost duo API host url
      */
-    public DuoAuthenticationService(final String duoIntegrationKey, final String duoSecretKey,
-                             final String duoApplicationKey, final String duoApiHost) {
+    @Autowired
+    public DuoAuthenticationService(@Value("${cas.duo.integration.key:}") final String duoIntegrationKey,
+                                    @Value("${cas.duo.secret.key:}") final String duoSecretKey,
+                                    @Value("${cas.duo.application.key:}") final String duoApplicationKey,
+                                    @Value("${cas.duo.api.host:}") final String duoApiHost) {
         this.duoIntegrationKey = duoIntegrationKey;
         this.duoSecretKey = duoSecretKey;
         this.duoApplicationKey = duoApplicationKey;
