@@ -29,6 +29,86 @@ Health: OK
     1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 {% endhighlight %}
 
+The list of configured monitors are all defined in `deployerConfigContext.xml` file:
+
+{% highlight xml %}
+
+<util:list id="monitorsList">
+  <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
+  <bean class="org.jasig.cas.monitor.SessionMonitor"
+        p:ticketRegistry-ref="ticketRegistry"
+        p:serviceTicketCountWarnThreshold="5000"
+        p:sessionCountWarnThreshold="100000" />
+</util:list>
+
+{% endhighlight %}
+
+The following optional monitors are also available:
+
+- MemcachedMonitor
+
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+
+- EhcacheMonitor
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+- DataSourceMonitor
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+- PooledConnectionFactoryMonitor
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+- ConnectionFactoryMonitor
+Monitors an LDAP connection factories provided by Ldaptive.
+
+{% highlight xml %}
+
+<bean class="org.jasig.cas.monitor.ConnectionFactoryMonitor"
+      c:factory-ref="provisioningConnectionFactory"
+      c:validator-ref="searchValidator" />
+
+<ldaptive:pooled-connection-factory
+        id="provisioningConnectionFactory"
+        ldapUrl="${ldap.url}"
+        blockWaitTime="${ldap.pool.blockWaitTime}"
+        failFastInitialize="true"
+        connectTimeout="${ldap.connectTimeout}"
+        useStartTLS="${ldap.useStartTLS}"
+        validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+        validatePeriodically="${ldap.pool.validatePeriodically}"
+        validatePeriod="${ldap.pool.validatePeriod}"
+        idleTime="${ldap.pool.idleTime}"
+        maxPoolSize="${ldap.pool.maxSize}"
+        minPoolSize="${ldap.pool.minSize}"
+        useSSL="${ldap.use.ssl:false}"
+        prunePeriod="${ldap.pool.prunePeriod}"
+        provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+/>
+
+<bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+{% endhighlight %}
 
 ## Internal Configuration Report
 
