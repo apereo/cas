@@ -1386,6 +1386,7 @@
         <module>cas-management-webapp</module>
         <module>cas-server-support-rest</module>
         <module>cas-server-support-yubikey</module>
+        <module>cas-server-support-duo</module>
         <module>cas-server-integration-hazelcast</module>
         <module>cas-server-integration-mongo</module>
     </modules>
