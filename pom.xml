@@ -507,6 +507,7 @@
                     </mapping>
                     <excludes>
                         <exclude>**/bin/**</exclude>
+                        <exclude>**/com/duosecurity/**</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>**/INSTALL*</exclude>
                         <exclude>**/NOTICE*</exclude>
