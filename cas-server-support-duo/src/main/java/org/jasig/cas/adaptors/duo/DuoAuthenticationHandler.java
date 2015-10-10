@@ -20,6 +20,7 @@
 package org.jasig.cas.adaptors.duo;
 
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
@@ -73,20 +74,25 @@ public final class DuoAuthenticationHandler extends AbstractPreAndPostProcessing
         try {
             final DuoCredential duoCredential = (DuoCredential) credential;
 
+            if (!duoCredential.isValid()) {
+                throw new GeneralSecurityException("Duo credential validation failed. Ensure a username "
+                + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
+            }
+
             final String duoVerifyResponse = this.duoAuthenticationService.authenticate(duoCredential.getSignedDuoResponse());
             logger.debug("Response from Duo verify: [{}]", duoVerifyResponse);
             final String primaryCredentialsUsername = duoCredential.getUsername();
 
-            final boolean isGoodAuthentication= duoVerifyResponse.equals(primaryCredentialsUsername);
+            final boolean isGoodAuthentication = duoVerifyResponse.equals(primaryCredentialsUsername);
 
             if (isGoodAuthentication) {
                 logger.info("Successful Duo authentication for [{}]", primaryCredentialsUsername);
 
-                final Principal principal = this.principalFactory.createPrincipal(primaryCredentialsUsername);
+                final Principal principal = this.principalFactory.createPrincipal(duoVerifyResponse);
                 return createHandlerResult(credential, principal, new ArrayList<MessageDescriptor>());
             }
-            throw new FailedLoginException("Duo authentication error for username "
-                    + primaryCredentialsUsername + " and Duo response: " + duoVerifyResponse);
+            throw new FailedLoginException("Duo authentication username "
+                    + primaryCredentialsUsername + " does not match Duo response: " + duoVerifyResponse);
 
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
