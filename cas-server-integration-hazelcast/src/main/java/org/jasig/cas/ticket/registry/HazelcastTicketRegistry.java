@@ -24,6 +24,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Map;
@@ -48,24 +49,24 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
 
     private final long serviceTicketTimeoutInSeconds;
 
-    private final long ticketGrantingTicketTimoutInSeconds;
+    private final long ticketGrantingTicketTimeoutInSeconds;
 
     private final HazelcastInstance hz;
 
     /**
-     * @param hz An instance of <code>HazelcastInstance</code>
+     * @param hz An instance of {@code HazelcastInstance}
      * @param mapName Name of map to use
-     * @param ticketGrantingTicketTimoutInSeconds TTL for TGT entries
+     * @param ticketGrantingTicketTimeoutInSeconds TTL for TGT entries
      * @param serviceTicketTimeoutInSeconds TTL for ST entries
      */
     public HazelcastTicketRegistry(final HazelcastInstance hz,
                                    final String mapName,
-                                   final long ticketGrantingTicketTimoutInSeconds,
+                                   final long ticketGrantingTicketTimeoutInSeconds,
                                    final long serviceTicketTimeoutInSeconds) {
 
-        logInitialization(hz, mapName, ticketGrantingTicketTimoutInSeconds, serviceTicketTimeoutInSeconds);
+        logInitialization(hz, mapName, ticketGrantingTicketTimeoutInSeconds, serviceTicketTimeoutInSeconds);
         this.registry = hz.getMap(mapName);
-        this.ticketGrantingTicketTimoutInSeconds = ticketGrantingTicketTimoutInSeconds;
+        this.ticketGrantingTicketTimeoutInSeconds = ticketGrantingTicketTimeoutInSeconds;
         this.serviceTicketTimeoutInSeconds = serviceTicketTimeoutInSeconds;
         this.hz = hz;
     }
@@ -85,17 +86,17 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     /**
      * @param hz An instance of <code>HazelcastInstance</code>
      * @param mapName Name of map to use
-     * @param ticketGrantingTicketTimoutInSeconds TTL for TGT entries
+     * @param ticketGrantingTicketTimeoutInSeconds TTL for TGT entries
      * @param serviceTicketTimeoutInSeconds TTL for ST entries
      */
     private void logInitialization(final HazelcastInstance hz,
                                    final String mapName,
-                                   final long ticketGrantingTicketTimoutInSeconds,
+                                   final long ticketGrantingTicketTimeoutInSeconds,
                                    final long serviceTicketTimeoutInSeconds) {
 
         logger.info("Setting up Hazelcast Ticket Registry...");
         logger.debug("Hazelcast instance: {}", hz);
-        logger.debug("TGT timeout: [{}s]", ticketGrantingTicketTimoutInSeconds);
+        logger.debug("TGT timeout: [{}s]", ticketGrantingTicketTimeoutInSeconds);
         logger.debug("ST timeout: [{}s]", serviceTicketTimeoutInSeconds);
     }
 
@@ -119,8 +120,8 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
-        final Ticket ticket = getProxiedTicketInstance(this.registry.get(encTicketId));
-        return decodeTicket(ticket);
+        final Ticket ticket = decodeTicket(this.registry.get(encTicketId));
+        return getProxiedTicketInstance(ticket);
     }
 
 
@@ -156,7 +157,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
                 if (this.registry.remove(entry.getKey()) != null) {
                     logger.trace("Removed service ticket [{}]", entry.getKey());
                 } else {
-                    logger.trace("Unable to remove service ticket [{}]", entry.getKey());
+                    logger.trace("Ticket not found or is already removed. Unable to remove service ticket [{}]", entry.getKey());
                 }
             }
         }
@@ -176,10 +177,12 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
      */
     private long getTimeout(final Ticket t) {
         if (t instanceof TicketGrantingTicket) {
-            return this.ticketGrantingTicketTimoutInSeconds;
-        } else if (t instanceof ServiceTicket) {
+            return this.ticketGrantingTicketTimeoutInSeconds;
+        }
+        if (t instanceof ServiceTicket) {
             return this.serviceTicketTimeoutInSeconds;
         }
+
         throw new IllegalArgumentException(
                 String.format("Invalid ticket type [%s]. Expecting either [TicketGrantingTicket] or [ServiceTicket]",
                         t.getClass().getName()));

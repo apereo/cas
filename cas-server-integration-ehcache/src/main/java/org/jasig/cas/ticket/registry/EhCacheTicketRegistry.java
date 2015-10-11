@@ -27,6 +27,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.style.ToStringCreator;
@@ -111,9 +112,6 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean deleteTicket(final String ticketIdToDelete) {
         final String ticketId = encodeTicketId(ticketIdToDelete);
@@ -139,19 +137,12 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
      * Delete the TGT and all of its service tickets.
      *
      * @param ticket the ticket
-     * @return boolean indicating wether ticket was deleted or not
+     * @return boolean indicating whether ticket was deleted or not
      */
     private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
-        // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
-            for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                if (this.serviceTicketsCache.remove(entry.getKey())) {
-                    logger.trace("Removed service ticket [{}]", entry.getKey());
-                } else {
-                    logger.trace("Unable to remove service ticket [{}]", entry.getKey());
-                }
-            }
+            this.serviceTicketsCache.removeAll(services.keySet());
         }
 
         return this.ticketGrantingTicketsCache.remove(ticket.getId());
@@ -173,8 +164,9 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
             return null;
         }
 
-        final Ticket ticket = decodeTicket((Ticket) element.getObjectValue());
-        return getProxiedTicketInstance(ticket);
+        final Ticket proxiedTicket = decodeTicket((Ticket) element.getObjectValue());
+        final Ticket ticket = getProxiedTicketInstance(proxiedTicket);
+        return ticket;
     }
 
     @Override
@@ -187,11 +179,13 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
         final Collection<Ticket> allTickets = new HashSet<>(serviceTickets.size() + tgtTicketsTickets.size());
 
         for (final Element ticket : serviceTickets) {
-            allTickets.add((Ticket) ticket.getObjectValue());
+            final Ticket proxiedTicket = getProxiedTicketInstance((Ticket) ticket.getObjectValue());
+            allTickets.add(proxiedTicket);
         }
 
         for (final Element ticket : tgtTicketsTickets) {
-            allTickets.add((Ticket) ticket.getObjectValue());
+            final Ticket proxiedTicket = getProxiedTicketInstance((Ticket) ticket.getObjectValue());
+            allTickets.add(proxiedTicket);
         }
 
         return decodeTickets(allTickets);
@@ -223,7 +217,7 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
 
     /**
      * Flag to indicate whether this registry instance should participate in reporting its state with
-     * default value set to <code>true</code>.
+     * default value set to {@code true}.
      * Based on the <a href="http://ehcache.org/apidocs/net/sf/ehcache/Ehcache.html#getKeysWithExpiryCheck()">EhCache documentation</a>,
      * determining the number of service tickets and the total session count from the cache can be considered
      * an expensive operation with the time taken as O(n), where n is the number of elements in the cache.
