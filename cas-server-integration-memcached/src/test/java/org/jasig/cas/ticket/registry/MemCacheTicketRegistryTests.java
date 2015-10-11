@@ -29,7 +29,12 @@ import de.flapdoodle.embed.memcached.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.memcached.distribution.Version;
 import de.flapdoodle.embed.process.config.store.IDownloadConfig;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
+import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.jasig.cas.authentication.principal.Service;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -47,6 +52,7 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 import static org.slf4j.LoggerFactory.*;
 
@@ -138,6 +144,39 @@ public class MemCacheTicketRegistryTests {
         // Sleep a little longer than service ticket expiry defined in Spring context
         Thread.sleep(2100);
         Assert.assertNull(registry.getTicket(id, ServiceTicket.class));
+    }
+
+    @Test
+    public void verifyDeleteTicketWithChildren() throws Exception {
+        this.registry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.registry.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true);
+        final ServiceTicket st2 = tgt.grantServiceTicket(
+                "ST2", service, new NeverExpiresExpirationPolicy(), true);
+        final ServiceTicket st3 = tgt.grantServiceTicket(
+                "ST3", service, new NeverExpiresExpirationPolicy(), true);
+
+        this.registry.addTicket(st1);
+        this.registry.addTicket(st2);
+        this.registry.addTicket(st3);
+
+        assertNotNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
+        assertNotNull(this.registry.getTicket("ST2", ServiceTicket.class));
+        assertNotNull(this.registry.getTicket("ST3", ServiceTicket.class));
+
+        this.registry.deleteTicket(tgt.getId());
+
+        assertNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.registry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.registry.getTicket("ST2", ServiceTicket.class));
+        assertNull(this.registry.getTicket("ST3", ServiceTicket.class));
     }
 
     private boolean isMemcachedListening() {
