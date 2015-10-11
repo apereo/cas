@@ -26,6 +26,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.validation.constraints.Min;
@@ -82,7 +83,7 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
 
     /**
      * Creates a new instance using the given memcached client instance, which is presumably configured via
-     * <code>net.spy.memcached.spring.MemcachedClientFactoryBean</code>.
+     * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
      *
      * @param client                      Memcached client.
      * @param ticketGrantingTicketTimeOut TGT timeout in seconds.
@@ -127,9 +128,6 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean deleteTicket(final String ticketIdToDel) {
         final String ticketId = encodeTicketId(ticketIdToDel);
@@ -151,13 +149,13 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
         try {
             return this.client.delete(ticketId).get();
         } catch (final Exception e) {
-            logger.error("Failed deleting {}", ticketId, e);
+            logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);
         }
         return false;
     }
 
     /**
-     * Delete the TGT's service tickets.
+     * Delete the TGT service tickets.
      *
      * @param ticket the ticket
      */
