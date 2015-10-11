@@ -18,37 +18,33 @@
  */
 package org.jasig.cas.support.openid.authentication.handler.support;
 
-import javax.security.auth.login.FailedLoginException;
-
-import static org.junit.Assert.*;
-
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.security.auth.login.FailedLoginException;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
-public class OpenIdCredentialsAuthenticationHandlerTests {
+public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdTests {
 
+    @Autowired
     private OpenIdCredentialsAuthenticationHandler openIdCredentialsAuthenticationHandler;
 
+    @Autowired
     private TicketRegistry ticketRegistry;
 
-    @Before
-    public void setUp() throws Exception {
-        this.openIdCredentialsAuthenticationHandler = new OpenIdCredentialsAuthenticationHandler();
-        this.ticketRegistry = new DefaultTicketRegistry();
-        this.openIdCredentialsAuthenticationHandler.setTicketRegistry(this.ticketRegistry);
-    }
 
     @Test
     public void verifySupports() {
