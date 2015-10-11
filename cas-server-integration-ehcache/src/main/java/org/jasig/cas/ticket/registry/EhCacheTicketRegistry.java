@@ -26,12 +26,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.authentication.principal.Service;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.style.ToStringCreator;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * <p>
@@ -108,12 +110,49 @@ public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegist
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteTicket(final String ticketId) {
         if (StringUtils.isBlank(ticketId)) {
             return false;
         }
-        return this.serviceTicketsCache.remove(ticketId) || this.ticketGrantingTicketsCache.remove(ticketId);
+
+        final Ticket ticket = getTicket(ticketId);
+        if (ticket == null) {
+            return false;
+        }
+
+        if (ticket instanceof TicketGrantingTicket) {
+            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
+            return deleteTicketAndChildren((TicketGrantingTicket) ticket);
+        }
+
+        logger.debug("Removing ticket [{}] from the registry.", ticket);
+        return this.serviceTicketsCache.remove(ticketId);
+    }
+
+    /**
+     * Delete the TGT and all of its service tickets.
+     *
+     * @param ticket the ticket
+     * @return boolean indicating wether ticket was deleted or not
+     */
+    private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
+        // delete service tickets
+        final Map<String, Service> services = ticket.getServices();
+        if (services != null && !services.isEmpty()) {
+            for (final Map.Entry<String, Service> entry : services.entrySet()) {
+                if (this.serviceTicketsCache.remove(entry.getKey())) {
+                    logger.trace("Removed service ticket [{}]", entry.getKey());
+                } else {
+                    logger.trace("Unable to remove service ticket [{}]", entry.getKey());
+                }
+            }
+        }
+
+        return this.ticketGrantingTicketsCache.remove(ticket.getId());
     }
 
     @Override

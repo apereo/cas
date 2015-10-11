@@ -84,7 +84,7 @@ public class OpenIdSingleSignOnActionTests {
         final Map<String, UniqueTicketIdGenerator> generator = new HashMap<>();
         generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
 
-        impl = new CentralAuthenticationServiceImpl(this.ticketRegistry, null, this.authenticationManager,
+        impl = new CentralAuthenticationServiceImpl(this.ticketRegistry, this.authenticationManager,
                 new DefaultUniqueTicketIdGenerator(), generator, new NeverExpiresExpirationPolicy(),
                 new NeverExpiresExpirationPolicy(),
                 new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl()), mock(LogoutManager.class));
