@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -51,13 +52,15 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:ticketRegistry.xml")
-public final class EhCacheTicketRegistryTests implements ApplicationContextAware {
+public final class EhCacheTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
     private ApplicationContext applicationContext;
+
     private TicketRegistry ticketRegistry;
 
     @Before
@@ -274,10 +277,6 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
         assertNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
     }
 
-    @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     /**
      * Cleaning ticket registry to start afresh, after newing up the instance.
