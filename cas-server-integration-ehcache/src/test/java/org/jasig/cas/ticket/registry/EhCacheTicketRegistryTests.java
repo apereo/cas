@@ -242,6 +242,39 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
         }
     }
 
+    @Test
+    public void verifyDeleteTicketWithChildren() {
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true);
+        final ServiceTicket st2 = tgt.grantServiceTicket(
+                "ST2", service, new NeverExpiresExpirationPolicy(), true);
+        final ServiceTicket st3 = tgt.grantServiceTicket(
+                "ST3", service, new NeverExpiresExpirationPolicy(), true);
+
+        this.ticketRegistry.addTicket(st1);
+        this.ticketRegistry.addTicket(st2);
+        this.ticketRegistry.addTicket(st3);
+
+        assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
+
+        this.ticketRegistry.deleteTicket(tgt.getId());
+
+        assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
+    }
+
     @Override
     public void setApplicationContext(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;

@@ -19,6 +19,7 @@
 package org.jasig.cas.ticket.registry;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,7 @@ import net.spy.memcached.MemcachedClientIF;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.authentication.principal.Service;
 import org.springframework.beans.factory.DisposableBean;
 
 /**
@@ -140,8 +142,26 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
             logger.error("Failed adding {}", ticket, e);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean deleteTicket(final String ticketId) {
+        if (ticketId == null) {
+            return false;
+        }
+
+        final Ticket ticket = getTicket(ticketId);
+        if (ticket == null) {
+            return false;
+        }
+
+        if (ticket instanceof TicketGrantingTicket) {
+            logger.debug("Removing ticket children [{}] from the registry.", ticket);
+            deleteChildren((TicketGrantingTicket) ticket);
+        }
+
         logger.debug("Deleting ticket {}", ticketId);
         try {
             return this.client.delete(ticketId).get();
@@ -150,6 +170,27 @@ public final class MemCacheTicketRegistry extends AbstractDistributedTicketRegis
         }
         return false;
     }
+
+    /**
+     * Delete the TGT's service tickets.
+     *
+     * @param ticket the ticket
+     */
+    private void deleteChildren(final TicketGrantingTicket ticket) {
+        // delete service tickets
+        final Map<String, Service> services = ticket.getServices();
+        if (services != null && !services.isEmpty()) {
+            for (final Map.Entry<String, Service> entry : services.entrySet()) {
+                try {
+                    this.client.delete(entry.getKey());
+                    logger.trace("Scheduled deletion of service ticket [{}]", entry.getKey());
+                } catch (final Exception e) {
+                    logger.error("Failed deleting {}", entry.getKey(), e);
+                }
+            }
+        }
+    }
+
     @Override
     public Ticket getTicket(final String ticketId) {
         try {
