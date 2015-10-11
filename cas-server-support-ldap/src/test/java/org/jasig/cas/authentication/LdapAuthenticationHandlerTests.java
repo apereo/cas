@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 
 import static org.junit.Assert.*;
@@ -80,7 +81,7 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         }
     }
 
-    @Test(expected=FailedLoginException.class)
+    @Test(expected=AccountNotFoundException.class)
     public void verifyAuthenticateNotFound() throws Exception {
         this.handler.authenticate(new UsernamePasswordCredential("notfound", "somepwd"));
         fail("Should have thrown FailedLoginException.");
