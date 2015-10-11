@@ -35,7 +35,7 @@
           p:maxPoolSize="1"
           p:keepAliveSeconds="1" />
 
-    <alias name="pooledLdapConnectionFactory" alias="pooledConnectionFactoryMonitorConnectionFactory" />
+    <alias name="provisioningConnectionFactory" alias="pooledConnectionFactoryMonitorConnectionFactory" />
     <alias name="searchValidator" alias="pooledConnectionFactoryMonitorValidator" />
     <alias name="executor" alias="pooledConnectionFactoryMonitorExecutorService" />
 
