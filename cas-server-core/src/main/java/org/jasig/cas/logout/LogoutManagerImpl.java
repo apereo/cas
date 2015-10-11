@@ -107,15 +107,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     @Override
     public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
-        final Map<String, Service> services;
-        // synchronize the retrieval of the services and their cleaning for the TGT
-        // to avoid concurrent logout mess ups
-        synchronized (ticket) {
-            services = ticket.getServices();
-            ticket.removeAllServices();
-        }
-        ticket.markTicketExpired();
-
+        final Map<String, Service> services = ticket.getServices();
         final List<LogoutRequest> logoutRequests = new ArrayList<>();
         // if SLO is not disabled
         if (!this.singleLogoutCallbacksDisabled) {
