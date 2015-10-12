@@ -236,7 +236,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         final String svcId = svcTicket.getService().getId();
         when(tgtMock.grantServiceTicket(anyString(), argThat(new VerifyServiceByIdMatcher(svcId)),
-                any(ExpirationPolicy.class), anyBoolean())).thenReturn(svcTicket);
+                any(ExpirationPolicy.class), anyBoolean(), anyBoolean())).thenReturn(svcTicket);
         when(tgtMock.getRoot()).thenReturn(root);
         when(tgtMock.getChainedAuthentications()).thenReturn(chainedAuthnList);
         when(svcTicket.getGrantingTicket()).thenReturn(tgtMock);   
