@@ -78,8 +78,9 @@ public class WebAppContextConfigurationTests {
     
     @Test
     public void verifyDeleteServiceSuccessfully() throws Exception {
+        this.mvc.perform(get("/manage.html"));
         final MockHttpServletResponse response = this.mvc.perform(post("/deleteRegisteredService.html")
-                .param("id", "100"))
+                .param("id", "200"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse();
         assertTrue(response.getContentAsString().contains("\"status\" : " + HttpServletResponse.SC_OK));
@@ -102,7 +103,7 @@ public class WebAppContextConfigurationTests {
         this.mvc.perform(post("/deleteRegisteredService.html").param("id", String.valueOf(Double.MAX_VALUE)))
                 .andExpect(status().isInternalServerError());
     }
-    
+
     @Test
     public void loadServicesManageView() throws Exception {
         final ModelAndView mv = this.mvc.perform(get("/manage.html"))

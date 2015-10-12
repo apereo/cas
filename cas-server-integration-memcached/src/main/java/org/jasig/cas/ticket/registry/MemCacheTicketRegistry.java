@@ -26,12 +26,14 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Key-value ticket registry implementation that stores tickets in memcached keyed on the ticket ID.
@@ -40,24 +42,29 @@ import java.util.Collection;
  * @author Marvin S. Addison
  * @since 3.3
  */
+@Component("memcachedTicketRegistry")
 public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry implements DisposableBean {
 
-    /** Memcached client. */
-    @NotNull
-    private final MemcachedClientIF client;
+    /**
+     * Memcached client.
+     */
+    private MemcachedClientIF client;
 
     /**
      * TGT cache entry timeout in seconds.
      */
-    @Min(0)
-    private final int tgtTimeout;
+    private int tgtTimeout;
 
     /**
      * ST cache entry timeout in seconds.
      */
-    @Min(0)
-    private final int stTimeout;
+    private int stTimeout;
 
+    /**
+     * Instantiates a new Mem cache ticket registry.
+     */
+    public MemCacheTicketRegistry() {
+    }
 
     /**
      * Creates a new instance that stores tickets in the given memcached hosts.
@@ -66,17 +73,29 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
      * @param ticketGrantingTicketTimeOut TGT timeout in seconds.
      * @param serviceTicketTimeOut        ST timeout in seconds.
      */
-    public MemCacheTicketRegistry(final String[] hostnames, final int ticketGrantingTicketTimeOut,
+    @Autowired
+    public MemCacheTicketRegistry(@Value("${memcached.servers:}")
+                                  final String[] hostnames,
+                                  @Value("${tgt.maxTimeToLiveInSeconds:28800}")
+                                  final int ticketGrantingTicketTimeOut,
+                                  @Value("${st.timeToKillInSeconds:10}")
                                   final int serviceTicketTimeOut) {
-        logger.info("Setting up Memcached Ticket Registry...");
 
         try {
-            this.client = new MemcachedClient(AddrUtil.getAddresses(Arrays.asList(hostnames)));
+            final List<String> hostNamesArray = Arrays.asList(hostnames);
+            if (hostNamesArray.isEmpty()) {
+                logger.debug("No memcached hosts are define. Client shall not be configured");
+            } else {
+                logger.info("Setting up Memcached Ticket Registry...");
+                this.tgtTimeout = ticketGrantingTicketTimeOut;
+                this.stTimeout = serviceTicketTimeOut;
+
+                this.client = new MemcachedClient(AddrUtil.getAddresses(hostNamesArray));
+            }
         } catch (final IOException e) {
             throw new IllegalArgumentException("Invalid memcached host specification.", e);
         }
-        this.tgtTimeout = ticketGrantingTicketTimeOut;
-        this.stTimeout = serviceTicketTimeOut;
+
     }
 
     /**
@@ -88,7 +107,7 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
      * @param serviceTicketTimeOut        ST timeout in seconds.
      */
     public MemCacheTicketRegistry(final MemcachedClientIF client, final int ticketGrantingTicketTimeOut,
-            final int serviceTicketTimeOut) {
+                                  final int serviceTicketTimeOut) {
         this.tgtTimeout = ticketGrantingTicketTimeOut;
         this.stTimeout = serviceTicketTimeOut;
         this.client = client;
@@ -96,6 +115,11 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
 
     @Override
     protected void updateTicket(final Ticket ticketToUpdate) {
+        if (this.client == null) {
+            logger.debug("No memcached client is configured.");
+            return;
+        }
+
         final Ticket ticket = encodeTicket(ticketToUpdate);
         logger.debug("Updating ticket {}", ticket);
         try {
@@ -104,7 +128,7 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
             }
         } catch (final InterruptedException e) {
             logger.warn("Interrupted while waiting for response to async replace operation for ticket {}. "
-                        + "Cannot determine whether update was successful.", ticket);
+                + "Cannot determine whether update was successful.", ticket);
         } catch (final Exception e) {
             logger.error("Failed updating {}", ticket, e);
         }
@@ -112,6 +136,11 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
+        if (this.client == null) {
+            logger.debug("No memcached client is configured.");
+            return;
+        }
+
         final Ticket ticket = encodeTicket(ticketToAdd);
         logger.debug("Adding ticket {}", ticket);
         try {
@@ -120,13 +149,19 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
             }
         } catch (final InterruptedException e) {
             logger.warn("Interrupted while waiting for response to async add operation for ticket {}."
-                    + "Cannot determine whether add was successful.", ticket);
+                + "Cannot determine whether add was successful.", ticket);
         } catch (final Exception e) {
             logger.error("Failed adding {}", ticket, e);
         }
     }
+
     @Override
     public boolean deleteTicket(final String ticketIdToDel) {
+        if (this.client == null) {
+            logger.debug("No memcached client is configured.");
+            return false;
+        }
+
         final String ticketId = encodeTicketId(ticketIdToDel);
         logger.debug("Deleting ticket {}", ticketId);
         try {
@@ -136,8 +171,14 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
         }
         return false;
     }
+
     @Override
     public Ticket getTicket(final String ticketIdToGet) {
+        if (this.client == null) {
+            logger.debug("No memcached client is configured.");
+            return null;
+        }
+
         final String ticketId = encodeTicketId(ticketIdToGet);
         try {
             final Ticket t = (Ticket) this.client.get(ticketId);
@@ -169,6 +210,9 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
      */
     @Override
     public void destroy() throws Exception {
+        if (this.client == null) {
+            return;
+        }
         this.client.shutdown();
     }
 

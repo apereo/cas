@@ -8,7 +8,7 @@ CAS provides a facility for limiting failed login attempts to support password g
 A couple strategies are provided for tracking failed attempts:
 
 1. Source IP - Limit successive failed logins against any username from the same IP address.
-2. Source IP and username - Limit succesive failed logins against a particular user from the same IP address.
+2. Source IP and username - Limit successive failed logins against a particular user from the same IP address.
 
 It would be straightforward to develop new components that implement alternative strategies.
 
@@ -22,55 +22,6 @@ A failure rate of more than 1 per 3 seconds is indicative of an automated authen
 reasonable basis for throttling policy. Regardless of policy care should be taken to weigh security against access;
 overly restrictive policies may prevent legitimate authentication attempts.
 
-
-## Throttling Components
-The CAS login throttling components are listed below along with a sample configuration that implements a policy
-preventing more than 1 failed login every 3 seconds.
-
-
-#####`InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter`
-Uses a memory map to prevent successive failed login attempts from the same IP address.
-{% highlight xml %}
-<bean id="loginThrottle"
-      class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter"
-      p:failureRangeInSeconds="3"
-      p:failureThreshold="1"
-      p:usernameParameter="username" />
-{% endhighlight %}
-
-
-#####`InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
-Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.
-{% highlight xml %}
-<bean id="loginThrottle"
-      class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter"
-      p:failureRangeInSeconds="3"
-      p:failureThreshold="1"
-      p:usernameParameter="username" />
-{% endhighlight %}
-
-
-#####`InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
-Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
-username from the same IP address. This component requires that the
-[inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
-`JdbcAuditTrailManager`, which writes audit data to a database.
-{% highlight xml %}
-<bean id="loginThrottle"
-      class="org.jasig.cas.web.support.InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter"
-      c:auditTrailManager-ref="auditTrailManager"
-      c:dataSource-ref="dataSource"
-      p:failureRangeInSeconds="3"
-      p:failureThreshold="1" />
-
-<bean id="auditTrailManager"
-      class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
-      c:transactionTemplate-ref="inspektrTransactionTemplate"
-      p:dataSource-ref="dataSource" />
-{% endhighlight %}
-
-For additional instructions on how to configure auditing via Inspektr,
-please [review the following guide](Logging.html).
 
 ## High Availability Considerations for Throttling
 
@@ -90,46 +41,50 @@ they cannot apply the rate strictly since requests to CAS hosts would be split a
 The _inspektr_ components, on the other hand, fully support stateless clusters.
 
 
-### Configuring Login Throttling
-Login throttling configuration consists of two core components:
+## Components
 
-1. A login throttle modeled as a Spring `HandlerInterceptorAdapter` component.
-2. A scheduled task that periodically cleans up state to allow the throttle to relax.
-
-The period of scheduled task execution MUST be less than that defined by `failureRangeInSeconds` for proper throttle policy enforcement. For example, if `failureRangeInSeconds` is 3, then the quartz trigger that drives the task would be configured for less than 3000 (ms).
-
-It is convenient to place Spring configuration for login throttling components in `deployerConfigContext.xml`.
+###`InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter`
+Uses a memory map to prevent successive failed login attempts from the same IP address.
 {% highlight xml %}
-<bean id="loginThrottle"
-      class="org.jasig.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter"
-      p:failureRangeInSeconds="3"
-      p:failureThreshold="1" />
-
-<bean id="loginThrottleJobDetail"
-      class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
-      p:targetObject-ref="loginThrottle"
-      p:targetMethod="decrementCounts"/>
-
-<!-- A scheduler that drives all configured triggers is provided by default in applicationContext.xml. -->
-<bean id="loginThrottleTrigger"
-      class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"
-      p:jobDetail-ref="loginThrottleJobDetail"
-      p:startDelay="1000"
-      p:repeatInterval="1000"/>
-{% endhighlight %}
-
-Configure the throttle to fire during the login webflow by editing `cas-servlet.xml`:
-{% highlight xml %}
-<bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"
-      p:flowRegistry-ref="loginFlowRegistry"
-      p:order="2">
-      <property name="interceptors">
-          <array value-type="org.springframework.web.servlet.HandlerInterceptor">
-            <ref bean="localeChangeInterceptor" />
-        <ref bean="loginThrottle" />		
-          </array>
-      </property>
-</bean>
+<alias name="inMemoryIpAddressThrottle" alias="authenticationThrottle" />
 {% endhighlight %}
 
 
+###`InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
+Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.
+
+{% highlight xml %}
+<alias name="inMemoryIpAddressUsernameThrottle" alias="authenticationThrottle" />
+{% endhighlight %}
+
+###`InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
+Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
+username from the same IP address. This component requires that the
+[inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
+`JdbcAuditTrailManager`, which writes audit data to a database.
+{% highlight xml %}
+
+<alias name="inspektrIpAddressUsernameThrottle" alias="authenticationThrottle" />
+
+<bean id="auditTrailDataSource" ... />
+
+<bean id="auditTrailManager"
+      class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
+      c:transactionTemplate-ref="inspektrTransactionTemplate"
+      p:dataSource-ref="auditTrailDataSource" />
+{% endhighlight %}
+
+For additional instructions on how to configure auditing via Inspektr,
+please [review the following guide](Logging.html).
+
+### Configuration
+Login throttling configuration consists of:
+
+{% highlight properties %}
+# cas.throttle.failure.threshold=
+# cas.throttle.failure.range.seconds=
+# cas.throttle.username.parameter=
+# cas.throttle.appcode=
+# cas.throttle.authn.failurecode=
+# cas.throttle.audit.query=
+{% endhighlight %}

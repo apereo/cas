@@ -20,6 +20,9 @@ package org.jasig.cas.support.spnego.authentication.principal;
 
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.Locale;
@@ -32,10 +35,11 @@ import java.util.Locale;
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
+@Component("spnegoPrincipalResolver")
 public final class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    /** Tranformation types. **/
-    public static enum Transform {NONE, UPPERCASE, LOWERCASE}
+    /** Transformation types. **/
+    public enum Transform {NONE, UPPERCASE, LOWERCASE}
 
     @NotNull
     private Transform transformPrincipalId = Transform.NONE;
@@ -61,6 +65,8 @@ public final class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResol
                 && SpnegoCredential.class.equals(credential.getClass());
     }
 
+    @Autowired
+    @Value("${cas.spnego.principal.resolver.transform:NONE}")
     public void setTransformPrincipalId(final Transform transform) {
         this.transformPrincipalId = transform;
     }

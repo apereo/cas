@@ -29,7 +29,10 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.style.ToStringCreator;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -51,10 +54,15 @@ import java.util.HashSet;
  * @author Andrew Tillinghast
  * @since 3.5
  */
+@Component("ehcacheTicketRegistry")
 public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry implements InitializingBean {
 
+    @Autowired
+    @Qualifier("serviceTicketsCache")
     private Cache serviceTicketsCache;
 
+    @Autowired
+    @Qualifier("ticketGrantingTicketsCache")
     private Cache ticketGrantingTicketsCache;
 
     /**

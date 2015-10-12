@@ -25,5 +25,6 @@
         <Confidence value="2"/>
         <Rank value="15"/>
         <Bug category="SECURITY,PERFORMANCE,MALICIOUS_CODE"/>
+        <Package name="^org\.jasig\.cas.+" />
     </Match>
 </FindBugsFilter>

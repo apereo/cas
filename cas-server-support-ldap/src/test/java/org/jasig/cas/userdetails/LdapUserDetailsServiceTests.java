@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,6 +47,7 @@ public class LdapUserDetailsServiceTests extends AbstractLdapTests {
     private static final String CAS_SERVICE_DETAILS_OBJ_CLASS = "casServiceUserDetails";
 
     @Autowired
+    @Qualifier("ldapUserDetailsService")
     private LdapUserDetailsService userDetailsService;
 
     @BeforeClass

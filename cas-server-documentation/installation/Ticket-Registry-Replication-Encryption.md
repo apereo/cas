@@ -16,14 +16,10 @@ when you use the above ticket registries. It requires explicit configuration bef
 
 ## Configuration
 
-Each ticket registry configuration supports a cipher component that needs to be configured by the deployer. A typical cipher configuration
-may be the following, placed into the `ticketRegistry.xml` file:
+Each ticket registry configuration supports a cipher component that needs to be configured by the deployer. A typical cipher configuration may be the following, placed into the `ticketRegistry.xml` file:
 
 {% highlight xml %}
-<bean id="ticketCipherExecutor" class="org.jasig.cas.util.ShiroCipherExecutor
-      c:encryptionSecretKey="${ticket.encryption.secretkey}"
-      c:encryptionSeed="${ticket.encryption.seed}"
-      c:signingSecretKey-ref="${ticket.signing.secretkey}"/>
+<alias name="shiroCipherExecutor" alias="ticketCipherExecutor" />
 {% endhighlight %}
 
 The settings, algorithms and secret keys used for the cipher may be controlled via `cas.properties`:
@@ -39,20 +35,3 @@ The settings, algorithms and secret keys used for the cipher may be controlled v
 # By default, must be a octet string of size 512.
 # ticket.signing.secretkey=szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w
 {% endhighlight %}
-
-Once you have added the cipher, you may configure your ticket registry instance as such with [Ehcache](Ehcache-Ticket-Registry.html)
-as an example:
-
-{% highlight xml %}
-<bean id="ticketRegistry"
-      	class="org.jasig.cas.ticket.registry.EhCacheTicketRegistry"
-		...
-		p:cipherExecutor-ref="ticketCipherExecutor" />
-
-{% endhighlight %}
-
-This step will effectively turn on ticket encryption for replication.
-
-
-
-

@@ -18,12 +18,17 @@
  */
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;
@@ -41,11 +46,13 @@ import java.util.Map;
  * @since 4.0.0
  *
  */
+@Component("primaryPrincipalResolver")
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /** Log instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Value("${cas.principal.resolver.persondir.return.null:false}")
     private boolean returnNullIfNoAttributes;
 
     /** Repository of principal attributes to be retrieved. */
@@ -58,6 +65,37 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /** Optional principal attribute name. */
     private String principalAttributeName;
+
+    @Autowired
+    public final void setAttributeRepository(@Qualifier("attributeRepository")
+                                             final IPersonAttributeDao attributeRepository) {
+        this.attributeRepository = attributeRepository;
+    }
+
+    public void setReturnNullIfNoAttributes(final boolean returnNullIfNoAttributes) {
+        this.returnNullIfNoAttributes = returnNullIfNoAttributes;
+    }
+
+    /**
+     * Sets the name of the attribute whose first non-null value should be used for the principal ID.
+     *
+     * @param attribute Name of attribute containing principal ID.
+     */
+    @Autowired
+    public void setPrincipalAttributeName(@Value("${cas.principal.resolver.persondir.principal.attribute:}")
+                                          final String attribute) {
+        this.principalAttributeName = attribute;
+    }
+
+    /**
+     * Sets principal factory to create principal objects.
+     *
+     * @param principalFactory the principal factory
+     */
+    @Autowired
+    public void setPrincipalFactory(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
+    }
 
     @Override
     public boolean supports(final Credential credential) {
@@ -97,7 +135,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
             final String key = entry.getKey();
             final List<Object> values = entry.getValue();
-            if (key.equalsIgnoreCase(this.principalAttributeName)) {
+            if (StringUtils.isNotBlank(this.principalAttributeName)
+                        && key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     logger.debug("{} is empty, using {} for principal", this.principalAttributeName, principalId);
                 } else {
@@ -114,34 +153,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return this.principalFactory.createPrincipal(principalId, convertedAttributes);
     }
 
-    public final void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
-        this.attributeRepository = attributeRepository;
-    }
 
-    public void setReturnNullIfNoAttributes(final boolean returnNullIfNoAttributes) {
-        this.returnNullIfNoAttributes = returnNullIfNoAttributes;
-    }
 
     /**
-     * Sets the name of the attribute whose first non-null value should be used for the principal ID.
-     *
-     * @param attribute Name of attribute containing principal ID.
-     */
-    public void setPrincipalAttributeName(final String attribute) {
-        this.principalAttributeName = attribute;
-    }
-
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
-        this.principalFactory = principalFactory;
-    }
-
-    /**
-     * Extracts the id of the user from the provided credential. This method should be overridded by subclasses to
+     * Extracts the id of the user from the provided credential. This method should be overridden by subclasses to
      * achieve more sophisticated strategies for producing a principal ID from a credential.
      *
      * @param credential the credential provided by the user.
