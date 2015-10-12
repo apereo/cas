@@ -738,6 +738,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.ldaptive</groupId>
+                <artifactId>ldaptive-beans</artifactId>
+                <version>${ldaptive.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>${woodstox.version}</version>
@@ -1347,6 +1353,12 @@
                 <artifactId>hazelcast</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.cryptacular</groupId>
+                <artifactId>cryptacular</artifactId>
+                <version>${cryptacular.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -1525,7 +1537,7 @@
         <spring.webflow.version>2.4.2.RELEASE</spring.webflow.version>
         <spring.version>4.2.1.RELEASE</spring.version>
         <spring.webflow.client.repo.version>1.0.0</spring.webflow.client.repo.version>
-        <ldaptive.version>1.0.6</ldaptive.version>
+        <ldaptive.version>1.1.0</ldaptive.version>
         <spring.security.version>4.0.2.RELEASE</spring.security.version>
         <aspectj.version>1.8.6</aspectj.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
@@ -1573,6 +1585,7 @@
         <dbcp.version>2.1.1</dbcp.version>
         <hazelcast.version>3.5.2</hazelcast.version>
         <c3p0.version>0.9.5.1</c3p0.version>
+        <cryptacular.version>1.0</cryptacular.version>
 
         <!-- Plugin Versions -->
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
@@ -1599,10 +1612,10 @@
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
         <project.build.targetVersion>1.7</project.build.targetVersion>
         <maven.compiler.aspectj.skip>false</maven.compiler.aspectj.skip>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
-        <cs.dir>${project.basedir}</cs.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.site.deployDirectory>/tmp/cas-deploy-site</project.site.deployDirectory>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
+        <cs.dir>${project.basedir}</cs.dir>
     </properties>
 </project>
