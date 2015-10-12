@@ -21,11 +21,16 @@ package org.jasig.cas.web.view;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.authentication.support.CasAttributeEncoder;
+import org.jasig.cas.services.web.view.CasViewConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
@@ -44,10 +49,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
     /** The attribute encoder instance. */
     @NotNull
+    @Resource(name="casAttributeEncoder")
     private CasAttributeEncoder casAttributeEncoder;
 
     /** The Services manager. */
     @NotNull
+    @Resource(name="servicesManager")
     private ServicesManager servicesManager;
 
     /**
@@ -169,5 +176,23 @@ public class Cas30ResponseView extends Cas20ResponseView {
      */
     public void setCasAttributeEncoder(@NotNull final CasAttributeEncoder casAttributeEncoder) {
         this.casAttributeEncoder = casAttributeEncoder;
+    }
+
+
+    /**
+     * The type Success.
+     */
+    @Component("cas3ServiceSuccessView")
+    public static class Success extends Cas30ResponseView {
+        /**
+         * Instantiates a new Success.
+         * @param view the view
+         */
+        @Autowired
+        public Success(@Qualifier("cas3JstlSuccessView")
+                       final AbstractUrlBasedView view) {
+            super(view);
+            super.setSuccessResponse(true);
+        }
     }
 }

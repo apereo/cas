@@ -17,20 +17,25 @@ Ehcache integration is enabled by including the following dependency in the Mave
 `EhCacheTicketRegistry` stores tickets in an [Ehcache](http://ehcache.org/) instance.
 
 
-## Distributed Cache 
-Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage 
+## Distributed Cache
+Distributed caches are recommended for HA architectures since they offer fault tolerance in the ticket storage
 subsystem. The registry maintains service tickets and ticket-granting tickets in two separate caches, so that:
 
 * Ticket Granting Tickets remain valid for a long time, replicated asynchronously
-* Service Tickets are short lived and must be replicated right away because the requests 
+* Service Tickets are short lived and must be replicated right away because the requests
 to validate them may very likely arrive at different CAS cluster nodes
 
 
 ###RMI Replication
-Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi/index.html) 
-replication for distributed caches composed of two or more nodes. To learn more about RMI 
+Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi/index.html)
+replication for distributed caches composed of two or more nodes. To learn more about RMI
 replication with Ehcache, [see this resource](http://ehcache.org/documentation/user-guide/rmi-replicated-caching).
 
+Enable the registry via:
+
+{% highlight properties %}
+<alias name="ehcacheTicketRegistry" alias="ticketRegistry" />
+{% endhighlight %}
 
 ####Configuration
 {% highlight properties %}
@@ -99,30 +104,30 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
 
 
 ###Eviction Policy
-Ehcache manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings. 
-The default CAS ticket registry cleaner is then not needed, but could be used to enable 
+Ehcache manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings.
+The default CAS ticket registry cleaner is then not needed, but could be used to enable
 [CAS single logout functionality](Logout-Single-Logout.html), if required.
 
-There have been reports of cache eviction problems when tickets are expired, but haven't been 
-removed from the cache due to ehache configuration. This can be a problem because old ticket 
-references "hang around" in the cache despite being expired. In other words, 
-Ehcache does [inline eviction](http://lists.terracotta.org/pipermail/ehcache-list/2011-November/000423.html) 
-where expired objects in the cache object won't be collected from memory until the cache max size is reached 
-or the expired entry is explicitly accessed. To reclaim memory on expired tickets, cache eviction 
-policies are must be carefully configured to avoid memory creep. Disk offload and/or a more 
+There have been reports of cache eviction problems when tickets are expired, but haven't been
+removed from the cache due to ehache configuration. This can be a problem because old ticket
+references "hang around" in the cache despite being expired. In other words,
+Ehcache does [inline eviction](http://lists.terracotta.org/pipermail/ehcache-list/2011-November/000423.html)
+where expired objects in the cache object won't be collected from memory until the cache max size is reached
+or the expired entry is explicitly accessed. To reclaim memory on expired tickets, cache eviction
+policies are must be carefully configured to avoid memory creep. Disk offload and/or a more
 aggressive eviction could provide a suitable workaround.
 
 
 ###Troubleshooting Guidelines
 
 * You will need to ensure that network communication across CAS nodes is allowed and no firewall or other component
- is blocking traffic. 
+ is blocking traffic.
 
-* If you are running this on a server with active firewalls, you will probably need to specify 
+* If you are running this on a server with active firewalls, you will probably need to specify
 a fixed `remoteObjectPort`, within the `cacheManagerPeerListenerFactory`.
-* Depending on environment settings and version of Ehcache used, you may also have to adjust the 
+* Depending on environment settings and version of Ehcache used, you may also have to adjust the
 `shared` setting .
 * Ensure that each cache manager specified a name that matches the Ehcache configuration itself.
-* You may also need to adjust your expiration policy to allow for a larger time span, specially 
-for service tickets depending on network traffic and communication delay across CAS nodes particularly 
+* You may also need to adjust your expiration policy to allow for a larger time span, specially
+for service tickets depending on network traffic and communication delay across CAS nodes particularly
 in the event that a node is trying to join the cluster.

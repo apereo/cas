@@ -31,4 +31,5 @@
     <suppress id="stackTraceConsoleLogs" files="(.*Tests*|Mock.*|Test.*)\.java" />
     <suppress id="sysOutConsoleLogs" files="\.xml" />
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
+    <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>
 </suppressions>

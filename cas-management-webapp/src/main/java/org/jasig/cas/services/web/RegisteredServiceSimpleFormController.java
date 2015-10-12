@@ -21,9 +21,10 @@ package org.jasig.cas.services.web;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
-import org.jasig.cas.web.view.JsonViewUtils;
+import org.jasig.cas.services.web.view.JsonViewUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +47,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Controller
+@Controller("registeredServiceSimpleFormController")
 public final class RegisteredServiceSimpleFormController extends AbstractManagementController {
 
     /**
@@ -62,8 +63,11 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
      * @param personAttributeDao the attribute repository
      */
     @Autowired
-    public RegisteredServiceSimpleFormController(final ServicesManager servicesManager,
-                                                 final IPersonAttributeDao personAttributeDao) {
+    public RegisteredServiceSimpleFormController(
+        @Qualifier("servicesManager")
+        final ServicesManager servicesManager,
+        @Qualifier("attributeRepository")
+        final IPersonAttributeDao personAttributeDao) {
         super(servicesManager);
         this.personAttributeDao = personAttributeDao;
     }

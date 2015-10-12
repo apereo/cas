@@ -51,7 +51,7 @@ public class RegisteredServiceImpl extends AbstractRegisteredService {
     @Deprecated
     public RegisteredServiceImpl() {
         super();
-        logger.warn("[{}] is deprecated and will be removed in future CAS releases. Consider using [{}] instead.",
+        logger.info("[{}] is deprecated and will be removed in future CAS releases. Consider using [{}] instead.",
                 this.getClass().getSimpleName(), RegexRegisteredService.class.getSimpleName());
     }
 

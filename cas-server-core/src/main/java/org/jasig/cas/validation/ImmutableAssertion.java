@@ -79,18 +79,22 @@ public final class ImmutableAssertion implements Assertion, Serializable {
         this.fromNewLogin = fromNewLogin;
     }
 
+    @Override
     public Authentication getPrimaryAuthentication() {
         return this.primaryAuthentication;
     }
 
+    @Override
     public List<Authentication> getChainedAuthentications() {
         return Collections.unmodifiableList(this.chainedAuthentications);
     }
 
+    @Override
     public boolean isFromNewLogin() {
         return this.fromNewLogin;
     }
 
+    @Override
     public Service getService() {
         return this.service;
     }

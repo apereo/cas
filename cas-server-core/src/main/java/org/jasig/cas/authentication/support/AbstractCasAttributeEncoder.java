@@ -22,11 +22,14 @@ package org.jasig.cas.authentication.support;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.services.RegisteredServiceCipherExecutor;
+import org.jasig.cas.services.web.view.CasViewConstants;
 import org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor;
-import org.jasig.cas.web.view.CasViewConstants;
+import org.jasig.cas.util.services.RegisteredServiceCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -39,16 +42,25 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("abstractCasAttributeEncoder")
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
-
     /** The Services manager. */
     @NotNull
-    protected final ServicesManager servicesManager;
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
 
     /** The Logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    @Qualifier("registeredServiceCipherExecutor")
     private RegisteredServiceCipherExecutor cipherExecutor;
+
+    /**
+     * Instantiates a new abstract cas attribute encoder.
+     */
+    protected AbstractCasAttributeEncoder() {}
 
     /**
      * Instantiates a new attribute encoder with the default
@@ -101,17 +113,17 @@ public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder
      * @param cipher the cipher object initialized per service public key
      * @param registeredService the registered service
      */
-    protected abstract void encodeAttributesInternal(final Map<String, Object> attributes,
-                                            final Map<String, String> cachedAttributesToEncode,
-                                            final RegisteredServiceCipherExecutor cipher,
-                                            final RegisteredService registeredService);
+    protected abstract void encodeAttributesInternal(Map<String, Object> attributes,
+                                                     Map<String, String> cachedAttributesToEncode,
+                                                     RegisteredServiceCipherExecutor cipher,
+                                                     RegisteredService registeredService);
 
 
     /**
      * Initialize the encoding process. Removes the
-     * {@link org.jasig.cas.web.view.CasViewConstants#MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL}
+     * {@link CasViewConstants#MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL}
      * and
-     * {@link org.jasig.cas.web.view.CasViewConstants#MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET}
+     * {@link CasViewConstants#MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET}
      * from the authentication attributes originally and into a cache object, so it
      * can later on be encrypted if needed.
      * @param attributes the new encoded attributes

@@ -19,6 +19,10 @@
 
 package org.jasig.cas.support.spnego.web.flow.client;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import javax.validation.constraints.NotNull;
 import java.util.regex.Pattern;
 
@@ -31,8 +35,15 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("hostnameSpnegoClientAction")
 public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-    private final Pattern hostNamePatternString;
+
+    private  Pattern hostNamePatternString;
+
+    /**
+     * Instantiates a new Host name spnego known client systems filter action.
+     */
+    public HostNameSpnegoKnownClientSystemsFilterAction() {}
 
     /**
      * Instantiates a new hostname spnego known client systems filter action.
@@ -40,7 +51,10 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
      * @param hostNamePatternString the host name pattern string.
      *                              The pattern to match the retrieved hostname against.
      */
-    public HostNameSpnegoKnownClientSystemsFilterAction(@NotNull final String hostNamePatternString) {
+    @Autowired
+    public HostNameSpnegoKnownClientSystemsFilterAction(@NotNull
+                                                        @Value("${cas.spnego.hostname.pattern:something.+}")
+                                                        final String hostNamePatternString) {
         super();
         this.hostNamePatternString = Pattern.compile(hostNamePatternString);
     }

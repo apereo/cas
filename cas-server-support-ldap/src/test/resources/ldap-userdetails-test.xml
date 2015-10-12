@@ -34,12 +34,9 @@
         <constructor-arg type="java.lang.String" value="mail" />
     </bean>
 
-    <bean id="ldapUserDetailsService" class="org.jasig.cas.userdetails.LdapUserDetailsService"
-          c:factory-ref="provisioningConnectionFactory"
-          c:roleSearchExecutor-ref="searchExecutorRole"
-          c:userSearchExecutor-ref="searchExecutorUser"
-          c:userAttributeName="mail"
-          c:roleAttributeName="uugid" />
+    <alias name="provisioningConnectionFactory" alias="ldapUserDetailsServiceConnectionFactory" />
+    <alias name="searchExecutorUser" alias="ldapUserDetailsServiceUserSearchExecutor" />
+    <alias name="searchExecutorRole" alias="ldapUserDetailsServiceRoleSearchExecutor" />
 
     <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
           p:baseDn="${ldap.baseDn}"
