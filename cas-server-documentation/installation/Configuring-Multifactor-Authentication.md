@@ -41,50 +41,7 @@ Simple factory class that produces contextual security policies that always pass
 default in some cases to provide backward compatibility with CAS 3.x.
 
 ###`RequiredHandlerAuthenticationPolicyFactory`
-Factory that produces policy objects based on the security context of the service requesting a ticket. In particular the security
-context is based on the required authentication handlers that must have successfully validated credentials in order to access
-the service. A clarifying example is helpful; assume the following authentication components are defined in `deployerConfigContext.xml`:
-
-{% highlight xml %}
-<bean id="ldapHandler"
-      class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-      p:name="ldapHandler">
-      <!-- Details elided for simplicity -->
-</bean>
-
-<bean id="oneTimePasswordHandler"
-      class="com.example.cas.authentication.CustomOTPAuthenticationHandler"
-      p:name="oneTimePasswordHandler" />
-
-<bean id="authenticationManager"
-      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
-  <constructor-arg>
-    <map>
-      <entry key-ref="passwordHandler" value="#{ null }" />
-      <entry key-ref="oneTimePasswordHandler" value="#{ null }" />
-    </map>
-  </constructor-arg>
-</bean>
-{% endhighlight %}
-
-Assume also the following beans are defined in `applicationContext.xml`:
-{% highlight xml %}
-<bean id="centralAuthenticationService"
-      class="org.jasig.cas.CentralAuthenticationServiceImpl"
-      c:authenticationManager-ref="authenticationManager"
-      c:logoutManager-ref="logoutManager"
-      c:servicesManager-ref="servicesManager"
-      c:serviceTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
-      c:serviceTicketRegistry-ref="ticketRegistry"
-      c:ticketGrantingTicketExpirationPolicy-ref="neverExpiresExpirationPolicy"
-      c:ticketGrantingTicketUniqueTicketIdGenerator-ref="uniqueTicketIdGenerator"
-      c:ticketRegistry-ref="ticketRegistry"
-      c:uniqueTicketIdGeneratorsForService-ref="uniqueTicketIdGeneratorsForService"
-      p:serviceContextAuthenticationPolicyFactory-ref="casAuthenticationPolicy" />
-
-<bean id="casAuthenticationPolicy"
-      class="org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory" />
-{% endhighlight %}
+Factory that produces policy objects based on the security context of the service requesting a ticket. In particular the security context is based on the required authentication handlers that must have successfully validated credentials in order to access the service.
 
 With the above configuration in mind, the [service management facility](Service-Management.html)
 may now be leveraged to register services that require specific kinds of credentials be used to access the service.

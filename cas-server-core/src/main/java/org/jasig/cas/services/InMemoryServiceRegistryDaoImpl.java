@@ -20,9 +20,12 @@ package org.jasig.cas.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +34,8 @@ import java.util.List;
  *
  * @author Scott Battaglia
  * @since 3.1
- *
  */
+@Component("inMemoryServiceRegistryDao")
 public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryServiceRegistryDaoImpl.class);
@@ -40,17 +43,45 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
     @NotNull
     private List<RegisteredService> registeredServices = new ArrayList<>();
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     /**
      * Instantiates a new In memory service registry.
      */
     public InMemoryServiceRegistryDaoImpl() {
-        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime "
-                + "will be LOST upon container restarts.");
+    }
+
+
+    /**
+     * After properties set.
+     */
+    @PostConstruct
+    public void afterPropertiesSet() {
+        final String[] aliases =
+            this.applicationContext.getAutowireCapableBeanFactory().getAliases("inMemoryServiceRegistryDao");
+        if (aliases.length > 0) {
+            LOGGER.debug("{} is used as the active service registry dao", this.getClass().getSimpleName());
+
+            try {
+                final List<RegisteredService> list = (List<RegisteredService>)
+                    this.applicationContext.getBean("inMemoryRegisteredServices", List.class);
+                if (list != null) {
+                    LOGGER.debug("Loaded {} services from the application context for {}",
+                        list.size(),
+                        this.getClass().getSimpleName());
+                    this.registeredServices = list;
+                }
+            } catch (final Exception e) {
+                LOGGER.debug("No registered services are defined for {}", this.getClass().getSimpleName());
+            }
+        }
+
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
+        logWarning();
         return this.registeredServices.remove(registeredService);
     }
 
@@ -72,8 +103,10 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
+        logWarning();
+
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) registeredService).setId(findHighestId()+1);
+            ((AbstractRegisteredService) registeredService).setId(findHighestId() + 1);
         }
 
         this.registeredServices.remove(registeredService);
@@ -82,7 +115,7 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
         return registeredService;
     }
 
-    public void setRegisteredServices(final List<RegisteredService> registeredServices) {
+    public void setRegisteredServices(final List registeredServices) {
         this.registeredServices = registeredServices;
     }
 
@@ -101,5 +134,16 @@ public final class InMemoryServiceRegistryDaoImpl implements ServiceRegistryDao 
         }
 
         return id;
+    }
+
+    private void logWarning() {
+        LOGGER.debug("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
+            + "Changes that are made to service definitions during runtime "
+            + "will be LOST upon container restarts.");
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

@@ -33,23 +33,14 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.annotation.ProfileValueSourceConfiguration;
-import org.springframework.test.annotation.SystemProfileValueSource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.jdbc.JdbcTestUtils;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,9 +58,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:jpaTestApplicationContext.xml")
-@ProfileValueSourceConfiguration(SystemProfileValueSource.class)
 public class JpaTicketRegistryTests {
     /** Number of clients contending for operations in concurrent test. */
     private static final int CONCURRENT_SIZE = 20;
@@ -83,30 +71,17 @@ public class JpaTicketRegistryTests {
     /** Logger instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
     private PlatformTransactionManager txManager;
 
-    @Autowired
-    private JpaTicketRegistry jpaTicketRegistry;
-
-    private JdbcTemplate simpleJdbcTemplate;
-
-
-    /**
-     * Set the datasource.
-     */
-    @Autowired
-    public void setDataSource(final DataSource dataSource) {
-        this.simpleJdbcTemplate = new JdbcTemplate(dataSource);
-    }
-
+    private TicketRegistry jpaTicketRegistry;
 
     @Before
-    public void setUp() {
-        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "SERVICETICKET");
-        JdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "TICKETGRANTINGTICKET");
+    public void setup() {
+        final ClassPathXmlApplicationContext ctx = new
+            ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
+        this.jpaTicketRegistry = ctx.getBean("jpaTicketRegistry", TicketRegistry.class);
+        this.txManager = ctx.getBean("ticketTransactionManager", PlatformTransactionManager.class);
     }
-
 
     @Test
     public void verifyTicketCreationAndDeletion() throws Exception {
@@ -125,7 +100,6 @@ public class JpaTicketRegistryTests {
     }
 
     @Test
-    @IfProfileValue(name="cas.jpa.concurrent", value="true")
     public void verifyConcurrentServiceTicketGeneration() throws Exception {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
@@ -166,7 +140,8 @@ public class JpaTicketRegistryTests {
     }
 
     void addTicketInTransaction(final Ticket ticket) {
-        new TransactionTemplate(txManager).execute(new TransactionCallback<Void>() {
+        new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
+            @Override
             public Void doInTransaction(final TransactionStatus status) {
                 jpaTicketRegistry.addTicket(ticket);
                 return null;
@@ -176,6 +151,7 @@ public class JpaTicketRegistryTests {
 
     void deleteTicketInTransaction(final String ticketId) {
         new TransactionTemplate(txManager).execute(new TransactionCallback<Void>() {
+            @Override
             public Void doInTransaction(final TransactionStatus status) {
                 jpaTicketRegistry.deleteTicket(ticketId);
                 return null;
@@ -185,6 +161,7 @@ public class JpaTicketRegistryTests {
 
     Ticket getTicketInTransaction(final String ticketId) {
         return new TransactionTemplate(txManager).execute(new TransactionCallback<Ticket>() {
+            @Override
             public Ticket doInTransaction(final TransactionStatus status) {
                 return jpaTicketRegistry.getTicket(ticketId);
             }
@@ -193,6 +170,7 @@ public class JpaTicketRegistryTests {
 
     ServiceTicket grantServiceTicketInTransaction(final TicketGrantingTicket parent) {
         return new TransactionTemplate(txManager).execute(new TransactionCallback<ServiceTicket>() {
+            @Override
             public ServiceTicket doInTransaction(final TransactionStatus status) {
                 final ServiceTicket st = newST(parent);
                 jpaTicketRegistry.addTicket(st);
@@ -204,21 +182,20 @@ public class JpaTicketRegistryTests {
     private static class ServiceTicketGenerator implements Callable<String> {
         private final PlatformTransactionManager txManager;
         private final String parentTgtId;
-        private final JpaTicketRegistry jpaTicketRegistry;
+        private final TicketRegistry jpaTicketRegistry;
 
-        ServiceTicketGenerator(final String tgtId, final JpaTicketRegistry jpaTicketRegistry,
+        ServiceTicketGenerator(final String tgtId, final TicketRegistry jpaTicketRegistry,
                                       final PlatformTransactionManager txManager) {
             parentTgtId = tgtId;
             this.jpaTicketRegistry = jpaTicketRegistry;
             this.txManager = txManager;
         }
 
-        /**
-     * {@inheritDoc}
-     */
+
         @Override
         public String call() throws Exception {
             return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {
+                @Override
                 public String doInTransaction(final TransactionStatus status) {
                     // Querying for the TGT prior to updating it as done in
                     // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credential)

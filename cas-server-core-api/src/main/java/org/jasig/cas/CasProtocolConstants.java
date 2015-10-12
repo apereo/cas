@@ -69,6 +69,9 @@ public interface CasProtocolConstants {
     /** Constant representing the method parameter in the request. */
     String PARAMETER_METHOD = "method";
 
+    /** Constant representing the pgt parameter in the request. */
+    String PARAMETER_PROXY_GRANTINOG_TICKET = "pgt";
+
     /** CAS Protocol Error Codes. **/
 
     /** Constant representing an invalid request for validation. */
@@ -79,4 +82,13 @@ public interface CasProtocolConstants {
     
     /** Constant representing an invalid ticket for validation. */
     String ERROR_CODE_INVALID_TICKET = "INVALID_TICKET";
+
+    /** Constant representing an invalid pgt request. */
+    String ERROR_CODE_INVALID_REQUEST_PROXY = "INVALID_REQUEST_PROXY";
+
+    /** Constant representing an invalid service request. */
+    String ERROR_CODE_UNAUTHORIZED_SERVICE = "UNAUTHORIZED_SERVICE";
+
+    /** Constant representing an invalid service proxy request. */
+    String ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY = "UNAUTHORIZED_SERVICE_PROXY";
 }

@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
+import org.springframework.stereotype.Component;
+
 /**
  * Authentication policy that defines success as at least one authentication success and no authentication attempts
  * that were prevented by system errors. This policy may be a desirable alternative to {@link AnyAuthenticationPolicy}
@@ -26,6 +28,7 @@ package org.jasig.cas.authentication;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("notPreventedAuthenticationPolicy")
 public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
 
     @Override

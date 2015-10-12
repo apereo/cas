@@ -21,14 +21,16 @@ package org.jasig.cas.authentication;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.jasig.inspektr.audit.annotation.Audit;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -74,6 +76,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("authenticationManager")
 public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
     /** Log instance for logging events, errors, warnings, etc. */
@@ -90,8 +93,14 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
     /** Map of authentication handlers to resolvers to be used when handler does not resolve a principal. */
     @NotNull
-    private final Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
+    @Resource(name="authenticationHandlersResolvers")
+    private Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
+
+    /**
+     * Instantiates a new Policy based authentication manager.
+     */
+    protected PolicyBasedAuthenticationManager() {}
 
     /**
      * Creates a new authentication manager with a varargs array of authentication handlers that are attempted in the
@@ -196,6 +205,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      *
      * @param populators Non-null list of metadata populators.
      */
+    @Resource(name="authenticationMetadataPopulators")
     public final void setAuthenticationMetaDataPopulators(final List<AuthenticationMetaDataPopulator> populators) {
         this.authenticationMetaDataPopulators = populators;
     }
@@ -205,6 +215,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      *
      * @param policy Non-null authentication policy. The default policy is {@link AnyAuthenticationPolicy}.
      */
+    @Resource(name="authenticationPolicy")
     public void setAuthenticationPolicy(final AuthenticationPolicy policy) {
         this.authenticationPolicy = policy;
     }

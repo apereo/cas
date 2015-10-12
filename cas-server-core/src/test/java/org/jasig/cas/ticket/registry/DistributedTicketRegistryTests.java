@@ -126,22 +126,27 @@ public final class DistributedTicketRegistryTests {
             this.parent = parent;
         }
 
+        @Override
         protected void updateTicket(final Ticket ticket) {
             this.parent.setWasTicketUpdated(true);
         }
 
+        @Override
         public void addTicket(final Ticket ticket) {
             this.tickets.put(ticket.getId(), ticket);
         }
 
+        @Override
         public boolean deleteTicket(final String ticketId) {
             return this.tickets.remove(ticketId) != null;
         }
 
+        @Override
         public Ticket getTicket(final String ticketId) {
             return getProxiedTicketInstance(this.tickets.get(ticketId));
         }
 
+        @Override
         public Collection<Ticket> getTickets() {
             return this.tickets.values();
         }
