@@ -168,6 +168,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
             = new DefaultUniqueTicketIdGenerator();
+
+    /** Whether we should track the most recent session by keeping the latest service ticket. */
+    private boolean onlyTrackMostRecentSession = true;
+
     /**
      * Build the central authentication service implementation.
      *
@@ -305,7 +309,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 service,
                 this.serviceTicketExpirationPolicy,
                 currentAuthentication != null,
-                registeredService.isOnlyTrackMostRecentSession());
+                this.onlyTrackMostRecentSession);
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
@@ -635,5 +639,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
+    }
+
+    public boolean isOnlyTrackMostRecentSession() {
+        return onlyTrackMostRecentSession;
+    }
+
+    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
+        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 }
