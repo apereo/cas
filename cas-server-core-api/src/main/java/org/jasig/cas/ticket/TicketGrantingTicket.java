@@ -20,7 +20,6 @@ package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.RegisteredService;
 
 import java.util.List;
 import java.util.Map;
@@ -67,12 +66,12 @@ public interface TicketGrantingTicket extends Ticket {
      * @param service The service for which we are granting a ticket
      * @param expirationPolicy the expiration policy.
      * @param credentialsProvided if the credentials are provided.
-     * @param registeredService the associated registered service
+     * @param onlyTrackMostRecentSession track the most recent session by keeping the latest service ticket
      * @return the service ticket granted to a specific service for the
      * principal of the TicketGrantingTicket
      */
     ServiceTicket grantServiceTicket(String id, Service service,
-        ExpirationPolicy expirationPolicy, boolean credentialsProvided, RegisteredService registeredService);
+        ExpirationPolicy expirationPolicy, boolean credentialsProvided, boolean onlyTrackMostRecentSession);
 
     /**
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.

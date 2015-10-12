@@ -305,7 +305,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 service,
                 this.serviceTicketExpirationPolicy,
                 currentAuthentication != null,
-                registeredService);
+                registeredService.isOnlyTrackMostRecentSession());
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
