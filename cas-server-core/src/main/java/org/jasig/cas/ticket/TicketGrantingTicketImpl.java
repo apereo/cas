@@ -162,6 +162,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
                 // and its service ticket to keep the latest one
                 if (StringUtils.equals(path, existingPath)) {
                     existingServices.remove(existingService);
+                    LOGGER.trace("removed previous ST for service: {}", existingService);
                     break;
                 }
             }
@@ -181,6 +182,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         String path = service.getId();
         path = StringUtils.substringBefore(path, "?");
         path = StringUtils.substringBefore(path, ";");
+        path = StringUtils.substringBefore(path, "#");
         return path;
     }
 
