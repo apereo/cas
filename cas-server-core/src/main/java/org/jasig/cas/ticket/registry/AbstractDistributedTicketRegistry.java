@@ -231,9 +231,10 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         @Override
         public ServiceTicket grantServiceTicket(final String id, final Service service,
-                final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
+                final ExpirationPolicy expirationPolicy, final boolean credentialsProvided,
+                final boolean onlyTrackMostRecentSession) {
             final ServiceTicket t = this.getTicket().grantServiceTicket(id, service,
-                    expirationPolicy, credentialsProvided);
+                    expirationPolicy, credentialsProvided, onlyTrackMostRecentSession);
             updateTicket();
             return t;
         }
