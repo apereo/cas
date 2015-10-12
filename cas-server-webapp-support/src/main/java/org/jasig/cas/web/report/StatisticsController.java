@@ -70,7 +70,7 @@ public final class StatisticsController implements ServletContextAware {
 
     private final Date upTimeStartDate = new Date();
 
-    @Value("${host.name}")
+    @Value("${host.name:cas01.example.org}")
     private String casTicketSuffix;
 
     @Autowired

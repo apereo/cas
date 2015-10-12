@@ -24,10 +24,7 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,17 +43,22 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.0.0
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
+
 public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     private SearchModeSearchDatabaseAuthenticationHandler handler;
 
-    @Autowired
+
     private DataSource dataSource;
 
     @Before
     public void setup() throws Exception {
+
+
+        final ClassPathXmlApplicationContext ctx = new
+            ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
+        this.dataSource = ctx.getBean("dataSource", DataSource.class);
+
         this.handler = new SearchModeSearchDatabaseAuthenticationHandler();
         handler.setDataSource(this.dataSource);
         handler.setTableUsers("cassearchusers");

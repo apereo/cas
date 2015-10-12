@@ -35,6 +35,7 @@
     <param-value>
       /WEB-INF/spring-configuration/*.xml
       /WEB-INF/managementConfigContext.xml
+      classpath*:/META-INF/spring/*.xml
     </param-value>
   </context-param>
 

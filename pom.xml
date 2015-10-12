@@ -507,6 +507,7 @@
                     </mapping>
                     <excludes>
                         <exclude>**/bin/**</exclude>
+                        <exclude>**/com/duosecurity/**</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>**/INSTALL*</exclude>
                         <exclude>**/NOTICE*</exclude>
@@ -877,6 +878,10 @@
                         <groupId>org.bouncycastle</groupId>
                         <artifactId>bcprov-jdk15</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>slf4j-api</artifactId>
+                        <groupId>org.slf4j</groupId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -1229,6 +1234,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.webflow</groupId>
+                <artifactId>spring-binding</artifactId>
+                <version>${spring.webflow.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.jasig</groupId>
@@ -1306,7 +1316,12 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>c3p0</artifactId>
+                        <groupId>c3p0</groupId>
+                    </exclusion>
                 </exclusions>
+
             </dependency>
 
             <dependency>
@@ -1386,6 +1401,7 @@
         <module>cas-management-webapp</module>
         <module>cas-server-support-rest</module>
         <module>cas-server-support-yubikey</module>
+        <module>cas-server-support-duo</module>
         <module>cas-server-integration-hazelcast</module>
         <module>cas-server-integration-mongo</module>
     </modules>
