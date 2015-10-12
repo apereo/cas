@@ -40,7 +40,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Repository
+@Repository("mongoServiceRegistryDao")
 public final class MongoServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
@@ -72,6 +72,8 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
             LOGGER.debug("Creating database collection: {}", this.collectionName);
             this.mongoTemplate.createCollection(this.collectionName);
         }
+
+
     }
 
     @Override
@@ -103,6 +105,11 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
         this.mongoTemplate.save(svc, this.collectionName);
         LOGGER.debug("Saved registered service: {}", svc);
         return this.findServiceById(svc.getId());
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 
     /**

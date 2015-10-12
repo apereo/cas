@@ -45,36 +45,19 @@ Selecting CSS files per enabled locale would involve changing the `top.jsp` file
 <%
     String cssFileName = "cas.css"; // default
     Locale locale = request.getLocale();
- 
+
     if (locale != null && locale.getLanguage() != null){
        String languageCssFileName = "cas_" + locale.getLanguage() + ".css";
        cssFileName = languageCssFileName; //ensure this file exists
     }
- 
+
 %>
 <link href="/path/to/css/<%=cssFileName%>" rel="stylesheet" type="text/css"/>
 {% endhighlight %}
 
 
 ###Responsive Design
-CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `css/cas.css` file. Below follows an example:
-
-{% highlight css %}
-@media only screen and (max-width: 960px) { 
-  footer { padding-left: 10px; }
-}
-
-@media only screen and (max-width: 799px) { 
-  header h1 { font-size: 1em; }
-  #login { float: none; width: 100%; }
-  #fm1 .row input[type=text], 
-  #fm1 .row input[type=password] { width: 100%; padding: 10px; box-sizing: border-box; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; }
-  #fm1 .row .btn-submit { outline: none; -webkit-appearance: none; -webkit-border-radius: 0; border: 0; background: #210F7A; color: white; font-weight: bold; width: 100%; padding: 10px 20px; -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
-  #fm1 .row .btn-reset { display: none; }
-  #sidebar { margin-top: 20px; }
-  #sidebar .sidebar-content { padding: 0; }
-}
-{% endhighlight %}
+CSS media queries bring responsive design features to CAS which would allow adopter to focus on one theme for all appropriate devices and platforms. These queries are defined in the same `css/cas.css` file.
 
 
 ##Javascript
@@ -85,9 +68,9 @@ You can also create your own `custom.js` file, for example, and call it from wit
 
 {% highlight html %}
 <script type="text/javascript" src="<c:url value="/js/custom.js" />"></script>
-{% endhighlight %} 
+{% endhighlight %}
 
-If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.javascript.file` setting. 
+If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.javascript.file` setting.
 
 The following Javascript libraries are utilized by CAS automatically:
 
@@ -98,25 +81,14 @@ The following Javascript libraries are utilized by CAS automatically:
 
 ###Asynchronous Script Loading
 CAS will attempt load the aforementioned script libraries asynchronously so as to not block the page rendering functionality.
-The loading of script files is handled by the [`head.js` library](http://headjs.com) and is the responsibility of `cas.js` file:
-
-{% highlight javascript %}
-var scripts = [ "...", "..."];
-head.ready(document, function() {
-    head.load(scripts, resourceLoadedSuccessfully);
-});
-
-function resourceLoadedSuccessfully() {
-    ...
-}
-{% endhighlight %}
+The loading of script files is handled by the [`head.js` library](http://headjs.com) and is the responsibility of `cas.js` file.
 
 The only script that is loaded synchronously is the `head.js` library itself.
 
 Because scripts, and specially JQuery are loaded asynchronously, any custom Javascript that is placed inside the page
 that relies on these libraries may not immediately function on page load. CAS provides a callback function that allows
 adopters to be notified when script loading has completed and this would be a safe time to execute/load other Javascript-related
-functions that depend on JQuery inside the actual page. 
+functions that depend on JQuery inside the actual page.
 
 {% highlight javascript %}
 function jqueryReady() {
@@ -126,36 +98,11 @@ function jqueryReady() {
 
 
 ###Checking CAPSLOCK
-CAS will display a brief warning when the CAPSLOCK key is turned on during the typing of the credential password. This check
-is enforced by the `cas.js` file.
-
-{% highlight javascript %}
-$('#password').keypress(function(e) {
-    var s = String.fromCharCode( e.which );
-    if ( s.toUpperCase() === s && s.toLowerCase() !== s && !e.shiftKey ) {
-        $('#capslock-on').show();
-    } else {
-        $('#capslock-on').hide();
-    }
-});
-}
-{% endhighlight %}
+CAS will display a brief warning when the CAPSLOCK key is turned on during the typing of the credential password. This check is enforced by the `cas.js` file.
 
 ###Browser Cookie Support
 For CAS to honor a single sign-on session, the browser MUST support and accept cookies. CAS will notify the
 user if the browser has turned off its support for cookies. This behavior is controlled via the `cas.js` file.
-
-{% highlight javascript %}
-function areCookiesEnabled() {
-    $.cookie('cookiesEnabled', 'true');
-    var value = $.cookie('cookiesEnabled');
-    if (value != undefined) {
-        $.removeCookie('cookiesEnabled');
-        return true;
-    }
-    return false;
-}
-{% endhighlight %}
 
 ###Preserving Anchor Fragments
 Anchors/fragments may be lost across redirects as the server-side handler of the form post ignores the client-side anchor, unless appended to the form POST url.
@@ -173,12 +120,12 @@ This is needed if you want a CAS-authenticated application to be able to use anc
 function prepareSubmit(form) {
     // Extract the fragment from the browser's current location.
     var hash = decodeURIComponent(self.document.location.hash);
- 
+
     // The fragment value may not contain a leading # symbol
     if (hash && hash.indexOf("#") === -1) {
         hash = "#" + hash;
     }
-   
+
     // Append the fragment to the current action so that it persists to the redirected URL.
     form.action = form.action + hash;
     return true;
@@ -189,8 +136,8 @@ function prepareSubmit(form) {
 ####Changes to Login Form
 
 {% highlight jsp %}
-<form:form method="post" id="fm1" cssClass="fm-v clearfix" 
-        commandName="${commandName}" htmlEscape="true" 
+<form:form method="post" id="fm1" cssClass="fm-v clearfix"
+        commandName="${commandName}" htmlEscape="true"
         onsubmit="return prepareSubmit(this);">
 {% endhighlight %}
 
@@ -212,7 +159,7 @@ The following JSP tag libraries are used by the user interface:
 
 ####Glossary of Views
 
-| View                             | Description 
+| View                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `casAccountDisabledView`  | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is disabled in the underlying account store (i.e. LDAP)
 | `casAccountLockedView`    | Specific to Password Policy Enforcement; displayed in the event that authentication encounters an account that is locked in the underlying account store (i.e. LDAP)
@@ -223,8 +170,8 @@ The following JSP tag libraries are used by the user interface:
 | `casWarnPassView` | Specific to Password Policy Enforcement; displayed when the user account is near expiration based on specified configuration (i.e. LDAP)
 | `casConfirmView`  | Displayed when the user is warned before being redirected to the service.  This allows users to be made aware whenever an application uses CAS to log them in. (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.) Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
 | `casGenericSuccess` | Displayed when the user has been logged in without providing a service to be redirected to.
-| `casLoginView`  | Main login form. 
-| `casLogoutView` | Main logout view. 
+| `casLoginView`  | Main login form.
+| `casLogoutView` | Main logout view.
 | `serviceErrorView` | Used in conjunction with the service registry feature, displayed when the service the user is trying to access is not allowed to use CAS. The default in-memory services registry configuration, in 'deployerConfigContext.xml', allows all users to obtain a service ticket to access all services.
 | `serviceErrorSsoView` | Displayed when a user would otherwise have experienced non-interactive single sign-on to a service that is, per services registry configuration, disabled from participating in single sign-on. (In the default services registry registrations, all services are permitted to participate in single sign-on, so this view will not be displayed.)
 
@@ -233,7 +180,7 @@ The following JSP tag libraries are used by the user interface:
 The monitoring views are found at `WEB-INF/view/jsp/monitoring/`.
 
 
-| View                             | Description 
+| View                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `viewConfig`  | Displayed when user attempts to view the state of the CAS application runtime and its configuration.
 | `viewSsoSessions` | Displayed when user wishes to view the Single Sign-on Report.
@@ -243,13 +190,13 @@ The monitoring views are found at `WEB-INF/view/jsp/monitoring/`.
 ####Glossary of System Error Views
 The error views are found at `WEB-INF/view/jsp/`.
 
-| View                             | Description 
+| View                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `errors`  | Displayed when CAS experiences an error it doesn't know how to handle (an unhandled Exception). For instance, CAS might be unable to access a database backing the services registry. This is the generic CAS error page. It's important to brand it to provide an acceptable error experience to your users.
 | `authorizationFailure` | Displayed when a user successfully authenticates to the services management web-based administrative UI included with CAS, but the user is not authorized to access that application.
 
 ###Warning Before Accessing Application
-CAS has the ability to warn the user before being redirected to the service. This allows users to be made aware whenever an application uses CAS to log them in. 
+CAS has the ability to warn the user before being redirected to the service. This allows users to be made aware whenever an application uses CAS to log them in.
 (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.)
 Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
 
@@ -300,27 +247,14 @@ In order to "invoke" a specific language for the UI, the `/login` endpoint may b
 {% highlight jsp %}
 https://cas.server.edu/login?locale=it
 {% endhighlight %}
-   
-Note that not all languages are complete and accurate across CAS server releases as translations are entirely dependent upon community contributions. 
+
+Note that not all languages are complete and accurate across CAS server releases as translations are entirely dependent upon community contributions.
 For an accurate and complete list of localized messages, always refer to the English language bundle.
 
 ###Configuration
-All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the 
-English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views, 
+All message bundles are marked under `messages_xx.properties` files at `WEB-INF/classes`. The default language bundle is for the
+English language and is thus called `messages.properties`. If there are any custom messages that need to be presented into views,
 they may also be formatted under `custom_messages.properties` files.
-
-Messages are parsed and loaded via the following configuration:
-
-{% highlight xml %}
-<bean id="messageSource" class="org.jasig.cas.web.view.CasReloadableMessageBundle"
-          p:basenames-ref="basenames" p:fallbackToSystemLocale="false" p:defaultEncoding="UTF-8"
-          p:cacheSeconds="180" p:useCodeAsDefaultMessage="true" />
-    
-<util:list id="basenames">
-    <value>classpath:custom_messages</value>
-    <value>classpath:messages</value>
-</util:list>
-{% endhighlight %}
 
 Messages are then read on each JSP view via the following sample configuration:
 
@@ -336,7 +270,7 @@ With the introduction of [Service Management application](Service-Management.htm
 
 Note that support for themes comes with the following components:
 
-| Component                      | Description 
+| Component                      | Description
 |--------------------------------+--------------------------------------------------------------------------------+
 | `ServiceThemeResolver`  | can be configured to decorate CAS views based on the `theme` property of a given registered service in the Service Registry. The theme that is activated via this method will still preserve the default JSP views for CAS but will simply apply decorations such as CSS and Javascript to the views. The physical structure of views cannot be modified via this method.
 | `RegisteredServiceThemeBasedViewResolver` | If there is a need to present an entirely new set of views for a given service, such that the structure and layout of the page needs an overhaul with additional icons, images, text, etc then this component` needs to be configured. This component will have the ability to resolve a new set of views that may entirely be different from the default JSPs. The `theme` property of a given registered service in the Service Registry will still need to be configured to note the set of views that are to be loaded.
@@ -344,14 +278,8 @@ Note that support for themes comes with the following components:
 
 ###`ServiceThemeResolver`
 Configuration of service-specific themes is backed by the Spring framework and provided by the following component:
-{% highlight xml %}
-<bean id="themeResolver" class="org.jasig.cas.services.web.ServiceThemeResolver"
-    p:defaultThemeName="${cas.themeResolver.defaultThemeName}"
-    p:servicesManager-ref="servicesManager"
-    p:argumentExtractors-ref="argumentExtractors" />
-{% endhighlight %}
 
-Furthermore, deployers may be able to use the functionality provided by the `ThemeChangeInterceptor` of Spring framework to provide theme configuration per each request. 
+Furthermore, deployers may be able to use the functionality provided by the `ThemeChangeInterceptor` of Spring framework to provide theme configuration per each request.
 
 ####Configuration
 - Add another theme properties file, which must be placed to the root of `/WEB-INF/classes` folder, name it as `theme_name.properties`. Contents of this file should match the `cas-theme-default.properties` file.
@@ -364,17 +292,15 @@ associated theme to selectively choose which set of UI views will be used to gen
 for a different type of audience are entirely different structurally that simply
 using the `ServiceThemeResolver` is not practical to augment the default views. In such cases, new view pages may be required.
 
-Views associated with a particular theme by default are expected to be found at: `/WEB-INF/view/jsp/<theme-id>/ui/` 
+Views associated with a particular theme by default are expected to be found at: `/WEB-INF/view/jsp/<theme-id>/ui/`
 
-{% highlight xml %}
-<bean id="themeResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
-    c:defaultThemeName="${cas.themeResolver.defaultThemeName}"
-    c:servicesManager-ref="servicesManager"
-    p:pathPrefix="/WEB-INF/view/jsp" />
+{% highlight jsp %}
+<bean id="internalViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
+        c:servicesManager-ref="servicesManager"
+        p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp/}"
+        p:order="2001"/>
 {% endhighlight %}
 
 ####Configuration
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `/WEB-INF/view/jsp/<theme-id>/ui/`).
 - Specify the name of your theme for the service definition under the `theme` property.
-
-

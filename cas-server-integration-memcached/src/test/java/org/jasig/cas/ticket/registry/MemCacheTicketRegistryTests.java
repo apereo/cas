@@ -82,7 +82,7 @@ public class MemCacheTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> getTestParameters() throws Exception {
+    public static Collection getTestParameters() throws Exception {
         return Arrays.asList(new Object[] {"testCase1", false}, new Object[] {"testCase2", true});
     }
 
