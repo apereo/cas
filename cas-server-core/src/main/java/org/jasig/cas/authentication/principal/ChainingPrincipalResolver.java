@@ -63,6 +63,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      *
      * @return The principal from the last configured resolver in the chain.
      */
+    @Override
     public Principal resolve(final Credential credential) {
         Principal result = null;
         Credential input = credential;
@@ -83,6 +84,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      *
      * @return True if the first configured resolver in the chain supports the credential, false otherwise.
      */
+    @Override
     public boolean supports(final Credential credential) {
         return this.chain.get(0).supports(credential);
     }

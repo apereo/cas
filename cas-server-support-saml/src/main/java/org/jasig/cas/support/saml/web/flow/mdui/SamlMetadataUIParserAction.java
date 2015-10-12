@@ -20,8 +20,8 @@
 package org.jasig.cas.support.saml.web.flow.mdui;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -35,6 +35,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -80,6 +81,10 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     @NotNull
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> serviceFactory;
+
     /**
      * Instantiates a new SAML mdui parser action.
      * Defaults the parameter name to {@link #ENTITY_ID_PARAMETER_NAME}.
@@ -111,7 +116,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
             return success();
         }
 
-        final WebApplicationService service = new WebApplicationServiceFactory().createService(entityId);
+        final WebApplicationService service = serviceFactory.createService(entityId);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             logger.debug("Entity id [{}] is not recognized/allowed by the CAS service registry", entityId);

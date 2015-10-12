@@ -20,6 +20,7 @@ package org.jasig.cas.util;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Misagh Moayyed
@@ -27,6 +28,7 @@ import org.springframework.context.ApplicationContextAware;
  * holds the application context
  * @since 3.0.0.
  */
+@Component("applicationContextProvider")
 public final class ApplicationContextProvider implements ApplicationContextAware {
     private static ApplicationContext CONTEXT;
 
@@ -34,6 +36,7 @@ public final class ApplicationContextProvider implements ApplicationContextAware
         return CONTEXT;
     }
 
+    @Override
     public void setApplicationContext(final ApplicationContext ctx) {
         CONTEXT = ctx;
     }

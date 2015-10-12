@@ -18,21 +18,22 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <parent>
-    <artifactId>cas-server</artifactId>
-    <groupId>org.jasig.cas</groupId>
-    <version>4.2.0-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>cas-server-core</artifactId>
-  <name>Apereo CAS Core</name>
-  <description>CAS core</description>
-  <dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <artifactId>cas-server</artifactId>
+        <groupId>org.jasig.cas</groupId>
+        <version>4.2.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>cas-server-core</artifactId>
+    <name>Apereo CAS Core</name>
+    <description>CAS core</description>
+    <dependencies>
         <dependency>
-          <groupId>org.jasig.cas</groupId>
-          <artifactId>cas-server-core-api</artifactId>
-          <version>${project.version}</version>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -47,8 +48,8 @@
         </dependency>
 
         <dependency>
-          <groupId>io.dropwizard.metrics</groupId>
-          <artifactId>metrics-annotation</artifactId>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-annotation</artifactId>
         </dependency>
 
         <dependency>
@@ -64,10 +65,10 @@
         </dependency>
 
         <dependency>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
-      
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
@@ -120,17 +121,29 @@
             <scope>compile</scope>
         </dependency>
 
-      <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-validator</artifactId>
-          <scope>test</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-core</artifactId>
-          <scope>compile</scope>
-      </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ryantenney.metrics</groupId>
+            <artifactId>metrics-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -177,23 +190,17 @@
             <artifactId>reflections</artifactId>
             <scope>compile</scope>
         </dependency>
-            
-        <dependency>
-          <groupId>org.quartz-scheduler</groupId>
-          <artifactId>quartz</artifactId>
-          <scope>test</scope>
-        </dependency>
 
         <dependency>
-          <groupId>org.jasig.inspektr</groupId>
-          <artifactId>inspektr-support-spring</artifactId>
-          <scope>test</scope>
-          <exclusions>
-            <exclusion>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-            </exclusion>
-          </exclusions>
+            <groupId>org.jasig.inspektr</groupId>
+            <artifactId>inspektr-support-spring</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -224,9 +231,9 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
         </dependency>
-  </dependencies>
+    </dependencies>
 
-  <properties>
-    <cs.dir>${project.parent.basedir}</cs.dir>
-  </properties>
+    <properties>
+        <cs.dir>${project.parent.basedir}</cs.dir>
+    </properties>
 </project>

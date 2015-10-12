@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.authentication.support;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -26,6 +30,7 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("ldapPasswordPolicyCOnfiguration")
 public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration {
 
     /** Directory-specific account state handler component. */
@@ -46,7 +51,9 @@ public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration
      *
      * @param accountStateHandler Account state handler.
      */
-    public void setAccountStateHandler(final AccountStateHandler accountStateHandler) {
+    @Autowired
+    public void setAccountStateHandler(@Qualifier("accountStateHandler")
+                                           final AccountStateHandler accountStateHandler) {
         this.accountStateHandler = accountStateHandler;
     }
 }

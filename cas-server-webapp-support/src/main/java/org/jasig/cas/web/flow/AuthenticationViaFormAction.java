@@ -33,8 +33,11 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -52,6 +55,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0.4
  */
+@Component("authenticationViaFormAction")
 public class AuthenticationViaFormAction {
 
     /** Authentication success result. */
@@ -281,11 +285,14 @@ public class AuthenticationViaFormAction {
         return new Event(this, id, new LocalAttributeMap("error", error));
     }
 
-    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+    @Autowired
+    public final void setCentralAuthenticationService(@Qualifier("centralAuthenticationService")
+                                                          final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    public final void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+    @Autowired
+    public final void setWarnCookieGenerator(@Qualifier("warnCookieGenerator")final CookieGenerator warnCookieGenerator) {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
