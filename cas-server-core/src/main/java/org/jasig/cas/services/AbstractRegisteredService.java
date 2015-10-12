@@ -134,8 +134,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "public_key", nullable = true)
     private RegisteredServicePublicKey publicKey;
 
-    @Column(name = "only_keep_latest_st", nullable = true)
-    private boolean onlyKeepLatestST = true;
+    @Column(name = "only_track_most_recent_session", nullable = true)
+    private boolean onlyTrackMostRecentSession = true;
 
     @Override
     public long getId() {
@@ -236,7 +236,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey, that.publicKey)
                 .append(this.logoutUrl, that.logoutUrl)
                 .append(this.requiredHandlers, that.requiredHandlers)
-                .append(this.onlyKeepLatestST, that.onlyKeepLatestST)
+                .append(this.onlyTrackMostRecentSession, that.onlyTrackMostRecentSession)
                 .isEquals();
     }
 
@@ -257,7 +257,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey)
                 .append(this.logoutUrl)
                 .append(this.requiredHandlers)
-                .append(this.onlyKeepLatestST)
+                .append(this.onlyTrackMostRecentSession)
                 .toHashCode();
     }
 
@@ -364,7 +364,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setLogoutUrl(source.getLogoutUrl());
         this.setPublicKey(source.getPublicKey());
         this.setRequiredHandlers(source.getRequiredHandlers());
-        this.setOnlyKeepLatestST(source.isOnlyKeepLatestST());
+        this.setOnlyTrackMostRecentSession(source.isOnlyTrackMostRecentSession());
     }
 
     /**
@@ -401,7 +401,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logo", this.logo);
         toStringBuilder.append("logoutUrl", this.logoutUrl);
         toStringBuilder.append("requiredHandlers", this.requiredHandlers);
-        toStringBuilder.append("onlyKeepLatestST", this.onlyKeepLatestST);
+        toStringBuilder.append("onlyTrackMostRecentSession", this.onlyTrackMostRecentSession);
 
         return toStringBuilder.toString();
     }
@@ -468,11 +468,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.publicKey = publicKey;
     }
 
-    public boolean isOnlyKeepLatestST() {
-        return onlyKeepLatestST;
+    public boolean isOnlyTrackMostRecentSession() {
+        return this.onlyTrackMostRecentSession;
     }
 
-    public void setOnlyKeepLatestST(final boolean onlyKeepLatestST) {
-        this.onlyKeepLatestST = onlyKeepLatestST;
+    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
+        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 }
