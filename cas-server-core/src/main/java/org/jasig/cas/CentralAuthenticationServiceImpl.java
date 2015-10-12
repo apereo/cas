@@ -66,6 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -189,6 +190,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
             = new DefaultUniqueTicketIdGenerator();
+
+    /** Whether we should track the most recent session by keeping the latest service ticket. */
+    @Value("${tgt.onlyTrackMostRecentSession:true}")
+    private boolean onlyTrackMostRecentSession = true;
 
     /**
      * Instantiates a new Central authentication service impl.
@@ -338,7 +343,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 ticketId,
                 service,
                 this.serviceTicketExpirationPolicy,
-                currentAuthentication != null);
+                currentAuthentication != null,
+                this.onlyTrackMostRecentSession);
 
         this.serviceTicketRegistry.addTicket(serviceTicket);
 
@@ -670,5 +676,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
+    }
+
+    public boolean isOnlyTrackMostRecentSession() {
+        return onlyTrackMostRecentSession;
+    }
+
+    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
+        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 }

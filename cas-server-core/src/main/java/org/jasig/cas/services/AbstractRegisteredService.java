@@ -359,7 +359,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setLogoutUrl(source.getLogoutUrl());
         this.setPublicKey(source.getPublicKey());
         this.setRequiredHandlers(source.getRequiredHandlers());
-
     }
 
     /**
