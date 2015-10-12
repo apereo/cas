@@ -64,9 +64,16 @@ import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -77,7 +84,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Concrete implementation of a CentralAuthenticationService, and also the
+ * Concrete implementation of a {@link CentralAuthenticationService}, and also the
  * central, organizing component of CAS's internal implementation.
  * <p>
  * This class is threadsafe.
@@ -105,51 +112,64 @@ import java.util.Set;
  * @author Dmitry Kopylenko
  * @since 3.0.0
  */
-public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
+@Component("centralAuthenticationService")
+public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService, Serializable {
+
+    private static final long serialVersionUID = -8943828074939533986L;
 
     /** Log instance for logging events, info, warnings, errors, etc. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
-    private final TicketRegistry ticketRegistry;
+    @Resource(name="ticketRegistry")
+    private TicketRegistry ticketRegistry;
 
     /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
-    @NotNull
-    private final TicketRegistry serviceTicketRegistry;
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("serviceTicketRegistry")
+    private TicketRegistry serviceTicketRegistry;
 
     /**
      * AuthenticationManager for authenticating credentials for purposes of
      * obtaining tickets.
      */
     @NotNull
-    private final AuthenticationManager authenticationManager;
+    @Resource(name="authenticationManager")
+    private AuthenticationManager authenticationManager;
 
     /**
      * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
      * created.
      */
     @NotNull
-    private final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+    @Resource(name="ticketGrantingTicketUniqueIdGenerator")
+    private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
     @NotNull
-    private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+    @Resource(name="uniqueIdGeneratorsMap")
+    private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     /** Implementation of Service Manager. */
     @NotNull
-    private final ServicesManager servicesManager;
+    @Resource(name="servicesManager")
+    private ServicesManager servicesManager;
 
     /** The logout manager. **/
     @NotNull
-    private final LogoutManager logoutManager;
+    @Resource(name="logoutManager")
+    private LogoutManager logoutManager;
 
     /** Expiration policy for ticket granting tickets. */
     @NotNull
+    @Resource(name="grantingTicketExpirationPolicy")
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     /** ExpirationPolicy for Service Tickets. */
     @NotNull
+    @Resource(name="serviceTicketExpirationPolicy")
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /**
@@ -157,6 +177,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * authenticating credentials.
      */
     @NotNull
+    @Resource(name="authenticationPolicyFactory")
     private ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
 
@@ -168,6 +189,12 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
             = new DefaultUniqueTicketIdGenerator();
+
+    /**
+     * Instantiates a new Central authentication service impl.
+     */
+    protected CentralAuthenticationServiceImpl() {}
+
     /**
      * Build the central authentication service implementation.
      *
@@ -181,21 +208,18 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @param servicesManager the services manager.
      * @param logoutManager the logout manager.
      */
-    public CentralAuthenticationServiceImpl(final TicketRegistry ticketRegistry,
-                                            final TicketRegistry serviceTicketRegistry,
-                                            final AuthenticationManager authenticationManager,
-                                            final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
-                                            final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
-                                            final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
-                                            final ExpirationPolicy serviceTicketExpirationPolicy,
-                                            final ServicesManager servicesManager,
-                                            final LogoutManager logoutManager) {
+    public CentralAuthenticationServiceImpl(
+        final TicketRegistry ticketRegistry,
+        final TicketRegistry serviceTicketRegistry,
+        final AuthenticationManager authenticationManager,
+        final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
+        final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
+        final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
+        final ExpirationPolicy serviceTicketExpirationPolicy,
+        final ServicesManager servicesManager,
+        final LogoutManager logoutManager) {
+
         this.ticketRegistry = ticketRegistry;
-        if (serviceTicketRegistry == null) {
-            this.serviceTicketRegistry = ticketRegistry;
-        } else {
-            this.serviceTicketRegistry = serviceTicketRegistry;
-        }
         this.authenticationManager = authenticationManager;
         this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
@@ -203,6 +227,16 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
+    }
+
+    /**
+     * Initialize ticket registry.
+     */
+    @PostConstruct
+    public void afterPropertiesSet() {
+        if (serviceTicketRegistry == null) {
+            this.serviceTicketRegistry = ticketRegistry;
+        }
     }
 
     /**
@@ -256,7 +290,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
 
         Authentication currentAuthentication = null;
-        if (sanitizedCredentials.size() > 0) {
+        if (!sanitizedCredentials.isEmpty()) {
             currentAuthentication = this.authenticationManager.authenticate(
                     sanitizedCredentials.toArray(new Credential[] {}));
             final Authentication original = ticketGrantingTicket.getAuthentication();
@@ -585,7 +619,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      *
      * @param principalFactory the principal factory
      */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+    @Autowired
+    public void setPrincipalFactory(@Qualifier("principalFactory")
+                                    final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 

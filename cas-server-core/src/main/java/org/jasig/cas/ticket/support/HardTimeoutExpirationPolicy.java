@@ -19,7 +19,10 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,18 +32,19 @@ import java.util.concurrent.TimeUnit;
  * @author Andrew Feller
  * @since 3.1.2
  */
+@Component("hardTimeoutExpirationPolicy")
 public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 6728077010285422290L;
 
     /** The time to kill in milliseconds. */
-    private final long timeToKillInMilliSeconds;
+    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
+    private long timeToKillInMilliSeconds;
 
     /** No-arg constructor for serialization support. */
-    private HardTimeoutExpirationPolicy() {
-        this.timeToKillInMilliSeconds = 0;
-    }
+    private HardTimeoutExpirationPolicy() {}
+
 
     /**
      * Instantiates a new hard timeout expiration policy.
@@ -59,6 +63,15 @@ public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPoli
      */
     public HardTimeoutExpirationPolicy(final long timeToKill, final TimeUnit timeUnit) {
         this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
+    }
+
+
+    /**
+     * Init .
+     */
+    @PostConstruct
+    public void init() {
+        this.timeToKillInMilliSeconds = TimeUnit.SECONDS.toMillis(this.timeToKillInMilliSeconds);
     }
 
     @Override

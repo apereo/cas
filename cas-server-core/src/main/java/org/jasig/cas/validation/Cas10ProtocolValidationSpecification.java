@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.validation;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 /**
  * Validation specification for the CAS 1.0 protocol. This specification checks
  * for the presence of renew=true and if requested, succeeds only if ticket
@@ -28,6 +31,8 @@ package org.jasig.cas.validation;
  * @author Drew Mazurek
  * @since 3.0.0
  */
+@Component("cas10ProtocolValidationSpecification")
+@Scope(value = "prototype")
 public final class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
 
     /**

@@ -23,6 +23,7 @@ import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -35,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("acceptableUsagePolicyFormAction")
 public class AcceptableUsagePolicyFormAction {
 
     /** Event id to signal the policy needs to be accepted. **/
