@@ -37,47 +37,11 @@ SPNEGO support is enabled by including the following dependency in the Maven WAR
 </dependency>
 {% endhighlight %}
 
-
-######`JCIFSSpnegoAuthenticationHandler`
-The authentication handler that provides SPNEGO support in both Kerberos and NTLM flavors. NTLM is disabled by default.
-Configuration properties:
-
-* `principalWithDomainName` - True to include the domain name in the CAS principal ID, false otherwise.
-* `NTLMallowed` - True to enable NTLM support, false otherwise. (Disabled by default.)
-
-
-######`JCIFSConfig`
-Configuration helper for JCIFS and the Spring framework. Configuration properties:
-
-* `jcifsServicePrincipal` - service principal name.
-* `jcifsServicePassword` - service principal password.
-* `kerberosDebug` - True to enable kerberos debugging, false otherwise.
-* `kerberosRealm` - Kerberos realm name.
-* `kerberosKdc` - Kerberos KDC address.
-* `loginConf` - Path to the login.conf JAAS configuration file.
-
-
-
-######`SpnegoNegociateCredentialsAction`
-CAS login Webflow action that begins the SPNEGO authenticaiton process. The action checks the `Authorization` request
-header for a suitable value (`Negotiate` for Kerberos or `NTLM`). If the check is successful, flow continues to the
-`SpnegoCredentialsAction` state; otherwise a 401 (not authorized) response is returned.
-
-
-######`SpnegoCredentialsAction`
-Constructs CAS credentials from the encoded GSSAPI data in the `Authorization` request header. The standard CAS
-authentication process proceeds as usual after this step: authentication is attempted with a suitable handler,
-`JCIFSSpnegoAuthenticationHandler` in this case. The action also sets response headers accordingly based on whether
-authentication succeeded or failed.
-
-
 ## SPNEGO Configuration
-
 
 ### Create SPN Account
 Create an Active Directory account for the Service Principal Name (SPN) and record the username and password, which
 will be used subsequently to configure the `JCIFSConfig` component.
-
 
 ### Create Keytab File
 The keytab file enables a trust link between the CAS server and the Key Distribution Center (KDC); an Active Directory
@@ -95,7 +59,7 @@ as a reference.
      default = FILE:/var/log/krb5libs.log
      kdc = FILE:/var/log/krb5kdc.log
      admin_server = FILE:/var/log/kadmind.log
-     
+
     [libdefaults]
      ticket_lifetime = 24000
      default_realm = YOUR.REALM.HERE
@@ -104,12 +68,12 @@ as a reference.
      dns_lookup_kdc = false
      default_tkt_enctypes = rc4-hmac
      default_tgs_enctypes = rc4-hmac
-     
+
     [realms]
      YOUR.REALM.HERE = {
       kdc = your.kdc.your.realm.here:88
      }
-     
+
     [domain_realm]
      .your.realm.here = YOUR.REALM.HERE
      your.realm.here = YOUR.REALM.HERE
@@ -141,7 +105,7 @@ Define two new action states in `login-webflow.xml` before the `viewLoginForm` s
   <evaluate expression="negociateSpnego" />
   <transition on="success" to="spnego" />
 </action-state>
- 
+
 <action-state id="spnego">
   <evaluate expression="spnego" />
   <transition on="success" to="sendTicketGrantingTicket" />
@@ -163,33 +127,6 @@ Insert the appropriate action before SPNEGO initiation, assigning a `yes` respon
 {% endhighlight %}
 
 ####Authentication Configuration
-
-Update `deployerConfigContext.xml` according to the following template:
-
-{% highlight xml %}
-<bean id="spnegoHandler"
-      class="org.jasig.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler"
-      p:authentication-ref="spnegoAuthentication"
-      p:principalWithDomainName="${cas.spengo.use.principal.domain:false}"
-      p:NTLMallowed="${cas.spnego.ntlm.allowed:true}" />
-
-<bean id="spnegoPrincipalResolver"
-      class="org.jasig.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver" />
-
-<bean id="authenticationManager"
-      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
-  <constructor-arg>
-    <map>
-      <entry key-ref="spnegoHandler" value-ref="spnegoPrincipalResolver"/>
-    </map>
-  </constructor-arg>
-  <property name="authenticationMetaDataPopulators">
-    <list>
-      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
-    </list>
-  </property>
-</bean>
-{% endhighlight %}
 
 Provide a JAAS `login.conf` file:
 
@@ -214,7 +151,7 @@ You may use the following configuration in `cas.properties`:
 # cas.spnego.kerb.debug=false
 # cas.spnego.kerb.realm=EXAMPLE.COM
 # cas.spnego.kerb.kdc=172.10.1.10
-# cas.spnego.login.conf.file=/path/to/login.conf
+# cas.spnego.login.conf.file=/path/to/login
 # cas.spnego.jcifs.domain=
 # cas.spnego.jcifs.domaincontroller=
 # cas.spnego.jcifs.netbios.cache.policy:600
@@ -228,12 +165,14 @@ You may use the following configuration in `cas.properties`:
 # cas.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
 # cas.spnego.mixed.mode.authn=false
 # cas.spnego.send.401.authn.failure=false
+# cas.spnego.principal.resolver.transform=NONE
+# cas.spnego.service.principal=HTTP/cas.example.com@EXAMPLE.COM
 {% endhighlight %}
 
 ## Client Selection Strategy
-CAS provides a set of components that attempt to activate the SPNEGO flow conditionally, 
-in case deployers need a configurable way to decide whether SPNEGO should be applied to the 
-current authentication/browser request. 
+CAS provides a set of components that attempt to activate the SPNEGO flow conditionally,
+in case deployers need a configurable way to decide whether SPNEGO should be applied to the
+current authentication/browser request.
 
 ### By Remote IP
 Checks to see if the request's remote ip address matches a predefine pattern.
@@ -246,7 +185,7 @@ Checks to see if the request's remote ip address matches a predefine pattern.
 
 
 ### By Hostname
-Checks to see if the request's remote hostname matches a predefine pattern. 
+Checks to see if the request's remote hostname matches a predefine pattern.
 
 {% highlight xml %}
 ...
@@ -255,11 +194,11 @@ Checks to see if the request's remote hostname matches a predefine pattern.
 {% endhighlight %}
 
 ### By LDAP Attribute
-Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence 
-would allow the webflow to resume to SPNEGO. 
+Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
+would allow the webflow to resume to SPNEGO.
 
 {% highlight xml %}
-<bean id="ldapSpnegoClientAction" 
+<bean id="ldapSpnegoClientAction"
       class="org.jasig.cas.support.spnego.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction"
       c:connectionFactory-ref="connectionFactory"
       c:searchRequest-ref="searchRequest"

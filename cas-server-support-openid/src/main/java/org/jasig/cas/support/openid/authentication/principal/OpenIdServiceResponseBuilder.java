@@ -26,6 +26,7 @@ import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.validation.Assertion;
 import org.openid4java.association.Association;
 import org.openid4java.message.AuthRequest;
@@ -47,25 +48,16 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
     private static final long serialVersionUID = -4581238964007702423L;
 
-    private final ServerManager serverManager;
-    private final CentralAuthenticationService centralAuthenticationService;
     private final ParameterList parameterList;
     private final String openIdPrefixUrl;
 
     /**
      * Instantiates a new Open id service response builder.
-     *
-     * @param serverManager the server manager
-     * @param centralAuthenticationService the central authentication service
      * @param parameterList the parameter list
      * @param openIdPrefixUrl the open id prefix url
      */
-    public OpenIdServiceResponseBuilder(final ServerManager serverManager,
-                                        final CentralAuthenticationService centralAuthenticationService,
-                                        final ParameterList parameterList,
+    public OpenIdServiceResponseBuilder(final ParameterList parameterList,
                                         final String openIdPrefixUrl) {
-        this.serverManager = serverManager;
-        this.centralAuthenticationService = centralAuthenticationService;
         this.parameterList = parameterList;
         this.openIdPrefixUrl = openIdPrefixUrl;
     }
@@ -83,6 +75,12 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      */
     @Override
     public Response build(final WebApplicationService webApplicationService, final String ticketId) {
+        final ServerManager serverManager = ApplicationContextProvider.getApplicationContext()
+                .getBean("serverManager", ServerManager.class);
+        final CentralAuthenticationService centralAuthenticationService = ApplicationContextProvider
+                .getApplicationContext().getBean("centralAuthenticationService",
+                CentralAuthenticationService.class);
+
         final OpenIdService service = (OpenIdService) webApplicationService;
 
         final Map<String, String> parameters = new HashMap<>();
@@ -92,7 +90,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
             return buildRedirect(service, parameters);
         }
 
-        final Association association = getAssociation();
+        final Association association = getAssociation(serverManager);
         final boolean associated = association != null;
         final boolean associationValid = isAssociationValid(association);
         boolean successFullAuthentication = true;
@@ -113,7 +111,7 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
 
         final String id = determineIdentity(service, assertion);
 
-        return buildAuthenticationResponse(ticketId, service, parameters, associated,
+        return buildAuthenticationResponse(serverManager, ticketId, service, parameters, associated,
             successFullAuthentication, id);
     }
 
@@ -138,15 +136,17 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * We sign directly (final 'true') because we don't add extensions
      * response message can be either a DirectError or an AuthSuccess here.
      *
-     * @param ticketId                  the ticket id
-     * @param service                   the service
-     * @param parameters                the parameters
-     * @param associated                the associated
+     * @param serverManager the server manager
+     * @param ticketId the ticket id
+     * @param service the service
+     * @param parameters the parameters
+     * @param associated the associated
      * @param successFullAuthentication the success full authentication
-     * @param id                        the id
-     * @return response
+     * @param id the id
+     * @return response response
      */
-    protected Response buildAuthenticationResponse(final String ticketId, final OpenIdService service,
+    protected Response buildAuthenticationResponse(final ServerManager serverManager,
+                                                   final String ticketId, final OpenIdService service,
                                                    final Map<String, String> parameters,
                                                    final boolean associated, final boolean successFullAuthentication,
                                                    final String id) {
@@ -163,12 +163,13 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
     /**
      * Gets association.
      *
+     * @param serverManager the server manager
      * @return the association
      */
-    protected Association getAssociation() {
+    protected Association getAssociation(final ServerManager serverManager) {
         try {
             final AuthRequest authReq = AuthRequest.createAuthRequest(this.parameterList,
-                this.serverManager.getRealmVerifier());
+                serverManager.getRealmVerifier());
             final Map parameterMap = authReq.getParameterMap();
             if (parameterMap != null && !parameterMap.isEmpty()) {
                 final String assocHandle = (String) parameterMap.get(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);

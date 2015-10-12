@@ -24,6 +24,8 @@ import org.jasig.cas.support.spnego.util.SpnegoConstants;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -44,9 +46,11 @@ import java.nio.charset.Charset;
  * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
+@Component
 public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAction {
 
 
+    @Value("${cas.spnego.ntlm.allowed:true}")
     private boolean ntlm;
 
     private String messageBeginPrefix = constructMessagePrefix();
@@ -57,6 +61,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
      * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
      * </ul>
      */
+    @Value("${cas.spnego.send.401.authn.failure:false}")
     private boolean send401OnAuthenticationFailure = true;
 
     @Override

@@ -32,42 +32,13 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <bean id="negociateSpnego" class="org.jasig.cas.support.spnego.web.flow.SpnegoNegociateCredentialsAction"
-            p:mixedModeAuthentication="${cas.spnego.mixed.mode.authn:false}"
-            p:ntlm="${cas.spnego.ntlm:false}"
-            p:supportedBrowser="#{T(java.util.Arrays).asList('${cas.spnego.supportedBrowsers:MSIE,Trident,Firefox,AppleWebKit}')}"/>
-
-    <bean id="spnego" class="org.jasig.cas.support.spnego.web.flow.SpnegoCredentialsAction"
-          p:send401OnAuthenticationFailure="${cas.spnego.send.401.authn.failure:false}"
-          p:principalFactory-ref="principalFactory"
-          p:centralAuthenticationService-ref="centralAuthenticationService" />
-
-    <bean id="jcifsConfig"
-          class="org.jasig.cas.support.spnego.authentication.handler.support.JcifsConfig"
-          p:jcifsServicePrincipal="HTTP/cas.example.com@EXAMPLE.COM"
-          p:kerberosDebug="${cas.spnego.kerb.debug:false}"
-          p:kerberosRealm="${cas.spnego.kerb.realm:EXAMPLE.COM}"
-          p:kerberosKdc="${cas.spnego.kerb.kdc:172.10.1.10}"
-          p:jcifsDomain="${cas.spnego.jcifs.domain:}"
-          p:jcifsDomainController="${cas.spnego.jcifs.domaincontroller:}"
-          p:jcifsNetbiosCachePolicy="${cas.spnego.jcifs.netbios.cache.policy:600}"
-          p:jcifsNetbiosWins="${cas.spnego.jcifs.netbios.wins:}"
-          p:jcifsPassword="${cas.spnego.jcifs.password:}"
-          p:jcifsServicePassword="${cas.spnego.jcifs.service.password:}"
-          p:jcifsSocketTimeout="${cas.spnego.jcifs.socket.timeout:300000}"
-          p:jcifsUsername="${cas.spnego.jcifs.username:}"
-          p:kerberosConf="${cas.spnego.kerb.conf:}"
-          p:useSubjectCredsOnly="${cas.spnego.use.subject.creds:false}"
-          p:loginConf="${cas.spnego.login.conf.file:/path/to/login.conf}" />
+    <!--
+    | The base-package indicates where components stored. Spring will scan this
+    | folder and find out the annotated beans and register it in Spring container.
+    -->
+    <context:component-scan base-package="org.jasig.cas" />
+    <context:annotation-config/>
 
     <bean id="spnegoAuthentication" class="jcifs.spnego.Authentication" />
 
-    <bean id="baseSpnegoClientAction"
-          class="org.jasig.cas.support.spnego.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction"
-          c:ipsToCheckPattern="${cas.spnego.ip.pattern:127.+}"
-          c:alternativeRemoteHostAttribute="${cas.spnego.alt.remote.host.attribute:alternateRemoteHeader}" />
-
-    <bean id="hostnameSpnegoClientAction"
-          class="org.jasig.cas.support.spnego.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction"
-          c:hostNamePatternString="${cas.spnego.hostname.pattern:something.+}" />
 </beans>

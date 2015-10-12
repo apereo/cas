@@ -25,6 +25,8 @@ import org.jasig.cas.support.spnego.util.ReverseDNSRunnable;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -45,6 +47,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("baseSpnegoClientAction")
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     private static final int DEFAULT_TIMEOUT = 2000;
 
@@ -52,9 +55,11 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Pattern of ip addresses to check. **/
+    @Value("${cas.spnego.ip.pattern:127.+}")
     private Pattern ipsToCheckPattern;
 
     /** Alternative remote host attribute. **/
+    @Value("${cas.spnego.alt.remote.host.attribute:alternateRemoteHeader}")
     private String alternativeRemoteHostAttribute;
 
     /** Timeout for DNS Requests. **/
