@@ -82,7 +82,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     
     private static final String PRINCIPAL = "principal";
 
-    private CentralAuthenticationService cas;
+    private CentralAuthenticationServiceImpl cas;
     private Authentication authentication;
     private TicketRegistry ticketRegMock;
 

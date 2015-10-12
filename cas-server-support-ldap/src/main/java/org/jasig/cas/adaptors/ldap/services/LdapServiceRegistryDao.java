@@ -43,7 +43,11 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -57,14 +61,19 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("ldapServiceRegistryDao")
 public final class LdapServiceRegistryDao implements ServiceRegistryDao {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @NotNull
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("ldapServiceRegistryConnectionFactory")
     private ConnectionFactory connectionFactory;
 
-    @NotNull
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("ldapServiceRegistryMapper")
     private LdapRegisteredServiceMapper ldapServiceMapper = new DefaultLdapRegisteredServiceMapper();
 
     @NotNull
@@ -73,9 +82,10 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     @NotNull
     private String loadFilter;
 
-    @NotNull
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("ldapServiceRegistrySearchRequest")
     private SearchRequest searchRequest;
-
 
     /**
      * Inits the dao with the search filter and load filters.
@@ -83,7 +93,9 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
     @PostConstruct
     public void init() {
         this.searchFilter = '(' + this.ldapServiceMapper.getIdAttribute() +  "={0})";
+        logger.debug("Configured search filter to {}", this.searchFilter);
         this.loadFilter = "(objectClass=" + this.ldapServiceMapper.getObjectClass() + ')';
+        logger.debug("Configured load filter to {}", this.loadFilter);
     }
 
     @Override
@@ -313,5 +325,10 @@ public final class LdapServiceRegistryDao implements ServiceRegistryDao {
             c.open();
         }
         return c;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

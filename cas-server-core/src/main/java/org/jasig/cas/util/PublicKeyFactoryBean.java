@@ -61,6 +61,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
         }
     }
 
+    @Override
     public Class getObjectType() {
         return PublicKey.class;
     }

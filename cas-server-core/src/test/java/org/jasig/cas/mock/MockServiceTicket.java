@@ -55,18 +55,22 @@ public class MockServiceTicket implements ServiceTicket {
         created = new Date();
     }
 
+    @Override
     public Service getService() {
         return service;
     }
 
+    @Override
     public boolean isFromNewLogin() {
         return false;
     }
 
+    @Override
     public boolean isValidFor(final Service service) {
         return this.service.equals(service);
     }
 
+    @Override
     public TicketGrantingTicket grantTicketGrantingTicket(
             final String id,
             final Authentication authentication,
@@ -74,22 +78,27 @@ public class MockServiceTicket implements ServiceTicket {
         return null;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public boolean isExpired() {
         return false;
     }
 
+    @Override
     public TicketGrantingTicket getGrantingTicket() {
         return parent;
     }
 
+    @Override
     public long getCreationTime() {
         return created.getTime();
     }
 
+    @Override
     public int getCountOfUses() {
         return 0;
     }
