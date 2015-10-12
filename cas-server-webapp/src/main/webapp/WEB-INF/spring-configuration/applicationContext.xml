@@ -120,7 +120,8 @@
           c:serviceTicketExpirationPolicy-ref="serviceTicketExpirationPolicy"
           c:servicesManager-ref="servicesManager"
           c:logoutManager-ref="logoutManager"
-          p:principalFactory-ref="principalFactory"/>
+          p:principalFactory-ref="principalFactory"
+          p:onlyTrackMostRecentSession="${tgt.onlyTrackMostRecentSession:true}"/>
 
     <bean id="proxy10Handler" class="org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler"/>
 
