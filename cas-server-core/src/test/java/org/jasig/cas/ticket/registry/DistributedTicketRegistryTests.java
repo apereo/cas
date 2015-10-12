@@ -75,7 +75,7 @@ public final class DistributedTicketRegistryTests {
         assertEquals(t.isRoot(), returned.isRoot());
 
         final ServiceTicket s = t.grantServiceTicket("stest", TestUtils.getService(),
-                new NeverExpiresExpirationPolicy(), false, TestUtils.getDefaultRegisteredService());
+                new NeverExpiresExpirationPolicy(), false, true);
         this.ticketRegistry.addTicket(s);
 
         final ServiceTicket sreturned = (ServiceTicket) this.ticketRegistry.getTicket("stest");
@@ -99,7 +99,7 @@ public final class DistributedTicketRegistryTests {
         final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
 
         final ServiceTicket s = returned.grantServiceTicket("test2", TestUtils.getService(),
-                new NeverExpiresExpirationPolicy(), true, TestUtils.getDefaultRegisteredService());
+                new NeverExpiresExpirationPolicy(), true, true);
 
         this.ticketRegistry.addTicket(s);
         final ServiceTicket s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
