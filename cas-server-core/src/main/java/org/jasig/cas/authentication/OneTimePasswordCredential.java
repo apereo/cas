@@ -79,6 +79,7 @@ public class OneTimePasswordCredential extends AbstractCredential {
      *
      * @return Possibly null unique ID.
      */
+    @Override
     public String getId() {
         return id;
     }

@@ -74,6 +74,7 @@ public final class SimplePrincipal implements Principal {
     /**
      * @return An immutable map of principal attributes
      */
+    @Override
     public Map<String, Object> getAttributes() {
         return Collections.unmodifiableMap(this.attributes);
     }
@@ -90,6 +91,7 @@ public final class SimplePrincipal implements Principal {
         return builder.toHashCode();
     }
 
+    @Override
     public String getId() {
         return this.id;
     }

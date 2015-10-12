@@ -31,29 +31,16 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-    <bean id="attributeRepository"
-        class="org.jasig.services.persondir.support.StubPersonAttributeDao" p:backingMap-ref="backingMap">
-    </bean>
-    
-    <util:map id="backingMap">
-        <entry key="uid" value="uid" />
-        <entry key="eduPersonAffiliation" value="eduPersonAffiliation" /> 
-        <entry key="groupMembership" value="groupMembership" />
-    </util:map>
+    <util:list id="inMemoryRegisteredServices">
+        <bean class="org.jasig.cas.services.RegexRegisteredService"
+              p:id="200" p:name="TestService" p:description="Test Service"
+              p:serviceId="^testService" p:evaluationOrder="10" />
+        <bean class="org.jasig.cas.services.RegexRegisteredService"
+              p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
+              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
+        <bean class="org.jasig.cas.services.RegexRegisteredService"
+              p:id="100" p:name="HTTP and IMAP" p:description="Another Test Service"
+              p:serviceId="^(https?|imaps?)://testService" p:evaluationOrder="100" />
+    </util:list>
 
-    <bean id="serviceRegistryDao"
-        class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
-            <property name="registeredServices">
-                <util:list>
-                    <bean class="org.jasig.cas.services.RegexRegisteredService"
-                          p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
-                          p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" />
-                    <bean class="org.jasig.cas.services.RegexRegisteredService"
-                          p:id="100" p:name="HTTP and IMAP" p:description="Another Test Service"
-                          p:serviceId="^(https?|imaps?)://testService" p:evaluationOrder="100" />
-                </util:list>
-            </property>
-        </bean>
-
-  <bean id="auditTrailManager" class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" />
 </beans>
