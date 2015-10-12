@@ -74,7 +74,7 @@ public final class InternalConfigStateController {
 
     private static final String[] INCLUDE_PACKAGES = new String[] {"org.jasig"};
 
-    @Autowired(required = true)
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired(required = true)

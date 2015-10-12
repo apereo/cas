@@ -21,11 +21,11 @@ package org.jasig.cas.support.oauth.web;
 import org.apache.http.HttpStatus;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.web.servlet.mvc.Controller;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,23 +38,19 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.5.0
  */
 @Component("oauth20WrapperController")
-public final class OAuth20WrapperController extends BaseOAuthWrapperController implements InitializingBean {
+public final class OAuth20WrapperController extends BaseOAuthWrapperController {
 
-    private AbstractController authorizeController;
+    @Resource(name="authorizeController")
+    private Controller authorizeController;
 
-    private AbstractController callbackAuthorizeController;
+    @Resource(name="callbackAuthorizeController")
+    private Controller callbackAuthorizeController;
 
-    private AbstractController accessTokenController;
+    @Resource(name="accessTokenController")
+    private Controller accessTokenController;
 
-    private AbstractController profileController;
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        authorizeController = new OAuth20AuthorizeController(servicesManager, loginUrl);
-        callbackAuthorizeController = new OAuth20CallbackAuthorizeController();
-        accessTokenController = new OAuth20AccessTokenController(servicesManager, ticketRegistry, timeout);
-        profileController = new OAuth20ProfileController(ticketRegistry);
-    }
+    @Resource(name="profileController")
+    private Controller profileController;
 
     @Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
@@ -81,5 +77,21 @@ public final class OAuth20WrapperController extends BaseOAuthWrapperController i
         logger.error("Unknown method : {}", method);
         OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_OK);
         return null;
+    }
+
+    public Controller getAuthorizeController() {
+        return authorizeController;
+    }
+
+    public Controller getCallbackAuthorizeController() {
+        return callbackAuthorizeController;
+    }
+
+    public Controller getAccessTokenController() {
+        return accessTokenController;
+    }
+
+    public Controller getProfileController() {
+        return profileController;
     }
 }

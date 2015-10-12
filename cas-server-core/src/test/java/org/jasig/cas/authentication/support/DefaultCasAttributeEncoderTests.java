@@ -22,7 +22,7 @@ package org.jasig.cas.authentication.support;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.web.view.CasViewConstants;
+import org.jasig.cas.services.web.view.CasViewConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

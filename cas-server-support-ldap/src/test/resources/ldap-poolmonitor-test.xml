@@ -28,15 +28,16 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="monitor"
-          class="org.jasig.cas.monitor.PooledConnectionFactoryMonitor"
-          c:factory-ref="provisioningConnectionFactory"
-          c:validator-ref="searchValidator"
-          p:executor-ref="executor" />
 
     <bean id="executor"
           class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
           p:corePoolSize="1"
           p:maxPoolSize="1"
           p:keepAliveSeconds="1" />
+
+    <alias name="provisioningConnectionFactory" alias="pooledConnectionFactoryMonitorConnectionFactory" />
+    <alias name="searchValidator" alias="pooledConnectionFactoryMonitorValidator" />
+    <alias name="executor" alias="pooledConnectionFactoryMonitorExecutorService" />
+
+
 </beans>

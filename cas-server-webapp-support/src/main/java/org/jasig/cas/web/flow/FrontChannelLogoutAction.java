@@ -31,6 +31,9 @@ import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -41,6 +44,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@Component("frontChannelLogoutAction")
 public final class FrontChannelLogoutAction extends AbstractLogoutAction {
     /** Defines the default logout parameter for requests. */
     public static final String DEFAULT_LOGOUT_PARAMETER = "SAMLRequest";
@@ -60,7 +64,8 @@ public final class FrontChannelLogoutAction extends AbstractLogoutAction {
      *
      * @param logoutManager a logout manager.
      */
-    public FrontChannelLogoutAction(final LogoutManager logoutManager) {
+    @Autowired
+    public FrontChannelLogoutAction(@Qualifier("logoutManager") final LogoutManager logoutManager) {
         this.logoutManager = logoutManager;
     }
 
