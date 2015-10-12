@@ -22,6 +22,7 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.web.view.CasViewConstants;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.web.AbstractServiceValidateControllerTests;
@@ -48,7 +49,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Unit tests for {@link org.jasig.cas.web.view.Cas20ResponseView}.
+ * Unit tests for {@link Cas20ResponseView}.
  * @author Misagh Moayyed
  * @since 4.0.0
  */

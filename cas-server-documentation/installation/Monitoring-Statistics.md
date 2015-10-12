@@ -148,30 +148,6 @@ The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring
 {% endhighlight %}
 
 Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
-
-{% highlight xml %}
-
-<metrics:reporter type="jmx" metric-registry="metrics" />
-
-{% endhighlight %}
-
-To explore this you can use VisualVM (which ships with most JDKs as jvisualvm) with the VisualVM-MBeans plugins installed or JConsole (which ships with most JDKs as jconsole):
-
-![](http://i.imgur.com/g8fmUlE.png)
-
-Additionally, various metrics on JVM performance and data are also reported. The metrics contain a number of reusable gauges and metric sets which allow you to easily instrument JVM internals.
-
-{% highlight xml %}
-
-<metrics:register metric-registry="metrics">
-    <bean metrics:name="jvm.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
-    <bean metrics:name="jvm.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
-    <bean metrics:name="jvm.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet" />
-    <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
-</metrics:register>
-
-{% endhighlight %}
-
 Supported metrics include:
 
 - Run count and elapsed times for all supported garbage collectors

@@ -327,7 +327,7 @@ public class JsonServiceRegistryDaoTests {
         for (final RegisteredService r2 : list) {
             Thread.sleep(500);
             this.dao.delete(r2);
-            Thread.sleep(500);
+            Thread.sleep(2000);
             assertNull(this.dao.findServiceById(r2.getId()));
         }
 

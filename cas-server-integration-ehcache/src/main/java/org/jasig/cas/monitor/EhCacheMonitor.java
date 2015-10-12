@@ -18,9 +18,12 @@
  */
 package org.jasig.cas.monitor;
 
-import javax.validation.constraints.NotNull;
-
 import net.sf.ehcache.Cache;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
 
 /**
  * Monitors a {@link net.sf.ehcache.Cache} instance.
@@ -31,10 +34,18 @@ import net.sf.ehcache.Cache;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
+@Component("ehcacheMonitor")
 public class EhCacheMonitor extends AbstractCacheMonitor {
 
-    @NotNull
-    private final Cache cache;
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("ehcacheMonitorCache")
+    private Cache cache;
+
+    /**
+     * Instantiates a new Ehcache monitor.
+     */
+    public EhCacheMonitor() {}
 
     /**
      * Instantiates a new EhCache monitor.

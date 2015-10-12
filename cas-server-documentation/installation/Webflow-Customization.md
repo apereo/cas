@@ -14,154 +14,13 @@ CAS uses [Spring Web Flow](projects.spring.io/spring-webflow) to do "script" pro
 
 Spring Web Flow presents CAS with a pluggable architecture where custom actions, views and decisions may be injected into the flow to account for additional use cases and processes. Note that to customize the weblow, one must possess a reasonable level of understanding of the webflow's internals and injection policies. The intention of this document is not to describe Spring Web Flow, but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
 
-
-##Login Flow
-The flow in CAS is given a unique id that is registered inside a `flowRegistry` component. Support is enabled via the following configuration snippets in `cas-servlet.xml`: 
-
-
-###Components
-{% highlight xml %}
-
-<bean name="loginFlowExecutor" class="org.springframework.webflow.executor.FlowExecutorImpl" 
-    c:definitionLocator-ref="loginFlowRegistry"
-    c:executionFactory-ref="loginFlowExecutionFactory"
-    c:executionRepository-ref="loginFlowExecutionRepository" />
-
-...
-
-<webflow:flow-registry id="loginFlowRegistry" 
-    flow-builder-services="builder" base-path="/WEB-INF/webflow">
-    <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
-</webflow:flow-registry>
-
-{% endhighlight %}
-
-###login-flow.xml Overview
-The login flow is at a high level composed of the following phases:
-
-- Initialization of the flow
-- Validation of Ticket Granting Ticket (TGT) 
-- Validation of requesting service and ensuring that it is authorized to use CAS
-- Generation of the Login Ticket (LT)
-- Presentation of the Login Form
-- Generation of TGT upon successful authentication
-- Generation of Service Ticket (ST) for the requesting service
-- Issuing a redirect back to the authenticating web service
-
-A high-level diagram detailing major states in the flow is presented here:
-
-![](http://i.imgur.com/SBDUGbH.png)
-
-Acceptance of user credentials and invoking the authentication handler components is carried out by:
-
-{% highlight xml %}
-<bean id="authenticationViaFormAction" class="org.jasig.cas.web.flow.AuthenticationViaFormAction"
-        p:centralAuthenticationService-ref="centralAuthenticationService"
-        p:warnCookieGenerator-ref="warnCookieGenerator"/>
-
-{% endhighlight %}
-
-Handling authentication failures, mapping the result of which event to a new state is carried out by:
-
-{% highlight xml %}
-<bean id="authenticationExceptionHandler" class="org.jasig.cas.web.flow.AuthenticationExceptionHandler" />
-
-...
-
-<action-state id="realSubmit">
-    <evaluate expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential, messageContext)" />
-
-    <transition on="success" to="sendTicketGrantingTicket" />
-    <transition on="authenticationFailure" to="handleAuthenticationFailure" />
-    <transition on="error" to="generateLoginTicket" />
-</action-state>
-
-....
-<action-state id="handleAuthenticationFailure">
-    <evaluate expression="authenticationExceptionHandler.handle(currentEvent.attributes.error, messageContext)" />
-    <transition on="AccountDisabledException" to="casAccountDisabledView"/>
-    <transition on="AccountLockedException" to="casAccountLockedView"/>
-    <transition on="CredentialExpiredException" to="casExpiredPassView"/>
-    <transition on="InvalidLoginLocationException" to="casBadWorkstationView"/>
-    <transition on="InvalidLoginTimeException" to="casBadHoursView"/>
-    <transition on="FailedLoginException" to="generateLoginTicket"/>
-    <transition on="AccountNotFoundException" to="generateLoginTicket"/>
-    <transition on="UNKNOWN" to="generateLoginTicket"/>
-</action-state>
-{% endhighlight %}
-
-Certain error conditions are also classified as global transitions, particularly in cases of unauthorized services attempting to use CAS:
-
-{% highlight xml %}
-<global-transitions>
-    <transition to="viewLoginForm" on-exception="org.jasig.cas.services.UnauthorizedSsoServiceException"/>
-    <transition to="viewServiceErrorView" on-exception="org.springframework.webflow.execution.repository.NoSuchFlowExecutionException" />
-    <transition to="viewServiceErrorView" on-exception="org.jasig.cas.services.UnauthorizedServiceException" />
-</global-transitions>
-{% endhighlight %}
-
-
-##Logout Flow
-The flow in CAS is given a unique id that is registered inside a `flowRegistry` component. Support is enabled via the following configuration snippets in `cas-servlet.xml`: 
-
-###Components
-{% highlight xml %}
-<webflow:flow-executor id="logoutFlowExecutor" flow-registry="logoutFlowRegistry">
-    <webflow:flow-execution-attributes>
-      <webflow:always-redirect-on-pause value="false" />
-      <webflow:redirect-in-same-state value="false" />
-    </webflow:flow-execution-attributes>
-</webflow:flow-executor>
-
-...
-
-<webflow:flow-registry id="logoutFlowRegistry" 
-     flow-builder-services="builder" base-path="/WEB-INF/webflow">
-    <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
-</webflow:flow-registry>
-
-{% endhighlight %}
-
-###logout-flow.xml Overview
-The logout flow is at a high level composed of the following phases:
-
-- Termination of the SSO session and destruction of the TGT
-- Initiating the Logout protocol 
-- Handling various methods of logout (front-channel, back-channel, etc)
-
-The Logout protocol is initiated by the following component:
-
-{% highlight xml %}
-<bean id="logoutAction" class="org.jasig.cas.web.flow.LogoutAction"
-        p:servicesManager-ref="servicesManager"
-        p:followServiceRedirects="${cas.logout.followServiceRedirects:false}"/>
-
-{% endhighlight %}
-
-Front-channel method of logout is specifically handled by the following component:
-
-{% highlight xml %}
-<bean id="frontChannelLogoutAction" class="org.jasig.cas.web.flow.FrontChannelLogoutAction"
-        c:logoutManager-ref="logoutManager"/>
-{% endhighlight %}
-
-
 ##Termination of Web Flow Sessions
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte stream in the flow execution identifier provided to the client when rendering a view. The following features are presented via this strategy:
 
 - Support for conversation management (e.g. flow scope)
 - Encryption of encoded flow state to prevent tampering by malicious clients
 
-By default, the conversational state of Spring Webflow is managed inside the application session, which can time out due to inactivity and must be cleared upon the termination of flow. Rather than storing this state inside the session, CAS automatically attempts to store and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication. 
-
-{% highlight xml %}
-<bean id="loginFlowExecutionRepository" 
-    class="org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository"
-    c:flowExecutionFactory-ref="loginFlowExecutionFactory"
-    c:flowDefinitionLocator-ref="loginFlowRegistry"
-    c:transcoder-ref="loginFlowStateTranscoder" />
-
-{% endhighlight %}
+By default, the conversational state of Spring Webflow is managed inside the application session, which can time out due to inactivity and must be cleared upon the termination of flow. Rather than storing this state inside the session, CAS automatically attempts to store and keep track of this state on the client in an encrypted form to remove the need for session cleanup, termination and replication.
 
 Default encryption strategy controlled via the `loginFlowStateTranscoder` component is using the 128-bit AES in CBC ciphering mode with compression turned on. These settings can be controlled via the following settings defined in the `cas.properties` file:
 
@@ -184,7 +43,7 @@ By default, CAS will present a generic success page if the initial authenticatio
 the target application. In some cases, the ability to login to CAS without logging
 in to a particular service may be considered a misfeature because in practice, too few users and institutions
 are prepared to understand, brand, and support what is at best a fringe use case of logging in to CAS for the
-sake of establishing an SSO session without logging in to any CAS-reliant service. 
+sake of establishing an SSO session without logging in to any CAS-reliant service.
 
 As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
 and instead presents a message when users visit CAS directly without specifying a service.
@@ -250,7 +109,7 @@ CAS presents the ability to allow the user to accept the usage policy before mov
 - Enable the actual flow components by uncommenting the following entries:
 
 {% highlight xml %}
-<!-- Enable AUP flow	
+<!-- Enable AUP flow
 <action-state id="acceptableUsagePolicyCheck">
     <evaluate expression="acceptableUsagePolicyFormAction.verify(flowRequestContext, flowScope.credential, messageContext)" />
     <transition on="success" to="sendTicketGrantingTicket" />
@@ -268,6 +127,6 @@ CAS presents the ability to allow the user to accept the usage policy before mov
 The task of remembering and accepting the policy is handled by `AcceptableUsagePolicyFormAction`. Adopters may extend this class to retrieve and persistent the user's choice via an external backend mechanism such as LDAP or JDBC.
 
 {% highlight xml %}
-<bean id="acceptableUsagePolicyFormAction" 
+<bean id="acceptableUsagePolicyFormAction"
       class="org.jasig.cas.web.flow.AcceptableUsagePolicyFormAction"/>
 {% endhighlight %}

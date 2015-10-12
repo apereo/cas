@@ -38,7 +38,7 @@ public interface LdapRegisteredServiceMapper {
      * @param result the result
      * @return the registered service
      */
-    RegisteredService mapToRegisteredService(final LdapEntry result);
+    RegisteredService mapToRegisteredService(LdapEntry result);
 
     /**
      * Map from registered service to ldap.
@@ -47,7 +47,7 @@ public interface LdapRegisteredServiceMapper {
      * @param svc the svc
      * @return the ldap entry
      */
-    LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc);
+    LdapEntry mapFromRegisteredService(String dn, RegisteredService svc);
 
     /**
      * Gets the dn for registered service.
