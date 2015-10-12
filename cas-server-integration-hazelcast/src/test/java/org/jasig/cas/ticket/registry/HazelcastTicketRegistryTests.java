@@ -144,7 +144,8 @@ public class HazelcastTicketRegistryTests {
         public ServiceTicket grantServiceTicket(final String id,
                                                 final Service service,
                                                 final ExpirationPolicy expirationPolicy,
-                                                final boolean credentialsProvided) {
+                                                final boolean credentialsProvided,
+                                                final boolean onlyTrackMostRecentSession) {
             return null;
         }
 
