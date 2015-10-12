@@ -206,6 +206,11 @@
 
     <servlet-mapping>
         <servlet-name>cas</servlet-name>
+        <url-pattern>/statistics/ssosessions/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>cas</servlet-name>
         <url-pattern>/statistics/ssosessions</url-pattern>
     </servlet-mapping>
 
