@@ -18,36 +18,25 @@
  */
 package org.jasig.cas.support.openid.web.support;
 
+import org.jasig.cas.support.openid.AbstractOpenIdTests;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.junit.Assert.*;
+
+
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
-public class OpenIdPostUrlHandlerMappingTests {
+public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
+    @Autowired
     private OpenIdPostUrlHandlerMapping handlerMapping;
 
-    public void verifyTest() {
-    }
 
-    /*
-    protected void setUp() throws Exception {
-        final GenericWebApplicationContext context = new GenericWebApplicationContext();
-        context.refresh();
-        final RootBeanDefinition definition = new RootBeanDefinition(Object.class);
-        context.registerBeanDefinition("testHandler", definition);
-
-        context.start();
-
-        final Map<String, Object> properties = new HashMap<>();
-        properties.put("/login", new Object());
-
-        this.handlerMapping = new OpenIdPostUrlHandlerMapping();
-        this.handlerMapping.setUrlMap(properties);
-
-        this.handlerMapping.initApplicationContext();
-    }
-
-
+    @Test
     public void verifyNoMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
@@ -55,6 +44,7 @@ public class OpenIdPostUrlHandlerMappingTests {
         assertNull(this.handlerMapping.lookupHandler("/hello", request));
     }
 
+    @Test
     public void verifyImproperMatch() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/hello");
@@ -62,6 +52,7 @@ public class OpenIdPostUrlHandlerMappingTests {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
 
+    @Test
     public void verifyProperMatchWrongMethod() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
@@ -70,6 +61,7 @@ public class OpenIdPostUrlHandlerMappingTests {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
 
+    @Test
     public void verifyProperMatchCorrectMethodNoParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
@@ -78,6 +70,7 @@ public class OpenIdPostUrlHandlerMappingTests {
         assertNull(this.handlerMapping.lookupHandler("/login", request));
     }
 
+    @Test
     public void verifyProperMatchCorrectMethodWithParam() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath("/login");
@@ -86,5 +79,5 @@ public class OpenIdPostUrlHandlerMappingTests {
 
 
         assertNotNull(this.handlerMapping.lookupHandler("/login", request));
-    }*/
+    }
 }
