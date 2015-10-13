@@ -31,8 +31,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -51,13 +51,15 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:ticketRegistry.xml")
-public final class EhCacheTicketRegistryTests implements ApplicationContextAware {
+public final class EhCacheTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 10;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
     private ApplicationContext applicationContext;
+
     private TicketRegistry ticketRegistry;
 
     @Before
@@ -241,10 +243,39 @@ public final class EhCacheTicketRegistryTests implements ApplicationContextAware
         }
     }
 
-    @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    @Test
+    public void verifyDeleteTicketWithChildren() {
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
+        final ServiceTicket st2 = tgt.grantServiceTicket(
+                "ST2", service, new NeverExpiresExpirationPolicy(), true, false);
+        final ServiceTicket st3 = tgt.grantServiceTicket(
+                "ST3", service, new NeverExpiresExpirationPolicy(), true, false);
+
+        this.ticketRegistry.addTicket(st1);
+        this.ticketRegistry.addTicket(st2);
+        this.ticketRegistry.addTicket(st3);
+
+        assertNotNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
+
+        this.ticketRegistry.deleteTicket(tgt.getId());
+
+        assertNull(this.ticketRegistry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST2", ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket("ST3", ServiceTicket.class));
     }
+
 
     /**
      * Cleaning ticket registry to start afresh, after newing up the instance.

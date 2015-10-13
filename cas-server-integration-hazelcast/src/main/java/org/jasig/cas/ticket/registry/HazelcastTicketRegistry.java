@@ -23,6 +23,7 @@ import com.hazelcast.core.IMap;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -53,7 +55,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
 
     private final long serviceTicketTimeoutInSeconds;
 
-    private final long ticketGrantingTicketTimoutInSeconds;
+    private final long ticketGrantingTicketTimeoutInSeconds;
 
     private final HazelcastInstance hz;
 
@@ -61,7 +63,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     /**
      * @param hz                                  An instance of <code>HazelcastInstance</code>
      * @param mapName                             Name of map to use
-     * @param ticketGrantingTicketTimoutInSeconds TTL for TGT entries
+     * @param ticketGrantingTicketTimeoutInSeconds TTL for TGT entries
      * @param serviceTicketTimeoutInSeconds       TTL for ST entries
      */
     @Autowired
@@ -71,12 +73,12 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         @Value("${hz.mapname:tickets}")
         final String mapName,
         @Value("${tgt.maxTimeToLiveInSeconds:28800}")
-        final long ticketGrantingTicketTimoutInSeconds,
+        final long ticketGrantingTicketTimeoutInSeconds,
         @Value("${st.timeToKillInSeconds:10}")
         final long serviceTicketTimeoutInSeconds) {
 
         this.registry = hz.getMap(mapName);
-        this.ticketGrantingTicketTimoutInSeconds = ticketGrantingTicketTimoutInSeconds;
+        this.ticketGrantingTicketTimeoutInSeconds = ticketGrantingTicketTimeoutInSeconds;
         this.serviceTicketTimeoutInSeconds = serviceTicketTimeoutInSeconds;
         this.hz = hz;
     }
@@ -88,7 +90,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     public void init() {
         logger.info("Setting up Hazelcast Ticket Registry...");
         logger.debug("Hazelcast instance: {} with name {}", this.hz, this.registry.getName());
-        logger.debug("TGT timeout: [{}s]", this.ticketGrantingTicketTimoutInSeconds);
+        logger.debug("TGT timeout: [{}s]", this.ticketGrantingTicketTimeoutInSeconds);
         logger.debug("ST timeout: [{}s]", this.serviceTicketTimeoutInSeconds);
     }
 
@@ -126,8 +128,8 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
-        final Ticket ticket = this.registry.get(encTicketId);
-        return decodeTicket(ticket);
+        final Ticket ticket = decodeTicket(this.registry.get(encTicketId));
+        return getProxiedTicketInstance(ticket);
     }
 
 
@@ -135,7 +137,38 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     public boolean deleteTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
         logger.debug("Removing ticket [{}]", encTicketId);
-        return this.registry.remove(encTicketId) != null;
+
+        final Ticket ticket = getTicket(encTicketId);
+        if (ticket == null) {
+            return false;
+        }
+
+        if (ticket instanceof TicketGrantingTicket) {
+            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
+            deleteChildren((TicketGrantingTicket) ticket);
+        }
+
+        logger.debug("Removing ticket [{}] from the registry.", ticket);
+        return (this.registry.remove(encTicketId) != null);
+    }
+
+    /**
+     * Delete TGT's service tickets.
+     *
+     * @param ticket the ticket
+     */
+    private void deleteChildren(final TicketGrantingTicket ticket) {
+        // delete service tickets
+        final Map<String, Service> services = ticket.getServices();
+        if (services != null && !services.isEmpty()) {
+            for (final Map.Entry<String, Service> entry : services.entrySet()) {
+                if (this.registry.remove(entry.getKey()) != null) {
+                    logger.trace("Removed service ticket [{}]", entry.getKey());
+                } else {
+                    logger.trace("Ticket not found or is already removed. Unable to remove service ticket [{}]", entry.getKey());
+                }
+            }
+        }
     }
 
     @Override
@@ -151,10 +184,12 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
      */
     private long getTimeout(final Ticket t) {
         if (t instanceof TicketGrantingTicket) {
-            return this.ticketGrantingTicketTimoutInSeconds;
-        } else if (t instanceof ServiceTicket) {
+            return this.ticketGrantingTicketTimeoutInSeconds;
+        }
+        if (t instanceof ServiceTicket) {
             return this.serviceTicketTimeoutInSeconds;
         }
+
         throw new IllegalArgumentException(
             String.format("Invalid ticket type [%s]. Expecting either [TicketGrantingTicket] or [ServiceTicket]",
                 t.getClass().getName()));
