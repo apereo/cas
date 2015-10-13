@@ -29,6 +29,7 @@ import static org.junit.Assert.*;
  * running test cases for {@link TimeBasedRegisteredServiceAccessStrategy}.
  *
  * @author Misagh Moayyed
+ * @since 4.2
  */
 public class TimeBasedRegisteredServiceAccessStrategyTests {
 
