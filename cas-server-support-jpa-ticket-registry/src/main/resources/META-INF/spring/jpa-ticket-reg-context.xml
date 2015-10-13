@@ -35,20 +35,24 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <util:list id="jpaServicePackagesToScan">
-        <value>org.jasig.cas.services</value>
+    <context:component-scan base-package="org.jasig.cas.ticket.registry" />
+    <context:annotation-config/>
+
+    <util:list id="ticketPackagesToScan">
+        <value>org.jasig.cas.ticket</value>
+        <value>org.jasig.cas.adaptors.jdbc</value>
     </util:list>
 
     <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-          id="jpaServiceVendorAdapter"
+          id="ticketJpaVendorAdapter"
           p:generateDdl="${database.gen.ddl:true}"
           p:showSql="${database.show.sql:true}" />
 
-    <bean id="abstractServiceJpaEntityManagerFactory" abstract="true"
+    <bean id="abstractJpaEntityManagerFactory" abstract="true"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-          p:jpaVendorAdapter-ref="jpaServiceVendorAdapter"
-          p:persistenceUnitName="jpaServiceRegistryContext"
-          p:packagesToScan-ref="jpaServicePackagesToScan">
+          p:persistenceUnitName="jpaTicketRegistryContext"
+          p:jpaVendorAdapter-ref="ticketJpaVendorAdapter"
+          p:packagesToScan-ref="ticketPackagesToScan">
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.dialect">${database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
@@ -58,16 +62,16 @@
         </property>
     </bean>
 
-    <bean id="abstractTicketTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+    <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
             abstract="true"/>
 
-    <bean id="serviceEntityManagerFactory" parent="abstractServiceJpaEntityManagerFactory"
-          p:dataSource-ref="dataSourceService"/>
+    <bean id="ticketEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
+          p:dataSource-ref="dataSourceTicket" />
 
-    <bean id="transactionManagerServiceReg" parent="abstractTicketTransactionManager"
-          p:entityManagerFactory-ref="serviceEntityManagerFactory" />
+    <bean id="ticketTransactionManager" parent="abstractTransactionManager"
+          p:entityManagerFactory-ref="ticketEntityManagerFactory" />
 
-    <tx:advice id="txAdviceServiceReg" transaction-manager="transactionManagerServiceReg">
+    <tx:advice id="txAdviceTicketReg" transaction-manager="ticketTransactionManager">
         <tx:attributes>
             <tx:method name="delete*" read-only="false"/>
             <tx:method name="save*" read-only="false"/>
@@ -78,10 +82,11 @@
 
 
     <aop:config>
-        <aop:pointcut id="servicesManagerOperations" expression="execution(* org.jasig.cas.services.JpaServiceRegistryDaoImpl.*(..))"/>
-        <aop:advisor advice-ref="txAdviceServiceReg" pointcut-ref="servicesManagerOperations"/>
+        <aop:pointcut id="ticketRegistryOperations" expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
+        <aop:pointcut id="ticketRegistryLockingOperations" expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
+        <aop:advisor advice-ref="txAdviceTicketReg" pointcut-ref="ticketRegistryOperations"/>
+        <aop:advisor advice-ref="txAdviceTicketReg" pointcut-ref="ticketRegistryLockingOperations"/>
     </aop:config>
-
 
 
 </beans>
