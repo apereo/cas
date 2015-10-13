@@ -11,7 +11,7 @@ Support is enabled by adding the following module into the Maven overlay:
 {% highlight xml %}
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-support-jdbc</artifactId>
+    <artifactId>cas-server-support-jpa-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -51,25 +51,4 @@ registered service storage. The configuration assumes a `dataSource` bean is def
 
 {% highlight xml %}
 <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao" />
-
-<import resource="classpath:jpa-svc-reg-context.xml" />
-
-<bean
-    id="dataSourceService"
-    class="com.mchange.v2.c3p0.ComboPooledDataSource"
-    p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
-    p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-service-registry}"
-    p:user="${database.user:sa}"
-    p:password="${database.password:}"
-    p:initialPoolSize="${database.pool.minSize:6}"
-    p:minPoolSize="${database.pool.minSize:6}"
-    p:maxPoolSize="${database.pool.maxSize:18}"
-    p:maxIdleTimeExcessConnections="${database.pool.maxIdleTime:1000}"
-    p:checkoutTimeout="${database.pool.maxWait:2000}"
-    p:acquireIncrement="${database.pool.acquireIncrement:16}"
-    p:acquireRetryAttempts="${database.pool.acquireRetryAttempts:5}"
-    p:acquireRetryDelay="${database.pool.acquireRetryDelay:2000}"
-    p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod:30}"
-    p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"/>
-
 {% endhighlight %}
