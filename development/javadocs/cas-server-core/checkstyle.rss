@@ -3406,20 +3406,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.CentralAuthenticationServiceImplTests.java">org/jasig/cas/CentralAuthenticationServiceImplTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.services.AbstractRegisteredService.java">org/jasig/cas/services/AbstractRegisteredService.java</a>
                 </td>
                 <td>
@@ -3435,6 +3421,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.util.SpringAwareMessageMessageInterpolator.java">org/jasig/cas/util/SpringAwareMessageMessageInterpolator.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.CentralAuthenticationServiceImplTests.java">org/jasig/cas/CentralAuthenticationServiceImplTests.java</a>
                 </td>
                 <td>
                   0
