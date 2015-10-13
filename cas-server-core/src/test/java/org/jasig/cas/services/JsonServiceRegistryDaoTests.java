@@ -363,8 +363,8 @@ public class JsonServiceRegistryDaoTests {
         r.setName("verifyAAccessStrategyWithStarEndDate");
         r.setId(62);
 
-        final DefaultRegisteredServiceAccessStrategy authz =
-                new DefaultRegisteredServiceAccessStrategy(true, false);
+        final TimeBasedRegisteredServiceAccessStrategy authz =
+                new TimeBasedRegisteredServiceAccessStrategy(true, false);
 
         authz.setStartingDateTime(DateTime.now().plusDays(1).toString());
         authz.setEndingDateTime(DateTime.now().plusDays(10).toString());
