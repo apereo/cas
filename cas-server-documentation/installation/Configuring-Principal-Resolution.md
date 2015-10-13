@@ -46,6 +46,7 @@ We present a stub configuration here that can be modified accordingly by consult
     </map>
   </property>
 </bean>
+{% endhighlight %}
 
 {% highlight properties %}
 # cas.principal.resolver.persondir.principal.attribute=cn
