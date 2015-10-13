@@ -73,7 +73,6 @@ import java.util.concurrent.TimeUnit;
  *
  */
 @Component("jpaTicketRegistry")
-@Conditional(JpaTicketRegistryCondition.class)
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
 
     @Value("${ticket.registry.cleaner.repeatinterval:5000000}")
@@ -257,19 +256,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         return intval;
     }
 
-    private boolean shouldScheduleCleanerJob() {
-        if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
-            if (WebUtils.isCasServletInitializing(this.applicationContext)) {
-                logger.debug("Found CAS servlet application context for OAuth");
-                final String[] aliases =
-                    this.applicationContext.getAutowireCapableBeanFactory().getAliases("jpaTicketRegistry");
-                logger.debug("{} is used as the active current ticket registry", this.getClass().getSimpleName());
-                return aliases.length > 0;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Schedule reloader job.
@@ -277,31 +263,31 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @PostConstruct
     public void scheduleCleanerJob() {
         try {
-            if (shouldScheduleCleanerJob()) {
-                logger.info("Preparing to schedule cleaner job");
 
-                final JobDetail job = JobBuilder.newJob(this.getClass())
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .build();
+            logger.info("Preparing to schedule cleaner job");
 
-                final Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
-                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(this.refreshInterval)
-                        .repeatForever()).build();
+            final JobDetail job = JobBuilder.newJob(this.getClass())
+                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                .build();
 
-                final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
-                final SchedulerFactory schFactory = new StdSchedulerFactory();
-                final Scheduler sch = schFactory.getScheduler();
-                sch.setJobFactory(jobFactory);
-                sch.start();
-                logger.debug("Started {} scheduler", this.getClass().getName());
-                sch.scheduleJob(job, trigger);
-                logger.info("{} will clean tickets every {} seconds",
-                    this.getClass().getSimpleName(),
-                    TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
-            }
+            final Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                    .withIntervalInMinutes(this.refreshInterval)
+                    .repeatForever()).build();
+
+            final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
+            final SchedulerFactory schFactory = new StdSchedulerFactory();
+            final Scheduler sch = schFactory.getScheduler();
+            sch.setJobFactory(jobFactory);
+            sch.start();
+            logger.debug("Started {} scheduler", this.getClass().getName());
+            sch.scheduleJob(job, trigger);
+            logger.info("{} will clean tickets every {} seconds",
+                this.getClass().getSimpleName(),
+                TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
+
         } catch (final Exception e){
             logger.warn(e.getMessage(), e);
         }

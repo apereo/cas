@@ -27,7 +27,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cas-server-webapp-support</artifactId>
     <packaging>jar</packaging>
-    <name>Apereo CAS Web Application support</name>
+    <name>Apereo CAS Web Application Support</name>
     <dependencies>
 
         <dependency>

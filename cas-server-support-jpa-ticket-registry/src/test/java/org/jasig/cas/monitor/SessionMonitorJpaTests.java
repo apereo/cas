@@ -35,7 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for {@link org.jasig.cas.monitor.SessionMonitor} class that involves {@link JpaTicketRegistry}.
+ * Unit test for {@link org.jasig.cas.monitor.SessionMonitor} class that involves
+ * {@link org.jasig.cas.ticket.registry.JpaTicketRegistry}.
  *
  * @author Marvin S. Addison
  * @since 3.5.0
