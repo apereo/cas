@@ -64,9 +64,15 @@ import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -77,7 +83,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Concrete implementation of a CentralAuthenticationService, and also the
+ * Concrete implementation of a {@link CentralAuthenticationService}, and also the
  * central, organizing component of CAS's internal implementation.
  * <p>
  * This class is threadsafe.
@@ -86,8 +92,6 @@ import java.util.Set;
  * <ul>
  * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
  * of available tickets.</li>
- * <li> <code>serviceTicketRegistry</code> - Provides an alternative to configure separate registries for
- * TGTs and ST in order to store them in different locations (i.e. long term memory or short-term)</li>
  * <li> <code>authenticationManager</code> - The service that will handle
  * authentication.</li>
  * <li> <code>ticketGrantingTicketUniqueTicketIdGenerator</code> - Plug in to
@@ -105,51 +109,59 @@ import java.util.Set;
  * @author Dmitry Kopylenko
  * @since 3.0.0
  */
-public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService {
+@Component("centralAuthenticationService")
+public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService, Serializable {
+
+    private static final long serialVersionUID = -8943828074939533986L;
 
     /** Log instance for logging events, info, warnings, errors, etc. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
-    private final TicketRegistry ticketRegistry;
+    @Resource(name="ticketRegistry")
+    private TicketRegistry ticketRegistry;
 
-    /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
-    @NotNull
-    private final TicketRegistry serviceTicketRegistry;
 
     /**
      * AuthenticationManager for authenticating credentials for purposes of
      * obtaining tickets.
      */
     @NotNull
-    private final AuthenticationManager authenticationManager;
+    @Resource(name="authenticationManager")
+    private AuthenticationManager authenticationManager;
 
     /**
      * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
      * created.
      */
     @NotNull
-    private final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+    @Resource(name="ticketGrantingTicketUniqueIdGenerator")
+    private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
     @NotNull
-    private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
+    @Resource(name="uniqueIdGeneratorsMap")
+    private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
     /** Implementation of Service Manager. */
     @NotNull
-    private final ServicesManager servicesManager;
+    @Resource(name="servicesManager")
+    private ServicesManager servicesManager;
 
     /** The logout manager. **/
     @NotNull
-    private final LogoutManager logoutManager;
+    @Resource(name="logoutManager")
+    private LogoutManager logoutManager;
 
     /** Expiration policy for ticket granting tickets. */
     @NotNull
+    @Resource(name="grantingTicketExpirationPolicy")
     private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     /** ExpirationPolicy for Service Tickets. */
     @NotNull
+    @Resource(name="serviceTicketExpirationPolicy")
     private ExpirationPolicy serviceTicketExpirationPolicy;
 
     /**
@@ -157,6 +169,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * authenticating credentials.
      */
     @NotNull
+    @Resource(name="authenticationPolicyFactory")
     private ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
             new AcceptAnyAuthenticationPolicyFactory();
 
@@ -168,11 +181,20 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     @NotNull
     private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
             = new DefaultUniqueTicketIdGenerator();
+
+    /** Whether we should track the most recent session by keeping the latest service ticket. */
+    @Value("${tgt.onlyTrackMostRecentSession:true}")
+    private boolean onlyTrackMostRecentSession = true;
+
+    /**
+     * Instantiates a new Central authentication service impl.
+     */
+    protected CentralAuthenticationServiceImpl() {}
+
     /**
      * Build the central authentication service implementation.
      *
      * @param ticketRegistry the tickets registry.
-     * @param serviceTicketRegistry the service tickets registry.
      * @param authenticationManager the authentication manager.
      * @param ticketGrantingTicketUniqueTicketIdGenerator the TGT id generator.
      * @param uniqueTicketIdGeneratorsForService the map with service and ticket id generators.
@@ -181,21 +203,17 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @param servicesManager the services manager.
      * @param logoutManager the logout manager.
      */
-    public CentralAuthenticationServiceImpl(final TicketRegistry ticketRegistry,
-                                            final TicketRegistry serviceTicketRegistry,
-                                            final AuthenticationManager authenticationManager,
-                                            final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
-                                            final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
-                                            final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
-                                            final ExpirationPolicy serviceTicketExpirationPolicy,
-                                            final ServicesManager servicesManager,
-                                            final LogoutManager logoutManager) {
+    public CentralAuthenticationServiceImpl(
+        final TicketRegistry ticketRegistry,
+        final AuthenticationManager authenticationManager,
+        final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
+        final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
+        final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
+        final ExpirationPolicy serviceTicketExpirationPolicy,
+        final ServicesManager servicesManager,
+        final LogoutManager logoutManager) {
+
         this.ticketRegistry = ticketRegistry;
-        if (serviceTicketRegistry == null) {
-            this.serviceTicketRegistry = ticketRegistry;
-        } else {
-            this.serviceTicketRegistry = serviceTicketRegistry;
-        }
         this.authenticationManager = authenticationManager;
         this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
@@ -229,6 +247,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
             final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
             this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+
             return logoutRequests;
         } catch (final InvalidTicketException e) {
             logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
@@ -256,7 +275,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
 
         Authentication currentAuthentication = null;
-        if (sanitizedCredentials.size() > 0) {
+        if (!sanitizedCredentials.isEmpty()) {
             currentAuthentication = this.authenticationManager.authenticate(
                     sanitizedCredentials.toArray(new Credential[] {}));
             final Authentication original = ticketGrantingTicket.getAuthentication();
@@ -304,9 +323,10 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 ticketId,
                 service,
                 this.serviceTicketExpirationPolicy,
-                currentAuthentication != null);
+                currentAuthentication != null,
+                this.onlyTrackMostRecentSession);
 
-        this.serviceTicketRegistry.addTicket(serviceTicket);
+        this.ticketRegistry.addTicket(serviceTicket);
 
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",
                 serviceTicket.getId(), service.getId(), principal.getId());
@@ -395,7 +415,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, AbstractTicketException {
 
-        final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null || serviceTicket.isExpired()) {
             logger.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
@@ -425,6 +445,12 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         return proxyGrantingTicket;
     }
 
+    /**
+     * Note:
+     * Synchronization on ticket object in case of cache based registry doesn't serialize
+     * access to critical section. The reason is that cache pulls serialized data and
+     * builds new object, most likely for each pull. Is this synchronization needed here?
+     */
     @Audit(
         action="SERVICE_TICKET_VALIDATE",
         actionResolverName="VALIDATE_SERVICE_TICKET_RESOLVER",
@@ -437,7 +463,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         verifyRegisteredServiceProperties(registeredService, service);
 
-        final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
             logger.info("Service ticket [{}] does not exist.", serviceTicketId);
@@ -482,7 +508,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     serviceTicket.isFromNewLogin());
         } finally {
             if (serviceTicket.isExpired()) {
-                this.serviceTicketRegistry.deleteTicket(serviceTicketId);
+                this.ticketRegistry.deleteTicket(serviceTicketId);
             }
         }
     }
@@ -517,6 +543,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /**
      * {@inheritDoc}
+     *
+     * Note:
+     * Synchronization on ticket object in case of cache based registry doesn't serialize
+     * access to critical section. The reason is that cache pulls serialized data and
+     * builds new object, most likely for each pull. Is this synchronization needed here?
      */
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
@@ -585,7 +616,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      *
      * @param principalFactory the principal factory
      */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+    @Autowired
+    public void setPrincipalFactory(@Qualifier("principalFactory")
+                                    final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 
@@ -634,5 +667,13 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
+    }
+
+    public boolean isOnlyTrackMostRecentSession() {
+        return onlyTrackMostRecentSession;
+    }
+
+    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
+        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 }

@@ -18,16 +18,14 @@
  */
 package org.jasig.cas.monitor;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.sql.DataSource;
 import java.util.concurrent.Executors;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link DataSourceMonitor}.
@@ -35,12 +33,16 @@ import static org.junit.Assert.assertEquals;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/jpaTestApplicationContext.xml")
 public class DataSourceMonitorTests {
 
-    @Autowired
     private DataSource dataSource;
+
+    @Before
+    public void setup() {
+        final ClassPathXmlApplicationContext ctx = new
+            ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
+        this.dataSource = ctx.getBean("dataSource", DataSource.class);
+    }
 
     @Test
     public void verifyObserve() throws Exception {

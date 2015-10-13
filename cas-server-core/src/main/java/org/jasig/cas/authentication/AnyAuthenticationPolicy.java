@@ -18,12 +18,17 @@
  */
 package org.jasig.cas.authentication;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 /**
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("anyAuthenticationPolicy")
 public class AnyAuthenticationPolicy implements AuthenticationPolicy {
 
     /** Flag to try all credentials before policy is satisfied. Defaults to <code>false</code>.*/
@@ -36,7 +41,8 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
      *
      * @param tryAll True to force all credentials to be authenticated, false otherwise.
      */
-    public void setTryAll(final boolean tryAll) {
+    @Autowired
+    public void setTryAll(@Value("${cas.authn.policy.any.tryall:false}") final boolean tryAll) {
         this.tryAll = tryAll;
     }
 
@@ -45,6 +51,6 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
         if (this.tryAll) {
             return authn.getCredentials().size() == authn.getSuccesses().size() + authn.getFailures().size();
         }
-        return authn.getSuccesses().size() > 0;
+        return !authn.getSuccesses().isEmpty();
     }
 }

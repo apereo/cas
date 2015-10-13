@@ -23,8 +23,12 @@ import org.jasig.inspektr.audit.AuditPointRuntimeInfo;
 import org.jasig.inspektr.audit.AuditTrailManager;
 import org.jasig.inspektr.common.web.ClientInfo;
 import org.jasig.inspektr.common.web.ClientInfoHolder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
@@ -47,6 +51,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Component("inspektrIpAddressUsernameThrottle")
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter
             extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
@@ -57,13 +62,30 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private static final String INSPEKTR_ACTION = "THROTTLED_LOGIN_ATTEMPT";
     private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 
-    private final AuditTrailManager auditTrailManager;
+    private static final String SQL_AUDIT_QUERY = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
+        + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
 
-    private final JdbcTemplate jdbcTemplate;
+    @Autowired
+    @Qualifier("auditTrailManager")
+    private AuditTrailManager auditTrailManager;
 
+    @Autowired(required=false)
+    @Qualifier("auditTrailDataSource")
+    private JdbcTemplate jdbcTemplate;
+
+    @Value("${cas.throttle.appcode:" + DEFAULT_APPLICATION_CODE + "}")
     private String applicationCode = DEFAULT_APPLICATION_CODE;
 
+    @Value("${cas.throttle.authn.failurecode:" + DEFAULT_AUTHN_FAILED_ACTION + "}")
     private String authenticationFailureCode = DEFAULT_AUTHN_FAILED_ACTION;
+
+    @Value("${cas.throttle.audit.query:" + SQL_AUDIT_QUERY + "}")
+    private String sqlQueryAudit;
+
+    /**
+     * Instantiates a new Inspektr throttled submission by ip address and username handler interceptor adapter.
+     */
+    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter() {}
 
     /**
      * Instantiates a new inspektr throttled submission by ip address and username handler interceptor adapter.
@@ -79,13 +101,12 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     protected boolean exceedsThreshold(final HttpServletRequest request) {
-        final String query = "SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? "
-                + "AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC";
+
         final String userToUse = constructUsername(request, getUsernameParameter());
         final Calendar cutoff = Calendar.getInstance();
         cutoff.add(Calendar.SECOND, -1 * getFailureRangeInSeconds());
         final List<Timestamp> failures = this.jdbcTemplate.query(
-                query,
+                sqlQueryAudit,
                 new Object[] {request.getRemoteAddr(), userToUse, this.authenticationFailureCode, this.applicationCode, cutoff.getTime()},
                 new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
                 new RowMapper<Timestamp>() {
@@ -149,5 +170,10 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     protected String constructUsername(final HttpServletRequest request, final String usernameParameter) {
         final String username = request.getParameter(usernameParameter);
         return "[username: " + (username != null ? username : "") + ']';
+    }
+
+    @Override
+    protected String getName() {
+        return "inspektrIpAddressUsernameThrottle";
     }
 }
