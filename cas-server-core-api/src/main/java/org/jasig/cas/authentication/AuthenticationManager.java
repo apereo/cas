@@ -45,5 +45,5 @@ public interface AuthenticationManager {
      * @throws AuthenticationException On authentication failure. The exception contains details
      * on each of the credentials that failed to authenticate.
      */
-    Authentication authenticate(final Credential... credentials) throws AuthenticationException;
+    Authentication authenticate(Credential... credentials) throws AuthenticationException;
 }

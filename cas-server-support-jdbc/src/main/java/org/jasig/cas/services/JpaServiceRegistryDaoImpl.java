@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.services;
 
+import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
@@ -29,10 +32,11 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("jpaServiceRegistryDao")
+@Conditional(JpaServiceRegistryDaoImplCondition.class)
 public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
-
     @NotNull
-    @PersistenceContext
+    @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;
 
     @Override
@@ -67,5 +71,10 @@ public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     @Override
     public RegisteredService findServiceById(final long id) {
         return this.entityManager.find(AbstractRegisteredService.class, id);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 }

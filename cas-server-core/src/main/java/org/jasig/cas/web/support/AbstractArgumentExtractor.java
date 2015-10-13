@@ -24,8 +24,8 @@ import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +42,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The factory responsible for creating service objects based on the arguments extracted. */
+    @Resource(name="serviceFactoryList")
     private final List<ServiceFactory<? extends WebApplicationService>> serviceFactory;
 
     /**
@@ -66,8 +67,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
      *
      * @param serviceFactoryList the service factory list
      */
-    public AbstractArgumentExtractor(@Min(1)
-                                     final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
+    public AbstractArgumentExtractor(final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
         this.serviceFactory = new ArrayList<>();
         this.serviceFactory.addAll(serviceFactoryList);
     }

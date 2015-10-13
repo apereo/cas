@@ -60,7 +60,8 @@ public class RegisteredServiceThemeBasedViewResolverTests {
         r2.setServiceId("myDefaultId");
         this.servicesManager.save(r2);
 
-        this.registeredServiceThemeBasedViewResolver = new RegisteredServiceThemeBasedViewResolver("defaultTheme", this.servicesManager);
+        this.registeredServiceThemeBasedViewResolver = new RegisteredServiceThemeBasedViewResolver(this.servicesManager);
+        this.registeredServiceThemeBasedViewResolver.setPrefix("/WEB-INF/view/jsp");
     }
 
     @Test
@@ -83,7 +84,7 @@ public class RegisteredServiceThemeBasedViewResolverTests {
         final WebApplicationService webApplicationService = new WebApplicationServiceFactory().createService("myDefaultId");
         requestContext.getFlowScope().put("service", webApplicationService);
 
-        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView",
+        assertEquals("/WEB-INF/view/jsp/default/ui/casLoginView",
                 this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
     }
 
@@ -92,7 +93,7 @@ public class RegisteredServiceThemeBasedViewResolverTests {
         final MockRequestContext requestContext = new MockRequestContext();
         RequestContextHolder.setRequestContext(requestContext);
 
-        assertEquals("/WEB-INF/view/jsp/defaultTheme/ui/casLoginView",
+        assertEquals("/WEB-INF/view/jsp/default/ui/casLoginView",
                 this.registeredServiceThemeBasedViewResolver.buildView("casLoginView").getUrl());
     }
 }

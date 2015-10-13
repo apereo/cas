@@ -25,6 +25,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.util.CompressionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
@@ -38,6 +41,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("shibbolethCompatiblePersistentIdGenerator")
 public final class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     private static final long serialVersionUID = 6182838799563190289L;
@@ -49,7 +53,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
 
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
-    private byte[] salt;
+    private final byte[] salt;
 
     /**
      * Instantiates a new shibboleth compatible persistent id generator.
@@ -66,7 +70,8 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      *
      * @param salt the the salt
      */
-    public ShibbolethCompatiblePersistentIdGenerator(@NotNull final String salt) {
+    @Autowired
+    public ShibbolethCompatiblePersistentIdGenerator(@NotNull @Value("${shib.id.gen.salt:casrox}") final String salt) {
         this.salt = salt.getBytes(Charset.defaultCharset());
     }
 

@@ -29,7 +29,11 @@ import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.net.URL;
@@ -44,6 +48,7 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@Component("logoutManager")
 public final class LogoutManagerImpl implements LogoutManager {
 
     /** The logger. */
@@ -57,24 +62,37 @@ public final class LogoutManagerImpl implements LogoutManager {
 
     /** The services manager. */
     @NotNull
-    private final ServicesManager servicesManager;
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     /** An HTTP client. */
     @NotNull
-    private final HttpClient httpClient;
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private HttpClient httpClient;
 
     @NotNull
-    private final LogoutMessageCreator logoutMessageBuilder;
+    @Autowired
+    @Qualifier("logoutBuilder")
+    private LogoutMessageCreator logoutMessageBuilder;
     
     /** Whether single sign out is disabled or not. */
+    @Value("${slo.callbacks.disabled:false}")
     private boolean singleLogoutCallbacksDisabled;
     
     /** 
      * Whether messages to endpoints would be sent in an asynchronous fashion.
      * True by default.
      **/
+    @Value("${slo.callbacks.asynchronous:true}")
     private boolean asynchronous = true;
-    
+
+    /**
+     * Instantiates a new Logout manager.
+     */
+    protected LogoutManagerImpl() {}
+
     /**
      * Build the logout manager.
      * @param servicesManager the services manager.
@@ -107,15 +125,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     @Override
     public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
-        final Map<String, Service> services;
-        // synchronize the retrieval of the services and their cleaning for the TGT
-        // to avoid concurrent logout mess ups
-        synchronized (ticket) {
-            services = ticket.getServices();
-            ticket.removeAllServices();
-        }
-        ticket.markTicketExpired();
-
+        final Map<String, Service> services = ticket.getServices();
         final List<LogoutRequest> logoutRequests = new ArrayList<>();
         // if SLO is not disabled
         if (!this.singleLogoutCallbacksDisabled) {
@@ -237,6 +247,7 @@ public final class LogoutManagerImpl implements LogoutManager {
      * @param logoutRequest the logout request.
      * @return a front SAML logout message.
      */
+    @Override
     public String createFrontChannelLogoutMessage(final LogoutRequest logoutRequest) {
         final String logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
         LOGGER.trace("Attempting to deflate the logout message [{}]", logoutMessage);
