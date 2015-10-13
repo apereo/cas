@@ -37,6 +37,7 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 /**
@@ -49,6 +50,7 @@ import org.springframework.util.StringUtils;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Component("simpleTestUsernamePasswordAuthenticationHandler")
 public final class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
     /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();

@@ -24,6 +24,9 @@ import org.jasig.cas.util.CipherExecutor;
 import org.jasig.cas.util.NoOpCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("defaultCookieValueManager")
 public final class DefaultCasCookieValueManager implements CookieValueManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
     private static final char COOKIE_FIELD_SEPARATOR = '@';
@@ -56,7 +60,9 @@ public final class DefaultCasCookieValueManager implements CookieValueManager {
      *
      * @param cipherExecutor the cipher executor
      */
-    public DefaultCasCookieValueManager(final CipherExecutor<String, String> cipherExecutor) {
+    @Autowired
+    public DefaultCasCookieValueManager(@Qualifier("defaultCookieCipherExecutor")
+                                            final CipherExecutor<String, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
         LOGGER.debug("Using cipher [{} to encrypt and decode the cookie",
                 this.cipherExecutor.getClass());

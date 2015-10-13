@@ -56,10 +56,12 @@ public final class DefaultLongNumericGenerator implements LongNumericGenerator {
         this.count = new AtomicLong(initialValue);
     }
 
+    @Override
     public long getNextLong() {
         return this.getNextValue();
     }
 
+    @Override
     public String getNextNumberAsString() {
         return Long.toString(this.getNextValue());
     }

@@ -32,6 +32,9 @@ import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -46,6 +49,8 @@ import org.slf4j.LoggerFactory;
 
  * @since 3.0.0
  */
+
+@Component("proxyAuthenticationHandler")
 public final class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     /** Log instance. */
@@ -53,6 +58,8 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
 
     /** Instance of Apache Commons HttpClient. */
     @NotNull
+    @Autowired
+    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
 
     @Override

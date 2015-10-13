@@ -27,6 +27,7 @@ import org.jasig.cas.monitor.HealthCheckMonitor;
 import org.jasig.cas.monitor.HealthStatus;
 import org.jasig.cas.monitor.Status;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,11 +44,9 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/status")
 public class HealthCheckController {
 
-    /** Prefix for custom response headers with health check details. */
-    private static final String HEADER_PREFIX = "X-CAS-";
-
     @NotNull
     @Autowired
+    @Qualifier("healthCheckMonitor")
     private HealthCheckMonitor healthCheckMonitor;
 
     /**
@@ -83,8 +82,6 @@ public class HealthCheckController {
         response.setStatus(healthStatus.getCode().value());
         response.setContentType("text/plain");
         response.getOutputStream().write(sb.toString().getBytes(response.getCharacterEncoding()));
-
-        // Return null to signal MVC framework that we handled response directly
         return null;
     }
 }

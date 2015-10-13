@@ -25,6 +25,9 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -37,6 +40,7 @@ import javax.validation.constraints.NotNull;
  * @author Dmitriy Kopylenko
  * @since 3.5.1
  **/
+@Component("serviceAuthorizationCheck")
 public final class ServiceAuthorizationCheck extends AbstractAction {
 
     @NotNull
@@ -48,7 +52,9 @@ public final class ServiceAuthorizationCheck extends AbstractAction {
      * Initialize the component with an instance of the services manager.
      * @param servicesManager the service registry instance.
      */
-    public ServiceAuthorizationCheck(final ServicesManager servicesManager) {
+    @Autowired
+    public ServiceAuthorizationCheck(@Qualifier("servicesManager")
+                                         final ServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 

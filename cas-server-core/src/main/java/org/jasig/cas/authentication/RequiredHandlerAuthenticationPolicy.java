@@ -18,6 +18,11 @@
  */
 package org.jasig.cas.authentication;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import javax.validation.constraints.NotNull;
 
 /**
@@ -27,6 +32,7 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("requiredHandlerAuthenticationPolicy")
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 
     /** Authentication handler name that is required to satisfy policy. */
@@ -41,7 +47,9 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
      *
      * @param requiredHandlerName the required handler name
      */
-    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
+    @Autowired
+    public RequiredHandlerAuthenticationPolicy(@Value("${cas.authn.policy.req.handlername:handlerName}")
+                                                   final String requiredHandlerName) {
         this.requiredHandlerName = requiredHandlerName;
     }
 
@@ -52,7 +60,9 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
      *
      * @param tryAll True to force all credentials to be authenticated, false otherwise.
      */
-    public void setTryAll(final boolean tryAll) {
+    @Autowired
+    public void setTryAll(@Value("${cas.authn.policy.req.tryall:false}")
+                              final boolean tryAll) {
         this.tryAll = tryAll;
     }
 
@@ -60,8 +70,10 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
     public boolean isSatisfiedBy(final Authentication authn) {
         boolean credsOk = true;
         if (this.tryAll) {
-            credsOk = authn.getCredentials().size() == authn.getSuccesses().size() + authn.getFailures().size();
+            credsOk = authn.getCredentials().size() == authn.getSuccesses().size()
+                + authn.getFailures().size();
         }
-        return credsOk && authn.getSuccesses().containsKey(this.requiredHandlerName);
+        return credsOk && StringUtils.isNotBlank(this.requiredHandlerName)
+                    && authn.getSuccesses().containsKey(this.requiredHandlerName);
     }
 }
