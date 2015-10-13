@@ -54,17 +54,13 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     private static final long serialVersionUID = 1245279151345635245L;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Is the service allowed at all? **/
     private boolean enabled = true;
 
     /** Is the service allowed to use SSO? **/
     private boolean ssoEnabled = true;
-
-    private String startingDateTime;
-
-    private String endingDateTime;
 
     private URI unauthorizedRedirectUrl;
 
@@ -135,22 +131,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     public Map<String, Set<String>> getRequiredAttributes() {
         return new HashMap<>(this.requiredAttributes);
-    }
-
-    public String getStartingDateTime() {
-        return startingDateTime;
-    }
-
-    public String getEndingDateTime() {
-        return endingDateTime;
-    }
-
-    public void setStartingDateTime(final String startingDateTime) {
-        this.startingDateTime = startingDateTime;
-    }
-
-    public void setEndingDateTime(final String endingDateTime) {
-        this.endingDateTime = endingDateTime;
     }
 
     public void setUnauthorizedRedirectUrl(final URI unauthorizedRedirectUrl) {
@@ -255,27 +235,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             logger.trace("Service is not enabled in service registry.");
         }
 
-        final DateTime now = DateTime.now();
-
-        if (this.startingDateTime != null) {
-            final DateTime st = DateTime.parse(this.startingDateTime);
-
-            if (now.isBefore(st)) {
-                logger.warn("Service access not allowed because it starts at {}. Now is {}",
-                        this.startingDateTime, now);
-                return false;
-            }
-        }
-
-        if (this.endingDateTime != null) {
-            final DateTime et = DateTime.parse(this.endingDateTime);
-            if  (now.isAfter(et)) {
-                logger.warn("Service access not allowed because it ended at {}. Now is {}",
-                        this.endingDateTime, now);
-                return false;
-            }
-        }
-
         return this.enabled;
     }
 
@@ -297,8 +256,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.ssoEnabled, rhs.ssoEnabled)
                 .append(this.requireAllAttributes, rhs.requireAllAttributes)
                 .append(this.requiredAttributes, rhs.requiredAttributes)
-                .append(this.startingDateTime, rhs.startingDateTime)
-                .append(this.endingDateTime, rhs.endingDateTime)
                 .append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
                 .isEquals();
     }
@@ -310,8 +267,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.ssoEnabled)
                 .append(this.requireAllAttributes)
                 .append(this.requiredAttributes)
-                .append(this.startingDateTime)
-                .append(this.endingDateTime)
                 .append(this.unauthorizedRedirectUrl)
                 .toHashCode();
     }
@@ -324,8 +279,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("ssoEnabled", ssoEnabled)
                 .append("requireAllAttributes", requireAllAttributes)
                 .append("requiredAttributes", requiredAttributes)
-                .append("startingDateTime", startingDateTime)
-                .append("endingDateTime", endingDateTime)
                 .append("unauthorizedRedirectUrl", unauthorizedRedirectUrl)
                 .toString();
     }
