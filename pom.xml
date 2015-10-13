@@ -1381,10 +1381,11 @@
     <modules>
         <module>cas-server-core-api</module>
         <module>cas-server-core</module>
-        <module>cas-server-webapp</module>
         <module>cas-server-webapp-support</module>
         <module>cas-server-support-generic</module>
         <module>cas-server-support-jdbc</module>
+        <module>cas-server-support-jpa-ticket-registry</module>
+        <module>cas-server-support-jpa-service-registry</module>
         <module>cas-server-support-ldap</module>
         <module>cas-server-support-openid</module>
         <module>cas-server-support-wsfederation</module>
@@ -1398,12 +1399,13 @@
         <module>cas-server-integration-memcached</module>
         <module>cas-server-integration-ehcache</module>
         <module>cas-server-extension-clearpass</module>
-        <module>cas-management-webapp</module>
         <module>cas-server-support-rest</module>
         <module>cas-server-support-yubikey</module>
         <module>cas-server-support-duo</module>
         <module>cas-server-integration-hazelcast</module>
         <module>cas-server-integration-mongo</module>
+        <module>cas-server-webapp</module>
+        <module>cas-management-webapp</module>
     </modules>
 
     <reporting>

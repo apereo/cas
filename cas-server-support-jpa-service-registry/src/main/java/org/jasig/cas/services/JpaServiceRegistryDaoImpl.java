@@ -33,7 +33,6 @@ import java.util.List;
  * @since 3.1
  */
 @Component("jpaServiceRegistryDao")
-@Conditional(JpaServiceRegistryDaoImplCondition.class)
 public final class JpaServiceRegistryDaoImpl implements ServiceRegistryDao {
     @NotNull
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
