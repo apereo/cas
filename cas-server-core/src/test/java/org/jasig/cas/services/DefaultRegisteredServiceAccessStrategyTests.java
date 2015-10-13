@@ -143,7 +143,6 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
     }
 
-
     private Map<String, Set<String>> getRequiredAttributes() {
         final Map<String, Set<String>> map = new HashMap<>();
         map.put("cn", Sets.newHashSet("cas", "SSO"));

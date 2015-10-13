@@ -13,7 +13,7 @@ containing metadata that drives a number of CAS behaviors:
 * Forced authentication - Provides administrative control for forced authentication.
 * Attribute release - Provide user details to services for authorization and personalization.
 * Proxy control - Further restrict authorized services by granting/denying proxy authentication capability.
-* Theme control - Define alternate CAS themese to be used for particular services.
+* Theme control - Define alternate CAS themes to be used for particular services.
 
 The service management webapp is a Web application that may be deployed along side CAS that provides a GUI
 to manage service registry data.
@@ -76,10 +76,21 @@ The default access manager allows one to configure a service with the following 
 | `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
 | `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes must be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
 | `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully.
+| `unauthorizedRedirectUrl`         | Optional url to redirect the flow in case service access is not allowed.
 
 <div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attributes is case-sensitive. Exact matches are required for any individual attribute value.</p></div>
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
+
+#####`TimeBasedRegisteredServiceAccessStrategy`
+This access strategy is an extension of the default which additionally,
+allows one to configure a service with the following properties:
+
+| Field                             | Description
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
+| `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
+
 
 ####Configuration of Role-based Access Control
 Some examples of RBAC configuration follow:

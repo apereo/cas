@@ -40,6 +40,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -279,6 +280,15 @@ public final class WebUtils {
      */
     public static void putLoginTicket(final RequestContext context, final String ticket) {
         context.getFlowScope().put("loginTicket", ticket);
+    }
+
+    /**
+     * Adds the unauthorized redirect url to the flow scope.
+     * @param context the request context
+     * @param url the uri to redirect the flow
+     */
+    public static void putUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context, final URI url) {
+        context.getFlowScope().put("unauthorizedRedirectUrl", url);
     }
 
     /**
