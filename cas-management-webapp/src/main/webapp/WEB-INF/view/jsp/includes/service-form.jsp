@@ -346,46 +346,57 @@
                     </div><%-- end .col-sm-8.form-group --%>
 
 
-                    <div class="container">
-                        <div class="row">
-                            <div class='col-sm-6'>
-                                <div class="form-group">
-                                    <spring:message code="services.form.label.sas.starttime" />
-                                    <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top"
-                                       title="<spring:message code="services.form.tooltip.sas.starttime" />"></i>
 
-                                    <div class='input-group date' id='accessStartingDate'>
-                                        <input type='text' class="form-control" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-time"></span>
-                                            </span>
-                                    </div>
+                    <div class='col-sm-12'>
 
-                                    <spring:message code="services.form.label.sas.endtime" />
-                                    <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top"
-                                       title="<spring:message code="services.form.tooltip.sas.endtime" />"></i>
-                                    <div class='input-group date' id='accessEndingDate'>
-                                        <input type='text' class="form-control" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-time"></span>
-                                            </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <script type="text/javascript">
-                                $(function () {
-                                    $('#accessStartingDate').datetimepicker({
-                                        format: "YYYY-MM-DDTHH:mm:ss.SSSZZ",
-                                        useCurrent: true
-                                    });
-                                    $('#accessEndingDate').datetimepicker({
-                                        format: "YYYY-MM-DDTHH:mm:ss.SSSZZ",
-                                        useCurrent: true
-                                    });
-                                });
-                            </script>
+                        <spring:message code="services.form.label.sas.starttime" />
+                        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float" data-toggle="tooltip" data-placement="top"
+                           title="<spring:message code="services.form.tooltip.sas.starttime" />"></i>
+
+                        <div class='input-group date' id='accessStartingDate'>
+                            <input type='text' class="form-control"
+                                   id='accessStartingDateInput'
+                                   ng-model="serviceFormCtrl.serviceData.supportAccess.startingTime" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
                         </div>
+                        <br/>
+                        <spring:message code="services.form.label.sas.endtime" />
+                        <i class="fa fa-lg fa-question-circle form-tooltip-icon no-float"
+                           data-toggle="tooltip" data-placement="top"
+                           title="<spring:message code="services.form.tooltip.sas.endtime" />"></i>
+                        <div class='input-group date' id='accessEndingDate'>
+                            <input type='text' class="form-control"
+                                   id='accessEndingDateInput'
+                                   ng-model="serviceFormCtrl.serviceData.supportAccess.endingTime" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-time"></span>
+                                    </span>
+                        </div>
+
                     </div>
+                    <script type="text/javascript">
+                        $(function () {
+                            $('#accessStartingDate').datetimepicker({
+                                format: "YYYY-MM-DDTHH:mm:ss.SSSZZ",
+                                useCurrent: true
+                            });
+                            $('#accessEndingDate').datetimepicker({
+                                format: "YYYY-MM-DDTHH:mm:ss.SSSZZ",
+                                useCurrent: true
+                            });
+
+                            $( "#accessStartingDateInput" ).blur(function() {
+                                $( "#accessStartingDateInput" ).trigger('input')
+                            });
+                            $( "#accessEndingDateInput" ).blur(function() {
+                                $( "#accessEndingDateInput" ).trigger('input');
+                            });
+
+                        });
+                    </script>
+
 
 
 
