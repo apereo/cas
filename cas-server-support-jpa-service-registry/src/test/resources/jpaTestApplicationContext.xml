@@ -35,27 +35,47 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-
-
   <context:property-placeholder properties-ref="casProperties"/>
   <util:properties id="casProperties"/>
 
+  <util:list id="ticketPackagesToScan">
+    <value>org.jasig.cas</value>
+  </util:list>
 
-  <context:component-scan base-package="org.jasig.cas" />
-  <context:annotation-config/>
+  <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+        id="ticketJpaVendorAdapter"
+        p:generateDdl="${database.gen.ddl:true}"
+        p:showSql="${database.show.sql:true}" />
+
+  <bean id="abstractJpaEntityManagerFactory" abstract="true"
+        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+        p:persistenceUnitName="jpaTicketRegistryContext"
+        p:jpaVendorAdapter-ref="ticketJpaVendorAdapter"
+        p:packagesToScan-ref="ticketPackagesToScan">
+    <property name="jpaProperties">
+      <props>
+        <prop key="hibernate.dialect">${database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+        <prop key="hibernate.hbm2ddl.auto">${database.ddl.auto:create-drop}</prop>
+        <prop key="hibernate.jdbc.batch_size">${database.batchSize:1}</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+        abstract="true"/>
+
+  <bean id="ticketEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
+        p:dataSource-ref="dataSource" />
 
 
-  <!-- CAS Context Core -->
-  <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
-  <util:map id="authenticationHandlersResolvers"/>
-  <util:list id="authenticationMetadataPopulators" />
-  <util:list id="monitorsList" />
-  <util:map id="uniqueIdGeneratorsMap"/>
-  <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-  <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
-  <util:list id="serviceFactoryList" />
-  <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-  <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
+  <bean class="org.springframework.jdbc.datasource.SimpleDriverDataSource"
+        id="dataSource"
+        p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
+        p:username="${database.user:sa}"
+        p:password="${database.password:}"
+        p:url="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}" />
+
+
 
 </beans>
 
