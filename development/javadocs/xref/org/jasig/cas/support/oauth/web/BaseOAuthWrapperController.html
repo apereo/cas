@@ -49,15 +49,15 @@
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment"> * @author Jerome Leleu</em>
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment"> * @since 3.5.0</em>
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  @Component
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  @Component(<span class="jxr_string">"baseOAuthWrapperController"</span>)
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../org/jasig/cas/support/oauth/web/BaseOAuthWrapperController.html">BaseOAuthWrapperController</a> <strong class="jxr_keyword">extends</strong> AbstractController {
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>  
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <em class="jxr_javadoccomment">/** The logger. */</em>
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(BaseOAuthWrapperController.<strong class="jxr_keyword">class</strong>);
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> Logger logger = LoggerFactory.getLogger(getClass());
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>      <em class="jxr_javadoccomment">/** The login url. */</em>
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>      @NotNull
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Value(<span class="jxr_string">"${server.prefix}/login"</span>)
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>      @Value(<span class="jxr_string">"${server.prefix:http://localhost:8080/cas}/login"</span>)
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">protected</strong> String loginUrl;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <em class="jxr_javadoccomment">/** The services manager. */</em>
@@ -131,7 +131,23 @@
 <a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setTimeout(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> timeout) {
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">this</strong>.timeout = timeout;
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     }
-<a class="jxr_linenumber" name="L126" href="#L126">126</a> }
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> 
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>     <strong class="jxr_keyword">public</strong> String getLoginUrl() {
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         <strong class="jxr_keyword">return</strong> loginUrl;
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>     }
+<a class="jxr_linenumber" name="L130" href="#L130">130</a> 
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/services/ServicesManager.html">ServicesManager</a> getServicesManager() {
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">return</strong> servicesManager;
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>     }
+<a class="jxr_linenumber" name="L134" href="#L134">134</a> 
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     <strong class="jxr_keyword">public</strong> <a href="../../../../../../org/jasig/cas/ticket/registry/TicketRegistry.html">TicketRegistry</a> getTicketRegistry() {
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>         <strong class="jxr_keyword">return</strong> ticketRegistry;
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>     }
+<a class="jxr_linenumber" name="L138" href="#L138">138</a> 
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getTimeout() {
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">return</strong> timeout;
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>     }
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

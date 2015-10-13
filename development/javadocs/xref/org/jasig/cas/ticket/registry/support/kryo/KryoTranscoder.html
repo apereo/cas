@@ -160,48 +160,50 @@
 <a class="jxr_linenumber" name="L152" href="#L152">152</a> <em class="jxr_javadoccomment">     * @param d Data to decode.</em>
 <a class="jxr_linenumber" name="L153" href="#L153">153</a> <em class="jxr_javadoccomment">     * @return False.</em>
 <a class="jxr_linenumber" name="L154" href="#L154">154</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> asyncDecode(<strong class="jxr_keyword">final</strong> CachedData d) {
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         <strong class="jxr_keyword">return</strong> false;
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>     }
-<a class="jxr_linenumber" name="L158" href="#L158">158</a> 
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>     @Override
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>     <strong class="jxr_keyword">public</strong> CachedData encode(<strong class="jxr_keyword">final</strong> Object obj) {
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <strong class="jxr_keyword">final</strong> ByteArrayOutputStream byteStream = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> Output output = <strong class="jxr_keyword">new</strong> Output(byteStream)) {
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>             kryo.writeClassAndObject(output, obj);
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>             output.flush();
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>             <strong class="jxr_keyword">final</strong> byte[] bytes = byteStream.toByteArray();
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CachedData(0, bytes, bytes.length);
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         }
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>     }
-<a class="jxr_linenumber" name="L169" href="#L169">169</a> 
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>     @Override
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>     <strong class="jxr_keyword">public</strong> Object decode(<strong class="jxr_keyword">final</strong> CachedData d) {
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         <strong class="jxr_keyword">final</strong> byte[] bytes = d.getData();
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> Input input = <strong class="jxr_keyword">new</strong> Input(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(bytes))) {
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>             <strong class="jxr_keyword">final</strong> Object obj =  kryo.readClassAndObject(input);
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>             <strong class="jxr_keyword">return</strong> obj;
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>         }
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>     }
-<a class="jxr_linenumber" name="L178" href="#L178">178</a> 
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L180" href="#L180">180</a> <em class="jxr_javadoccomment">     * Maximum size of encoded data supported by this transcoder.</em>
-<a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">     * @return  &lt;code&gt;net.spy.memcached.CachedData#MAX_SIZE&lt;/code&gt;.</em>
-<a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> getMaxSize() {
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">return</strong> CachedData.MAX_SIZE;
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
-<a class="jxr_linenumber" name="L187" href="#L187">187</a> 
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L189" href="#L189">189</a> <em class="jxr_javadoccomment">     * Gets the kryo object that provides encoding and decoding services for this instance.</em>
-<a class="jxr_linenumber" name="L190" href="#L190">190</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L191" href="#L191">191</a> <em class="jxr_javadoccomment">     * @return Underlying Kryo instance.</em>
-<a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>     <strong class="jxr_keyword">public</strong> Kryo getKryo() {
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>         <strong class="jxr_keyword">return</strong> kryo;
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>     }
-<a class="jxr_linenumber" name="L196" href="#L196">196</a> }
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>     @Override
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> asyncDecode(<strong class="jxr_keyword">final</strong> CachedData d) {
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>     }
+<a class="jxr_linenumber" name="L159" href="#L159">159</a> 
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>     @Override
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">public</strong> CachedData encode(<strong class="jxr_keyword">final</strong> Object obj) {
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>         <strong class="jxr_keyword">final</strong> ByteArrayOutputStream byteStream = <strong class="jxr_keyword">new</strong> ByteArrayOutputStream();
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> Output output = <strong class="jxr_keyword">new</strong> Output(byteStream)) {
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>             kryo.writeClassAndObject(output, obj);
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>             output.flush();
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>             <strong class="jxr_keyword">final</strong> byte[] bytes = byteStream.toByteArray();
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>             <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CachedData(0, bytes, bytes.length);
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>         }
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>     }
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> 
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>     @Override
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>     <strong class="jxr_keyword">public</strong> Object decode(<strong class="jxr_keyword">final</strong> CachedData d) {
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>         <strong class="jxr_keyword">final</strong> byte[] bytes = d.getData();
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>         <strong class="jxr_keyword">try</strong> (<strong class="jxr_keyword">final</strong> Input input = <strong class="jxr_keyword">new</strong> Input(<strong class="jxr_keyword">new</strong> ByteArrayInputStream(bytes))) {
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>             <strong class="jxr_keyword">final</strong> Object obj =  kryo.readClassAndObject(input);
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">return</strong> obj;
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>         }
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>     }
+<a class="jxr_linenumber" name="L179" href="#L179">179</a> 
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> <em class="jxr_javadoccomment">     * Maximum size of encoded data supported by this transcoder.</em>
+<a class="jxr_linenumber" name="L182" href="#L182">182</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> <em class="jxr_javadoccomment">     * @return  &lt;code&gt;net.spy.memcached.CachedData#MAX_SIZE&lt;/code&gt;.</em>
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     @Override
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> getMaxSize() {
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         <strong class="jxr_keyword">return</strong> CachedData.MAX_SIZE;
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     }
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> 
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a> <em class="jxr_javadoccomment">     * Gets the kryo object that provides encoding and decoding services for this instance.</em>
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L193" href="#L193">193</a> <em class="jxr_javadoccomment">     * @return Underlying Kryo instance.</em>
+<a class="jxr_linenumber" name="L194" href="#L194">194</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>     <strong class="jxr_keyword">public</strong> Kryo getKryo() {
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>         <strong class="jxr_keyword">return</strong> kryo;
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>     }
+<a class="jxr_linenumber" name="L198" href="#L198">198</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

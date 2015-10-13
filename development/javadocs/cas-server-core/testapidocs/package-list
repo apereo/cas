@@ -14,9 +14,9 @@ org.jasig.cas.services.support
 org.jasig.cas.ticket
 org.jasig.cas.ticket.proxy.support
 org.jasig.cas.ticket.registry
-org.jasig.cas.ticket.registry.support
 org.jasig.cas.ticket.support
 org.jasig.cas.util
 org.jasig.cas.util.http
 org.jasig.cas.validation
+org.jasig.cas.web.view
 org.slf4j.impl

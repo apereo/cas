@@ -277,7 +277,7 @@
 <a class="jxr_linenumber" name="L269" href="#L269">269</a> <em class="jxr_javadoccomment">     *</em>
 <a class="jxr_linenumber" name="L270" href="#L270">270</a> <em class="jxr_javadoccomment">     * @param id the new service id</em>
 <a class="jxr_linenumber" name="L271" href="#L271">271</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> setServiceId(<strong class="jxr_keyword">final</strong> String id);
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">void</strong> setServiceId(String id);
 <a class="jxr_linenumber" name="L273" href="#L273">273</a> 
 <a class="jxr_linenumber" name="L274" href="#L274">274</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setId(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> id) {
 <a class="jxr_linenumber" name="L275" href="#L275">275</a>         <strong class="jxr_keyword">this</strong>.id = id;
@@ -367,109 +367,108 @@
 <a class="jxr_linenumber" name="L359" href="#L359">359</a>         <strong class="jxr_keyword">this</strong>.setLogoutUrl(source.getLogoutUrl());
 <a class="jxr_linenumber" name="L360" href="#L360">360</a>         <strong class="jxr_keyword">this</strong>.setPublicKey(source.getPublicKey());
 <a class="jxr_linenumber" name="L361" href="#L361">361</a>         <strong class="jxr_keyword">this</strong>.setRequiredHandlers(source.getRequiredHandlers());
-<a class="jxr_linenumber" name="L362" href="#L362">362</a> 
-<a class="jxr_linenumber" name="L363" href="#L363">363</a>     }
-<a class="jxr_linenumber" name="L364" href="#L364">364</a> 
-<a class="jxr_linenumber" name="L365" href="#L365">365</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L366" href="#L366">366</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
-<a class="jxr_linenumber" name="L367" href="#L367">367</a> <em class="jxr_javadoccomment">     * Compares this instance with the &lt;code&gt;other&lt;/code&gt; registered service based on</em>
-<a class="jxr_linenumber" name="L368" href="#L368">368</a> <em class="jxr_javadoccomment">     * evaluation order, name. The name comparison is case insensitive.</em>
-<a class="jxr_linenumber" name="L369" href="#L369">369</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L370" href="#L370">370</a> <em class="jxr_javadoccomment">     * @see #getEvaluationOrder()</em>
-<a class="jxr_linenumber" name="L371" href="#L371">371</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L372" href="#L372">372</a>     @Override
-<a class="jxr_linenumber" name="L373" href="#L373">373</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> compareTo(<strong class="jxr_keyword">final</strong> RegisteredService other) {
-<a class="jxr_linenumber" name="L374" href="#L374">374</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CompareToBuilder()
-<a class="jxr_linenumber" name="L375" href="#L375">375</a>                   .append(<strong class="jxr_keyword">this</strong>.getEvaluationOrder(), other.getEvaluationOrder())
-<a class="jxr_linenumber" name="L376" href="#L376">376</a>                   .append(<strong class="jxr_keyword">this</strong>.getName().toLowerCase(), other.getName().toLowerCase())
-<a class="jxr_linenumber" name="L377" href="#L377">377</a>                   .append(<strong class="jxr_keyword">this</strong>.getServiceId(), other.getServiceId())
-<a class="jxr_linenumber" name="L378" href="#L378">378</a>                   .toComparison();
-<a class="jxr_linenumber" name="L379" href="#L379">379</a>     }
-<a class="jxr_linenumber" name="L380" href="#L380">380</a> 
-<a class="jxr_linenumber" name="L381" href="#L381">381</a>     @Override
-<a class="jxr_linenumber" name="L382" href="#L382">382</a>     <strong class="jxr_keyword">public</strong> String toString() {
-<a class="jxr_linenumber" name="L383" href="#L383">383</a>         <strong class="jxr_keyword">final</strong> ToStringBuilder toStringBuilder = <strong class="jxr_keyword">new</strong> ToStringBuilder(<strong class="jxr_keyword">null</strong>, ToStringStyle.SHORT_PREFIX_STYLE);
-<a class="jxr_linenumber" name="L384" href="#L384">384</a>         toStringBuilder.append(<span class="jxr_string">"id"</span>, <strong class="jxr_keyword">this</strong>.id);
-<a class="jxr_linenumber" name="L385" href="#L385">385</a>         toStringBuilder.append(<span class="jxr_string">"name"</span>, <strong class="jxr_keyword">this</strong>.name);
-<a class="jxr_linenumber" name="L386" href="#L386">386</a>         toStringBuilder.append(<span class="jxr_string">"description"</span>, <strong class="jxr_keyword">this</strong>.description);
-<a class="jxr_linenumber" name="L387" href="#L387">387</a>         toStringBuilder.append(<span class="jxr_string">"serviceId"</span>, <strong class="jxr_keyword">this</strong>.serviceId);
-<a class="jxr_linenumber" name="L388" href="#L388">388</a>         toStringBuilder.append(<span class="jxr_string">"usernameAttributeProvider"</span>, <strong class="jxr_keyword">this</strong>.usernameAttributeProvider);
-<a class="jxr_linenumber" name="L389" href="#L389">389</a>         toStringBuilder.append(<span class="jxr_string">"theme"</span>, <strong class="jxr_keyword">this</strong>.theme);
-<a class="jxr_linenumber" name="L390" href="#L390">390</a>         toStringBuilder.append(<span class="jxr_string">"evaluationOrder"</span>, <strong class="jxr_keyword">this</strong>.evaluationOrder);
-<a class="jxr_linenumber" name="L391" href="#L391">391</a>         toStringBuilder.append(<span class="jxr_string">"logoutType"</span>, <strong class="jxr_keyword">this</strong>.logoutType);
-<a class="jxr_linenumber" name="L392" href="#L392">392</a>         toStringBuilder.append(<span class="jxr_string">"attributeReleasePolicy"</span>, <strong class="jxr_keyword">this</strong>.attributeReleasePolicy);
-<a class="jxr_linenumber" name="L393" href="#L393">393</a>         toStringBuilder.append(<span class="jxr_string">"accessStrategy"</span>, <strong class="jxr_keyword">this</strong>.accessStrategy);
-<a class="jxr_linenumber" name="L394" href="#L394">394</a>         toStringBuilder.append(<span class="jxr_string">"publicKey"</span>, <strong class="jxr_keyword">this</strong>.publicKey);
-<a class="jxr_linenumber" name="L395" href="#L395">395</a>         toStringBuilder.append(<span class="jxr_string">"proxyPolicy"</span>, <strong class="jxr_keyword">this</strong>.proxyPolicy);
-<a class="jxr_linenumber" name="L396" href="#L396">396</a>         toStringBuilder.append(<span class="jxr_string">"logo"</span>, <strong class="jxr_keyword">this</strong>.logo);
-<a class="jxr_linenumber" name="L397" href="#L397">397</a>         toStringBuilder.append(<span class="jxr_string">"logoutUrl"</span>, <strong class="jxr_keyword">this</strong>.logoutUrl);
-<a class="jxr_linenumber" name="L398" href="#L398">398</a>         toStringBuilder.append(<span class="jxr_string">"requiredHandlers"</span>, <strong class="jxr_keyword">this</strong>.requiredHandlers);
-<a class="jxr_linenumber" name="L399" href="#L399">399</a> 
-<a class="jxr_linenumber" name="L400" href="#L400">400</a>         <strong class="jxr_keyword">return</strong> toStringBuilder.toString();
-<a class="jxr_linenumber" name="L401" href="#L401">401</a>     }
-<a class="jxr_linenumber" name="L402" href="#L402">402</a> 
-<a class="jxr_linenumber" name="L403" href="#L403">403</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L404" href="#L404">404</a> <em class="jxr_javadoccomment">     * Create a new service instance.</em>
-<a class="jxr_linenumber" name="L405" href="#L405">405</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L406" href="#L406">406</a> <em class="jxr_javadoccomment">     * @return the registered service</em>
-<a class="jxr_linenumber" name="L407" href="#L407">407</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L408" href="#L408">408</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <a href="../../../../org/jasig/cas/services/AbstractRegisteredService.html">AbstractRegisteredService</a> newInstance();
-<a class="jxr_linenumber" name="L409" href="#L409">409</a> 
-<a class="jxr_linenumber" name="L410" href="#L410">410</a>     @Override
-<a class="jxr_linenumber" name="L411" href="#L411">411</a>     <strong class="jxr_keyword">public</strong> Set&lt;String&gt; getRequiredHandlers() {
-<a class="jxr_linenumber" name="L412" href="#L412">412</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.requiredHandlers == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L413" href="#L413">413</a>             <strong class="jxr_keyword">this</strong>.requiredHandlers = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
-<a class="jxr_linenumber" name="L414" href="#L414">414</a>         }
-<a class="jxr_linenumber" name="L415" href="#L415">415</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.requiredHandlers;
-<a class="jxr_linenumber" name="L416" href="#L416">416</a>     }
-<a class="jxr_linenumber" name="L417" href="#L417">417</a> 
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">     * Sets the required handlers for this service.</em>
-<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">     * @param handlers the new required handlers</em>
-<a class="jxr_linenumber" name="L422" href="#L422">422</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setRequiredHandlers(<strong class="jxr_keyword">final</strong> Set&lt;String&gt; handlers) {
-<a class="jxr_linenumber" name="L424" href="#L424">424</a>         getRequiredHandlers().clear();
-<a class="jxr_linenumber" name="L425" href="#L425">425</a>         <strong class="jxr_keyword">if</strong> (handlers == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L426" href="#L426">426</a>             <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="L427" href="#L427">427</a>         }
-<a class="jxr_linenumber" name="L428" href="#L428">428</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String handler : handlers) {
-<a class="jxr_linenumber" name="L429" href="#L429">429</a>             getRequiredHandlers().add(handler);
-<a class="jxr_linenumber" name="L430" href="#L430">430</a>         }
-<a class="jxr_linenumber" name="L431" href="#L431">431</a>     }
-<a class="jxr_linenumber" name="L432" href="#L432">432</a>     
-<a class="jxr_linenumber" name="L433" href="#L433">433</a>     <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L434" href="#L434">434</a> <em class="jxr_javadoccomment">     * Sets the attribute filtering policy.</em>
-<a class="jxr_linenumber" name="L435" href="#L435">435</a> <em class="jxr_javadoccomment">     *</em>
-<a class="jxr_linenumber" name="L436" href="#L436">436</a> <em class="jxr_javadoccomment">     * @param policy the new attribute filtering policy</em>
-<a class="jxr_linenumber" name="L437" href="#L437">437</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L438" href="#L438">438</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setAttributeReleasePolicy(<strong class="jxr_keyword">final</strong> AttributeReleasePolicy policy) {
-<a class="jxr_linenumber" name="L439" href="#L439">439</a>         <strong class="jxr_keyword">this</strong>.attributeReleasePolicy = policy;
-<a class="jxr_linenumber" name="L440" href="#L440">440</a>     }
-<a class="jxr_linenumber" name="L441" href="#L441">441</a> 
-<a class="jxr_linenumber" name="L442" href="#L442">442</a>     @Override
-<a class="jxr_linenumber" name="L443" href="#L443">443</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> AttributeReleasePolicy getAttributeReleasePolicy() {
-<a class="jxr_linenumber" name="L444" href="#L444">444</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.attributeReleasePolicy;
-<a class="jxr_linenumber" name="L445" href="#L445">445</a>     }
-<a class="jxr_linenumber" name="L446" href="#L446">446</a> 
-<a class="jxr_linenumber" name="L447" href="#L447">447</a>     @Override
-<a class="jxr_linenumber" name="L448" href="#L448">448</a>     <strong class="jxr_keyword">public</strong> URL getLogo() {
-<a class="jxr_linenumber" name="L449" href="#L449">449</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.logo;
-<a class="jxr_linenumber" name="L450" href="#L450">450</a>     }
-<a class="jxr_linenumber" name="L451" href="#L451">451</a> 
-<a class="jxr_linenumber" name="L452" href="#L452">452</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLogo(<strong class="jxr_keyword">final</strong> URL logo) {
-<a class="jxr_linenumber" name="L453" href="#L453">453</a>         <strong class="jxr_keyword">this</strong>.logo = logo;
-<a class="jxr_linenumber" name="L454" href="#L454">454</a>     }
-<a class="jxr_linenumber" name="L455" href="#L455">455</a> 
-<a class="jxr_linenumber" name="L456" href="#L456">456</a>     @Override
-<a class="jxr_linenumber" name="L457" href="#L457">457</a>     <strong class="jxr_keyword">public</strong> RegisteredServicePublicKey getPublicKey() {
-<a class="jxr_linenumber" name="L458" href="#L458">458</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.publicKey;
-<a class="jxr_linenumber" name="L459" href="#L459">459</a>     }
-<a class="jxr_linenumber" name="L460" href="#L460">460</a> 
-<a class="jxr_linenumber" name="L461" href="#L461">461</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPublicKey(@NotNull <strong class="jxr_keyword">final</strong> RegisteredServicePublicKey publicKey) {
-<a class="jxr_linenumber" name="L462" href="#L462">462</a>         <strong class="jxr_keyword">this</strong>.publicKey = publicKey;
-<a class="jxr_linenumber" name="L463" href="#L463">463</a>     }
-<a class="jxr_linenumber" name="L464" href="#L464">464</a> }
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>     }
+<a class="jxr_linenumber" name="L363" href="#L363">363</a> 
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L365" href="#L365">365</a> <em class="jxr_javadoccomment">     * {@inheritDoc}</em>
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> <em class="jxr_javadoccomment">     * Compares this instance with the &lt;code&gt;other&lt;/code&gt; registered service based on</em>
+<a class="jxr_linenumber" name="L367" href="#L367">367</a> <em class="jxr_javadoccomment">     * evaluation order, name. The name comparison is case insensitive.</em>
+<a class="jxr_linenumber" name="L368" href="#L368">368</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L369" href="#L369">369</a> <em class="jxr_javadoccomment">     * @see #getEvaluationOrder()</em>
+<a class="jxr_linenumber" name="L370" href="#L370">370</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L371" href="#L371">371</a>     @Override
+<a class="jxr_linenumber" name="L372" href="#L372">372</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> compareTo(<strong class="jxr_keyword">final</strong> RegisteredService other) {
+<a class="jxr_linenumber" name="L373" href="#L373">373</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> CompareToBuilder()
+<a class="jxr_linenumber" name="L374" href="#L374">374</a>                   .append(<strong class="jxr_keyword">this</strong>.getEvaluationOrder(), other.getEvaluationOrder())
+<a class="jxr_linenumber" name="L375" href="#L375">375</a>                   .append(<strong class="jxr_keyword">this</strong>.getName().toLowerCase(), other.getName().toLowerCase())
+<a class="jxr_linenumber" name="L376" href="#L376">376</a>                   .append(<strong class="jxr_keyword">this</strong>.getServiceId(), other.getServiceId())
+<a class="jxr_linenumber" name="L377" href="#L377">377</a>                   .toComparison();
+<a class="jxr_linenumber" name="L378" href="#L378">378</a>     }
+<a class="jxr_linenumber" name="L379" href="#L379">379</a> 
+<a class="jxr_linenumber" name="L380" href="#L380">380</a>     @Override
+<a class="jxr_linenumber" name="L381" href="#L381">381</a>     <strong class="jxr_keyword">public</strong> String toString() {
+<a class="jxr_linenumber" name="L382" href="#L382">382</a>         <strong class="jxr_keyword">final</strong> ToStringBuilder toStringBuilder = <strong class="jxr_keyword">new</strong> ToStringBuilder(<strong class="jxr_keyword">null</strong>, ToStringStyle.SHORT_PREFIX_STYLE);
+<a class="jxr_linenumber" name="L383" href="#L383">383</a>         toStringBuilder.append(<span class="jxr_string">"id"</span>, <strong class="jxr_keyword">this</strong>.id);
+<a class="jxr_linenumber" name="L384" href="#L384">384</a>         toStringBuilder.append(<span class="jxr_string">"name"</span>, <strong class="jxr_keyword">this</strong>.name);
+<a class="jxr_linenumber" name="L385" href="#L385">385</a>         toStringBuilder.append(<span class="jxr_string">"description"</span>, <strong class="jxr_keyword">this</strong>.description);
+<a class="jxr_linenumber" name="L386" href="#L386">386</a>         toStringBuilder.append(<span class="jxr_string">"serviceId"</span>, <strong class="jxr_keyword">this</strong>.serviceId);
+<a class="jxr_linenumber" name="L387" href="#L387">387</a>         toStringBuilder.append(<span class="jxr_string">"usernameAttributeProvider"</span>, <strong class="jxr_keyword">this</strong>.usernameAttributeProvider);
+<a class="jxr_linenumber" name="L388" href="#L388">388</a>         toStringBuilder.append(<span class="jxr_string">"theme"</span>, <strong class="jxr_keyword">this</strong>.theme);
+<a class="jxr_linenumber" name="L389" href="#L389">389</a>         toStringBuilder.append(<span class="jxr_string">"evaluationOrder"</span>, <strong class="jxr_keyword">this</strong>.evaluationOrder);
+<a class="jxr_linenumber" name="L390" href="#L390">390</a>         toStringBuilder.append(<span class="jxr_string">"logoutType"</span>, <strong class="jxr_keyword">this</strong>.logoutType);
+<a class="jxr_linenumber" name="L391" href="#L391">391</a>         toStringBuilder.append(<span class="jxr_string">"attributeReleasePolicy"</span>, <strong class="jxr_keyword">this</strong>.attributeReleasePolicy);
+<a class="jxr_linenumber" name="L392" href="#L392">392</a>         toStringBuilder.append(<span class="jxr_string">"accessStrategy"</span>, <strong class="jxr_keyword">this</strong>.accessStrategy);
+<a class="jxr_linenumber" name="L393" href="#L393">393</a>         toStringBuilder.append(<span class="jxr_string">"publicKey"</span>, <strong class="jxr_keyword">this</strong>.publicKey);
+<a class="jxr_linenumber" name="L394" href="#L394">394</a>         toStringBuilder.append(<span class="jxr_string">"proxyPolicy"</span>, <strong class="jxr_keyword">this</strong>.proxyPolicy);
+<a class="jxr_linenumber" name="L395" href="#L395">395</a>         toStringBuilder.append(<span class="jxr_string">"logo"</span>, <strong class="jxr_keyword">this</strong>.logo);
+<a class="jxr_linenumber" name="L396" href="#L396">396</a>         toStringBuilder.append(<span class="jxr_string">"logoutUrl"</span>, <strong class="jxr_keyword">this</strong>.logoutUrl);
+<a class="jxr_linenumber" name="L397" href="#L397">397</a>         toStringBuilder.append(<span class="jxr_string">"requiredHandlers"</span>, <strong class="jxr_keyword">this</strong>.requiredHandlers);
+<a class="jxr_linenumber" name="L398" href="#L398">398</a> 
+<a class="jxr_linenumber" name="L399" href="#L399">399</a>         <strong class="jxr_keyword">return</strong> toStringBuilder.toString();
+<a class="jxr_linenumber" name="L400" href="#L400">400</a>     }
+<a class="jxr_linenumber" name="L401" href="#L401">401</a> 
+<a class="jxr_linenumber" name="L402" href="#L402">402</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L403" href="#L403">403</a> <em class="jxr_javadoccomment">     * Create a new service instance.</em>
+<a class="jxr_linenumber" name="L404" href="#L404">404</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L405" href="#L405">405</a> <em class="jxr_javadoccomment">     * @return the registered service</em>
+<a class="jxr_linenumber" name="L406" href="#L406">406</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L407" href="#L407">407</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">abstract</strong> <a href="../../../../org/jasig/cas/services/AbstractRegisteredService.html">AbstractRegisteredService</a> newInstance();
+<a class="jxr_linenumber" name="L408" href="#L408">408</a> 
+<a class="jxr_linenumber" name="L409" href="#L409">409</a>     @Override
+<a class="jxr_linenumber" name="L410" href="#L410">410</a>     <strong class="jxr_keyword">public</strong> Set&lt;String&gt; getRequiredHandlers() {
+<a class="jxr_linenumber" name="L411" href="#L411">411</a>         <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">this</strong>.requiredHandlers == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L412" href="#L412">412</a>             <strong class="jxr_keyword">this</strong>.requiredHandlers = <strong class="jxr_keyword">new</strong> HashSet&lt;&gt;();
+<a class="jxr_linenumber" name="L413" href="#L413">413</a>         }
+<a class="jxr_linenumber" name="L414" href="#L414">414</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.requiredHandlers;
+<a class="jxr_linenumber" name="L415" href="#L415">415</a>     }
+<a class="jxr_linenumber" name="L416" href="#L416">416</a> 
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L418" href="#L418">418</a> <em class="jxr_javadoccomment">     * Sets the required handlers for this service.</em>
+<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">     * @param handlers the new required handlers</em>
+<a class="jxr_linenumber" name="L421" href="#L421">421</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setRequiredHandlers(<strong class="jxr_keyword">final</strong> Set&lt;String&gt; handlers) {
+<a class="jxr_linenumber" name="L423" href="#L423">423</a>         getRequiredHandlers().clear();
+<a class="jxr_linenumber" name="L424" href="#L424">424</a>         <strong class="jxr_keyword">if</strong> (handlers == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L425" href="#L425">425</a>             <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L426" href="#L426">426</a>         }
+<a class="jxr_linenumber" name="L427" href="#L427">427</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> String handler : handlers) {
+<a class="jxr_linenumber" name="L428" href="#L428">428</a>             getRequiredHandlers().add(handler);
+<a class="jxr_linenumber" name="L429" href="#L429">429</a>         }
+<a class="jxr_linenumber" name="L430" href="#L430">430</a>     }
+<a class="jxr_linenumber" name="L431" href="#L431">431</a>     
+<a class="jxr_linenumber" name="L432" href="#L432">432</a>     <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L433" href="#L433">433</a> <em class="jxr_javadoccomment">     * Sets the attribute filtering policy.</em>
+<a class="jxr_linenumber" name="L434" href="#L434">434</a> <em class="jxr_javadoccomment">     *</em>
+<a class="jxr_linenumber" name="L435" href="#L435">435</a> <em class="jxr_javadoccomment">     * @param policy the new attribute filtering policy</em>
+<a class="jxr_linenumber" name="L436" href="#L436">436</a> <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L437" href="#L437">437</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">void</strong> setAttributeReleasePolicy(<strong class="jxr_keyword">final</strong> AttributeReleasePolicy policy) {
+<a class="jxr_linenumber" name="L438" href="#L438">438</a>         <strong class="jxr_keyword">this</strong>.attributeReleasePolicy = policy;
+<a class="jxr_linenumber" name="L439" href="#L439">439</a>     }
+<a class="jxr_linenumber" name="L440" href="#L440">440</a> 
+<a class="jxr_linenumber" name="L441" href="#L441">441</a>     @Override
+<a class="jxr_linenumber" name="L442" href="#L442">442</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> AttributeReleasePolicy getAttributeReleasePolicy() {
+<a class="jxr_linenumber" name="L443" href="#L443">443</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.attributeReleasePolicy;
+<a class="jxr_linenumber" name="L444" href="#L444">444</a>     }
+<a class="jxr_linenumber" name="L445" href="#L445">445</a> 
+<a class="jxr_linenumber" name="L446" href="#L446">446</a>     @Override
+<a class="jxr_linenumber" name="L447" href="#L447">447</a>     <strong class="jxr_keyword">public</strong> URL getLogo() {
+<a class="jxr_linenumber" name="L448" href="#L448">448</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.logo;
+<a class="jxr_linenumber" name="L449" href="#L449">449</a>     }
+<a class="jxr_linenumber" name="L450" href="#L450">450</a> 
+<a class="jxr_linenumber" name="L451" href="#L451">451</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setLogo(<strong class="jxr_keyword">final</strong> URL logo) {
+<a class="jxr_linenumber" name="L452" href="#L452">452</a>         <strong class="jxr_keyword">this</strong>.logo = logo;
+<a class="jxr_linenumber" name="L453" href="#L453">453</a>     }
+<a class="jxr_linenumber" name="L454" href="#L454">454</a> 
+<a class="jxr_linenumber" name="L455" href="#L455">455</a>     @Override
+<a class="jxr_linenumber" name="L456" href="#L456">456</a>     <strong class="jxr_keyword">public</strong> RegisteredServicePublicKey getPublicKey() {
+<a class="jxr_linenumber" name="L457" href="#L457">457</a>         <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.publicKey;
+<a class="jxr_linenumber" name="L458" href="#L458">458</a>     }
+<a class="jxr_linenumber" name="L459" href="#L459">459</a> 
+<a class="jxr_linenumber" name="L460" href="#L460">460</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPublicKey(@NotNull <strong class="jxr_keyword">final</strong> RegisteredServicePublicKey publicKey) {
+<a class="jxr_linenumber" name="L461" href="#L461">461</a>         <strong class="jxr_keyword">this</strong>.publicKey = publicKey;
+<a class="jxr_linenumber" name="L462" href="#L462">462</a>     }
+<a class="jxr_linenumber" name="L463" href="#L463">463</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

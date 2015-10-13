@@ -226,7 +226,7 @@
 <a class="jxr_linenumber" name="L218" href="#L218">218</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = <strong class="jxr_keyword">new</strong> TicketGrantingTicketImpl(<span class="jxr_string">"TEST"</span> + i,
 <a class="jxr_linenumber" name="L219" href="#L219">219</a>                     TestUtils.getAuthentication(), <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy());
 <a class="jxr_linenumber" name="L220" href="#L220">220</a>             <strong class="jxr_keyword">final</strong> ServiceTicket st = ticketGrantingTicket.grantServiceTicket(<span class="jxr_string">"tests"</span> + i, getService(),
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>                     <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), false);
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>                     <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), false, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L222" href="#L222">222</a>             tickets.add(ticketGrantingTicket);
 <a class="jxr_linenumber" name="L223" href="#L223">223</a>             tickets.add(st);
 <a class="jxr_linenumber" name="L224" href="#L224">224</a>             <strong class="jxr_keyword">this</strong>.ticketRegistry.addTicket(ticketGrantingTicket);

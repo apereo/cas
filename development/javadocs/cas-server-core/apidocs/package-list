@@ -11,11 +11,11 @@ org.jasig.cas.monitor
 org.jasig.cas.services
 org.jasig.cas.services.jmx
 org.jasig.cas.services.support
+org.jasig.cas.services.web.view
 org.jasig.cas.ticket
 org.jasig.cas.ticket.proxy.support
 org.jasig.cas.ticket.registry
 org.jasig.cas.ticket.registry.encrypt
-org.jasig.cas.ticket.registry.support
 org.jasig.cas.ticket.support
 org.jasig.cas.util
 org.jasig.cas.util.http
