@@ -19,6 +19,8 @@
 package org.jasig.cas.support.openid.web.support;
 
 
+import org.springframework.stereotype.Component;
+
 /**
  * Extracts a local Id from an openid.identity. The default provider can extract
  * the following uris: http://openid.myprovider.com/scottb provides a local id
@@ -27,8 +29,8 @@ package org.jasig.cas.support.openid.web.support;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class DefaultOpenIdUserNameExtractor implements
-OpenIdUserNameExtractor {
+@Component("defaultOpenIdUserNameExtractor")
+public final class DefaultOpenIdUserNameExtractor implements OpenIdUserNameExtractor {
 
     @Override
     public String extractLocalUsernameFromUri(final String uri) {
