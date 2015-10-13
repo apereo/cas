@@ -41,15 +41,15 @@ import javax.validation.constraints.NotNull;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Component
+@Component("baseOAuthWrapperController")
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
     /** The logger. */
-    protected final Logger logger = LoggerFactory.getLogger(BaseOAuthWrapperController.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The login url. */
     @NotNull
-    @Value("${server.prefix}/login")
+    @Value("${server.prefix:http://localhost:8080/cas}/login")
     protected String loginUrl;
 
     /** The services manager. */
@@ -122,5 +122,21 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
 
     public void setTimeout(final long timeout) {
         this.timeout = timeout;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public ServicesManager getServicesManager() {
+        return servicesManager;
+    }
+
+    public TicketRegistry getTicketRegistry() {
+        return ticketRegistry;
+    }
+
+    public long getTimeout() {
+        return timeout;
     }
 }

@@ -24,6 +24,9 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
 
@@ -35,6 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.4.9
  *
  */
+@Component("generateLoginTicketAction")
 public class GenerateLoginTicketAction {
     /** 3.5.1 - Login tickets SHOULD begin with characters "LT-". */
     private static final String PREFIX = "LT";
@@ -58,7 +62,8 @@ public class GenerateLoginTicketAction {
         return "generated";
     }
 
-    public void setTicketIdGenerator(final UniqueTicketIdGenerator generator) {
+    @Autowired
+    public void setTicketIdGenerator(@Qualifier("loginTicketUniqueIdGenerator") final UniqueTicketIdGenerator generator) {
         this.ticketIdGenerator = generator;
     }
 }
