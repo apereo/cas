@@ -27,6 +27,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
@@ -87,7 +88,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         final ServicesManager servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(regSvc);
         
-        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey, servicesManager);
+        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey);
     }
 
     @Before
