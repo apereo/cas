@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.services;
 
-import org.springframework.context.annotation.Conditional;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
