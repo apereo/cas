@@ -19,7 +19,6 @@
 package org.jasig.cas.util;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,6 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-import java.util.zip.InflaterOutputStream;
 
 /**
  * This is {@link CompressionUtils}
@@ -63,7 +61,7 @@ public final class CompressionUtils {
      */
     public static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[10000];
+        final byte[] xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
 
         final byte[] extendedBytes = new byte[bytes.length + 1];
         System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
