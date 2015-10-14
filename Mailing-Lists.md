@@ -14,7 +14,7 @@ The community is very understanding of non-native English speakers and generally
 in those circumstances. _Please post in English._
 
 
-## CAS Community Discussion List (cas-user)
+## CAS Community List (cas-user)
 _Focus_: support, troubleshooting, general questions.
 
 Post to this list if you have a question about installing, configuring, or troubleshooting CAS.
