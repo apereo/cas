@@ -63,7 +63,7 @@ public class GoogleAccountsArgumentExtractorTests extends AbstractOpenSamlTests 
         final ServicesManager servicesManager = mock(ServicesManager.class);
         
         this.extractor = new GoogleAccountsArgumentExtractor((PublicKey) pubKeyFactoryBean.getObject(), 
-                (PrivateKey) privKeyFactoryBean.getObject(), servicesManager);
+                (PrivateKey) privKeyFactoryBean.getObject());
     }
 
     @Test
