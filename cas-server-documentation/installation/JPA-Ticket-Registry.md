@@ -17,30 +17,43 @@ and the redundancy and vertical scaling they often provide, more suitable recomm
 the default in-memory ticket registry for a single node CAS deployment and distributed cache-based
 registries for higher availability.</p></div>
 
+Support is enabled by adding the following module into the Maven overlay:
+
+{% highlight xml %}
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-jpa-ticket-registry</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
+
 
 # Configuration
 
 {% highlight xml %}
 <alias name="jpaTicketRegistry" alias="ticketRegistry" />
+{% endhighlight %}
 
-<import resource="classpath:jpa-ticket-reg-context.xml" />
-<bean
-    id="dataSourceTicket"
-    class="com.mchange.v2.c3p0.ComboPooledDataSource"
-    p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
-    p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}"
-    p:user="${database.user:sa}"
-    p:password="${database.password:}"
-    p:initialPoolSize="${database.pool.minSize:6}"
-    p:minPoolSize="${database.pool.minSize:6}"
-    p:maxPoolSize="${database.pool.maxSize:18}"
-    p:maxIdleTimeExcessConnections="${database.pool.maxIdleTime:1000}"
-    p:checkoutTimeout="${database.pool.maxWait:2000}"
-    p:acquireIncrement="${database.pool.acquireIncrement:16}"
-    p:acquireRetryAttempts="${database.pool.acquireRetryAttempts:5}"
-    p:acquireRetryDelay="${database.pool.acquireRetryDelay:2000}"
-    p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod:30}"
-    p:preferredTestQuery="${database.pool.connectionHealthQuery:select 1}"/>
+The following settings are expected:
+
+{% highlight properties %}
+# ticketreg.database.ddl.auto=create-drop
+# ticketreg.database.hibernate.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
+# ticketreg.database.hibernate.batchSize=10
+# ticketreg.database.driverClass=org.hsqldb.jdbcDriver
+# ticketreg.database.url=jdbc:hsqldb:mem:cas-ticket-registry
+# ticketreg.database.user=sa
+# ticketreg.database.password=
+# ticketreg.database.pool.minSize=6
+# ticketreg.database.pool.maxSize=18
+# ticketreg.database.pool.maxWait=10000
+# ticketreg.database.pool.maxIdleTime=120
+# ticketreg.database.pool.acquireIncrement=6
+# ticketreg.database.pool.idleConnectionTestPeriod=30
+# ticketreg.database.pool.connectionHealthQuery=select 1
+# ticketreg.database.pool.acquireRetryAttempts=5
+# ticketreg.database.pool.acquireRetryDelay=2000
+# ticketreg.database.pool.connectionHealthQuery=select 1
 {% endhighlight %}
 
 
@@ -113,7 +126,7 @@ CREATE INDEX "TGT_TGT_FK_I"
 
 ## Ticket Cleanup
 
-The use `JpaLockingStrategy` is strongly recommended for HA environments where
+The use of `JpaLockingStrategy` is strongly recommended for HA environments where
 multiple nodes are attempting ticket cleanup on a shared database.
 `JpaLockingStrategy` can auto-generate the schema for the target platform.  
 A representative schema is provided below that applies to PostgreSQL:
@@ -134,97 +147,3 @@ ALTER TABLE locks ADD CONSTRAINT pk_locks
 the LOCKS table may differ from the above. For example, on Oracle platforms
 the `expiration_date` column must be of type `DAT`E.  Use the `JpaLockingStrategy`
 which can create and update the schema automatically to avoid platform-specific schema issues.</p></div>
-
-
-## Connection Pooling
-
-It is ***strongly*** recommended that database connection pooling be used in a p
-production environment. Based on the example above, the following pool configuration parameters are provided
-for information only and may serve as a reasonable starting point for configuring a production database connection pool.
-
-<div class="alert alert-info"><strong>Usage Tip</strong><p>Note the health check query is specific to PostgreSQL.</p></div>
-
-{% highlight properties %}
-# == Basic database connection pool configuration ==
-database.dialect=org.hibernate.dialect.PostgreSQLDialect
-database.driverClass=org.postgresql.Driver
-database.url=jdbc:postgresql://somehost.vt.edu/cas?ssl=true
-database.user=somebody
-database.password=meaningless
-database.pool.minSize=6
-database.pool.maxSize=18
-
-# Maximum amount of time to wait in ms for a connection to become
-# available when the pool is exhausted
-database.pool.maxWait=10000
-
-# Amount of time in seconds after which idle connections
-# in excess of minimum size are pruned.
-database.pool.maxIdleTime=120
-
-# Number of connections to obtain on pool exhaustion condition.
-# The maximum pool size is always respected when acquiring
-# new connections.
-database.pool.acquireIncrement=6
-
-# == Connection testing settings ==
-
-# Period in s at which a health query will be issued on idle
-# connections to determine connection liveliness.
-database.pool.idleConnectionTestPeriod=30
-
-# Query executed periodically to test health
-database.pool.connectionHealthQuery=select 1
-
-# == Database recovery settings ==
-
-# Number of times to retry acquiring a _new_ connection
-# when an error is encountered during acquisition.
-database.pool.acquireRetryAttempts=5
-
-# Amount of time in ms to wait between successive acquire retry attempts.
-database.pool.acquireRetryDelay=2000
-{% endhighlight %}
-
-
-# Platform Considerations
-
-## MySQL
-
-### Use InnoDB Tables
-The use of InnoDB tables is strongly recommended for the MySQL platform for a couple reasons:
-
-- InnoDB provides referential integrity that is helpful for preventing orphaned records in ticket tables.
-- Provides better locking semantics (e.g. support for SELECT ... FOR UPDATE) than the default MyISAM table type.
-
-InnoDB tables are easily specified via the use of the following Hibernate dialect:
-
-{% highlight xml %}
-<prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</prop>
-
-<!-- OR for MySQL 5.x use the following instead -->
-<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
-{% endhighlight %}
-
-
-###BLOB vs LONGBLOB
-Hibernate on recent versions of MySQL (e.g. 5.1) properly maps the `@Lob` JPA annotation onto type `LONGBLOB`,
-which is very important since these fields commonly store serialized graphs of Java objects that
-grow proportionally with CAS SSO session lifetime. Under some circumstances, Hibernate may treat
-these columns as type `BLOB`, which have storage limits that are easily exceeded. It is
-recommended that the generated schema be reviewed and any BLOB type columns be converted to `LONGBLOB`.
-
-The following MySQL statement would change this `SERVICES_GRANTED_ACCESS_TO` column's type to `LONGBLOB`:
-
-{% highlight sql %}
-ALTER TABLE TICKETGRANTINGTICKET MODIFY SERVICES_GRANTED_ACCESS_TO LONGBLOB;
-{% endhighlight %}
-
-
-###Case Sensitive Schema
-It may necessary to force lowercase schema names in the MySQL configuration:
-
-Adjust the `my.cnf` file to include the following:
-{% highlight bash %}
-lower-case-table-names = 1
-{% endhighlight %}
