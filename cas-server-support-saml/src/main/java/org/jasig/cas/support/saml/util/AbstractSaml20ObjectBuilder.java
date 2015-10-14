@@ -254,12 +254,16 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return null;
         }
 
+        logger.debug("Decoding SAML authN request: {}", encodedRequestXmlString);
+
         final byte[] decodedBytes = CompressionUtils.decodeBase64ToByteArray(encodedRequestXmlString);
         if (decodedBytes == null) {
             return null;
         }
 
         final String inflated = CompressionUtils.inflate(decodedBytes);
+        logger.debug("Inflated SAML authN request: {}", inflated);
+
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }
