@@ -56,12 +56,6 @@ import org.jdom.Element;
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
-    private static final int INFLATED_BYTE_ARRAY_LENGTH = 10000;
-    private static final int DEFLATED_BYTE_ARRAY_BUFFER_LENGTH = 1024;
-    private static final int SAML_RESPONSE_RANDOM_ID_LENGTH = 20;
-    private static final int SAML_RESPONSE_ID_LENGTH = 40;
-    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
-    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
 
     private static final GoogleSaml20ObjectBuilder BUILDER = new GoogleSaml20ObjectBuilder();
 
