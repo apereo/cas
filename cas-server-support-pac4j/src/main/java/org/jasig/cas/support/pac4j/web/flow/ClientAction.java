@@ -31,7 +31,8 @@ import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.client.Mechanism;
+import org.pac4j.core.client.ClientType;
+import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
@@ -83,8 +84,8 @@ public final class ClientAction extends AbstractAction {
     /**
      * Supported protocols.
      */
-    private static final Set<Mechanism> SUPPORTED_PROTOCOLS = ImmutableSet.of(Mechanism.CAS_PROTOCOL, Mechanism.OAUTH_PROTOCOL,
-            Mechanism.OPENID_PROTOCOL, Mechanism.SAML_PROTOCOL, Mechanism.OPENID_CONNECT_PROTOCOL);
+    private static final Set<ClientType> SUPPORTED_PROTOCOLS = ImmutableSet.of(ClientType.CAS_PROTOCOL, ClientType.OAUTH_PROTOCOL,
+            ClientType.OPENID_PROTOCOL, ClientType.SAML_PROTOCOL, ClientType.OPENID_CONNECT_PROTOCOL);
 
     /**
      * The logger.
@@ -106,13 +107,13 @@ public final class ClientAction extends AbstractAction {
     /**
      * Build the action.
      *
-     * @param theCentralAuthenticationService The service for CAS authentication
-     * @param theClients The clients for authentication
+     * @param centralAuthenticationService The service for CAS authentication
+     * @param clients The clients for authentication
      */
-    public ClientAction(final CentralAuthenticationService theCentralAuthenticationService,
-            final Clients theClients) {
-        this.centralAuthenticationService = theCentralAuthenticationService;
-        this.clients = theClients;
+    public ClientAction(final CentralAuthenticationService centralAuthenticationService,
+            final Clients clients) {
+        this.centralAuthenticationService = centralAuthenticationService;
+        this.clients = clients;
         ProfileHelper.setKeepRawData(true);
     }
 
@@ -141,8 +142,8 @@ public final class ClientAction extends AbstractAction {
             logger.debug("client: {}", client);
 
             // Only supported protocols
-            final Mechanism mechanism = client.getMechanism();
-            if (!SUPPORTED_PROTOCOLS.contains(mechanism)) {
+            final ClientType clientType = client.getClientType();
+            if (!SUPPORTED_PROTOCOLS.contains(clientType)) {
                 throw new TechnicalException("Only CAS, OAuth, OpenID and SAML protocols are supported: " + client);
             }
 
@@ -172,7 +173,7 @@ public final class ClientAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                final TicketGrantingTicket tgt = 
+                final TicketGrantingTicket tgt =
                         this.centralAuthenticationService.createTicketGrantingTicket(new ClientCredential(credentials));
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
@@ -208,8 +209,8 @@ public final class ClientAction extends AbstractAction {
         // for all clients, generate redirection urls
         for (final Client client : this.clients.findAllClients()) {
             final String key = client.getName() + "Url";
-            final BaseClient baseClient = (BaseClient) client;
-            final String redirectionUrl = baseClient.getRedirectionUrl(webContext);
+            final IndirectClient indirectClient = (IndirectClient) client;
+            final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
             logger.debug("{} -> {}", key, redirectionUrl);
             context.getFlowScope().put(key, redirectionUrl);
         }
