@@ -107,6 +107,7 @@
         <configuration>
           <webApp>
               <contextPath>/cas</contextPath>
+              <overrideDescriptor>${cs.dir}/etc/jetty/web.xml</overrideDescriptor>
           </webApp>
         </configuration>
       </plugin>
