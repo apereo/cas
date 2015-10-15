@@ -272,6 +272,9 @@
 
     </bean>
 
+    <bean id="cachingPrincipalAttributeRepository" class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
+          c:attributeRepository-ref="attributeRepository" />
+
     <bean id="neverExpiresExpirationPolicy"
           class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy" />
 

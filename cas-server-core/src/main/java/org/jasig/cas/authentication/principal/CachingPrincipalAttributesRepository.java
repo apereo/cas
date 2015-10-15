@@ -35,7 +35,6 @@ import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
-import javax.validation.constraints.NotNull;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
@@ -251,7 +250,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
     }
 
     @Override
-    public Map<String, Object> getAttributes(@NotNull final Principal p) {
+    public Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> cachedAttributes = this.cache.get(p.getId());
         if (cachedAttributes != null) {
             LOGGER.debug("Found [{}] cached attributes for principal [{}]", cachedAttributes.size(), p.getId());
