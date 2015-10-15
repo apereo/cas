@@ -20,7 +20,6 @@ package org.jasig.cas.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.slf4j.Logger;
@@ -47,22 +46,6 @@ public final class LdapUtils {
      */
     private LdapUtils() {
         // private constructor so that no one can instantiate.
-    }
-
-    /**
-     * Close the given context and ignore any thrown exception. This is useful
-     * for typical finally blocks in manual Ldap statements.
-     *
-     * @param context the Ldap connection to close
-     */
-    public static void closeConnection(final Connection context) {
-        if (context != null && context.isOpen()) {
-            try {
-                context.close();
-            } catch (final Exception ex) {
-                LOGGER.warn("Could not close ldap connection", ex);
-            }
-        }
     }
 
     /**

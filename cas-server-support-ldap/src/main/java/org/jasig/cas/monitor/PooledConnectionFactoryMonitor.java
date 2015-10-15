@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.monitor;
 
-import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.Validator;
@@ -70,12 +69,12 @@ public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
 
     @Override
     protected StatusCode checkPool() throws Exception {
-        final Connection conn = this.connectionFactory.getConnection();
-        try {
-            return this.validator.validate(conn) ? StatusCode.OK : StatusCode.ERROR;
-        } finally {
-            LdapUtils.closeConnection(conn);
+        if (this.connectionFactory != null && this.validator != null) {
+            try (final Connection conn = this.connectionFactory.getConnection()) {
+                return this.validator.validate(conn) ? StatusCode.OK : StatusCode.ERROR;
+            }
         }
+        return StatusCode.UNKNOWN;
     }
 
     @Override
