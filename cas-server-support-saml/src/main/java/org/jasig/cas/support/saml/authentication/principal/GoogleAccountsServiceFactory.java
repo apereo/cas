@@ -96,8 +96,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         final String requestId = root.getAttributeValue("ID");
 
         final GoogleAccountsServiceResponseBuilder builder =
-            new GoogleAccountsServiceResponseBuilder(this.privateKey, this.publicKey,
-                BUILDER, this.servicesManager);
+            new GoogleAccountsServiceResponseBuilder(this.privateKey, this.publicKey, BUILDER);
         return new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId, builder);
     }
 
