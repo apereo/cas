@@ -61,6 +61,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
@@ -77,7 +78,7 @@ import java.util.List;
  * @author Misagh Moayyed mmoayyed@unicon.net
  * @since 4.1
  */
-public abstract class AbstractSamlObjectBuilder {
+public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
      */
