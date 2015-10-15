@@ -106,7 +106,8 @@
         <version>${maven-jetty-plugin.version}</version>
         <configuration>
           <webApp>
-            <contextPath>/cas</contextPath>
+              <contextPath>/cas</contextPath>
+              <overrideDescriptor>${cs.dir}/etc/jetty/web.xml</overrideDescriptor>
           </webApp>
         </configuration>
       </plugin>
