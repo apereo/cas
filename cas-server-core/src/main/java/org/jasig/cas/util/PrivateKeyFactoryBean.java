@@ -66,4 +66,12 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey>
     public void setAlgorithm(final String algorithm) {
         this.algorithm = algorithm;
     }
+
+    public Resource getLocation() {
+        return location;
+    }
+
+    public String getAlgorithm() {
+        return algorithm;
+    }
 }
