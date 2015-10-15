@@ -43,7 +43,7 @@ Adjust the following settings in your `cas.properties`:
 ##
 # Google Apps public/private key
 #
-# cas.saml.googleapps.publickey.file=classpath:private.key
+# cas.saml.googleapps.publickey.file=classpath:private.p8
 # cas.saml.googleapps.privatekey.file=classpath:public.key
 # cas.saml.googleapps.key.alg=RSA
 {% endhighlight %}

@@ -184,7 +184,7 @@ public final class TestUtils {
             policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
             final CachingPrincipalAttributesRepository repo =
-                    new CachingPrincipalAttributesRepository(new StubPersonAttributeDao(), TimeUnit.SECONDS , 10);
+                    new CachingPrincipalAttributesRepository(new StubPersonAttributeDao(), TimeUnit.SECONDS, 10);
             repo.setMergingStrategy(new NoncollidingAttributeAdder());
             policy.setPrincipalAttributesRepository(repo);
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
