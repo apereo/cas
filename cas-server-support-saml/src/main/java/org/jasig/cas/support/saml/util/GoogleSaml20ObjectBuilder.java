@@ -36,6 +36,8 @@ import java.lang.reflect.Field;
  * @since 4.1.0
  */
 public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
+    private static final long serialVersionUID = 2979638064754730668L;
+
     @Override
     public final QName getSamlObjectQName(final Class objectType) throws RuntimeException {
         try {
