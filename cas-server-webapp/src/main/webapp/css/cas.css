@@ -528,3 +528,13 @@ table.principal_attributes>tbody>tr>td {
 .statisticsView .adminPanels.container-fluid {
     padding-right: 0;
 }
+
+/**
+ * View Configuration Styles
+ */
+#viewConfigError {
+    display: none;
+}
+#view-configuration {
+    display: none;
+}
