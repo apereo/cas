@@ -106,7 +106,7 @@
         <version>${maven-jetty-plugin.version}</version>
         <configuration>
           <webApp>
-            <contextPath>/cas</contextPath>
+              <contextPath>/cas</contextPath>
           </webApp>
         </configuration>
       </plugin>
