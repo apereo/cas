@@ -217,6 +217,7 @@
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>${maven-jetty-plugin.version}</version>
                     <configuration>
+                        <jettyXml>${cs.dir}/etc/jetty/jetty.xml,${cs.dir}/etc/jetty/jetty-ssl.xml,${cs.dir}/etc/jetty/jetty-https.xml</jettyXml>
                         <systemProperties>
                             <systemProperty>
                                 <name>org.eclipse.jetty.annotations.maxWait</name>
