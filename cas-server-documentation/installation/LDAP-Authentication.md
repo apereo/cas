@@ -61,7 +61,7 @@ The above configuration defines a map of attributes. Keys are LDAP attribute nam
 {% endhighlight %}
 
 ## Schema Declaration
-LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that the XML configuration file contains the 'ldaptive' namespace declarations:
+LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that the XML configuration file contains the `ldaptive` namespace declarations:
 
 {% highlight xml %}
 <beans xmlns="http://www.springframework.org/schema/beans"
