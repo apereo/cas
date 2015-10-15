@@ -18,67 +18,80 @@
  */
 package org.jasig.cas.support.pac4j.authentication.handler.support;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.webflow.context.ExternalContextHolder;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 
-import javax.security.auth.login.FailedLoginException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
 /**
- * Specialized handler which builds the authenticated user directly from the retrieved user profile.
+ * Pac4j authentication handler which gets the credentials and then the user profile
+ * in a delegated authentication process from an external identity provider.
  *
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class ClientAuthenticationHandler extends AbstractClientAuthenticationHandler {
+@Component("clientAuthenticationHandler")
+@SuppressWarnings("unchecked")
+public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
     /**
-     * Whether to use the typed identifier (by default) or just the identifier.
+     * The clients for authentication.
      */
-    private boolean typedIdUsed = true;
+    @NotNull
+    @Autowired
+    private Clients clients;
 
-    /**
-     * Define the clients.
-     *
-     * @param theClients The clients for authentication
-     */
-    public ClientAuthenticationHandler(final Clients theClients) {
-        super(theClients);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected HandlerResult createResult(final ClientCredential credentials, final UserProfile profile)
-        throws GeneralSecurityException, PreventedException {
-        final String id;
-        if (typedIdUsed) {
-            id = profile.getTypedId();
-        } else {
-            id = profile.getId();
-        }
-        if (StringUtils.isNotBlank(id)) {
-            credentials.setUserProfile(profile);
-            return new DefaultHandlerResult(
-                this,
-                new BasicCredentialMetaData(credentials),
-                this.principalFactory.createPrincipal(id, profile.getAttributes()));
-        }
-        throw new FailedLoginException("No identifier found for this user profile: " + profile);
+    public final boolean supports(final Credential credential) {
+        return credential != null && ClientCredential.class.isAssignableFrom(credential.getClass());
     }
 
-    public boolean isTypedIdUsed() {
-        return typedIdUsed;
+    @Override
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+        final ClientCredential clientCredentials = (ClientCredential) credential;
+        logger.debug("clientCredentials  {}", clientCredentials);
+
+        final Credentials credentials = clientCredentials.getCredentials();
+        final String clientName = credentials.getClientName();
+        logger.debug("clientName:  {}", clientName);
+
+        // get client
+        final Client<Credentials, UserProfile> client = this.clients.findClient(clientName);
+        logger.debug("client: {}", client);
+
+        // web context
+        final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        final HttpServletRequest request = (HttpServletRequest) servletExternalContext.getNativeRequest();
+        final HttpServletResponse response = (HttpServletResponse) servletExternalContext.getNativeResponse();
+        final WebContext webContext = new J2EContext(request, response);
+
+        // get user profile
+        final UserProfile userProfile = client.getUserProfile(credentials, webContext);
+        logger.debug("userProfile : {}", userProfile);
+
+        return createResult(clientCredentials, userProfile);
     }
 
-    public void setTypedIdUsed(final boolean typedIdUsed) {
-        this.typedIdUsed = typedIdUsed;
+    public Clients getClients() {
+        return clients;
+    }
+
+    public void setClients(final Clients clients) {
+        this.clients = clients;
     }
 }

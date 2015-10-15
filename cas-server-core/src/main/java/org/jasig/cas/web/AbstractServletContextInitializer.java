@@ -154,7 +154,7 @@ public abstract class AbstractServletContextInitializer
      * Add authentication metadata populator.
      * @param populator the populator
      */
-    protected final void addAuthenticationHandlerPrincipalResolver(final AuthenticationMetaDataPopulator populator) {
+    protected final void addAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
         logger.debug("Adding {} to application context", populator);
         final List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators =
             applicationContext.getBean("authenticationMetadataPopulators", List.class);

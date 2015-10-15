@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
+import org.springframework.stereotype.Component;
 
 /**
  * This class is a meta data populator for authentication. The client name associated to the authentication is added
@@ -30,6 +31,7 @@ import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Component("clientAuthenticationMetaDataPopulator")
 public final class ClientAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     /***
