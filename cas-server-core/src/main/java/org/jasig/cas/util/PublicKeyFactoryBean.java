@@ -70,6 +70,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
         return resource;
     }
 
+
     public String getAlgorithm() {
         return algorithm;
     }

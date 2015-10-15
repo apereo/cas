@@ -125,12 +125,19 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
             if (this.privateKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
                 bean.setLocation(new ClassPathResource(
                     StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            } else if (this.privateKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
+                bean.setLocation(new FileSystemResource(
+                        StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
             } else {
                 bean.setLocation(new FileSystemResource(this.privateKeyLocation));
             }
 
             bean.setAlgorithm(this.keyAlgorithm);
+            logger.debug("Loading Google Apps private key from {} with key algorithm {}",
+                    bean.getLocation(), bean.getAlgorithm());
+
             bean.afterPropertiesSet();
+
 
             logger.debug("Creating Google Apps private key instance via {}", this.publicKeyLocation);
             return bean.getObject();
@@ -146,12 +153,19 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
             final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
             if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
                 bean.setLocation(new ClassPathResource(
-                    StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+                        StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
+                bean.setLocation(new FileSystemResource(
+                        StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
             } else {
                 bean.setLocation(new FileSystemResource(this.publicKeyLocation));
             }
 
             bean.setAlgorithm(this.keyAlgorithm);
+
+            logger.debug("Loading Google Apps public key from {} with key algorithm {}",
+                    bean.getResource(), bean.getAlgorithm());
+
             bean.afterPropertiesSet();
 
             logger.debug("Creating Google Apps public key instance via {}", this.publicKeyLocation);
@@ -169,5 +183,7 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
                     || StringUtils.isNotBlank(this.keyAlgorithm);
         }
     }
+    
+
 
 }
