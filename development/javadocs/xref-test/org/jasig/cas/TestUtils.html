@@ -192,7 +192,7 @@
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>             policy.setAuthorizedToReleaseProxyGrantingTicket(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L185" href="#L185">185</a> 
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>             <strong class="jxr_keyword">final</strong> CachingPrincipalAttributesRepository repo =
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>                     <strong class="jxr_keyword">new</strong> CachingPrincipalAttributesRepository(<strong class="jxr_keyword">new</strong> StubPersonAttributeDao(), TimeUnit.SECONDS , 10);
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>                     <strong class="jxr_keyword">new</strong> CachingPrincipalAttributesRepository(<strong class="jxr_keyword">new</strong> StubPersonAttributeDao(), TimeUnit.SECONDS, 10);
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>             repo.setMergingStrategy(<strong class="jxr_keyword">new</strong> NoncollidingAttributeAdder());
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>             policy.setPrincipalAttributesRepository(repo);
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>             policy.setAttributeFilter(<strong class="jxr_keyword">new</strong> RegisteredServiceRegexAttributeFilter(<span class="jxr_string">"https://.+"</span>));
