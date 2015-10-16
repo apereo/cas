@@ -24,8 +24,9 @@ import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
-import org.jasig.cas.web.view.JsonViewUtils;
+import org.jasig.cas.services.web.view.JsonViewUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +51,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Controller
+@Controller("manageRegisteredServicesMultiActionController")
 public final class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
     @NotNull
     private final Service defaultService;
@@ -62,8 +63,9 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * @param defaultServiceUrl the default service url
      */
     @Autowired
-    public ManageRegisteredServicesMultiActionController(final ServicesManager servicesManager,
-            @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
+    public ManageRegisteredServicesMultiActionController(
+        @Qualifier("servicesManager") final ServicesManager servicesManager,
+        @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
         super(servicesManager);
         this.defaultService = new WebApplicationServiceFactory().createService(defaultServiceUrl);
     }

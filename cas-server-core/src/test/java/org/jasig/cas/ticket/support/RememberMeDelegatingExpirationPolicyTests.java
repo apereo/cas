@@ -43,7 +43,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
 
     /** Factory to create the principal type. **/
     @NotNull
-    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    protected final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
 
     private RememberMeDelegatingExpirationPolicy p;
@@ -63,7 +63,7 @@ public final class RememberMeDelegatingExpirationPolicyTests {
                         RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
+        t.grantServiceTicket("55", TestUtils.getService(), this.p, false, true);
         assertTrue(t.isExpired());
 
     }
@@ -73,9 +73,8 @@ public final class RememberMeDelegatingExpirationPolicyTests {
         final Authentication authentication = TestUtils.getAuthentication();
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", TestUtils.getService(), this.p, false);
+        t.grantServiceTicket("55", TestUtils.getService(), this.p, false, true);
         assertFalse(t.isExpired());
 
     }
-
 }

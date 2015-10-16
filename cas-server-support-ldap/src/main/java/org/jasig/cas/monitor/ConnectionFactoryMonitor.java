@@ -18,11 +18,15 @@
  */
 package org.jasig.cas.monitor;
 
-import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.pool.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
 
 /**
  * Monitors an ldaptive {@link ConnectionFactory}.  While this class can be used with instances of
@@ -31,6 +35,7 @@ import org.ldaptive.pool.Validator;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("ldapConnectionFactoryMonitor")
 public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
 
     /** OK status. */
@@ -40,11 +45,22 @@ public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
     private static final Status ERROR = new Status(StatusCode.ERROR);
 
     /** Source of connections to validate. */
-    private final ConnectionFactory connectionFactory;
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("connectionFactoryMonitorConnectionFactory")
+    private ConnectionFactory connectionFactory;
 
     /** Connection validator. */
-    private final Validator<Connection> validator;
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("connectionFactoryMonitorValidator")
+    private Validator<Connection> validator;
 
+
+    /**
+     * Instantiates a new Connection factory monitor.
+     */
+    public ConnectionFactoryMonitor() {}
 
     /**
      * Creates a new instance that monitors the given connection factory.
@@ -65,18 +81,17 @@ public class ConnectionFactoryMonitor extends AbstractNamedMonitor<Status> {
      */
     @Override
     public Status observe() {
-        Connection conn = null;
-        try {
-            conn = this.connectionFactory.getConnection();
-            if (!conn.isOpen()) {
-                conn.open();
+        if (this.connectionFactory != null && this.validator != null) {
+            try (final Connection conn = this.connectionFactory.getConnection()) {
+                if (!conn.isOpen()) {
+                    conn.open();
+                }
+                return this.validator.validate(conn) ? OK : ERROR;
+            } catch (final LdapException e) {
+                logger.warn("Validation failed with error.", e);
             }
-            return this.validator.validate(conn) ? OK : ERROR;
-        } catch (final LdapException e) {
-            logger.warn("Validation failed with error.", e);
-        } finally {
-            LdapUtils.closeConnection(conn);
+            return ERROR;
         }
-        return ERROR;
+        return Status.UNKNOWN;
     }
 }

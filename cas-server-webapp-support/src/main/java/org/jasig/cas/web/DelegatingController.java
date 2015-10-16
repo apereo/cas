@@ -59,7 +59,7 @@ public class DelegatingController extends AbstractController {
                                                     throws Exception {
         for (final AbstractDelegateController delegate : delegates) {
             if (delegate.canHandle(request, response)) {
-                return delegate.handleRequest(request, response);
+                return delegate.handleRequestInternal(request, response);
             }
         }
         return generateErrorView("INVALID_REQUEST", "INVALID_REQUEST", null);

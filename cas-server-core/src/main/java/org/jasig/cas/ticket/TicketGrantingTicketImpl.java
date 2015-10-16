@@ -19,6 +19,7 @@
 package org.jasig.cas.ticket;
 
 import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
@@ -32,11 +33,11 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -141,7 +142,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     @Override
     public synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
-        final boolean credentialsProvided) {
+        final boolean credentialsProvided, final boolean onlyTrackMostRecentSession) {
         final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
             service, this.getCountOfUses() == 0 || credentialsProvided,
             expirationPolicy);
@@ -151,14 +152,43 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
         final List<Authentication> authentications = getChainedAuthentications();
         service.setPrincipal(authentications.get(authentications.size()-1).getPrincipal());
 
+        if (onlyTrackMostRecentSession) {
+            final String path = normalizePath(service);
+            final Collection<Service> existingServices = services.values();
+            // loop on existing services
+            for (final Service existingService : existingServices) {
+                final String existingPath = normalizePath(existingService);
+                // if an existing service has the same normalized path, remove it
+                // and its service ticket to keep the latest one
+                if (StringUtils.equals(path, existingPath)) {
+                    existingServices.remove(existingService);
+                    LOGGER.trace("removed previous ST for service: {}", existingService);
+                    break;
+                }
+            }
+        }
         this.services.put(id, service);
 
         return serviceTicket;
     }
 
     /**
+     * Normalize the path of a service by removing the query string and everything after a semi-colon.
+     *
+     * @param service the service to normalize
+     * @return the normalized path
+     */
+    private String normalizePath(final Service service) {
+        String path = service.getId();
+        path = StringUtils.substringBefore(path, "?");
+        path = StringUtils.substringBefore(path, ";");
+        path = StringUtils.substringBefore(path, "#");
+        return path;
+    }
+
+    /**
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
-     * Unlike {@link Collections#unmodifiableMap(java.util.Map)},
+     * Unlike {@link java.util.Collections#unmodifiableMap(java.util.Map)},
      * which is a view of a separate map which can still change, an instance of {@link ImmutableMap}
      * contains its own data and will never change.
      *
@@ -260,5 +290,6 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
                 .append(ticket.getId(), this.getId())
                 .isEquals();
     }
+
 
 }

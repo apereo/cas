@@ -27,6 +27,11 @@ where _h(K)_ is the hash of key _K_, _N1 ... Nm_ is the set of cache nodes, and 
 The function is deterministic in that it consistently produces the same result for a given key and set of cache nodes.
 Note that a change in the set of available cache nodes may produce a different target node on which to store the key.
 
+Enable the registry via:
+
+{% highlight properties %}
+<alias name="memcachedTicketRegistry" alias="ticketRegistry" />
+{% endhighlight %}
 
 ## Configuration Considerations
 There are three core configuration concerns with memcached:
@@ -42,7 +47,7 @@ corresponding value. The choice of hashing algorithm has implications for failov
 for HA deployments. The `FNV1_64_HASH` algorithm is recommended since it offers a nice balance of speed and low
 collision rate; see the
 [javadocs](https://github.com/couchbase/spymemcached/blob/2.8.1/src/main/java/net/spy/memcached/DefaultHashAlgorithm.java)
-for alternatives. 
+for alternatives.
 
 
 ### Node Locator
@@ -80,7 +85,6 @@ compact data, which benefits both storage requirements and throughput.
 # memcached.locatorType=ARRAY_MOD
 # memcached.failureMode=Redistribute
 # memcached.buffersize=8192
-
 {% endhighlight %}
 
 ## High Availability Considerations

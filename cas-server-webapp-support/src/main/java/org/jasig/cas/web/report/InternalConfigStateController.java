@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +48,9 @@ public final class InternalConfigStateController {
     private static final Logger LOGGER = LoggerFactory.getLogger(InternalConfigStateController.class);
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired(required = true)
     @Qualifier("casProperties")

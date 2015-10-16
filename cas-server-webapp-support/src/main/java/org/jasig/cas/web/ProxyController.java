@@ -18,14 +18,21 @@
  */
 package org.jasig.cas.web;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +53,9 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public final class ProxyController extends AbstractController {
+@Component("proxyController")
+@Controller
+public class ProxyController {
 
     /** View for if the creation of a "Proxy" Ticket Fails. */
     private static final String CONST_PROXY_FAILURE = "cas2ProxyFailureView";
@@ -61,28 +70,30 @@ public final class ProxyController extends AbstractController {
     @NotNull
     private CentralAuthenticationService centralAuthenticationService;
 
+    @Autowired
+    private ApplicationContext context;
+
     /**
      * Instantiates a new proxy controller, with cache seconds set to 0.
      */
-    public ProxyController() {
-        setCacheSeconds(0);
-    }
+    public ProxyController() {}
 
     /**
-     * {@inheritDoc}
+     * Handle request internal.
+     *
+     * @param request the request
+     * @param response the response
      * @return ModelAndView containing a view name of either
      * <code>casProxyFailureView</code> or <code>casProxySuccessView</code>
      */
-    @Override
-    protected ModelAndView handleRequestInternal(
-        final HttpServletRequest request, final HttpServletResponse response)
-        throws Exception {
-        final String ticket = request.getParameter("pgt");
+    @RequestMapping(path="/proxy", method = RequestMethod.GET)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
+        final String ticket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET);
         final Service targetService = getTargetService(request);
 
         if (!StringUtils.hasText(ticket) || targetService == null) {
-            return generateErrorView("INVALID_REQUEST",
-                "INVALID_REQUEST_PROXY", null);
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
+                CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
         }
 
         try {
@@ -90,11 +101,11 @@ public final class ProxyController extends AbstractController {
                 this.centralAuthenticationService.grantServiceTicket(ticket,
                     targetService));
         } catch (final AbstractTicketException e) {
-            return generateErrorView(e.getCode(), e.getCode(),
-                new Object[] {ticket});
+            return generateErrorView(e.getCode(), e.getCode(), new Object[] {ticket}, request);
         } catch (final UnauthorizedServiceException e) {
-            return generateErrorView("UNAUTHORIZED_SERVICE",
-                "UNAUTHORIZED_SERVICE_PROXY", new Object[] {targetService});
+            return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE,
+                CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY,
+                new Object[] {targetService}, request);
         }
     }
 
@@ -118,11 +129,11 @@ public final class ProxyController extends AbstractController {
      * @return the model and view
      */
     private ModelAndView generateErrorView(final String code,
-        final String description, final Object[] args) {
+        final String description, final Object[] args, final HttpServletRequest request) {
         final ModelAndView modelAndView = new ModelAndView(CONST_PROXY_FAILURE);
         modelAndView.addObject("code", code);
-        modelAndView.addObject("description", getMessageSourceAccessor()
-            .getMessage(description, args, description));
+        modelAndView.addObject("description", this.context.getMessage(description, args,
+            description, request.getLocale()));
 
         return modelAndView;
     }
@@ -131,8 +142,14 @@ public final class ProxyController extends AbstractController {
      * @param centralAuthenticationService The centralAuthenticationService to
      * set.
      */
+    @Autowired
     public void setCentralAuthenticationService(
+        @Qualifier("centralAuthenticationService")
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setApplicationContext(final ApplicationContext context) {
+        this.context = context;
     }
 }

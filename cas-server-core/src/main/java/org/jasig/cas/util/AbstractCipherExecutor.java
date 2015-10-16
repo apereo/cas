@@ -36,7 +36,13 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
     /** Logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final AesKey signingKey;
+    private AesKey signingKey;
+
+    /**
+     * Instantiates a new cipher executor.
+     *
+     */
+    protected AbstractCipherExecutor() {}
 
     /**
      * Instantiates a new cipher executor.
@@ -44,6 +50,10 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @param signingSecretKey the signing key
      */
     public AbstractCipherExecutor(final String signingSecretKey) {
+        setSigningKey(signingSecretKey);
+    }
+
+    public void setSigningKey(final String signingSecretKey) {
         this.signingKey = new AesKey(signingSecretKey.getBytes());
     }
 
@@ -91,4 +101,6 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             throw new RuntimeException(e);
         }
     }
+
+
 }

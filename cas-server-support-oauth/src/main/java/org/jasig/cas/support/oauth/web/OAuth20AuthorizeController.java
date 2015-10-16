@@ -19,14 +19,11 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,58 +37,47 @@ import javax.servlet.http.HttpSession;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuth20AuthorizeController extends AbstractController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeController.class);
-
-    private final String loginUrl;
-
-    private final ServicesManager servicesManager;
+@Component("authorizeController")
+public final class OAuth20AuthorizeController extends BaseOAuthWrapperController {
 
     /**
      * Instantiates a new o auth20 authorize controller.
-     *
-     * @param servicesManager the services manager
-     * @param loginUrl the login url
      */
-    public OAuth20AuthorizeController(final ServicesManager servicesManager, final String loginUrl) {
-        this.servicesManager = servicesManager;
-        this.loginUrl = loginUrl;
-    }
+    public OAuth20AuthorizeController() {}
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
 
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        LOGGER.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
+        logger.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
 
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        LOGGER.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
+        logger.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
 
         final String state = request.getParameter(OAuthConstants.STATE);
-        LOGGER.debug("{} : {}", OAuthConstants.STATE, state);
+        logger.debug("{} : {}", OAuthConstants.STATE, state);
 
         // clientId is required
         if (StringUtils.isBlank(clientId)) {
-            LOGGER.error("Missing {}", OAuthConstants.CLIENT_ID);
+            logger.error("Missing {}", OAuthConstants.CLIENT_ID);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
         // redirectUri is required
         if (StringUtils.isBlank(redirectUri)) {
-            LOGGER.error("Missing {}", OAuthConstants.REDIRECT_URI);
+            logger.error("Missing {}", OAuthConstants.REDIRECT_URI);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         if (service == null) {
-            LOGGER.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
+            logger.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
         final String serviceId = service.getServiceId();
         if (!redirectUri.matches(serviceId)) {
-            LOGGER.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
+            logger.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
             return new ModelAndView(OAuthConstants.ERROR_VIEW);
         }
 
@@ -104,11 +90,11 @@ public final class OAuth20AuthorizeController extends AbstractController {
 
         final String callbackAuthorizeUrl = request.getRequestURL().toString()
                 .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
-        LOGGER.debug("{} : {}", OAuthConstants.CALLBACK_AUTHORIZE_URL, callbackAuthorizeUrl);
+        logger.debug("{} : {}", OAuthConstants.CALLBACK_AUTHORIZE_URL, callbackAuthorizeUrl);
 
         final String loginUrlWithService = OAuthUtils.addParameter(loginUrl, OAuthConstants.SERVICE,
                 callbackAuthorizeUrl);
-        LOGGER.debug("loginUrlWithService : {}", loginUrlWithService);
+        logger.debug("loginUrlWithService : {}", loginUrlWithService);
         return OAuthUtils.redirectTo(loginUrlWithService);
     }
 }

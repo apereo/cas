@@ -19,6 +19,7 @@
 
 package org.jasig.cas.support.saml.authentication.principal;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.springframework.stereotype.Component;
@@ -93,7 +94,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
     @Override
     public SamlService createService(final String id) {
-        return null;
+        throw new NotImplementedException("This operation is not supported. ");
     }
 
     /**

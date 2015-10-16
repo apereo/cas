@@ -20,6 +20,7 @@ package org.jasig.cas.authentication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * We utilize the {@link org.jasig.cas.authentication.AuthenticationMetaDataPopulator} to retrieve and store
@@ -29,6 +30,7 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("cacheCredentialsMetaDataPopulator")
 public final class CacheCredentialsMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

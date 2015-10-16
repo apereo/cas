@@ -23,10 +23,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsServiceFactory;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
+import org.jasig.cas.support.saml.web.SamlValidateController;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.util.PublicKeyFactoryBean;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
+import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowire;
@@ -69,9 +71,15 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
     @Qualifier("samlServiceTicketUniqueIdGenerator")
     private UniqueTicketIdGenerator samlServiceTicketUniqueIdGenerator;
 
+    @Autowired
+    @Qualifier("samlValidateController")
+    private SamlValidateController samlValidateController;
+
     @Override
-    public void initializeServletContext(final ServletContextEvent sce) {
-        addEndpointMappingToCasServlet(sce, SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
+    public void initializeServletContext(final ServletContextEvent event) {
+        if (WebUtils.isCasServletInitializing(event)) {
+            addEndpointMappingToCasServlet(event, SamlProtocolConstants.ENDPOINT_SAML_VALIDATE);
+        }
     }
 
     @Override
@@ -84,8 +92,7 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
 
     @Override
     protected void initializeServletApplicationContext() {
-        addControllerToCasServletHandlerMapping(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE,
-                "samlValidateController");
+        addControllerToCasServletHandlerMapping(SamlProtocolConstants.ENDPOINT_SAML_VALIDATE, samlValidateController);
     }
 
     @Component
@@ -118,12 +125,19 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
             if (this.privateKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
                 bean.setLocation(new ClassPathResource(
                     StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            } else if (this.privateKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
+                bean.setLocation(new FileSystemResource(
+                        StringUtils.removeStart(this.privateKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
             } else {
                 bean.setLocation(new FileSystemResource(this.privateKeyLocation));
             }
 
             bean.setAlgorithm(this.keyAlgorithm);
+            logger.debug("Loading Google Apps private key from {} with key algorithm {}",
+                    bean.getLocation(), bean.getAlgorithm());
+
             bean.afterPropertiesSet();
+
 
             logger.debug("Creating Google Apps private key instance via {}", this.publicKeyLocation);
             return bean.getObject();
@@ -139,12 +153,19 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
             final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
             if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
                 bean.setLocation(new ClassPathResource(
-                    StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+                        StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
+                bean.setLocation(new FileSystemResource(
+                        StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
             } else {
                 bean.setLocation(new FileSystemResource(this.publicKeyLocation));
             }
 
             bean.setAlgorithm(this.keyAlgorithm);
+
+            logger.debug("Loading Google Apps public key from {} with key algorithm {}",
+                    bean.getResource(), bean.getAlgorithm());
+
             bean.afterPropertiesSet();
 
             logger.debug("Creating Google Apps public key instance via {}", this.publicKeyLocation);
@@ -162,5 +183,7 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
                     || StringUtils.isNotBlank(this.keyAlgorithm);
         }
     }
+    
+
 
 }

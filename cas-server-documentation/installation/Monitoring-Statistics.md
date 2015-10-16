@@ -29,6 +29,86 @@ Health: OK
     1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 {% endhighlight %}
 
+The list of configured monitors are all defined in `deployerConfigContext.xml` file:
+
+{% highlight xml %}
+
+<util:list id="monitorsList">
+  <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
+  <bean class="org.jasig.cas.monitor.SessionMonitor"
+        p:ticketRegistry-ref="ticketRegistry"
+        p:serviceTicketCountWarnThreshold="5000"
+        p:sessionCountWarnThreshold="100000" />
+</util:list>
+
+{% endhighlight %}
+
+The following optional monitors are also available:
+
+- MemcachedMonitor
+
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+
+- EhcacheMonitor
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+- DataSourceMonitor
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+- PooledConnectionFactoryMonitor
+
+{% highlight xml %}
+
+
+
+{% endhighlight %}
+
+- ConnectionFactoryMonitor
+Monitors an LDAP connection factories provided by Ldaptive.
+
+{% highlight xml %}
+
+<bean class="org.jasig.cas.monitor.ConnectionFactoryMonitor"
+      c:factory-ref="provisioningConnectionFactory"
+      c:validator-ref="searchValidator" />
+
+<ldaptive:pooled-connection-factory
+        id="provisioningConnectionFactory"
+        ldapUrl="${ldap.url}"
+        blockWaitTime="${ldap.pool.blockWaitTime}"
+        failFastInitialize="true"
+        connectTimeout="${ldap.connectTimeout}"
+        useStartTLS="${ldap.useStartTLS}"
+        validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+        validatePeriodically="${ldap.pool.validatePeriodically}"
+        validatePeriod="${ldap.pool.validatePeriod}"
+        idleTime="${ldap.pool.idleTime}"
+        maxPoolSize="${ldap.pool.maxSize}"
+        minPoolSize="${ldap.pool.minSize}"
+        useSSL="${ldap.use.ssl:false}"
+        prunePeriod="${ldap.pool.prunePeriod}"
+        provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+/>
+
+<bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+{% endhighlight %}
 
 ## Internal Configuration Report
 
@@ -68,30 +148,6 @@ The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring
 {% endhighlight %}
 
 Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
-
-{% highlight xml %}
-
-<metrics:reporter type="jmx" metric-registry="metrics" />
-
-{% endhighlight %}
-
-To explore this you can use VisualVM (which ships with most JDKs as jvisualvm) with the VisualVM-MBeans plugins installed or JConsole (which ships with most JDKs as jconsole):
-
-![](http://i.imgur.com/g8fmUlE.png)
-
-Additionally, various metrics on JVM performance and data are also reported. The metrics contain a number of reusable gauges and metric sets which allow you to easily instrument JVM internals.
-
-{% highlight xml %}
-
-<metrics:register metric-registry="metrics">
-    <bean metrics:name="jvm.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
-    <bean metrics:name="jvm.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
-    <bean metrics:name="jvm.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet" />
-    <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
-</metrics:register>
-
-{% endhighlight %}
-
 Supported metrics include:
 
 - Run count and elapsed times for all supported garbage collectors

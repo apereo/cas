@@ -19,6 +19,8 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -45,15 +47,14 @@ import java.util.Map;
  *
  * @since 3.0.0
  */
+@Component("acceptUsersAuthenticationHandler")
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The list of users we will accept. */
     @NotNull
+    @Value("#{T(java.util.Collections).singletonMap('casuser', 'Mellon')}")
     private Map<String, String> users;
 
-    /**
-     * {@inheritDoc}
-     **/
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
