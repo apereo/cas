@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.validation;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 /**
  * Base validation specification for the CAS protocol. This specification checks
  * for the presence of renew=true and if requested, succeeds only if ticket
@@ -26,10 +29,9 @@ package org.jasig.cas.validation;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Component("abstractCasProtocolValidationSpecification")
+@Scope(value = "prototype")
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
-
-    /** The default value for the renew attribute is false. */
-    private static final boolean DEFAULT_RENEW = false;
 
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;
@@ -38,8 +40,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
      * Instantiates a new abstract cas protocol validation specification.
      */
     public AbstractCasProtocolValidationSpecification() {
-        this.renew = DEFAULT_RENEW;
-    }
+            }
 
     /**
      * Instantiates a new abstract cas protocol validation specification.
@@ -68,9 +69,6 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
         return this.renew;
     }
 
-    /* (non-Javadoc)
-     * @see org.jasig.cas.validation.ValidationSpecification#isSatisfiedBy(org.jasig.cas.validation.Assertion)
-     */
     @Override
     public final boolean isSatisfiedBy(final Assertion assertion) {
         return isSatisfiedByInternal(assertion)
@@ -83,5 +81,5 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
      * @param assertion the assertion
      * @return true, if the subclass implementation is satisfied by the assertion
      */
-    protected abstract boolean isSatisfiedByInternal(final Assertion assertion);
+    protected abstract boolean isSatisfiedByInternal(Assertion assertion);
 }

@@ -36,12 +36,6 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-        <bean id="ticketRegistry"
-              class="org.jasig.cas.ticket.registry.MemCacheTicketRegistry"
-              c:client-ref="memcachedClient"
-              c:ticketGrantingTicketTimeOut="${tgt.maxTimeToLiveInSeconds:7200}"
-              c:serviceTicketTimeOut="${st.timeToKillInSeconds:10}" />
-
         <bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean"
               p:servers="${memcached.servers:cas-1.example.org:11211}"
               p:protocol="${memcached.protocol:BINARY}"

@@ -26,6 +26,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
+import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -35,6 +36,7 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
+import org.springframework.context.ApplicationContext;
 
 import java.io.StringWriter;
 import java.security.PrivateKey;
@@ -54,7 +56,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
     private final GoogleSaml20ObjectBuilder samlObjectBuilder;
-    private final ServicesManager servicesManager;
 
     /**
      * Instantiates a new Google accounts service response builder.
@@ -62,16 +63,13 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @param privateKey the private key
      * @param publicKey the public key
      * @param samlObjectBuilder the saml object builder
-     * @param servicesManager the services manager
      */
     public GoogleAccountsServiceResponseBuilder(final PrivateKey privateKey,
                                                 final PublicKey publicKey,
-                                                final GoogleSaml20ObjectBuilder samlObjectBuilder,
-                                                final ServicesManager servicesManager) {
+                                                final GoogleSaml20ObjectBuilder samlObjectBuilder) {
         this.privateKey = privateKey;
         this.publicKey = publicKey;
         this.samlObjectBuilder = samlObjectBuilder;
-        this.servicesManager = servicesManager;
     }
 
     @Override
@@ -98,7 +96,14 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final DateTime currentDateTime = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
         final DateTime notBeforeIssueInstant = DateTime.parse("2003-04-17T00:46:02Z");
 
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        /*
+         * Must be looked up directly from the context
+         * because the services manager is not serializable
+         * and cannot be class field.
+         */
+        final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+        final ServicesManager servicesManager = context.getBean("servicesManager", ServicesManager.class);
+        final RegisteredService registeredService = servicesManager.findServiceBy(service);
         final String userId = registeredService.getUsernameAttributeProvider()
                     .resolveUsername(service.getPrincipal(), service);
 

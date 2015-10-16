@@ -38,14 +38,17 @@ public class AbstractPoolMonitorTests {
     @Test
     public void verifyObserveOK() throws Exception {
         final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {
+            @Override
             protected StatusCode checkPool() throws Exception {
                 return StatusCode.OK;
             }
 
+            @Override
             protected int getIdleCount() {
                 return 3;
             }
 
+            @Override
             protected int getActiveCount() {
                 return 2;
             }
@@ -62,15 +65,18 @@ public class AbstractPoolMonitorTests {
     @Test
     public void verifyObserveWarn() throws Exception {
         final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {
+            @Override
             protected StatusCode checkPool() throws Exception {
                 Thread.sleep(1000);
                 return StatusCode.OK;
             }
 
+            @Override
             protected int getIdleCount() {
                 return 1;
             }
 
+            @Override
             protected int getActiveCount() {
                 return 1;
             }
@@ -87,14 +93,17 @@ public class AbstractPoolMonitorTests {
     @Test
     public void verifyObserveError() throws Exception {
         final AbstractPoolMonitor monitor = new AbstractPoolMonitor() {
+            @Override
             protected StatusCode checkPool() throws Exception {
                 throw new RuntimeException("Pool check failed due to rogue penguins.");
             }
 
+            @Override
             protected int getIdleCount() {
                 return 1;
             }
 
+            @Override
             protected int getActiveCount() {
                 return 1;
             }

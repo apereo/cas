@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.authentication;
 
+import org.springframework.stereotype.Component;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,6 +33,8 @@ import java.util.Set;
  * @author Alaa Nassef
  * @since 4.0.0
  */
+
+@Component("successfulHandlerMetaDataPopulator")
 public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDataPopulator {
     /** Attribute name containing collection of handler names that successfully authenticated credential. */
     public static final String SUCCESSFUL_AUTHENTICATION_HANDLERS = "successfulAuthenticationHandlers";

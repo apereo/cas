@@ -19,6 +19,7 @@
 package org.jasig.cas.web.support;
 
 import org.jasig.inspektr.common.web.ClientInfoHolder;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,11 +30,17 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Component("inMemoryIpAddressThrottle")
 public final class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter
              extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter {
 
     @Override
     protected String constructKey(final HttpServletRequest request) {
         return ClientInfoHolder.getClientInfo().getClientIpAddress();
+    }
+
+    @Override
+    protected String getName() {
+        return "inMemoryIpAddressThrottle";
     }
 }

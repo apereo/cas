@@ -65,6 +65,7 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
     @Override
     protected StatusCode checkPool() throws Exception {
         return this.jdbcTemplate.query(this.validationQuery, new ResultSetExtractor<StatusCode>() {
+            @Override
             public StatusCode extractData(final ResultSet rs) throws SQLException {
                 if (rs.next()) {
                     return StatusCode.OK;

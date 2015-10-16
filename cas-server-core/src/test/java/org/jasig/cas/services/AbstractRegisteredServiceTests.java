@@ -51,14 +51,17 @@ public class AbstractRegisteredServiceTests {
     private final AbstractRegisteredService r = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 
+        @Override
         public void setServiceId(final String id) {
             serviceId = id;
         }
 
+        @Override
         protected AbstractRegisteredService newInstance() {
             return this;
         }
 
+        @Override
         public boolean matches(final Service service) {
             return true;
         }

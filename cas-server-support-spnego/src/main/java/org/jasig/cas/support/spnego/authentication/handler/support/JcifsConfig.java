@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.net.URL;
 
@@ -118,7 +120,9 @@ public final class JcifsConfig implements InitializingBean {
      *
      * @param jcifsServicePassword the new jcifs service password
      */
-    public void setJcifsServicePassword(final String jcifsServicePassword) {
+    @Autowired
+    public void setJcifsServicePassword(@Value("${cas.spnego.jcifs.service.password:}")
+                                        final String jcifsServicePassword) {
         if (StringUtils.isNotBlank(jcifsServicePassword)) {
             logger.debug("jcifsServicePassword is set to *****");
             Config.setProperty(JCIFS_PROP_SERVICE_PASSWORD, jcifsServicePassword);
@@ -131,7 +135,9 @@ public final class JcifsConfig implements InitializingBean {
      *
      * @param jcifsServicePrincipal the new jcifs service principal
      */
-    public void setJcifsServicePrincipal(final String jcifsServicePrincipal) {
+    @Autowired
+    public void setJcifsServicePrincipal(@Value("${cas.spnego.service.principal:HTTP/cas.example.com@EXAMPLE.COM}")
+                                         final String jcifsServicePrincipal) {
         if (StringUtils.isNotBlank(jcifsServicePrincipal)) {
             logger.debug("jcifsServicePrincipal is set to {}", jcifsServicePrincipal);
             Config.setProperty(JCIFS_PROP_SERVICE_PRINCIPAL, jcifsServicePrincipal);
@@ -143,7 +149,8 @@ public final class JcifsConfig implements InitializingBean {
      *
      * @param kerberosConf the new kerberos conf
      */
-    public void setKerberosConf(final String kerberosConf) {
+    @Autowired
+    public void setKerberosConf(@Value("${cas.spnego.kerb.conf:}") final String kerberosConf) {
         if (StringUtils.isNotBlank(kerberosConf)) {
 
             logger.debug("kerberosConf is set to :{}", kerberosConf);
@@ -156,7 +163,9 @@ public final class JcifsConfig implements InitializingBean {
      *
      * @param kerberosKdc the new kerberos kdc
      */
-    public void setKerberosKdc(final String kerberosKdc) {
+    @Autowired
+    public void setKerberosKdc(@Value("${cas.spnego.kerb.kdc:172.10.1.10}")
+                               final String kerberosKdc) {
         if (StringUtils.isNotBlank(kerberosKdc)) {
 
             logger.debug("kerberosKdc is set to : {}", kerberosKdc);
@@ -169,14 +178,18 @@ public final class JcifsConfig implements InitializingBean {
      *
      * @param kerberosRealm the new kerberos realm
      */
-    public void setKerberosRealm(final String kerberosRealm) {
+    @Autowired
+    public void setKerberosRealm(@Value("${cas.spnego.kerb.realm:EXAMPLE.COM}")
+                                 final String kerberosRealm) {
         if (StringUtils.isNotBlank(kerberosRealm)) {
             logger.debug("kerberosRealm is set to :{}", kerberosRealm);
             System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
         }
     }
 
-    public void setLoginConf(final String loginConf) {
+    @Autowired
+    public void setLoginConf(@Value("${cas.spnego.login.conf.file:/path/to/login.conf}")
+                             final String loginConf) {
         this.loginConf = loginConf;
     }
 
@@ -185,7 +198,9 @@ public final class JcifsConfig implements InitializingBean {
      *
      * @param useSubjectCredsOnly the new use subject creds only
      */
-    public void setUseSubjectCredsOnly(final boolean useSubjectCredsOnly) {
+    @Autowired
+    public void setUseSubjectCredsOnly(@Value("${cas.spnego.use.subject.creds:false}")
+                                       final boolean useSubjectCredsOnly) {
         logger.debug("useSubjectCredsOnly is set to {}", useSubjectCredsOnly);
         System.setProperty(SYS_PROP_USE_SUBJECT_CRED_ONLY, Boolean.toString(useSubjectCredsOnly));
     }
@@ -195,7 +210,9 @@ public final class JcifsConfig implements InitializingBean {
      *
      * @param kerberosDebug the new kerberos debug
      */
-    public void setKerberosDebug(final String kerberosDebug) {
+    @Autowired
+    public void setKerberosDebug(@Value("${cas.spnego.kerb.debug:false}")
+                                 final String kerberosDebug) {
         if (StringUtils.isNotBlank(kerberosDebug)) {
             logger.debug("kerberosDebug is set to : {}", kerberosDebug);
             System.setProperty(SYS_PROP_KERBEROS_DEBUG, kerberosDebug);
@@ -205,7 +222,9 @@ public final class JcifsConfig implements InitializingBean {
     /**
      * @param jcifsDomain the jcifsDomain to set
      */
-    public void setJcifsDomain(final String jcifsDomain) {
+    @Autowired
+    public void setJcifsDomain(@Value("${cas.spnego.jcifs.domain:}")
+                               final String jcifsDomain) {
         if (StringUtils.isNotBlank(jcifsDomain)) {
             logger.debug("jcifsDomain is set to {}", jcifsDomain);
             Config.setProperty(JCIFS_PROP_CLIENT_DOMAIN, jcifsDomain);
@@ -215,7 +234,9 @@ public final class JcifsConfig implements InitializingBean {
     /**
      * @param jcifsDomainController the jcifsDomainController to set
      */
-    public void setJcifsDomainController(final String jcifsDomainController) {
+    @Autowired
+    public void setJcifsDomainController(@Value("${cas.spnego.jcifs.domaincontroller:}")
+                                         final String jcifsDomainController) {
         if (StringUtils.isNotBlank(jcifsDomainController)) {
             logger.debug("jcifsDomainController is set to {}", jcifsDomainController);
             Config.setProperty(JCIFS_PROP_DOMAIN_CONTROLLER, jcifsDomainController);
@@ -225,7 +246,9 @@ public final class JcifsConfig implements InitializingBean {
     /**
      * @param jcifsPassword the jcifsPassword to set
      */
-    public void setJcifsPassword(final String jcifsPassword) {
+    @Autowired
+    public void setJcifsPassword(@Value("${cas.spnego.jcifs.password:}")
+                                     final String jcifsPassword) {
         if (StringUtils.isNotBlank(jcifsPassword)) {
             Config.setProperty(JCIFS_PROP_CLIENT_PASSWORD, jcifsPassword);
             logger.debug("jcifsPassword is set to *****");
@@ -235,7 +258,8 @@ public final class JcifsConfig implements InitializingBean {
     /**
      * @param jcifsUsername the jcifsUsername to set
      */
-    public void setJcifsUsername(final String jcifsUsername) {
+    @Autowired
+    public void setJcifsUsername(@Value("${cas.spnego.jcifs.username:}") final String jcifsUsername) {
         if (StringUtils.isNotBlank(jcifsUsername)) {
             logger.debug("jcifsUsername is set to {}", jcifsUsername);
             Config.setProperty(JCIFS_PROP_CLIENT_USERNAME, jcifsUsername);
@@ -245,7 +269,9 @@ public final class JcifsConfig implements InitializingBean {
     /**
      * @param jcifsNetbiosWins the jcifsNetbiosWins to set
      */
-    public void setJcifsNetbiosWins(final String jcifsNetbiosWins) {
+    @Autowired
+    public void setJcifsNetbiosWins(@Value("${cas.spnego.jcifs.netbios.wins:}")
+                                    final String jcifsNetbiosWins) {
         if (StringUtils.isNotBlank(jcifsNetbiosWins)) {
             logger.debug("jcifsNetbiosWins is set to {}", jcifsNetbiosWins);
             Config.setProperty(JCIFS_PROP_NETBIOS_WINS, jcifsNetbiosWins);
@@ -257,7 +283,9 @@ public final class JcifsConfig implements InitializingBean {
      *
      * @param policy the policy
      */
-    public void setJcifsNetbiosCachePolicy(final String policy) {
+    @Autowired
+    public void setJcifsNetbiosCachePolicy(@Value("${cas.spnego.jcifs.netbios.cache.policy:600}")
+                                           final String policy) {
         if (StringUtils.isNotBlank(policy)) {
             logger.debug("jcifsNetbiosCachePolicy is set to {}", policy);
             Config.setProperty(JCIFS_PROP_NETBIOS_CACHE_POLICY, policy);
@@ -269,7 +297,9 @@ public final class JcifsConfig implements InitializingBean {
      *
      * @param timeout the timeout
      */
-    public void setJcifsSocketTimeout(final String timeout) {
+    @Autowired
+    public void setJcifsSocketTimeout(@Value("${cas.spnego.jcifs.socket.timeout:300000}")
+                                          final String timeout) {
         if (StringUtils.isNotBlank(timeout)) {
             logger.debug("jcifsSocketTimeout is set to {}", timeout);
             Config.setProperty(JCIFS_PROP_CLIENT_SOTIMEOUT, timeout);
