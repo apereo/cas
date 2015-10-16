@@ -29,6 +29,8 @@ import org.jasig.cas.web.support.WebUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -51,15 +53,19 @@ import org.springframework.webflow.execution.RequestContext;
  * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
+@Component("negociateSpnego")
 public final class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoNegociateCredentialsAction.class);
 
     /** Whether this is using the NTLM protocol or not. */
+    @Value("${cas.spnego.ntlm:false}")
     private boolean ntlm;
 
+    @Value("${cas.spnego.mixed.mode.authn:false}")
     private boolean mixedModeAuthentication;
 
+    @Value("#{T(java.util.Arrays).asList('${cas.spnego.supportedBrowsers:MSIE,Trident,Firefox,AppleWebKit}')}")
     private List<String> supportedBrowser;
 
     private String messageBeginPrefix = constructMessagePrefix();

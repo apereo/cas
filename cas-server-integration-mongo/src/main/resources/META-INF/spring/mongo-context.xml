@@ -56,13 +56,7 @@
                 <bean class="org.jasig.cas.services.convert.Converters.PersonAttributesConverter"/>
             </mongo:converter>
             <mongo:converter>
-                <bean class="org.jasig.cas.services.convert.Converters.MutableConfigurationConverter"/>
-            </mongo:converter>
-            <mongo:converter>
                 <bean class="org.jasig.cas.services.convert.Converters.CacheLoaderConverter"/>
-            </mongo:converter>
-            <mongo:converter>
-                <bean class="org.jasig.cas.services.convert.Converters.CacheWriterConverter"/>
             </mongo:converter>
             <mongo:converter>
                 <bean class="org.jasig.cas.services.convert.Converters.RunnableConverter"/>
@@ -75,9 +69,6 @@
             </mongo:converter>
             <mongo:converter>
                 <bean class="org.jasig.cas.services.convert.Converters.CertPathConverter"/>
-            </mongo:converter>
-            <mongo:converter>
-                <bean class="org.jasig.cas.services.convert.Converters.CacheManagerConverter"/>
             </mongo:converter>
             <mongo:converter>
                 <bean class="org.jasig.cas.services.convert.Converters.CacheConverter"/>
@@ -93,19 +84,26 @@
           c:mongoDbFactory-ref="mongoDbFactory"
           c:mongoConverter-ref="mappingConverter"/>
 
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.MongoServiceRegistryDao" />
-
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
-    <mongo:mongo host="${mongodb.host}" port="${mongodb.port}" id="mongo">
-        <mongo:options connect-timeout="5000" auto-connect-retry="true" />
-    </mongo:mongo>
+    <mongo:mongo-client host="${mongodb.host:localhost}" port="${mongodb.port:27017}" id="mongo">
+        <mongo:client-options write-concern="${mongodb.writeconcern:NORMAL}"
+                              heartbeat-connect-timeout="${mongodb.timeout:5000}"
+                              heartbeat-socket-timeout="${mongodb.timeout:5000}"
+                              max-connection-life-time="${mongodb.conns.lifetime:60000}"
+                              socket-keep-alive="${mongodb.socket.keepalive:false}"
+                              max-connection-idle-time="${mongodb.idle.timeout:30000}"
+                              connections-per-host="${mongodb.conns.per.host:10}"
+                              socket-timeout="${mongodb.timeout:5000}"
+                              connect-timeout="${mongodb.timeout:5000}"  />
+    </mongo:mongo-client>
+
 
     <mongo:db-factory id="mongoDbFactory"
                       mongo-ref="mongo"
-                      dbname="${cas.service.registry.mongo.db}"
-                      username="${mongodb.userId}"
-                      password="${mongodb.userPassword}"/>
+                      dbname="${cas.service.registry.mongo.db:cas-service-registry}"
+                      username="${mongodb.userId:}"
+                      password="${mongodb.userPassword:}"/>
 
 </beans>

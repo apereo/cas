@@ -224,18 +224,22 @@ public class DefaultServicesManagerImplTests  {
             this.id = id;
         }
 
+        @Override
         public Map<String, Object> getAttributes() {
             return null;
         }
 
+        @Override
         public String getId() {
             return this.id;
         }
 
+        @Override
         public void setPrincipal(final Principal principal) {
             // nothing to do
         }
 
+        @Override
         public boolean matches(final Service service) {
             return true;
         }

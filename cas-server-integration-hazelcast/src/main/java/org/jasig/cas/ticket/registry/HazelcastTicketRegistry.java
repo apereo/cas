@@ -23,15 +23,22 @@ import com.hazelcast.core.IMap;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
- *
+ * <p/>
  * <p>This implementation just wraps the Hazelcast's {@link IMap}
  * which is an extension of the standard Java's <code>ConcurrentMap</code>.</p>
  * <p>The heavy lifting of distributed data partitioning, network cluster discovery and
@@ -41,34 +48,51 @@ import java.util.concurrent.TimeUnit;
  * @author Jonathan Johnson
  * @since 4.1.0
  */
+@Component("hazelcastTicketRegistry")
 public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry implements DisposableBean {
 
     private final IMap<String, Ticket> registry;
 
     private final long serviceTicketTimeoutInSeconds;
 
-    private final long ticketGrantingTicketTimoutInSeconds;
+    private final long ticketGrantingTicketTimeoutInSeconds;
 
     private final HazelcastInstance hz;
 
-    /**
-     * @param hz An instance of <code>HazelcastInstance</code>
-     * @param mapName Name of map to use
-     * @param ticketGrantingTicketTimoutInSeconds TTL for TGT entries
-     * @param serviceTicketTimeoutInSeconds TTL for ST entries
-     */
-    public HazelcastTicketRegistry(final HazelcastInstance hz,
-                                   final String mapName,
-                                   final long ticketGrantingTicketTimoutInSeconds,
-                                   final long serviceTicketTimeoutInSeconds) {
 
-        logInitialization(hz, mapName, ticketGrantingTicketTimoutInSeconds, serviceTicketTimeoutInSeconds);
+    /**
+     * @param hz                                  An instance of <code>HazelcastInstance</code>
+     * @param mapName                             Name of map to use
+     * @param ticketGrantingTicketTimeoutInSeconds TTL for TGT entries
+     * @param serviceTicketTimeoutInSeconds       TTL for ST entries
+     */
+    @Autowired
+    public HazelcastTicketRegistry(
+        @Qualifier("hazelcast")
+        final HazelcastInstance hz,
+        @Value("${hz.mapname:tickets}")
+        final String mapName,
+        @Value("${tgt.maxTimeToLiveInSeconds:28800}")
+        final long ticketGrantingTicketTimeoutInSeconds,
+        @Value("${st.timeToKillInSeconds:10}")
+        final long serviceTicketTimeoutInSeconds) {
+
         this.registry = hz.getMap(mapName);
-        this.ticketGrantingTicketTimoutInSeconds = ticketGrantingTicketTimoutInSeconds;
+        this.ticketGrantingTicketTimeoutInSeconds = ticketGrantingTicketTimeoutInSeconds;
         this.serviceTicketTimeoutInSeconds = serviceTicketTimeoutInSeconds;
         this.hz = hz;
     }
 
+    /**
+     * Init.
+     */
+    @PostConstruct
+    public void init() {
+        logger.info("Setting up Hazelcast Ticket Registry...");
+        logger.debug("Hazelcast instance: {} with name {}", this.hz, this.registry.getName());
+        logger.debug("TGT timeout: [{}s]", this.ticketGrantingTicketTimeoutInSeconds);
+        logger.debug("ST timeout: [{}s]", this.serviceTicketTimeoutInSeconds);
+    }
 
     @Override
     protected void updateTicket(final Ticket ticket) {
@@ -81,22 +105,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
         return false;
     }
 
-    /**
-     * @param hz An instance of <code>HazelcastInstance</code>
-     * @param mapName Name of map to use
-     * @param ticketGrantingTicketTimoutInSeconds TTL for TGT entries
-     * @param serviceTicketTimeoutInSeconds TTL for ST entries
-     */
-    private void logInitialization(final HazelcastInstance hz,
-                                   final String mapName,
-                                   final long ticketGrantingTicketTimoutInSeconds,
-                                   final long serviceTicketTimeoutInSeconds) {
 
-        logger.info("Setting up Hazelcast Ticket Registry...");
-        logger.debug("Hazelcast instance: {}", hz);
-        logger.debug("TGT timeout: [{}s]", ticketGrantingTicketTimoutInSeconds);
-        logger.debug("ST timeout: [{}s]", serviceTicketTimeoutInSeconds);
-    }
 
     @Override
     public void addTicket(final Ticket ticket) {
@@ -105,8 +114,9 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
 
     /**
      * Adds the ticket to the hazelcast instance.
+     *
      * @param ticket a ticket
-     * @param ttl time to live in seconds
+     * @param ttl    time to live in seconds
      */
     private void addTicket(final Ticket ticket, final long ttl) {
         logger.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
@@ -118,8 +128,8 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
-        final Ticket ticket = this.registry.get(encTicketId);
-        return decodeTicket(ticket);
+        final Ticket ticket = decodeTicket(this.registry.get(encTicketId));
+        return getProxiedTicketInstance(ticket);
     }
 
 
@@ -127,7 +137,38 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     public boolean deleteTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
         logger.debug("Removing ticket [{}]", encTicketId);
-        return this.registry.remove(encTicketId) != null;
+
+        final Ticket ticket = getTicket(encTicketId);
+        if (ticket == null) {
+            return false;
+        }
+
+        if (ticket instanceof TicketGrantingTicket) {
+            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
+            deleteChildren((TicketGrantingTicket) ticket);
+        }
+
+        logger.debug("Removing ticket [{}] from the registry.", ticket);
+        return (this.registry.remove(encTicketId) != null);
+    }
+
+    /**
+     * Delete TGT's service tickets.
+     *
+     * @param ticket the ticket
+     */
+    private void deleteChildren(final TicketGrantingTicket ticket) {
+        // delete service tickets
+        final Map<String, Service> services = ticket.getServices();
+        if (services != null && !services.isEmpty()) {
+            for (final Map.Entry<String, Service> entry : services.entrySet()) {
+                if (this.registry.remove(entry.getKey()) != null) {
+                    logger.trace("Removed service ticket [{}]", entry.getKey());
+                } else {
+                    logger.trace("Ticket not found or is already removed. Unable to remove service ticket [{}]", entry.getKey());
+                }
+            }
+        }
     }
 
     @Override
@@ -139,18 +180,19 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
      * A method to get the starting TTL for a ticket based upon type.
      *
      * @param t Ticket to get starting TTL for
-     *
      * @return Initial TTL for ticket
      */
     private long getTimeout(final Ticket t) {
         if (t instanceof TicketGrantingTicket) {
-            return this.ticketGrantingTicketTimoutInSeconds;
-        } else if (t instanceof ServiceTicket) {
+            return this.ticketGrantingTicketTimeoutInSeconds;
+        }
+        if (t instanceof ServiceTicket) {
             return this.serviceTicketTimeoutInSeconds;
         }
+
         throw new IllegalArgumentException(
-                String.format("Invalid ticket type [%s]. Expecting either [TicketGrantingTicket] or [ServiceTicket]",
-                        t.getClass().getName()));
+            String.format("Invalid ticket type [%s]. Expecting either [TicketGrantingTicket] or [ServiceTicket]",
+                t.getClass().getName()));
     }
 
     /**

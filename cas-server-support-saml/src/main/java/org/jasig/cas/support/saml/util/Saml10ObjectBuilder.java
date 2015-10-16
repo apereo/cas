@@ -62,6 +62,7 @@ import java.util.Map;
 public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
+    private static final long serialVersionUID = -4711012620700270554L;
 
     /**
      * Create a new SAML response object.
