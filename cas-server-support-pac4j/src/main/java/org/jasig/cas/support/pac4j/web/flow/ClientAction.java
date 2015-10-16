@@ -42,6 +42,8 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -64,6 +66,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.5.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@Component("clientAction")
 public final class ClientAction extends AbstractAction {
     /**
      * Constant for the service parameter.
@@ -96,24 +99,20 @@ public final class ClientAction extends AbstractAction {
      * The clients used for authentication.
      */
     @NotNull
-    private final Clients clients;
+    @Autowired
+    private Clients clients;
 
     /**
      * The service for CAS authentication.
      */
     @NotNull
-    private final CentralAuthenticationService centralAuthenticationService;
+    @Autowired
+    private CentralAuthenticationService centralAuthenticationService;
 
     /**
-     * Build the action.
-     *
-     * @param centralAuthenticationService The service for CAS authentication
-     * @param clients The clients for authentication
+     * Build the ClientAction.
      */
-    public ClientAction(final CentralAuthenticationService centralAuthenticationService,
-            final Clients clients) {
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.clients = clients;
+    public ClientAction() {
         ProfileHelper.setKeepRawData(true);
     }
 
@@ -242,5 +241,21 @@ public final class ClientAction extends AbstractAction {
         if (value != null) {
             session.setAttribute(name, value);
         }
+    }
+
+    public Clients getClients() {
+        return clients;
+    }
+
+    public void setClients(final Clients clients) {
+        this.clients = clients;
+    }
+
+    public CentralAuthenticationService getCentralAuthenticationService() {
+        return centralAuthenticationService;
+    }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 }
