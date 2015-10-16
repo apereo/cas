@@ -28,76 +28,6 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-##How to use CAS/OAuth/OpenID/SAML client support in CAS applications?
-
-
-###Information returned by a delegated authentication
-
-Once you have configured (see information below) your CAS server to act as an OAuth, CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML provider (like Facebook) instead of authenticating directly inside the CAS server.
-
-In the CAS server, after this kind of delegated authentication, users have specific authentication data.
-
-The `Authentication` object has:
-
-* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
-* The attribute *`clientName`* set to the type of the provider used during authentication process.
-
-The `Principal` object of the `Authentication` object has:
-
-* An identifier which is the profile type + `#` + the identifier of the user for this provider (i.e `FacebookProfile#0000000001`)
-* Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
-
-###How to send profile attributes to CAS client applications?
-
-In CAS applications, through service ticket validation, user information are pushed to the CAS client and therefore to the application itself.
-
-The identifier of the user is always pushed to the CAS client. For user attributes, it involves both the configuration at the server and the way of validating service tickets.
-
-On CAS server side, to push attributes to the CAS client, it should be configured in the `deployerConfigContext.xml` file for the expected service:
-
-{% highlight xml %}
-<bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
- <property name="registeredServices">
-   <list>
-     <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-       <property name="id" value="0" />
-       <property name="name" value="HTTP" />
-       <property name="description" value="Only Allows HTTP Urls" />
-       <property name="serviceId" value="http://**" />
-       <property name="evaluationOrder" value="10000001" />
-       <property name="allowedAttributes">
-        <list>
-          <!-- facebook -->
-          <value>name</value>
-          <value>first_name</value>
-          <value>middle_name</value>
-...
-{% endhighlight %}
-
-On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is the `/p3/serviceValidate` url.
-
-###How to recreate user profiles in CAS applications?
-
-In the CAS server, the complete user profile is known but when attributes are sent back to the CAS client applications, there is some kind of "CAS serialization" which makes data uneasy to be restored at their original state.
-
-Though, you can now completely rebuild the original user profile from data returned in the CAS `Assertion`.
-
-After validating the service ticket, an `Assertion` is available in the CAS client from which you can get the identifier and the attributes of the authenticated user using the pac4j library:
-
-{% highlight java %}
-final AttributePrincipal principal = assertion.getPrincipal();
-final String id = principal.getName();
-final Map<String, Object> attributes = principal.getAttributes();
-{% endhighlight %}
-
-As the identifier stores the kind of profile in its own definition (`*clientName#idAtProvider*`), you can use the `org.pac4j.core.profile.ProfileHelper.buildProfile(id, attributes)` method to recreate the original profile:
-
-{% highlight java %}
-final FacebookProfile rebuiltProfileOnCasClientSide =
-    (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
-{% endhighlight %}
-
-and then use it in your application!
 
 ##Configuration
 
@@ -245,10 +175,86 @@ To start authentication on a remote provider, these links must be added on the l
 </form>
 {% endhighlight %}
 
+###Identifier of the authenticated user
+
+After a successful delegated authentication, a user is created inside the CAS server with a specific identifier: this one can be created only from the technical identifier received from the external identity provider (like 1234) or as a "typed identifier" (like FacebookProfile#1234), which is the default.
+
+This can be defined in the `cas.properties` file:
+
+{% highlight properties %}
+cas.pac4j.client.authn.typedidused=true
+{% endhighlight %}
+
 
 ##Demo
 
 Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) to see this authentication delegation mechanism in action.
+
+
+##How to use this support on CAS applications side?
+
+###Information returned by a delegated authentication
+
+Once you have configured (see information above) your CAS server to act as an OAuth, CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML provider (like Facebook) instead of authenticating directly inside the CAS server.
+
+In the CAS server, after this kind of delegated authentication, users have specific authentication data.
+
+The `Authentication` object has:
+
+* The attribute `AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE` (authenticationMethod) set to *`org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler`*
+* The attribute *`clientName`* set to the type of the provider used during authentication process.
+
+The `Principal` object of the `Authentication` object has:
+
+* An identifier which is the profile type + `#` + the identifier of the user for this provider (i.e `FacebookProfile#0000000001`)
+* Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
+
+###How to send profile attributes to CAS client applications?
+
+In CAS applications, through service ticket validation, user information are pushed to the CAS client and therefore to the application itself.
+
+The identifier of the user is always pushed to the CAS client. For user attributes, it involves both the configuration at the server and the way of validating service tickets.
+
+On CAS server side, to push attributes to the CAS client, it should be configured in the expected service:
+
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "name", "first_name", "middle_name" ] ]
+  }
+}
+{% endhighlight %}
+
+On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is the `/p3/serviceValidate` url.
+
+###How to recreate user profiles in CAS applications?
+
+In the CAS server, the complete user profile is known but when attributes are sent back to the CAS client applications, there is some kind of "CAS serialization" which makes data uneasy to be restored at their original state.
+
+Though, you can now completely rebuild the original user profile from data returned in the CAS `Assertion`.
+
+After validating the service ticket, an `Assertion` is available in the CAS client from which you can get the identifier and the attributes of the authenticated user using the pac4j library:
+
+{% highlight java %}
+final AttributePrincipal principal = assertion.getPrincipal();
+final String id = principal.getName();
+final Map<String, Object> attributes = principal.getAttributes();
+{% endhighlight %}
+
+As the identifier stores the kind of profile in its own definition (`*clientName#idAtProvider*`), you can use the `org.pac4j.core.profile.ProfileHelper.buildProfile(id, attributes)` method to recreate the original profile:
+
+{% highlight java %}
+final FacebookProfile rebuiltProfileOnCasClientSide =
+    (FacebookProfile) ProfileHelper.buildProfile(id, attributes);
+{% endhighlight %}
+
+and then use it in your application.
 
 
 ##Wrapper for pac4j authenticator and profile creator

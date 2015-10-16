@@ -40,12 +40,13 @@ import java.security.GeneralSecurityException;
  * @since 4.2.0
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractWrapperAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
+public abstract class AbstractWrapperAuthenticationHandler<I extends Credential, C extends Credentials>
+        extends AbstractPac4jAuthenticationHandler {
 
     /**
      * The pac4j authenticator used for authentication.
      */
-    protected Authenticator authenticator;
+    protected Authenticator<C> authenticator;
 
     /**
      * The pac4j profile creator used for authentication.
@@ -63,7 +64,7 @@ public abstract class AbstractWrapperAuthenticationHandler extends AbstractPac4j
         CommonHelper.assertNotNull("authenticator", this.authenticator);
         CommonHelper.assertNotNull("profileCreator", this.profileCreator);
 
-        final Credentials credentials = convertToPac4jCredentials(credential);
+        final C credentials = convertToPac4jCredentials((I) credential);
         logger.debug("credentials: {}", credentials);
 
         try {
@@ -87,7 +88,7 @@ public abstract class AbstractWrapperAuthenticationHandler extends AbstractPac4j
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException On the indeterminate case when authentication is prevented.
      */
-    protected abstract Credentials convertToPac4jCredentials(final Credential casCredential) throws GeneralSecurityException,
+    protected abstract C convertToPac4jCredentials(final I casCredential) throws GeneralSecurityException,
             PreventedException;
 
     /**
@@ -96,7 +97,7 @@ public abstract class AbstractWrapperAuthenticationHandler extends AbstractPac4j
      *
      * @return the CAS credential class
      */
-    protected abstract Class<? extends Credential> getCasCredentialsType();
+    protected abstract Class<I> getCasCredentialsType();
 
     public Authenticator getAuthenticator() {
         return authenticator;

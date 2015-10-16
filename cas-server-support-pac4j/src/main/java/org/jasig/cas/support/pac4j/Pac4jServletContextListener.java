@@ -47,7 +47,7 @@ public class Pac4jServletContextListener extends AbstractServletContextInitializ
 
     @Override
     protected void initializeRootApplicationContext() {
-        addAuthenticationHandlerPrincipalResolver(clientAuthenticationHandler, null);
+        addAuthenticationHandler(clientAuthenticationHandler);
         addAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator);
     }
 }

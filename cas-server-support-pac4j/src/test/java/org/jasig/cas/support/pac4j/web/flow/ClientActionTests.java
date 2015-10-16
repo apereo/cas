@@ -90,7 +90,9 @@ public final class ClientActionTests {
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient(MY_KEY, MY_SECRET);
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
-        final ClientAction action = new ClientAction(mock(CentralAuthenticationService.class), clients);
+        final ClientAction action = new ClientAction();
+        action.setCentralAuthenticationService(mock(CentralAuthenticationService.class));
+        action.setClients(clients);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -130,7 +132,9 @@ public final class ClientActionTests {
         final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any(Credential.class))).thenReturn(tgt);
-        final ClientAction action = new ClientAction(casImpl, clients);
+        final ClientAction action = new ClientAction();
+        action.setCentralAuthenticationService(casImpl);
+        action.setClients(clients);
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(ClientAction.THEME));
@@ -157,7 +161,9 @@ public final class ClientActionTests {
 
         final BasicAuthClient basicAuthClient = new BasicAuthClient();
         final Clients clients = new Clients(MY_LOGIN_URL, basicAuthClient);
-        final ClientAction action = new ClientAction(mock(CentralAuthenticationService.class), clients);
+        final ClientAction action = new ClientAction();
+        action.setCentralAuthenticationService(mock(CentralAuthenticationService.class));
+        action.setClients(clients);
 
         try {
             action.execute(mockRequestContext);

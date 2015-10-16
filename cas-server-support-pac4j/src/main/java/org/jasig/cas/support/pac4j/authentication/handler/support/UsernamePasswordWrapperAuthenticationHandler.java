@@ -18,14 +18,12 @@
  */
 package org.jasig.cas.support.pac4j.authentication.handler.support;
 
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
-import org.pac4j.core.credentials.Credentials;
 import org.pac4j.http.credentials.UsernamePasswordCredentials;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -39,7 +37,8 @@ import java.security.GeneralSecurityException;
  * @author Jerome Leleu
  * @since 4.2.0
  */
-public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrapperAuthenticationHandler {
+public class UsernamePasswordWrapperAuthenticationHandler
+        extends AbstractWrapperAuthenticationHandler<UsernamePasswordCredential, UsernamePasswordCredentials> {
 
     /**
      * PasswordEncoder to be used by subclasses to encode passwords for
@@ -54,11 +53,9 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     @NotNull
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected Credentials convertToPac4jCredentials(final Credential casCredential) throws GeneralSecurityException, PreventedException {
+    protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential)
+            throws GeneralSecurityException, PreventedException {
         logger.debug("CAS credentials: {}", casCredential);
         final UsernamePasswordCredential credential = (UsernamePasswordCredential) casCredential;
         final String username = this.principalNameTransformer.transform(credential.getUsername());
@@ -71,11 +68,8 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
         return credentials;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    protected Class<? extends Credential> getCasCredentialsType() {
+    protected Class<UsernamePasswordCredential> getCasCredentialsType() {
         return UsernamePasswordCredential.class;
     }
 
