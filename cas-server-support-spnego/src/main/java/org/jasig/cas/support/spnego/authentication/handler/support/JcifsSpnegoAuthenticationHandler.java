@@ -27,6 +27,10 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -42,25 +46,30 @@ import java.util.regex.Pattern;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@Component("spnegoHandler")
 public final class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
+    @Autowired
+    @Qualifier("spnegoAuthentication")
     private Authentication authentication;
 
     /**
      * Principal contains the DomainName ? (true by default).
      */
+    @Value("${cas.spengo.use.principal.domain:false}")
     private boolean principalWithDomainName = true;
 
     /**
      * Allow SPNEGO/NTLM Token as valid credentials. (false by default)
      */
+    @Value("${cas.spnego.ntlm.allowed:true}")
     private boolean isNTLMallowed;
 
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
-        java.security.Principal principal;
-        byte[] nextToken;
+        final java.security.Principal principal;
+        final byte[] nextToken;
         if (!this.isNTLMallowed && spnegoCredential.isNtlm()) {
             throw new FailedLoginException("NTLM not allowed");
         }

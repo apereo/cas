@@ -47,5 +47,5 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
      * @param certificate the certificate
      * @return the string
      */
-    protected abstract String resolvePrincipalInternal(final X509Certificate certificate);
+    protected abstract String resolvePrincipalInternal(X509Certificate certificate);
 }

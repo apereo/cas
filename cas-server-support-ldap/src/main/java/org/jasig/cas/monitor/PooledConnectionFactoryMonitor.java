@@ -18,10 +18,14 @@
  */
 package org.jasig.cas.monitor;
 
-import org.jasig.cas.util.LdapUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
 
 /**
  * Monitors an ldaptive {@link PooledConnectionFactory}.
@@ -29,14 +33,26 @@ import org.ldaptive.pool.Validator;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("pooledLdapConnectionFactoryMonitor")
 public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
 
     /** Source of connections to validate. */
-    private final PooledConnectionFactory connectionFactory;
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("pooledConnectionFactoryMonitorConnectionFactory")
+    private PooledConnectionFactory connectionFactory;
 
     /** Connection validator. */
-    private final Validator<Connection> validator;
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("pooledConnectionFactoryMonitorValidator")
+    private Validator<Connection> validator;
 
+
+    /**
+     * Instantiates a new Pooled connection factory monitor.
+     */
+    public PooledConnectionFactoryMonitor() {}
 
     /**
      * Creates a new instance that monitors the given pooled connection factory.
@@ -53,12 +69,12 @@ public class PooledConnectionFactoryMonitor extends AbstractPoolMonitor {
 
     @Override
     protected StatusCode checkPool() throws Exception {
-        final Connection conn = this.connectionFactory.getConnection();
-        try {
-            return this.validator.validate(conn) ? StatusCode.OK : StatusCode.ERROR;
-        } finally {
-            LdapUtils.closeConnection(conn);
+        if (this.connectionFactory != null && this.validator != null) {
+            try (final Connection conn = this.connectionFactory.getConnection()) {
+                return this.validator.validate(conn) ? StatusCode.OK : StatusCode.ERROR;
+            }
         }
+        return StatusCode.UNKNOWN;
     }
 
     @Override

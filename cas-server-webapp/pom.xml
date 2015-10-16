@@ -75,6 +75,10 @@
       <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-servlets</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-web</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -102,7 +106,8 @@
         <version>${maven-jetty-plugin.version}</version>
         <configuration>
           <webApp>
-            <contextPath>/cas</contextPath>
+              <contextPath>/cas</contextPath>
+              <overrideDescriptor>${cs.dir}/etc/jetty/web.xml</overrideDescriptor>
           </webApp>
         </configuration>
       </plugin>

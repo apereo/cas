@@ -20,16 +20,19 @@ package org.jasig.cas.support.openid.web.support;
 
 import static org.junit.Assert.*;
 
+import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
 
  */
-public class DefaultOpenIdUserNameExtractorTests {
+public class DefaultOpenIdUserNameExtractorTests extends AbstractOpenIdTests {
 
-    private final DefaultOpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
+    @Autowired
+    private DefaultOpenIdUserNameExtractor extractor;
 
     @Test
     public void verifyExtractionSuccessful() {

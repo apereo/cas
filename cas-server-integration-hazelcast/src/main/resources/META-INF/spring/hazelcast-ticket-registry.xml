@@ -77,11 +77,5 @@
         </property>
     </bean>
 
-    <bean id="ticketRegistry" destroy-method="shutdown"
-          class="org.jasig.cas.ticket.registry.HazelcastTicketRegistry"
-          c:hz-ref="hazelcast"
-          c:mapName="tickets"
-          c:ticketGrantingTicketTimoutInSeconds="${tgt.maxTimeToLiveInSeconds:28800}"
-          c:serviceTicketTimeoutInSeconds="${st.timeToKillInSeconds:10}" />
 
 </beans>

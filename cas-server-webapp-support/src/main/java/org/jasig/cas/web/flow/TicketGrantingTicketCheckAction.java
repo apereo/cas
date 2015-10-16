@@ -22,6 +22,9 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -41,6 +44,7 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("ticketGrantingTicketCheckAction")
 public class TicketGrantingTicketCheckAction extends AbstractAction {
 
     /**
@@ -70,7 +74,9 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      *
      * @param centralAuthenticationService the central authentication service
      */
-    public TicketGrantingTicketCheckAction(final CentralAuthenticationService centralAuthenticationService) {
+    @Autowired
+    public TicketGrantingTicketCheckAction(@Qualifier("centralAuthenticationService")
+                                               final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
