@@ -202,7 +202,7 @@
 <a class="jxr_linenumber" name="L194" href="#L194">194</a>             <strong class="jxr_keyword">final</strong> TicketGrantingTicket ticketGrantingTicket = <strong class="jxr_keyword">new</strong> TicketGrantingTicketImpl(<span class="jxr_string">"TEST"</span> + i,
 <a class="jxr_linenumber" name="L195" href="#L195">195</a>                     TestUtils.getAuthentication(), <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy());
 <a class="jxr_linenumber" name="L196" href="#L196">196</a>             <strong class="jxr_keyword">final</strong> ServiceTicket st = ticketGrantingTicket.grantServiceTicket(<span class="jxr_string">"tests"</span> + i, TestUtils.getService(),
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>                     <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), false);
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>                     <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), false, <strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L198" href="#L198">198</a>             tickets.add(ticketGrantingTicket);
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>             tickets.add(st);
 <a class="jxr_linenumber" name="L200" href="#L200">200</a>             <strong class="jxr_keyword">this</strong>.ticketRegistry.addTicket(ticketGrantingTicket);
@@ -235,11 +235,11 @@
 <a class="jxr_linenumber" name="L227" href="#L227">227</a>             <strong class="jxr_keyword">final</strong> Service service = TestUtils.getService(<span class="jxr_string">"TGT_DELETE_TEST"</span>);
 <a class="jxr_linenumber" name="L228" href="#L228">228</a> 
 <a class="jxr_linenumber" name="L229" href="#L229">229</a>             <strong class="jxr_keyword">final</strong> ServiceTicket st1 = tgt.grantServiceTicket(
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>                     <span class="jxr_string">"ST1"</span>, service, <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>                     <span class="jxr_string">"ST1"</span>, service, <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), <strong class="jxr_keyword">true</strong>, false);
 <a class="jxr_linenumber" name="L231" href="#L231">231</a>             <strong class="jxr_keyword">final</strong> ServiceTicket st2 = tgt.grantServiceTicket(
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>                     <span class="jxr_string">"ST2"</span>, service, <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>                     <span class="jxr_string">"ST2"</span>, service, <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), <strong class="jxr_keyword">true</strong>, false);
 <a class="jxr_linenumber" name="L233" href="#L233">233</a>             <strong class="jxr_keyword">final</strong> ServiceTicket st3 = tgt.grantServiceTicket(
-<a class="jxr_linenumber" name="L234" href="#L234">234</a>                     <span class="jxr_string">"ST3"</span>, service, <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>                     <span class="jxr_string">"ST3"</span>, service, <strong class="jxr_keyword">new</strong> NeverExpiresExpirationPolicy(), <strong class="jxr_keyword">true</strong>, false);
 <a class="jxr_linenumber" name="L235" href="#L235">235</a> 
 <a class="jxr_linenumber" name="L236" href="#L236">236</a>             <strong class="jxr_keyword">this</strong>.ticketRegistry.addTicket(st1);
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>             <strong class="jxr_keyword">this</strong>.ticketRegistry.addTicket(st2);

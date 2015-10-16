@@ -65,21 +65,25 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">this</strong>.loggedOut;
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      }
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipal(<strong class="jxr_keyword">final</strong> Principal principal) {}
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>  
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>      <strong class="jxr_keyword">public</strong> Map&lt;String, Object&gt; getAttributes() {
-<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L64" href="#L64">64</a>      }
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
-<a class="jxr_linenumber" name="L66" href="#L66">66</a>      <strong class="jxr_keyword">public</strong> String getId() {
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">return</strong> id;
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>      }
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>  
-<a class="jxr_linenumber" name="L70" href="#L70">70</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> matches(<strong class="jxr_keyword">final</strong> Service service) {
-<a class="jxr_linenumber" name="L71" href="#L71">71</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L72" href="#L72">72</a>      }
-<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
-<a class="jxr_linenumber" name="L74" href="#L74">74</a>  }
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>      @Override
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setPrincipal(<strong class="jxr_keyword">final</strong> Principal principal) {}
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>      @Override
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>      <strong class="jxr_keyword">public</strong> Map&lt;String, Object&gt; getAttributes() {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>      }
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>      @Override
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      <strong class="jxr_keyword">public</strong> String getId() {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">return</strong> id;
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>      @Override
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">boolean</strong> matches(<strong class="jxr_keyword">final</strong> Service service) {
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      }
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

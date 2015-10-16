@@ -30,7 +30,7 @@
 <a class="jxr_linenumber" name="L22" href="#L22">22</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Service;
 <a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ServicesManager;
 <a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.support.ArgumentExtractor;
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.support.CasArgumentExtractor;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.support.DefaultArgumentExtractor;
 <a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 <a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.support.WebUtils;
 <a class="jxr_linenumber" name="L28" href="#L28">28</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
@@ -72,7 +72,7 @@
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          <strong class="jxr_keyword">this</strong>.tgtCookieGenerator = <strong class="jxr_keyword">new</strong> CookieRetrievingCookieGenerator();
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">this</strong>.action.setTicketGrantingTicketCookieGenerator(<strong class="jxr_keyword">this</strong>.tgtCookieGenerator);
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">this</strong>.action.setWarnCookieGenerator(<strong class="jxr_keyword">this</strong>.warnCookieGenerator);
-<a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">final</strong> ArgumentExtractor[] argExtractors = <strong class="jxr_keyword">new</strong> ArgumentExtractor[] {<strong class="jxr_keyword">new</strong> CasArgumentExtractor()};
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">final</strong> ArgumentExtractor[] argExtractors = <strong class="jxr_keyword">new</strong> ArgumentExtractor[] {<strong class="jxr_keyword">new</strong> DefaultArgumentExtractor()};
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">this</strong>.action.setArgumentExtractors(Arrays.asList(argExtractors));
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>  
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>          <strong class="jxr_keyword">this</strong>.servicesManager = mock(ServicesManager.<strong class="jxr_keyword">class</strong>);

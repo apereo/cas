@@ -46,7 +46,7 @@
 <a class="jxr_linenumber" name="L38" href="#L38">38</a>      <em class="jxr_javadoccomment">/** View if Service Ticket Validation Fails. */</em>
 <a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String DEFAULT_ERROR_VIEW_NAME = <span class="jxr_string">"casServiceFailureView"</span>;
 <a class="jxr_linenumber" name="L40" href="#L40">40</a>  
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">private</strong> List&lt;DelegateController&gt; delegates;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">private</strong> List&lt;AbstractDelegateController&gt; delegates;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      <em class="jxr_javadoccomment">/** The view to redirect if no delegate can handle the request. */</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>      @NotNull
@@ -65,9 +65,9 @@
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      @Override
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">final</strong> ModelAndView handleRequestInternal(<strong class="jxr_keyword">final</strong> HttpServletRequest request, <strong class="jxr_keyword">final</strong> HttpServletResponse response)
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>                                                      <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> DelegateController delegate : delegates) {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">final</strong> AbstractDelegateController delegate : delegates) {
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>              <strong class="jxr_keyword">if</strong> (delegate.canHandle(request, response)) {
-<a class="jxr_linenumber" name="L62" href="#L62">62</a>                  <strong class="jxr_keyword">return</strong> delegate.handleRequest(request, response);
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>                  <strong class="jxr_keyword">return</strong> delegate.handleRequestInternal(request, response);
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>              }
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>          }
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          <strong class="jxr_keyword">return</strong> generateErrorView(<span class="jxr_string">"INVALID_REQUEST"</span>, <span class="jxr_string">"INVALID_REQUEST"</span>, <strong class="jxr_keyword">null</strong>);
@@ -93,8 +93,8 @@
 <a class="jxr_linenumber" name="L85" href="#L85">85</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>  <em class="jxr_javadoccomment">     * @param delegates the delegate controllers to set</em>
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L88" href="#L88">88</a>      @NotNull
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDelegates(<strong class="jxr_keyword">final</strong> List&lt;DelegateController&gt; delegates) {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setDelegates(@NotNull <strong class="jxr_keyword">final</strong> List&lt;AbstractDelegateController&gt; delegates) {
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          <strong class="jxr_keyword">this</strong>.delegates = delegates;
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>      }
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>  

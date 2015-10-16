@@ -26,32 +26,59 @@
 <a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_comment"> */</em>
 <a class="jxr_linenumber" name="L19" href="#L19">19</a>  <strong class="jxr_keyword">package</strong> org.jasig.cas;
 <a class="jxr_linenumber" name="L20" href="#L20">20</a>  
-<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L22" href="#L22">22</a>  <em class="jxr_javadoccomment"> * Class that exposes the CAS version. Fetches the "Implementation-Version"</em>
-<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <em class="jxr_javadoccomment"> * manifest attribute from the jar file.</em>
-<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_javadoccomment"> *</em>
-<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_javadoccomment"> * @author Dmitriy Kopylenko</em>
-<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
-<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
-<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/jasig/cas/CasVersion.html">CasVersion</a> {
-<a class="jxr_linenumber" name="L30" href="#L30">30</a>  
-<a class="jxr_linenumber" name="L31" href="#L31">31</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment">     * Private constructor for CasVersion. You should not be able to instantiate</em>
-<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <em class="jxr_javadoccomment">     * this class.</em>
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">private</strong> <a href="../../../org/jasig/cas/CasVersion.html">CasVersion</a>() {
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>          <em class="jxr_comment">// this class is not instantiable</em>
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>      }
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <em class="jxr_javadoccomment">/**</em>
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <em class="jxr_javadoccomment">     * @return Return the full CAS version string.</em>
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <em class="jxr_javadoccomment">     * @see java.lang.Package#getImplementationVersion</em>
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String getVersion() {
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>          <strong class="jxr_keyword">return</strong> CasVersion.<strong class="jxr_keyword">class</strong>.getPackage().getImplementationVersion();
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>      }
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  }
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <strong class="jxr_keyword">import</strong> org.joda.time.DateTime;
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">import</strong> java.io.File;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <strong class="jxr_keyword">import</strong> java.net.URL;
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <em class="jxr_javadoccomment"> * Class that exposes the CAS version. Fetches the "Implementation-Version"</em>
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  <em class="jxr_javadoccomment"> * manifest attribute from the jar file.</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <em class="jxr_javadoccomment"> * @author Dmitriy Kopylenko</em>
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <em class="jxr_javadoccomment"> * @since 3.0.0</em>
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">class</strong> <a href="../../../org/jasig/cas/CasVersion.html">CasVersion</a> {
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <em class="jxr_javadoccomment">     * Private constructor for CasVersion. You should not be able to instantiate</em>
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <em class="jxr_javadoccomment">     * this class.</em>
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">private</strong> <a href="../../../org/jasig/cas/CasVersion.html">CasVersion</a>() {
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>          <em class="jxr_comment">// this class is not instantiable</em>
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      }
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment">     * @return Return the full CAS version string.</em>
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment">     * @see java.lang.Package#getImplementationVersion</em>
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> String getVersion() {
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <strong class="jxr_keyword">return</strong> CasVersion.<strong class="jxr_keyword">class</strong>.getPackage().getImplementationVersion();
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>      }
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>      <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">     * Gets last modified date/time for the module.</em>
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">     * @return the date/time</em>
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> DateTime getDateTime() {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>          <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>              <strong class="jxr_keyword">final</strong> Class clazz = CasVersion.<strong class="jxr_keyword">class</strong>;
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>              <strong class="jxr_keyword">final</strong> URL resource = clazz.getResource(clazz.getSimpleName() + <span class="jxr_string">".class"</span>);
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>              <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"file"</span>.equals(resource.getProtocol())) {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> DateTime(<strong class="jxr_keyword">new</strong> File(resource.toURI()).lastModified());
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>              } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (<span class="jxr_string">"jar"</span>.equals(resource.getProtocol())) {
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>                  <strong class="jxr_keyword">final</strong> String path = resource.getPath();
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>                  <strong class="jxr_keyword">final</strong> File file = <strong class="jxr_keyword">new</strong> File(path.substring(5, path.indexOf('!')));
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>                  <strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> DateTime(file.lastModified());
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>              }
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> IllegalArgumentException(<span class="jxr_string">"Unhandled url protocol: "</span>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>                          + resource.getProtocol() + <span class="jxr_string">" for class: "</span>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>                          + clazz.getName() + <span class="jxr_string">" resource: "</span> + resource);
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> Exception e) {
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>              <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> RuntimeException(e);
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>          }
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      }
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

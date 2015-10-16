@@ -4,7 +4,7 @@ title: CAS - Configuring Principal Resolution
 ---
 
 # Configuring Principal Resolution
-Principal resolution converts information in the authentication credential into a security principal 
+Principal resolution converts information in the authentication credential into a security principal
 that commonly contains additional
 metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
 
@@ -46,52 +46,12 @@ We present a stub configuration here that can be modified accordingly by consult
     </map>
   </property>
 </bean>
-
-<bean id="principalResolver"
-      class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver"
-      p:principalAttributeName="username"
-      p:attributeRepository-ref="attributeRepository"
-      p:returnNullIfNoAttributes="true" />
 {% endhighlight %}
 
-
-###`OpenIdPrincipalResolver`
-Extension of `PersonDirectoryPrincipalResolver` that is specifically for use with OpenID credentials. The configuration
-of this component is identical to that of `PersonDirectoryPrincipalResolver`.
-
-
-###`SpnegoPrincipalResolver`
-Extension of `PersonDirectoryPrincipalResolver` that is specifically for use with SPNEGO credentials. The configuration
-is the same as that of `PersonDirectoryPrincipalResolver` but with an additional property, `transformPrincipalId`,
-that provides a simple case transform on the principal ID. The following values are supported:
-
-* NONE
-* LOWERCASE
-* UPPERCASE
-
-{% highlight xml %}
-<bean id="principalResolver"
-      class="org.jasig.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver"
-      p:principalAttributeName="username"
-      p:attributeRepository-ref="attributeRepository"
-      p:returnNullIfNoAttributes="true"
-      p:transformPrincipalId="UPPERCASE" />
+{% highlight properties %}
+# cas.principal.resolver.persondir.principal.attribute=cn
+# cas.principal.resolver.persondir.return.null=false
 {% endhighlight %}
-
-###`X509SubjectPrincipalResolver`
-Creates a principal ID from a format string composed of components from the subject distinguished name.
-See the [X.509 principal resolver](#x_509) section for more information.
-
-###`X509SubjectDNPrincipalResolver`
-Creates a principal ID from the certificate subject distinguished name.
-
-###`ChainingPrincipalResolver`
-Delegates to one or more principal resolves in series to resolve a principal. The input to first configured
-resolver is the authenticated
-credential; for every subsequent resolver, the input is a Credential whose ID is the resolved principal
- ID of the previous resolver.
-A common use case for this component is resolving a temporary principal ID from an X.509 credential followed
-by a search (e.g. LDAP, database) for the final principal based on the temporary ID.
 
 ## PrincipalResolver vs. AuthenticationHandler
 The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to
@@ -100,13 +60,8 @@ If the principal that is resolved by the authentication handler
 suffices, then a `null` value may be passed in place of the resolver bean id:
 
 {% highlight xml %}
-<bean id="authenticationManager"
-      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
-      p:authenticationPolicy-ref="authenticationPolicy">
-  <constructor-arg>
-      <map>
-          <entry key-ref="passwordHandler" value="#{null}"/>
-      </map>
-  </constructor-arg>
-</bean>
+<util:map id="authenticationHandlersResolvers">
+    ...
+    <entry key-ref="primaryAuthenticationHandler" value="#{null}" />
+</util:map>
 {% endhighlight %}
