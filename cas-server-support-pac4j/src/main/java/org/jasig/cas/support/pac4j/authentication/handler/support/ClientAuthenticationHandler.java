@@ -82,7 +82,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
         // get user profile
         final UserProfile userProfile = client.getUserProfile(credentials, webContext);
-        logger.debug("userProfile : {}", userProfile);
+        logger.debug("userProfile: {}", userProfile);
 
         return createResult(clientCredentials, userProfile);
     }

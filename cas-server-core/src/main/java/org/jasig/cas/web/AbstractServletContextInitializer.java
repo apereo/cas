@@ -151,6 +151,15 @@ public abstract class AbstractServletContextInitializer
     }
 
     /**
+     * Add authentication handler without any principal resolver.
+     *
+     * @param handler the handler
+     */
+    protected final void addAuthenticationHandler(final AuthenticationHandler handler) {
+        addAuthenticationHandlerPrincipalResolver(handler, null);
+    }
+
+    /**
      * Add authentication metadata populator.
      * @param populator the populator
      */
