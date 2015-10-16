@@ -151,24 +151,25 @@
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
 <a class="jxr_linenumber" name="L144" href="#L144">144</a>     }
 <a class="jxr_linenumber" name="L145" href="#L145">145</a> 
-<a class="jxr_linenumber" name="L146" href="#L146">146</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Set&lt;String&gt;&gt; getRequiredAttributes() {
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Set&lt;String&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>         map.put(<span class="jxr_string">"cn"</span>, Sets.newHashSet(<span class="jxr_string">"cas"</span>, <span class="jxr_string">"SSO"</span>));
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         map.put(<span class="jxr_string">"givenName"</span>, Sets.newHashSet(<span class="jxr_string">"CAS"</span>, <span class="jxr_string">"KAZ"</span>));
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">return</strong> map;
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>     }
-<a class="jxr_linenumber" name="L152" href="#L152">152</a> 
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Object&gt; getPrincipalAttributes() {
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>         map.put(<span class="jxr_string">"cn"</span>, <span class="jxr_string">"cas"</span>);
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         map.put(<span class="jxr_string">"givenName"</span>, Arrays.asList(<span class="jxr_string">"cas"</span>, <span class="jxr_string">"KAZ"</span>));
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>         map.put(<span class="jxr_string">"sn"</span>, <span class="jxr_string">"surname"</span>);
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         map.put(<span class="jxr_string">"phone"</span>, <span class="jxr_string">"123-456-7890"</span>);
-<a class="jxr_linenumber" name="L159" href="#L159">159</a> 
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">return</strong> map;
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>     }
-<a class="jxr_linenumber" name="L162" href="#L162">162</a> 
-<a class="jxr_linenumber" name="L163" href="#L163">163</a> }
+<a class="jxr_linenumber" name="L146" href="#L146">146</a> 
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Set&lt;String&gt;&gt; getRequiredAttributes() {
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Set&lt;String&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         map.put(<span class="jxr_string">"cn"</span>, Sets.newHashSet(<span class="jxr_string">"cas"</span>, <span class="jxr_string">"SSO"</span>));
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         map.put(<span class="jxr_string">"givenName"</span>, Sets.newHashSet(<span class="jxr_string">"CAS"</span>, <span class="jxr_string">"KAZ"</span>));
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>         <strong class="jxr_keyword">return</strong> map;
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>     }
+<a class="jxr_linenumber" name="L153" href="#L153">153</a> 
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Object&gt; getPrincipalAttributes() {
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         map.put(<span class="jxr_string">"cn"</span>, <span class="jxr_string">"cas"</span>);
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         map.put(<span class="jxr_string">"givenName"</span>, Arrays.asList(<span class="jxr_string">"cas"</span>, <span class="jxr_string">"KAZ"</span>));
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         map.put(<span class="jxr_string">"sn"</span>, <span class="jxr_string">"surname"</span>);
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         map.put(<span class="jxr_string">"phone"</span>, <span class="jxr_string">"123-456-7890"</span>);
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> 
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>         <strong class="jxr_keyword">return</strong> map;
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>     }
+<a class="jxr_linenumber" name="L163" href="#L163">163</a> 
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>

@@ -20,16 +20,30 @@ Trusted authentication handler support is enabled by including the following dep
 
 
 ## Configure Trusted Authentication Handler
-Update `deployerConfigContext.xml` according to the following template:
+Modify `deployerConfigContext.xml` according to the following template:
 
 {% highlight xml %}
-...
-<entry key-ref="trustedHandler" value-ref="trustedPrincipalResolver" />
-<util:list id="authenticationMetadataPopulators">
-  <ref bean="successfulHandlerMetaDataPopulator" />
-</util:list>
-...
+<bean id="trustedHandler"
+      class="org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler" />
+
+<bean id="trustedPrincipalResolver"
+      class="org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver" />
+
+<bean id="authenticationManager"
+      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+  <constructor-arg>
+    <map>
+      <entry key-ref="trustedHandler" value-ref="trustedPrincipalResolver"/>
+    </map>
+  </constructor-arg>
+  <property name="authenticationMetaDataPopulators">
+    <list>
+      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
+    </list>
+  </property>
+</bean>
 {% endhighlight %}
+
 
 ## Configure Webflow Components
 Add an additional state to `login-webflow.xml`:
@@ -43,3 +57,10 @@ Add an additional state to `login-webflow.xml`:
 {% endhighlight %}
 
 Replace references to `viewLoginForm` in existing states with `remoteAuthenticate`.
+
+Install the Webflow action into the Spring context by adding the following bean to `cas-servlet.xml`:
+{% highlight xml %}
+<bean id="principalFromRemoteAction"
+      class="org.jasig.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction"
+      p:centralAuthenticationService-ref="centralAuthenticationService" />
+{% endhighlight %}

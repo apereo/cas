@@ -196,26 +196,11 @@ The filters are configured to sanitize authentication request parameters and rej
 
 It is **STRONGLY** recommended that all CAS deployments be evaluated and include this configuration if necessary to prevent protocol attacks in situations where the CAS container and environment are unable to block malicious and badly-configured requests.
 
-#### Security Response Headers
-As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
-insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
-These settings are presently off by default, and may be enabled via the following settings:
-
-{% highlight xml %}
-# httpresponse.header.cache=false
-# httpresponse.header.hsts=false
-# httpresponse.header.xframe=false
-# httpresponse.header.xcontent=false
-# httpresponse.header.xss=false
-{% endhighlight %}
-
-To review and learn more about these options, please visit [this guide][cas-sec-filter].
-
 ### Spring Webflow Sessions
 The CAS project uses Spring Webflow to manage and orchestrate the authentication process. The conversational state of the
 webflow used by CAS is managed by the client which is then passed and tracked throughout various states of the authentication
 process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryptions
-settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be evaluated prior to production rollouts and regenerate this configuration to prevent attacks.
+settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be evaluated prior to production rollouts and regenerate this configuration to prevent attacks. 
 
 ## User-Driven Security Features
 The following features may be employed to afford some user control of the SSO experience.

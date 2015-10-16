@@ -29,6 +29,171 @@ Once an overlay project has been created, the `cas.war` file must be built and s
 servlet container like Tomcat. The following set of commands, issued from the Maven WAR overlay project root
 directory, provides a sketch of how to accomplish this on a Unix platform.
 
+{% highlight bash %}
+$CATALINA_HOME/bin/shutdown.sh
+mvn clean package
+rm -rf $CATALINA_HOME/logs/*
+rm -f $CATALINA_HOME/webapps/cas.war
+rm -rf $CATALINA_HOME/webapps/cas
+rm -rf $CATALINA_HOME/work/*
+cp -v target/cas.war $CATALINA_HOME/webapps
+$CATALINA_HOME/bin/startup.sh
+{% endhighlight %}
+
+
+## Configuration Files
+CAS configuration is controlled primarily by Spring XML context configuration files. At a minimum, every deployer
+must customize `deployerConfigContext.xml` and `cas.properties` by including them in the Maven WAR overlay,
+but there are other optional configuration files that may be included in the overlay for further customization
+or to provide additional features. The following exploded file system hierarchy shows how files should be organized
+in the overlay (1):
+
+{% highlight bash %}
+
+\---src
+    +---main
+    |   +---resources
+    |   |       apereo.properties
+    |   |       cas-theme-default.properties
+    |   |       log4j.xml
+    |   |       messages.properties
+    |   |       protocol_views.properties
+    |   |       saml_views.properties
+    |   |       truststore.jks
+    |   |       
+    |   \---webapp
+    |       |   favicon.ico
+    |       |   index.jsp
+    |       |   
+    |       +---css
+    |       |       cas.css
+    |       |       
+    |       +---images
+    |       |       cas-logo.png
+    |       |       confirm.gif
+    |       |       error.gif
+    |       |       error.png
+    |       |       green.gif
+    |       |       info.gif
+    |       |       info.png
+    |       |       ja-sig-logo.gif
+    |       |       jasig-logo-small.png
+    |       |       jasig-logo.png
+    |       |       key-point_bl.gif
+    |       |       key-point_br.gif
+    |       |       key-point_tl.gif
+    |       |       key-point_tr.gif
+    |       |       question.png
+    |       |       red.gif
+    |       |       success.png
+    |       |       warning.png
+    |       |       
+    |       +---js
+    |       |       cas.js
+    |       |       
+    |       +---themes
+    |       |   \---apereo
+    |       |       +---css
+    |       |       |       cas.css
+    |       |       |       
+    |       |       +---images
+    |       |       |       apereo-logo.png
+    |       |       |       bg-tile.gif
+    |       |       |       
+    |       |       \---js
+    |       |               cas.js
+    |       |               
+    |       \---WEB-INF
+    |           |   cas-servlet.xml
+    |           |   cas.properties
+    |           |   deployerConfigContext.xml
+    |           |   restlet-servlet.xml
+    |           |   web.xml
+    |           |   
+    |           +---spring-configuration
+    |           |       applicationContext.xml
+    |           |       argumentExtractorsConfiguration.xml
+    |           |       auditTrailContext.xml
+    |           |       filters.xml
+    |           |       log4jConfiguration.xml
+    |           |       propertyFileConfigurer.xml
+    |           |       README.txt
+    |           |       securityContext.xml
+    |           |       ticketExpirationPolicies.xml
+    |           |       ticketGrantingTicketCookieGenerator.xml
+    |           |       ticketRegistry.xml
+    |           |       uniqueIdGenerators.xml
+    |           |       warnCookieGenerator.xml
+    |           |       
+    |           +---unused-spring-configuration
+    |           |       clearpass-configuration.xml
+    |           |       lppe-configuration.xml
+    |           |       mbeans.xml
+    |           |       
+    |           +---view
+    |           |   \---jsp
+    |           |       |   authorizationFailure.jsp
+    |           |       |   errors.jsp
+    |           |       |   
+    |           |       +---default
+    |           |       |   \---ui
+    |           |       |       |   casAccountDisabledView.jsp
+    |           |       |       |   casAccountLockedView.jsp
+    |           |       |       |   casBadHoursView.jsp
+    |           |       |       |   casBadWorkstationView.jsp
+    |           |       |       |   casConfirmView.jsp
+    |           |       |       |   casExpiredPassView.jsp
+    |           |       |       |   casGenericSuccess.jsp
+    |           |       |       |   casLoginMessageView.jsp
+    |           |       |       |   casLoginView.jsp
+    |           |       |       |   casLogoutView.jsp
+    |           |       |       |   casMustChangePassView.jsp
+    |           |       |       |   serviceErrorSsoView.jsp
+    |           |       |       |   serviceErrorView.jsp
+    |           |       |       |   
+    |           |       |       \---includes
+    |           |       |               bottom.jsp
+    |           |       |               top.jsp
+    |           |       |               
+    |           |       +---monitoring
+    |           |       |       viewStatistics.jsp
+    |           |       |       
+    |           |       \---protocol
+    |           |           |   casPostResponseView.jsp
+    |           |           |   
+    |           |           +---2.0
+    |           |           |       casProxyFailureView.jsp
+    |           |           |       casProxySuccessView.jsp
+    |           |           |       casServiceValidationFailure.jsp
+    |           |           |       casServiceValidationSuccess.jsp
+    |           |           |       
+    |           |           +---3.0
+    |           |           |       casServiceValidationFailure.jsp
+    |           |           |       casServiceValidationSuccess.jsp
+    |           |           |       
+    |           |           +---clearPass
+    |           |           |       clearPassFailure.jsp
+    |           |           |       clearPassSuccess.jsp
+    |           |           |       
+    |           |           +---oauth
+    |           |           |       confirm.jsp
+    |           |           |       
+    |           |           \---openid
+    |           |                   casOpenIdAssociationFailureView.jsp
+    |           |                   casOpenIdAssociationSuccessView.jsp
+    |           |                   casOpenIdServiceFailureView.jsp
+    |           |                   casOpenIdServiceSuccessView.jsp
+    |           |                   user.jsp
+    |           |                   
+    |           \---webflow
+    |               +---login
+    |               |       login-webflow.xml
+    |               |       
+    |               \---logout
+    |                       logout-webflow.xml
+    |                                               
+{% endhighlight %}
+
 The approach to Spring configuration is to group related components into a single configuration file, which allows
 deployers to include the handful of files containing components (typically authentication and ticketing) required
 for their environment. The files are intended to be self-identifying with respect to the kinds of components they
@@ -54,7 +219,21 @@ CAS server depends heavily on the Spring framework. There are exact and specific
 Spring beans in the XML configuration files can be overwritten to change behavior if need be via the Maven overlay process. There are two approaches to this:
 
 1. The XML file can be obtained from source for the CAS version and placed at the same exact path by the same exact name in the Maven overlay build. If configured correctly, the build will use the locally-provided XML file rather than the default.
-2. CAS server is able to load patterns of XML configuration files to overwrite what is provided by default. These configuration files that intend to overrule CAS default behavior can be placed at `/WEB-INF/` and must be named by the following pattern: `cas-servlet-*.xml`. Beans placed in this file will overwrite others.
+2. CAS server is able to load patterns of XML configuration files to overwrite what is provided by default. These configuration files that intend to overrule CAS default behavior can be placed at `/WEB-INF/` and must be named by the following pattern: `cas-servlet-*.xml`. Beans placed in this file will overwrite others. This configuration is recognized by the `DispatcherServlet` in the `web.xml` file:
+
+{% highlight xml %}
+...
+
+<servlet-class>
+    org.springframework.web.servlet.DispatcherServlet
+</servlet-class>
+<init-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/cas-servlet.xml, /WEB-INF/cas-servlet-*.xml</param-value>
+</init-param>
+
+...
+{% endhighlight %}
 
 ## Custom and Third-Party Source
 It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or

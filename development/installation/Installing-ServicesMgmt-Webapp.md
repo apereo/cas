@@ -6,15 +6,15 @@ title: CAS - Services Management Webapp
 
 The services management webapp is no longer part of the CAS server and is a standalone web application: `cas-management-webapp`.
 
-Nonetheless, one MUST keep in mind that both applications (the CAS server and the services management webapp)
+Nonetheless, one MUST keep in mind that both applications (the CAS server and the services management webapp) 
 share the _same_ configuration for the CAS services:
 
 * The management webapp is used to add/edit/delete all the CAS services
 * The CAS server loads/relies on all these defined CAS services to process all incoming requests.
 
 You can install the services management webapp in your favorite applications server, there is no restriction.
-Though, you need to configure it according to your environment. Towards that goal, the best way to
-proceed is to create your own services management webapp using
+Though, you need to configure it according to your environment. Towards that goal, the best way to 
+proceed is to create your own services management webapp using 
 a [Maven overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html) based on the CAS services management webapp:
 
 {% highlight xml %}
@@ -38,10 +38,10 @@ Access to the management webapp is controlled via Spring Security. Rules are def
 
 
 ###Static List of Users
-By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` file that should be available on the runtime classpath.
+By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` file that should be available on the runtime classpath. 
 
 {% highlight xml %}
-<sec:user-service id="userDetailsService"
+<sec:user-service id="userDetailsService" 
    properties="${user.details.file.location:classpath:user-details.properties}" />
 {% endhighlight %}
 
@@ -51,7 +51,7 @@ You can change the location of this file, by uncommenting the following key in y
 ##
 # User details file location that contains list of users
 # who are allowed access to the management webapp:
-#
+# 
 # user.details.file.location = classpath:user-details.properties
 {% endhighlight %}
 
@@ -59,7 +59,7 @@ The format of the file should be as such:
 
 {% highlight bash %}
 # The syntax of each entry should be in the form of:
-#
+# 
 # username=password,grantedAuthority[,grantedAuthority][,enabled|disabled]
 
 # Example:
@@ -116,7 +116,7 @@ You will also need to ensure that the `spring-security-ldap` dependency is avail
 
 ## Urls Configuration
 
-The urls configuration of the CAS server and management applications can be done
+The urls configuration of the CAS server and management applications can be done 
 by overriding the default `WEB-INF/cas-management.properties` file:
 
 {% highlight properties %}
@@ -133,11 +133,12 @@ cas-management.securityContext.serviceProperties.service=${cas-management.prefix
 cas-management.securityContext.serviceProperties.adminRoles=hasRole('ROLE_ADMIN')
 {% endhighlight %}
 
-When authenticating against a CAS server, the services management webapp will be processed as a
+When authenticating against a CAS server, the services management webapp will be processed as a 
 regular CAS service and thus, needs to be defined in the services registry of the CAS server.
 
 ## Services Registry
 
-You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml`
+You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml` 
 file and set the appropriate `serviceRegistryDao`. The [persistence storage](Service-Management.html) MUST be the same.
 It should be the same configuration you already use in your CAS server in the `WEB-INF/deployerConfigContext.xml` file.
+

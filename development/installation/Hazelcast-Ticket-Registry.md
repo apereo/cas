@@ -21,28 +21,17 @@ This ticket registry implementation is enabled by simply including the module in
 
 ## Configuration
 
-Enable the registry via:
+This implementation auto-configures most of the internal details of the underlying Hazelcast instance and the distributed `IMap` for tickets storage.
+The only required configuration value on each CAS node in the cluster is a comma-separated list of *ALL* the member nodes defined in the configuration 
+property `hz.cluster.members` (in `cas.properties` file). For example: `hz.cluster.members=cas1.example.com,cas2.example.com`
 
-{% highlight properties %}
-<alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
-{% endhighlight %}
+Other optional properties that could be set are:
 
-This implementation auto-configures most of the internal details of the underlying Hazelcast instance and
-the distributed `IMap` for tickets storage.
-
-{% highlight properties %}
-# hz.cluster.portAutoIncrement=true
-# hz.cluster.port=5701
-# hz.cluster.multicast.enabled=false
-# hz.cluster.members=cas1.example.com,cas2.example.com
-# hz.cluster.tcpip.enabled=true
-# hz.cluster.max.heapsize.percentage=85
-# hz.cluster.max.heartbeat.seconds=5
-# hz.cluster.eviction.percentage=10
-# hz.cluster.eviction.policy=LRU
-# hz.cluster.instance.name=${host.name}
-{% endhighlight %}
-
+* `hz.cluster.port` (default value is `5701`)
+* `hz.cluster.portAutoIncrement` (default value is `true`)
+* TGT time to live value for this implementation is set via `tgt.maxTimeToLiveInSeconds` and defaults to `28800`
+* ST time to live value for this implementation is set via `st.timeToKillInSeconds` and defaults to `10`
+ 
 ## Logging
 To enable additional logging for the registry, configure the log4j configuration file to add the following
 levels:
@@ -55,3 +44,5 @@ levels:
 </Logger>
 ...
 {% endhighlight %}
+  
+  

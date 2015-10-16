@@ -74,7 +74,7 @@
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>                  newMockHandler(false),
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>                  newMockHandler(false));
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>          manager.authenticate(mock(Credential.<strong class="jxr_keyword">class</strong>), mock(Credential.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L69" href="#L69">69</a>          fail(<span class="jxr_string">"Should have thrown authentication exception"</span>);
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>          fail(<span class="jxr_string">"Should have thrown AuthenticationException"</span>);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      }
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      @Test
@@ -96,7 +96,7 @@
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>                  newMockHandler(false));
 <a class="jxr_linenumber" name="L89" href="#L89">89</a>          manager.setAuthenticationPolicy(<strong class="jxr_keyword">new</strong> AllAuthenticationPolicy());
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>          manager.authenticate(mock(Credential.<strong class="jxr_keyword">class</strong>), mock(Credential.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L91" href="#L91">91</a>          fail(<span class="jxr_string">"Should have thrown authentication exception"</span>);
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>          fail(<span class="jxr_string">"Should have thrown AuthenticationException"</span>);
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>      }
 <a class="jxr_linenumber" name="L93" href="#L93">93</a>  
 <a class="jxr_linenumber" name="L94" href="#L94">94</a>      @Test
@@ -118,7 +118,7 @@
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>                 newMockHandler(<span class="jxr_string">"HandlerB"</span>, false));
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>         manager.setAuthenticationPolicy(<strong class="jxr_keyword">new</strong> RequiredHandlerAuthenticationPolicy(<span class="jxr_string">"HandlerB"</span>));
 <a class="jxr_linenumber" name="L112" href="#L112">112</a>         manager.authenticate(mock(Credential.<strong class="jxr_keyword">class</strong>), mock(Credential.<strong class="jxr_keyword">class</strong>));
-<a class="jxr_linenumber" name="L113" href="#L113">113</a>         fail(<span class="jxr_string">"Should have thrown AbstractAuthenticationException"</span>);
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         fail(<span class="jxr_string">"Should have thrown AuthenticationException"</span>);
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>     }
 <a class="jxr_linenumber" name="L115" href="#L115">115</a> 
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>     @Test

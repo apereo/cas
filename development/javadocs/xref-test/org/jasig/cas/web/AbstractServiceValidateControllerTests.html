@@ -39,7 +39,7 @@
 <a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 <a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
-<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.support.DefaultArgumentExtractor;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.web.support.CasArgumentExtractor;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.junit.Before;
 <a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.junit.Test;
 <a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">abstract</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../org/jasig/cas/web/AbstractServiceValidateControllerTests.html">AbstractServiceValidateControllerTests</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../org/jasig/cas/AbstractCentralAuthenticationServiceTest.html">AbstractCentralAuthenticationServiceTest</a> {
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  
-<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">protected</strong> AbstractServiceValidateController serviceValidateController;
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">protected</strong> ServiceValidateController serviceValidateController;
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      @Autowired
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>      <strong class="jxr_keyword">private</strong> ServicesManager servicesManager;
@@ -73,7 +73,7 @@
 <a class="jxr_linenumber" name="L65" href="#L65">65</a>          proxyHandler.setHttpClient(<strong class="jxr_keyword">new</strong> SimpleHttpClientFactoryBean().getObject());
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setProxyHandler(proxyHandler);
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setApplicationContext(context);
-<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setArgumentExtractor(<strong class="jxr_keyword">new</strong> DefaultArgumentExtractor());
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setArgumentExtractor(<strong class="jxr_keyword">new</strong> CasArgumentExtractor());
 <a class="jxr_linenumber" name="L69" href="#L69">69</a>          <strong class="jxr_keyword">this</strong>.serviceValidateController.setServicesManager(<strong class="jxr_keyword">this</strong>.servicesManager);
 <a class="jxr_linenumber" name="L70" href="#L70">70</a>      }
 <a class="jxr_linenumber" name="L71" href="#L71">71</a>  
@@ -113,14 +113,14 @@
 <a class="jxr_linenumber" name="L105" href="#L105">105</a>         request.addParameter(<span class="jxr_string">"service"</span>, TestUtils.getService().getId());
 <a class="jxr_linenumber" name="L106" href="#L106">106</a>         request.addParameter(<span class="jxr_string">"ticket"</span>, sId.getId());
 <a class="jxr_linenumber" name="L107" href="#L107">107</a> 
-<a class="jxr_linenumber" name="L108" href="#L108">108</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
 <a class="jxr_linenumber" name="L109" href="#L109">109</a>                 <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request,
 <a class="jxr_linenumber" name="L110" href="#L110">110</a>                         <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getViewName());
 <a class="jxr_linenumber" name="L111" href="#L111">111</a>     }
 <a class="jxr_linenumber" name="L112" href="#L112">112</a> 
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>     @Test
 <a class="jxr_linenumber" name="L114" href="#L114">114</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidServiceTicketInvalidSpec() <strong class="jxr_keyword">throws</strong> Exception {
-<a class="jxr_linenumber" name="L115" href="#L115">115</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
 <a class="jxr_linenumber" name="L116" href="#L116">116</a>                 <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(getHttpServletRequest(), <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getViewName());
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>     }
 <a class="jxr_linenumber" name="L118" href="#L118">118</a> 
@@ -128,7 +128,7 @@
 <a class="jxr_linenumber" name="L120" href="#L120">120</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidServiceTicketRuntimeExceptionWithSpec() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L121" href="#L121">121</a>         <strong class="jxr_keyword">this</strong>.serviceValidateController.setValidationSpecificationClass(MockValidationSpecification.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L122" href="#L122">122</a> 
-<a class="jxr_linenumber" name="L123" href="#L123">123</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
 <a class="jxr_linenumber" name="L124" href="#L124">124</a>                 <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(getHttpServletRequest(), <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getViewName());
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>         fail(TestUtils.CONST_EXCEPTION_EXPECTED);
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>     }
@@ -145,7 +145,7 @@
 <a class="jxr_linenumber" name="L137" href="#L137">137</a>         request.addParameter(<span class="jxr_string">"service"</span>, TestUtils.getService().getId());
 <a class="jxr_linenumber" name="L138" href="#L138">138</a>         request.addParameter(<span class="jxr_string">"ticket"</span>, sId.getId());
 <a class="jxr_linenumber" name="L139" href="#L139">139</a> 
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME,
 <a class="jxr_linenumber" name="L141" href="#L141">141</a>                 <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request,
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>                         <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getViewName());
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>     }
@@ -163,7 +163,7 @@
 <a class="jxr_linenumber" name="L155" href="#L155">155</a>         request.addParameter(<span class="jxr_string">"ticket"</span>, sId.getId());
 <a class="jxr_linenumber" name="L156" href="#L156">156</a>         request.addParameter(<span class="jxr_string">"pgtUrl"</span>, <span class="jxr_string">"https://www.github.com"</span>);
 <a class="jxr_linenumber" name="L157" href="#L157">157</a> 
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
 <a class="jxr_linenumber" name="L159" href="#L159">159</a>                 <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request,
 <a class="jxr_linenumber" name="L160" href="#L160">160</a>                         <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getViewName());
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>     }
@@ -172,7 +172,7 @@
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyValidServiceTicketWithSecurePgtUrl() <strong class="jxr_keyword">throws</strong> Exception {
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>         <strong class="jxr_keyword">this</strong>.serviceValidateController.setProxyHandler(<strong class="jxr_keyword">new</strong> Cas10ProxyHandler());
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>         <strong class="jxr_keyword">final</strong> ModelAndView modelAndView = getModelAndViewUponServiceValidationWithSecurePgtUrl();
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
 <a class="jxr_linenumber" name="L168" href="#L168">168</a>         
 <a class="jxr_linenumber" name="L169" href="#L169">169</a>     }
 <a class="jxr_linenumber" name="L170" href="#L170">170</a> 
@@ -189,7 +189,7 @@
 <a class="jxr_linenumber" name="L181" href="#L181">181</a>         request.addParameter(<span class="jxr_string">"pgtUrl"</span>, <span class="jxr_string">"duh"</span>);
 <a class="jxr_linenumber" name="L182" href="#L182">182</a> 
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>         <strong class="jxr_keyword">final</strong> ModelAndView modelAndView = <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request, <strong class="jxr_keyword">new</strong> MockHttpServletResponse());
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
 <a class="jxr_linenumber" name="L185" href="#L185">185</a>         assertNull(modelAndView.getModel().get(<span class="jxr_string">"pgtIou"</span>));
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>     }
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>     
@@ -205,7 +205,7 @@
 <a class="jxr_linenumber" name="L197" href="#L197">197</a>         request.addParameter(<span class="jxr_string">"pgtUrl"</span>, <span class="jxr_string">"https://www.github.com"</span>);
 <a class="jxr_linenumber" name="L198" href="#L198">198</a> 
 <a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">final</strong> ModelAndView modelAndView = <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request, <strong class="jxr_keyword">new</strong> MockHttpServletResponse());
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME, modelAndView.getViewName());
 <a class="jxr_linenumber" name="L201" href="#L201">201</a>         assertNotNull(modelAndView.getModel().get(<span class="jxr_string">"pgtIou"</span>));
 <a class="jxr_linenumber" name="L202" href="#L202">202</a>     }
 <a class="jxr_linenumber" name="L203" href="#L203">203</a>     
@@ -233,7 +233,7 @@
 <a class="jxr_linenumber" name="L225" href="#L225">225</a>         });
 <a class="jxr_linenumber" name="L226" href="#L226">226</a>         
 <a class="jxr_linenumber" name="L227" href="#L227">227</a>         <strong class="jxr_keyword">final</strong> ModelAndView modelAndView = <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request, <strong class="jxr_keyword">new</strong> MockHttpServletResponse());
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
 <a class="jxr_linenumber" name="L229" href="#L229">229</a>         assertNull(modelAndView.getModel().get(<span class="jxr_string">"pgtIou"</span>));
 <a class="jxr_linenumber" name="L230" href="#L230">230</a>     }
 <a class="jxr_linenumber" name="L231" href="#L231">231</a>     
@@ -253,7 +253,7 @@
 <a class="jxr_linenumber" name="L245" href="#L245">245</a>         request.addParameter(<span class="jxr_string">"service"</span>, TestUtils.getService(reqSvc).getId());
 <a class="jxr_linenumber" name="L246" href="#L246">246</a>         request.addParameter(<span class="jxr_string">"ticket"</span>, sId.getId());
 <a class="jxr_linenumber" name="L247" href="#L247">247</a>         
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
 <a class="jxr_linenumber" name="L249" href="#L249">249</a>                 <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request,
 <a class="jxr_linenumber" name="L250" href="#L250">250</a>                         <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getViewName());
 <a class="jxr_linenumber" name="L251" href="#L251">251</a>     }
@@ -274,7 +274,7 @@
 <a class="jxr_linenumber" name="L266" href="#L266">266</a>         request.addParameter(<span class="jxr_string">"service"</span>, TestUtils.getService(reqSvc).getId());
 <a class="jxr_linenumber" name="L267" href="#L267">267</a>         request.addParameter(<span class="jxr_string">"ticket"</span>, sId.getId());
 <a class="jxr_linenumber" name="L268" href="#L268">268</a>         
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_SUCCESS_VIEW_NAME,
 <a class="jxr_linenumber" name="L270" href="#L270">270</a>                 <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request,
 <a class="jxr_linenumber" name="L271" href="#L271">271</a>                         <strong class="jxr_keyword">new</strong> MockHttpServletResponse()).getViewName());
 <a class="jxr_linenumber" name="L272" href="#L272">272</a>     }
@@ -293,7 +293,7 @@
 <a class="jxr_linenumber" name="L285" href="#L285">285</a>         request.addParameter(<span class="jxr_string">"pgtUrl"</span>, <span class="jxr_string">"http://www.github.com"</span>);
 <a class="jxr_linenumber" name="L286" href="#L286">286</a>         
 <a class="jxr_linenumber" name="L287" href="#L287">287</a>         <strong class="jxr_keyword">final</strong> ModelAndView modelAndView = <strong class="jxr_keyword">this</strong>.serviceValidateController.handleRequestInternal(request, <strong class="jxr_keyword">new</strong> MockHttpServletResponse());
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>         assertEquals(ServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
 <a class="jxr_linenumber" name="L289" href="#L289">289</a>         assertNull(modelAndView.getModel().get(<span class="jxr_string">"pgtIou"</span>));
 <a class="jxr_linenumber" name="L290" href="#L290">290</a>     }
 <a class="jxr_linenumber" name="L291" href="#L291">291</a> 

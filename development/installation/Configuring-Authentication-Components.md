@@ -68,6 +68,49 @@ avoid short circuiting at step 4.1 above and try every handler even if one prior
 used to support a multi-factor authentication situation, for example, where username/password authentication is
 required but an additional OTP is optional.
 
+The following configuration snippet demonstrates how to configure `PolicyBasedAuthenticationManager` for a
+straightforward multi-factor authentication case where username/password authentication is required 
+and an additional OTP credential is optional; in both cases principals are resolved from LDAP.
+
+{% highlight xml %}
+<bean id="passwordHandler"
+      class="org.jasig.cas.authentication.LdapAuthenticationHandler">
+      <!-- Details elided for simplicity -->
+</bean>
+
+<bean id="oneTimePasswordHandler"
+      class="com.example.cas.authentication.CustomOTPAuthenticationHandler"
+      p:name="oneTimePasswordHandler" />
+
+<bean id="authenticationPolicy"
+      class="org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory"
+      c:requiredHandlerName="passwordHandler"
+      p:tryAll="true" />
+      
+
+<bean id="principalResolver"
+      class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver"
+      p:principalAttributeName="username"
+      p:attributeRepository-ref="attributeRepository"
+      p:returnNullIfNoAttributes="true" />
+      
+<bean id="authenticationManager"
+      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
+      p:authenticationPolicy-ref="authenticationPolicy">
+  <constructor-arg>
+    <map>
+      <entry key-ref="passwordHandler" value-ref="principalResolver"/>
+      <entry key-ref="oneTimePasswordHandler" value-ref="principalResolver" />
+    </map>
+  </constructor-arg>
+  <property name="authenticationMetaDataPopulators">
+    <list>
+      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
+    </list>
+  </property>
+</bean>
+{% endhighlight %}
+
 ## Authentication Handlers
 CAS ships with support for authenticating against many common kinds of authentication systems.
 The following list provides a complete list of supported authentication technologies; jump to the section(s) of
@@ -76,22 +119,56 @@ interest.
 * [Database](Database-Authentication.html)
 * [JAAS](JAAS-Authentication.html)
 * [LDAP](LDAP-Authentication.html)
+* [Legacy](Legacy-Authentication.html)
 * [OAuth 1.0/2.0, OpenID](OAuth-OpenId-Authentication.html)
 * [RADIUS](RADIUS-Authentication.html)
 * [SPNEGO](SPNEGO-Authentication.html) (Windows)
 * [Trusted](Trusted-Authentication.html) (REMOTE_USER)
 * [X.509](X509-Authentication.html) (client SSL certificate)
 * [Remote Address](Remote-Address-Authentication.html)
-* [YubiKey](YubiKey-Authentication.html)
-* [Apache Shiro](Shiro-Authentication.html)
+
 
 There are some additional handlers for small deployments and special cases:
 
 * [Whilelist](Whitelist-Authentication.html)
 * [Blacklist](Blacklist-Authentication.html)
 
+
 ##Argument Extractors
-Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction.
+Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction. 
+
+Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml`. Here's a brief sample:
+
+{% highlight xml %}
+<bean id="casArgumentExtractor"	class="org.jasig.cas.web.support.CasArgumentExtractor" />
+
+<util:list id="argumentExtractors">
+    <ref bean="casArgumentExtractor" />
+</util:list>
+{% endhighlight %}
+
+
+###Components
+
+####`ArgumentExtractor`
+Strategy parent interface that defines operations needed to extract arguments from the http request.
+
+
+####`CasArgumentExtractor`
+Argument extractor that maps the request based on the specifications of the CAS protocol.
+
+
+####`GoogleAccountsArgumentExtractor`
+Argument extractor to be used to enable Google Apps integration and SAML v2 specification.
+
+
+####`SamlArgumentExtractor`
+Argument extractor compliant with SAML v1.1 specification.
+
+
+####`OpenIdArgumentExtractor`
+Argument extractor compliant with OpenId protocol.
+
 
 ## Principal Resolution
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
@@ -108,7 +185,7 @@ Transforms the user id by adding a postfix or suffix.
 
 ######`ConvertCasePrincipalNameTransformer`
 A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed.
-The transformer is also able to accept and work on the result of
+The transformer is also able to accept and work on the result of 
 a previous transformer that might have modified the uid, such that the two can be chained.
 
 #### Configuration
@@ -125,7 +202,7 @@ Here is an example configuration based for the `AcceptUsersAuthenticationHandler
     </property>
 </bean>
 
-<bean id="convertCasePrincipalNameTransformer"
+<bean id="convertCasePrincipalNameTransformer" 
     class="org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer"
     p:toUpperCase="true" />
 
@@ -159,6 +236,6 @@ CAS provides a facility for limiting failed login attempts to support password g
 Please [see this guide](Configuring-Authentication-Throttling.html) for additional details on login throttling.
 
 ## SSO Session Cookie
-A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session.
+A ticket-granting cookie is an HTTP cookie set by CAS upon the establishment of a single sign-on session. 
 This cookie maintains login state for the client, and while it is valid, the client can present it to CAS in lieu of primary credentials.
 Please [see this guide](Configuring-SSO-Session-Cookie.html) for additional details.
