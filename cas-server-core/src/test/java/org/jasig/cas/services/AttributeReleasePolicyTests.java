@@ -22,7 +22,6 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
@@ -159,8 +158,9 @@ public class AttributeReleasePolicyTests {
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
 
-        final PrincipalAttributesRepository repository =
-                new CachingPrincipalAttributesRepository(dao, TimeUnit.MILLISECONDS, 100);
+        final CachingPrincipalAttributesRepository repository =
+                new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS, 100);
+        repository.setAttributeRepository(dao);
 
         final Principal p = new DefaultPrincipalFactory().createPrincipal("uid",
                     Collections.<String, Object>singletonMap("mail", "final@example.com"));
