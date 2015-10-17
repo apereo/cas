@@ -245,7 +245,7 @@
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>                 attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>                 attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
 <a class="jxr_linenumber" name="L239" href="#L239">239</a> 
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>                 <strong class="jxr_keyword">final</strong> IAttributeMerger merger = cc.getMergingStrategy();
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>                 <strong class="jxr_keyword">final</strong> IAttributeMerger merger = cc.getMergingStrategy().getAttributeMerger();
 <a class="jxr_linenumber" name="L241" href="#L241">241</a> 
 <a class="jxr_linenumber" name="L242" href="#L242">242</a>                 <strong class="jxr_keyword">if</strong> (merger != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L243" href="#L243">243</a>                     <strong class="jxr_keyword">if</strong> (merger instanceof NoncollidingAttributeAdder) {
@@ -657,7 +657,7 @@
 <a class="jxr_linenumber" name="L649" href="#L649">649</a>                 <strong class="jxr_keyword">final</strong> String attrType = <strong class="jxr_keyword">this</strong>.attrRelease.getAttrOption();
 <a class="jxr_linenumber" name="L650" href="#L650">650</a>                 <strong class="jxr_keyword">if</strong> (StringUtils.equalsIgnoreCase(attrType,
 <a class="jxr_linenumber" name="L651" href="#L651">651</a>                         RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
-<a class="jxr_linenumber" name="L652" href="#L652">652</a>                     policy.setPrincipalAttributesRepository(<strong class="jxr_keyword">new</strong> CachingPrincipalAttributesRepository(dao,
+<a class="jxr_linenumber" name="L652" href="#L652">652</a>                     policy.setPrincipalAttributesRepository(<strong class="jxr_keyword">new</strong> CachingPrincipalAttributesRepository(
 <a class="jxr_linenumber" name="L653" href="#L653">653</a>                             TimeUnit.valueOf(<strong class="jxr_keyword">this</strong>.attrRelease.getCachedTimeUnit().toUpperCase()),
 <a class="jxr_linenumber" name="L654" href="#L654">654</a>                             <strong class="jxr_keyword">this</strong>.attrRelease.getCachedExpiration()));
 <a class="jxr_linenumber" name="L655" href="#L655">655</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (StringUtils.equalsIgnoreCase(attrType,
