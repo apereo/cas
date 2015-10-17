@@ -215,9 +215,16 @@ Parent component that describes the relationship between a CAS `Principal` and t
 The default relationship between a CAS `Principal` and the underlying attribute repository source, such that principal attributes are kept as they are without any additional processes to evaluate and update them. This need not be configured explicitly.
 
 ####`CachingPrincipalAttributesRepository`
-The  relationship between a CAS `Principal` and the underlying attribute repository source, that describes how and at what length the CAS `Principal` attributes should be cached. Upon attribute release time, this component is consulted to ensure that appropriate attribute values are released to the scoped service, per the cache expiration policy. If the expiration policy has passed, the underlying attribute repository source will be consulted to figure out the available set of attributes. 
+The  relationship between a CAS `Principal` and the underlying attribute repository source, that describes how and 
+at what length the CAS `Principal` attributes should be cached. Upon attribute release time, this component 
+is consulted to ensure that appropriate attribute values are released to the scoped service, per the cache 
+expiration policy. If the expiration policy has passed, the underlying attribute repository source will be consulted to figure out the available set of attributes. 
 
-The default caching policy is 2 hours which can be controlled via the `cas.attrs.timeToExpireInHours` property. This component also has the ability to resolve conflicts between existing principal attributes and those that are retrieved from repository source via a `mergingStrategy` property. This is useful if you want to preserve the collection of attributes that are already available to the principal that were retrieved from a different place during the authentication event, etc.
+The default caching policy is 2 hours. 
+This component also has the ability to resolve conflicts between existing principal attributes and those that are 
+retrieved from repository source via a `mergingStrategy` property. This is useful if you want to preserve the 
+collection of attributes that are already available to the principal that were retrieved from a different place 
+during the authentication event, etc.
 
 <div class="alert alert-info"><strong>Caching Upon Release</strong><p>Note that the policy is only consulted at release time, upon a service ticket validation event. If there are any custom webflows and such that wish to rely on the resolved <code>Principal</code> AND also wish to receive an updated set of attributes, those components must consult the underlying source directory without relying on the <code>Principal</code>.</p></div>
 
@@ -236,7 +243,6 @@ Sample configuration follows:
                 </property>
         <property name="principalAttributesRepository">
                     <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-                            c:attributeRepository-ref="attributeRepository"
                             c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
                 </property>
         </bean>
@@ -246,7 +252,8 @@ Sample configuration follows:
 
 
 ####Merging Strategies
-By default, no merging strategy takes place, which means the principal attributes are always ignored and attributes from the source are always returned. But any of the following merging strategies may be a suitable option:
+By default, no merging strategy takes place, which means the principal attributes are always ignored and 
+attributes from the source are always returned. But any of the following merging strategies may be a suitable option:
 
 * `MultivaluedAttributeMerger`
 Attributes with the same name are merged into multi-valued lists.
@@ -264,11 +271,8 @@ For example:
     <property name="principalAttributesRepository">
         <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
               c:attributeRepository-ref="attributeRepository"
-              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
-            <property name="mergingStrategy">
-                <bean class="org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger" />
-            </property>
-        </bean>
+              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
+              p:mergingStrategy="MULTIVALUED" />
     </property>
 ...
 </bean>
@@ -289,11 +293,8 @@ For example:
     <property name="principalAttributesRepository">
         <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
               c:attributeRepository-ref="attributeRepository"
-              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
-            <property name="mergingStrategy">
-                <bean class="org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder" />
-            </property>
-        </bean>
+              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
+              p:mergingStrategy="ADD" />
     </property>
 ...
 </bean>
@@ -315,11 +316,8 @@ For example:
     <property name="principalAttributesRepository">
         <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
               c:attributeRepository-ref="attributeRepository"
-              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
-            <property name="mergingStrategy">
-                <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
-            </property>
-        </bean>
+              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
+              p:mergingStrategy="REPLACE" />
     </property>
 ...
 </bean>

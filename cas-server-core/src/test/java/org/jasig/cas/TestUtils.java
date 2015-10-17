@@ -47,7 +47,6 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
-import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -181,8 +180,8 @@ public final class TestUtils {
             policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
             final CachingPrincipalAttributesRepository repo =
-                    new CachingPrincipalAttributesRepository(new StubPersonAttributeDao(), 10);
-            repo.setMergingStrategy(new NoncollidingAttributeAdder());
+                    new CachingPrincipalAttributesRepository(10);
+            repo.setMergingStrategy(CachingPrincipalAttributesRepository.MergingStrategy.ADD);
             policy.setPrincipalAttributesRepository(repo);
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
             policy.setAllowedAttributes(new ArrayList(getTestAttributes().keySet()));
