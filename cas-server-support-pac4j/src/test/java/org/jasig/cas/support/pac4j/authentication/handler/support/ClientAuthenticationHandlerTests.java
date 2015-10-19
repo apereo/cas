@@ -27,8 +27,8 @@ import javax.security.auth.login.FailedLoginException;
 
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.principal.ClientCredential;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.jasig.cas.support.pac4j.test.MockFacebookClient;
 import org.junit.Before;
 import org.junit.Test;
