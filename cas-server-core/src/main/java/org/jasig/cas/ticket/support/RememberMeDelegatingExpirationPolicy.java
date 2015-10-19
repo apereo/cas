@@ -45,7 +45,7 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
 
 
     /** No-arg constructor used for serialization purposes. */
-    private RememberMeDelegatingExpirationPolicy() {}
+    public RememberMeDelegatingExpirationPolicy() {}
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
