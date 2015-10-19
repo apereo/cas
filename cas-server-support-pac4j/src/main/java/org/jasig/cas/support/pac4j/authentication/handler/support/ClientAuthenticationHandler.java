@@ -21,7 +21,9 @@ package org.jasig.cas.support.pac4j.authentication.handler.support;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
+import org.jasig.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
+import org.jasig.cas.authentication.principal.ClientCredential;
+import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.J2EContext;
@@ -30,8 +32,6 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -75,9 +75,8 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
         logger.debug("client: {}", client);
 
         // web context
-        final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
-        final HttpServletRequest request = (HttpServletRequest) servletExternalContext.getNativeRequest();
-        final HttpServletResponse response = (HttpServletResponse) servletExternalContext.getNativeResponse();
+        final HttpServletRequest request = WebUtils.getHttpServletRequest();
+        final HttpServletResponse response = WebUtils.getHttpServletResponse();
         final WebContext webContext = new J2EContext(request, response);
 
         // get user profile

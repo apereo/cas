@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -83,6 +84,42 @@ public final class WebUtils {
     }
 
     /**
+     * Gets the http servlet request from the current servlet context.
+     *
+     * @return the http servlet request
+     */
+    public static HttpServletRequest getHttpServletRequest() {
+        final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        return (HttpServletRequest) servletExternalContext.getNativeRequest();
+    }
+
+    /**
+     * Gets the http servlet response from the context.
+     *
+     * @param context the context
+     * @return the http servlet response
+     */
+    public static HttpServletResponse getHttpServletResponse(
+            final RequestContext context) {
+        Assert.isInstanceOf(ServletExternalContext.class, context
+                        .getExternalContext(),
+                "Cannot obtain HttpServletResponse from event of type: "
+                        + context.getExternalContext().getClass().getName());
+        return (HttpServletResponse) context.getExternalContext()
+                .getNativeResponse();
+    }
+
+    /**
+     * Gets the http servlet response from the current servlet context.
+     *
+     * @return the http servlet response
+     */
+    public static HttpServletResponse getHttpServletResponse() {
+        final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
+        return (HttpServletResponse) servletExternalContext.getNativeResponse();
+    }
+
+    /**
      * Is cas servlet initializing?
      *
      * @param sce the sce
@@ -123,25 +160,8 @@ public final class WebUtils {
             return isCasServletInitializing(((WebApplicationContext) sce).getServletContext());
         }
         LOGGER.debug("No CAS servlet is available because the given application context is not of type {}",
-            WebApplicationContext.class);
+                WebApplicationContext.class);
         return false;
-    }
-
-
-    /**
-     * Gets the http servlet response.
-     *
-     * @param context the context
-     * @return the http servlet response
-     */
-    public static HttpServletResponse getHttpServletResponse(
-        final RequestContext context) {
-        Assert.isInstanceOf(ServletExternalContext.class, context
-            .getExternalContext(),
-            "Cannot obtain HttpServletResponse from event of type: "
-                + context.getExternalContext().getClass().getName());
-        return (HttpServletResponse) context.getExternalContext()
-            .getNativeResponse();
     }
 
     /**

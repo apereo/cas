@@ -30,7 +30,7 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.TechnicalException;
-import org.pac4j.http.client.BasicAuthClient;
+import org.pac4j.http.client.indirect.IndirectBasicAuthClient;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -147,7 +147,7 @@ public final class ClientActionTests {
     @Test
     public void checkUnautorizedProtocol() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "BasicAuthClient");
+        mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "IndirectBasicAuthClient");
 
         final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
         when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
@@ -155,7 +155,7 @@ public final class ClientActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
 
-        final BasicAuthClient basicAuthClient = new BasicAuthClient();
+        final IndirectBasicAuthClient basicAuthClient = new IndirectBasicAuthClient();
         final Clients clients = new Clients(MY_LOGIN_URL, basicAuthClient);
         final ClientAction action = new ClientAction(mock(CentralAuthenticationService.class), clients);
 

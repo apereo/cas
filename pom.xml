@@ -1375,6 +1375,23 @@
                 <version>${cryptacular.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.pac4j</groupId>
+                <artifactId>pac4j-core</artifactId>
+                <version>${pac4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pac4j</groupId>
+                <artifactId>pac4j-oauth</artifactId>
+                <version>${pac4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pac4j</groupId>
+                <artifactId>pac4j-http</artifactId>
+                <version>${pac4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -1398,6 +1415,7 @@
         <module>cas-server-support-saml</module>
         <module>cas-server-integration-memcached</module>
         <module>cas-server-integration-ehcache</module>
+        <module>cas-server-integration-pac4j</module>
         <module>cas-server-extension-clearpass</module>
         <module>cas-server-support-rest</module>
         <module>cas-server-support-yubikey</module>
