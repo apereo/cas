@@ -41,11 +41,11 @@ This project includes:
   CDI APIs under Apache License, Version 2.0
   Central Authentication Service under Jasig License
   ClassMate under The Apache Software License, Version 2.0
-  Commons CLI under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
+  Cryptacular Library under Apache 2 or GNU Lesser General Public License
   dom4j under BSD License
   ehcache under The Apache Software License, Version 2.0
   Expression Language 2.2 Implementation under CDDL + GPLv2 with classpath exception
@@ -112,6 +112,5 @@ This project includes:
   Spring Web MVC under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   UnboundID LDAP SDK for Java under GNU General Public License version 2 (GPLv2) or GNU Lesser General Public License version 2.1 (LGPLv2.1) or UnboundID LDAP SDK Free Use License
-  VT Crypt Library under Apache 2 or GNU Lesser General Public License
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
 
