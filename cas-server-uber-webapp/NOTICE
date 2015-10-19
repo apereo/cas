@@ -25,6 +25,16 @@ This project includes:
   AspectJ weaver under Eclipse Public License - v 1.0
   Bean Validation API under Apache License, Version 2.0
   Bouncy Castle Provider under Bouncy Castle Licence
+  com.github.coova.jradius:jradius-apps under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-client under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-core under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-dictionary under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-dictionary-min under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-example under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-extended under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-extras under GNU Lesser General Public License, version 2.1
+  com.github.coova.jradius:jradius-server under GNU Lesser General Public License, version 2.1
+  com.github.coova:jradius under GNU Lesser General Public License, version 2.1
   Commons Chain under The Apache Software License, Version 2.0
   Commons CLI under The Apache Software License, Version 2.0
   Commons Codec under The Apache Software License, Version 2.0
@@ -34,13 +44,12 @@ This project includes:
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
   Commons Logging under The Apache Software License, Version 2.0
+  Commons Pool under The Apache Software License, Version 2.0
   commons-beanutils under Apache License, Version 2.0
   commons-beanutils-core under Apache License, Version 2.0
   Digester under The Apache Software License, Version 2.0
   dom4j under BSD License
-  ehcache under The Apache Software License, Version 2.0
   Ehcache Core under The Apache Software License, Version 2.0
-  gnu-crypto under GNU General Public License, with the "library exception"
   Hamcrest Core under New BSD License
   Hibernate Commons Annotations under GNU LESSER GENERAL PUBLIC LICENSE
   Inspektr - Auditing API under Apache 2.0 License
@@ -56,7 +65,6 @@ This project includes:
   Jasig CAS Web Application under Apache 2
   Jasig CAS X.509 Client Certificate Support under Apache 2
   Java Transaction API under Commons Development and Distribution License, Version 1.0
-  java-getopt under GNU General Public License, with the "library exception"
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   jaxb-api under Commons Development and Distribution License, Version 1.0
@@ -70,8 +78,6 @@ This project includes:
   JGroups under Library (or Lesser) GNU Public License 2.1
   Joda time under Apache 2
   JPA 2.0 API under Sun Binary Code License
-  jradius-core-1.0.0 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
-  jradius-dictionary-1.0.0 under GNU Lessor/Library Public License, Version 3.0 or GNU Public License, Version 3.0
   JUnit under Common Public License Version 1.0
   Kryo under New BSD License
   kryo serializers under The Apache Software License, Version 2.0
@@ -79,6 +85,7 @@ This project includes:
   MinLog under New BSD License
   Mockito under The MIT License
   Objenesis under MIT License
+  ON Enterprise Server JAR under GNU Lesser General Public License (LGPL)
   org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   Perf4J under Apache 2
   Person Directory API under Apache License Version 2.0
