@@ -39,7 +39,6 @@ This project includes:
   AspectJ weaver under Eclipse Public License - v 1.0
   Bean Validation API under The Apache Software License, Version 2.0
   Bouncy Castle Provider under Bouncy Castle Licence
-  c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
   CAS server security filter under Apache 2
   CDI APIs under Apache License, Version 2.0
   ClassMate under The Apache Software License, Version 2.0

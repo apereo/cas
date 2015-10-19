@@ -59,13 +59,13 @@ This project includes:
   com.github.coova:jradius under GNU Lesser General Public License, version 2.1
   Commons BeanUtils under The Apache Software License, Version 2.0
   Commons Chain under The Apache Software License, Version 2.0
-  Commons CLI under The Apache Software License, Version 2.0
   Commons Configuration under The Apache Software License, Version 2.0
   Commons IO under The Apache Software License, Version 2.0
   Commons JEXL under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   commons-beanutils-core under Apache License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
+  Cryptacular Library under Apache 2 or GNU Lesser General Public License
   Digester under The Apache Software License, Version 2.0
   dom4j under BSD License
   ehcache under The Apache Software License, Version 2.0
@@ -94,7 +94,6 @@ This project includes:
   javax.inject under The Apache Software License, Version 2.0
   JAXB CORE under CDDL 1.1 or GPL2 w/ CPE
   JAXB Reference Implementation under CDDL 1.1 or GPL2 w/ CPE
-  JBoss Cache - Core Edition under GNU Lesser General Public License
   JBoss Common Classes under lgpl
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging Programming Interface under lgpl
@@ -119,6 +118,7 @@ This project includes:
   Objenesis under Apache 2
   OGNL - Object Graph Navigation Library under Apache License, Version 2.0
   ON Enterprise Server JAR under GNU Lesser General Public License (LGPL)
+  org.jboss.cache:jbosscache-core under LGPL, v2.1
   org.samba.jcifs:jcifs-ext under GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
@@ -146,6 +146,5 @@ This project includes:
   Spring Web MVC under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   Spymemcached under The Apache Software License, Version 2.0
-  VT Crypt Library under Apache 2 or GNU Lesser General Public License
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
 

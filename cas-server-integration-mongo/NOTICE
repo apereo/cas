@@ -72,7 +72,6 @@ This project includes:
   JCL 1.1.1 implemented over SLF4J under MIT License
   Joda-Time under Apache 2
   jose4j under The Apache Software License, Version 2.0
-  js under Mozilla Public License, Version 1.1
   JSR-250 Common Annotations for the JavaTM Platform under COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
   JSR107 API and SPI under JSR-000107 JCACHE 2.9 Public Review - Updated Specification
                 License
@@ -90,6 +89,7 @@ This project includes:
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
   Reflections under WTFPL or The New BSD License
+  Rhino under Mozilla Public License
   SLF4J API Module under MIT License
   Spring AOP under The Apache Software License, Version 2.0
   Spring Beans under The Apache Software License, Version 2.0
