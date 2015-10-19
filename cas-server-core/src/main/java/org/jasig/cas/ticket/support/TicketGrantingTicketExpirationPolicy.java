@@ -47,7 +47,7 @@ public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpir
      * Instantiates a new Ticket granting ticket expiration policy.
      */
     @Deprecated
-    private TicketGrantingTicketExpirationPolicy() {
+    public TicketGrantingTicketExpirationPolicy() {
         this.maxTimeToLiveInMilliSeconds = 0;
         this.timeToKillInMilliSeconds = 0;
     }

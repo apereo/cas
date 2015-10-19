@@ -40,7 +40,7 @@ public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExp
     private long timeInBetweenUsesInMilliSeconds;
 
     /** No-arg constructor used for serialization purposes. */
-    private ThrottledUseAndTimeoutExpirationPolicy() {}
+    public ThrottledUseAndTimeoutExpirationPolicy() {}
 
     public void setTimeInBetweenUsesInMilliSeconds(
         final long timeInBetweenUsesInMilliSeconds) {
