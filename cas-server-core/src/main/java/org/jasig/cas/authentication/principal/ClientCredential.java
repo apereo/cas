@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.pac4j.authentication.principal;
+package org.jasig.cas.authentication.principal;
 
 import java.io.Serializable;
 
