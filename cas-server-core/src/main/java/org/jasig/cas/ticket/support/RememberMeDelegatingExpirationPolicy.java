@@ -43,6 +43,10 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
     @NotNull
     private ExpirationPolicy sessionExpirationPolicy;
 
+
+    /** No-arg constructor used for serialization purposes. */
+    private RememberMeDelegatingExpirationPolicy() {}
+
     @Override
     public boolean isExpired(final TicketState ticketState) {
         final Boolean b = (Boolean) ticketState.getAuthentication().getAttributes().

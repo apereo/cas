@@ -39,6 +39,9 @@ public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExp
     /** Time time between which a ticket must wait to be used again. */
     private long timeInBetweenUsesInMilliSeconds;
 
+    /** No-arg constructor used for serialization purposes. */
+    private ThrottledUseAndTimeoutExpirationPolicy() {}
+
     public void setTimeInBetweenUsesInMilliSeconds(
         final long timeInBetweenUsesInMilliSeconds) {
         this.timeInBetweenUsesInMilliSeconds = timeInBetweenUsesInMilliSeconds;
