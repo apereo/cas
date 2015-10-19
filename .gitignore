@@ -16,3 +16,4 @@ pom.xml.versionsBackup
 *.log
 
 **/.checkstyle
+**/*.orig
