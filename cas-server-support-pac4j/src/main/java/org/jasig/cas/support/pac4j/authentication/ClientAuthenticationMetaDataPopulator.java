@@ -21,7 +21,7 @@ package org.jasig.cas.support.pac4j.authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
+import org.jasig.cas.authentication.principal.ClientCredential;
 import org.springframework.stereotype.Component;
 
 /**

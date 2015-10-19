@@ -231,6 +231,12 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.pac4j</groupId>
+            <artifactId>pac4j-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <properties>

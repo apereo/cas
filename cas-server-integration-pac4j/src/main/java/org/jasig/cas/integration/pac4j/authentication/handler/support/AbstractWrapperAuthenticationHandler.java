@@ -16,12 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.support.pac4j.authentication.handler.support;
+package org.jasig.cas.integration.pac4j.authentication.handler.support;
 
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
+import org.jasig.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
+import org.jasig.cas.authentication.principal.ClientCredential;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.UserProfile;

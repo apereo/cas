@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Licensed to Apereo under one or more contributor license
@@ -20,25 +19,10 @@
     under the License.
 
 -->
-
-<Configuration>
-    <Appenders>
-        <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
-        </Console>
-        <RollingFile name="file" fileName="target/oauth.log" append="true"
-                     filePattern="oauth-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="%d %p [%c] - %m%n"/>
-            <Policies>
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="10 MB"/>
-                <TimeBasedTriggeringPolicy />
-            </Policies>
-        </RollingFile>
-    </Appenders>
-    <Loggers>
-        <Root level="warn">
-            <AppenderRef ref="console"/>
-        </Root>
-    </Loggers>
-</Configuration>
+<project name="Apereo CAS ${project.version}">
+    <body>
+        <menu ref="parent"/>
+        <menu ref="reports" name="Reports" inherit="top"/>
+        <menu ref="modules" name="Modules" inherit="top"/>
+    </body>
+</project>
