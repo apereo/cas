@@ -84,6 +84,7 @@ interest.
 * [Remote Address](Remote-Address-Authentication.html)
 * [YubiKey](YubiKey-Authentication.html)
 * [Apache Shiro](Shiro-Authentication.html)
+* [pac4j](Pac4j-Authentication.html)
 
 There are some additional handlers for small deployments and special cases:
 
