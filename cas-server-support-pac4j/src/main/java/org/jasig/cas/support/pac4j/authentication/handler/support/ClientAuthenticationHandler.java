@@ -31,6 +31,7 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +55,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
      */
     @NotNull
     @Autowired
+    @Qualifier("builtClients")
     private Clients clients;
 
     @Override
@@ -81,7 +83,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
         // get user profile
         final UserProfile userProfile = client.getUserProfile(credentials, webContext);
-        logger.debug("userProfile : {}", userProfile);
+        logger.debug("userProfile: {}", userProfile);
 
         return createResult(clientCredentials, userProfile);
     }
