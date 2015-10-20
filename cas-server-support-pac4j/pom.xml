@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.pac4j</groupId>
             <artifactId>pac4j-oauth</artifactId>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

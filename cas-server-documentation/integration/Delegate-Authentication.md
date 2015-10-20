@@ -85,7 +85,7 @@ To add SAML support, add the following dependency:
 
 ###Add the needed clients
 
-A provider is a server which can authenticate user (like Google, Yahoo...) instead of a CAS server. If you want to delegate the CAS authentication to Twitter for example, you have to add an OAuth client for the provider: Twitter. Clients classes are defined in the pac4j library.
+An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server. If you want to delegate the CAS authentication to Twitter for example, you have to add an OAuth client for the provider: Twitter. Clients classes are defined in the pac4j library.
 
 All the needed clients to authenticate via providers must be declared in a specific `WEB-INF/spring-configuration/pac4jContext.xml` file:
 
@@ -121,11 +121,10 @@ For each OAuth provider, the CAS server is considered as an OAuth client and the
 
 For the CAS OAuth wrapping, the *casOAuthUrl* property must be set to the OAuth wrapping url of the other CAS server which is using OAuth wrapping (for example: *http://mycasserver2/oauth2.0*).
 
-Finally, all the clients and the CAS server login url are gathered in the `Clients` configuration bean:
+Finally, all the clients must be gathered in the `Clients` configuration bean:
 
 {% highlight xml %}
 <bean id="clients" class="org.pac4j.core.client.Clients">
-  <property name="callbackUrl" value="http://localhost:8080/cas/login" />
   <property name="clients">
     <list>
       <ref bean="facebook1" />
@@ -136,6 +135,19 @@ Finally, all the clients and the CAS server login url are gathered in the `Clien
     </list>
   </property>
 </bean>
+{% endhighlight %}
+
+The Facebook and Twitter clients can be defined via properties only, which makes the configuration easier (the Spring context and the `Clients` object are optional in that case).
+
+In the `cas.properties` file:
+
+{% highlight properties %}
+cas.pac4j.facebook.id=1234
+cas.pac4j.facebook.secret=fbSecret
+cas.pac4j.facebook.scope=email,user_likes,user_about_me,user_birthday
+cas.pac4j.facebook.fields=id,name,first_name,middle_name,last_name,gender
+cas.pac4j.twitter.id=5678
+cas.pac4j.twitter.secret=twSecret
 {% endhighlight %}
 
 
@@ -168,11 +180,15 @@ To start authentication on a remote provider, these links must be added on the l
 <a href="${CasClientUrl}">Authenticate with another CAS server using CAS protocol</a><br />
 <br />
 
-<p>Authenticate with MyOpenId.com</p>
-<form action="${MyOpenIdClientUrl}" method="POST">
-  <input type="text" name="openIdUser" value="http://xxx.myopenid.com/" />
-  <input type="submit" value="Authenticate with myopenid.com" />
-</form>
+
+###Identifier of the authenticated user
+
+After a successful delegated authentication, a user is created inside the CAS server with a specific identifier: this one can be created only from the technical identifier received from the external identity provider (like 1234) or as a "typed identifier" (like FacebookProfile#1234), which is the default.
+
+This can be defined in the `cas.properties` file:
+
+{% highlight properties %}
+cas.pac4j.client.authn.typedidused=true
 {% endhighlight %}
 
 
@@ -181,11 +197,11 @@ To start authentication on a remote provider, these links must be added on the l
 Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) to see this authentication delegation mechanism in action.
 
 
-##How to use CAS/OAuth/OpenID/SAML client support in CAS applications?
+##How to use this support on CAS applications side?
 
 ###Information returned by a delegated authentication
 
-Once you have configured (see information below) your CAS server to act as an OAuth, CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML provider (like Facebook) instead of authenticating directly inside the CAS server.
+Once you have configured (see information above) your CAS server to act as an OAuth, CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML provider (like Facebook) instead of authenticating directly inside the CAS server.
 
 In the CAS server, after this kind of delegated authentication, users have specific authentication data.
 
@@ -205,25 +221,20 @@ In CAS applications, through service ticket validation, user information are pus
 
 The identifier of the user is always pushed to the CAS client. For user attributes, it involves both the configuration at the server and the way of validating service tickets.
 
-On CAS server side, to push attributes to the CAS client, it should be configured in the `deployerConfigContext.xml` file for the expected service:
+On CAS server side, to push attributes to the CAS client, it should be configured in the expected service:
 
-{% highlight xml %}
-<bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
- <property name="registeredServices">
-   <list>
-     <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-       <property name="id" value="0" />
-       <property name="name" value="HTTP" />
-       <property name="description" value="Only Allows HTTP Urls" />
-       <property name="serviceId" value="http://**" />
-       <property name="evaluationOrder" value="10000001" />
-       <property name="allowedAttributes">
-        <list>
-          <!-- facebook -->
-          <value>name</value>
-          <value>first_name</value>
-          <value>middle_name</value>
-...
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "name", "first_name", "middle_name" ] ]
+  }
+}
 {% endhighlight %}
 
 On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is the `/p3/serviceValidate` url.
