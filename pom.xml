@@ -1406,6 +1406,7 @@
         <module>cas-server-support-jpa-service-registry</module>
         <module>cas-server-support-ldap</module>
         <module>cas-server-support-ldap-service-registry</module>
+        <module>cas-server-support-ldap-monitor</module>
         <module>cas-server-support-openid</module>
         <module>cas-server-support-wsfederation</module>
         <module>cas-server-support-radius</module>
