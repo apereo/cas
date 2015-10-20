@@ -332,5 +332,7 @@
           p:order="1"/>
 
     <bean id="cachingPrincipalAttributeRepository"
-          class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"/>
+          class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
+            c:timeUnit="SECONDS"
+            c:expiryDuration="20"/>
 </beans>
