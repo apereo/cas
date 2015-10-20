@@ -24,8 +24,6 @@ import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGe
 import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.jasig.services.persondir.support.StubPersonAttributeDao;
-import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.junit.Test;

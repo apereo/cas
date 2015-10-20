@@ -24,9 +24,6 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
-import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.junit.Before;
 import org.junit.Test;
 
