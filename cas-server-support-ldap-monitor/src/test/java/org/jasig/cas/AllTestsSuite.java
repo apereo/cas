@@ -18,7 +18,6 @@
  */
 package org.jasig.cas;
 
-import org.jasig.cas.monitor.ConnectionFactoryMonitorTests;
 import org.jasig.cas.monitor.PooledConnectionFactoryMonitorTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -30,7 +29,6 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    ConnectionFactoryMonitorTests.class,
     PooledConnectionFactoryMonitorTests.class,
 })
 public class AllTestsSuite {

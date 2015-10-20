@@ -15,7 +15,7 @@ Support is enabled by adding the following module into the Maven overlay:
 {% highlight xml %}
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-support-ldap</artifactId>
+    <artifactId>cas-server-support-ldap-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
