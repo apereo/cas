@@ -56,8 +56,18 @@ The following optional monitors are also available:
 <util:list id="monitorsList">
     <ref bean="memcachedMonitor" />
 </util:list>
+
+...
+
 {% endhighlight %}
 
+
+The following settings are available:
+
+{% highlight properties %}
+# cache.monitor.warn.free.threshold=10
+# cache.monitor.eviction.threshold=0
+{% endhighlight %}
 
 - `EhcacheMonitor`
 
@@ -75,6 +85,13 @@ The following optional monitors are also available:
     <ref bean="ehcacheMonitor" />
 </util:list>
 <alias name="ticketGrantingTicketsCache" alias="ehcacheMonitorCache" />
+{% endhighlight %}
+
+The following settings are available:
+
+{% highlight properties %}
+# cache.monitor.warn.free.threshold=10
+# cache.monitor.eviction.threshold=0
 {% endhighlight %}
 
 - `DataSourceMonitor`
