@@ -24,6 +24,7 @@ org.jasig.cas.authentication.principal
 org.jasig.cas.authentication.principal.cache
 org.jasig.cas.authentication.support
 org.jasig.cas.extension.clearpass
+org.jasig.cas.integration.pac4j.authentication.handler.support
 org.jasig.cas.logout
 org.jasig.cas.monitor
 org.jasig.cas.services
@@ -43,9 +44,9 @@ org.jasig.cas.support.openid.web
 org.jasig.cas.support.openid.web.flow
 org.jasig.cas.support.openid.web.mvc
 org.jasig.cas.support.openid.web.support
+org.jasig.cas.support.pac4j
 org.jasig.cas.support.pac4j.authentication
 org.jasig.cas.support.pac4j.authentication.handler.support
-org.jasig.cas.support.pac4j.authentication.principal
 org.jasig.cas.support.pac4j.web.flow
 org.jasig.cas.support.rest
 org.jasig.cas.support.saml
