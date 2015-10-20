@@ -19,17 +19,10 @@
     under the License.
 
 -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-
-
-    <alias name="provisioningConnectionFactory" alias="connectionFactoryMonitorConnectionFactory" />
-    <alias name="searchValidator" alias="connectionFactoryMonitorValidator" />
-
-</beans>
+<project name="Apereo CAS ${project.version}">
+    <body>
+        <menu ref="parent"/>
+        <menu ref="reports" name="Reports" inherit="top"/>
+        <menu ref="modules" name="Modules" inherit="top"/>
+    </body>
+</project>
