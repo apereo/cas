@@ -35,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import javax.validation.constraints.NotNull;
 import java.io.Closeable;
 import java.util.Collections;
 import java.util.HashMap;
@@ -205,7 +204,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     }
 
     @Override
-    public final Map<String, Object> getAttributes(@NotNull final Principal p) {
+    public final Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
             logger.debug("Found [{}] cached attributes for principal [{}]", cachedAttributes.size(), p.getId());
