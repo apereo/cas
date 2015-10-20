@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas.ticket.registry;
+package org.jasig.cas;
 
 import de.flapdoodle.embed.memcached.Command;
 import de.flapdoodle.embed.memcached.MemcachedExecutable;
