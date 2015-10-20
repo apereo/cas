@@ -1376,6 +1376,23 @@
                 <version>${cryptacular.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.pac4j</groupId>
+                <artifactId>pac4j-core</artifactId>
+                <version>${pac4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pac4j</groupId>
+                <artifactId>pac4j-oauth</artifactId>
+                <version>${pac4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pac4j</groupId>
+                <artifactId>pac4j-http</artifactId>
+                <version>${pac4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -1399,6 +1416,7 @@
         <module>cas-server-support-saml</module>
         <module>cas-server-integration-memcached</module>
         <module>cas-server-integration-ehcache</module>
+        <module>cas-server-integration-pac4j</module>
         <module>cas-server-extension-clearpass</module>
         <module>cas-server-support-rest</module>
         <module>cas-server-support-yubikey</module>
@@ -1599,7 +1617,7 @@
         <jersey.version>1.19</jersey.version>
         <jose.version>0.4.4</jose.version>
         <woodstox.version>4.4.1</woodstox.version>
-        <pac4j.version>1.7.1</pac4j.version>
+        <pac4j.version>1.8.0</pac4j.version>
         <bouncycastle.version>1.51</bouncycastle.version>
         <dbcp.version>2.1.1</dbcp.version>
         <hazelcast.version>3.5.2</hazelcast.version>
