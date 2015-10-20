@@ -266,11 +266,18 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     protected abstract Map<String, Object> getPrincipalAttributes(Principal p);
 
+    protected void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
+        this.attributeRepository = attributeRepository;
+    }
 
     private IPersonAttributeDao getAttributeRepository() {
         if (this.attributeRepository == null) {
             final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
-            return context.getBean("attributeRepository", IPersonAttributeDao.class);
+            if (context != null) {
+                return context.getBean("attributeRepository", IPersonAttributeDao.class);
+            } else {
+                logger.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
+            }
         }
         return this.attributeRepository;
     }
