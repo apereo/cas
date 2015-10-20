@@ -18,6 +18,7 @@
  */
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.AbstractMemcacheTests;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ServiceTicket;
