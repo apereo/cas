@@ -179,7 +179,7 @@ To start authentication on a remote provider, these links must be added on the l
 <br />
 <a href="${CasClientUrl}">Authenticate with another CAS server using CAS protocol</a><br />
 <br />
-
+{% endhighlight %}
 
 ###Identifier of the authenticated user
 
