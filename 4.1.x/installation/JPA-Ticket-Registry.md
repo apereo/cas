@@ -125,13 +125,6 @@ In the `pom.xml` file of the Maven overlay, adjust for the following dependencie
 
 <dependency>
   <groupId>org.hibernate</groupId>
-  <artifactId>hibernate-core</artifactId>
-  <version>${hibernate.core.version}</version>
-  <scope>runtime</scope>
-</dependency>
-
-<dependency>
-  <groupId>org.hibernate</groupId>
   <artifactId>hibernate-entitymanager</artifactId>
   <version>${hibernate.core.version}</version>
   <scope>runtime</scope>
