@@ -20,7 +20,7 @@
 package org.jasig.cas.monitor;
 
 import net.spy.memcached.MemcachedClientIF;
-import org.jasig.cas.AbstractMemcacheTests;
+import org.jasig.cas.AbstractMemcachedTests;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,7 +40,7 @@ import java.io.IOException;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/monitor-test.xml")
-public class MemcachedMonitorTests extends AbstractMemcacheTests {
+public class MemcachedMonitorTests extends AbstractMemcachedTests {
 
     @Autowired
     @Qualifier("memcachedMonitor")
