@@ -24,11 +24,16 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
+import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
+import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
+import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
+import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import javax.validation.constraints.NotNull;
 import java.io.Closeable;
@@ -56,43 +61,73 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     /** Logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final IPersonAttributeDao attributeRepository;
+    /** The expiration time. */
+    protected final long expiration;
 
-    private final long expiration;
-
-    private final TimeUnit timeUnit;
+    /** Expiration time unit. */
+    protected final TimeUnit timeUnit;
 
     /**
      * The merging strategy that deals with existing principal attributes
      * and those that are retrieved from the source. By default, existing attributes
      * are ignored and the source is always consulted.
      */
-    private IAttributeMerger mergingStrategy;
+    protected MergingStrategy mergingStrategy;
+
+    /**
+     * Defines the merging strategy options.
+     */
+    public enum MergingStrategy {
+
+        /** Replace attributes. */
+        REPLACE,
+        /** Add attributes. */
+        ADD,
+        /** No merging. */
+        NONE,
+        /** Multivalued attributes. */
+        MULTIVALUED;
+
+        /**
+         * Get attribute merger.
+         * @return the attribute merger
+         */
+        public IAttributeMerger getAttributeMerger() {
+            final String name = this.name().toUpperCase();
+
+            switch (name.toUpperCase()) {
+                case "REPLACE":
+                    return new ReplacingAttributeAdder();
+                case "ADD":
+                    return new NoncollidingAttributeAdder();
+                case "MULTIVALUED":
+                    return new MultivaluedAttributeMerger();
+                default:
+                    return null;
+            }
+        }
+
+    }
+
+    private transient IPersonAttributeDao attributeRepository;
+
 
     /**
      * Instantiates a new principal attributes repository.
      * Simply used buy
      */
     protected AbstractPrincipalAttributesRepository() {
-        this(null, DEFAULT_CACHE_EXPIRATION_DURATION, DEFAULT_CACHE_EXPIRATION_UNIT);
+        this(DEFAULT_CACHE_EXPIRATION_DURATION, DEFAULT_CACHE_EXPIRATION_UNIT);
     }
 
     /**
      * Instantiates a new principal attributes repository.
-     *
-     * @param attributeRepository the attribute repository
      * @param expiration the expiration
      * @param timeUnit the time unit
      */
-    public AbstractPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                 final long expiration, final TimeUnit timeUnit) {
-        this.attributeRepository = attributeRepository;
+    public AbstractPrincipalAttributesRepository(final long expiration, final TimeUnit timeUnit) {
         this.expiration = expiration;
         this.timeUnit = timeUnit;
-    }
-
-    protected final IPersonAttributeDao getAttributeRepository() {
-        return this.attributeRepository;
     }
 
     /**
@@ -101,11 +136,11 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * are ignored and the source is always consulted.
      * @param mergingStrategy the strategy to use for conflicts
      */
-    public final void setMergingStrategy(final IAttributeMerger mergingStrategy) {
+    public final void setMergingStrategy(final MergingStrategy mergingStrategy) {
         this.mergingStrategy = mergingStrategy;
     }
 
-    public final IAttributeMerger getMergingStrategy() {
+    public final MergingStrategy getMergingStrategy() {
         return mergingStrategy;
     }
 
@@ -154,13 +189,14 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     protected final Map<String, List<Object>> retrievePersonAttributesToPrincipalAttributes(final String id) {
 
-        final IPersonAttributes personAttributes = this.attributeRepository.getPerson(id);
-        if (personAttributes == null) {
+        final IPersonAttributes attrs = getAttributeRepository().getPerson(id);
+
+        if (attrs == null) {
             logger.debug("Could not find principal [{}] in the repository so no attributes are returned.", id);
             return Collections.emptyMap();
         }
 
-        final Map<String, List<Object>> attributes = personAttributes.getAttributes();
+        final Map<String, List<Object>> attributes = attrs.getAttributes();
         if (attributes == null) {
             logger.debug("Principal [{}] has no attributes and so none are returned.", id);
             return Collections.emptyMap();
@@ -176,7 +212,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             return cachedAttributes;
         }
 
-        if (this.attributeRepository == null) {
+        if (getAttributeRepository() == null) {
             logger.debug("No attribute repository is defined for [{}]. Returning default principal attributes for {}",
                     getClass().getName(), p.getId());
             return cachedAttributes;
@@ -186,7 +222,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         logger.debug("Found [{}] attributes for principal [{}] from the attribute repository.",
                 sourceAttributes.size(), p.getId());
 
-        if (this.mergingStrategy == null) {
+        if (this.mergingStrategy == null || this.mergingStrategy.getAttributeMerger() == null) {
             logger.debug("No merging strategy found, so attributes retrieved from the repository will be used instead.");
             return convertAttributesToPrincipalAttributesAndCache(p, sourceAttributes);
         }
@@ -196,7 +232,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         logger.debug("Merging current principal attributes with that of the repository via strategy [{}]",
                 this.mergingStrategy.getClass().getSimpleName());
         final Map<String, List<Object>> mergedAttributes =
-                this.mergingStrategy.mergeAttributes(principalAttributes, sourceAttributes);
+                this.mergingStrategy.getAttributeMerger().mergeAttributes(principalAttributes, sourceAttributes);
 
         return convertAttributesToPrincipalAttributesAndCache(p, mergedAttributes);
     }
@@ -231,10 +267,18 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     protected abstract Map<String, Object> getPrincipalAttributes(Principal p);
 
+
+    private IPersonAttributeDao getAttributeRepository() {
+        if (this.attributeRepository == null) {
+            final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+            return context.getBean("attributeRepository", IPersonAttributeDao.class);
+        }
+        return this.attributeRepository;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("attributeRepository", this.attributeRepository)
                 .append("mergingStrategy", this.mergingStrategy)
                 .append("expiration", this.expiration)
                 .append("timeUnit", this.timeUnit)
