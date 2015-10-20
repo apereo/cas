@@ -47,7 +47,7 @@ The following optional monitors are also available:
 
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-memcached</artifactId>
+    <artifactId>cas-server-integration-memcached-monitor</artifactId>
     <version>${cas.version}</version>
 </dependency>
 

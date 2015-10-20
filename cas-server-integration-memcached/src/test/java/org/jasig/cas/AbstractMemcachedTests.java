@@ -37,12 +37,12 @@ import java.net.Socket;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * This is {@link AbstractMemcacheTests}.
+ * This is {@link AbstractMemcachedTests}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public abstract class AbstractMemcacheTests {
+public abstract class AbstractMemcachedTests {
 
     private static final int PORT = 11211;
 
@@ -58,7 +58,7 @@ public abstract class AbstractMemcacheTests {
             MEMCACHED_EXECUTABLE = runtime.prepare(new MemcachedConfig(Version.V1_4_22, PORT));
             MEMCACHED = MEMCACHED_EXECUTABLE.start();
         } catch (final Exception e) {
-            getLogger(AbstractMemcacheTests.class).warn("Aborting since no memcached server could be started.", e);
+            getLogger(AbstractMemcachedTests.class).warn("Aborting since no memcached server could be started.", e);
         }
     }
 
