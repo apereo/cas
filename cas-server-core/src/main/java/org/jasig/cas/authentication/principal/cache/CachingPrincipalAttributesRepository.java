@@ -23,7 +23,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.services.persondir.IPersonAttributeDao;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,41 +41,43 @@ public final class CachingPrincipalAttributesRepository extends AbstractPrincipa
     private static final long DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
 
     private final transient Cache<String, Map<String, Object>> cache;
-    private final PrincipalAttributesCacheLoader cacheLoader =
+    private final transient PrincipalAttributesCacheLoader cacheLoader =
             new PrincipalAttributesCacheLoader();
+
+    private long maxCacheSize = DEFAULT_MAXIMUM_CACHE_SIZE;
 
     /**
      * Used for serialization only.
      */
     private CachingPrincipalAttributesRepository() {
-        this.cache = null;
+        super();
+        this.cache = CacheBuilder.newBuilder().maximumSize(this.maxCacheSize)
+                .expireAfterWrite(this.expiration, this.timeUnit).build(this.cacheLoader);
     }
 
     /**
      * Instantiates a new caching attributes principal factory.
      * Sets the default cache size to {@link #DEFAULT_MAXIMUM_CACHE_SIZE}.
-     * @param attributeRepository the attribute repository
      * @param timeUnit the time unit
      * @param expiryDuration the expiry duration
      */
-    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                final TimeUnit timeUnit,
+    public CachingPrincipalAttributesRepository(final TimeUnit timeUnit,
                                                 final long expiryDuration) {
-        this(attributeRepository, DEFAULT_MAXIMUM_CACHE_SIZE, timeUnit, expiryDuration);
+        this(DEFAULT_MAXIMUM_CACHE_SIZE, timeUnit, expiryDuration);
     }
 
     /**
      * Instantiates a new caching attributes principal factory.
-     * @param attributeRepository the attribute repository
      * @param maxCacheSize the max cache size
      * @param timeUnit the time unit
      * @param expiryDuration the expiry duration
      */
-    public CachingPrincipalAttributesRepository(final IPersonAttributeDao attributeRepository,
-                                                final long maxCacheSize,
+    public CachingPrincipalAttributesRepository(final long maxCacheSize,
                                                 final TimeUnit timeUnit,
                                                 final long expiryDuration) {
-        super(attributeRepository, expiryDuration, timeUnit);
+        super(expiryDuration, timeUnit);
+        this.maxCacheSize = maxCacheSize;
+
         this.cache = CacheBuilder.newBuilder().maximumSize(maxCacheSize)
                 .expireAfterWrite(expiryDuration, timeUnit).build(this.cacheLoader);
     }

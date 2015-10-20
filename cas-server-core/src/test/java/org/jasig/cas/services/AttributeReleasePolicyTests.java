@@ -161,7 +161,7 @@ public class AttributeReleasePolicyTests {
         when(person.getAttributes()).thenReturn(attributes);
 
         final PrincipalAttributesRepository repository =
-                new CachingPrincipalAttributesRepository(dao, TimeUnit.MILLISECONDS, 100);
+                new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS, 100);
 
         final Principal p = new DefaultPrincipalFactory().createPrincipal("uid",
                     Collections.<String, Object>singletonMap("mail", "final@example.com"));

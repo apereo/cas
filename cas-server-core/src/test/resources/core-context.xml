@@ -330,4 +330,7 @@
           p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/3.0/}"
           p:suffix=".jsp"
           p:order="1"/>
+
+    <bean id="cachingPrincipalAttributeRepository"
+          class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"/>
 </beans>
