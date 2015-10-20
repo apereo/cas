@@ -61,6 +61,12 @@
 
         <dependency>
             <groupId>org.pac4j</groupId>
+            <artifactId>pac4j-saml</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.pac4j</groupId>
             <artifactId>pac4j-http</artifactId>
             <scope>test</scope>
         </dependency>

@@ -23,6 +23,8 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
+import org.pac4j.saml.client.SAML2Client;
+import org.pac4j.saml.client.SAML2ClientConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,21 +48,32 @@ public class Pac4jConfiguration {
 
     @Value("${cas.pac4j.facebook.id:}")
     private String facebookId;
-
     @Value("${cas.pac4j.facebook.secret:}")
     private String facebookSecret;
-
     @Value("${cas.pac4j.facebook.scope:}")
     private String facebookScope;
-
     @Value("${cas.pac4j.facebook.fields:}")
     private String facebookFields;
 
     @Value("${cas.pac4j.twitter.id:}")
     private String twitterId;
-
     @Value("${cas.pac4j.twitter.secret:}")
     private String twitterSecret;
+
+    @Value("${cas.pac4j.saml.keystorePassword:}")
+    private String samlKeystorePassword;
+    @Value("${cas.pac4j.saml.privateKeyPassword:}")
+    private String samlPrivateKeyPassword;
+    @Value("${cas.pac4j.saml.keystorePath:}")
+    private String samlKeystorePath;
+    @Value("${cas.pac4j.saml.identityProviderMetadataPath:}")
+    private String samlIdentityProviderMetadataPath;
+    @Value("${cas.pac4j.saml.maximumAuthenticationLifetime:}")
+    private String samlMaximumAuthenticationLifetime;
+    @Value("${cas.pac4j.saml.serviceProviderEntityId:}")
+    private String samlServiceProviderEntityId;
+    @Value("${cas.pac4j.saml.serviceProviderMetadataPath:}")
+    private String samlServiceProviderMetadataPath;
 
     @Autowired(required = false)
     @Qualifier("clients")
@@ -85,6 +98,18 @@ public class Pac4jConfiguration {
         }
 
         // add new clients by properties
+        autoCreateFacebookClient(allClients);
+        autoCreateTwitterClient(allClients);
+        autoCreateSaml2Client(allClients);
+
+        // rebuild a new Clients configuration
+        if (allClients == null || allClients.size() == 0) {
+            throw new IllegalArgumentException("At least one pac4j client must be defined");
+        }
+        return new Clients(callbackUrl, allClients);
+    }
+
+    private void autoCreateFacebookClient(final List<Client> clients) {
         if (StringUtils.isNotBlank(facebookId) && StringUtils.isNotBlank(facebookSecret)) {
             final FacebookClient facebookClient = new FacebookClient(facebookId, facebookSecret);
             if (StringUtils.isNotBlank(facebookScope)) {
@@ -93,17 +118,33 @@ public class Pac4jConfiguration {
             if (StringUtils.isNotBlank(facebookFields)) {
                 facebookClient.setFields(facebookFields);
             }
-            allClients.add(facebookClient);
+            clients.add(facebookClient);
         }
+    }
+
+    private void autoCreateTwitterClient(final List<Client> clients) {
         if (StringUtils.isNotBlank(twitterId) && StringUtils.isNotBlank(twitterSecret)) {
             final TwitterClient twitterClient = new TwitterClient(twitterId, twitterSecret);
-            allClients.add(twitterClient);
+            clients.add(twitterClient);
         }
+    }
 
-        // rebuild a new Clients configuration
-        if (allClients == null || allClients.size() == 0) {
-            throw new IllegalArgumentException("At least one pac4j client must be defined");
+    private void autoCreateSaml2Client(final List<Client> clients) {
+        if (StringUtils.isNotBlank(samlKeystorePassword) && StringUtils.isNotBlank(samlPrivateKeyPassword)
+                && StringUtils.isNotBlank(samlKeystorePath) && StringUtils.isNotBlank(samlIdentityProviderMetadataPath)) {
+            final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(samlKeystorePath, samlKeystorePassword,
+                    samlPrivateKeyPassword, samlIdentityProviderMetadataPath);
+            if (StringUtils.isNotBlank(samlMaximumAuthenticationLifetime)) {
+                cfg.setMaximumAuthenticationLifetime(Integer.parseInt(samlMaximumAuthenticationLifetime));
+            }
+            if (StringUtils.isNotBlank(samlServiceProviderEntityId)) {
+                cfg.setServiceProviderEntityId(samlServiceProviderEntityId);
+            }
+            if (StringUtils.isNotBlank(samlServiceProviderMetadataPath)) {
+                cfg.setServiceProviderMetadataPath(samlServiceProviderMetadataPath);
+            }
+            final SAML2Client saml2Client = new SAML2Client(cfg);
+            clients.add(saml2Client);
         }
-        return new Clients(callbackUrl, allClients);
     }
 }
