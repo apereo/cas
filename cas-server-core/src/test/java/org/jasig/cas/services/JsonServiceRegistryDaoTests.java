@@ -21,6 +21,7 @@ package org.jasig.cas.services;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
@@ -266,10 +267,8 @@ public class JsonServiceRegistryDaoTests {
         attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
 
         final CachingPrincipalAttributesRepository repository =
-                new CachingPrincipalAttributesRepository(
-                        new StubPersonAttributeDao(attributes),
-                        TimeUnit.MILLISECONDS, 100);
-        repository.setMergingStrategy(new ReplacingAttributeAdder());
+                new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS, 100);
+        repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
 
         policy.setPrincipalAttributesRepository(repository);
         r.setAttributeReleasePolicy(policy);
@@ -281,6 +280,8 @@ public class JsonServiceRegistryDaoTests {
         assertEquals(r2, r3);
         assertNotNull(r3.getAttributeReleasePolicy());
         assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
+
+        dao.load();
     }
 
     @Test
@@ -297,9 +298,8 @@ public class JsonServiceRegistryDaoTests {
 
         final CachingPrincipalAttributesRepository repository =
                 new CachingPrincipalAttributesRepository(
-                        new StubPersonAttributeDao(attributes),
                         TimeUnit.MILLISECONDS, 100);
-        repository.setMergingStrategy(new ReplacingAttributeAdder());
+        repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.REPLACE);
 
         policy.setPrincipalAttributesRepository(repository);
         r.setAttributeReleasePolicy(policy);
