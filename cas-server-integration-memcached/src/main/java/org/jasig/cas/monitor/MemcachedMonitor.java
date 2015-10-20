@@ -45,7 +45,6 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
     @Qualifier("memcachedClient")
     private MemcachedClientIF memcachedClient;
 
-
     /**
      * Instantiates a new Memcached monitor.
      */
