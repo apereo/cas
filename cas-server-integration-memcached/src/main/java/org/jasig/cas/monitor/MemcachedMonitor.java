@@ -42,7 +42,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
 
     @Nullable
     @Autowired(required=false)
-    @Qualifier("memcachedMonitorClient")
+    @Qualifier("memcachedClient")
     private MemcachedClientIF memcachedClient;
 
 
