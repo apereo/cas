@@ -39,7 +39,6 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 
 <util:list id="packagesToScan">
-        <value>org.jasig.cas.services</value>
         <value>org.jasig.cas.ticket</value>
         <value>org.jasig.cas.adaptors.jdbc</value>
 </util:list>
@@ -77,10 +76,8 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
 </tx:advice>
 
 <aop:config>
-        <aop:pointcut id="servicesManagerOperations" expression="execution(* org.jasig.cas.services.JpaServiceRegistryDaoImpl.*(..))"/>
         <aop:pointcut id="ticketRegistryOperations" expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
         <aop:pointcut id="ticketRegistryLockingOperations" expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="servicesManagerOperations"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="ticketRegistryOperations"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="ticketRegistryLockingOperations"/>
 </aop:config>
