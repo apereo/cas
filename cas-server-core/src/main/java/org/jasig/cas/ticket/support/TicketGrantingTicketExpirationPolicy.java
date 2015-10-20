@@ -49,6 +49,30 @@ public final class TicketGrantingTicketExpirationPolicy implements ExpirationPol
     /** Time to kill in milliseconds. */
     private long timeToKillInMilliSeconds;
 
+    public TicketGrantingTicketExpirationPolicy() {
+        this.maxTimeToLiveInMilliSeconds = 0;
+        this.timeToKillInMilliSeconds = 0;
+    }
+
+    /**
+     * Instantiates a new Ticket granting ticket expiration policy.
+     *
+     * @param maxTimeToLive the max time to live
+     * @param timeToKill the time to kill
+     * @param timeUnit the time unit
+     */
+    public TicketGrantingTicketExpirationPolicy(final long maxTimeToLive, final long timeToKill, final TimeUnit timeUnit) {
+        this.maxTimeToLiveInMilliSeconds = timeUnit.toMillis(maxTimeToLive);
+        this.timeToKillInMilliSeconds = timeUnit.toMillis(timeToKill);
+    }
+
+    /**
+     * @deprecated As of 4.1.
+     * Set max time to live in milli seconds.
+     *
+     * @param maxTimeToLiveInMilliSeconds the max time to live in milli seconds
+     */
+    @Deprecated
     public void setMaxTimeToLiveInMilliSeconds(final long maxTimeToLiveInMilliSeconds){
         this.maxTimeToLiveInMilliSeconds = maxTimeToLiveInMilliSeconds;
     }
