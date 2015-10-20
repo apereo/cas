@@ -41,7 +41,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
     /**
      * Whether to use the typed identifier (by default) or just the identifier.
      */
-    @Value("${clientAuthenticationHandler.typedIdUsed:true}")
+    @Value("${cas.pac4j.client.authn.typedidused:true}")
     private boolean typedIdUsed = true;
 
     /**
