@@ -27,11 +27,7 @@ function loadjQueryUI() {
 }
 
 function loadjQueryCookies() {
-    head.load("https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js", loadjQueryDebug);
-}
-
-function loadjQueryDebug() {
-    head.load("https://rawgithub.com/cowboy/javascript-debug/master/ba-debug.min.js", resourceLoadedSuccessfully);
+    head.load("https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js", resourceLoadedSuccessfully);
 }
 
 function areCookiesEnabled() {
