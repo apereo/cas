@@ -174,11 +174,11 @@ The regex filter that is responsible to make sure only attributes whose value ma
 
 Suppose that the following attributes are resolved:
 
-| Name       							| Value
+| Name                                  | Value
 |---------------------------------------+---------------------------------------------------------------+
-| `uid`        							| jsmith
-| `groupMembership`        				| std  
-| `cn`        							| JohnSmith   
+| `uid`                                 | jsmith
+| `groupMembership`                     | std  
+| `cn`                                  | JohnSmith   
 
 The following configuration for instance considers the initial list of `uid`, `groupMembership` and then only allows and releases attributes whose value's length is 3 characters. Therefor, out of the above list, only `groupMembership` is released to the application.
 
@@ -270,7 +270,6 @@ For example:
 ...
     <property name="principalAttributesRepository">
         <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-              c:attributeRepository-ref="attributeRepository"
               c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
               p:mergingStrategy="MULTIVALUED" />
     </property>
@@ -292,7 +291,6 @@ For example:
 ...
     <property name="principalAttributesRepository">
         <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-              c:attributeRepository-ref="attributeRepository"
               c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
               p:mergingStrategy="ADD" />
     </property>
@@ -315,7 +313,6 @@ For example:
 ...
     <property name="principalAttributesRepository">
         <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-              c:attributeRepository-ref="attributeRepository"
               c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
               p:mergingStrategy="REPLACE" />
     </property>
