@@ -42,7 +42,6 @@ public final class TimeoutExpirationPolicy implements ExpirationPolicy, Serializ
     /** The time to kill in milliseconds. */
     private final long timeToKillInMilliSeconds;
 
-
     /** No-arg constructor for serialization support. */
     private TimeoutExpirationPolicy() {
         this.timeToKillInMilliSeconds = 0;

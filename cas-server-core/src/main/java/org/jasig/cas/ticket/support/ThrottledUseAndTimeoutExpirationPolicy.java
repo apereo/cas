@@ -47,6 +47,9 @@ public final class ThrottledUseAndTimeoutExpirationPolicy implements ExpirationP
     /** Time time between which a ticket must wait to be used again. */
     private long timeInBetweenUsesInMilliSeconds;
 
+    /** No-arg constructor used for serialization purposes. */
+    public ThrottledUseAndTimeoutExpirationPolicy() {}
+
     public void setTimeInBetweenUsesInMilliSeconds(
         final long timeInBetweenUsesInMilliSeconds) {
         this.timeInBetweenUsesInMilliSeconds = timeInBetweenUsesInMilliSeconds;
