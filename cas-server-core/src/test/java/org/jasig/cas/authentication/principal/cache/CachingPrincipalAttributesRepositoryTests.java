@@ -29,6 +29,8 @@ public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPr
 
     @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final TimeUnit unit, final long duration) {
-        return new CachingPrincipalAttributesRepository(unit, duration);
+        final CachingPrincipalAttributesRepository repo = new CachingPrincipalAttributesRepository(unit, duration);
+        repo.setAttributeRepository(this.dao);
+        return repo;
     }
 }
