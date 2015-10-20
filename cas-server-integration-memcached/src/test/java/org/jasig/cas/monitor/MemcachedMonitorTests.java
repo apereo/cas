@@ -17,10 +17,10 @@
  * under the License.
  */
 
-package org.jasig.cas.ticket.registry;
+package org.jasig.cas.monitor;
 
 import net.spy.memcached.MemcachedClientIF;
-import org.jasig.cas.monitor.MemcachedMonitor;
+import org.jasig.cas.AbstractMemcacheTests;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,14 +33,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.IOException;
 
 /**
- * This is {@link MemcacheMonitorTests}.
+ * This is {@link MemcachedMonitorTests}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/monitor-test.xml")
-public class MemcacheMonitorTests extends AbstractMemcacheTests {
+public class MemcachedMonitorTests extends AbstractMemcacheTests {
 
     @Autowired
     @Qualifier("memcachedMonitor")
