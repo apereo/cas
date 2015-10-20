@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.AbstractMemcacheTests;
+import org.jasig.cas.AbstractMemcachedTests;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-public class MemCacheTicketRegistryTests extends AbstractMemcacheTests {
+public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     private MemCacheTicketRegistry registry;
 
