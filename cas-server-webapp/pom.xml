@@ -79,6 +79,11 @@
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-web</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.pac4j</groupId>
+      <artifactId>pac4j-http</artifactId>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>
