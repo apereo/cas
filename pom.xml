@@ -1393,6 +1393,12 @@
                 <artifactId>pac4j-http</artifactId>
                 <version>${pac4j.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.pac4j</groupId>
+                <artifactId>spring-webmvc-pac4j</artifactId>
+                <version>${spring-webmvc-pac4j.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -1618,6 +1624,7 @@
         <jose.version>0.4.4</jose.version>
         <woodstox.version>4.4.1</woodstox.version>
         <pac4j.version>1.8.0</pac4j.version>
+        <spring-webmvc-pac4j.version>1.0.0-SNAPSHOT</spring-webmvc-pac4j.version>
         <bouncycastle.version>1.51</bouncycastle.version>
         <dbcp.version>2.1.1</dbcp.version>
         <hazelcast.version>3.5.2</hazelcast.version>
