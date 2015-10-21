@@ -137,7 +137,7 @@ Finally, all the clients must be gathered in the `Clients` configuration bean:
 </bean>
 {% endhighlight %}
 
-The Facebook and Twitter clients can be defined via properties only, which makes the configuration easier (the Spring context and the `Clients` object are optional in that case).
+The Facebook, Twitter and SAML 2 clients can be defined via properties only, which makes the configuration easier (the Spring context and the `Clients` object are optional in that case).
 
 In the `cas.properties` file:
 
@@ -148,6 +148,13 @@ cas.pac4j.facebook.scope=email,user_likes,user_about_me,user_birthday
 cas.pac4j.facebook.fields=id,name,first_name,middle_name,last_name,gender
 cas.pac4j.twitter.id=5678
 cas.pac4j.twitter.secret=twSecret
+cas.pac4j.saml.keystorePassword=pac4j-demo-passwd
+cas.pac4j.saml.privateKeyPassword=pac4j-demo-passwd
+cas.pac4j.saml.keystorePath=resource:samlKeystore.jks
+cas.pac4j.saml.identityProviderMetadataPath=resource:testshib-providers.xml
+# cas.pac4j.saml.maximumAuthenticationLifetime=
+# cas.pac4j.saml.serviceProviderEntityId=
+# cas.pac4j.saml.serviceProviderMetadataPath=
 {% endhighlight %}
 
 
