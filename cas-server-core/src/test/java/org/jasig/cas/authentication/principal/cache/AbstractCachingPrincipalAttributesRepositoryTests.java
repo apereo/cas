@@ -24,9 +24,6 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
-import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
-import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,7 +45,7 @@ import static org.mockito.Mockito.when;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public abstract class AbstractGuavaCachingPrincipalAttributesRepositoryTests {
+public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     protected IPersonAttributeDao dao;
 
     private Map<String, List<Object>> attributes;
@@ -106,7 +103,7 @@ public abstract class AbstractGuavaCachingPrincipalAttributesRepositoryTests {
     @Test
     public void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Exception {
         try (final AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS, 5)) {
-            repository.setMergingStrategy(new NoncollidingAttributeAdder());
+            repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
 
             assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
             assertEquals(repository.getAttributes(this.principal).get("mail").toString(), "final@school.com");
@@ -116,7 +113,7 @@ public abstract class AbstractGuavaCachingPrincipalAttributesRepositoryTests {
     @Test
     public void verifyMergingStrategyWithReplacingAttributeAdder() throws Exception {
         try (final AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS, 5)) {
-            repository.setMergingStrategy(new ReplacingAttributeAdder());
+            repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.REPLACE);
 
             assertTrue(repository.getAttributes(this.principal).containsKey("mail"));
             assertEquals(repository.getAttributes(this.principal).get("mail").toString(), "final@example.com");
@@ -126,7 +123,7 @@ public abstract class AbstractGuavaCachingPrincipalAttributesRepositoryTests {
     @Test
     public void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Exception {
         try (final AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS, 5)) {
-            repository.setMergingStrategy(new MultivaluedAttributeMerger());
+            repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.MULTIVALUED);
 
             assertTrue(repository.getAttributes(this.principal).get("mail") instanceof List);
 
