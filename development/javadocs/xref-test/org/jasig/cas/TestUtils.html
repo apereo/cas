@@ -41,21 +41,21 @@
 <a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Principal;
 <a class="jxr_linenumber" name="L34" href="#L34">34</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.Service;
 <a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
-<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.AbstractRegisteredService;
-<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
-<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.LogoutType;
-<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
-<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegexRegisteredService;
-<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegisteredServicePublicKeyImpl;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
-<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Assertion;
-<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.ImmutableAssertion;
-<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> org.jasig.services.persondir.IPersonAttributeDao;
-<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> org.jasig.services.persondir.support.StubPersonAttributeDao;
-<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.AbstractRegisteredService;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.LogoutType;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegexRegisteredService;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.RegisteredServicePublicKeyImpl;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.Assertion;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <strong class="jxr_keyword">import</strong> org.jasig.cas.validation.ImmutableAssertion;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <strong class="jxr_keyword">import</strong> org.jasig.services.persondir.IPersonAttributeDao;
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <strong class="jxr_keyword">import</strong> org.jasig.services.persondir.support.StubPersonAttributeDao;
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <strong class="jxr_keyword">import</strong> org.springframework.mock.web.MockHttpServletRequest;
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">import</strong> org.springframework.mock.web.MockHttpServletResponse;
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <strong class="jxr_keyword">import</strong> org.springframework.mock.web.MockServletContext;
@@ -192,8 +192,8 @@
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>             policy.setAuthorizedToReleaseProxyGrantingTicket(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L185" href="#L185">185</a> 
 <a class="jxr_linenumber" name="L186" href="#L186">186</a>             <strong class="jxr_keyword">final</strong> CachingPrincipalAttributesRepository repo =
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>                     <strong class="jxr_keyword">new</strong> CachingPrincipalAttributesRepository(<strong class="jxr_keyword">new</strong> StubPersonAttributeDao(), TimeUnit.SECONDS, 10);
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>             repo.setMergingStrategy(<strong class="jxr_keyword">new</strong> NoncollidingAttributeAdder());
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>                     <strong class="jxr_keyword">new</strong> CachingPrincipalAttributesRepository(TimeUnit.SECONDS, 10);
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>             repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
 <a class="jxr_linenumber" name="L189" href="#L189">189</a>             policy.setPrincipalAttributesRepository(repo);
 <a class="jxr_linenumber" name="L190" href="#L190">190</a>             policy.setAttributeFilter(<strong class="jxr_keyword">new</strong> RegisteredServiceRegexAttributeFilter(<span class="jxr_string">"https://.+"</span>));
 <a class="jxr_linenumber" name="L191" href="#L191">191</a>             policy.setAllowedAttributes(<strong class="jxr_keyword">new</strong> ArrayList(getTestAttributes().keySet()));

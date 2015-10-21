@@ -270,20 +270,6 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.principal.cache.AbstractGuavaCachingPrincipalAttributesRepositoryTests.java">org/jasig/cas/authentication/principal/cache/AbstractGuavaCachingPrincipalAttributesRepositoryTests.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.monitor.MemoryMonitor.java">org/jasig/cas/monitor/MemoryMonitor.java</a>
                 </td>
                 <td>
@@ -3533,6 +3519,20 @@ under the License.
                           <tr>
                 <td>
                   <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.RequiredHandlerAuthenticationPolicyFactory.java">org/jasig/cas/authentication/RequiredHandlerAuthenticationPolicyFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://www.jasig.org/cas/cas-server-core//checkstyle.html#org.jasig.cas.authentication.principal.cache.AbstractCachingPrincipalAttributesRepositoryTests.java">org/jasig/cas/authentication/principal/cache/AbstractCachingPrincipalAttributesRepositoryTests.java</a>
                 </td>
                 <td>
                   0

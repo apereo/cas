@@ -282,7 +282,7 @@
 <a class="jxr_linenumber" name="L274" href="#L274">274</a>             }
 <a class="jxr_linenumber" name="L275" href="#L275">275</a> 
 <a class="jxr_linenumber" name="L276" href="#L276">276</a>             <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/authentication/principal/cache/AbstractPrincipalAttributesRepository.html">AbstractPrincipalAttributesRepository</a> cc = (AbstractPrincipalAttributesRepository) pr;
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>             <strong class="jxr_keyword">final</strong> IAttributeMerger merger = cc.getMergingStrategy();
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>             <strong class="jxr_keyword">final</strong> IAttributeMerger merger = cc.getMergingStrategy().getAttributeMerger();
 <a class="jxr_linenumber" name="L278" href="#L278">278</a> 
 <a class="jxr_linenumber" name="L279" href="#L279">279</a>             <strong class="jxr_keyword">if</strong> (merger != <strong class="jxr_keyword">null</strong>) {
 <a class="jxr_linenumber" name="L280" href="#L280">280</a>                 <strong class="jxr_keyword">if</strong> (merger instanceof NoncollidingAttributeAdder) {
@@ -616,7 +616,7 @@
 <a class="jxr_linenumber" name="L608" href="#L608">608</a>                 <strong class="jxr_keyword">final</strong> String attrType = <strong class="jxr_keyword">this</strong>.attrRelease.getAttrOption();
 <a class="jxr_linenumber" name="L609" href="#L609">609</a>                 <strong class="jxr_keyword">if</strong> (StringUtils.equalsIgnoreCase(attrType,
 <a class="jxr_linenumber" name="L610" href="#L610">610</a>                         RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
-<a class="jxr_linenumber" name="L611" href="#L611">611</a>                     policy.setPrincipalAttributesRepository(<strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/authentication/principal/cache/CachingPrincipalAttributesRepository.html">CachingPrincipalAttributesRepository</a>(dao,
+<a class="jxr_linenumber" name="L611" href="#L611">611</a>                     policy.setPrincipalAttributesRepository(<strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/authentication/principal/cache/CachingPrincipalAttributesRepository.html">CachingPrincipalAttributesRepository</a>(
 <a class="jxr_linenumber" name="L612" href="#L612">612</a>                             TimeUnit.valueOf(<strong class="jxr_keyword">this</strong>.attrRelease.getCachedTimeUnit().toUpperCase()),
 <a class="jxr_linenumber" name="L613" href="#L613">613</a>                             <strong class="jxr_keyword">this</strong>.attrRelease.getCachedExpiration()));
 <a class="jxr_linenumber" name="L614" href="#L614">614</a>                 } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (StringUtils.equalsIgnoreCase(attrType,

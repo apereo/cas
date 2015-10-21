@@ -169,7 +169,7 @@
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>         when(person.getAttributes()).thenReturn(attributes);
 <a class="jxr_linenumber" name="L162" href="#L162">162</a> 
 <a class="jxr_linenumber" name="L163" href="#L163">163</a>         <strong class="jxr_keyword">final</strong> PrincipalAttributesRepository repository =
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>                 <strong class="jxr_keyword">new</strong> CachingPrincipalAttributesRepository(dao, TimeUnit.MILLISECONDS, 100);
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>                 <strong class="jxr_keyword">new</strong> CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS, 100);
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> 
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>         <strong class="jxr_keyword">final</strong> Principal p = <strong class="jxr_keyword">new</strong> DefaultPrincipalFactory().createPrincipal(<span class="jxr_string">"uid"</span>,
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>                     Collections.&lt;String, Object&gt;singletonMap(<span class="jxr_string">"mail"</span>, <span class="jxr_string">"final@example.com"</span>));
