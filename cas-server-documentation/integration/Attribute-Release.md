@@ -241,8 +241,8 @@ attribute values are released to the scoped service, per the cache expiration po
 If the expiration policy has passed, the underlying attribute repository source will be consulted
 to figure out the available set of attributes. 
 
-The default caching policy is 2 hours which can be controlled via the `cas.attrs.timeToExpireInHours` 
-property. This component also has the ability to resolve conflicts between existing principal attributes and 
+The default caching policy is 2 hours. This component also has the ability to resolve conflicts between 
+existing principal attributes and 
 those that are retrieved from repository source via a `mergingStrategy` property. 
 This is useful if you want to preserve the collection of attributes that are already 
 available to the principal that were retrieved from a different place during the authentication event, etc.
@@ -268,7 +268,6 @@ Sample configuration follows:
             </property>
             <property name="principalAttributesRepository">
                     <bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
-                            c:attributeRepository-ref="attributeRepository"
                             c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
             </property>
         </bean>
@@ -297,12 +296,8 @@ For example:
 ...
     <property name="principalAttributesRepository">
         <bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
-              c:attributeRepository-ref="attributeRepository"
-              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
-            <property name="mergingStrategy">
-                <bean class="org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger" />
-            </property>
-        </bean>
+              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
+              p:mergingStrategy="MULTIVALUED" />
     </property>
 ...
 </bean>
@@ -322,12 +317,8 @@ For example:
 ...
     <property name="principalAttributesRepository">
         <bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
-              c:attributeRepository-ref="attributeRepository"
-              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
-            <property name="mergingStrategy">
-                <bean class="org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder" />
-            </property>
-        </bean>
+              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
+              p:mergingStrategy="ADD" />
     </property>
 ...
 </bean>
@@ -348,12 +339,8 @@ For example:
 ...
     <property name="principalAttributesRepository">
         <bean class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
-              c:attributeRepository-ref="attributeRepository"
-              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}">
-            <property name="mergingStrategy">
-                <bean class="org.jasig.services.persondir.support.merger.ReplacingAttributeAdder" />
-            </property>
-        </bean>
+              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
+              p:mergingStrategy="REPLACE" />
     </property>
 ...
 </bean>
