@@ -1405,6 +1405,8 @@
         <module>cas-server-support-jpa-ticket-registry</module>
         <module>cas-server-support-jpa-service-registry</module>
         <module>cas-server-support-ldap</module>
+        <module>cas-server-support-ldap-service-registry</module>
+        <module>cas-server-support-ldap-monitor</module>
         <module>cas-server-support-openid</module>
         <module>cas-server-support-wsfederation</module>
         <module>cas-server-support-radius</module>
@@ -1415,6 +1417,7 @@
         <module>cas-server-support-pac4j</module>
         <module>cas-server-support-saml</module>
         <module>cas-server-integration-memcached</module>
+        <module>cas-server-integration-memcached-monitor</module>
         <module>cas-server-integration-ehcache</module>
         <module>cas-server-integration-pac4j</module>
         <module>cas-server-extension-clearpass</module>

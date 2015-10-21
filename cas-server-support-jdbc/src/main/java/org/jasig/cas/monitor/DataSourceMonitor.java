@@ -18,9 +18,14 @@
  */
 package org.jasig.cas.monitor;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
@@ -32,22 +37,29 @@ import java.sql.SQLException;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
+@Component("dataSourceMonitor")
 public class DataSourceMonitor extends AbstractPoolMonitor {
 
     @NotNull
-    private final JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @NotNull
+    @Value("${datasource.monitor.validation.query:SELECT 1")
     private String validationQuery;
-
 
     /**
      * Creates a new instance that monitors the given data source.
      *
      * @param dataSource Data source to monitor.
      */
-    public DataSourceMonitor(final DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    @Autowired
+
+    public DataSourceMonitor(@Qualifier("monitorDataSource") @Nullable final DataSource dataSource) {
+        if (dataSource != null) {
+            this.jdbcTemplate = new JdbcTemplate(dataSource);
+        } else {
+            logger.debug("No data source is defined to monitor");
+        }
     }
 
 
