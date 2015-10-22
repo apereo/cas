@@ -1356,7 +1356,7 @@
                 <artifactId>cas-server-security-filter</artifactId>
                 <version>${cas-server-security-filter.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-web</artifactId>
@@ -1369,7 +1369,7 @@
                 <artifactId>hazelcast</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.cryptacular</groupId>
                 <artifactId>cryptacular</artifactId>
@@ -1385,6 +1385,12 @@
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-oauth</artifactId>
+                <version>${pac4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pac4j</groupId>
+                <artifactId>pac4j-saml</artifactId>
                 <version>${pac4j.version}</version>
             </dependency>
 
