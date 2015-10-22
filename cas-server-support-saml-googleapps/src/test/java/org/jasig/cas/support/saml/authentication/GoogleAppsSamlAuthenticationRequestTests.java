@@ -17,24 +17,30 @@
  * under the License.
  */
 
-package org.jasig.cas.support.saml;
+package org.jasig.cas.support.saml.authentication;
 
-import org.jasig.cas.support.saml.authentication.GoogleAppsSamlAuthenticationRequestTests;
-import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsServiceFactoryTests;
-import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsServiceTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.jasig.cas.support.saml.AbstractOpenSamlTests;
+import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
+import org.jasig.cas.util.CompressionUtils;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
- * Test suite to run all SAML tests.
+ * This is {@link GoogleAppsSamlAuthenticationRequestTests}.
+ *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        GoogleAppsSamlAuthenticationRequestTests.class,
-        GoogleAccountsServiceTests.class,
-        GoogleAccountsServiceFactoryTests.class,
-})
-public final class AllTestsSuite {
+public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
+
+    @Test
+    public void ensureInflation() throws Exception {
+        final String deflator = CompressionUtils.deflate(SAML_REQUEST);
+        final AbstractSaml20ObjectBuilder builder = new GoogleSaml20ObjectBuilder();
+        final String msg = builder.decodeSamlAuthnRequest(deflator);
+        assertEquals(msg, SAML_REQUEST);
+    }
+
 }
