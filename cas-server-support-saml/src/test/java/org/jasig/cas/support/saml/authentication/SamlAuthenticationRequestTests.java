@@ -20,8 +20,6 @@
 package org.jasig.cas.support.saml.authentication;
 
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
-import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.CompressionUtils;
 import org.junit.Test;
 
@@ -29,7 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.DeflaterOutputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Utility class to ensure authentication requests are properly encoded and decoded.
@@ -37,26 +35,12 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
-    private static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-            + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
-            + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
-            + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
-            + "ProviderName=\"https://localhost:8443/myRutgers\" "
-            + "AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
 
     @Test
     public void ensureDeflation() throws Exception {
         final String deflator = CompressionUtils.deflate(SAML_REQUEST);
         final String deflatorStream = deflateViaStream(SAML_REQUEST);
         assertEquals(deflatorStream, deflator);
-    }
-
-    @Test
-    public void ensureInflation() throws Exception {
-        final String deflator = CompressionUtils.deflate(SAML_REQUEST);
-        final AbstractSaml20ObjectBuilder builder = new GoogleSaml20ObjectBuilder();
-        final String msg = builder.decodeSamlAuthnRequest(deflator);
-        assertEquals(msg, SAML_REQUEST);
     }
 
     private String deflateViaStream(final String samlRequest) throws IOException {
