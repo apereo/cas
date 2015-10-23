@@ -791,6 +791,14 @@
             </dependency>
 
             <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+                <scope>compile</scope>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-dbcp2</artifactId>
                 <version>${dbcp.version}</version>
@@ -1487,6 +1495,7 @@
         <module>cas-server-webapp-support</module>
         <module>cas-server-support-generic</module>
         <module>cas-server-support-jdbc</module>
+        <module>cas-server-support-jdbc-monitor</module>
         <module>cas-server-support-jpa-ticket-registry</module>
         <module>cas-server-support-jpa-service-registry</module>
         <module>cas-server-support-ldap</module>
