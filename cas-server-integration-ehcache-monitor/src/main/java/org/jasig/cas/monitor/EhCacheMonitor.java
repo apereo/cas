@@ -16,9 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.cas.monitor;
 
 import net.sf.ehcache.Cache;
+import org.jasig.cas.monitor.AbstractCacheMonitor;
+import org.jasig.cas.monitor.CacheStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -26,7 +29,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Nullable;
 
 /**
- * Monitors a {@link net.sf.ehcache.Cache} instance.
+ * Monitors a {@link Cache} instance.
  * The accuracy of statistics is governed by the value of {@link Cache#getStatistics()}.
  *
  * <p>NOTE: computation of highly accurate statistics is expensive.</p>
