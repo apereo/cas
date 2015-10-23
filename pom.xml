@@ -1475,6 +1475,14 @@
     <modules>
         <module>cas-server-core-api</module>
         <module>cas-server-core</module>
+        <module>cas-server-core-audit</module>
+        <module>cas-server-core-authentication</module>
+        <module>cas-server-core-logout</module>
+        <module>cas-server-core-monitor</module>
+        <module>cas-server-core-services</module>
+        <module>cas-server-core-tickets</module>
+        <module>cas-server-core-validation</module>
+        <module>cas-server-core-web</module>
         <module>cas-server-webapp-support</module>
         <module>cas-server-support-generic</module>
         <module>cas-server-support-jdbc</module>
