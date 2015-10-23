@@ -1475,6 +1475,7 @@
     <modules>
         <module>cas-server-core-api</module>
         <module>cas-server-core</module>
+        <module>cas-server-core-util</module>
         <module>cas-server-core-audit</module>
         <module>cas-server-core-authentication</module>
         <module>cas-server-core-logout</module>
@@ -1507,6 +1508,7 @@
         <module>cas-server-integration-ehcache</module>
         <module>cas-server-integration-ehcache-monitor</module>
         <module>cas-server-integration-pac4j</module>
+        <module>cas-server-integration-pac4j-core</module>
         <module>cas-server-extension-clearpass</module>
         <module>cas-server-support-rest</module>
         <module>cas-server-support-yubikey</module>
