@@ -30,20 +30,13 @@
     </description>
 
     <bean id="config" class="org.pac4j.core.config.Config">
-        <constructor-arg name="clients">
-            <bean class="org.pac4j.core.client.Clients">
-                <constructor-arg name="clients">
-                    <bean class="org.pac4j.http.client.direct.IpClient">
-                        <property name="authenticator">
-                            <bean class="org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator">
-                                <constructor-arg name="regexpPattern" value="${cas.securityContext.adminpages.ip:127\.0\.\.1}" />
-                            </bean>
-                        </property>
-                        <property name="profileCreator">
-                            <bean class="org.pac4j.http.IpProfileCreator" />
-                        </property>
+        <constructor-arg name="client">
+            <bean class="org.pac4j.http.client.direct.IpClient">
+                <property name="authenticator">
+                    <bean class="org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator">
+                        <constructor-arg name="regexpPattern" value="${cas.securityContext.adminpages.ip:127\.0\.\.1}" />
                     </bean>
-                </constructor-arg>
+                </property>
             </bean>
         </constructor-arg>
     </bean>
