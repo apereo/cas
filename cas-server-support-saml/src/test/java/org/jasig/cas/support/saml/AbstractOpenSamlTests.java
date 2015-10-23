@@ -44,6 +44,14 @@ import static org.junit.Assert.*;
 @ContextConfiguration({"/META-INF/spring/*-config.xml"})
 @WebAppConfiguration()
 public abstract class AbstractOpenSamlTests {
+
+    protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
+            + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
+            + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
+            + "ProviderName=\"https://localhost:8443/myRutgers\" "
+            + "AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
+
     @Autowired
     protected ApplicationContext applicationContext;
 
