@@ -26,9 +26,9 @@
         <version>4.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>cas-server-core</artifactId>
-    <name>Apereo CAS Core</name>
-    <description>CAS core</description>
+    <artifactId>cas-server-core-tickets</artifactId>
+    <name>Apereo CAS Core Tickets</name>
+    <description>CAS core tickets</description>
     <dependencies>
         <dependency>
             <groupId>org.jasig.cas</groupId>
