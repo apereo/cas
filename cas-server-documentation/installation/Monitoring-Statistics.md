@@ -100,7 +100,7 @@ The following settings are available:
 
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-support-jdbc</artifactId>
+    <artifactId>cas-server-support-jdbc-monitor</artifactId>
     <version>${cas.version}</version>
 </dependency>
 

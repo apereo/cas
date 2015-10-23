@@ -54,7 +54,7 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             return null;
         }
 
-        final String id = cleanupUrl(serviceToUse);
+        final String id = AbstractServiceFactory.cleanupUrl(serviceToUse);
         final String artifactId = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
 
         final  Response.ResponseType type = "POST".equalsIgnoreCase(method) ? Response.ResponseType.POST

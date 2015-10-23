@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class CompressionUtilsTests {
+public class TicketEncryptionDecryptionTests {
 
     private final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");
     private final ShiroCipherExecutor cipher = new ShiroCipherExecutor("1234567890123456",

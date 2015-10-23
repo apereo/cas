@@ -28,7 +28,7 @@ import org.jasig.cas.authentication.principal.Service;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class ServiceContext {
+public final class ServiceContext {
 
     /** Service principal. */
     @NotNull
