@@ -16,12 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.jasig.cas.monitor;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.statistics.StatisticsGateway;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.monitor.CacheStatistics;
+
 import java.util.Formatter;
 
 /**
