@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthenticationServiceTest {
 
     @Test
-         public void verifyNullTicket() throws Exception {
+    public void verifyNullTicket() throws Exception {
 
         final MockRequestContext ctx = new MockRequestContext();
         final TicketGrantingTicketCheckAction action = new
