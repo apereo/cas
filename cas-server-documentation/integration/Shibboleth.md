@@ -4,7 +4,8 @@ title: CAS - Shibboleth Integration
 ---
 
 #Overview
-CAS can be integrated with the [Shibboleth federated SSO platform](http://shibboleth.net/) by a couple different strategies. It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP. With such a setup, when user is routed to the IdP, the following may take place:
+CAS can be integrated with the [Shibboleth federated SSO platform](http://shibboleth.net/) by a couple different strategies. 
+It is possible to designate CAS to serve as the authentication provider for the Shibboleth IdP. With such a setup, when user is routed to the IdP, the following may take place:
 
 - If the user has already authenticated to CAS and has a valid CAS SSO session, the IdP will transparently perform the requested action, e.g. attribute release.
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must authenticate before the IDP proceeds with the requested action.
@@ -16,7 +17,8 @@ CAS can be integrated with the [Shibboleth federated SSO platform](http://shibbo
 
 ####Include CAS Client Libraries in IdP Deployable
 
-Download the latest Java CAS Client Release and modify the IdP war deployable such that the following jars are included in the `./lib` installer folder, then redeploy the Idp with these files:
+Download the latest Java CAS Client Release and modify the IdP war deployable such that the following jars are 
+included in the `./lib` installer folder, then redeploy the Idp with these files:
 
 {% highlight bash %}
 cas-client-$VERSION/modules/cas-client-core-$VERSION.jar
@@ -116,12 +118,15 @@ Ensure the following is defined:
 
 
 ##SSO for Shibboleth IdP (External)
-This is a Shibboleth IdP external authentication plugin that delegates the authentication to CAS. The advantage of using this component over the plain `RemoteUser` solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`.
+This is a Shibboleth IdP external authentication plugin that delegates the authentication to CAS. The advantage of using 
+this component over the plain `RemoteUser` solution is the ability to utilize a full range of native CAS protocol features such as `renew` and `gateway`.
 
-The plugin is available for both Shibboleth Identity Provider [v2](https://github.com/Unicon/shib-cas-authn2) and [v3](https://github.com/Unicon/shib-cas-authn3).
+The plugin is available for both Shibboleth Identity Provider [v2](https://github.com/Unicon/shib-cas-authn2) 
+and [v3](https://github.com/Unicon/shib-cas-authn3).
 
 ###Relying Party EntityId
-The authentication plugin is able to pass the relying party's entity ID over to the CAS server upon authentication requests. The entity ID is passed in form of a url parameter to the CAS server as such:
+The authentication plugin is able to pass the relying party's entity ID over to the CAS server upon authentication requests. 
+The entity ID is passed in form of a url parameter to the CAS server as such:
 
 ```
 https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<relying-party-entity-id>
@@ -139,7 +144,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% highlight xml %}
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-support-saml</artifactId>
+  <artifactId>cas-server-support-saml-mdui</artifactId>
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -272,7 +277,9 @@ A sample screenshot of the above configuration in action:
 ![capture](https://cloud.githubusercontent.com/assets/1205228/8120071/095c7628-1050-11e5-810e-7bce128391df.PNG)
 
 ##Shibboleth Service Provider Proxy
-The [CASShib project](https://code.google.com/p/casshib/) "Shibbolizes" the CAS server and enables end applications to get authentication information from CAS rather than the Shibboleth Service Provider. CASShib is designed as an alternative to deploying the Shibboleth service provider for each application in order to:
+The [CASShib project](https://code.google.com/p/casshib/) "Shibbolizes" the CAS server and enables end applications to get authentication 
+information from CAS rather than the Shibboleth Service Provider. CASShib is designed as an alternative to deploying the 
+Shibboleth service provider for each application in order to:
 
 - Leverage Shibboleth's sophisticated attribute release policy functionality to enable attribute releasing to services in the local environment.
 - Offer the chance for local applications to easily become federated services.

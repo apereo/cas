@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.ApplicationContextProvider;
@@ -104,6 +105,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
         final ServicesManager servicesManager = context.getBean("servicesManager", ServicesManager.class);
         final RegisteredService registeredService = servicesManager.findServiceBy(service);
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        }
         final String userId = registeredService.getUsernameAttributeProvider()
                     .resolveUsername(service.getPrincipal(), service);
 
