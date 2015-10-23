@@ -20,8 +20,6 @@
 package org.jasig.cas.monitor;
 
 import net.sf.ehcache.Cache;
-import org.jasig.cas.monitor.AbstractCacheMonitor;
-import org.jasig.cas.monitor.CacheStatistics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
