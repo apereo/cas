@@ -33,7 +33,8 @@ This project includes:
   Apache Shiro :: Core under The Apache Software License, Version 2.0
   Apereo CAS Core under Apache 2
   Apereo CAS Core APIs under Apache 2
-  Apereo CAS OAuth Server Support under Apache 2
+  Apereo CAS LDAP Monitor Support under Apache 2
+  Apereo CAS LDAP Support under Apache 2
   AspectJ runtime under Eclipse Public License - v 1.0
   AspectJ weaver under Eclipse Public License - v 1.0
   Bean Validation API under The Apache Software License, Version 2.0
@@ -72,7 +73,9 @@ This project includes:
   JTA 1.1 under The Apache Software License, Version 2.0
   JUL to SLF4J bridge under MIT License
   JUnit under Eclipse Public License 1.0
+  LDAPTIVE BEANS under Apache 2 or GNU Lesser General Public License
   LDAPTIVE CORE under Apache 2 or GNU Lesser General Public License
+  LDAPTIVE UNBOUNDID PROVIDER under Apache 2 or GNU Lesser General Public License
   Metrics Core under Apache License 2.0
   Mockito under The MIT License
   Objenesis under Apache 2
@@ -99,5 +102,6 @@ This project includes:
   Spring Web Flow under The Apache Software License, Version 2.0
   Spring Web MVC under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
+  UnboundID LDAP SDK for Java under GNU General Public License version 2 (GPLv2) or GNU Lesser General Public License version 2.1 (LGPLv2.1) or UnboundID LDAP SDK Free Use License
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0 or The SAX License or The W3C License
 

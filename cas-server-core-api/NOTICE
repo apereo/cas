@@ -32,6 +32,7 @@ This project includes:
   Hamcrest Core under New BSD License
   Inspektr - Aspects under Apache 2.0 License
   Java Servlet API under CDDL + GPLv2 with classpath exception
+  Joda-Time under Apache 2
   JUL to SLF4J bridge under MIT License
   JUnit under Eclipse Public License 1.0
   Mockito under The MIT License
