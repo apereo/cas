@@ -17,24 +17,35 @@
  * under the License.
  */
 
-package org.jasig.cas;
+package org.jasig.cas.services;
 
-import org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandlerTests;
-import org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerTests;
-import org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandlerTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.jasig.cas.authentication.principal.Service;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * The {@link AllTestsSuite} is responsible for
- * running all jdbc test cases.
+ * This is {@link TestUtils}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+public final class TestUtils {
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({QueryAndEncodeDatabaseAuthenticationHandlerTests.class, QueryDatabaseAuthenticationHandlerTests.class,
-        SearchModeSearchDatabaseAuthenticationHandlerTests.class})
-public class AllTestsSuite {
+    public static final String CONST_TEST_URL = "https://test.com";
+    public static final String CONST_TEST_URL2 = "https://example.com";
+
+    private TestUtils() {}
+
+    public static Service getService() {
+        return getService(CONST_TEST_URL);
+    }
+
+    public static Service getService2() {
+        return getService(CONST_TEST_URL2);
+    }
+
+    public static Service getService(final String name) {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", name);
+        return new WebApplicationServiceFactory().createService(request);
+    }
 }
