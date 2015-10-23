@@ -75,7 +75,7 @@ The following settings are available:
 
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-integration-ehcache</artifactId>
+    <artifactId>cas-server-integration-ehcache-monitor</artifactId>
     <version>${cas.version}</version>
 </dependency>
 
