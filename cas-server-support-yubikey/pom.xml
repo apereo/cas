@@ -36,6 +36,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-authentication</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.yubico</groupId>
             <artifactId>yubico-validation-client2</artifactId>
             <version>${yubikey.client.version}</version>
