@@ -1505,6 +1505,7 @@
         <module>cas-server-integration-memcached</module>
         <module>cas-server-integration-memcached-monitor</module>
         <module>cas-server-integration-ehcache</module>
+        <module>cas-server-integration-ehcache-monitor</module>
         <module>cas-server-integration-pac4j</module>
         <module>cas-server-extension-clearpass</module>
         <module>cas-server-support-rest</module>
