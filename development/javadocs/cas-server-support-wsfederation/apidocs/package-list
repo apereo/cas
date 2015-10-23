@@ -1,0 +1,4 @@
+org.jasig.cas.support.wsfederation
+org.jasig.cas.support.wsfederation.authentication.handler.support
+org.jasig.cas.support.wsfederation.authentication.principal
+org.jasig.cas.support.wsfederation.web.flow

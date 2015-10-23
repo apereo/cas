@@ -1,0 +1,6 @@
+org.jasig.cas
+org.jasig.cas.adaptors.ldap
+org.jasig.cas.authentication
+org.jasig.cas.userdetails
+org.jasig.cas.util
+org.jasig.cas.util.ldap.uboundid
