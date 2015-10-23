@@ -23,7 +23,6 @@ import org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandlerTe
 import org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerTests;
 import org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandlerTests;
 import org.jasig.cas.monitor.DataSourceMonitorTests;
-import org.jasig.cas.monitor.SessionMonitorTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -37,7 +36,6 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({QueryAndEncodeDatabaseAuthenticationHandlerTests.class, QueryDatabaseAuthenticationHandlerTests.class,
-        SearchModeSearchDatabaseAuthenticationHandlerTests.class, DataSourceMonitorTests.class,
-        SessionMonitorTests.class})
+        SearchModeSearchDatabaseAuthenticationHandlerTests.class, DataSourceMonitorTests.class})
 public class AllTestsSuite {
 }
