@@ -1492,6 +1492,8 @@
         <module>cas-server-support-oauth</module>
         <module>cas-server-support-pac4j</module>
         <module>cas-server-support-saml</module>
+        <module>cas-server-support-saml-googleapps</module>
+        <module>cas-server-support-saml-mdui</module>
         <module>cas-server-integration-memcached</module>
         <module>cas-server-integration-memcached-monitor</module>
         <module>cas-server-integration-ehcache</module>
