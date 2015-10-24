@@ -37,6 +37,12 @@ import java.util.List;
 public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 
     /**
+     * Default extractor.
+     */
+    public DefaultArgumentExtractor() {
+        super();
+    }
+    /**
      * Instantiates a new argument extractor.
      *
      * @param serviceFactory the service factory

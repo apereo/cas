@@ -19,6 +19,7 @@
 package org.jasig.cas.adaptors.ldap.services;
 
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
+import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -158,7 +159,9 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         final AbstractRegisteredService rs = new RegisteredServiceImpl();
         rs.setName("Service Name1");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
-        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
+        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
+                new ShibbolethCompatiblePersistentIdGenerator("hello")
+        ));
         rs.setDescription("Service description");
         rs.setServiceId("https://?.edu/**");
         rs.setTheme("the theme name");
@@ -172,7 +175,9 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         final AbstractRegisteredService rs  = new RegexRegisteredService();
         rs.setName("Service Name Regex");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
-        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
+        rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
+                new ShibbolethCompatiblePersistentIdGenerator("hello")
+        ));
         rs.setDescription("Service description");
         rs.setServiceId("^http?://.+");
         rs.setTheme("the theme name");
