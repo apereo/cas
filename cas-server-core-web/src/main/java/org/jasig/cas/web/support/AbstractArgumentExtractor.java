@@ -45,6 +45,13 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     private final List<ServiceFactory<? extends WebApplicationService>> serviceFactory;
 
     /**
+     * Default extractor initiation.
+     */
+    public AbstractArgumentExtractor() {
+        this.serviceFactory = new ArrayList<>();
+    }
+
+    /**
      * Instantiates a new argument extractor.
      *
      * @param serviceFactory the service factory
