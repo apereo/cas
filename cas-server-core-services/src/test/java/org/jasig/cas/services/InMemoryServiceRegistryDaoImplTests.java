@@ -19,7 +19,6 @@
 
 package org.jasig.cas.services;
 
-import org.jasig.cas.TestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -34,7 +33,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     @Test
     public void verifySave()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
-        final RegisteredService svc = TestUtils.getRegisteredService("service");
+        final RegisteredService svc = org.jasig.cas.services.TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
     }
 
@@ -47,7 +46,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     @Test
      public void verifySaveAndLoad()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
-        final RegisteredService svc = TestUtils.getRegisteredService("service");
+        final RegisteredService svc = org.jasig.cas.services.TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
         assertEquals(reg.load().size(), 1);
     }
@@ -55,7 +54,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     @Test
     public void verifySaveAndFind()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
-        final RegisteredService svc = TestUtils.getRegisteredService("service");
+        final RegisteredService svc = org.jasig.cas.services.TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
         assertEquals(reg.findServiceById(svc.getId()), svc);
     }
@@ -63,7 +62,7 @@ public class InMemoryServiceRegistryDaoImplTests {
     @Test
     public void verifySaveAndDelete()  {
         final InMemoryServiceRegistryDaoImpl reg = new InMemoryServiceRegistryDaoImpl();
-        final RegisteredService svc = TestUtils.getRegisteredService("service");
+        final RegisteredService svc = org.jasig.cas.services.TestUtils.getRegisteredService("service");
         assertEquals(reg.save(svc), svc);
         assertTrue(reg.delete(svc));
         assertEquals(reg.load().size(), 0);

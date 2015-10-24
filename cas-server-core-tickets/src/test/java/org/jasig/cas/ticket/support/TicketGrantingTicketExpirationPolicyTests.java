@@ -19,7 +19,7 @@
 package org.jasig.cas.ticket.support;
 
 import static org.junit.Assert.*;
-import org.jasig.cas.TestUtils;
+
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
@@ -48,7 +48,8 @@ public class TicketGrantingTicketExpirationPolicyTests {
     public void setUp() throws Exception {
         this.expirationPolicy = new TicketGrantingTicketExpirationPolicy(HARD_TIMEOUT, SLIDING_TIMEOUT,
             TimeUnit.MILLISECONDS);
-        this.ticketGrantingTicket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(),
+        this.ticketGrantingTicket = new TicketGrantingTicketImpl("test",
+                org.jasig.cas.authentication.TestUtils.getAuthentication(),
                 this.expirationPolicy);
     }
 
@@ -57,14 +58,16 @@ public class TicketGrantingTicketExpirationPolicyTests {
          // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
          while (System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()
                  < (HARD_TIMEOUT - SLIDING_TIMEOUT / 2)) {
-             ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+             ticketGrantingTicket.grantServiceTicket("test",
+                     org.jasig.cas.services.TestUtils.getService(), expirationPolicy, false,
                      true);
              Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
              assertFalse(this.ticketGrantingTicket.isExpired());
          }
 
          // final sliding window extension past the HARD_TIMEOUT
-         ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+         ticketGrantingTicket.grantServiceTicket("test",
+                 org.jasig.cas.services.TestUtils.getService(), expirationPolicy, false,
                  true);
          Thread.sleep(SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER);
          assertTrue(ticketGrantingTicket.isExpired());
@@ -73,17 +76,20 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     @Test
     public void verifyTgtIsExpiredBySlidingWindow() throws InterruptedException {
-        ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+        ticketGrantingTicket.grantServiceTicket("test",
+                org.jasig.cas.services.TestUtils.getService(), expirationPolicy, false,
                 true);
         Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
         assertFalse(ticketGrantingTicket.isExpired());
 
-        ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+        ticketGrantingTicket.grantServiceTicket("test",
+                org.jasig.cas.services.TestUtils.getService(), expirationPolicy, false,
                 true);
         Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
         assertFalse(ticketGrantingTicket.isExpired());
 
-        ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+        ticketGrantingTicket.grantServiceTicket("test",
+                org.jasig.cas.services.TestUtils.getService(), expirationPolicy, false,
                 true);
         Thread.sleep(SLIDING_TIMEOUT + TIMEOUT_BUFFER);
         assertTrue(ticketGrantingTicket.isExpired());

@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
@@ -45,7 +44,7 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyEquals() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertNotNull(t);
         assertFalse(t.equals(new Object()));
@@ -60,7 +59,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyGetAuthentication() {
-        final Authentication authentication = TestUtils.getAuthentication();
+        final Authentication authentication = org.jasig.cas.authentication.TestUtils.getAuthentication();
 
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
             authentication, new NeverExpiresExpirationPolicy());
@@ -72,7 +71,7 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyIsRootTrue() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertTrue(t.isRoot());
     }
@@ -80,17 +79,17 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyIsRootFalse() {
         final TicketGrantingTicketImpl t1 = new TicketGrantingTicketImpl("test", null, null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
                 new WebApplicationServiceFactory().createService("gantor"), t1,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertFalse(t.isRoot());
     }
 
     @Test
     public void verifyGetChainedPrincipalsWithOne() {
-        final Authentication authentication = TestUtils.getAuthentication();
+        final Authentication authentication = org.jasig.cas.authentication.TestUtils.getAuthentication();
         final List<Authentication> principals = new ArrayList<>();
         principals.add(authentication);
 
@@ -102,7 +101,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyCheckCreationTime() {
-        final Authentication authentication = TestUtils.getAuthentication();
+        final Authentication authentication = org.jasig.cas.authentication.TestUtils.getAuthentication();
         final List<Authentication> principals = new ArrayList<>();
         principals.add(authentication);
 
@@ -115,8 +114,8 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyGetChainedPrincipalsWithTwo() {
-        final Authentication authentication = TestUtils.getAuthentication();
-        final Authentication authentication1 = TestUtils.getAuthentication("test1");
+        final Authentication authentication = org.jasig.cas.authentication.TestUtils.getAuthentication();
+        final Authentication authentication1 = org.jasig.cas.authentication.TestUtils.getAuthentication("test1");
         final List<Authentication> principals = new ArrayList<>();
         principals.add(authentication);
         principals.add(authentication1);
@@ -133,9 +132,9 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyServiceTicketAsFromInitialCredentials() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
-            .getNewTicketId(ServiceTicket.PREFIX), TestUtils.getService(),
+            .getNewTicketId(ServiceTicket.PREFIX), org.jasig.cas.services.TestUtils.getService(),
             new NeverExpiresExpirationPolicy(), false, true);
 
         assertTrue(s.isFromNewLogin());
@@ -144,17 +143,17 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyServiceTicketAsFromNotInitialCredentials() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(),
+                org.jasig.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
         final ServiceTicket s = t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(),
+                org.jasig.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
@@ -166,7 +165,7 @@ public class TicketGrantingTicketImplTests {
     public void verifyWebApplicationServices() {
         final MockService testService = new MockService("test");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), testService,
             new NeverExpiresExpirationPolicy(), false, true);
@@ -183,7 +182,7 @@ public class TicketGrantingTicketImplTests {
     public void verifyWebApplicationExpire() {
         final MockService testService = new MockService("test");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-            TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+            org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(this.uniqueTicketIdGenerator
                         .getNewTicketId(ServiceTicket.PREFIX), testService,
                 new NeverExpiresExpirationPolicy(), false, true);
@@ -195,17 +194,17 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyDoubleGrantSameServiceTicketKeepMostRecentSession() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(),
+                org.jasig.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(),
+                org.jasig.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
@@ -216,17 +215,17 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyDoubleGrantSimilarServiceTicketKeepMostRecentSession() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService("http://host.com?test"),
+                org.jasig.cas.services.TestUtils.getService("http://host.com?test"),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService("http://host.com;JSESSIONID=xxx"),
+                org.jasig.cas.services.TestUtils.getService("http://host.com;JSESSIONID=xxx"),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
@@ -237,17 +236,17 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyDoubleGrantSimilarServiceWithPathTicketKeepMostRecentSession() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService("http://host.com/webapp1"),
+                org.jasig.cas.services.TestUtils.getService("http://host.com/webapp1"),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService("http://host.com/webapp1?test=true"),
+                org.jasig.cas.services.TestUtils.getService("http://host.com/webapp1?test=true"),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
@@ -258,17 +257,17 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyDoubleGrantSameServiceTicketKeepAll() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(),
+                org.jasig.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(),
+                org.jasig.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 false);
@@ -279,17 +278,17 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyDoubleGrantDifferentServiceTicket() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService(),
+                org.jasig.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService2(),
+                org.jasig.cas.services.TestUtils.getService2(),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
@@ -300,17 +299,17 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyDoubleGrantDifferentServiceOnPathTicket() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
-                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService("http://host.com/webapp1"),
+                org.jasig.cas.services.TestUtils.getService("http://host.com/webapp1"),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);
         t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                TestUtils.getService("http://host.com/webapp2"),
+                org.jasig.cas.services.TestUtils.getService("http://host.com/webapp2"),
                 new NeverExpiresExpirationPolicy(),
                 false,
                 true);

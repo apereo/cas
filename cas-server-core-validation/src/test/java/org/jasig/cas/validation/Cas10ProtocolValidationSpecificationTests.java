@@ -18,10 +18,9 @@
  */
 package org.jasig.cas.validation;
 
-import static org.junit.Assert.*;
-
-import org.jasig.cas.TestUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -58,14 +57,17 @@ public class Cas10ProtocolValidationSpecificationTests {
         assertTrue(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
+    @Test
     public void verifyNotSatisfiesSpecOfTrue() {
         assertFalse(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(false)));
     }
 
+    @Test
     public void verifySatisfiesSpecOfFalse() {
         assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(true)));
     }
 
+    @Test
     public void verifySatisfiesSpecOfFalse2() {
         assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(false)));
     }

@@ -20,7 +20,8 @@ package org.jasig.cas.authentication.handler.support;
 
 import javax.security.auth.login.LoginException;
 
-import org.jasig.cas.TestUtils;
+
+import org.jasig.cas.authentication.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 

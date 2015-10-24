@@ -18,14 +18,14 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
+import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.TestUtils;
+import org.junit.Before;
+import org.junit.Test;
+
 import javax.security.auth.login.FailedLoginException;
 
 import static org.junit.Assert.*;
-
-import org.jasig.cas.TestUtils;
-import org.jasig.cas.authentication.HandlerResult;
-import org.junit.Before;
-import org.junit.Test;
 
 /**
  * Test of the simple username/password handler.
@@ -44,7 +44,8 @@ public final class SimpleTestUsernamePasswordHandlerTests {
 
     @Test
     public void verifySupportsProperUserCredentials() {
-        assertTrue(this.authenticationHandler.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertTrue(this.authenticationHandler.supports(
+                TestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test

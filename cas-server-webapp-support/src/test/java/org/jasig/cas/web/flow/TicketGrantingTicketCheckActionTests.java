@@ -20,7 +20,6 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
@@ -66,7 +65,8 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
 
         final MockRequestContext ctx = new MockRequestContext();
         final TicketGrantingTicket tgt = this.getCentralAuthenticationService()
-                .createTicketGrantingTicket(TestUtils.getCredentialsWithSameUsernameAndPassword());
+                .createTicketGrantingTicket(
+                        org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
         final TicketGrantingTicketCheckAction action = new

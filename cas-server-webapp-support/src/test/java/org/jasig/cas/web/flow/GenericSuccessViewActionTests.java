@@ -19,7 +19,6 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
@@ -42,7 +41,8 @@ public class GenericSuccessViewActionTests {
     public void verifyValidPrincipal() throws InvalidTicketException {
         final CentralAuthenticationService cas = mock(CentralAuthenticationService.class);
         final Authentication authn = mock(Authentication.class);
-        when(authn.getPrincipal()).thenReturn(TestUtils.getPrincipal("cas"));
+        when(authn.getPrincipal()).thenReturn(
+                org.jasig.cas.authentication.TestUtils.getPrincipal("cas"));
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(authn);
 

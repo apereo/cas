@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.TestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
