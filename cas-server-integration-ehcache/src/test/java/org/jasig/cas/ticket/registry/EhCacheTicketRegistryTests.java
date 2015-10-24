@@ -20,7 +20,6 @@ package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -33,7 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -66,12 +64,6 @@ public final class EhCacheTicketRegistryTests {
     public void setUp() throws Exception {
         this.ticketRegistry = this.applicationContext.getBean("ticketRegistry", TicketRegistry.class);
         initTicketRegistry();
-    }
-
-    public static Service getService() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", "test");
-        return new WebApplicationServiceFactory().createService(request);
     }
 
     /**
@@ -219,7 +211,8 @@ public final class EhCacheTicketRegistryTests {
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, getService(),
+            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i,
+                    org.jasig.cas.authentication.TestUtils.getService(),
                     new NeverExpiresExpirationPolicy(), false, true);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
