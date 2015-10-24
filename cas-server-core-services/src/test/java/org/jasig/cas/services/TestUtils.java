@@ -19,6 +19,7 @@
 
 package org.jasig.cas.services;
 
+import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
@@ -52,10 +53,12 @@ public final class TestUtils {
         return getService(CONST_TEST_URL2);
     }
 
-    public static Service getService(final String name) {
+    public static AbstractWebApplicationService getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
-        return new WebApplicationServiceFactory().createService(request);
+        final AbstractWebApplicationService result = (AbstractWebApplicationService)
+                new WebApplicationServiceFactory().createService(request);
+        return result;
     }
 
     public static AbstractRegisteredService getRegisteredService(final String id) {
