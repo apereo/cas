@@ -36,7 +36,7 @@ import java.util.List;
  *
  * <ol>
  *     <li>Maps handler errors onto message bundle strings for display to user.</li>
- *     <li>Determines the next webflow state by comparing handler erors against {@link #errors}
+ *     <li>Determines the next webflow state by comparing handler errors against {@link #errors}
  *     in list order. The first entry that matches determines the outcome state, which
  *     is the simple class name of the exception.</li>
  * </ol>
