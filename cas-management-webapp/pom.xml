@@ -71,18 +71,14 @@
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core</artifactId>
+            <artifactId>cas-server-core-services</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.webflow</groupId>
-                    <artifactId>spring-webflow</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.opensaml</groupId>
-                    <artifactId>opensaml</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-authentication</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -151,13 +147,7 @@
             <artifactId>hibernate-validator</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
     <build>
