@@ -45,7 +45,7 @@
   <dependencies>
     <dependency>
       <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-core</artifactId>
+      <artifactId>cas-server-core-api</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -62,6 +62,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework.webflow</groupId>
       <artifactId>spring-webflow</artifactId>
       <scope>compile</scope>
@@ -75,6 +81,12 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>

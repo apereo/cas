@@ -44,8 +44,8 @@
 
     <dependencies>
         <dependency>
-            <artifactId>cas-server-core</artifactId>
             <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-authentication</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
