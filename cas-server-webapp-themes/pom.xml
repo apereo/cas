@@ -25,10 +25,11 @@
         <version>4.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>cas-server-webapp-support</artifactId>
+    <artifactId>cas-server-webapp-themes</artifactId>
     <packaging>jar</packaging>
-    <name>Apereo CAS Web Application Support</name>
+    <name>Apereo CAS Web Application Themes Support</name>
     <dependencies>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
@@ -42,14 +43,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -58,16 +54,23 @@
             <version>${project.version}</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <artifactId>spring-context-support</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-webflow</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
+            <artifactId>spring-context</artifactId>
         </dependency>
+
 
     </dependencies>
 

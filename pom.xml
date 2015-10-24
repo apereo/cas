@@ -1493,7 +1493,6 @@
         <module>cas-server-core-web</module>
         <module>cas-server-core</module>
         <module>cas-server-core-audit</module>
-        <module>cas-server-webapp-support</module>
         <module>cas-server-support-generic</module>
         <module>cas-server-support-jdbc</module>
         <module>cas-server-support-jdbc-monitor</module>
@@ -1525,6 +1524,15 @@
         <module>cas-server-support-duo</module>
         <module>cas-server-integration-hazelcast</module>
         <module>cas-server-integration-mongo</module>
+
+        <module>cas-server-webapp-cookie</module>
+        <module>cas-server-webapp-reports</module>
+        <module>cas-server-webapp-themes</module>
+        <module>cas-server-webapp-throttle</module>
+        <module>cas-server-webapp-validation</module>
+        <module>cas-server-webapp-actions</module>
+        <module>cas-server-webapp-support</module>
+
         <module>cas-server-webapp</module>
         <module>cas-management-webapp</module>
     </modules>
