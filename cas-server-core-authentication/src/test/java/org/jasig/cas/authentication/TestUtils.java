@@ -147,6 +147,10 @@ public final class TestUtils {
                 .build();
     }
 
+    public static RegisteredService getRegisteredService() {
+        return getRegisteredService(CONST_TEST_URL);
+    }
+
     public static RegisteredService getRegisteredService(final String url) {
         final RegisteredService service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn(url);
