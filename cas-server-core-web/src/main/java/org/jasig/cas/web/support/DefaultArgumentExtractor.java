@@ -38,13 +38,6 @@ public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
 
     /**
      * Instantiates a new argument extractor.
-     */
-    public DefaultArgumentExtractor() {
-        super();
-    }
-
-    /**
-     * Instantiates a new argument extractor.
      *
      * @param serviceFactory the service factory
      */

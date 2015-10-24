@@ -29,7 +29,7 @@ import org.jasig.cas.authentication.principal.Principal;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public interface AttributeReleasePolicy extends Serializable {
+public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
 
     /**
      * Is authorized to release credential password?
@@ -50,7 +50,7 @@ public interface AttributeReleasePolicy extends Serializable {
      *
      * @param filter the new attribute filter
      */
-    void setAttributeFilter(AttributeFilter filter);
+    void setAttributeFilter(RegisteredServiceAttributeFilter filter);
     
     /**
      * Gets the attributes, having applied the filter.

@@ -54,15 +54,15 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.jasig.service.persondir</groupId>
             <artifactId>person-directory-impl</artifactId>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-binding</artifactId>
+            <version>${spring.webflow.version}</version>
         </dependency>
     </dependencies>
 

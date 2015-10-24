@@ -20,7 +20,6 @@ package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,13 +43,6 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     /** The factory responsible for creating service objects based on the arguments extracted. */
     @Resource(name="serviceFactoryList")
     private final List<ServiceFactory<? extends WebApplicationService>> serviceFactory;
-
-    /**
-     * Instantiates a new argument extractor.
-     */
-    public AbstractArgumentExtractor() {
-        this(new WebApplicationServiceFactory());
-    }
 
     /**
      * Instantiates a new argument extractor.

@@ -19,7 +19,7 @@
 package org.jasig.cas.services.support;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.jasig.cas.services.AttributeFilter;
+import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.RegisteredService;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
  */
 public class RegisteredServiceRegexAttributeFilterTests {
 
-    private final AttributeFilter filter;
+    private final RegisteredServiceAttributeFilter filter;
     private final Map<String, Object> givenAttributesMap;
 
     @Mock
@@ -102,7 +102,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     @Test
     public void verifySerialization() {
         final byte[] data = SerializationUtils.serialize(this.filter);
-        final AttributeFilter secondFilter = SerializationUtils.deserialize(data);
+        final RegisteredServiceAttributeFilter secondFilter = SerializationUtils.deserialize(data);
         assertEquals(secondFilter, this.filter);
     }
 }
