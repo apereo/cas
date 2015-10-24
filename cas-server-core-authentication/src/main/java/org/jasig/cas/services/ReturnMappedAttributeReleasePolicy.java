@@ -22,37 +22,35 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
- * Return only the collection of allowed attributes out of what's resolved
- * for the principal.
+ * Return a collection of allowed attributes for the principal, but additionally,
+ * offers the ability to rename attributes on a per-service level.
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttributeReleasePolicy {
+public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
-    private static final long serialVersionUID = -5771481877391140569L;
+    private static final long serialVersionUID = -6249488544306639050L;
     
-    private List<String> allowedAttributes;
+    private Map<String, String> allowedAttributes;
 
     /**
-     * Instantiates a new Return allowed attribute release policy.
+     * Instantiates a new Return mapped attribute release policy.
      */
-    public ReturnAllowedAttributeReleasePolicy() {
-        this(new ArrayList<String>());
+    public ReturnMappedAttributeReleasePolicy() {
+        this(new TreeMap<String, String>());
     }
 
     /**
-     * Instantiates a new Return allowed attribute release policy.
+     * Instantiates a new Return mapped attribute release policy.
      *
      * @param allowedAttributes the allowed attributes
      */
-    public ReturnAllowedAttributeReleasePolicy(final List<String> allowedAttributes) {
+    public ReturnMappedAttributeReleasePolicy(final Map<String, String> allowedAttributes) {
         this.allowedAttributes = allowedAttributes;
     }
 
@@ -61,7 +59,7 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttribute
      *
      * @param allowed the allowed attributes.
      */
-    public void setAllowedAttributes(final List<String> allowed) {
+    public void setAllowedAttributes(final Map<String, String> allowed) {
         this.allowedAttributes = allowed;
     }
     
@@ -70,20 +68,23 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttribute
      *
      * @return the allowed attributes
      */
-    public List<String> getAllowedAttributes() {
-        return Collections.unmodifiableList(this.allowedAttributes);
+    public Map<String, String> getAllowedAttributes() {
+        return new TreeMap<String, String>(this.allowedAttributes);
     }
     
     @Override
     protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
-        for (final String attribute : this.allowedAttributes) {
-            final Object value = resolvedAttributes.get(attribute);
+        for (final Map.Entry<String, String> entry : this.allowedAttributes.entrySet()) {
+            final String key = entry.getKey();
+            final Object value = resolvedAttributes.get(key);
 
             if (value != null) {
-                logger.debug("Found attribute [{}] in the list of allowed attributes", attribute);
-                attributesToRelease.put(attribute, value);
+                final String mappedAttributeName = entry.getValue();
+                logger.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
+                        key, mappedAttributeName);
+                attributesToRelease.put(mappedAttributeName, value);
             }
         }
         return attributesToRelease;
@@ -101,7 +102,7 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttribute
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final ReturnAllowedAttributeReleasePolicy rhs = (ReturnAllowedAttributeReleasePolicy) obj;
+        final ReturnMappedAttributeReleasePolicy rhs = (ReturnMappedAttributeReleasePolicy) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
                 .append(this.allowedAttributes, rhs.allowedAttributes)
@@ -110,12 +111,11 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractAttribute
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 133)
+        return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
                 .append(allowedAttributes)
                 .toHashCode();
     }
-
 
     @Override
     public String toString() {

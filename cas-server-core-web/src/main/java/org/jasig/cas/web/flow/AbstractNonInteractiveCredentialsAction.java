@@ -21,7 +21,6 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
@@ -58,7 +57,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      */
     @Autowired
     @Qualifier("principalFactory")
-    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+    protected PrincipalFactory principalFactory;
 
     /** Instance of CentralAuthenticationService. */
     @NotNull

@@ -37,15 +37,14 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Attribute filtering policy tests.
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class AttributeReleasePolicyTests {
+public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyAttributeFilterMappedAttributes() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();

@@ -21,8 +21,6 @@ package org.jasig.cas.services;
 import com.google.common.collect.Sets;
 import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
-import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
@@ -37,7 +35,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -247,68 +244,9 @@ public class JsonServiceRegistryDaoTests {
     @Test
     public void checkLoadingOfJsonServiceFiles() throws Exception {
         prepTests();
-        verifySaveAttributeReleasePolicyAllowedAttrRulesWithCaching();
+        verifySaveAttributeReleasePolicyMappingRules();
         verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
         assertEquals(this.dao.load().size(), 2);
-    }
-
-    @Test
-    public void verifySaveAttributeReleasePolicyAllowedAttrRulesWithCaching() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
-        r.setName("testSaveAttributeReleasePolicyAllowedAttrRulesWithCaching");
-        r.setServiceId("testId");
-
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
-
-        final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
-
-        final CachingPrincipalAttributesRepository repository =
-                new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS, 100);
-        repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
-
-        policy.setPrincipalAttributesRepository(repository);
-        r.setAttributeReleasePolicy(policy);
-
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
-
-        assertEquals(r, r2);
-        assertEquals(r2, r3);
-        assertNotNull(r3.getAttributeReleasePolicy());
-        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
-
-        dao.load();
-    }
-
-    @Test
-    public void verifySaveAttributeReleasePolicyAllowedAttrRulesWithGuavaCaching() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
-        r.setName("verifySaveAttributeReleasePolicyAllowedAttrRulesWithGuavaCaching");
-        r.setServiceId("testId");
-
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        policy.setAllowedAttributes(Arrays.asList("1", "2", "3"));
-
-        final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
-
-        final CachingPrincipalAttributesRepository repository =
-                new CachingPrincipalAttributesRepository(
-                        TimeUnit.MILLISECONDS, 100);
-        repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.REPLACE);
-
-        policy.setPrincipalAttributesRepository(repository);
-        r.setAttributeReleasePolicy(policy);
-
-        final RegisteredService r2 = this.dao.save(r);
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
-
-        assertEquals(r, r2);
-        assertEquals(r2, r3);
-        assertNotNull(r3.getAttributeReleasePolicy());
-        assertEquals(r2.getAttributeReleasePolicy(), r3.getAttributeReleasePolicy());
     }
 
     @Test
