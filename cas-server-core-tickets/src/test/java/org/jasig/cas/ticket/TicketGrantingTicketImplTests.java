@@ -20,7 +20,6 @@ package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -81,7 +80,7 @@ public class TicketGrantingTicketImplTests {
         final TicketGrantingTicketImpl t1 = new TicketGrantingTicketImpl("test", null, null,
                 org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                new WebApplicationServiceFactory().createService("gantor"), t1,
+                org.jasig.cas.authentication.TestUtils.getService("gantor"), t1,
                 org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
 
         assertFalse(t.isRoot());
@@ -123,7 +122,7 @@ public class TicketGrantingTicketImplTests {
         final TicketGrantingTicketImpl t1 = new TicketGrantingTicketImpl("test", null, null,
             authentication1, new NeverExpiresExpirationPolicy());
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                new WebApplicationServiceFactory().createService("gantor"), t1,
+                org.jasig.cas.authentication.TestUtils.getService("gantor"), t1,
             authentication, new NeverExpiresExpirationPolicy());
 
         assertEquals(principals, t.getChainedAuthentications());
