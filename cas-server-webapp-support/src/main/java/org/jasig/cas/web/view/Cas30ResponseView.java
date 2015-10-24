@@ -23,6 +23,7 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.view.CasViewConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,10 +105,14 @@ public class Cas30ResponseView extends Cas20ResponseView {
     protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
                                                                          final Map<String, Object> model,
                                                                          final RegisteredService service) {
+
+        final RegisteredServiceAttributeReleasePolicy policy = service.getAttributeReleasePolicy();
+        final boolean isAuthorized = policy != null && policy.isAuthorizedToReleaseCredentialPassword();
+
         decideAttributeReleaseBasedOnServiceAttributePolicy(attributes,
                 getAuthenticationAttribute(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL),
                 CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
-                service, service.getAttributeReleasePolicy().isAuthorizedToReleaseCredentialPassword());
+                service, isAuthorized);
     }
 
     /**
@@ -123,10 +128,13 @@ public class Cas30ResponseView extends Cas20ResponseView {
     protected void decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
                                                                          final Map<String, Object> model,
                                                                          final RegisteredService service) {
+        final RegisteredServiceAttributeReleasePolicy policy = service.getAttributeReleasePolicy();
+        final boolean isAuthorized = policy != null && policy.isAuthorizedToReleaseProxyGrantingTicket();
+
         decideAttributeReleaseBasedOnServiceAttributePolicy(attributes,
                 getProxyGrantingTicketId(model),
                 CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
-                service, service.getAttributeReleasePolicy().isAuthorizedToReleaseProxyGrantingTicket());
+                service, isAuthorized);
     }
 
     /**

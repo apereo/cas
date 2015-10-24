@@ -21,7 +21,7 @@ package org.jasig.cas.services.support;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.services.AttributeFilter;
+import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public final class RegisteredServiceRegexAttributeFilter implements AttributeFilter {
+public final class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
     private static final long serialVersionUID = 403015306984610128L;
     
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

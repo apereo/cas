@@ -22,7 +22,6 @@ package org.jasig.cas.web;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.validation.BindException;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -33,11 +32,6 @@ import org.springframework.webflow.test.MockRequestContext;
  * @since 4.2.0
  */
 public final class TestUtils {
-
-    private static final String CONST_CREDENTIALS = "credentials";
-
-    private static final String CONST_WEBFLOW_BIND_EXCEPTION =
-            "org.springframework.validation.BindException.credentials";
 
     private TestUtils() {}
 
@@ -55,24 +49,6 @@ public final class TestUtils {
             final MockHttpServletResponse response) {
         final MockRequestContext context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        return context;
-    }
-
-    public static MockRequestContext getContextWithCredentials(
-            final MockHttpServletRequest request) {
-        return getContextWithCredentials(request, new MockHttpServletResponse());
-    }
-
-    public static MockRequestContext getContextWithCredentials(
-            final MockHttpServletRequest request,
-            final MockHttpServletResponse response) {
-        final MockRequestContext context = getContext(request, response);
-        context.getRequestScope().put(CONST_CREDENTIALS,
-                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
-        context.getRequestScope().put(CONST_WEBFLOW_BIND_EXCEPTION,
-                new BindException(
-                        org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword(), CONST_CREDENTIALS));
-
         return context;
     }
 

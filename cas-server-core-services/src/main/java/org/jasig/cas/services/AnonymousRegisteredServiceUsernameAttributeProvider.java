@@ -22,10 +22,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -43,16 +45,10 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
     private static final Logger LOGGER = LoggerFactory.getLogger(AnonymousRegisteredServiceUsernameAttributeProvider.class);
 
     /** Encoder to generate PseudoIds. */
-    @NotNull
+    @Nullable
+    @Autowired
+    @Qualifier("persistentIdGenerator")
     private final PersistentIdGenerator persistentIdGenerator;
-    
-    /**
-     * Instantiates a new anonymous registered service username attribute provider.
-     * The default id generator used here is {@link ShibbolethCompatiblePersistentIdGenerator}.
-     */
-    public AnonymousRegisteredServiceUsernameAttributeProvider() {
-        this(new ShibbolethCompatiblePersistentIdGenerator());
-    }
     
     /**
      * Instantiates a new default registered service username provider.
