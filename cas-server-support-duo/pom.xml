@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core</artifactId>
+            <artifactId>cas-server-core-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

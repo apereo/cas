@@ -1483,6 +1483,7 @@
     <modules>
         <module>cas-server-core-api</module>
         <module>cas-server-core</module>
+        <module>cas-server-core-logging</module>
         <module>cas-server-core-util</module>
         <module>cas-server-core-audit</module>
         <module>cas-server-core-authentication</module>
