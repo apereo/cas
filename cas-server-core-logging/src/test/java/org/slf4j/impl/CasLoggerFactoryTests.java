@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.helpers.Util;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 
@@ -51,6 +52,7 @@ public class CasLoggerFactoryTests {
             + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
     private static final String ID3 = TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX
             + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
+
     private Logger logger;
 
     @BeforeClass
