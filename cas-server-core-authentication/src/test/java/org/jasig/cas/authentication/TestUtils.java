@@ -100,6 +100,10 @@ public final class TestUtils {
         return svc;
     }
 
+    public static Service getService() {
+        return getService(CONST_TEST_URL);
+    }
+
     public static IPersonAttributeDao getAttributeRepository() {
         final Map<String, List<Object>>  attributes = new HashMap<>();
         attributes.put("uid", (List) ImmutableList.of(CONST_USERNAME));

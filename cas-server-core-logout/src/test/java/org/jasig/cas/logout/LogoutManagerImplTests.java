@@ -18,11 +18,10 @@
  */
 package org.jasig.cas.logout;
 
+import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
+import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.LogoutType;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.http.HttpClient;
@@ -61,9 +60,9 @@ public class LogoutManagerImplTests {
 
     private Map<String, Service> services;
 
-    private SimpleWebApplicationServiceImpl simpleWebApplicationServiceImpl;
+    private AbstractWebApplicationService simpleWebApplicationServiceImpl;
 
-    private RegisteredServiceImpl registeredService;
+    private AbstractRegisteredService registeredService;
 
     @Mock
     private ServicesManager servicesManager;
@@ -84,11 +83,11 @@ public class LogoutManagerImplTests {
         this.logoutManager = new LogoutManagerImpl(servicesManager, client, new SamlCompliantLogoutMessageCreator());
 
         this.services = new HashMap<>();
-        this.simpleWebApplicationServiceImpl = (SimpleWebApplicationServiceImpl) new WebApplicationServiceFactory().createService(URL);
+        this.simpleWebApplicationServiceImpl = org.jasig.cas.services.TestUtils.getService(URL);
         this.services.put(ID, this.simpleWebApplicationServiceImpl);
         when(this.tgt.getServices()).thenReturn(this.services);
 
-        this.registeredService = new RegisteredServiceImpl();
+        this.registeredService = org.jasig.cas.services.TestUtils.getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
     }
 
