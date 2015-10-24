@@ -19,7 +19,6 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -52,13 +51,13 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         this.action.afterPropertiesSet();
 
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test
     public void verifyServiceTicketFromCookie() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put("service", org.jasig.cas.authentication.TestUtils.getService());
         context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket.getId());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
@@ -74,7 +73,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     @Test
     public void verifyTicketGrantingTicketFromRequest() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put("service", org.jasig.cas.authentication.TestUtils.getService());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
@@ -90,7 +89,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     @Test
     public void verifyTicketGrantingTicketNoTgt() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put("service", org.jasig.cas.authentication.TestUtils.getService());
         
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
@@ -107,7 +106,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     @Test
     public void verifyTicketGrantingTicketExpiredTgt() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put("service", org.jasig.cas.authentication.TestUtils.getService());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
@@ -121,7 +120,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     @Test
     public void verifyTicketGrantingTicketNotTgtButGateway() throws Exception {
         final MockRequestContext context = new MockRequestContext();
-        context.getFlowScope().put("service", TestUtils.getService());
+        context.getFlowScope().put("service", org.jasig.cas.authentication.TestUtils.getService());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));

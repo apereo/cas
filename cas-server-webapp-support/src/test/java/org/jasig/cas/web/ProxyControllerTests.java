@@ -21,7 +21,6 @@ package org.jasig.cas.web;
 import java.util.Map;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -73,7 +72,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
     @Test
     public void verifyExistingPGT() throws Exception {
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
-                "ticketGrantingTicketId", TestUtils.getAuthentication(),
+                "ticketGrantingTicketId", org.jasig.cas.authentication.TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -89,7 +88,8 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
     @Test
     public void verifyNotAuthorizedPGT() throws Exception {
-        final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("ticketGrantingTicketId", TestUtils.getAuthentication(),
+        final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("ticketGrantingTicketId",
+                org.jasig.cas.authentication.TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();

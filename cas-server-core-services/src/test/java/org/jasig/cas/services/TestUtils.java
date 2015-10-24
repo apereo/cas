@@ -20,7 +20,16 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
+import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.net.URL;
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link TestUtils}.
@@ -47,5 +56,46 @@ public final class TestUtils {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
         return new WebApplicationServiceFactory().createService(request);
+    }
+
+    public static AbstractRegisteredService getRegisteredService(final String id) {
+        try  {
+            final RegexRegisteredService s = new RegexRegisteredService();
+            s.setServiceId(id);
+            s.setEvaluationOrder(1);
+            s.setName("Test registered service");
+            s.setDescription("Registered service description");
+            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+            s.setId(new SecureRandom().nextInt(Math.abs(s.hashCode())));
+            s.setTheme("exampleTheme");
+            s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
+            final DefaultRegisteredServiceAccessStrategy accessStrategy =
+                    new DefaultRegisteredServiceAccessStrategy(true, true);
+            accessStrategy.setRequireAllAttributes(true);
+            accessStrategy.setRequiredAttributes(org.jasig.cas.util.TestUtils.getTestAttributes());
+            s.setAccessStrategy(accessStrategy);
+            s.setLogo(new URL("https://logo.example.org/logo.png"));
+            s.setLogoutType(LogoutType.BACK_CHANNEL);
+            s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
+            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
+
+            s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:pub.key", "RSA"));
+
+            final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+            policy.setAuthorizedToReleaseCredentialPassword(true);
+            policy.setAuthorizedToReleaseProxyGrantingTicket(true);
+
+            final CachingPrincipalAttributesRepository repo =
+                    new CachingPrincipalAttributesRepository(TimeUnit.SECONDS, 10);
+            repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
+            policy.setPrincipalAttributesRepository(repo);
+            policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
+            policy.setAllowedAttributes(new ArrayList(org.jasig.cas.util.TestUtils.getTestAttributes().keySet()));
+            s.setAttributeReleasePolicy(policy);
+
+            return s;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

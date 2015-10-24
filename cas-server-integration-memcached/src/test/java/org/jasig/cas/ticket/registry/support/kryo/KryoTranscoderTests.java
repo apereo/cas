@@ -23,7 +23,6 @@ import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import net.spy.memcached.CachedData;
 import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -119,16 +118,18 @@ public class KryoTranscoderTests {
                 new BasicCredentialMetaData(userPassCredential)));
 
         final TicketGrantingTicket parent =
-                new TicketGrantingTicketImpl(TGT_ID, TestUtils.getService(), null, bldr.build(),
+                new TicketGrantingTicketImpl(TGT_ID,
+                        org.jasig.cas.authentication.TestUtils.getService(), null, bldr.build(),
                         new NeverExpiresExpirationPolicy());
 
         final TicketGrantingTicket expectedTGT =
-                new TicketGrantingTicketImpl(TGT_ID, TestUtils.getService(),
+                new TicketGrantingTicketImpl(TGT_ID,
+                        org.jasig.cas.authentication.TestUtils.getService(),
                         null, bldr.build(),
                         new NeverExpiresExpirationPolicy());
 
         final ServiceTicket ticket = expectedTGT.grantServiceTicket(ST_ID,
-                TestUtils.getService(),
+                org.jasig.cas.authentication.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), false, true);
         CachedData result = transcoder.encode(expectedTGT);
         final TicketGrantingTicket resultTicket = (TicketGrantingTicket) transcoder.decode(result);
