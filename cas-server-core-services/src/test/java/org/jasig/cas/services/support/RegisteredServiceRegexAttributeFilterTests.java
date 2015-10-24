@@ -19,8 +19,10 @@
 package org.jasig.cas.services.support;
 
 import org.apache.commons.lang3.SerializationUtils;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -33,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Misagh Moayyed
@@ -98,7 +100,33 @@ public class RegisteredServiceRegexAttributeFilterTests {
         final List<?> obj = (List<?>) attrs.get("memberOf");
         assertEquals(2, obj.size());
     }
-    
+
+    @Test
+    public void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
+        policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
+        final Principal p = mock(Principal.class);
+
+        final Map<String, Object> map = new HashMap<>();
+        map.put("attr1", "value1");
+        map.put("attr2", "value2");
+        map.put("attr3", Arrays.asList("v3", "v4"));
+
+        when(p.getAttributes()).thenReturn(map);
+        when(p.getId()).thenReturn("principalId");
+
+        final Map<String, Object> attr = policy.getAttributes(p);
+        assertEquals(attr.size(), 1);
+        assertTrue(attr.containsKey("attr3"));
+
+        final byte[] data = SerializationUtils.serialize(policy);
+        final ReturnAllowedAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
+        assertNotNull(p2);
+        assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
+        assertEquals(p2.getAttributeFilter(), policy.getAttributeFilter());
+    }
+
     @Test
     public void verifySerialization() {
         final byte[] data = SerializationUtils.serialize(this.filter);
