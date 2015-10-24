@@ -25,9 +25,9 @@
         <version>4.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>cas-server-webapp-support</artifactId>
+    <artifactId>cas-server-webapp-validation</artifactId>
     <packaging>jar</packaging>
-    <name>Apereo CAS Web Application Support</name>
+    <name>Apereo CAS Web Application Protocol Validation</name>
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -49,24 +49,54 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <artifactId>spring-webmvc</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core-web</artifactId>
+            <artifactId>cas-server-core-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-services</artifactId>
             <version>${project.version}</version>
         </dependency>
 
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-validation</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-tickets</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-authentication</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
+            <artifactId>spring-context</artifactId>
         </dependency>
 
     </dependencies>

@@ -25,13 +25,32 @@
         <version>4.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>cas-server-webapp-support</artifactId>
+    <artifactId>cas-server-webapp-throttle</artifactId>
     <packaging>jar</packaging>
-    <name>Apereo CAS Web Application Support</name>
+    <name>Apereo CAS Web Application Authentication Throttling</name>
     <dependencies>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.jasig.inspektr</groupId>
+            <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>
         </dependency>
 
@@ -49,6 +68,12 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
 
@@ -58,16 +83,12 @@
             <version>${project.version}</version>
         </dependency>
 
-
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-util</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
 
     </dependencies>
 
