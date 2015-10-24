@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.services;
 
-import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -41,7 +40,8 @@ public class AnonymousRegisteredServiceUsernameAttributeProviderTests {
         
         final Service service = mock(Service.class);
         when(service.getId()).thenReturn("id");
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal("uid");
+        final Principal principal = mock(Principal.class);
+        when(principal.getId()).thenReturn("uid");
         final String id = provider.resolveUsername(principal, service);
         assertNotNull(id);
     }

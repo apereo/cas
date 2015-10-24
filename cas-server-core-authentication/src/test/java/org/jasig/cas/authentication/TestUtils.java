@@ -22,6 +22,8 @@ import com.google.common.collect.ImmutableList;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 
@@ -31,6 +33,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -84,10 +88,16 @@ public final class TestUtils {
             final String url) {
         try {
             return new HttpBasedServiceCredential(new URL(url),
-                    org.jasig.cas.services.TestUtils.getRegisteredService(url));
+                    TestUtils.getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public static Service getService(final String id) {
+        final Service svc = mock(Service.class);
+        when(svc.getId()).thenReturn(id);
+        return svc;
     }
 
     public static IPersonAttributeDao getAttributeRepository() {
@@ -133,4 +143,12 @@ public final class TestUtils {
                 .build();
     }
 
+    public static RegisteredService getRegisteredService(final String url) {
+        final RegisteredService service = mock(RegisteredService.class);
+        when(service.getServiceId()).thenReturn(url);
+        when(service.getName()).thenReturn("service name");
+        when(service.getId()).thenReturn(Long.MAX_VALUE);
+        when(service.getDescription()).thenReturn("service description");
+        return service;
+    }
 }

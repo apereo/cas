@@ -23,7 +23,6 @@ import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
@@ -97,32 +96,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
-    
-    @Test
-    public void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
-        policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
-        final Principal p = mock(Principal.class);
-        
-        final Map<String, Object> map = new HashMap<>();
-        map.put("attr1", "value1");
-        map.put("attr2", "value2");
-        map.put("attr3", Arrays.asList("v3", "v4"));
-        
-        when(p.getAttributes()).thenReturn(map);
-        when(p.getId()).thenReturn("principalId");
-        
-        final Map<String, Object> attr = policy.getAttributes(p);
-        assertEquals(attr.size(), 1);
-        assertTrue(attr.containsKey("attr3"));
-        
-        final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
-        assertNotNull(p2);
-        assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
-        assertEquals(p2.getAttributeFilter(), policy.getAttributeFilter());
-    }
+
     
     @Test
     public void verifyServiceAttributeFilterAllAttributes() {

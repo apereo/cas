@@ -135,6 +135,6 @@ public class MultifactorAuthenticationTests {
     }
 
     private static Service newService(final String id) {
-        return org.jasig.cas.services.TestUtils.getService(id);
+        return TestUtils.getService(id);
     }
 }
