@@ -117,7 +117,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     /** The attribute filtering policy. */
     @Lob
     @Column(name = "attribute_release", nullable = true)
-    private AttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
+    private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy;
 
     @Column(name = "logo")
     private URL logo;
@@ -195,9 +195,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         }
         if (this.accessStrategy == null) {
             this.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        }
-        if (this.attributeReleasePolicy == null) {
-            this.attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
         }
     }
 
@@ -434,12 +431,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      *
      * @param policy the new attribute filtering policy
      */
-    public final void setAttributeReleasePolicy(final AttributeReleasePolicy policy) {
+    public final void setAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy) {
         this.attributeReleasePolicy = policy;
     }
 
     @Override
-    public final AttributeReleasePolicy getAttributeReleasePolicy() {
+    public final RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy() {
         return this.attributeReleasePolicy;
     }
 

@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public interface AttributeFilter extends Serializable {
+public interface RegisteredServiceAttributeFilter extends Serializable {
     /**
      * Filters the received principal attributes for the given registered service.
      *

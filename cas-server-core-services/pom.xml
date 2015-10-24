@@ -37,21 +37,30 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core-authentication</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.jasig.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <dependency>
@@ -73,19 +82,16 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core-util</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core-util</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-            <type>test-jar</type>
         </dependency>
-
 
         <dependency>
             <groupId>org.jasig.cas</groupId>

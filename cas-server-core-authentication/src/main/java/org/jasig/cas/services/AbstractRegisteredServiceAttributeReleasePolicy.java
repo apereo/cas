@@ -35,7 +35,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public abstract class AbstractAttributeReleasePolicy implements AttributeReleasePolicy {
+public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
     
     private static final long serialVersionUID = 5325460875620586503L;
 
@@ -43,7 +43,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The attribute filter. */
-    private AttributeFilter attributeFilter;
+    private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
 
     /** Attribute repository that refreshes attributes for a principal. **/
     private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
@@ -55,8 +55,8 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     private boolean authorizedToReleaseProxyGrantingTicket;
 
     @Override
-    public final void setAttributeFilter(final AttributeFilter filter) {
-        this.attributeFilter = filter;
+    public final void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
+        this.registeredServiceAttributeFilter = filter;
     }
 
     public final void setPrincipalAttributesRepository(final PrincipalAttributesRepository repository) {
@@ -72,8 +72,8 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
      *
      * @return the attribute filter
      */
-    public final AttributeFilter getAttributeFilter() {
-        return this.attributeFilter;
+    public final RegisteredServiceAttributeFilter getAttributeFilter() {
+        return this.registeredServiceAttributeFilter;
     }
 
     @Override
@@ -99,8 +99,8 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
         final Map<String, Object> principalAttributes = this.principalAttributesRepository.getAttributes(p);
         final Map<String, Object> attributesToRelease = getAttributesInternal(principalAttributes);
         
-        if (this.attributeFilter != null) {
-            return this.attributeFilter.filter(attributesToRelease);
+        if (this.registeredServiceAttributeFilter != null) {
+            return this.registeredServiceAttributeFilter.filter(attributesToRelease);
         }
         return attributesToRelease;
     }
@@ -116,7 +116,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     @Override
     public int hashCode() {
         return new HashCodeBuilder(13, 133)
-                .append(this.attributeFilter)
+                .append(this.registeredServiceAttributeFilter)
                 .append(this.authorizedToReleaseCredentialPassword)
                 .append(this.authorizedToReleaseProxyGrantingTicket)
                 .append(this.principalAttributesRepository)
@@ -133,14 +133,14 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
             return true;
         }
 
-        if (!(o instanceof AbstractAttributeReleasePolicy)) {
+        if (!(o instanceof AbstractRegisteredServiceAttributeReleasePolicy)) {
             return false;
         }
 
-        final AbstractAttributeReleasePolicy that = (AbstractAttributeReleasePolicy) o;
+        final AbstractRegisteredServiceAttributeReleasePolicy that = (AbstractRegisteredServiceAttributeReleasePolicy) o;
         final EqualsBuilder builder = new EqualsBuilder();
         return builder
-                .append(this.attributeFilter, that.attributeFilter)
+                .append(this.registeredServiceAttributeFilter, that.registeredServiceAttributeFilter)
                 .append(this.authorizedToReleaseCredentialPassword, that.authorizedToReleaseCredentialPassword)
                 .append(this.authorizedToReleaseProxyGrantingTicket, that.authorizedToReleaseProxyGrantingTicket)
                 .append(this.principalAttributesRepository, that.principalAttributesRepository)
@@ -151,7 +151,7 @@ public abstract class AbstractAttributeReleasePolicy implements AttributeRelease
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("attributeFilter", attributeFilter)
+                .append("attributeFilter", registeredServiceAttributeFilter)
                 .append("principalAttributesRepository", principalAttributesRepository)
                 .append("authorizedToReleaseCredentialPassword", authorizedToReleaseCredentialPassword)
                 .append("authorizedToReleaseProxyGrantingTicket", authorizedToReleaseProxyGrantingTicket)
