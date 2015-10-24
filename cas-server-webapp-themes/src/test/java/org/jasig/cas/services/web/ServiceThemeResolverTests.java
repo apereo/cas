@@ -22,7 +22,6 @@ import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -74,7 +73,7 @@ public class ServiceThemeResolverTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final RequestContext ctx = mock(RequestContext.class);
         final MutableAttributeMap scope = new LocalAttributeMap();
-        scope.put("service", TestUtils.getService(r.getServiceId()));
+        scope.put("service", org.jasig.cas.services.TestUtils.getService(r.getServiceId()));
         when(ctx.getFlowScope()).thenReturn(scope);
         RequestContextHolder.setRequestContext(ctx);
         request.addHeader("User-Agent", "Mozilla");
