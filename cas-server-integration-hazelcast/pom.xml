@@ -31,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core</artifactId>
+            <artifactId>cas-server-core-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -45,13 +45,15 @@
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>            
         </dependency>
+
         <dependency>
           <groupId>org.jasig.cas</groupId>
-          <artifactId>cas-server-core</artifactId>
+          <artifactId>cas-server-core-authentication</artifactId>
           <version>${project.version}</version>
           <type>test-jar</type>
           <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core-util</artifactId>

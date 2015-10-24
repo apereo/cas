@@ -43,12 +43,13 @@ public final class TestUtils {
     public static Assertion getAssertion(final boolean fromNewLogin,
                                          final String[] extraPrincipals) {
         final List<Authentication> list = new ArrayList<>();
-        list.add(TestUtils.getAuthentication());
+        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication());
 
         for (int i = 0; i < extraPrincipals.length; i++) {
-            list.add(TestUtils.getAuthentication(extraPrincipals[i]));
+            list.add(org.jasig.cas.authentication.TestUtils.getAuthentication(extraPrincipals[i]));
         }
-        return new ImmutableAssertion(TestUtils.getAuthentication(), list, TestUtils.getService(), fromNewLogin);
+        return new ImmutableAssertion(org.jasig.cas.authentication.TestUtils.getAuthentication(),
+                list, org.jasig.cas.services.TestUtils.getService(), fromNewLogin);
     }
 
 }

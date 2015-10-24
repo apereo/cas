@@ -18,10 +18,9 @@
  */
 package org.jasig.cas.validation;
 
-import static org.junit.Assert.*;
-
-import org.jasig.cas.TestUtils;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia

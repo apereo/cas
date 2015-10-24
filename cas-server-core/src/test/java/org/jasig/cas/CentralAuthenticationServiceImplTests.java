@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.MixedPrincipalException;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.UnauthorizedServiceException;
@@ -65,7 +66,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 .createTicketGrantingTicket(
                     TestUtils.getCredentialsWithSameUsernameAndPassword()));
         } catch (final AbstractTicketException e) {
-            fail(TestUtils.CONST_EXCEPTION_NON_EXPECTED);
+            fail("Exception expected");
         }
     }
 
@@ -153,12 +154,12 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             .createTicketGrantingTicket(
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
-            .grantServiceTicket(ticketId.getId(), TestUtils.getService());
+            .grantServiceTicket(ticketId.getId(), org.jasig.cas.services.TestUtils.getService());
         final TicketGrantingTicket pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
             serviceTicketId.getId(), TestUtils.getHttpBasedServiceCredentials());
 
         final ServiceTicket pt = getCentralAuthenticationService().grantServiceTicket(pgt.getId(),
-            TestUtils.getService(), new Credential[]{});
+                org.jasig.cas.services.TestUtils.getService(), new Credential[]{});
         assertTrue(pt.getId().startsWith(ServiceTicket.PROXY_TICKET_PREFIX));
     }
 

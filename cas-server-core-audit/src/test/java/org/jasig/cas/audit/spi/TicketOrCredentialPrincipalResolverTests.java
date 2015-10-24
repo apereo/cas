@@ -18,13 +18,13 @@
  */
 package org.jasig.cas.audit.spi;
 
-import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.junit.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;

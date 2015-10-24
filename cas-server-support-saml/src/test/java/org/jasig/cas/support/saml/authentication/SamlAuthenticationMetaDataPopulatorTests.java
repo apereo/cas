@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.support.saml.authentication;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
@@ -56,7 +55,8 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
-        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        final AuthenticationBuilder builder = newAuthenticationBuilder(
+                org.jasig.cas.authentication.TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -68,7 +68,8 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     @Test
     public void verifyAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
-        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        final AuthenticationBuilder builder = newAuthenticationBuilder(
+                org.jasig.cas.authentication.TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 
@@ -84,7 +85,8 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
         this.populator.setUserDefinedMappings(added);
 
-        final AuthenticationBuilder builder = newAuthenticationBuilder(TestUtils.getPrincipal());
+        final AuthenticationBuilder builder = newAuthenticationBuilder(
+                org.jasig.cas.authentication.TestUtils.getPrincipal());
         this.populator.populateAttributes(builder, credentials);
         final Authentication auth = builder.build();
 

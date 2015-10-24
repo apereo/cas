@@ -18,11 +18,11 @@
  */
 package org.jasig.cas.services.web;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

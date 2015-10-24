@@ -20,7 +20,6 @@
 package org.jasig.cas.util;
 
 import com.google.common.io.ByteSource;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockServiceTicket;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -48,7 +47,7 @@ public class TicketEncryptionDecryptionTests {
 
     @Test
     public void checkSerializationOfSt() {
-        final MockServiceTicket st = new MockServiceTicket("serviceid", TestUtils.getService(), tgt);
+        final MockServiceTicket st = new MockServiceTicket("serviceid", org.jasig.cas.services.TestUtils.getService(), tgt);
         final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, st);
         final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
@@ -56,7 +55,7 @@ public class TicketEncryptionDecryptionTests {
 
     @Test
     public void checkSerializationOfStBase64Encode() {
-        final MockServiceTicket st = new MockServiceTicket("serviceid", TestUtils.getService(), tgt);
+        final MockServiceTicket st = new MockServiceTicket("serviceid", org.jasig.cas.services.TestUtils.getService(), tgt);
         final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, st);
         final String string = CompressionUtils.encodeBase64(bytes);
         assertNotNull(string);
