@@ -69,6 +69,12 @@
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-monitor</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-support-saml</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
