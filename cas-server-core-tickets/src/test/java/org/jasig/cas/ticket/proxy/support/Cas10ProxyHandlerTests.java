@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.ticket.proxy.support;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.junit.Test;
@@ -42,6 +41,7 @@ public class Cas10ProxyHandlerTests {
     public void verifyCredentialsAndProxy() {
         final TicketGrantingTicket proxyGrantingTicket = mock(TicketGrantingTicket.class);
         when(proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
-        assertNull(this.proxyHandler.handle(TestUtils.getCredentialsWithSameUsernameAndPassword(), proxyGrantingTicket));
+        assertNull(this.proxyHandler.handle(
+                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword(), proxyGrantingTicket));
     }
 }

@@ -26,6 +26,7 @@ import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
@@ -172,17 +173,20 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test(expected=InvalidTicketException.class)
     public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.cas.delegateTicketGrantingTicket("bad-st", TestUtils.getCredentialsWithSameUsernameAndPassword());
+        this.cas.delegateTicketGrantingTicket("bad-st",
+                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected=UnauthorizedServiceException.class)
     public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.cas.delegateTicketGrantingTicket(ST_ID, TestUtils.getCredentialsWithSameUsernameAndPassword());
+        this.cas.delegateTicketGrantingTicket(ST_ID,
+                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected=UnauthorizedProxyingException.class)
     public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws AbstractTicketException {
-        this.cas.grantServiceTicket(TGT_ID, TestUtils.getService(SVC1_ID));
+        this.cas.grantServiceTicket(TGT_ID,
+                org.jasig.cas.services.TestUtils.getService(SVC1_ID));
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -203,7 +207,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void verifyChainedAuthenticationsOnValidation() throws AbstractTicketException {
-        final Service svc = TestUtils.getService(SVC2_ID);
+        final Service svc = org.jasig.cas.services.TestUtils.getService(SVC2_ID);
         final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc);
         assertNotNull(st);
         

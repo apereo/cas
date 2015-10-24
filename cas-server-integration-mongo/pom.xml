@@ -72,7 +72,7 @@
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core</artifactId>
+            <artifactId>cas-server-core-services</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

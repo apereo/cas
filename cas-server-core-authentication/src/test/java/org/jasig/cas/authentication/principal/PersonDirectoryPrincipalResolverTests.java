@@ -19,8 +19,8 @@
 
 package org.jasig.cas.authentication.principal;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.TestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

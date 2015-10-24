@@ -16,9 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.jasig.cas.authentication;
+package org.jasig.cas.services;
 
-import org.jasig.cas.TestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

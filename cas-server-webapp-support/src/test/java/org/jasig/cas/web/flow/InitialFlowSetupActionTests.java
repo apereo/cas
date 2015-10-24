@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -68,7 +67,8 @@ public class InitialFlowSetupActionTests {
         this.action.setArgumentExtractors(Arrays.asList(argExtractors));
 
         this.servicesManager = mock(ServicesManager.class);
-        when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(TestUtils.getRegisteredService("test"));
+        when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(
+                org.jasig.cas.authentication.TestUtils.getRegisteredService("test"));
         this.action.setServicesManager(this.servicesManager);
 
         this.action.afterPropertiesSet();

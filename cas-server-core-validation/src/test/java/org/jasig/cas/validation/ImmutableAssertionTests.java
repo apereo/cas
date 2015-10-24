@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.validation;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.junit.Test;
@@ -40,12 +39,12 @@ public class ImmutableAssertionTests {
     public void verifyGettersForChainedPrincipals() {
         final List<Authentication> list = new ArrayList<>();
 
-        list.add(TestUtils.getAuthentication("test"));
-        list.add(TestUtils.getAuthentication("test1"));
-        list.add(TestUtils.getAuthentication("test2"));
+        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication("test"));
+        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication("test1"));
+        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication("test2"));
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, TestUtils.getService(), true);
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), list, org.jasig.cas.services.TestUtils.getService(), true);
 
         assertEquals(list.toArray(new Authentication[0]).length, assertion.getChainedAuthentications().size());
     }
@@ -54,10 +53,10 @@ public class ImmutableAssertionTests {
     public void verifyGetterFalseForNewLogin() {
         final List<Authentication> list = new ArrayList<>();
 
-        list.add(TestUtils.getAuthentication());
+        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, TestUtils.getService(), false);
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), list, org.jasig.cas.services.TestUtils.getService(), false);
 
         assertFalse(assertion.isFromNewLogin());
     }
@@ -66,10 +65,10 @@ public class ImmutableAssertionTests {
     public void verifyGetterTrueForNewLogin() {
         final List<Authentication> list = new ArrayList<>();
 
-        list.add(TestUtils.getAuthentication());
+        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, TestUtils.getService(), true);
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), list, org.jasig.cas.services.TestUtils.getService(), true);
 
         assertTrue(assertion.isFromNewLogin());
     }
@@ -77,10 +76,10 @@ public class ImmutableAssertionTests {
     @Test
     public void verifyEqualsWithNull() {
         final List<Authentication> list = new ArrayList<>();
-        list.add(TestUtils.getAuthentication());
+        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, TestUtils.getService(), true);
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), list, org.jasig.cas.services.TestUtils.getService(), true);
 
         assertNotEquals(assertion, null);
     }
@@ -88,10 +87,10 @@ public class ImmutableAssertionTests {
     @Test
     public void verifyEqualsWithInvalidObject() {
         final List<Authentication> list = new ArrayList<>();
-        list.add(TestUtils.getAuthentication());
+        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                TestUtils.getAuthentication(), list, TestUtils.getService(), true);
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), list, org.jasig.cas.services.TestUtils.getService(), true);
 
         assertFalse("test".equals(assertion));
     }
@@ -101,24 +100,25 @@ public class ImmutableAssertionTests {
         final List<Authentication> list1 = new ArrayList<>();
         final List<Authentication> list2 = new ArrayList<>();
 
-        final Authentication auth = TestUtils.getAuthentication();
+        final Authentication auth = org.jasig.cas.authentication.TestUtils.getAuthentication();
         list1.add(auth);
         list2.add(auth);
 
-        final ImmutableAssertion assertion1 = new ImmutableAssertion(auth, list1, TestUtils.getService(), true);
-        final ImmutableAssertion assertion2 = new ImmutableAssertion(auth, list2, TestUtils.getService(), true);
+        final ImmutableAssertion assertion1 = new ImmutableAssertion(auth, list1, org.jasig.cas.services.TestUtils.getService(), true);
+        final ImmutableAssertion assertion2 = new ImmutableAssertion(auth, list2, org.jasig.cas.services.TestUtils.getService(), true);
 
         assertTrue(assertion1.equals(assertion2));
     }
 
     @Test
     public void verifyGetService() {
-        final Service service = TestUtils.getService();
+        final Service service = org.jasig.cas.services.TestUtils.getService();
 
         final List<Authentication> list = new ArrayList<>();
-        list.add(TestUtils.getAuthentication());
+        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication());
 
-        final Assertion assertion = new ImmutableAssertion(TestUtils.getAuthentication(), list, service, false);
+        final Assertion assertion = new ImmutableAssertion(
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), list, service, false);
 
         assertEquals(service, assertion.getService());
     }

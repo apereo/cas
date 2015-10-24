@@ -23,7 +23,6 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -64,7 +63,8 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyAddTicketToCache() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
         } catch (final Exception e) {
             fail("Caught an exception. But no exception should have been thrown.");
@@ -92,7 +92,8 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyGetExistingTicketWithProperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", TicketGrantingTicket.class);
         } catch (final Exception e) {
@@ -103,7 +104,8 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyGetExistingTicketWithInproperClass() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST", ServiceTicket.class);
         } catch (final ClassCastException e) {
@@ -133,7 +135,8 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyGetExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket("TEST");
         } catch (final Exception e) {
@@ -145,7 +148,8 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyDeleteExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertTrue("Ticket was not deleted.", this.ticketRegistry.deleteTicket("TEST"));
         } catch (final Exception e) {
@@ -156,7 +160,8 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyDeleteNonExistingTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
         } catch (final Exception e) {
@@ -167,11 +172,11 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyDeleteNullTicket() {
         try {
-            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
+            this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST",
+                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null));
         } catch (final Exception e) {
-            e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -181,7 +186,6 @@ public abstract class AbstractTicketRegistryTests {
         try {
             assertEquals("The size of the empty registry is not zero.", this.ticketRegistry.getTickets().size(), 0);
         } catch (final Exception e) {
-            e.printStackTrace();
             fail("Caught an exception. But no exception should have been thrown.");
         }
     }
@@ -192,8 +196,9 @@ public abstract class AbstractTicketRegistryTests {
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
-                    TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i, TestUtils.getService(),
+                    org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+            final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i,
+                    org.jasig.cas.services.TestUtils.getService(),
                     new NeverExpiresExpirationPolicy(), false, true);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
@@ -220,11 +225,12 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyDeleteTicketWithChildren() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(
-                    "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+                    "TGT", org.jasig.cas.authentication.TestUtils.getAuthentication(),
+                    new NeverExpiresExpirationPolicy()));
             final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
                     "TGT", TicketGrantingTicket.class);
 
-            final Service service = TestUtils.getService("TGT_DELETE_TEST");
+            final Service service = org.jasig.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
             final ServiceTicket st1 = tgt.grantServiceTicket(
                     "ST1", service, new NeverExpiresExpirationPolicy(), true, false);

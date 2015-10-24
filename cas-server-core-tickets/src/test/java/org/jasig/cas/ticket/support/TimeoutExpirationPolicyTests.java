@@ -20,7 +20,6 @@ package org.jasig.cas.ticket.support;
 
 import static org.junit.Assert.*;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -44,7 +43,7 @@ public class TimeoutExpirationPolicyTests {
     public void setUp() throws Exception {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 
-        this.ticket = new TicketGrantingTicketImpl("test", TestUtils
+        this.ticket = new TicketGrantingTicketImpl("test", org.jasig.cas.authentication.TestUtils
             .getAuthentication(), this.expirationPolicy);
 
     }

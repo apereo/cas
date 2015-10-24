@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.ServiceTicket;

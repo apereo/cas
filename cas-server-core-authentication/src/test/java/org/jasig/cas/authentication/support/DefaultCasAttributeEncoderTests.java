@@ -19,7 +19,7 @@
 
 package org.jasig.cas.authentication.support;
 
-import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.view.CasViewConstants;

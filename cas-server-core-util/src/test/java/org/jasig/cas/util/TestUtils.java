@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.jasig.cas;
+package org.jasig.cas.util;
 
 import com.google.common.collect.ImmutableSet;
 

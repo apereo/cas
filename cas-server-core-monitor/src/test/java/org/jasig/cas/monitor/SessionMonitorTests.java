@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.monitor;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -30,8 +29,7 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link SessionMonitor} class.
@@ -85,7 +83,7 @@ public class SessionMonitorTests {
         for (int i = 0; i < tgtCount; i++) {
             ticket = new TicketGrantingTicketImpl(
                     GENERATOR.getNewTicketId("TGT"),
-                    TestUtils.getAuthentication(),
+                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
                     TEST_EXP_POLICY);
             registry.addTicket(ticket);
         }

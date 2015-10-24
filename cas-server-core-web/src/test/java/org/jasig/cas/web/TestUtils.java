@@ -67,9 +67,11 @@ public final class TestUtils {
             final MockHttpServletRequest request,
             final MockHttpServletResponse response) {
         final MockRequestContext context = getContext(request, response);
-        context.getRequestScope().put(CONST_CREDENTIALS, TestUtils.getCredentialsWithSameUsernameAndPassword());
+        context.getRequestScope().put(CONST_CREDENTIALS,
+                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
         context.getRequestScope().put(CONST_WEBFLOW_BIND_EXCEPTION,
-                new BindException(TestUtils.getCredentialsWithSameUsernameAndPassword(), CONST_CREDENTIALS));
+                new BindException(
+                        org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword(), CONST_CREDENTIALS));
 
         return context;
     }

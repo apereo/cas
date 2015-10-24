@@ -19,12 +19,10 @@
 
 package org.jasig.cas.ticket;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link UnrecognizableServiceForServiceTicketValidationException}.
@@ -33,7 +31,7 @@ import static org.junit.Assert.assertSame;
  */
 public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
 
-    private final Service service = TestUtils.getService();
+    private final Service service = org.jasig.cas.services.TestUtils.getService();
 
     @Test
     public void verifyThrowableConstructor() {
