@@ -104,7 +104,7 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
     private boolean allowMultipleResults;
 
     /**
-     * Instantiates a new Ldap user details service.
+     * Instantiates a new Ldap authorization generator.
      */
     public LdapAuthorizationGenerator() {}
 
