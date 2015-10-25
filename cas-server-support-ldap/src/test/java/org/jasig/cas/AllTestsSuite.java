@@ -18,11 +18,8 @@
  */
 package org.jasig.cas;
 
-import org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDaoTests;
 import org.jasig.cas.authentication.LdapAuthenticationHandlerTests;
-import org.jasig.cas.monitor.ConnectionFactoryMonitorTests;
-import org.jasig.cas.monitor.PooledConnectionFactoryMonitorTests;
-import org.jasig.cas.userdetails.LdapUserDetailsServiceTests;
+import org.jasig.cas.authorization.generator.LdapAuthorizationGeneratorTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -33,11 +30,8 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    LdapServiceRegistryDaoTests.class,
     LdapAuthenticationHandlerTests.class,
-    ConnectionFactoryMonitorTests.class,
-    PooledConnectionFactoryMonitorTests.class,
-    LdapUserDetailsServiceTests.class
+    LdapAuthorizationGeneratorTests.class
 })
 public class AllTestsSuite {
 }

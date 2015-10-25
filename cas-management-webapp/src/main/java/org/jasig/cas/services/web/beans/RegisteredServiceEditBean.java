@@ -274,7 +274,7 @@ public final class RegisteredServiceEditBean implements Serializable {
             }
 
             final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
-            final IAttributeMerger merger = cc.getMergingStrategy();
+            final IAttributeMerger merger = cc.getMergingStrategy().getAttributeMerger();
 
             if (merger != null) {
                 if (merger instanceof NoncollidingAttributeAdder) {
@@ -608,7 +608,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final String attrType = this.attrRelease.getAttrOption();
                 if (StringUtils.equalsIgnoreCase(attrType,
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
-                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
+                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(
                             TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
                             this.attrRelease.getCachedExpiration()));
                 } else if (StringUtils.equalsIgnoreCase(attrType,
