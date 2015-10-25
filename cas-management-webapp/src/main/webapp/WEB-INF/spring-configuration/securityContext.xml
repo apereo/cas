@@ -36,6 +36,7 @@
     <context:component-scan base-package="org.pac4j.springframework.web" />
 
     <bean id="config" class="org.pac4j.core.config.Config">
+        <constructor-arg name="callbackUrl" value="${cas-management.securityContext.serviceProperties.service}" />
         <constructor-arg name="client">
             <bean class="org.pac4j.cas.client.CasClient">
                 <property name="casLoginUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}" />
