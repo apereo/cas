@@ -85,7 +85,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="logout.html" target="_self" id="logoutUrlLink">
+                        <a href="/logout?url=/loggedOut.html" target="_self" id="logoutUrlLink">
                             <i class="fa fa-sign-out"></i>
                             <spring:message code="management.services.header.navbar.navitem.logout" />
                         </a>

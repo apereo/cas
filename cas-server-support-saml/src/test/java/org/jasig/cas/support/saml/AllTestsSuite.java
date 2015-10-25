@@ -21,10 +21,8 @@ package org.jasig.cas.support.saml;
 
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulatorTests;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationRequestTests;
-import org.jasig.cas.support.saml.authentication.principal.GoogleAccountsServiceTests;
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceTests;
 import org.jasig.cas.support.saml.util.SamlCompliantUniqueTicketIdGeneratorTests;
-import org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserActionTests;
 import org.jasig.cas.support.saml.web.support.WebUtilTests;
 import org.jasig.cas.support.saml.web.view.Saml10FailureResponseViewTests;
 import org.jasig.cas.support.saml.web.view.Saml10SuccessResponseViewTests;
@@ -38,12 +36,10 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        GoogleAccountsServiceTests.class,
         SamlServiceTests.class,
         SamlAuthenticationMetaDataPopulatorTests.class,
         SamlAuthenticationRequestTests.class,
         SamlCompliantUniqueTicketIdGeneratorTests.class,
-        SamlMetadataUIParserActionTests.class,
         WebUtilTests.class,
         Saml10FailureResponseViewTests.class,
         Saml10SuccessResponseViewTests.class

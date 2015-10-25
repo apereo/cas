@@ -3,8 +3,9 @@ layout: default
 title: CAS - Monitoring & Statistics
 ---
 
-#Monitoring
-The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software. Access to the endpoint is secured by Spring Security at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
+# Monitoring
+The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software. 
+Access to the endpoint is secured by Spring Security at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
 
 {% highlight xml %}
 <sec:http pattern="/status/**" entry-point-ref="notAuthorizedEntryPoint" use-expressions="true" auto-config="true">
@@ -32,64 +33,110 @@ Health: OK
 The list of configured monitors are all defined in `deployerConfigContext.xml` file:
 
 {% highlight xml %}
-
 <util:list id="monitorsList">
-  <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
-  <bean class="org.jasig.cas.monitor.SessionMonitor"
-        p:ticketRegistry-ref="ticketRegistry"
-        p:serviceTicketCountWarnThreshold="5000"
-        p:sessionCountWarnThreshold="100000" />
+    <ref bean="memoryMonitor" />
+    <ref bean="sessionMonitor" />
 </util:list>
-
 {% endhighlight %}
 
 The following optional monitors are also available:
 
-- MemcachedMonitor
-
+- `MemcachedMonitor`
 
 {% highlight xml %}
 
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-integration-memcached-monitor</artifactId>
+    <version>${cas.version}</version>
+</dependency>
 
+...
+
+<util:list id="monitorsList">
+    <ref bean="memcachedMonitor" />
+</util:list>
+
+...
 
 {% endhighlight %}
 
 
-- EhcacheMonitor
+The following settings are available:
+
+{% highlight properties %}
+# cache.monitor.warn.free.threshold=10
+# cache.monitor.eviction.threshold=0
+{% endhighlight %}
+
+- `EhcacheMonitor`
 
 {% highlight xml %}
 
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-integration-ehcache-monitor</artifactId>
+    <version>${cas.version}</version>
+</dependency>
 
+...
+
+<util:list id="monitorsList">
+    <ref bean="ehcacheMonitor" />
+</util:list>
+<alias name="ticketGrantingTicketsCache" alias="ehcacheMonitorCache" />
+{% endhighlight %}
+
+The following settings are available:
+
+{% highlight properties %}
+# cache.monitor.warn.free.threshold=10
+# cache.monitor.eviction.threshold=0
+{% endhighlight %}
+
+- `DataSourceMonitor`
+
+{% highlight xml %}
+
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-jdbc</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+
+...
+<bean id="pooledConnectionFactoryMonitorExecutorService"
+    class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
+    p:corePoolSize="1"
+    p:maxPoolSize="1"
+    p:keepAliveSeconds="1" />
+          
+<util:list id="monitorsList">
+    <ref bean="dataSourceMonitor" />
+</util:list>
+
+<alias name="myDataSource" alias="monitorDataSource" />
 
 {% endhighlight %}
 
-- DataSourceMonitor
+- `PooledConnectionFactoryMonitor`
 
 {% highlight xml %}
 
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-ldap-monitor</artifactId>
+    <version>${cas.version}</version>
+</dependency>
 
+...
 
-{% endhighlight %}
-
-- PooledConnectionFactoryMonitor
-
-{% highlight xml %}
-
-
-
-{% endhighlight %}
-
-- ConnectionFactoryMonitor
-Monitors an LDAP connection factories provided by Ldaptive.
-
-{% highlight xml %}
-
-<bean class="org.jasig.cas.monitor.ConnectionFactoryMonitor"
-      c:factory-ref="provisioningConnectionFactory"
-      c:validator-ref="searchValidator" />
+<util:list id="monitorsList">
+    <ref bean="pooledLdapConnectionFactoryMonitor" />
+</util:list>
 
 <ldaptive:pooled-connection-factory
-        id="provisioningConnectionFactory"
+        id="pooledConnectionFactoryMonitorConnectionFactory"
         ldapUrl="${ldap.url}"
         blockWaitTime="${ldap.pool.blockWaitTime}"
         failFastInitialize="true"
@@ -106,14 +153,15 @@ Monitors an LDAP connection factories provided by Ldaptive.
         provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
 />
 
-<bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+<bean id="pooledConnectionFactoryMonitorValidator" class="org.ldaptive.pool.SearchValidator" />
 
 {% endhighlight %}
 
 ## Internal Configuration Report
 
-CAS also provides a `/status/config` endpoint that produces a report of the runtime CAS configuration, which includes all components that are under the `org.jasig`
-package as well as settings defined in the `cas.properties` file. The output of this endpoint is a JSON representation of the runtime that is rendered into a modest visualization.
+CAS also provides a `/status/config` endpoint that produces a report of the runtime CAS configuration, which includes 
+settings defined in the `cas.properties` file. The output of this endpoint is a JSON representation of the 
+runtime that is rendered into a modest visualization.
 
 #Statistics
 Furthermore, the CAS web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance.

@@ -26,6 +26,9 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.core.profile.UserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -400,5 +403,22 @@ public final class WebUtils {
             return null;
         }
         return credential;
+    }
+
+    /**
+     * Return the username of the authenticated user (based on pac4j security).
+     *
+     * @return the authenticated username.
+     */
+    public static String getAuthenticatedUsername() {
+        final HttpServletRequest request = getHttpServletRequest();
+        final HttpServletResponse response = getHttpServletResponse();
+        final J2EContext context = new J2EContext(request, response);
+        final ProfileManager manager = new ProfileManager(context);
+        final UserProfile profile = manager.get(true);
+        if (profile != null) {
+            return profile.getId();
+        }
+        return null;
     }
 }

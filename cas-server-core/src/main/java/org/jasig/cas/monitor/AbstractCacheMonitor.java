@@ -18,6 +18,8 @@
  */
 package org.jasig.cas.monitor;
 
+import org.springframework.beans.factory.annotation.Value;
+
 /**
  * Abstract base class for monitors that observe cache storage systems.
  *
@@ -33,9 +35,11 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
     public static final long DEFAULT_EVICTION_THRESHOLD = 0;
 
     /** Percent free capacity threshold below which a warning is issued.*/
+    @Value(("${cache.monitor.warn.free.threshold:" + DEFAULT_WARN_FREE_THRESHOLD + "}"))
     private int warnFreeThreshold = DEFAULT_WARN_FREE_THRESHOLD;
 
     /** Threshold for number of acceptable evictions above which an error is issued. */
+    @Value(("${cache.monitor.eviction.threshold:" + DEFAULT_EVICTION_THRESHOLD + "}"))
     private long evictionThreshold = DEFAULT_EVICTION_THRESHOLD;
 
 

@@ -21,9 +21,9 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>org.jasig.parent</groupId>
-        <artifactId>jasig-parent</artifactId>
-        <version>40</version>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jasig.cas</groupId>
@@ -160,8 +160,8 @@
     </contributors>
 
     <issueManagement>
-        <system>Jira</system>
-        <url>https://issues.jasig.org/browse/CAS</url>
+        <system>Github</system>
+        <url>https://github.com/Jasig/cas/issues</url>
     </issueManagement>
 
     <mailingLists>
@@ -213,6 +213,28 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
+                    <configuration>
+                        <attachClasses>true</attachClasses>
+                        <archive>
+                            <index>true</index>
+                            <manifest>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.codehaus.plexus</groupId>
+                            <artifactId>plexus-archiver</artifactId>
+                            <version>${plexus.archiver.ver}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>${maven-jetty-plugin.version}</version>
@@ -250,6 +272,62 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>${maven-site-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.wagon</groupId>
+                        <artifactId>wagon-webdav-jackrabbit</artifactId>
+                        <version>${wagon.webdav.jackrabbit.ver}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <goals>
+                            <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-report-plugin</artifactId>
+                            <version>${maven-surefire-plugin.version}</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>${maven-javadoc-plugin.version}</version>
+                            <configuration>
+                                <source>${project.build.sourceVersion}</source>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-jasig-legal-plugin</artifactId>
+                <version>${maven-legal-plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-notice-plugin</artifactId>
+                <version>${maven-notice-plugin.version}</version>
+                <configuration>
+                    <noticeTemplate>${jasig-notice-template-url}</noticeTemplate>
+                    <licenseMapping>
+                        <param>${jasig-license-lookup-url}</param>
+                    </licenseMapping>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -370,6 +448,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>${project.build.sourceVersion}</source>
                     <target>${project.build.targetVersion}</target>
@@ -397,9 +476,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
                 <configuration>
                     <archive>
                         <manifest>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>
@@ -407,6 +488,13 @@
                         </manifestEntries>
                     </archive>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-archiver</artifactId>
+                        <version>${plexus.archiver.ver}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <goals>
@@ -420,16 +508,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven-assembly-plugin.version}</version>
-                <configuration>
-                    <descriptors>
-                        <descriptor>${basedir}/assembly.xml</descriptor>
-                    </descriptors>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -470,26 +548,18 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
                 <configuration>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
-                    <arguments>-Psonatype-oss-release,jasig-release,nocheck</arguments>
+                    <arguments>-Psonatype-oss-release,nocheck</arguments>
                 </configuration>
             </plugin>
-            <!-- CAS-988 generate hashes for assembly artifacts -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>${maven-antrun-plugin.version}</version>
-                <configuration>
-                    <target>
-                        <ant antfile="tasks.xml" target="genhash" />
-                    </target>
-                </configuration>
-            </plugin>
+
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
+                <version>${maven-license-plugin.version}</version>
                 <configuration>
                     <header>${cs.dir}/src/licensing/header.txt</header>
                     <skipExistingHeaders>true</skipExistingHeaders>
@@ -1034,19 +1104,6 @@
                 <scope>compile</scope>
             </dependency>
 
-            <!-- Spring Security Managed Dependencies -->
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-cas</artifactId>
-                <version>${spring.security.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
@@ -1097,31 +1154,6 @@
                     <exclusion>
                         <groupId>org.springframework</groupId>
                         <artifactId>spring-aop</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- Spring Security Dependencies -->
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>${spring.security.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>${spring.security.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-config</artifactId>
-                <version>${spring.security.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1356,7 +1388,7 @@
                 <artifactId>cas-server-security-filter</artifactId>
                 <version>${cas-server-security-filter.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-web</artifactId>
@@ -1369,7 +1401,7 @@
                 <artifactId>hazelcast</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>org.cryptacular</groupId>
                 <artifactId>cryptacular</artifactId>
@@ -1390,7 +1422,19 @@
 
             <dependency>
                 <groupId>org.pac4j</groupId>
+                <artifactId>pac4j-saml</artifactId>
+                <version>${pac4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-http</artifactId>
+                <version>${pac4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pac4j</groupId>
+                <artifactId>pac4j-cas</artifactId>
                 <version>${pac4j.version}</version>
             </dependency>
 
@@ -1425,6 +1469,8 @@
         <module>cas-server-support-jpa-ticket-registry</module>
         <module>cas-server-support-jpa-service-registry</module>
         <module>cas-server-support-ldap</module>
+        <module>cas-server-support-ldap-service-registry</module>
+        <module>cas-server-support-ldap-monitor</module>
         <module>cas-server-support-openid</module>
         <module>cas-server-support-wsfederation</module>
         <module>cas-server-support-radius</module>
@@ -1434,8 +1480,12 @@
         <module>cas-server-support-oauth</module>
         <module>cas-server-support-pac4j</module>
         <module>cas-server-support-saml</module>
+        <module>cas-server-support-saml-googleapps</module>
+        <module>cas-server-support-saml-mdui</module>
         <module>cas-server-integration-memcached</module>
+        <module>cas-server-integration-memcached-monitor</module>
         <module>cas-server-integration-ehcache</module>
+        <module>cas-server-integration-ehcache-monitor</module>
         <module>cas-server-integration-pac4j</module>
         <module>cas-server-extension-clearpass</module>
         <module>cas-server-support-rest</module>
@@ -1469,55 +1519,6 @@
                         </reports>
                     </reportSet>
                 </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${maven-projectinfo-reports-plugin.version}</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>index</report>
-                            <report>project-team</report>
-                            <report>mailing-list</report>
-                            <report>issue-tracking</report>
-                            <report>license</report>
-                            <report>scm</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-                <version>${maven-jxr-plugin.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>${maven-pmd-plugin.version}</version>
-                <configuration>
-                    <targetJdk>${project.build.targetVersion}</targetJdk>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>${maven-versions-plugin.version}</version>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>dependency-updates-report</report>
-                            <report>plugin-updates-report</report>
-                            <report>property-updates-report</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>taglist-maven-plugin</artifactId>
-                <version>${maven-taglist-plugin.version}</version>
             </plugin>
         </plugins>
     </reporting>
@@ -1595,7 +1596,6 @@
         <spring.version>4.2.1.RELEASE</spring.version>
         <spring.webflow.client.repo.version>1.0.0</spring.webflow.client.repo.version>
         <ldaptive.version>1.1.0</ldaptive.version>
-        <spring.security.version>4.0.2.RELEASE</spring.security.version>
         <aspectj.version>1.8.6</aspectj.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
         <commons.jexl.version>1.1</commons.jexl.version>
@@ -1649,22 +1649,24 @@
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
         <maven-versions-plugin.version>2.2</maven-versions-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
-        <maven-pmd-plugin.version>3.5</maven-pmd-plugin.version>
-        <maven-jxr-plugin.version>2.5</maven-jxr-plugin.version>
-        <maven-projectinfo-reports-plugin.version>2.8</maven-projectinfo-reports-plugin.version>
-        <maven-taglist-plugin.version>2.4</maven-taglist-plugin.version>
         <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
         <maven-checkstyle-plugin.version>2.16</maven-checkstyle-plugin.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
-        <maven-assembly-plugin.version>2.5.5</maven-assembly-plugin.version>
         <maven-aspectj-plugin.version>1.7</maven-aspectj-plugin.version>
-        <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
         <maven-findbugs-plugin.version>3.0.1</maven-findbugs-plugin.version>
         <maven-findbugs-contrib-plugin.version>6.2.1</maven-findbugs-contrib-plugin.version>
         <maven-findbugs-security-plugin.version>1.4.1</maven-findbugs-security-plugin.version>
         <maven-buildnumber-plugin-version>1.3</maven-buildnumber-plugin-version>
         <maven-resources-plugin.version>2.7</maven-resources-plugin.version>
         <maven-jetty-plugin.version>9.3.3.v20150827</maven-jetty-plugin.version>
+        <maven-site-plugin.version>3.4</maven-site-plugin.version>
+        <maven-release-plugin.version>2.5.2</maven-release-plugin.version>
+        <maven-license-plugin.version>2.11</maven-license-plugin.version>
+        <maven-legal-plugin.version>1.0.2</maven-legal-plugin.version>
+        <maven-notice-plugin.version>1.0.6.1</maven-notice-plugin.version>
+        <maven-war-plugin.version>2.6</maven-war-plugin.version>
+        <maven-jar-plugin.version>2.6</maven-jar-plugin.version>
+        <maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
 
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
@@ -1674,6 +1676,14 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.site.deployDirectory>/tmp/cas-deploy-site</project.site.deployDirectory>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
+        <plexus.archiver.ver>3.0.1</plexus.archiver.ver>
+        <wagon.webdav.jackrabbit.ver>2.9</wagon.webdav.jackrabbit.ver>
+
+        <jasig-scm-base>https://raw.githubusercontent.com/Jasig/apereo-parent/master/</jasig-scm-base>
+        <jasig-short-license-url>${jasig-scm-base}licenses/short-license-header.txt</jasig-short-license-url>
+        <jasig-license-lookup-url>${jasig-scm-base}licenses/license-mappings.xml</jasig-license-lookup-url>
+        <jasig-notice-template-url>${jasig-scm-base}licenses/NOTICE.template</jasig-notice-template-url>
+
         <cs.dir>${project.basedir}</cs.dir>
     </properties>
 </project>
