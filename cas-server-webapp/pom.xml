@@ -84,6 +84,11 @@
       <artifactId>pac4j-http</artifactId>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-saml-googleapps</artifactId>
+      <version>4.2.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>
