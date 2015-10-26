@@ -44,7 +44,7 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
     private JdbcTemplate jdbcTemplate;
 
     @NotNull
-    @Value("${datasource.monitor.validation.query:SELECT 1")
+    @Value("${datasource.monitor.validation.query:SELECT 1}")
     private String validationQuery;
 
     /**
