@@ -472,6 +472,9 @@ table.principal_attributes>tbody>tr>td {
   font-family: 'Georgia' sans-serif;
   font-size: 10pt;
 }
+#uptime-panel {
+    display: none;
+}
 #uptime {
     font-family: 'Lato', sans-serif;
     font-size: 16pt;
