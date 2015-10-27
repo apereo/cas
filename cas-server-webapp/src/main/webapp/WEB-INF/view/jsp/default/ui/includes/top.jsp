@@ -39,9 +39,11 @@
 
 
     <spring:theme code="standard.custom.css.file" var="customCssFile" />
-  <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
-  <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
+    <link rel="stylesheet" href="<c:url value="${customCssFile}" />" />
+    <link rel="icon" href="<c:url value="/favicon.ico" />" type="image/x-icon" />
 
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" />
 </head>
 <body id="cas">
 

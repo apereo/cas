@@ -528,3 +528,7 @@ table.principal_attributes>tbody>tr>td {
 .statisticsView .adminPanels.container-fluid {
     padding-right: 0;
 }
+
+.hidden {
+    display: none;
+}
