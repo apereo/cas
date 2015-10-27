@@ -26,14 +26,21 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextEvent;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -43,8 +50,16 @@ import java.util.List;
  * @since 3.1
  */
 public final class WebUtils {
+
+    /** Default CAS Servlet name. **/
+    public static final String CAS_SERVLET_NAME = "cas";
+
+
     /** Request attribute that contains message key describing details of authorization failure.*/
     public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
+
 
     /**
      * Instantiates a new web utils instance.
@@ -66,6 +81,52 @@ public final class WebUtils {
 
         return (HttpServletRequest) context.getExternalContext().getNativeRequest();
     }
+
+    /**
+     * Is cas servlet initializing?
+     *
+     * @param sce the sce
+     * @return the boolean
+     */
+    public static boolean isCasServletInitializing(final ServletContext sce) {
+        return sce.getServletRegistrations().containsKey(CAS_SERVLET_NAME);
+    }
+
+    /**
+     * Is cas servlet initializing?
+     *
+     * @param sce the sce
+     * @return the boolean
+     */
+    public static boolean isCasServletInitializing(final ServletContextEvent sce) {
+        return sce.getServletContext().getServletRegistrations().containsKey(CAS_SERVLET_NAME);
+    }
+
+    /**
+     * Is cas servlet initializing?
+     *
+     * @param sce the sce
+     * @return the boolean
+     */
+    public static boolean isCasServletInitializing(final WebApplicationContext sce) {
+        return isCasServletInitializing(sce.getServletContext());
+    }
+
+    /**
+     * Is cas servlet initializing.
+     *
+     * @param sce the sce
+     * @return the boolean
+     */
+    public static boolean isCasServletInitializing(final ApplicationContext sce) {
+        if (sce instanceof WebApplicationContext) {
+            return isCasServletInitializing(((WebApplicationContext) sce).getServletContext());
+        }
+        LOGGER.debug("No CAS servlet is available because the given application context is not of type {}",
+            WebApplicationContext.class);
+        return false;
+    }
+
 
     /**
      * Gets the http servlet response.
@@ -219,6 +280,15 @@ public final class WebUtils {
      */
     public static void putLoginTicket(final RequestContext context, final String ticket) {
         context.getFlowScope().put("loginTicket", ticket);
+    }
+
+    /**
+     * Adds the unauthorized redirect url to the flow scope.
+     * @param context the request context
+     * @param url the uri to redirect the flow
+     */
+    public static void putUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context, final URI url) {
+        context.getFlowScope().put("unauthorizedRedirectUrl", url);
     }
 
     /**

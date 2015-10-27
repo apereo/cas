@@ -18,13 +18,36 @@
  */
 package org.jasig.cas.web.support;
 
+import org.jasig.cas.util.CasSpringBeanJobFactory;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerFactory;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.spi.JobFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of a HandlerInterceptorAdapter that keeps track of a mapping
@@ -36,10 +59,22 @@ import java.util.concurrent.ConcurrentMap;
  * @author Scott Battaglia
  * @since 3.0.0.5
  */
+@Component("abstractInMemoryThrottledSubmissionHandlerInterceptorAdapter")
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
-                extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
+                extends AbstractThrottledSubmissionHandlerInterceptorAdapter implements Job {
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
+
+    @Value("${cas.throttle.inmemory.cleaner.repeatinterval:5000}")
+    private int refreshInterval;
+
+    @Value("${cas.throttle.inmemory.cleaner.startdelay:5000}")
+    private int startDelay;
+
+    @Autowired
+    @NotNull
+    private ApplicationContext applicationContext;
+
     private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<>();
 
     @Override
@@ -93,4 +128,68 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     private double submissionRate(final Date a, final Date b) {
         return SUBMISSION_RATE_DIVIDEND / (a.getTime() - b.getTime());
     }
+
+
+    /**
+     * Schedule throttle job.
+     */
+    @PostConstruct
+    public void scheduleThrottleJob() {
+        try {
+            if (shouldScheduleCleanerJob()) {
+                logger.info("Preparing to schedule throttle job");
+
+                final JobDetail job = JobBuilder.newJob(this.getClass())
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .build();
+
+                final Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInMinutes(this.refreshInterval)
+                        .repeatForever()).build();
+
+                final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
+                final SchedulerFactory schFactory = new StdSchedulerFactory();
+                final Scheduler sch = schFactory.getScheduler();
+                sch.setJobFactory(jobFactory);
+                sch.start();
+                logger.debug("Started {} scheduler", this.getClass().getName());
+                sch.scheduleJob(job, trigger);
+                logger.info("{} will clean tickets every {} seconds",
+                    this.getClass().getSimpleName(),
+                    TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
+            }
+        } catch (final Exception e){
+            logger.warn(e.getMessage(), e);
+        }
+
+    }
+
+    private boolean shouldScheduleCleanerJob() {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
+            if (WebUtils.isCasServletInitializing(this.applicationContext)) {
+                logger.debug("Found CAS servlet application context");
+                final String[] aliases =
+                    this.applicationContext.getAutowireCapableBeanFactory().getAliases("authenticationThrottle");
+                logger.debug("{} is used as the active authentication throttle", this.getClass().getSimpleName());
+                return aliases.length > 0 && aliases[0].equals(getName());
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+        try {
+            logger.info("Beginning audit cleanup...");
+            decrementCounts();
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
 }
