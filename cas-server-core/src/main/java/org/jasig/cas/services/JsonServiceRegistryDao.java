@@ -27,8 +27,11 @@ import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import java.io.BufferedInputStream;
@@ -87,6 +90,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Component("jsonServiceRegistryDao")
 public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationContextAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
@@ -146,7 +150,10 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
      * @param configDirectory the config directory where service registry files can be found.
      * @throws IOException the IO exception
      */
-    public JsonServiceRegistryDao(final File configDirectory) throws IOException {
+    @Autowired
+    public JsonServiceRegistryDao(
+        @Value("${service.registry.config.location:classpath:services}")
+        final File configDirectory) throws IOException {
         this(Paths.get(configDirectory.getCanonicalPath()));
     }
 
@@ -307,6 +314,11 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
             LOGGER.warn("Services manger could not be obtained from the application context. "
                 + "Service definition may not take immediate effect, which suggests a configuration problem");
         }
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName();
     }
 
     @Override

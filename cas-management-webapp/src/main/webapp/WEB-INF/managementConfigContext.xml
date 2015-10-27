@@ -35,7 +35,6 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
@@ -62,8 +61,7 @@
         <entry key="groupMembership" value="groupMembership"/>
     </util:map>
 
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.JsonServiceRegistryDao"
-          c:configDirectory="${service.registry.config.location:classpath:services}"/>
+    <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
 
     <bean id="auditTrailManager" class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"/>
 </beans>

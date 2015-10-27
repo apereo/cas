@@ -28,10 +28,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <bean id="monitor"
-          class="org.jasig.cas.monitor.ConnectionFactoryMonitor"
-          c:factory-ref="provisioningConnectionFactory"
-          c:validator-ref="searchValidator" />
 
+    <alias name="provisioningConnectionFactory" alias="connectionFactoryMonitorConnectionFactory" />
+    <alias name="searchValidator" alias="connectionFactoryMonitorValidator" />
 
 </beans>

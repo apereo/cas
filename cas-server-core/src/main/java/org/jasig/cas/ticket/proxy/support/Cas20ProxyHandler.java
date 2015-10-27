@@ -27,6 +27,9 @@ import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.util.http.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.net.URL;
@@ -41,6 +44,7 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Component("proxy20Handler")
 public final class Cas20ProxyHandler implements ProxyHandler {
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
@@ -55,11 +59,23 @@ public final class Cas20ProxyHandler implements ProxyHandler {
 
     /** Generate unique ids. */
     @NotNull
-    private UniqueTicketIdGenerator uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    @Autowired
+    @Qualifier("proxy20TicketUniqueIdGenerator")
+    private UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     /** Instance of Apache Commons HttpClient. */
     @NotNull
+    @Autowired
+    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient httpClient;
+
+    /**
+     * Initializes the ticket id generator to
+     * {@link DefaultUniqueTicketIdGenerator}.
+     */
+    public Cas20ProxyHandler() {
+        this.uniqueTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    }
 
     @Override
     public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
