@@ -62,6 +62,15 @@ var loggingDashboard = (function () {
             "order": [[ 1, "desc" ]],
             data: json.loggers,
             //dataSrc: "loggers",
+            "drawCallback": function( settings ) {
+                var api = this.api();
+
+                if (api.page.info().pages > 1) {
+                    $('#' + $.fn.dataTable.tables()[0].id + '_paginate')[0].style.display = "block";
+                } else {
+                    $('#' + $.fn.dataTable.tables()[0].id + '_paginate')[0].style.display = "none";
+                }
+            },
             "initComplete": function(settings, data) {
                 //console.warn(settings.aoData);
             //
