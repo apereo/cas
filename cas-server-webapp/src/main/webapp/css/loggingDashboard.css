@@ -29,3 +29,18 @@
 #loggingDashboard .btn .caret {
     margin-left: 5px;
 }
+
+#loggersTable td.details-control {
+    cursor: pointer;
+    font-family: FontAwesome;
+    font-size: 10pt;
+    color: #337ab7;
+}
+#loggersTable td.details-control span:after {
+    content: "\f067";
+    /*content: "\002B"; - thinner plus sign */
+}
+#loggersTable tr.shown td.details-control span:after {
+    content: "\f068";
+    /*content: "\002D"; - thinner minus sign */
+}
