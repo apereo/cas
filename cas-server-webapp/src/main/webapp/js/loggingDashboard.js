@@ -90,12 +90,13 @@ var loggingDashboard = (function () {
             columnDefs: [
                 {
                     "targets": 0,
+                    "className":      'details-control',
                     "orderable":      false,
                     "data":           'appenders',
                     "defaultContent": '',
                     render: function (data, type, full, meta) {
                         if (data.length > 0) {
-                            return '+';
+                            return '<span></span>';
                         } else {
                             return '';
                         }
