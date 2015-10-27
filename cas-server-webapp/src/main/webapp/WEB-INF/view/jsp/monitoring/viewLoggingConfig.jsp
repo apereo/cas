@@ -49,7 +49,7 @@
 
     <div id="loadingMessage"><h3><spring:message code="cas.loggingdashboard.loading" /></h3></div>
 
-    <div id="errorLoadingData" class=alert alert-danger "hidden">
+    <div id="errorLoadingData" class="alert alert-danger hidden">
         <h2><spring:message code="cas.loggingdashboard.loading.error" /></h2>
         <div>
             <input class="btn btn-success" type="button" onclick="location.reload();" value="<spring:message code="cas.ssosessions.button.refresh" />">
