@@ -95,6 +95,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
     private static class CustomCredential implements Credential {
 
+        @Override
         public String getId() {
             return "nobody";
         }

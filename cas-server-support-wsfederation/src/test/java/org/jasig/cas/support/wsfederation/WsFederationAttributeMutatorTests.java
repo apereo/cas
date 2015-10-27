@@ -52,6 +52,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
     private static class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
         private static final long serialVersionUID = -1858140387002752668L;
 
+        @Override
         public void modifyAttributes(final Map<String, Object> attributes) {
             attributes.put("test", "newtest");
             attributes.put("upn", "testing");

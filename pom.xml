@@ -507,6 +507,7 @@
                     </mapping>
                     <excludes>
                         <exclude>**/bin/**</exclude>
+                        <exclude>**/com/duosecurity/**</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>**/INSTALL*</exclude>
                         <exclude>**/NOTICE*</exclude>
@@ -738,6 +739,12 @@
             </dependency>
 
             <dependency>
+                <groupId>org.ldaptive</groupId>
+                <artifactId>ldaptive-beans</artifactId>
+                <version>${ldaptive.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>${woodstox.version}</version>
@@ -870,6 +877,10 @@
                     <exclusion>
                         <groupId>org.bouncycastle</groupId>
                         <artifactId>bcprov-jdk15</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>slf4j-api</artifactId>
+                        <groupId>org.slf4j</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -1223,6 +1234,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.springframework.webflow</groupId>
+                <artifactId>spring-binding</artifactId>
+                <version>${spring.webflow.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.jasig</groupId>
@@ -1300,7 +1316,12 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>c3p0</artifactId>
+                        <groupId>c3p0</groupId>
+                    </exclusion>
                 </exclusions>
+
             </dependency>
 
             <dependency>
@@ -1380,6 +1401,7 @@
         <module>cas-management-webapp</module>
         <module>cas-server-support-rest</module>
         <module>cas-server-support-yubikey</module>
+        <module>cas-server-support-duo</module>
         <module>cas-server-integration-hazelcast</module>
         <module>cas-server-integration-mongo</module>
     </modules>
@@ -1531,7 +1553,7 @@
         <spring.webflow.version>2.4.2.RELEASE</spring.webflow.version>
         <spring.version>4.2.1.RELEASE</spring.version>
         <spring.webflow.client.repo.version>1.0.0</spring.webflow.client.repo.version>
-        <ldaptive.version>1.0.6</ldaptive.version>
+        <ldaptive.version>1.1.0</ldaptive.version>
         <spring.security.version>4.0.2.RELEASE</spring.security.version>
         <aspectj.version>1.8.6</aspectj.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>

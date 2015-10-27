@@ -83,7 +83,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     }
 
     public ServiceTicket grantServiceTicket(final Service service) {
-        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, true);
+        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, true, true);
     }
 
     @Override
@@ -91,7 +91,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
             final String id,
             final Service service,
             final ExpirationPolicy expirationPolicy,
-            final boolean credentialsProvided) {
+            final boolean credentialsProvided,
+            final boolean onlyTrackMostRecentSession) {
         usageCount++;
         return new MockServiceTicket(id, service, this);
     }

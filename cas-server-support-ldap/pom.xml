@@ -68,6 +68,16 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive-beans</artifactId>
+    </dependency>
+
+    <dependency>
         <groupId>org.ldaptive</groupId>
         <artifactId>ldaptive-unboundid</artifactId>
         <version>${ldaptive.version}</version>
@@ -95,6 +105,13 @@
       <groupId>com.unboundid</groupId>
       <artifactId>unboundid-ldapsdk</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
 
   </dependencies>
 

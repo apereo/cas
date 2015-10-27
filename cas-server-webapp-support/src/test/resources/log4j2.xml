@@ -37,10 +37,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="info">
+        <Logger name="org.jasig" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.springframework" level="warn">
+        <Logger name="org.springframework" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
