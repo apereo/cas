@@ -18,7 +18,12 @@
  */
 package org.jasig.cas.monitor;
 
-import javax.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -31,16 +36,20 @@ import java.util.concurrent.TimeoutException;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@Component("abstractPoolMonitor")
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
 
     /** Default maximum wait time for asynchronous pool validation. */
     public static final int DEFAULT_MAX_WAIT = 3000;
 
     /** Maximum amount of time in ms to wait while validating pool resources. */
+    @Value("${ldap.pool.monitor.maxwait:3000}")
     private int maxWait = DEFAULT_MAX_WAIT;
 
     /** Executor that performs pool resource validation. */
-    @NotNull
+    @Nullable
+    @Autowired(required=false)
+    @Qualifier("pooledConnectionFactoryMonitorExecutorService")
     private ExecutorService executor;
 
 
@@ -56,7 +65,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
 
     /**
      * Set the maximum amount of time wait while validating pool resources.
-     * If the pool defines a minumum time to wait for a resource, this property
+     * If the pool defines a maximum time to wait for a resource, this property
      * should be set less than that value.
      *
      * @param time Wait time in milliseconds.
@@ -65,9 +74,6 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
         this.maxWait = time;
     }
 
-    /**
-     * {@inheritDoc}
-     **/
     @Override
     public PoolStatus observe() {
         final Future<StatusCode> result = this.executor.submit(new Validator(this));

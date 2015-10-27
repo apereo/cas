@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("authenticationExceptionHandler")
 public class AuthenticationExceptionHandler {
 
     /** State name when no matching exception is found. */

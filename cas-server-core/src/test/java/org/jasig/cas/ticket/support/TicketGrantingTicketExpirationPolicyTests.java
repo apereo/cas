@@ -57,13 +57,15 @@ public class TicketGrantingTicketExpirationPolicyTests {
          // keep tgt alive via sliding window until within SLIDING_TIME / 2 of the HARD_TIMEOUT
          while (System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()
                  < (HARD_TIMEOUT - SLIDING_TIMEOUT / 2)) {
-             ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false);
+             ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+                     true);
              Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
              assertFalse(this.ticketGrantingTicket.isExpired());
          }
 
          // final sliding window extension past the HARD_TIMEOUT
-         ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false);
+         ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+                 true);
          Thread.sleep(SLIDING_TIMEOUT / 2 + TIMEOUT_BUFFER);
          assertTrue(ticketGrantingTicket.isExpired());
 
@@ -71,15 +73,18 @@ public class TicketGrantingTicketExpirationPolicyTests {
 
     @Test
     public void verifyTgtIsExpiredBySlidingWindow() throws InterruptedException {
-        ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false);
+        ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+                true);
         Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
         assertFalse(ticketGrantingTicket.isExpired());
 
-        ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false);
+        ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+                true);
         Thread.sleep(SLIDING_TIMEOUT - TIMEOUT_BUFFER);
         assertFalse(ticketGrantingTicket.isExpired());
 
-        ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false);
+        ticketGrantingTicket.grantServiceTicket("test", TestUtils.getService(), expirationPolicy, false,
+                true);
         Thread.sleep(SLIDING_TIMEOUT + TIMEOUT_BUFFER);
         assertTrue(ticketGrantingTicket.isExpired());
 

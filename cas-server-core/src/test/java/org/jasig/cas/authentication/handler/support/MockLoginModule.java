@@ -34,11 +34,13 @@ import java.util.Map;
 public class MockLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
 
+    @Override
     public void initialize(final Subject subject, final CallbackHandler handler, final Map<String, ?> arg2,
-            final Map<String, ?> arg3) {
+                           final Map<String, ?> arg3) {
         this.callbackHandler = handler;
     }
 
+    @Override
     public boolean login() throws LoginException {
         final Callback[] callbacks = new Callback[] {new NameCallback("f"), new PasswordCallback("f", false)};
         try {
@@ -57,14 +59,17 @@ public class MockLoginModule implements LoginModule {
         throw new LoginException();
     }
 
+    @Override
     public boolean commit() throws LoginException {
         return true;
     }
 
+    @Override
     public boolean abort() throws LoginException {
         return true;
     }
 
+    @Override
     public boolean logout() throws LoginException {
         return true;
     }

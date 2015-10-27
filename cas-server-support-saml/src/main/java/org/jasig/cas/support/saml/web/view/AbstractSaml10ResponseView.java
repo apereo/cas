@@ -23,7 +23,7 @@ import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.DefaultArgumentExtractor;
-import org.jasig.cas.web.view.AbstractCasView;
+import org.jasig.cas.services.web.view.AbstractCasView;
 import org.joda.time.DateTime;
 
 import org.opensaml.saml.saml1.core.Response;

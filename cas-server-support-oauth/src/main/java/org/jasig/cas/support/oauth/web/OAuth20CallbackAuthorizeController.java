@@ -21,10 +21,8 @@ package org.jasig.cas.support.oauth.web;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,13 +38,12 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuth20CallbackAuthorizeController extends AbstractController {
-
-    private final Logger logger = LoggerFactory.getLogger(OAuth20CallbackAuthorizeController.class);
+@Component("callbackAuthorizeController")
+public final class OAuth20CallbackAuthorizeController extends BaseOAuthWrapperController {
 
     @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
+    protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
+                                                 final HttpServletResponse response) throws Exception {
         // get CAS ticket
         final String ticket = request.getParameter(OAuthConstants.TICKET);
         logger.debug("{} : {}", OAuthConstants.TICKET, ticket);
