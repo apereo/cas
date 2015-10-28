@@ -22,6 +22,10 @@ import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +39,7 @@ import java.util.List;
  * @since 3.1.2
  *
  */
+@Component("abstractArgumentExtractor")
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     /** Logger instance. */
@@ -42,13 +47,16 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     /** The factory responsible for creating service objects based on the arguments extracted. */
     @Resource(name="serviceFactoryList")
-    private final List<ServiceFactory<? extends WebApplicationService>> serviceFactory;
+    private final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     /**
      * Default extractor initiation.
      */
     public AbstractArgumentExtractor() {
-        this.serviceFactory = new ArrayList<>();
+        this.serviceFactoryList = new ArrayList<>();
     }
 
     /**
@@ -57,8 +65,8 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
      * @param serviceFactory the service factory
      */
     public AbstractArgumentExtractor(final ServiceFactory<? extends WebApplicationService> serviceFactory) {
-        this.serviceFactory = new ArrayList<>();
-        this.serviceFactory.add(serviceFactory);
+        this.serviceFactoryList = new ArrayList<>();
+        this.serviceFactoryList.add(serviceFactory);
     }
 
     /**
@@ -67,8 +75,8 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
      * @param serviceFactoryList the service factory list
      */
     public AbstractArgumentExtractor(final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
-        this.serviceFactory = new ArrayList<>();
-        this.serviceFactory.addAll(serviceFactoryList);
+        this.serviceFactoryList = new ArrayList<>();
+        this.serviceFactoryList.addAll(serviceFactoryList);
     }
 
     @Override
@@ -93,10 +101,10 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     protected abstract WebApplicationService extractServiceInternal(HttpServletRequest request);
 
     public final ServiceFactory<? extends WebApplicationService> getServiceFactory() {
-        return serviceFactory.get(0);
+        return serviceFactoryList.get(0);
     }
 
     protected final List<ServiceFactory<? extends WebApplicationService>> getServiceFactories() {
-        return serviceFactory;
+        return serviceFactoryList;
     }
 }
