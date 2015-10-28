@@ -48,6 +48,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-web</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.jasig.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>
@@ -63,6 +70,17 @@
             <groupId>org.springframework.webflow</groupId>
             <artifactId>spring-binding</artifactId>
             <version>${spring.webflow.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

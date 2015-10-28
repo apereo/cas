@@ -37,7 +37,7 @@ import java.util.List;
 @Deprecated
 public final class CasArgumentExtractor extends AbstractArgumentExtractor {
     /**
-     * Create a CAS argument extractor
+     * Create a CAS argument extractor.
      * @param serviceFactory service factory
      */
     public CasArgumentExtractor(final ServiceFactory<? extends WebApplicationService> serviceFactory) {
@@ -45,7 +45,7 @@ public final class CasArgumentExtractor extends AbstractArgumentExtractor {
     }
 
     /**
-     *  create cas argument extractor
+     *  create cas argument extractor.
      * @param serviceFactoryList list of service factories
      */
     public CasArgumentExtractor(final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {

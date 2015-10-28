@@ -295,13 +295,14 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     protected final ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
+        final Service service = org.jasig.cas.authentication.TestUtils.getService();
+
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(),
-                org.jasig.cas.authentication.TestUtils.getService());
+        final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("service", org.jasig.cas.authentication.TestUtils.getService().getId());
+        request.addParameter("service", service.getId());
         request.addParameter("ticket", sId.getId());
         request.addParameter("pgtUrl", "https://www.github.com");
 

@@ -19,12 +19,6 @@
 
 package org.jasig.cas.util;
 
-import com.google.common.collect.ImmutableSet;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * @author Scott Battaglia
  * @since 3.0.0.2
@@ -35,11 +29,5 @@ public final class TestUtils {
         // do not instantiate
     }
 
-    public static Map<String, Set<String>> getTestAttributes() {
-        final Map<String, Set<String>>  attributes = new HashMap<>();
-        attributes.put("uid", ImmutableSet.of("uid"));
-        attributes.put("givenName", ImmutableSet.of("CASUser"));
-        attributes.put("memberOf", ImmutableSet.of("system", "admin", "cas"));
-        return attributes;
-    }
+
 }

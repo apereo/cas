@@ -152,7 +152,8 @@ public class RegisteredServiceViewBean implements Serializable {
             proxyPolicyBean.setValue(option.getPattern().toString());
         }
 
-        final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy = (AbstractRegisteredServiceAttributeReleasePolicy) svc.getAttributeReleasePolicy();
+        final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy =
+                (AbstractRegisteredServiceAttributeReleasePolicy) svc.getAttributeReleasePolicy();
         final RegisteredServiceAttributeReleasePolicyViewBean attrPolicyBean = bean.getAttrRelease();
 
         if (attrPolicy != null) {

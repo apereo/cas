@@ -33,7 +33,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * @since 3.0.0
  */
 @ContextConfiguration(locations = {
-    "/core-context.xml"
+        "/core-context.xml"
 })
 public abstract class AbstractCentralAuthenticationServiceTest extends AbstractJUnit4SpringContextTests {
 

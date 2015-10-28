@@ -133,8 +133,9 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
 
-        final PrincipalAttributesRepository repository =
+        final CachingPrincipalAttributesRepository repository =
                 new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS, 100);
+        repository.setAttributeRepository(dao);
 
         final Principal p = new DefaultPrincipalFactory().createPrincipal("uid",
                     Collections.<String, Object>singletonMap("mail", "final@example.com"));
