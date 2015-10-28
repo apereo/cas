@@ -266,7 +266,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      */
     protected abstract Map<String, Object> getPrincipalAttributes(Principal p);
 
-    protected void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
+    public void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
         this.attributeRepository = attributeRepository;
     }
 

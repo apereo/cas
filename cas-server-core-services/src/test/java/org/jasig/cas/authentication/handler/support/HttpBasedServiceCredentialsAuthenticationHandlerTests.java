@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.services.TestUtils;
 import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Before;
@@ -49,7 +49,8 @@ public final class HttpBasedServiceCredentialsAuthenticationHandlerTests {
 
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler.supports(TestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertFalse(this.authenticationHandler.supports(
+                TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test2")));
     }
 
     @Test

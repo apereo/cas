@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations= {"/core-context.xml", "/WEB-INF/cas-servlet.xml"})
+@ContextConfiguration(locations= {"/services-context.xml"})
 public class DefaultCasAttributeEncoderTests {
 
     private Map<String, Object> attributes;

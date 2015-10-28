@@ -29,6 +29,7 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -54,6 +55,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -113,14 +115,14 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(this.authentication.getSuccesses()).thenReturn(successes);
         when(this.authentication.getPrincipal()).thenReturn(new DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
          
-        final Service service1 = TestUtils.getService(SVC1_ID);
+        final Service service1 = getService(SVC1_ID);
         final ServiceTicket stMock = createMockServiceTicket(ST_ID, service1); 
         
         final TicketGrantingTicket tgtRootMock = createRootTicketGrantingTicket();
         
         final TicketGrantingTicket tgtMock = createMockTicketGrantingTicket(TGT_ID, stMock, false,
                 tgtRootMock, new ArrayList<Authentication>());
-        when(tgtMock.getProxiedBy()).thenReturn(TestUtils.getService("proxiedBy"));
+        when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
 
         final List<Authentication> authnListMock = mock(List.class);
         //Size is required to be 2, so that we can simulate proxying capabilities
@@ -129,7 +131,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);
         when(stMock.getGrantingTicket()).thenReturn(tgtMock);
         
-        final Service service2 = TestUtils.getService(SVC2_ID);
+        final Service service2 = getService(SVC2_ID);
         final ServiceTicket stMock2 = createMockServiceTicket(ST2_ID, service2);
         
         final TicketGrantingTicket tgtMock2 = createMockTicketGrantingTicket(TGT2_ID, stMock2, false, tgtRootMock, authnListMock);        
@@ -274,5 +276,11 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(mockRegSvc.getUsernameAttributeProvider()).thenReturn(new DefaultRegisteredServiceUsernameProvider());
         when(mockRegSvc.getAccessStrategy()).thenReturn(new DefaultRegisteredServiceAccessStrategy(enabled, true));
         return mockRegSvc;
+    }
+
+    private Service getService(final String name) {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", name);
+        return new WebApplicationServiceFactory().createService(request);
     }
 }

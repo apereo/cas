@@ -216,7 +216,8 @@ public final class RegisteredServiceEditBean implements Serializable {
      * @param bean the bean
      */
     private static void configureAttributeReleasePolicy(final RegisteredService svc, final ServiceData bean) {
-        final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy = (AbstractRegisteredServiceAttributeReleasePolicy) svc.getAttributeReleasePolicy();
+        final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy =
+                (AbstractRegisteredServiceAttributeReleasePolicy) svc.getAttributeReleasePolicy();
         if (attrPolicy != null) {
             final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();
 
