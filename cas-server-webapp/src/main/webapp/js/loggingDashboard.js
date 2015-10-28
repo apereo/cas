@@ -17,52 +17,69 @@
  * under the License.
  */
 /**
- * Created by unicon on 10/19/15.
+ * Created by Jeff Sittler on 10/19/15.
  */
 
 
 /**
  * ToDo:
- * - wire up extended information view "+" functionality
- * - wire up the dropdown to show the static list of options
- * - show the selected item in from the dropdown
- * - wire up the AJAX call when a value is changed
+ * X wire up extended information view "+" functionality
+ * X wire up the dropdown to show the static list of options
+ * X show the selected item in from the dropdown
+ * X wire up the AJAX call when a value is changed
  *  - when the ajax call is made, change the drop-down to disabled and/or a processing state
- *  - when ajax call is successful, change state to indicate it was successful or there was an error
+ *  X when ajax call is successful, change state to indicate it was successful or there was an error
  * - Add active loggers tab
  * -- ???
  */
 
 $('#myTabs a').click(function (e) {
-  e.preventDefault()
-  $(this).tab('show')
+    e.preventDefault()
+    $(this).tab('show')
 })
+
+var alertHandler = (function () {
+    var alertContainer = $('#alert-container');
+    var create = function (message, state) {
+        //console.log('create the alert');
+        alertContainer.html('<div class="alert alert-' + state + ' alert-dismissable"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><span>' + message + '</span></div>')
+    };
+
+    var destroy = function () {
+        alertContainer.empty();
+    };
+
+    return {
+        dismiss: function () {
+            console.log('dismiss the alert');
+            destroy();
+        },
+        show: function (msg, state) {
+            console.log('show the alert', 'msg:', msg, 'state:', state);
+            create(msg, state);
+        }
+    }
+})();
 
 var loggingDashboard = (function () {
     var json = null;
 
-    var getData = function() {
-        ///cas/status/config/logging/getConfiguration
+    var logLevels = ['trace', 'debug', 'info', 'warn', 'error'];
 
-        $.getJSON( "/cas/status/config/logging/getConfiguration", function( data ) {
-            //console.log(data);
+    var getData = function () {
+        $.getJSON("/cas/status/config/logging/getConfiguration", function (data) {
             json = data;
 
             loggerTable();
-          //var items = [];
-          //$.each( data, function( key, val ) {
-          //  items.push( "<li id='" + key + "'>" + val + "</li>" );
-          //});
-
         });
     };
 
-    var loggerTable = function() {
-        $('#loggersTable').DataTable( {
-            "order": [[ 1, "desc" ]],
+
+    var loggerTable = function () {
+        $('#loggersTable').DataTable({
+            "order": [[1, "desc"]],
             data: json.loggers,
-            //dataSrc: "loggers",
-            "drawCallback": function( settings ) {
+            "drawCallback": function (settings) {
                 var api = this.api();
 
                 if (api.page.info().pages > 1) {
@@ -71,37 +88,23 @@ var loggingDashboard = (function () {
                     $('#' + $.fn.dataTable.tables()[0].id + '_paginate')[0].style.display = "none";
                 }
             },
-            "initComplete": function(settings, data) {
-                //console.warn(settings.aoData);
-            //
+            "initComplete": function (settings, data) {
                 if (!settings.aoData || settings.aoData.length == 0) {
                     $('#loadingMessage').addClass('hidden');
                     $('#errorLoadingData').removeClass('hidden');
                 } else {
-            //        updateAdminPanels( json );
-            //
                     $('#loadingMessage').addClass('hidden');
                     $('#errorLoadingData').addClass('hidden');
                     $("#loggingDashboard .tabsContainer").removeClass('hidden');
                 }
             },
-            //"language": {
-            //    //"infoEmpty": "No active sessions were found",
-            //    "emptyTable": "No sessions found",
-            //    "zeroRecords": "No matching sessions found"
-            //},
             "processing": true,
-            //"ajax": {
-            //    "url": '/cas/statistics/ssosessions/getSsoSessions',
-            //    "dataSrc": "activeSsoSessions"
-            //},
-            //columns: [
             columnDefs: [
                 {
                     "targets": 0,
-                    "className":      'details-control',
-                    "orderable":      false,
-                    "data":           'appenders',
+                    "className": 'details-control',
+                    "orderable": false,
+                    "data": 'appenders',
                     "defaultContent": '',
                     render: function (data, type, full, meta) {
                         if (data.length > 0) {
@@ -113,124 +116,142 @@ var loggingDashboard = (function () {
                 },
                 {
                     targets: 1,
-                    data: 'name'
+                    data: 'name',
+                    className: 'col-xs-5'
                 },
                 {
                     targets: 2,
+                    data: 'additive',
+                    className: 'additive col-xs-2',
+                    render: function (data, type, full, meta) {
+                        if (data) {
+                            return '<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>';
+                        } else {
+                            return '<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>';
+
+                        }
+                    }
+                },
+                {
+                    targets: 3,
+                    data: 'state',
+                    className: 'col-xs-2'
+                },
+                {
+                    targets: 4,
                     data: 'level',
+                    className: 'col-xs-3',
                     render: function (data, type, full, meta) {
                         return toggleSwitch(data, type, full, meta);
-                        //return data
                     }
-                    //render: toggleSwitch(data, type, full, meta)
                 }
-                //{
-                //    "targets": 0,
-                //    "className":      'details-control',
-                //    "orderable":      false,
-                //    "data":           null,
-                //    "defaultContent": ''
-                //},
-                //{
-                //    "targets": 1,
-                //    "data": 'is_proxied',
-                //    'className': 'col-xs-2 col-md-1',
-                //    "render" : function ( data, type, full, meta ) {
-                //        if ( data === true) {
-                //            return '<span class="label label-primary">Proxy</span>';
-                //        } else {
-                //            return ' ';
-                //        }
-                //    }
-                //},
-                //{
-                //    "targets": 2,
-                //    "data": 'authenticated_principal',
-                //    "className": 'col-xs-4 col-md-2',
-                //    "render": function ( data, type, full, meta ) {
-                //        return type === 'display' && data.length > 20 ?
-                //        '<span title="'+data+'">'+data.substr( 0, 18 )+'...</span>' :
-                //        data;
-                //    }
-                //},
-                //{
-                //    "targets": 3,
-                //    "data": 'ticket_granting_ticket',
-                //    "className": 'hidden-xs hidden-sm col-md-4',
-                //    "render": function ( data, type, full, meta ) {
-                //        return type === 'display' && data.length > 20 ?
-                //        '<span title="'+data+'">'+data.substr( 0, 40 )+'...</span>' :
-                //        data;
-                //    }
-                //},
-                //{
-                //    "targets": 4,
-                //    "data": 'authentication_date_formatted',
-                //    "className": 'col-xs-4 col-sm-4 col-md-2'
-                //},
-                //{
-                //    "targets": 5,
-                //    "data": 'number_of_uses',
-                //    "className": 'hidden-xs hidden-sm visible-md-* col-md-2'
-                //},
-                //{
-                //    "targets": 6,
-                //    "data": "ticket_granting_ticket",
-                //    "className": 'col-xs-2 col-sm-2 col-md-1',
-                //    "render": function (data, type, full, meta ) {
-                //        return '<button class="btn btn-xs btn-block btn-danger" type="button" value="' + data + '">Destroy</button>';
-                //    },
-                //    "orderable": false
-                //},
             ]
         });
     };
 
-    var toggleSwitch = function(data, type, full, meta) {
+    var toggleSwitch = function (data, type, full, meta) {
+        // Todo: Add additional colors for the other options
+        //console.log('toggleSwitch data',data);
         //console.log('type',type);
         //console.log('full',full);
         //console.log('meta',meta);
         //console.log(logLevels);
-        var btnGroup = '<div class="btn-group btn-block"><button class="btn btn-sm btn-block dropdown-toggle text-right" name="recordinput" data-toggle="dropdown">' + data + ' <span class="caret"></span></button>' +
-            '<ul class="dropdown-menu">' +
-                  '<li><a href="#">A</a></li>' +
-                  '<li><a href="#">CNAME</a></li>' +
-                  '<li><a href="#">MX</a></li>' +
-                  '<li><a href="#">PTR</a></li>' +
-            '</ul>' +
-        '</div>';
+        var btnColor;
 
-/*
-var btnGroup = '<div class="btn-group btn-block">' +
-  '<button type="button" class="btn btn-default">' + data + '</button>' +
-  '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-    '<span class="caret"></span>' +
-    '<span class="sr-only">Toggle Dropdown</span>' +
-  '</button>' +
-  '<ul class="dropdown-menu">' +
-    '<li><a href="#">Action</a></li>' +
-    '<li><a href="#">Another action</a></li>' +
-    '<li><a href="#">Something else here</a></li>' +
-    '<li role="separator" class="divider"></li>' +
-    '<li><a href="#">Separated link</a></li>' +
-  '</ul>' +
-'</div>';
-*/
-        //return '<button class="btn btn-xs btn-block btn-danger" type="button" value="' + data.state + '">data.state</button>'
+        switch (data.toLowerCase()) {
+            case 'error':
+                btnColor = 'danger';
+                break;
+            case 'info':
+                btnColor = 'info';
+                break;
+            case 'warn':
+                btnColor = 'warning';
+                break;
+            default:
+                btnColor = 'default';
+        }
+        var btnGroup = '<div class="btn-group btn-block" data-logger="' + full + '"><button class="btn btn-sm btn-block bg-' + btnColor + ' dropdown-toggle" name="recordinput" data-toggle="dropdown">' + data + ' <span class="caret"></span></button>' +
+            '<ul class="dropdown-menu">';
+        for (var i = 0; i < logLevels.length; i++) {
+            btnGroup += '<li><a href="#">' + logLevels[i].toUpperCase() + '</a></li>';
+        }
+        btnGroup += '</ul></div>';
+
         return btnGroup;
     };
 
+    /* Formatting function for row details - modify as you need */
+    var viewAppenders = function (data) {
+        return '<table class="table table-bordered row-detail"><tbody><tr class="">' +
+            '<td class="field-label active">Appenders:</td>' +
+            '<td>' + data.appenders + '</td>' +
+            '</tr>' +
+            '</tbody></table>';
+    };
+
+    var addEventHandlers = function () {
+        //console.log('addEventHAndlers()');
+
+        $(document).on('click', '#loggersTable .dropdown-menu li a', function (e) {
+            //console.log('status change', this);
+            e.preventDefault();
+            var selText = $(this).text();
+
+            changeLogLevel(selText, this);
+        });
+
+        $(document).on('click', '#loggersTable tbody td.details-control span', function () {
+            var table = $('#loggersTable').DataTable();
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                // Open this row
+                row.child(viewAppenders(row.data()), 'info').show();
+                tr.addClass('shown');
+            }
+        });
+    };
+
+    var changeLogLevel = function (newLevel, el) {
+        /**
+         * POST - /cas/status/config/logging/updateLoggerLevel
+         * Allows you to change the log level for given logger. Parameters are:
+         * loggerName, loggerLevel, additive (true/false)
+         */
+        var table = $('#loggersTable').DataTable();
+        var data = table.row($(el).closest('tr')[0]).data();
+
+        var cell = table.cell($(el).closest('td')[0]);
+
+        var jqxhr = $.post('/cas/status/config/logging/updateLoggerLevel', {
+            loggerName: data.name,
+            loggerLevel: newLevel,
+            additive: data.additive
+        }, function () {
+            cell.data( newLevel ).draw();
+            alertHandler.show('Successfully changed.', 'success');
+        }).fail(function () {
+            alertHandler.show('Error saving change.  Please try again', 'danger');
+        });
+    };
+
     // initialization *******
-    ( function init () {
+    (function init() {
         getData();
-        //createDataTable();
+        addEventHandlers();
     })();
 
     return {
-        getJson: function() {
+        getJson: function () {
             return json;
         },
-        showLoggersTable: function() {
+        showLoggersTable: function () {
             loggerTable();
         }
     }

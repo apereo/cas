@@ -20,17 +20,15 @@
 
 }
 #loggingDashboard .tabsContainer {
-    /*display: none;*/
+    padding: 0 20px;
 }
-#error-retrieving-data {
-    /*display: none;*/
-}
+#error-retrieving-data {}
 
 #loggingDashboard .btn .caret {
     margin-left: 5px;
 }
 
-#loggersTable td.details-control {
+#loggersTable td.details-control span {
     cursor: pointer;
     font-family: FontAwesome;
     font-size: 10pt;
@@ -43,4 +41,19 @@
 #loggersTable tr.shown td.details-control span:after {
     content: "\f068";
     /*content: "\002D"; - thinner minus sign */
+}
+
+.tab-pane {
+    padding: 20px 10px;
+    border: 1px solid #ddd;
+    border-top: none;
+}
+.additive {
+    text-align: center;
+}
+.additive .glyphicon-ok {
+    color: #5cb85c;
+}
+.additive .glyphicon-remove {
+    color: #d9534f;
 }
