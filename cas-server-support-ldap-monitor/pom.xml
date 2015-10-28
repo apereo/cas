@@ -56,6 +56,24 @@
         </dependency>
         <dependency>
             <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-tickets</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-logout</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-services</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core-monitor</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -75,6 +93,11 @@
             <groupId>org.ldaptive</groupId>
             <artifactId>ldaptive-unboundid</artifactId>
             <version>${ldaptive.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -46,10 +46,13 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
 
     /** Encoder to generate PseudoIds. */
     @Nullable
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("persistentIdGenerator")
-    private final PersistentIdGenerator persistentIdGenerator;
-    
+    private PersistentIdGenerator persistentIdGenerator;
+
+    /** Init provider. */
+    public AnonymousRegisteredServiceUsernameAttributeProvider() {}
+
     /**
      * Instantiates a new default registered service username provider.
      *
@@ -65,6 +68,9 @@ public final class AnonymousRegisteredServiceUsernameAttributeProvider implement
 
     @Override
     public String resolveUsername(final Principal principal, final Service service) {
+        if (this.persistentIdGenerator == null) {
+            throw new IllegalArgumentException("No persistent id generator is defined");
+        }
         final String id = this.persistentIdGenerator.generate(principal, service);
         LOGGER.debug("Resolved username [{}] for anonymous access", id);
         return id;

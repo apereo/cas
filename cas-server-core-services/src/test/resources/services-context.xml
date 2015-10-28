@@ -24,21 +24,17 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:metrics="http://www.ryantenney.com/schema/metrics"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="org.jasig.cas"/>
     <context:annotation-config/>
 
-
     <context:property-placeholder properties-ref="casProperties"/>
     <util:properties id="casProperties"/>
-
 
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
@@ -60,10 +56,6 @@
     </util:map>
 
 
-    <alias name="defaultTicketRegistry" alias="ticketRegistry"/>
-
-    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy"/>
-    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy"/>
 
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy"/>
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory"/>
@@ -74,10 +66,7 @@
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
 
-    <util:list id="monitorsList" value-type="org.jasig.cas.monitor.Monitor">
-        <ref bean="memoryMonitor"/>
-        <ref bean="sessionMonitor"/>
-    </util:list>
+
 
     <util:list id="serviceFactoryList" value-type="org.jasig.cas.authentication.principal.ServiceFactory">
         <ref bean="webApplicationServiceFactory" />
@@ -87,11 +76,6 @@
         <ref bean="defaultArgumentExtractor"/>
     </util:list>
 
-    <util:map id="uniqueIdGeneratorsMap">
-        <entry
-            key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-            value-ref="serviceTicketUniqueIdGenerator" />
-    </util:map>
 
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
 
@@ -268,71 +252,4 @@
 
     </util:list>
 
-
-    <util:map id="serviceThemeResolverSupportedBrowsers">
-        <entry key=".*iPhone.*" value="iphone"/>
-        <entry key=".*Android.*" value="android"/>
-        <entry key=".*Safari.*Pre.*" value="safari"/>
-        <entry key=".*Nokia.*AppleWebKit.*" value="nokiawebkit"/>
-    </util:map>
-
-    <!-- CAS 2.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <bean id="cas2JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas2ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casServiceValidationFailure.jsp" />
-
-    <!-- Proxy Response Protocol Views: /proxy -->
-
-    <!-- Failure Proxy Views -->
-    <bean id="cas2ProxyFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxyFailureView.jsp" />
-
-    <!-- Successful Proxy Views -->
-    <bean id="cas2ProxySuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/2.0/casProxySuccessView.jsp" />
-
-    <!-- CAS 3.0 Response Protocol Views -->
-
-    <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
-
-    <!-- Successful Validation Views -->
-
-    <bean id="cas3JstlSuccessView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationSuccess.jsp" />
-
-    <!-- Failure Validation Views -->
-    <bean id="cas3ServiceFailureView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/3.0/casServiceValidationFailure.jsp" />
-
-    <!-- Post View -->
-    <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
-          c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
-
-    <metrics:metric-registry id="metrics" />
-    <metrics:health-check-registry id="healthCheckMetrics" />
-
-    <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
-
-    <bean id="protocolCas2ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-          p:viewClass="org.springframework.web.servlet.view.JstlView"
-          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/2.0/}"
-          p:suffix=".jsp"
-          p:order="0"/>
-
-    <bean id="protocolCas3ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-          p:viewClass="org.springframework.web.servlet.view.JstlView"
-          p:prefix="cas-server-webapp/src/main/webapp/WEB-INF/view/jsp/protocol/3.0/}"
-          p:suffix=".jsp"
-          p:order="1"/>
-
-    <bean id="cachingPrincipalAttributeRepository"
-          class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
-            c:timeUnit="SECONDS"
-            c:expiryDuration="20"/>
 </beans>

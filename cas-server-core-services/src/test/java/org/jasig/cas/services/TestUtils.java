@@ -19,6 +19,9 @@
 
 package org.jasig.cas.services;
 
+import com.google.common.collect.ImmutableSet;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
@@ -27,9 +30,13 @@ import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRe
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -45,6 +52,28 @@ public final class TestUtils {
 
     private TestUtils() {}
 
+    public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
+        return getHttpBasedServiceCredentials(CONST_TEST_URL);
+    }
+
+    public static HttpBasedServiceCredential getHttpBasedServiceCredentials(
+            final String url) {
+        try {
+            return new HttpBasedServiceCredential(new URL(url),
+                    TestUtils.getRegisteredService(url));
+        } catch (final MalformedURLException e) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(
+            final String username, final String password) {
+        final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
+        usernamePasswordCredentials.setUsername(username);
+        usernamePasswordCredentials.setPassword(password);
+
+        return usernamePasswordCredentials;
+    }
     public static Service getService() {
         return getService(CONST_TEST_URL);
     }
@@ -61,6 +90,14 @@ public final class TestUtils {
         return result;
     }
 
+    public static Map<String, Set<String>> getTestAttributes() {
+        final Map<String, Set<String>>  attributes = new HashMap<>();
+        attributes.put("uid", ImmutableSet.of("uid"));
+        attributes.put("givenName", ImmutableSet.of("CASUser"));
+        attributes.put("memberOf", ImmutableSet.of("system", "admin", "cas"));
+        return attributes;
+    }
+
     public static AbstractRegisteredService getRegisteredService(final String id) {
         try  {
             final RegexRegisteredService s = new RegexRegisteredService();
@@ -75,7 +112,7 @@ public final class TestUtils {
             final DefaultRegisteredServiceAccessStrategy accessStrategy =
                     new DefaultRegisteredServiceAccessStrategy(true, true);
             accessStrategy.setRequireAllAttributes(true);
-            accessStrategy.setRequiredAttributes(org.jasig.cas.util.TestUtils.getTestAttributes());
+            accessStrategy.setRequiredAttributes(getTestAttributes());
             s.setAccessStrategy(accessStrategy);
             s.setLogo(new URL("https://logo.example.org/logo.png"));
             s.setLogoutType(LogoutType.BACK_CHANNEL);
@@ -93,7 +130,7 @@ public final class TestUtils {
             repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
             policy.setPrincipalAttributesRepository(repo);
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
-            policy.setAllowedAttributes(new ArrayList(org.jasig.cas.util.TestUtils.getTestAttributes().keySet()));
+            policy.setAllowedAttributes(new ArrayList(getTestAttributes().keySet()));
             s.setAttributeReleasePolicy(policy);
 
             return s;

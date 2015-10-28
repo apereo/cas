@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/mfa-test-context.xml" })
+@ContextConfiguration(locations = {"/mfa-test-context.xml"})
 public class MultifactorAuthenticationTests {
 
     @Autowired

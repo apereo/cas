@@ -19,9 +19,9 @@
 package org.jasig.cas.support.rest;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.util.TestUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Before;
 import org.junit.Test;
