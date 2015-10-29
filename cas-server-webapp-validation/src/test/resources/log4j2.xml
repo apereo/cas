@@ -43,9 +43,6 @@
         <Logger name="org.springframework" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
-            <AppenderRef ref="file"/>
-        </Logger>
         <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>

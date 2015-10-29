@@ -116,6 +116,12 @@
         </dependency>
 
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core-validation</artifactId>
             <version>${project.version}</version>

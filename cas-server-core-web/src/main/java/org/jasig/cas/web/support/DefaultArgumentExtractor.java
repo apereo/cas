@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -72,4 +73,10 @@ public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
         logger.debug("No service could be extracted based on the given request");
         return null;
     }
+
+    @Resource(name="serviceFactoryList")
+    public void setServiceFactoryList(final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
+        this.serviceFactoryList = serviceFactoryList;
+    }
+
 }
