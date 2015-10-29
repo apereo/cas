@@ -22,9 +22,6 @@ import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -47,10 +44,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     /** The factory responsible for creating service objects based on the arguments extracted. */
     @Resource(name="serviceFactoryList")
-    private final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList;
-
-    @Autowired
-    private ApplicationContext applicationContext;
+    protected List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList;
 
     /**
      * Default extractor initiation.
@@ -107,4 +101,5 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     protected final List<ServiceFactory<? extends WebApplicationService>> getServiceFactories() {
         return serviceFactoryList;
     }
+
 }
