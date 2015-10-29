@@ -126,7 +126,7 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
                 "TGT", TicketGrantingTicket.class);
 
         final Service service =
-                org.jasig.cas.authentication.TestUtils.getService("TGT_DELETE_TEST");
+                org.jasig.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), true, false);

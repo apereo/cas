@@ -19,6 +19,7 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.DefaultArgumentExtractor;
@@ -63,15 +64,18 @@ public class InitialFlowSetupActionTests {
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
-        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new DefaultArgumentExtractor()};
+        final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new DefaultArgumentExtractor(
+                new WebApplicationServiceFactory()
+        )};
         this.action.setArgumentExtractors(Arrays.asList(argExtractors));
 
         this.servicesManager = mock(ServicesManager.class);
         when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(
-                org.jasig.cas.authentication.TestUtils.getRegisteredService("test"));
+                org.jasig.cas.services.TestUtils.getRegisteredService("test"));
         this.action.setServicesManager(this.servicesManager);
 
         this.action.afterPropertiesSet();
+
     }
 
     @Test
