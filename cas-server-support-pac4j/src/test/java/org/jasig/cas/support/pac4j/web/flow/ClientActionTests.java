@@ -85,7 +85,7 @@ public final class ClientActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
         mockRequestContext.getFlowScope().put(ClientAction.SERVICE,
-                org.jasig.cas.authentication.TestUtils.getService(MY_SERVICE));
+                org.jasig.cas.services.TestUtils.getService(MY_SERVICE));
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient(MY_KEY, MY_SECRET);
