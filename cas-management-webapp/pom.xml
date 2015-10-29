@@ -83,6 +83,32 @@
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-logout</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-logging</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-audit</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-support-oauth</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -131,7 +157,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>${jstl.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -173,8 +198,6 @@
     </build>
 
     <properties>
-        <taglibs.version>1.1.2</taglibs.version>
-        <jstl.version>1.1.2</jstl.version>
         <cs.dir>${project.parent.basedir}</cs.dir>
     </properties>
 </project>

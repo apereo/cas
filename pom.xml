@@ -1344,6 +1344,14 @@
             </dependency>
 
             <dependency>
+                <groupId>taglibs</groupId>
+                <artifactId>standard</artifactId>
+                <version>${taglibs.version}</version>
+                <type>jar</type>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
@@ -1690,6 +1698,7 @@
         <hazelcast.version>3.5.2</hazelcast.version>
         <c3p0.version>0.9.5.1</c3p0.version>
         <cryptacular.version>1.0</cryptacular.version>
+        <taglibs.version>1.1.2</taglibs.version>
 
         <!-- Plugin Versions -->
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>

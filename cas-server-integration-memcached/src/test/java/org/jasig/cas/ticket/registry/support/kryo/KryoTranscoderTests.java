@@ -124,12 +124,12 @@ public class KryoTranscoderTests {
 
         final TicketGrantingTicket expectedTGT =
                 new TicketGrantingTicketImpl(TGT_ID,
-                        org.jasig.cas.authentication.TestUtils.getService(),
+                        org.jasig.cas.services.TestUtils.getService(),
                         null, bldr.build(),
                         new NeverExpiresExpirationPolicy());
 
         final ServiceTicket ticket = expectedTGT.grantServiceTicket(ST_ID,
-                org.jasig.cas.authentication.TestUtils.getService(),
+                org.jasig.cas.services.TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), false, true);
         CachedData result = transcoder.encode(expectedTGT);
         final TicketGrantingTicket resultTicket = (TicketGrantingTicket) transcoder.decode(result);
