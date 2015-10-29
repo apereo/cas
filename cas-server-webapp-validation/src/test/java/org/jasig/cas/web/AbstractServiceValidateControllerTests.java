@@ -22,7 +22,6 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.mock.MockValidationSpecification;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
@@ -30,10 +29,8 @@ import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
-import org.jasig.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -51,9 +48,6 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     protected AbstractServiceValidateController serviceValidateController;
 
-    @Autowired
-    private ServicesManager servicesManager;
-
     @Before
     public void onSetUp() throws Exception {
         final StaticApplicationContext context = new StaticApplicationContext();
@@ -64,8 +58,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         proxyHandler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
         this.serviceValidateController.setProxyHandler(proxyHandler);
         this.serviceValidateController.setApplicationContext(context);
-        this.serviceValidateController.setArgumentExtractor(new DefaultArgumentExtractor());
-        this.serviceValidateController.setServicesManager(this.servicesManager);
+        this.serviceValidateController.setArgumentExtractor(getArgumentExtractor());
+        this.serviceValidateController.setServicesManager(getServicesManager());
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {
