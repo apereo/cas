@@ -33,8 +33,10 @@ import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.ConfigurationListener;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Reconfigurable;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.CasDelegatingLogger;
 import org.slf4j.impl.CasLoggerFactory;
@@ -76,9 +78,20 @@ public class LoggingConfigController {
 
     private LoggerContext loggerContext;
 
+    /**
+     * Init.
+     *
+     * @throws Exception the exception
+     */
     @PostConstruct
-    public void init() throws Exception {
+    public void initialize() throws Exception {
         this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
+        this.loggerContext.getConfiguration().addListener(new ConfigurationListener() {
+            @Override
+            public void onChange(final Reconfigurable reconfigurable) {
+                loggerContext.updateLoggers(reconfigurable.reconfigure());
+            }
+        });
     }
 
     /**
@@ -112,6 +125,7 @@ public class LoggingConfigController {
         responseMap.put("activeLoggers", loggers);
         return responseMap;
     }
+
 
     /**
      * Gets configuration as JSON.
