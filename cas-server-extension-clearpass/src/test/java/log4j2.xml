@@ -29,7 +29,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.springframework" level="error" />
-        <Root level="debug">
+        <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
