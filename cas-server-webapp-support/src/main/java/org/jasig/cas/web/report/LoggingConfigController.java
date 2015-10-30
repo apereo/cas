@@ -110,7 +110,7 @@ public class LoggingConfigController {
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
-        for(final LoggerConfig config : loggerConfigs) {
+        for (final LoggerConfig config : loggerConfigs) {
             final Map<String, Object> loggerMap = new HashMap();
             loggerMap.put("name", StringUtils.defaultIfBlank(config.getName(), "Root"));
             loggerMap.put("state", config.getState());
@@ -192,6 +192,7 @@ public class LoggingConfigController {
                                   final HttpServletRequest request,
                                   final HttpServletResponse response)
             throws Exception {
+
         final CasLoggerFactory factory = (CasLoggerFactory) LoggerFactory.getILoggerFactory();
         final CasDelegatingLogger casLogger = factory.getLoggers().get(loggerName);
         final LocationAwareLogger delegatedLogger = (LocationAwareLogger) casLogger.getDelegate();

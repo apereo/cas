@@ -35,59 +35,31 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager"
-            c:map-ref="authenticationHandlersResolvers"
-            p:authenticationMetaDataPopulators-ref="authenticationMetadataPopulators"
-            p:authenticationPolicy-ref="authenticationPolicy" />
 
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
     </util:map>
-
-    <util:list id="authenticationMetadataPopulators">
-        <!--
-        <bean class="org.jasig.cas.authentication.CacheCredentialsMetaDataPopulator"/>
-        -->
-    </util:list>
-
-    <bean id="authenticationPolicy" class="org.jasig.cas.authentication.AnyAuthenticationPolicy" />
-
-    <!-- Required for proxy ticket mechanism. -->
-    <bean id="proxyAuthenticationHandler"
-          class="org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler"
-          p:httpClient-ref="supportsTrustStoreSslSocketFactoryHttpClient" />
-
-    <bean id="primaryAuthenticationHandler"
-          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
-        <property name="users">
-            <map>
-                <entry key="casuser" value="Mellon"/>
-            </map>
-        </property>
-    </bean>
-
-    <!-- Required for proxy ticket mechanism -->
-    <bean id="proxyPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.BasicPrincipalResolver" />
-
-    <bean id="primaryPrincipalResolver"
-          class="org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver"
-          p:principalFactory-ref="principalFactory"
-          p:attributeRepository-ref="attributeRepository" />
+    <util:list id="authenticationMetadataPopulators" />
 
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
           p:backingMap-ref="attrRepoBackingMap" />
+
+    <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
 
     <util:map id="attrRepoBackingMap">
         <entry key="uid" value="uid" />
@@ -103,21 +75,28 @@
         </entry>
     </util:map>
 
-    <bean id="serviceRegistryDao" class="org.jasig.cas.services.JsonServiceRegistryDao"
-          c:configDirectory="${service.registry.config.location:classpath:services}" />
+    <alias name="serviceThemeResolver" alias="themeResolver" />
+
+    <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
+
+    <alias name="defaultTicketRegistry" alias="ticketRegistry" />
+
+    <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+    <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
+
+    <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
+    <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
+
+    <alias name="neverThrottle" alias="authenticationThrottle" />
 
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
 
-    <bean id="healthCheckMonitor" class="org.jasig.cas.monitor.HealthCheckMonitor" p:monitors-ref="monitorsList" />
-
     <util:list id="monitorsList">
-        <bean class="org.jasig.cas.monitor.MemoryMonitor" p:freeMemoryWarnThreshold="10" />
-        <bean class="org.jasig.cas.monitor.SessionMonitor"
-              p:ticketRegistry-ref="ticketRegistry"
-              p:serviceTicketCountWarnThreshold="5000"
-              p:sessionCountWarnThreshold="100000" />
+        <ref bean="memoryMonitor" />
+        <ref bean="sessionMonitor" />
     </util:list>
+
 </beans>

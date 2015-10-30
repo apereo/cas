@@ -25,6 +25,9 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -35,6 +38,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("terminateSessionAction")
 public class TerminateSessionAction {
 
     /** Webflow event helper component. */
@@ -58,9 +62,13 @@ public class TerminateSessionAction {
      * @param tgtCookieGenerator TGT cookie generator.
      * @param warnCookieGenerator Warn cookie generator.
      */
+    @Autowired
     public TerminateSessionAction(
+        @Qualifier("centralAuthenticationService")
             final CentralAuthenticationService cas,
+        @Qualifier("ticketGrantingTicketCookieGenerator")
             final CookieRetrievingCookieGenerator tgtCookieGenerator,
+        @Qualifier("warnCookieGenerator")
             final CookieRetrievingCookieGenerator warnCookieGenerator) {
         this.centralAuthenticationService = cas;
         this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;

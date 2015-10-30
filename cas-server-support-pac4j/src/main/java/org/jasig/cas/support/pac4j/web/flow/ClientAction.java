@@ -23,15 +23,16 @@ import java.util.Set;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.principal.ClientCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.client.Mechanism;
+import org.pac4j.core.client.ClientType;
+import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
@@ -41,6 +42,9 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -63,6 +67,7 @@ import javax.validation.constraints.NotNull;
  * @since 3.5.0
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
+@Component("clientAction")
 public final class ClientAction extends AbstractAction {
     /**
      * Constant for the service parameter.
@@ -83,8 +88,8 @@ public final class ClientAction extends AbstractAction {
     /**
      * Supported protocols.
      */
-    private static final Set<Mechanism> SUPPORTED_PROTOCOLS = ImmutableSet.of(Mechanism.CAS_PROTOCOL, Mechanism.OAUTH_PROTOCOL,
-            Mechanism.OPENID_PROTOCOL, Mechanism.SAML_PROTOCOL, Mechanism.OPENID_CONNECT_PROTOCOL);
+    private static final Set<ClientType> SUPPORTED_PROTOCOLS = ImmutableSet.of(ClientType.CAS_PROTOCOL, ClientType.OAUTH_PROTOCOL,
+            ClientType.OPENID_PROTOCOL, ClientType.SAML_PROTOCOL, ClientType.OPENID_CONNECT_PROTOCOL);
 
     /**
      * The logger.
@@ -95,24 +100,21 @@ public final class ClientAction extends AbstractAction {
      * The clients used for authentication.
      */
     @NotNull
-    private final Clients clients;
+    @Autowired
+    @Qualifier("builtClients")
+    private Clients clients;
 
     /**
      * The service for CAS authentication.
      */
     @NotNull
-    private final CentralAuthenticationService centralAuthenticationService;
+    @Autowired
+    private CentralAuthenticationService centralAuthenticationService;
 
     /**
-     * Build the action.
-     *
-     * @param theCentralAuthenticationService The service for CAS authentication
-     * @param theClients The clients for authentication
+     * Build the ClientAction.
      */
-    public ClientAction(final CentralAuthenticationService theCentralAuthenticationService,
-            final Clients theClients) {
-        this.centralAuthenticationService = theCentralAuthenticationService;
-        this.clients = theClients;
+    public ClientAction() {
         ProfileHelper.setKeepRawData(true);
     }
 
@@ -141,8 +143,8 @@ public final class ClientAction extends AbstractAction {
             logger.debug("client: {}", client);
 
             // Only supported protocols
-            final Mechanism mechanism = client.getMechanism();
-            if (!SUPPORTED_PROTOCOLS.contains(mechanism)) {
+            final ClientType clientType = client.getClientType();
+            if (!SUPPORTED_PROTOCOLS.contains(clientType)) {
                 throw new TechnicalException("Only CAS, OAuth, OpenID and SAML protocols are supported: " + client);
             }
 
@@ -172,7 +174,7 @@ public final class ClientAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                final TicketGrantingTicket tgt = 
+                final TicketGrantingTicket tgt =
                         this.centralAuthenticationService.createTicketGrantingTicket(new ClientCredential(credentials));
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
@@ -208,8 +210,8 @@ public final class ClientAction extends AbstractAction {
         // for all clients, generate redirection urls
         for (final Client client : this.clients.findAllClients()) {
             final String key = client.getName() + "Url";
-            final BaseClient baseClient = (BaseClient) client;
-            final String redirectionUrl = baseClient.getRedirectionUrl(webContext);
+            final IndirectClient indirectClient = (IndirectClient) client;
+            final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
             logger.debug("{} -> {}", key, redirectionUrl);
             context.getFlowScope().put(key, redirectionUrl);
         }
@@ -241,5 +243,21 @@ public final class ClientAction extends AbstractAction {
         if (value != null) {
             session.setAttribute(name, value);
         }
+    }
+
+    public Clients getClients() {
+        return clients;
+    }
+
+    public void setClients(final Clients clients) {
+        this.clients = clients;
+    }
+
+    public CentralAuthenticationService getCentralAuthenticationService() {
+        return centralAuthenticationService;
+    }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 }

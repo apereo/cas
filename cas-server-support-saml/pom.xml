@@ -162,11 +162,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <scope>compile</scope>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-web</artifactId>
+            <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>jdom</groupId>
@@ -188,6 +187,19 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-webapp-support</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+        <groupId>com.ryantenney.metrics</groupId>
+        <artifactId>metrics-spring</artifactId>
+        <scope>test</scope>
+    </dependency>
     </dependencies>
 
     <properties>

@@ -136,7 +136,7 @@ public class TicketGrantingTicketImplTests {
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), TestUtils.getService(),
-            new NeverExpiresExpirationPolicy(), false);
+            new NeverExpiresExpirationPolicy(), false, true);
 
         assertTrue(s.isFromNewLogin());
     }
@@ -150,12 +150,14 @@ public class TicketGrantingTicketImplTests {
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
-                false);
+                false,
+                true);
         final ServiceTicket s = t.grantServiceTicket(
                 this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
                 TestUtils.getService(),
                 new NeverExpiresExpirationPolicy(),
-                false);
+                false,
+                true);
 
         assertFalse(s.isFromNewLogin());
     }
@@ -167,7 +169,7 @@ public class TicketGrantingTicketImplTests {
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(this.uniqueTicketIdGenerator
             .getNewTicketId(ServiceTicket.PREFIX), testService,
-            new NeverExpiresExpirationPolicy(), false);
+            new NeverExpiresExpirationPolicy(), false, true);
         Map<String, Service> services = t.getServices();
         assertEquals(1, services.size());
         final String ticketId = services.keySet().iterator().next();
@@ -183,10 +185,136 @@ public class TicketGrantingTicketImplTests {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
             TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         t.grantServiceTicket(this.uniqueTicketIdGenerator
-            .getNewTicketId(ServiceTicket.PREFIX), testService,
-            new NeverExpiresExpirationPolicy(), false);
+                        .getNewTicketId(ServiceTicket.PREFIX), testService,
+                new NeverExpiresExpirationPolicy(), false, true);
         assertFalse(t.isExpired());
         t.markTicketExpired();
         assertTrue(t.isExpired());
+    }
+
+    @Test
+    public void verifyDoubleGrantSameServiceTicketKeepMostRecentSession() {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
+                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+
+        assertEquals(1, t.getServices().size());
+    }
+
+    @Test
+    public void verifyDoubleGrantSimilarServiceTicketKeepMostRecentSession() {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
+                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService("http://host.com?test"),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService("http://host.com;JSESSIONID=xxx"),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+
+        assertEquals(1, t.getServices().size());
+    }
+
+    @Test
+    public void verifyDoubleGrantSimilarServiceWithPathTicketKeepMostRecentSession() {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
+                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService("http://host.com/webapp1"),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService("http://host.com/webapp1?test=true"),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+
+        assertEquals(1, t.getServices().size());
+    }
+
+    @Test
+    public void verifyDoubleGrantSameServiceTicketKeepAll() {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
+                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                false);
+
+        assertEquals(2, t.getServices().size());
+    }
+
+    @Test
+    public void verifyDoubleGrantDifferentServiceTicket() {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
+                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService(),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService2(),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+
+        assertEquals(2, t.getServices().size());
+    }
+
+    @Test
+    public void verifyDoubleGrantDifferentServiceOnPathTicket() {
+        final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
+                TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService("http://host.com/webapp1"),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+        t.grantServiceTicket(
+                this.uniqueTicketIdGenerator.getNewTicketId(ServiceTicket.PREFIX),
+                TestUtils.getService("http://host.com/webapp2"),
+                new NeverExpiresExpirationPolicy(),
+                false,
+                true);
+
+        assertEquals(2, t.getServices().size());
     }
 }

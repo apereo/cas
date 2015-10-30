@@ -29,6 +29,7 @@ import static org.junit.Assert.*;
  */
 public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
 
+    @Override
     public TicketRegistry getNewTicketRegistry() throws Exception {
         return new DefaultTicketRegistry();
     }
