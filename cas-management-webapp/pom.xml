@@ -85,19 +85,23 @@
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core-logout</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core-logging</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-tickets</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -192,6 +196,17 @@
                             </includes>
                         </resource>
                     </webResources>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${maven-jetty-plugin.version}</version>
+                <configuration>
+                    <webApp>
+                        <contextPath>/cas-management</contextPath>
+                        <overrideDescriptor>${cs.dir}/etc/jetty/web.xml</overrideDescriptor>
+                    </webApp>
                 </configuration>
             </plugin>
         </plugins>
