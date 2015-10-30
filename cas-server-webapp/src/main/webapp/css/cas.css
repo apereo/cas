@@ -532,3 +532,13 @@ table.principal_attributes>tbody>tr>td {
 .hidden {
     display: none;
 }
+
+/**
+ * View Configuration Styles
+ */
+#viewConfigError {
+    display: none;
+}
+#view-configuration {
+    display: none;
+}

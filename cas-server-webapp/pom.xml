@@ -75,6 +75,16 @@
       <groupId>io.dropwizard.metrics</groupId>
       <artifactId>metrics-servlets</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-saml-googleapps</artifactId>
+      <version>4.2.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -102,7 +112,8 @@
         <version>${maven-jetty-plugin.version}</version>
         <configuration>
           <webApp>
-            <contextPath>/cas</contextPath>
+              <contextPath>/cas</contextPath>
+              <overrideDescriptor>${cs.dir}/etc/jetty/web.xml</overrideDescriptor>
           </webApp>
         </configuration>
       </plugin>

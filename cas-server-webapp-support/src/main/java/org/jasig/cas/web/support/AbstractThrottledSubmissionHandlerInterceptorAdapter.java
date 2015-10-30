@@ -23,6 +23,9 @@ import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.execution.RequestContext;
@@ -38,6 +41,7 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Component("abstractThrottledSubmissionHandlerInterceptorAdapter")
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements InitializingBean {
 
     private static final int DEFAULT_FAILURE_THRESHOLD = 100;
@@ -110,15 +114,24 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         recordSubmissionFailure(request);
     }
 
-    public final void setFailureThreshold(final int failureThreshold) {
+    @Autowired
+    public final void setFailureThreshold(@Value("${cas.throttle.failure.threshold:"
+                                            + DEFAULT_FAILURE_THRESHOLD + "}")
+                                          final int failureThreshold) {
         this.failureThreshold = failureThreshold;
     }
 
-    public final void setFailureRangeInSeconds(final int failureRangeInSeconds) {
+    @Autowired
+    public final void setFailureRangeInSeconds(@Value("${cas.throttle.failure.range.seconds:"
+                                                        + DEFAULT_FAILURE_RANGE_IN_SECONDS + "}")
+                                               final int failureRangeInSeconds) {
         this.failureRangeInSeconds = failureRangeInSeconds;
     }
 
-    public final void setUsernameParameter(final String usernameParameter) {
+    @Autowired
+    public final void setUsernameParameter(@Value("${cas.throttle.username.parameter:"
+                                                + DEFAULT_USERNAME_PARAMETER + "}")
+                                               final String usernameParameter) {
         this.usernameParameter = usernameParameter;
     }
 
@@ -175,4 +188,11 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
                 .append("thresholdRate", this.thresholdRate)
                 .toString();
     }
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    protected abstract String getName();
 }

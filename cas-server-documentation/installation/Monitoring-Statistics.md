@@ -3,8 +3,9 @@ layout: default
 title: CAS - Monitoring & Statistics
 ---
 
-#Monitoring
-The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software. Access to the endpoint is secured by Spring Security at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
+# Monitoring
+The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software. 
+Access to the endpoint is secured by Spring Security at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
 
 {% highlight xml %}
 <sec:http pattern="/status/**" entry-point-ref="notAuthorizedEntryPoint" use-expressions="true" auto-config="true">
@@ -29,11 +30,138 @@ Health: OK
     1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
 {% endhighlight %}
 
+The list of configured monitors are all defined in `deployerConfigContext.xml` file:
+
+{% highlight xml %}
+<util:list id="monitorsList">
+    <ref bean="memoryMonitor" />
+    <ref bean="sessionMonitor" />
+</util:list>
+{% endhighlight %}
+
+The following optional monitors are also available:
+
+- `MemcachedMonitor`
+
+{% highlight xml %}
+
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-integration-memcached-monitor</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+
+...
+
+<util:list id="monitorsList">
+    <ref bean="memcachedMonitor" />
+</util:list>
+
+...
+
+{% endhighlight %}
+
+
+The following settings are available:
+
+{% highlight properties %}
+# cache.monitor.warn.free.threshold=10
+# cache.monitor.eviction.threshold=0
+{% endhighlight %}
+
+- `EhcacheMonitor`
+
+{% highlight xml %}
+
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-integration-ehcache-monitor</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+
+...
+
+<util:list id="monitorsList">
+    <ref bean="ehcacheMonitor" />
+</util:list>
+<alias name="ticketGrantingTicketsCache" alias="ehcacheMonitorCache" />
+{% endhighlight %}
+
+The following settings are available:
+
+{% highlight properties %}
+# cache.monitor.warn.free.threshold=10
+# cache.monitor.eviction.threshold=0
+{% endhighlight %}
+
+- `DataSourceMonitor`
+
+{% highlight xml %}
+
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-jdbc</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+
+...
+<bean id="pooledConnectionFactoryMonitorExecutorService"
+    class="org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean"
+    p:corePoolSize="1"
+    p:maxPoolSize="1"
+    p:keepAliveSeconds="1" />
+          
+<util:list id="monitorsList">
+    <ref bean="dataSourceMonitor" />
+</util:list>
+
+<alias name="myDataSource" alias="monitorDataSource" />
+
+{% endhighlight %}
+
+- `PooledConnectionFactoryMonitor`
+
+{% highlight xml %}
+
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-ldap-monitor</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+
+...
+
+<util:list id="monitorsList">
+    <ref bean="pooledLdapConnectionFactoryMonitor" />
+</util:list>
+
+<ldaptive:pooled-connection-factory
+        id="pooledConnectionFactoryMonitorConnectionFactory"
+        ldapUrl="${ldap.url}"
+        blockWaitTime="${ldap.pool.blockWaitTime}"
+        failFastInitialize="true"
+        connectTimeout="${ldap.connectTimeout}"
+        useStartTLS="${ldap.useStartTLS}"
+        validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+        validatePeriodically="${ldap.pool.validatePeriodically}"
+        validatePeriod="${ldap.pool.validatePeriod}"
+        idleTime="${ldap.pool.idleTime}"
+        maxPoolSize="${ldap.pool.maxSize}"
+        minPoolSize="${ldap.pool.minSize}"
+        useSSL="${ldap.use.ssl:false}"
+        prunePeriod="${ldap.pool.prunePeriod}"
+        provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
+/>
+
+<bean id="pooledConnectionFactoryMonitorValidator" class="org.ldaptive.pool.SearchValidator" />
+
+{% endhighlight %}
 
 ## Internal Configuration Report
 
-CAS also provides a `/status/config` endpoint that produces a report of the runtime CAS configuration, which includes all components that are under the `org.jasig`
-package as well as settings defined in the `cas.properties` file. The output of this endpoint is a JSON representation of the runtime that is rendered into a modest visualization.
+CAS also provides a `/status/config` endpoint that produces a report of the runtime CAS configuration, which includes 
+settings defined in the `cas.properties` file. The output of this endpoint is a JSON representation of the 
+runtime that is rendered into a modest visualization.
 
 #Statistics
 Furthermore, the CAS web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance.
@@ -68,30 +196,6 @@ The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring
 {% endhighlight %}
 
 Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
-
-{% highlight xml %}
-
-<metrics:reporter type="jmx" metric-registry="metrics" />
-
-{% endhighlight %}
-
-To explore this you can use VisualVM (which ships with most JDKs as jvisualvm) with the VisualVM-MBeans plugins installed or JConsole (which ships with most JDKs as jconsole):
-
-![](http://i.imgur.com/g8fmUlE.png)
-
-Additionally, various metrics on JVM performance and data are also reported. The metrics contain a number of reusable gauges and metric sets which allow you to easily instrument JVM internals.
-
-{% highlight xml %}
-
-<metrics:register metric-registry="metrics">
-    <bean metrics:name="jvm.gc" class="com.codahale.metrics.jvm.GarbageCollectorMetricSet" />
-    <bean metrics:name="jvm.memory" class="com.codahale.metrics.jvm.MemoryUsageGaugeSet" />
-    <bean metrics:name="jvm.thread-states" class="com.codahale.metrics.jvm.ThreadStatesGaugeSet" />
-    <bean metrics:name="jvm.fd.usage" class="com.codahale.metrics.jvm.FileDescriptorRatioGauge" />
-</metrics:register>
-
-{% endhighlight %}
-
 Supported metrics include:
 
 - Run count and elapsed times for all supported garbage collectors

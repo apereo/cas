@@ -18,18 +18,13 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import de.flapdoodle.embed.memcached.Command;
-import de.flapdoodle.embed.memcached.MemcachedExecutable;
-import de.flapdoodle.embed.memcached.MemcachedProcess;
-import de.flapdoodle.embed.memcached.MemcachedStarter;
-import de.flapdoodle.embed.memcached.config.ArtifactStoreBuilder;
-import de.flapdoodle.embed.memcached.config.DownloadConfigBuilder;
-import de.flapdoodle.embed.memcached.config.MemcachedConfig;
-import de.flapdoodle.embed.memcached.config.RuntimeConfigBuilder;
-import de.flapdoodle.embed.memcached.distribution.Version;
-import de.flapdoodle.embed.process.config.store.IDownloadConfig;
-import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
+import org.jasig.cas.AbstractMemcachedTests;
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -38,17 +33,17 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
-import static org.slf4j.LoggerFactory.*;
+
 
 /**
  * Unit test for MemCacheTicketRegistry class.
@@ -57,12 +52,7 @@ import static org.slf4j.LoggerFactory.*;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-public class MemCacheTicketRegistryTests {
-    private static final Logger LOGGER = getLogger(MemCacheTicketRegistryTests.class);
-    private static final int PORT = 11211;
-
-    private static MemcachedExecutable MEMCACHED_EXECUTABLE;
-    private static MemcachedProcess MEMCACHED;
+public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
 
     private MemCacheTicketRegistry registry;
 
@@ -76,30 +66,18 @@ public class MemCacheTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object[]> getTestParameters() throws Exception {
+    public static Collection getTestParameters() throws Exception {
         return Arrays.asList(new Object[] {"testCase1", false}, new Object[] {"testCase2", true});
     }
 
     @BeforeClass
     public static void beforeClass() throws IOException {
-        try {
-            final MemcachedStarter runtime = MemcachedStarter.getInstance(
-                    new CasRuntimeConfigBuilder().defaults(Command.MemcacheD).build());
-            MEMCACHED_EXECUTABLE = runtime.prepare(new MemcachedConfig(Version.V1_4_22, PORT));
-            MEMCACHED = MEMCACHED_EXECUTABLE.start();
-        } catch (final Exception e) {
-            LOGGER.warn("Aborting since no memcached server could be started.", e);
-        }
+        bootstrap();
     }
 
     @AfterClass
     public static void afterClass() throws Exception {
-       if (MEMCACHED != null && MEMCACHED.isProcessRunning()) {
-           MEMCACHED.stop();
-       }
-        if (MEMCACHED_EXECUTABLE != null) {
-            MEMCACHED_EXECUTABLE.stop();
-        }
+        shutdown();
     }
 
     @Before
@@ -108,7 +86,7 @@ public class MemCacheTicketRegistryTests {
         // Abort tests if there is no memcached server available on localhost:11211.
         final boolean environmentOk = isMemcachedListening();
         if (!environmentOk) {
-            LOGGER.warn("Aborting test since no memcached server is available on localhost.");
+            logger.warn("Aborting test since no memcached server is available on localhost.");
         }
         Assume.assumeTrue(environmentOk);
         final ApplicationContext context = new ClassPathXmlApplicationContext("/ticketRegistry-test.xml");
@@ -140,38 +118,38 @@ public class MemCacheTicketRegistryTests {
         Assert.assertNull(registry.getTicket(id, ServiceTicket.class));
     }
 
-    private boolean isMemcachedListening() {
-        try (final Socket socket = new Socket("127.0.0.1", PORT)) {
-            return true;
-        } catch (final Exception e) {
-            return false;
-        }
+    @Test
+    public void verifyDeleteTicketWithChildren() throws Exception {
+        this.registry.addTicket(new TicketGrantingTicketImpl(
+                "TGT", TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.registry.getTicket(
+                "TGT", TicketGrantingTicket.class);
+
+        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(
+                "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
+        final ServiceTicket st2 = tgt.grantServiceTicket(
+                "ST2", service, new NeverExpiresExpirationPolicy(), true, false);
+        final ServiceTicket st3 = tgt.grantServiceTicket(
+                "ST3", service, new NeverExpiresExpirationPolicy(), true, false);
+
+        this.registry.addTicket(st1);
+        this.registry.addTicket(st2);
+        this.registry.addTicket(st3);
+
+        assertNotNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNotNull(this.registry.getTicket("ST1", ServiceTicket.class));
+        assertNotNull(this.registry.getTicket("ST2", ServiceTicket.class));
+        assertNotNull(this.registry.getTicket("ST3", ServiceTicket.class));
+
+        this.registry.deleteTicket(tgt.getId());
+
+        assertNull(this.registry.getTicket("TGT", TicketGrantingTicket.class));
+        assertNull(this.registry.getTicket("ST1", ServiceTicket.class));
+        assertNull(this.registry.getTicket("ST2", ServiceTicket.class));
+        assertNull(this.registry.getTicket("ST3", ServiceTicket.class));
     }
 
-    private static class CasRuntimeConfigBuilder extends RuntimeConfigBuilder {
-        @Override
-        public RuntimeConfigBuilder defaults(final Command command) {
-            final RuntimeConfigBuilder builder = super.defaults(command);
 
-            final IDownloadConfig downloadConfig = new CasDownloadConfigBuilder()
-                    .defaultsForCommand(command)
-                    .progressListener(new StandardConsoleProgressListener())
-                    .build();
-            this.artifactStore().overwriteDefault(new ArtifactStoreBuilder()
-                    .defaults(command).download(downloadConfig).build());
-            return builder;
-        }
-    }
-
-    /**
-     * Download an embedded memcached instance based on environment.
-     */
-    private static class CasDownloadConfigBuilder extends DownloadConfigBuilder {
-        @Override
-        public DownloadConfigBuilder defaults() {
-            final DownloadConfigBuilder bldr = super.defaults();
-            bldr.downloadPath("http://heli0s.darktech.org/memcached/");
-            return bldr;
-        }
-    }
 }
