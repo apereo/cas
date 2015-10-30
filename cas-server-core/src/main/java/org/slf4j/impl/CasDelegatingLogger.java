@@ -458,7 +458,6 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * Set the current log level.
      *
      * @param level the level
-     * @return the log level
      * @since 4.2
      */
     public void setLevel(final Level level) {
