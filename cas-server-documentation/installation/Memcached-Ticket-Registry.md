@@ -84,7 +84,6 @@ compact data, which benefits both storage requirements and throughput.
 # memcached.protocol=BINARY
 # memcached.locatorType=ARRAY_MOD
 # memcached.failureMode=Redistribute
-# memcached.buffersize=8192
 {% endhighlight %}
 
 ## High Availability Considerations
