@@ -37,7 +37,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
         <bean id="memcachedClient" class="net.spy.memcached.spring.MemcachedClientFactoryBean"
-              p:servers="${memcached.servers:cas-1.example.org:11211}"
+              p:servers="${memcached.servers:localhost:11211}"
               p:protocol="${memcached.protocol:BINARY}"
               p:locatorType="${memcached.locatorType:ARRAY_MOD}"
               p:failureMode="${memcached.failureMode:Redistribute}"
@@ -49,8 +49,7 @@
 
         <bean id="kryoTranscoder"
               class="org.jasig.cas.ticket.registry.support.kryo.KryoTranscoder"
-              init-method="initialize"
-              c:initialBufferSize="${memcached.buffersize:8192}" />
+              init-method="initialize" />
     </beans>
 
 </beans>
