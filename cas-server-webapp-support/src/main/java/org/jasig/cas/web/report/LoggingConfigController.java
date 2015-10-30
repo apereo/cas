@@ -120,7 +120,7 @@ public class LoggingConfigController {
     @ResponseBody
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
-        final Map<String, Object> responseMap = new HashMap();
+        final Map<String, Object> responseMap = new HashMap<>();
         final Set<Map.Entry<String, CasDelegatingLogger>> loggers = getActiveLoggersInFactory();
         final Collection<CasDelegatingLogger> activeLoggers = new ArrayList<>();
         for (final Map.Entry<String, CasDelegatingLogger> logger : loggers) {
@@ -148,7 +148,7 @@ public class LoggingConfigController {
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         for (final LoggerConfig config : getLoggerConfigurations()) {
 
-            final Map<String, Object> loggerMap = new HashMap();
+            final Map<String, Object> loggerMap = new HashMap<>();
             loggerMap.put("name", StringUtils.defaultIfBlank(config.getName(), LOGGER_NAME_ROOT));
             loggerMap.put("state", config.getState());
             if (config.getProperties() != null) {
