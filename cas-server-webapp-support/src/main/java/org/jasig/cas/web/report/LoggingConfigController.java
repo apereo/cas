@@ -55,6 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -120,9 +121,12 @@ public class LoggingConfigController {
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         final Map<String, Object> responseMap = new HashMap();
-
         final Set<Map.Entry<String, CasDelegatingLogger>> loggers = getActiveLoggersInFactory();
-        responseMap.put("activeLoggers", loggers);
+        final Collection<CasDelegatingLogger> activeLoggers = new ArrayList<>();
+        for (final Map.Entry<String, CasDelegatingLogger> logger : loggers) {
+            activeLoggers.add(logger.getValue());
+        }
+        responseMap.put("activeLoggers", activeLoggers);
         return responseMap;
     }
 
