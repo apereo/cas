@@ -18,6 +18,9 @@
  */
 package org.jasig.cas.monitor;
 
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,9 +34,11 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@Component("healthCheckMonitor")
 public class HealthCheckMonitor implements Monitor<HealthStatus> {
     /** Individual monitors that comprise health check. */
     @NotNull
+
     private Collection<Monitor> monitors = Collections.emptySet();
 
 
@@ -42,21 +47,16 @@ public class HealthCheckMonitor implements Monitor<HealthStatus> {
      *
      * @param monitors Collection of monitors responsible for observing various aspects of CAS.
      */
+    @Resource(name="monitorsList")
     public void setMonitors(final Collection<Monitor> monitors) {
         this.monitors = monitors;
     }
 
-    /**
-     * {@inheritDoc}
-     **/
     @Override
     public String getName() {
         return HealthCheckMonitor.class.getSimpleName();
     }
 
-    /**
-     * {@inheritDoc}
-     **/
     @Override
     public HealthStatus observe() {
         final Map<String, Status> results = new LinkedHashMap<>(this.monitors.size());

@@ -33,6 +33,7 @@ import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
+import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -47,7 +48,6 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
-import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -75,6 +75,8 @@ public final class TestUtils {
     public static final String CONST_USERNAME = "test";
 
     public static final String CONST_TEST_URL = "https://test.com";
+
+    public static final String CONST_TEST_URL2 = "https://example.com";
 
     public static final String CONST_EXCEPTION_EXPECTED = "Exception expected.";
 
@@ -182,8 +184,8 @@ public final class TestUtils {
             policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
             final CachingPrincipalAttributesRepository repo =
-                    new CachingPrincipalAttributesRepository(new StubPersonAttributeDao(), TimeUnit.SECONDS , 10);
-            repo.setMergingStrategy(new NoncollidingAttributeAdder());
+                    new CachingPrincipalAttributesRepository(TimeUnit.SECONDS, 10);
+            repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
             policy.setPrincipalAttributesRepository(repo);
             policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
             policy.setAllowedAttributes(new ArrayList(getTestAttributes().keySet()));
@@ -197,6 +199,10 @@ public final class TestUtils {
 
     public static Service getService() {
         return getService(CONST_TEST_URL);
+    }
+
+    public static Service getService2() {
+        return getService(CONST_TEST_URL2);
     }
 
     public static Service getService(final String name) {

@@ -18,6 +18,10 @@
  */
 package org.jasig.cas.monitor;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -28,15 +32,19 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@Component("sessionMonitor")
 public class SessionMonitor implements Monitor<SessionStatus> {
     /** Ticket registry instance that exposes state info. */
     @NotNull
+    @Resource(name="ticketRegistry")
     private TicketRegistryState registryState;
 
     /** Threshold above which warnings are issued for session count. */
+    @Value("${cas.monitor.tgt.warn.threshold:10000}")
     private int sessionCountWarnThreshold = -1;
 
     /** Threshold above which warnings are issued for service ticket count. */
+    @Value("${cas.monitor.st.warn.threshold:5000}")
     private int serviceTicketCountWarnThreshold = -1;
 
 

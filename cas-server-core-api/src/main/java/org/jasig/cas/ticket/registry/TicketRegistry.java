@@ -66,6 +66,7 @@ public interface TicketRegistry {
 
     /**
      * Remove a specific ticket from the registry.
+     * If ticket to delete is TGT then related service tickets are removed as well.
      *
      * @param ticketId The id of the ticket to delete.
      * @return true if the ticket was removed and false if the ticket did not

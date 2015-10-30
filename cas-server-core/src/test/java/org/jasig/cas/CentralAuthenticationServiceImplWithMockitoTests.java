@@ -82,7 +82,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     
     private static final String PRINCIPAL = "principal";
 
-    private CentralAuthenticationService cas;
+    private CentralAuthenticationServiceImpl cas;
     private Authentication authentication;
     private TicketRegistry ticketRegMock;
 
@@ -143,7 +143,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(ticketIdGenForServiceMock.containsKey(any())).thenReturn(true);
         when(ticketIdGenForServiceMock.get(any())).thenReturn(new DefaultUniqueTicketIdGenerator());
         
-        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, null, mock(AuthenticationManager.class),
+        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, mock(AuthenticationManager.class),
                 mock(UniqueTicketIdGenerator.class), ticketIdGenForServiceMock, mock(ExpirationPolicy.class),
                 mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));
     }
@@ -235,7 +235,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         final String svcId = svcTicket.getService().getId();
         when(tgtMock.grantServiceTicket(anyString(), argThat(new VerifyServiceByIdMatcher(svcId)),
-                any(ExpirationPolicy.class), anyBoolean())).thenReturn(svcTicket);
+                any(ExpirationPolicy.class), anyBoolean(), anyBoolean())).thenReturn(svcTicket);
         when(tgtMock.getRoot()).thenReturn(root);
         when(tgtMock.getChainedAuthentications()).thenReturn(chainedAuthnList);
         when(svcTicket.getGrantingTicket()).thenReturn(tgtMock);   
