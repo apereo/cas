@@ -128,7 +128,7 @@
                 </div>
             </div>
             <div class="col-md-8">
-                <div class="panel panel-info">
+                <div id="uptime-panel" class="panel panel-info">
                     <div class="panel-heading">
                         <div class="row">
                             <div class="col-xs-3">
