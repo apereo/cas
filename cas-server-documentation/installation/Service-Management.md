@@ -92,115 +92,129 @@ allows one to configure a service with the following properties:
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
 
-####Configuration of Role-based Access Control
+####Configuration of Access Control
 Some examples of RBAC configuration follow:
 
 * Service is not allowed to use CAS:
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-                c:ssoEnabled="true"
-                c:enabled="false"/>
-    </property>
-...
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : false,
+    "ssoEnabled" : true
+  }
+}
 {% endhighlight %}
 
 
 * Service will be challenged to present credentials every time, thereby not using SSO:
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-                c:ssoEnabled="false"
-                c:enabled="true"/>
-    </property>
-...
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : false
+  }
+}
 {% endhighlight %}
 
 
 * To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
 `givenName` attribute with the value of `Administrator`:
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
-             <map>
-                 <entry key="cn" value="admin" />
-                 <entry key="givenName" value="Administrator" />
-             </map>
-        </bean>
-    </property>
-...
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "admin" ] ],
+      "givenName" : [ "java.util.HashSet", [ "Administrator" ] ]
+    }
+  }
+}
 {% endhighlight %}
 
 * To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`.
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
-            <map>
-                <entry key="cn">
-                    <list>
-                           <value>admin</value>
-                           <value>Admin</value>
-                           <value>TheAdmin</value>
-                    </list>
-                </entry>
-             </map>
-        </bean>
-    </property>
-...
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ]
+    }
+  }
+}
 {% endhighlight %}
 
 
 * To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
 OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`.
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-                p:requireAllAttributes="false">
-            <map>
-                <entry key="cn">
-                    <list>
-                        <value>admin</value>
-                        <value>Admin</value>
-                        <value>TheAdmin</value>
-                    </list>
-                </entry>
-                <entry key="member">
-                    <list>
-                        <value>admins</value>
-                        <value>adminGroup</value>
-                        <value>staff</value>
-                    </list>
-                </entry>
-             </map>
-        </bean>
-    </property>
-...
-</bean>
+
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "requireAllAttributes" : false,
+    "ssoEnabled" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ],
+      "member" : [ "java.util.HashSet", [ "admins, adminGroup, staff" ] ]
+    }
+  }
+}
 {% endhighlight %}
+
+* Service access is only allowed within `startingDateTime` and `endingDateTime`:
+
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "test",
+  "id" : 62,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true,
+    "unauthorizedRedirectUrl" : "https://www.github.com",
+    "startingDateTime" : "2015-11-01T13:19:54.132-07:00",
+    "endingDateTime" : "2015-11-10T13:19:54.248-07:00"
+  }
+}
+{% endhighlight %}
+
 
 
 ###Configure Proxy Authentication Policy
@@ -213,19 +227,32 @@ Note that by default, the proxy authentication is disallowed for all application
 #####`RefuseRegisteredServiceProxyPolicy`
 Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
 
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
+  }
+}
+{% endhighlight %}
+
 #####`RegexMatchingRegisteredServiceProxyPolicy`
 A proxy policy that only allows proxying to PGT urls that match the specified regex pattern.
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:description="Allows HTTP(S) and IMAP(S) protocols"
-         p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
-    <property name="proxyPolicy">
-        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-            c:pgtUrlPattern="^https?://.*" />
-    </property>
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https?://.*"
+  }
+}
 {% endhighlight %}
 
 ## Persisting Registered Service Data
