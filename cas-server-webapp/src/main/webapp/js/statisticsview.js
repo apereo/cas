@@ -104,31 +104,41 @@ var Gauge = function (wrapper, percent, options) {
 
 
 function upTime(countTo, el) {
-  now = new Date();
-  countTo = new Date(countTo);
-  difference = (now-countTo);
+    var wrapper = document.getElementById('uptime-panel');
+    var element = document.getElementById(el);
+    var now = new Date();
+    countTo = new Date(countTo);
+    var difference = (now - countTo);
 
-  days=Math.floor(difference/(60*60*1000*24)*1);
-  hours=Math.floor((difference%(60*60*1000*24))/(60*60*1000)*1);
-  mins=Math.floor(((difference%(60*60*1000*24))%(60*60*1000))/(60*1000)*1);
-  secs=Math.floor((((difference%(60*60*1000*24))%(60*60*1000))%(60*1000))/1000*1);
+    var days = Math.floor(difference / (60 * 60 * 1000 * 24) * 1);
+    var hours = Math.floor((difference % (60 * 60 * 1000 * 24)) / (60 * 60 * 1000) * 1);
+    var mins = Math.floor(((difference % (60 * 60 * 1000 * 24)) % (60 * 60 * 1000)) / (60 * 1000) * 1);
+    var secs = Math.floor((((difference % (60 * 60 * 1000 * 24)) % (60 * 60 * 1000)) % (60 * 1000)) / 1000 * 1);
 
-  days = (days  == 1) ? days  + ' day '    : days  + ' days ';
-  hours = (hours == 1) ? hours + ' hour '   : hours + ' hours ';
-  mins = (mins  == 1) ? mins  + ' minute ' : mins  + ' minutes ';
-  secs = (secs  == 1) ? secs  + ' second ' : secs  + ' seconds';
+    clearTimeout(upTime.to);
 
+    if (isNaN(days) || isNaN(hours) || isNaN(mins) || isNaN(secs) ) {
+        wrapper.style.display = 'none';
+    } else {
+        days = (days == 1) ? days + ' day ' : days + ' days ';
+        hours = (hours == 1) ? hours + ' hour ' : hours + ' hours ';
+        mins = (mins == 1) ? mins + ' minute ' : mins + ' minutes ';
+        secs = (secs == 1) ? secs + ' second ' : secs + ' seconds';
 
-  var timeString = '<span class="upTime">' + days + hours + mins + secs + '</span>';
-  document.getElementById( el ).innerHTML = timeString;
+        var timeString = '<span class="upTime">' + days + hours + mins + secs + '</span>';
+        element.innerHTML = timeString;
+        wrapper.style.display = 'block';
 
-  clearTimeout(upTime.to);
-  upTime.to=setTimeout(function(){ upTime(countTo, el); },1000);
+        upTime.to = setTimeout(function() {
+            upTime(countTo, el);
+        },1000);
+
+    }
 }
 
 
 // Fill modal with content from link href
-$("#threadDumpModal").on("show.bs.modal", function(e) {
+$("#threadDumpModal").on("show.bs.modal", function (e) {
     var link = $(e.relatedTarget);
     $(this).find(".modal-body pre").load(link.val());
 });
@@ -140,8 +150,8 @@ $("#threadDumpModal").on("show.bs.modal", function(e) {
  */
 function getThreadDumpPreview(len) {
     var len = len || 400;
-    $.get( $('#threadDumpViewButton').val() , function( data ) {
-        $('#threadDumpPreview').html( data.substr(-len) );
+    $.get($('#threadDumpViewButton').val(), function (data) {
+        $('#threadDumpPreview').html(data.substr(-len));
     });
 }
 
