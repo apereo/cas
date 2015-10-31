@@ -208,24 +208,25 @@ during the authentication event, etc.
 
 Sample configuration follows:
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-      p:id="10000001" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
-      p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
-    <property name="attributeReleasePolicy">
-        <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy">
-        <property name="allowedAttributes">
-                <list>
-                        <value>mail</value>
-                    </list>
-                </property>
-        <property name="principalAttributesRepository">
-                    <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-                            c:expiryDuration="${cas.attrs.timeToExpireInHours:2}" />
-                </property>
-        </bean>
-    </property>
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegisteredServiceImpl",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository",
+      "duration" : {
+        "@class" : "javax.cache.expiry.Duration",
+        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
+        "durationAmount" : 2
+      },
+      "mergingStrategy" : "NONE"
+    }
+  }
+}
 {% endhighlight %}
 
 
@@ -243,16 +244,25 @@ For example:
 3. The resulting merged would have attributes: `{email=eric.dalquist@example.com, phone=[123-456-7890, 111-222-3333, 000-999-8888], office=3233}`
 
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService">
-...
-    <property name="principalAttributesRepository">
-        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
-              p:mergingStrategy="MULTIVALUED" />
-    </property>
-...
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegisteredServiceImpl",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository",
+      "duration" : {
+        "@class" : "javax.cache.expiry.Duration",
+        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
+        "durationAmount" : 2
+      },
+      "mergingStrategy" : "MULTIVALUED"
+    }
+  }
+}
 {% endhighlight %}
 
 * `NoncollidingAttributeAdder`
@@ -264,16 +274,25 @@ For example:
 2. Source has attributes `{phone=[111-222-3333, 000-999-8888], office=3233}`
 3. The resulting merged would have attributes: `{email=eric.dalquist@example.com, phone=123-456-7890, office=3233}`
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService">
-...
-    <property name="principalAttributesRepository">
-        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
-              p:mergingStrategy="ADD" />
-    </property>
-...
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegisteredServiceImpl",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository",
+      "duration" : {
+        "@class" : "javax.cache.expiry.Duration",
+        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
+        "durationAmount" : 2
+      },
+      "mergingStrategy" : "ADD"
+    }
+  }
+}
 {% endhighlight %}
 
 * `ReplacingAttributeAdder`
@@ -287,15 +306,24 @@ For example:
 
 
 {% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService">
-...
-    <property name="principalAttributesRepository">
-        <bean class="org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository"
-              c:expiryDuration="${cas.attrs.timeToExpireInHours:2}"
-              p:mergingStrategy="REPLACE" />
-    </property>
-...
-</bean>
+{
+  "@class" : "org.jasig.cas.services.RegisteredServiceImpl",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository",
+      "duration" : {
+        "@class" : "javax.cache.expiry.Duration",
+        "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
+        "durationAmount" : 2
+      },
+      "mergingStrategy" : "REPLACE"
+    }
+  }
+}
 {% endhighlight %}
 
 ###Encrypting Attributes
