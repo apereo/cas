@@ -210,7 +210,7 @@ Sample configuration follows:
 
 {% highlight json %}
 {
-  "@class" : "org.jasig.cas.services.RegisteredServiceImpl",
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
@@ -246,7 +246,7 @@ For example:
 
 {% highlight json %}
 {
-  "@class" : "org.jasig.cas.services.RegisteredServiceImpl",
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
@@ -276,7 +276,7 @@ For example:
 
 {% highlight json %}
 {
-  "@class" : "org.jasig.cas.services.RegisteredServiceImpl",
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
@@ -307,7 +307,7 @@ For example:
 
 {% highlight xml %}
 {
-  "@class" : "org.jasig.cas.services.RegisteredServiceImpl",
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
   "name" : "sample",
   "id" : 100,
