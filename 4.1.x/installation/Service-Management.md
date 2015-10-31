@@ -81,116 +81,109 @@ The default access manager allows one to configure a service with the following 
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-####Configuration of Role-based Access Control
+####Configuration of Access Control
 Some examples of RBAC configuration follow:
 
 * Service is not allowed to use CAS:
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-                c:ssoEnabled="true"
-                c:enabled="false"/>
-    </property>
-...
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : false,
+    "ssoEnabled" : true
+  }
+}
 {% endhighlight %}
 
 
 * Service will be challenged to present credentials every time, thereby not using SSO:
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-                c:ssoEnabled="false"
-                c:enabled="true"/>
-    </property>
-...
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : false
+  }
+}
 {% endhighlight %}
-
 
 * To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
 `givenName` attribute with the value of `Administrator`:
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
-             <map>
-                 <entry key="cn" value="admin" />
-                 <entry key="givenName" value="Administrator" />
-             </map>
-        </bean>
-    </property>
-...
-</bean>
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "admin" ] ],
+      "givenName" : [ "java.util.HashSet", [ "Administrator" ] ]
+    }
+  }
+}
 {% endhighlight %}
 
 * To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`.
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy">
-            <map>
-                <entry key="cn">
-                    <list>
-                           <value>admin</value>
-                           <value>Admin</value>
-                           <value>TheAdmin</value>
-                    </list>
-                </entry>
-             </map>
-        </bean>
-    </property>
-...
-</bean>
+
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ]
+    }
+  }
+}
 {% endhighlight %}
 
 
 * To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
 OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`.
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:serviceId="^(https?|imaps?)://.*">
-    <property name="accessStrategy">
-        <bean class="org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-                p:requireAllAttributes="false">
-            <map>
-                <entry key="cn">
-                    <list>
-                        <value>admin</value>
-                        <value>Admin</value>
-                        <value>TheAdmin</value>
-                    </list>
-                </entry>
-                <entry key="member">
-                    <list>
-                        <value>admins</value>
-                        <value>adminGroup</value>
-                        <value>staff</value>
-                    </list>
-                </entry>
-             </map>
-        </bean>
-    </property>
-...
-</bean>
-{% endhighlight %}
 
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "requireAllAttributes" : false,
+    "ssoEnabled" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ],
+      "member" : [ "java.util.HashSet", [ "admins, adminGroup, staff" ] ]
+    }
+  }
+}
+{% endhighlight %}
 
 ###Configure Proxy Authentication Policy
 Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT.
@@ -202,19 +195,33 @@ Note that by default, the proxy authentication is disallowed for all application
 #####`RefuseRegisteredServiceProxyPolicy`
 Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
 
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
+  }
+}
+{% endhighlight %}
+
 #####`RegexMatchingRegisteredServiceProxyPolicy`
 A proxy policy that only allows proxying to PGT urls that match the specified regex pattern.
 
-{% highlight xml %}
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:description="Allows HTTP(S) and IMAP(S) protocols"
-         p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001">
-    <property name="proxyPolicy">
-        <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-            c:pgtUrlPattern="^https?://.*" />
-    </property>
-</bean>
+
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
+    "pattern" : "^https?://.*"
+  }
+}
 {% endhighlight %}
 
 ## Persisting Registered Service Data
@@ -254,35 +261,12 @@ A sample JSON file follows:
 
 {% highlight json %}
 {
-    "@class" : "org.jasig.cas.services.RegexRegisteredService",
-    "id" : 103935657744185,
-    "description" : "Service description",
-    "serviceId" : "https://**",
-    "name" : "testJsonFile",
-    "theme" : "testtheme",
-    "proxyPolicy" : {
-        "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
-        "pattern" : "https://.+"
-    },
-    "accessStrategy" : {
-        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-    },
-    "evaluationOrder" : 1000,
-    "usernameAttributeProvider" : {
-        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
-    },
-    "logoutType" : "BACK_CHANNEL",
-    "requiredHandlers" : [ "java.util.HashSet", [ "handler1", "handler2" ] ],
-    "attributeReleasePolicy" : {
-        "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
-        "attributeFilter" : {
-            "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
-            "pattern" : "\\w+"
-        },
-        "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "cn", "sn" ] ]
-    }
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "evaluationOrder" : 0
 }
-
 {% endhighlight %}
 
 
@@ -403,7 +387,7 @@ create table RegisteredServiceImpl (
 
 
 The following configuration template may be applied to `deployerConfigContext.xml` to provide for persistent
-registered service storage. 
+registered service storage.
 
 {% highlight xml %}
 <bean
@@ -524,7 +508,7 @@ Finally, be sure to add those to your `pom.xml`:
   <version>${c3p0.version}</version>
 </dependency>
 
-<!-- Required for MySQL. Swap with the appropriate driver for your deployment. 
+<!-- Required for MySQL. Swap with the appropriate driver for your deployment.
 <dependency>
     <groupId>mysql</groupId>
     <artifactId>mysql-connector-java</artifactId>
