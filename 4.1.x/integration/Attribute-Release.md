@@ -39,7 +39,7 @@ The default configuration which need not explicitly be defined, simply returns t
 Returns an attribute that is already resolved for the principal as the username for this service. If the attribute
 is not available, the default principal id will be used.
 
-{% highlight xml %}
+{% highlight json %}
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "sample",
