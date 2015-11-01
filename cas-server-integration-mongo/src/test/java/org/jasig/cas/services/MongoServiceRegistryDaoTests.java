@@ -19,7 +19,6 @@
 
 package org.jasig.cas.services;
 
-import org.jasig.cas.TestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

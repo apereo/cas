@@ -25,12 +25,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
@@ -59,6 +61,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     @Before
     public void setUp() throws Exception {
         this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
+        this.action.setPrincipalFactory(new DefaultPrincipalFactory());
 
         final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
@@ -68,7 +71,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
                 Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
                         new PrincipalBearingCredentialsAuthenticationHandler(),
                         new PrincipalBearingPrincipalResolver()));
-        final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
+        final CentralAuthenticationService centralAuthenticationService = new CentralAuthenticationServiceImpl(
                 new DefaultTicketRegistry(), authenticationManager, new DefaultUniqueTicketIdGenerator(),
                 idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(),
                 mock(ServicesManager.class), mock(LogoutManager.class));
