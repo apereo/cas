@@ -21,9 +21,9 @@ package org.jasig.cas;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/mfa-test-context.xml" })
+@ContextConfiguration(locations = {"/mfa-test-context.xml"})
 public class MultifactorAuthenticationTests {
 
     @Autowired
@@ -135,6 +135,6 @@ public class MultifactorAuthenticationTests {
     }
 
     private static Service newService(final String id) {
-        return new WebApplicationServiceFactory().createService(id);
+        return TestUtils.getService(id);
     }
 }

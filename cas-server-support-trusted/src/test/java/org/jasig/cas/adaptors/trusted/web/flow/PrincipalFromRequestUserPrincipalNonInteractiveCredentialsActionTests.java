@@ -24,6 +24,7 @@ import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingP
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
@@ -59,6 +60,7 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
     @Before
     public void setUp() throws Exception {
         this.action = new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction();
+        this.action.setPrincipalFactory(new DefaultPrincipalFactory());
 
         final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
