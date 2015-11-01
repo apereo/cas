@@ -25,11 +25,12 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public class CachingPrincipalAttributesRepositoryTests extends AbstractGuavaCachingPrincipalAttributesRepositoryTests {
+public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
     @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final TimeUnit unit, final long duration) {
-        return new CachingPrincipalAttributesRepository(this.dao,
-                unit, duration);
+        final CachingPrincipalAttributesRepository repo = new CachingPrincipalAttributesRepository(unit, duration);
+        repo.setAttributeRepository(this.dao);
+        return repo;
     }
 }

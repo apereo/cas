@@ -26,6 +26,10 @@ import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.web.support.WebUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -44,16 +48,20 @@ import java.util.List;
  * @author Jerome Leleu
  * @since 3.0.0
  */
+@Component("logoutAction")
 public final class LogoutAction extends AbstractLogoutAction {
 
     /** The services manager. */
     @NotNull
+    @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     /**
      * Boolean to determine if we will redirect to any url provided in the
      * service request parameter.
      */
+    @Value("${cas.logout.followServiceRedirects:false}")
     private boolean followServiceRedirects;
 
     @Override

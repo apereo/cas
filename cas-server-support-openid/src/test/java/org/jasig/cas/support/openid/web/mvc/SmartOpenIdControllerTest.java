@@ -18,36 +18,32 @@
  */
 package org.jasig.cas.support.openid.web.mvc;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
+import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.junit.Test;
 import org.openid4java.server.ServerManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.Map;
+
+import static org.junit.Assert.*;
 
 /**
  * Test case of the Smart OpenId Controller.
  * @author Frederic Esnault
  * @since 3.0.0
  */
-public class SmartOpenIdControllerTest {
+public class SmartOpenIdControllerTest extends AbstractOpenIdTests {
     private final MockHttpServletRequest request = new MockHttpServletRequest();
     private final HttpServletResponse response = new MockHttpServletResponse();
-    private ServerManager manager;
-    private final SmartOpenIdController smartOpenIdController = new SmartOpenIdController();
 
-    @Before
-    public void setUp() {
-        manager = new ServerManager();
-        manager.setOPEndpointUrl("https://localshot:8443/cas/login");
-        manager.setEnforceRpId(false);
-        smartOpenIdController.setServerManager(manager);
-    }
+    @Autowired
+    private ServerManager manager;
+
+    @Autowired
+    private SmartOpenIdController smartOpenIdController;
 
     @Test
     public void verifyCanHandle() {

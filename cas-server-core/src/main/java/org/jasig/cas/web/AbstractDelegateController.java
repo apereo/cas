@@ -20,7 +20,7 @@ package org.jasig.cas.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Frederic Esnault
  * @since 4.2.0
  */
-public abstract class AbstractDelegateController extends AbstractController {
+public abstract class AbstractDelegateController {
     
     /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -44,5 +44,15 @@ public abstract class AbstractDelegateController extends AbstractController {
      */
     public abstract boolean canHandle(HttpServletRequest request, HttpServletResponse response);
 
+    /**
+     * Handle request internal.
+     *
+     * @param request the request
+     * @param response the response
+     * @return the model and view
+     * @throws Exception the exception
+     */
+    protected abstract ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response)
+        throws Exception;
 
 }

@@ -23,7 +23,6 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -58,8 +57,7 @@ public final class DefaultArgumentExtractor extends AbstractArgumentExtractor {
      *
      * @param serviceFactoryList the service factory list
      */
-    public DefaultArgumentExtractor(@Min(1)
-                                    final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
+    public DefaultArgumentExtractor(final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
         super(serviceFactoryList);
     }
 
