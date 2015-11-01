@@ -19,18 +19,21 @@
 
 package org.jasig.cas.support.saml;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
 /**
- * Test suite to run all SAML tests.
+ * Class that exposes relevant constants and parameters to
+ * the SAML IdP.
+ *
  * @author Misagh Moayyed
- * @since 4.2.0
+ * @since 4.2
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+public interface SamlIdPConstants {
 
-})
-public final class AllTestsSuite {
+    /** The IdP metadata endpoint. */
+    String ENDPOINT_IDP_METADATA = "/idp/metadata";
+
+
+    /** The SAML2 SSO redirect profile endpoint. */
+    String ENDPOINT_SAML2_SSO_PROFILE_REDIRECT = "/idp/profile/SAML2/Redirect/SSO";
+
 }
 
