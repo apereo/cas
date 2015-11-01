@@ -20,7 +20,6 @@ package org.jasig.cas.adaptors.generic;
 
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.junit.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -66,11 +65,9 @@ public class RejectUsersAuthenticationHandlerTests {
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
         try {
-            final RegisteredServiceImpl svc = new RegisteredServiceImpl();
-            svc.setServiceId("https://some.app.edu");
             assertFalse(this.authenticationHandler
                 .supports(new HttpBasedServiceCredential(new URL(
-                    "http://www.rutgers.edu"), svc)));
+                    "http://www.rutgers.edu"), org.jasig.cas.authentication.TestUtils.getRegisteredService())));
         } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }
