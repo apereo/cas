@@ -18,6 +18,11 @@
  */
 package org.jasig.cas.web.view;
 
+import org.jasig.cas.services.web.view.AbstractDelegatingCasView;
+import org.jasig.cas.services.web.view.CasViewConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,5 +53,23 @@ public class Cas20ResponseView extends AbstractDelegatingCasView {
         super.putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL, getPrincipal(model));
         super.putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, getChainedAuthentications(model));
         super.putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION, getPrimaryAuthenticationFrom(model));
+    }
+
+
+    /**
+     * The type Success.
+     */
+    @Component("cas2ServiceSuccessView")
+    public static class Success extends Cas20ResponseView {
+        /**
+         * Instantiates a new Success.
+         * @param view the view
+         */
+        @Autowired
+        public Success(@Qualifier("cas2JstlSuccessView")
+                       final View view) {
+            super(view);
+            super.setSuccessResponse(true);
+        }
     }
 }

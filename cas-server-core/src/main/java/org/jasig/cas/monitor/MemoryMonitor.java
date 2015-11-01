@@ -18,12 +18,17 @@
  */
 package org.jasig.cas.monitor;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 /**
  * Monitors JVM memory usage.
  *
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@Component("memoryMonitor")
 public class MemoryMonitor implements Monitor<MemoryStatus> {
 
     /** Default percent free memory warning threshold. */
@@ -39,7 +44,9 @@ public class MemoryMonitor implements Monitor<MemoryStatus> {
      *
      * @param threshold Percent free memory warning threshold.
      */
-    public void setFreeMemoryWarnThreshold(final long threshold) {
+    @Autowired
+    public void setFreeMemoryWarnThreshold(@Value("${cas.monitor.free.mem.threshold:10}")
+                                               final long threshold) {
         if (threshold < 0) {
             throw new IllegalArgumentException("Warning threshold must be non-negative.");
         }

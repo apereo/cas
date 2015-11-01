@@ -21,7 +21,13 @@ This ticket registry implementation is enabled by simply including the module in
 
 ## Configuration
 
-This implementation auto-configures most of the internal details of the underlying Hazelcast instance and 
+Enable the registry via:
+
+{% highlight properties %}
+<alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
+{% endhighlight %}
+
+This implementation auto-configures most of the internal details of the underlying Hazelcast instance and
 the distributed `IMap` for tickets storage.
 
 {% highlight properties %}
@@ -37,7 +43,6 @@ the distributed `IMap` for tickets storage.
 # hz.cluster.instance.name=${host.name}
 {% endhighlight %}
 
- 
 ## Logging
 To enable additional logging for the registry, configure the log4j configuration file to add the following
 levels:
@@ -50,5 +55,3 @@ levels:
 </Logger>
 ...
 {% endhighlight %}
-  
-  

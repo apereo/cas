@@ -27,6 +27,10 @@ import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -42,13 +46,15 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Component("sendTicketGrantingTicketAction")
 public final class SendTicketGrantingTicketAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(SendTicketGrantingTicketAction.class);
 
+    @Value("${create.sso.renewed.authn:true}")
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
 
     @NotNull
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
@@ -64,8 +70,12 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
      * @param centralAuthenticationService the central authentication service
      * @param servicesManager the services manager
      */
-    public SendTicketGrantingTicketAction(final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+    @Autowired
+    public SendTicketGrantingTicketAction(@Qualifier("ticketGrantingTicketCookieGenerator")
+                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                          @Qualifier("centralAuthenticationService")
                                           final CentralAuthenticationService centralAuthenticationService,
+                                          @Qualifier("servicesManager")
                                           final ServicesManager servicesManager) {
         super();
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;

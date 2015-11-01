@@ -57,16 +57,20 @@ public class MockService implements Service {
         return this.loggedOut;
     }
 
+    @Override
     public void setPrincipal(final Principal principal) {}
 
+    @Override
     public Map<String, Object> getAttributes() {
         return null;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public boolean matches(final Service service) {
         return true;
     }

@@ -29,6 +29,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -58,12 +59,13 @@ import java.util.Formatter;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
-@RestController("/v1")
+@RestController
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
 
     @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
     /**
@@ -88,10 +90,10 @@ public class TicketsResource {
                     .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
                     .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
                     .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
-            return new ResponseEntity<String>(fmt.toString(), headers, HttpStatus.CREATED);
+            return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
         } catch (final Throwable e) {
             LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -108,12 +110,12 @@ public class TicketsResource {
         try {
             final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
                     new WebApplicationServiceFactory().createService(requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE)));
-            return new ResponseEntity<String>(serviceTicketId.getId(), HttpStatus.OK);
+            return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
         } catch (final InvalidTicketException e) {
-            return new ResponseEntity<String>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -138,5 +140,9 @@ public class TicketsResource {
      */
     protected Credential obtainCredential(final MultiValueMap<String, String> requestBody) {
         return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
+    }
+
+    public CentralAuthenticationService getCas() {
+        return cas;
     }
 }

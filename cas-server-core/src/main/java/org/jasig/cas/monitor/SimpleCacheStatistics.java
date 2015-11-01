@@ -71,16 +71,19 @@ public class SimpleCacheStatistics implements CacheStatistics {
         this.name = name;
     }
 
+    @Override
     public long getSize() {
         return this.size;
     }
 
 
+    @Override
     public long getCapacity() {
         return this.capacity;
     }
 
 
+    @Override
     public long getEvictions() {
         return this.evictions;
     }
@@ -112,6 +115,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
      *
      * @return Name of cache instance/host to which statistics apply.
      */
+    @Override
     public String getName() {
         return this.name;
     }

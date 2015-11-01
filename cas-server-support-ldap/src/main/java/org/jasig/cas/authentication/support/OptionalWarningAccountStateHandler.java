@@ -18,14 +18,15 @@
  */
 package org.jasig.cas.authentication.support;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.MessageDescriptor;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * The component supports both opt-in and opt-out warnings on a per-user basis using a simple algorithm of three
@@ -44,20 +45,23 @@ import org.ldaptive.auth.AuthenticationResponse;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("optionalWarningAccountStateHandler")
 public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandler {
 
     /** Name of user attribute that describes whether or not to display expiration warnings. */
-    @NotNull
+    @Value("${password.policy.warn.attribute.name:}")
+
     private String warningAttributeName;
 
     /** Attribute value to match. */
-    @NotNull
+    @Value("${password.policy.warn.attribute.value:}")
     private String warningAttributeValue;
 
     /**
      * True to opt into password expiration
      * warnings on match, false to opt out on match.
      **/
+    @Value("${password.policy.warn.display.matched:true}")
     private boolean displayWarningOnMatch = true;
 
 
@@ -95,6 +99,17 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
             final AuthenticationResponse response,
             final LdapPasswordPolicyConfiguration configuration,
             final List<MessageDescriptor> messages) {
+
+        if (StringUtils.isBlank(this.warningAttributeName)) {
+            logger.debug("No warning attribute name is defined");
+            return;
+        }
+
+        if (StringUtils.isBlank(this.warningAttributeValue)) {
+            logger.debug("No warning attribute value to match is defined");
+            return;
+        }
+
 
         final LdapAttribute attribute = response.getLdapEntry().getAttribute(this.warningAttributeName);
         boolean matches = false;

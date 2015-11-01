@@ -50,6 +50,6 @@
 
   <end-state id="redirectView" view="externalRedirect:#{flowScope.logoutRedirectUrl}" />
 
-  <view-state id="logoutView" view="casLogoutView" />
+  <end-state id="logoutView" view="casLogoutView" />
 
 </flow>

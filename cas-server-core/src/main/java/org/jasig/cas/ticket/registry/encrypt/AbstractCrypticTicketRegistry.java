@@ -26,6 +26,8 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
 import org.jasig.cas.util.CipherExecutor;
 import org.jasig.cas.util.CompressionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -45,6 +47,8 @@ import java.util.HashSet;
 public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketCipherExecutor")
     private CipherExecutor<byte[], byte[]> cipherExecutor;
 
     /**
@@ -117,12 +121,12 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
             return result;
         }
 
-        logger.info("Attempting to decode [{}]",  result);
+        logger.info("Attempting to decode {}", result);
         final EncodedTicket encodedTicket = (EncodedTicket) result;
 
         final Ticket ticket = CompressionUtils.decodeAndSerializeObject(
                 encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
-        logger.info("Decoded [{}]",  ticket);
+        logger.info("Decoded {}",  ticket);
         return ticket;
     }
 
@@ -132,7 +136,7 @@ public abstract class AbstractCrypticTicketRegistry extends AbstractDistributedT
      * @param items the items
      * @return the set
      */
-    protected Collection<Ticket>  decodeTickets(final Collection<Ticket> items) {
+    protected Collection<Ticket> decodeTickets(final Collection<Ticket> items) {
         if (this.cipherExecutor == null) {
             logger.trace("Ticket encryption is not enabled. Falling back to default behavior");
             return items;

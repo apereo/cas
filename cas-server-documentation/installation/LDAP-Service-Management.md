@@ -4,10 +4,10 @@ title: CAS - LDAP Service Registry
 ---
 
 # LDAP Service Registry
-Service registry implementation which stores the services in a LDAP Directory. 
-Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapRegisteredServiceMapper` 
-in order to configure settings for retrieval, search and persistence of service definitions. 
-By default, entries are assigned the `objectclass` `casRegisteredService` 
+Service registry implementation which stores the services in a LDAP Directory.
+Uses an instance of `LdapRegisteredServiceMapper`, that by default is `DefaultLdapRegisteredServiceMapper`
+in order to configure settings for retrieval, search and persistence of service definitions.
+By default, entries are assigned the `objectclass` `casRegisteredService`
 attribute and are looked up by the `uid` attribute.
 
 Support is enabled by adding the following module into the Maven overlay:
@@ -15,7 +15,7 @@ Support is enabled by adding the following module into the Maven overlay:
 {% highlight xml %}
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-support-ldap</artifactId>
+    <artifactId>cas-server-support-ldap-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -24,24 +24,13 @@ Support is enabled by adding the following module into the Maven overlay:
 ## Configuration
 
 {% highlight xml %}
-
-<context:component-scan base-package="org.jasig.cas" />
-
-<bean id="serviceRegistryDao"
-      class="org.jasig.cas.adaptors.ldap.services.LdapServiceRegistryDao"
-      p:connectionFactory-ref="pooledLdapConnectionFactory"
-      p:searchRequest-ref="searchRequest"
-      p:ldapServiceMapper-ref="ldapServiceMapper" />
-
-<bean id="ldapServiceMapper"
-      class="org.jasig.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper"/>
+...
+<alias name="ldapServiceRegistryDao" alias="serviceRegistryDao" />
+<alias name="mySearchRequest" alias="ldapServiceRegistrySearchRequest" />
+<alias name="myConnectionFactory" alias="ldapServiceRegistryConnectionFactory" />
+...
 {% endhighlight %}
 
-Note that the configuration of the mapper is optional and need not explicitly exist.
-
-<p/>
-
-##`DefaultLdapRegisteredServiceMapper`
 The default mapper has support for the following optional items:
 
 | Field                             | Default Value
@@ -50,6 +39,6 @@ The default mapper has support for the following optional items:
 | `serviceDefinitionAttribute`      | description
 | `idAttribute`                     | uid
 
-Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as 
-JSON objects. The format and syntax of the JSON is identical to that of 
+Service definitions are by default stored inside the `serviceDefinitionAttribute` attribute as
+JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html).
