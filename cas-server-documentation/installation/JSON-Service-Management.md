@@ -1,17 +1,22 @@
 ---
 layout: default
-title: CAS - JSON Service Registry 
+title: CAS - JSON Service Registry
 ---
 
-# JSON Service Registry 
-This DAO reads services definitions from JSON configuration files at the application context initialization time. 
+# JSON Service Registry
+This DAO reads services definitions from JSON configuration files at the application context initialization time.
 JSON files are
-expected to be found inside a configured directory location and this DAO will recursively look through 
+expected to be found inside a configured directory location and this DAO will recursively look through
 the directory structure to find relevant JSON files.
 
 {% highlight xml %}
-<bean id="serviceRegistryDao" class="org.jasig.cas.services.JsonServiceRegistryDao"
-          c:configDirectory="file:/etc/cas/json" />
+<alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
+{% endhighlight %}
+
+Path to the JSON service definitions directory is controlled via:
+
+{% highlight properties %}
+service.registry.config.location=classpath:services
 {% endhighlight %}
 
 A sample JSON file follows:

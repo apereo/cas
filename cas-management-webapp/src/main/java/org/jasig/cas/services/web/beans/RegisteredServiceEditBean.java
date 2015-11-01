@@ -48,6 +48,7 @@ import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
+import org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
@@ -200,6 +201,12 @@ public final class RegisteredServiceEditBean implements Serializable {
             accessBean.setRequireAll(def.isRequireAllAttributes());
             accessBean.setRequiredAttr(def.getRequiredAttributes());
         }
+
+        if (accessStrategy instanceof TimeBasedRegisteredServiceAccessStrategy) {
+            final TimeBasedRegisteredServiceAccessStrategy def = (TimeBasedRegisteredServiceAccessStrategy) accessStrategy;
+            accessBean.setStartingTime(def.getStartingDateTime());
+            accessBean.setEndingTime(def.getEndingDateTime());
+        }
     }
 
     /**
@@ -267,7 +274,7 @@ public final class RegisteredServiceEditBean implements Serializable {
             }
 
             final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
-            final IAttributeMerger merger = cc.getMergingStrategy();
+            final IAttributeMerger merger = cc.getMergingStrategy().getAttributeMerger();
 
             if (merger != null) {
                 if (merger instanceof NoncollidingAttributeAdder) {
@@ -560,8 +567,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                     regSvc.setLogoutUrl(new URL(this.logoutUrl));
                 }
 
-                final RegisteredServiceAccessStrategy accessStrategy = regSvc.getAccessStrategy();
-                convertAccessStrategyToService((DefaultRegisteredServiceAccessStrategy) accessStrategy);
+                convertAccessStrategyToService(regSvc);
 
                 convertProxyPolicyToService(regSvc);
 
@@ -602,7 +608,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final String attrType = this.attrRelease.getAttrOption();
                 if (StringUtils.equalsIgnoreCase(attrType,
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
-                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
+                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(
                             TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
                             this.attrRelease.getCachedExpiration()));
                 } else if (StringUtils.equalsIgnoreCase(attrType,
@@ -676,15 +682,17 @@ public final class RegisteredServiceEditBean implements Serializable {
         /**
          * Convert access strategy to service.
          *
-         * @param accessStrategy the access strategy
+         * @param regSvc the service
          */
-        private void convertAccessStrategyToService(final DefaultRegisteredServiceAccessStrategy accessStrategy) {
-            accessStrategy
-                    .setEnabled(this.supportAccess.isCasEnabled());
-            accessStrategy
-                    .setSsoEnabled(this.supportAccess.isSsoEnabled());
-            accessStrategy
-                    .setRequireAllAttributes(this.supportAccess.isRequireAll());
+        private void convertAccessStrategyToService(final AbstractRegisteredService regSvc) {
+
+
+            final TimeBasedRegisteredServiceAccessStrategy accessStrategy =
+                    new TimeBasedRegisteredServiceAccessStrategy();
+
+            accessStrategy.setEnabled(this.supportAccess.isCasEnabled());
+            accessStrategy.setSsoEnabled(this.supportAccess.isSsoEnabled());
+            accessStrategy.setRequireAllAttributes(this.supportAccess.isRequireAll());
 
             final Map<String, Set<String>> requiredAttrs = this.supportAccess.getRequiredAttr();
             final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
@@ -695,8 +703,13 @@ public final class RegisteredServiceEditBean implements Serializable {
                     it.remove();
                 }
             }
-            accessStrategy
-                    .setRequiredAttributes(requiredAttrs);
+            accessStrategy.setRequiredAttributes(requiredAttrs);
+
+            accessStrategy.setEndingDateTime(this.supportAccess.getEndingTime());
+            accessStrategy.setStartingDateTime(this.supportAccess.getStartingTime());
+
+            regSvc.setAccessStrategy(accessStrategy);
+
         }
 
         /**

@@ -152,6 +152,7 @@ public class KryoTranscoder implements Transcoder<Object> {
      * @param d Data to decode.
      * @return False.
      */
+    @Override
     public boolean asyncDecode(final CachedData d) {
         return false;
     }
@@ -181,6 +182,7 @@ public class KryoTranscoder implements Transcoder<Object> {
      *
      * @return  <code>net.spy.memcached.CachedData#MAX_SIZE</code>.
      */
+    @Override
     public int getMaxSize() {
         return CachedData.MAX_SIZE;
     }

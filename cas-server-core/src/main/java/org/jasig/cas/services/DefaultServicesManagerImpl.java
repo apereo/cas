@@ -19,14 +19,36 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.util.CasSpringBeanJobFactory;
+import org.jasig.cas.web.support.WebUtils;
 import org.jasig.inspektr.audit.annotation.Audit;
+import org.joda.time.DateTime;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerFactory;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.spi.JobFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -37,30 +59,53 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Component("servicesManager")
 public final class DefaultServicesManagerImpl implements ReloadableServicesManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServicesManagerImpl.class);
 
-    /** Instance of ServiceRegistryDao. */
+    /**
+     * Instance of ServiceRegistryDao.
+     */
     @NotNull
-    private final ServiceRegistryDao serviceRegistryDao;
+    private ServiceRegistryDao serviceRegistryDao;
 
-    /** Map to store all services. */
+
+    /**
+     * Map to store all services.
+     */
     private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
+
+    @Value("${service.registry.quartz.reloader.repeatInterval:60}")
+    private int refreshInterval;
+
+    @Value("${service.registry.quartz.reloader.startDelay:15}")
+    private int startDelay;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    /**
+     * Instantiates a new default services manager impl.
+     */
+    public DefaultServicesManagerImpl() {
+    }
 
     /**
      * Instantiates a new default services manager impl.
      *
      * @param serviceRegistryDao the service registry dao
      */
-    public DefaultServicesManagerImpl(final ServiceRegistryDao serviceRegistryDao) {
+
+    @Autowired
+    public DefaultServicesManagerImpl(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
         this.serviceRegistryDao = serviceRegistryDao;
 
         load();
     }
 
     @Audit(action = "DELETE_SERVICE", actionResolverName = "DELETE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
+        resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final long id) {
         final RegisteredService r = findServiceBy(id);
@@ -104,7 +149,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      *
      * @return the tree set
      */
-    protected TreeSet<RegisteredService> convertToTreeSet() {
+    public TreeSet<RegisteredService> convertToTreeSet() {
         return new TreeSet<>(this.services.values());
     }
 
@@ -119,7 +164,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     @Audit(action = "SAVE_SERVICE", actionResolverName = "SAVE_SERVICE_ACTION_RESOLVER",
-            resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
+        resourceResolverName = "SAVE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService) {
         final RegisteredService r = this.serviceRegistryDao.save(registeredService);
@@ -134,11 +179,11 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     /**
-     * Load services that are provided by the DAO. 
+     * Load services that are provided by the DAO.
      */
-    private void load() {
+    public void load() {
         final ConcurrentHashMap<Long, RegisteredService> localServices =
-                new ConcurrentHashMap<>();
+            new ConcurrentHashMap<>();
 
         for (final RegisteredService r : this.serviceRegistryDao.load()) {
             LOGGER.debug("Adding registered service {}", r.getServiceId());
@@ -146,7 +191,76 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
         }
 
         this.services = localServices;
-        LOGGER.info("Loaded {} services.", this.services.size());
-        
+        LOGGER.info("Loaded {} services from {}.", this.services.size(),
+            this.serviceRegistryDao);
+
+    }
+
+    /**
+     * Schedule reloader job.
+     */
+    @PostConstruct
+    public void scheduleReloaderJob() {
+        try {
+            if (shouldScheduleLoaderJob()) {
+                LOGGER.debug("Preparing to schedule reloader job");
+
+                final JobDetail job = JobBuilder.newJob(ServiceRegistryReloaderJob.class)
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .build();
+
+                final Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInSeconds(this.refreshInterval)
+                        .repeatForever()).build();
+
+                final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
+                final SchedulerFactory schFactory = new StdSchedulerFactory();
+                final Scheduler sch = schFactory.getScheduler();
+                sch.setJobFactory(jobFactory);
+
+                sch.start();
+                LOGGER.debug("Started {} scheduler", this.getClass().getName());
+                sch.scheduleJob(job, trigger);
+                LOGGER.info("Services manager will reload service definitions every {} seconds",
+                    this.refreshInterval);
+            }
+
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
+
+    private boolean shouldScheduleLoaderJob() {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
+            if (WebUtils.isCasServletInitializing(this.applicationContext)) {
+                LOGGER.debug("Found CAS servlet application context for service management");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * The Service registry reloader job.
+     */
+    public static class ServiceRegistryReloaderJob implements Job {
+
+        @Autowired
+        @Qualifier("servicesManager")
+        private ReloadableServicesManager servicesManager;
+
+        @Override
+        public void execute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
+            try {
+                servicesManager.reload();
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+
+        }
     }
 }

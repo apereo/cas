@@ -61,6 +61,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
         }
     }
 
+    @Override
     public Class getObjectType() {
         return PublicKey.class;
     }
@@ -68,6 +69,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
     public Resource getResource() {
         return resource;
     }
+
 
     public String getAlgorithm() {
         return algorithm;
