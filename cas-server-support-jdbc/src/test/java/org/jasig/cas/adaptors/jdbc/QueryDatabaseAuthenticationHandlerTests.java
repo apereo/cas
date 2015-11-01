@@ -19,8 +19,8 @@
 
 package org.jasig.cas.adaptors.jdbc;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.TestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

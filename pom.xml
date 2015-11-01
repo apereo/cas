@@ -791,6 +791,14 @@
             </dependency>
 
             <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+                <scope>compile</scope>
+                <type>jar</type>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-dbcp2</artifactId>
                 <version>${dbcp.version}</version>
@@ -1309,6 +1317,12 @@
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-binding</artifactId>
                 <version>${spring.webflow.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -1326,7 +1340,21 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
+
+
+                    <exclusion>
+                        <artifactId>slf4j-log4j12</artifactId>
+                        <groupId>org.slf4j</groupId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>taglibs</groupId>
+                <artifactId>standard</artifactId>
+                <version>${taglibs.version}</version>
+                <type>jar</type>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>
@@ -1474,10 +1502,20 @@
 
     <modules>
         <module>cas-server-core-api</module>
+        <module>cas-server-core-logging</module>
+        <module>cas-server-core-util</module>
+        <module>cas-server-core-authentication</module>
+        <module>cas-server-core-logout</module>
+        <module>cas-server-core-monitor</module>
+        <module>cas-server-core-services</module>
+        <module>cas-server-core-tickets</module>
+        <module>cas-server-core-validation</module>
+        <module>cas-server-core-web</module>
         <module>cas-server-core</module>
-        <module>cas-server-webapp-support</module>
+        <module>cas-server-core-audit</module>
         <module>cas-server-support-generic</module>
         <module>cas-server-support-jdbc</module>
+        <module>cas-server-support-jdbc-monitor</module>
         <module>cas-server-support-jpa-ticket-registry</module>
         <module>cas-server-support-jpa-service-registry</module>
         <module>cas-server-support-ldap</module>
@@ -1500,12 +1538,22 @@
         <module>cas-server-integration-ehcache</module>
         <module>cas-server-integration-ehcache-monitor</module>
         <module>cas-server-integration-pac4j</module>
+        <module>cas-server-integration-pac4j-core</module>
         <module>cas-server-extension-clearpass</module>
         <module>cas-server-support-rest</module>
         <module>cas-server-support-yubikey</module>
         <module>cas-server-support-duo</module>
         <module>cas-server-integration-hazelcast</module>
         <module>cas-server-integration-mongo</module>
+
+        <module>cas-server-webapp-cookie</module>
+        <module>cas-server-webapp-reports</module>
+        <module>cas-server-webapp-themes</module>
+        <module>cas-server-webapp-throttle</module>
+        <module>cas-server-webapp-validation</module>
+        <module>cas-server-webapp-actions</module>
+        <module>cas-server-webapp-support</module>
+
         <module>cas-server-webapp</module>
         <module>cas-management-webapp</module>
     </modules>
@@ -1657,6 +1705,7 @@
         <hazelcast.version>3.5.2</hazelcast.version>
         <c3p0.version>0.9.5.1</c3p0.version>
         <cryptacular.version>1.0</cryptacular.version>
+        <taglibs.version>1.1.2</taglibs.version>
 
         <!-- Plugin Versions -->
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>

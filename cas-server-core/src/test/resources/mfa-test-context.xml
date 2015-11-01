@@ -90,8 +90,8 @@
 
     <util:map id="uniqueIdGeneratorsMap">
         <entry
-            key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
-            value-ref="serviceTicketUniqueIdGenerator"/>
+                key="org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl"
+                value-ref="serviceTicketUniqueIdGenerator"/>
     </util:map>
 
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao"/>
