@@ -44,6 +44,10 @@
             <artifactId>cas-server-support-saml</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+        </dependency>
     </dependencies>
 
     <properties>
