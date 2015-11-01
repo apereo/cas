@@ -33,11 +33,13 @@ import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.SamlIdPConstants;
+import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +63,7 @@ import java.security.SecureRandom;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Controller
+@Controller("ssoPostProfileHandlerController")
 public class SSOPostProfileHandlerController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -92,6 +94,10 @@ public class SSOPostProfileHandlerController {
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     private Service callbackService;
+
+    @Autowired
+    @Qualifier("ssoPostProfileSamlResponseBuilder")
+    private SamlResponseBuilder responseBuilder;
 
     /**
      * Instantiates a new redirect profile handler controller.
@@ -167,10 +173,13 @@ public class SSOPostProfileHandlerController {
         final Assertion assertion = validator.validate(ticket, serviceUrl);
         logValidationAssertion(assertion);
         if (assertion.isValid()) {
-
+            logger.debug("Preparing SAML response to {}", authnRequest.getAssertionConsumerServiceURL());
+            final Response samlResponse = responseBuilder.build(authnRequest, request, response, assertion);
         }
         storeAuthnRequest(request, null);
     }
+
+
 
     /**
      * Handle profile request.
