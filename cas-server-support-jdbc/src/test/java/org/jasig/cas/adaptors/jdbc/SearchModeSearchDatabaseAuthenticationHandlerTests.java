@@ -19,7 +19,7 @@
 
 package org.jasig.cas.adaptors.jdbc;
 
-import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.After;
 import org.junit.Before;

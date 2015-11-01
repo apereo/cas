@@ -20,7 +20,6 @@ package org.jasig.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -114,9 +113,9 @@ public final class OAuth20ProfileControllerTests {
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal p = TestUtils.getPrincipal(ID, map);
+        final Principal p = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
         final TicketGrantingTicket impl = new TicketGrantingTicketImpl(TGT_ID,
-            TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
 
         ((OAuth20WrapperController) oauth20WrapperController).getTicketRegistry().addTicket(impl);
 

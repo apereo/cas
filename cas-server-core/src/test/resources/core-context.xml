@@ -24,12 +24,10 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:metrics="http://www.ryantenney.com/schema/metrics"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.ryantenney.com/schema/metrics http://www.ryantenney.com/schema/metrics/metrics-3.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="org.jasig.cas"/>
@@ -79,7 +77,7 @@
         <ref bean="sessionMonitor"/>
     </util:list>
 
-    <util:list id="serviceFactoryList" value-type="org.jasig.cas.authentication.principal.ServiceFactory">
+    <util:list id="serviceFactoryList">
         <ref bean="webApplicationServiceFactory" />
     </util:list>
 
@@ -172,7 +170,7 @@
             <property name="serviceId" value="testAnonymous"/>
             <property name="evaluationOrder" value="5"/>
             <property name="usernameAttributeProvider">
-                <bean class="org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider"/>
+                <bean class="org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider" />
             </property>
         </bean>
 
@@ -314,9 +312,6 @@
     <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
           c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
 
-    <metrics:metric-registry id="metrics" />
-    <metrics:health-check-registry id="healthCheckMetrics" />
-
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor" />
 
     <bean id="protocolCas2ViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
@@ -335,4 +330,7 @@
           class="org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository"
             c:timeUnit="SECONDS"
             c:expiryDuration="20"/>
+
+    <bean id="persistentIdGenerator" class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
+          c:salt="casrox"  />
 </beans>

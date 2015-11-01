@@ -45,19 +45,14 @@ public final class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    protected Credential constructCredentialsFromRequest(
-            final RequestContext context) {
-        final HttpServletRequest request = WebUtils
-                .getHttpServletRequest(context);
+    protected Credential constructCredentialsFromRequest(final RequestContext context) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
         final String remoteUser = request.getRemoteUser();
 
         if (StringUtils.hasText(remoteUser)) {
-            logger.debug("Remote  User [{}] found in HttpServletRequest", remoteUser);
+            logger.debug("Remote User [{}] found in HttpServletRequest", remoteUser);
             return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser));
         }
-
-        logger.debug("Remote User not found in HttpServletRequest.");
-
         return null;
     }
 }

@@ -19,7 +19,6 @@
 package org.jasig.cas.support.saml.web.view;
 
 import org.jasig.cas.CasProtocolConstants;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
@@ -66,7 +65,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final List<RegisteredService> list = new ArrayList<>();
 
         final RegisteredServiceImpl regSvc = new RegisteredServiceImpl();
-        regSvc.setServiceId(TestUtils.getService().getId());
+        regSvc.setServiceId(org.jasig.cas.authentication.TestUtils.getService().getId());
         regSvc.setName("Test Service");
         regSvc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
@@ -95,9 +94,11 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
-        final Authentication primary = TestUtils.getAuthentication(principal, authAttributes);
+        final Authentication primary =
+                org.jasig.cas.authentication.TestUtils.getAuthentication(principal, authAttributes);
         final Assertion assertion = new ImmutableAssertion(
-                primary, Collections.singletonList(primary), TestUtils.getService(), true);
+                primary, Collections.singletonList(primary),
+                org.jasig.cas.authentication.TestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -129,10 +130,11 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
                 SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
-        final Authentication primary = TestUtils.getAuthentication(principal, authAttributes);
+        final Authentication primary = org.jasig.cas.authentication.TestUtils.getAuthentication(principal, authAttributes);
 
         final Assertion assertion = new ImmutableAssertion(
-                primary, Collections.singletonList(primary), TestUtils.getService(), true);
+                primary, Collections.singletonList(primary),
+                org.jasig.cas.authentication.TestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -158,10 +160,12 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authnAttributes.put("authnAttribute2", "authnAttrbuteV2");
         authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
 
-        final Authentication primary = TestUtils.getAuthentication(principal, authnAttributes);
+        final Authentication primary =
+                org.jasig.cas.authentication.TestUtils.getAuthentication(principal, authnAttributes);
 
         final Assertion assertion = new ImmutableAssertion(
-                primary, Collections.singletonList(primary), TestUtils.getService(), true);
+                primary, Collections.singletonList(primary),
+                org.jasig.cas.authentication.TestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
