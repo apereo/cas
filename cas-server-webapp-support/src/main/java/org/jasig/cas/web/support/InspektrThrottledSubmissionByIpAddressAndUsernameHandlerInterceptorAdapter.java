@@ -169,7 +169,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      */
     protected String constructUsername(final HttpServletRequest request, final String usernameParameter) {
         final String username = request.getParameter(usernameParameter);
-        return "[username: " + (username != null ? username : "") + ']';
+        return (username != null ? username : "unknown") + "+password";
     }
 
     @Override
