@@ -26,7 +26,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>cas-server-integration-pac4j-core</artifactId>
     <packaging>jar</packaging>
-    <name>Apereo CAS Authentication handler wrapping pac4j</name>
+    <name>Apereo CAS Authentication Core Integration for Pac4j</name>
 
     <developers>
         <developer>

@@ -22,7 +22,6 @@ package org.jasig.cas.support.saml.web.idp.profile;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.DefaultSaml20ObjectBuilder;
-import org.jasig.cas.util.CompressionUtils;
 import org.opensaml.saml.common.SAMLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
