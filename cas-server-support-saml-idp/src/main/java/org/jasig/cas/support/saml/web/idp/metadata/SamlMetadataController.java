@@ -20,6 +20,7 @@
 package org.jasig.cas.support.saml.web.idp.metadata;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,16 +47,16 @@ public final class SamlMetadataController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${cas.samlidp.metadata.location}")
+    @Value("${cas.samlidp.metadata.location:}")
     private File metadataLocation;
 
-    @Value("${cas.samlidp.entityid}")
+    @Value("${cas.samlidp.entityid:}")
     private String entityId;
 
-    @Value("${cas.samlidp.hostname}")
+    @Value("${cas.samlidp.hostname:}")
     private String hostName;
 
-    @Value("${cas.samlidp.scope}")
+    @Value("${cas.samlidp.scope:}")
     private String scope;
 
     /**
@@ -81,6 +82,15 @@ public final class SamlMetadataController {
      */
     @RequestMapping(method = RequestMethod.GET)
     protected void generateMetadata(final HttpServletResponse response) throws IOException {
+
+        if (StringUtils.isBlank(this.entityId)
+                || StringUtils.isBlank(this.hostName)
+                || StringUtils.isAllLowerCase(this.scope)) {
+            logger.warn("Metadata cannot be generated, because the SAML Identity Provider is not configured."
+                    + " Examine settings and ensure metadata location, entityId, hostName and scope are all defined");
+            return;
+        }
+
         logger.debug("Preparing to generate metadata for entityId [{}]", this.entityId);
         final GenerateSamlMetadata generator = new GenerateSamlMetadata(this.metadataLocation,
                 this.hostName, this.entityId, this.scope);
