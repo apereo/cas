@@ -1,0 +1,9 @@
+org.jasig.cas
+org.jasig.cas.authentication
+org.jasig.cas.authentication.handler
+org.jasig.cas.authentication.handler.support
+org.jasig.cas.authentication.principal
+org.jasig.cas.authentication.principal.cache
+org.jasig.cas.services
+org.jasig.cas.util
+org.jasig.cas.web.flow

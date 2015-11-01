@@ -1,0 +1,6 @@
+org.jasig.cas.authentication.principal
+org.jasig.cas.authentication.support
+org.jasig.cas.services
+org.jasig.cas.services.jmx
+org.jasig.cas.services.support
+org.jasig.cas.util.services

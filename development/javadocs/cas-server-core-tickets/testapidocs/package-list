@@ -1,0 +1,7 @@
+org.jasig.cas
+org.jasig.cas.mock
+org.jasig.cas.ticket
+org.jasig.cas.ticket.proxy.support
+org.jasig.cas.ticket.registry
+org.jasig.cas.ticket.support
+org.jasig.cas.util
