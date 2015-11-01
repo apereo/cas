@@ -22,6 +22,7 @@ import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import org.apache.commons.collections4.Predicate;
+import org.apache.commons.collections4.map.HashedMap;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -38,7 +39,7 @@ import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
-import org.jasig.cas.services.AttributeReleasePolicy;
+import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
@@ -300,7 +301,14 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
 
-        final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal);
+        final RegisteredServiceAttributeReleasePolicy releasePolicy = registeredService.getAttributeReleasePolicy();
+        final Map<String, Object> principalAttrs;
+        if (releasePolicy != null) {
+            principalAttrs = releasePolicy.getAttributes(principal);
+        } else {
+            principalAttrs = new HashedMap<>();
+        }
+
         if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
             logger.warn("ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
                     service.getId(), principal);
@@ -489,7 +497,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     root, new ServiceContext(serviceTicket.getService(), registeredService));
             final Principal principal = authentication.getPrincipal();
 
-            final AttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
+            final RegisteredServiceAttributeReleasePolicy attributePolicy = registeredService.getAttributeReleasePolicy();
             logger.debug("Attribute policy [{}] is associated with service [{}]", attributePolicy, registeredService);
             
             @SuppressWarnings("unchecked")

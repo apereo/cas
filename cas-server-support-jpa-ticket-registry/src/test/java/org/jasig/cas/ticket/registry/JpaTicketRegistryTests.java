@@ -18,7 +18,7 @@
  */
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.TestUtils;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.mock.MockService;
