@@ -147,7 +147,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      *
      * @return the attribute release policy
      */
-    AttributeReleasePolicy getAttributeReleasePolicy();
+    RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy();
 
     /**
      * Gets the logo image associated with this service.

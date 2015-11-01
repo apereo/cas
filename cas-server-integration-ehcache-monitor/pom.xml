@@ -38,11 +38,10 @@
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core</artifactId>
+            <artifactId>cas-server-core-monitor</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
+
 
     </dependencies>
 

@@ -21,7 +21,6 @@ package org.jasig.cas.adaptors.generic;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -61,10 +60,8 @@ public class FileAuthenticationHandlerTests  {
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
         try {
-            final RegisteredServiceImpl svc = new RegisteredServiceImpl();
-            svc.setServiceId("https://some.app.edu");
             final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
-                new URL("http://www.rutgers.edu"), svc);
+                new URL("http://www.rutgers.edu"), org.jasig.cas.authentication.TestUtils.getRegisteredService());
             assertFalse(this.authenticationHandler.supports(c));
         } catch (final MalformedURLException e) {
             fail("MalformedURLException caught.");
