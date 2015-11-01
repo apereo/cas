@@ -30,7 +30,7 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.TechnicalException;
-import org.pac4j.http.client.BasicAuthClient;
+import org.pac4j.http.client.indirect.IndirectBasicAuthClient;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -90,7 +90,9 @@ public final class ClientActionTests {
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient(MY_KEY, MY_SECRET);
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
-        final ClientAction action = new ClientAction(mock(CentralAuthenticationService.class), clients);
+        final ClientAction action = new ClientAction();
+        action.setCentralAuthenticationService(mock(CentralAuthenticationService.class));
+        action.setClients(clients);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -130,7 +132,9 @@ public final class ClientActionTests {
         final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
         when(casImpl.createTicketGrantingTicket(any(Credential.class))).thenReturn(tgt);
-        final ClientAction action = new ClientAction(casImpl, clients);
+        final ClientAction action = new ClientAction();
+        action.setCentralAuthenticationService(casImpl);
+        action.setClients(clients);
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
         assertEquals(MY_THEME, mockRequest.getAttribute(ClientAction.THEME));
@@ -147,7 +151,7 @@ public final class ClientActionTests {
     @Test
     public void checkUnautorizedProtocol() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "BasicAuthClient");
+        mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "IndirectBasicAuthClient");
 
         final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
         when(servletExternalContext.getNativeRequest()).thenReturn(mockRequest);
@@ -155,9 +159,11 @@ public final class ClientActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
 
-        final BasicAuthClient basicAuthClient = new BasicAuthClient();
+        final IndirectBasicAuthClient basicAuthClient = new IndirectBasicAuthClient();
         final Clients clients = new Clients(MY_LOGIN_URL, basicAuthClient);
-        final ClientAction action = new ClientAction(mock(CentralAuthenticationService.class), clients);
+        final ClientAction action = new ClientAction();
+        action.setCentralAuthenticationService(mock(CentralAuthenticationService.class));
+        action.setClients(clients);
 
         try {
             action.execute(mockRequestContext);

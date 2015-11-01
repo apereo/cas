@@ -19,6 +19,7 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.services.ServiceContext;
+import org.springframework.stereotype.Component;
 
 /**
  * Produces {@link ContextualAuthenticationPolicy} instances that are satisfied iff the given {@link Authentication}
@@ -28,6 +29,7 @@ import org.jasig.cas.services.ServiceContext;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("requiredHandlerAuthenticationPolicyFactory")
 public class RequiredHandlerAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
 
     @Override

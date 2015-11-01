@@ -4,14 +4,14 @@ title: CAS - Google Apps Integration
 ---
 
 #Overview
-Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an integration point for external authentication services. SAML2 support for Google Apps integration is built via a special `ArgumentExtractor` and accompanying `Service` to provide process and understand SAML 2.0 requests from Google.
+Google Apps for Education (or any of the Google Apps) utilizes SAML 2.0 to provide an integration point for external authentication services. 
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-support-saml</artifactId>
+  <artifactId>cas-server-support-saml-googleapps</artifactId>
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -23,7 +23,7 @@ After keys are created, the public key needs to be registered with Google.
 The keys will also need to be available to the CAS application (but not publicly available over the Internet)
 via the classpath (i.e. `WEB-INF/classes`) though any location accessible by the user running the web server 
 instance and not served publicly to the Internet is acceptable.  Thus, inside `WEB-INF` is 
-nice because `WEB-INF` is scoped to the web application but not normally served. `/etc/cas/keys/` 
+nice because `WEB-INF` is scoped to the web application but not normally served. `/etc/cas/` 
 is also fine as well and protects the key from being overwritten on deploy of a new CAS webapp version.
 
 {% highlight bash %}
@@ -43,12 +43,13 @@ Adjust the following settings in your `cas.properties`:
 ##
 # Google Apps public/private key
 #
-# cas.saml.googleapps.publickey.file=classpath:private.key
-# cas.saml.googleapps.privatekey.file=classpath:public.key
+# cas.saml.googleapps.publickey.file=file:/etc/cas/public.key
+# cas.saml.googleapps.privatekey.file=file:/etc/cas/private.p8
 # cas.saml.googleapps.key.alg=RSA
 {% endhighlight %}
 
-Also, ensure that Google Apps is registered in your Service Registry, by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
+Also, ensure that Google Apps is registered in your Service Registry, 
+by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
 
 ##Configure Username Attribute 
 As an optional step, you can configure an alternate username to be send to Google in the SAML reply. This alternate user name
@@ -65,4 +66,5 @@ Use the following URLs when you are configuring for Google Apps:
 * Change password URL: `https://mgmt.password.edu/`
 
 ##Test
-Attempt to access a Google-hosted application, such as Google Calendar with the url: `http://calendar.google.com/a/YourGoogleDomain`
+Attempt to access a Google-hosted application, such as Google Calendar 
+with the url: `http://calendar.google.com/a/YourGoogleDomain`

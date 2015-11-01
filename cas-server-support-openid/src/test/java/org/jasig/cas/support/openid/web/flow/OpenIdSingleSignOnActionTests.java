@@ -19,38 +19,20 @@
 package org.jasig.cas.support.openid.web.flow;
 
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.logout.LogoutManager;
-import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
-import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.jasig.cas.services.DefaultServicesManagerImpl;
-import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
-import org.jasig.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
-import org.jasig.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdServiceFactory;
-import org.jasig.cas.support.openid.web.support.DefaultOpenIdUserNameExtractor;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
-import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -58,43 +40,25 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+import static org.junit.Assert.*;
+
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
-public class OpenIdSingleSignOnActionTests {
+public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
+    @Autowired
     private OpenIdSingleSignOnAction action;
 
+    @Autowired
     private TicketRegistry ticketRegistry;
 
+    @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
     private CentralAuthenticationServiceImpl impl;
-
-    @Before
-    public void setUp() throws Exception {
-        this.ticketRegistry = new DefaultTicketRegistry();
-        final OpenIdCredentialsAuthenticationHandler handler = new OpenIdCredentialsAuthenticationHandler();
-        handler.setTicketRegistry(this.ticketRegistry);
-        this.authenticationManager = new PolicyBasedAuthenticationManager(
-                Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
-                        handler,
-                        new OpenIdPrincipalResolver()));
-
-        final Map<String, UniqueTicketIdGenerator> generator = new HashMap<>();
-        generator.put(OpenIdService.class.getName(), new DefaultUniqueTicketIdGenerator());
-
-        impl = new CentralAuthenticationServiceImpl(this.ticketRegistry, null, this.authenticationManager,
-                new DefaultUniqueTicketIdGenerator(), generator, new NeverExpiresExpirationPolicy(),
-                new NeverExpiresExpirationPolicy(),
-                new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl()), mock(LogoutManager.class));
-
-        this.action = new OpenIdSingleSignOnAction();
-        this.action.setCentralAuthenticationService(this.impl);
-        this.action.setExtractor(new DefaultOpenIdUserNameExtractor());
-        this.action.afterPropertiesSet();
-    }
 
     @Test
     public void verifyNoTgt() throws Exception {

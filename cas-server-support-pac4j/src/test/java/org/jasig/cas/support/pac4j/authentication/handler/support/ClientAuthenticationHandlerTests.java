@@ -27,8 +27,8 @@ import javax.security.auth.login.FailedLoginException;
 
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
+import org.jasig.cas.authentication.principal.ClientCredential;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.support.pac4j.authentication.principal.ClientCredential;
 import org.jasig.cas.support.pac4j.test.MockFacebookClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,23 +50,24 @@ public final class ClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
     private static final String ID = "123456789";
-    
+
     private MockFacebookClient fbClient;
 
     private ClientAuthenticationHandler handler;
-    
+
     private ClientCredential clientCredential;
 
     @Before
     public void setUp() {
         this.fbClient = new MockFacebookClient();
         final Clients clients = new Clients(CALLBACK_URL, fbClient);
-        this.handler = new ClientAuthenticationHandler(clients);
+        this.handler = new ClientAuthenticationHandler();
+        this.handler.setClients(clients);
         final Credentials credentials = new OAuthCredentials(null, MockFacebookClient.CLIENT_NAME);
         this.clientCredential = new ClientCredential(credentials);
         ExternalContextHolder.setExternalContext(mock(ServletExternalContext.class));
     }
-    
+
     @Test
     public void verifyOk() throws GeneralSecurityException, PreventedException {
         final FacebookProfile facebookProfile = new FacebookProfile();

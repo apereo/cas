@@ -34,14 +34,9 @@
         references to other beans and whose changes can be configured externally.
     </description>
 
-    <bean id="openIdValidateController" class="org.jasig.cas.web.ServiceValidateController"
-          p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
-          p:centralAuthenticationService-ref="centralAuthenticationService"
-          p:proxyHandler-ref="proxy20Handler"
-          p:servicesManager-ref="servicesManager"
-          p:argumentExtractor-ref="openIdArgumentExtractor"
-          p:successView="casOpenIdServiceSuccessView"
-          p:failureView="casOpenIdServiceFailureView" />
+
+    <context:component-scan base-package="org.jasig.cas"/>
+    <context:annotation-config/>
 
     <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
           p:delegates-ref="delegateControllers"/>
@@ -56,8 +51,6 @@
           p:oPEndpointUrl="${server.prefix}/login"
           p:enforceRpId="${cas.openid.enforce.rpid:false}" />
 
-    <context:component-scan base-package="org.jasig.cas.support.openid"/>
-    <context:annotation-config/>
 
     <!-- OpenId View -->
 

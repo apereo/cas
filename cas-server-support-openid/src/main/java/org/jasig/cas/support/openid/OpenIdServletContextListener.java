@@ -74,4 +74,6 @@ public class OpenIdServletContextListener extends AbstractServletContextInitiali
     protected void initializeServletContext(final ServletContextEvent event) {
         addEndpointMappingToCasServlet(event, OpenIdProtocolConstants.ENDPOINT_OPENID);
     }
+
+
 }

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -52,13 +53,15 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     private static final long serialVersionUID = 1245279151345635245L;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Is the service allowed at all? **/
     private boolean enabled = true;
 
     /** Is the service allowed to use SSO? **/
     private boolean ssoEnabled = true;
+
+    private URI unauthorizedRedirectUrl;
 
     /**
      * Defines the attribute aggregation behavior when checking for required attributes.
@@ -127,6 +130,15 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
     public Map<String, Set<String>> getRequiredAttributes() {
         return new HashMap<>(this.requiredAttributes);
+    }
+
+    public void setUnauthorizedRedirectUrl(final URI unauthorizedRedirectUrl) {
+        this.unauthorizedRedirectUrl = unauthorizedRedirectUrl;
+    }
+
+    @Override
+    public URI getUnauthorizedRedirectUrl() {
+        return this.unauthorizedRedirectUrl;
     }
 
     /**
@@ -221,6 +233,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         if (!this.enabled) {
             logger.trace("Service is not enabled in service registry.");
         }
+
         return this.enabled;
     }
 
@@ -242,6 +255,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.ssoEnabled, rhs.ssoEnabled)
                 .append(this.requireAllAttributes, rhs.requireAllAttributes)
                 .append(this.requiredAttributes, rhs.requiredAttributes)
+                .append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
                 .isEquals();
     }
 
@@ -252,6 +266,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.ssoEnabled)
                 .append(this.requireAllAttributes)
                 .append(this.requiredAttributes)
+                .append(this.unauthorizedRedirectUrl)
                 .toHashCode();
     }
 
@@ -263,6 +278,9 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("ssoEnabled", ssoEnabled)
                 .append("requireAllAttributes", requireAllAttributes)
                 .append("requiredAttributes", requiredAttributes)
+                .append("unauthorizedRedirectUrl", unauthorizedRedirectUrl)
                 .toString();
     }
+
+
 }

@@ -42,7 +42,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
      *
      * @param ticket the ticket
      */
-    protected abstract void updateTicket(final Ticket ticket);
+    protected abstract void updateTicket(Ticket ticket);
 
     /**
      * Whether or not a callback to the TGT is required when checking for expiration.
@@ -105,6 +105,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return this.ticket;
         }
 
+        @Override
         public final String getId() {
             return this.ticket.getId();
         }
@@ -131,10 +132,12 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return this.ticketRegistry.getTicket(old.getId(), Ticket.class);
         }
 
+        @Override
         public final long getCreationTime() {
             return this.ticket.getCreationTime();
         }
 
+        @Override
         public final int getCountOfUses() {
             return this.ticket.getCountOfUses();
         }
@@ -228,9 +231,10 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
 
         @Override
         public ServiceTicket grantServiceTicket(final String id, final Service service,
-                final ExpirationPolicy expirationPolicy, final boolean credentialsProvided) {
+                final ExpirationPolicy expirationPolicy, final boolean credentialsProvided,
+                final boolean onlyTrackMostRecentSession) {
             final ServiceTicket t = this.getTicket().grantServiceTicket(id, service,
-                    expirationPolicy, credentialsProvided);
+                    expirationPolicy, credentialsProvided, onlyTrackMostRecentSession);
             updateTicket();
             return t;
         }
