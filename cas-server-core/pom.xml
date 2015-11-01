@@ -37,6 +37,30 @@
         </dependency>
 
         <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-tickets</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-validation</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-authentication</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.jasig.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
             <scope>compile</scope>
@@ -69,17 +93,6 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <scope>compile</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -116,18 +129,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <scope>test</scope>
@@ -159,12 +160,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.webflow</groupId>
-            <artifactId>spring-webflow</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
             <groupId>commons-jexl</groupId>
             <artifactId>commons-jexl</artifactId>
             <scope>runtime</scope>
@@ -174,9 +169,6 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>${commons.io.version}</version>
-            <scope>compile</scope>
-            <type>jar</type>
         </dependency>
 
         <dependency>
@@ -185,11 +177,7 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <scope>compile</scope>
-        </dependency>
+
 
         <dependency>
             <groupId>org.jasig.inspektr</groupId>
@@ -204,24 +192,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.bitbucket.b_c</groupId>
-            <artifactId>jose4j</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
@@ -233,9 +207,57 @@
         </dependency>
 
         <dependency>
-            <groupId>org.pac4j</groupId>
-            <artifactId>pac4j-core</artifactId>
-            <scope>provided</scope>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-tickets</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-logout</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-util</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-logout</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-monitor</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-services</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-authentication</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
     </dependencies>
 

@@ -19,7 +19,6 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -233,12 +232,13 @@ public final class OAuth20AccessTokenControllerTests {
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal p = TestUtils.getPrincipal(ID, map);
+        final Principal p = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
         final TicketGrantingTicketImpl impl = new TicketGrantingTicketImpl(TGT_ID,
-            TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
 
         ((OAuth20WrapperController) oauth20WrapperController)
-            .getTicketRegistry().addTicket(new ServiceTicketImpl("ST1", impl, TestUtils.getService(), false,
+            .getTicketRegistry().addTicket(new ServiceTicketImpl("ST1", impl,
+                org.jasig.cas.authentication.TestUtils.getService(), false,
             new ExpirationPolicy() {
                 private static final long serialVersionUID = -7321055962209199811L;
 
@@ -272,12 +272,13 @@ public final class OAuth20AccessTokenControllerTests {
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal p = TestUtils.getPrincipal(ID, map);
+        final Principal p = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
         final TicketGrantingTicketImpl impl = new TicketGrantingTicketImpl(TGT_ID,
-            TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
 
         ((OAuth20WrapperController) oauth20WrapperController)
-            .getTicketRegistry().addTicket(new ServiceTicketImpl(CODE, impl, TestUtils.getService(), false,
+            .getTicketRegistry().addTicket(new ServiceTicketImpl(CODE, impl,
+                org.jasig.cas.authentication.TestUtils.getService(), false,
             new ExpirationPolicy() {
                 private static final long serialVersionUID = -7321055962209199811L;
 
