@@ -7,7 +7,6 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing granting of a
  * service ticket by a CAS server.
- * This subclass adds {@link Authentication} that is associated with this event to the encapsulated data.
  *
  * @author Dmitriy Kopylenko
  * @since 4.2
@@ -45,7 +44,6 @@ public final class CasServiceTicketGrantedEvent extends AbstractCasEvent {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
                 .append("ticketGrantingTicket", ticketGrantingTicket)
                 .append("serviceTicket", serviceTicket)
                 .toString();

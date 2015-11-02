@@ -36,7 +36,6 @@ public final class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEven
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
                 .append("ticketGrantingTicket", ticketGrantingTicket)
                 .toString();
     }
