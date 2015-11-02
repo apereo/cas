@@ -1,7 +1,6 @@
 package org.jasig.cas.support.events;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
 /**
