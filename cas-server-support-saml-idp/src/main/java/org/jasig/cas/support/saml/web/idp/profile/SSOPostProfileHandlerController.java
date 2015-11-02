@@ -31,7 +31,9 @@ import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.SamlIdPConstants;
 import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
 import org.opensaml.saml.common.SAMLObject;
@@ -173,13 +175,24 @@ public class SSOPostProfileHandlerController {
         final Assertion assertion = validator.validate(ticket, serviceUrl);
         logValidationAssertion(assertion);
         if (assertion.isValid()) {
-            logger.debug("Preparing SAML response to {}", authnRequest.getAssertionConsumerServiceURL());
-            final Response samlResponse = responseBuilder.build(authnRequest, request, response, assertion);
+            final RegisteredService registeredService =
+                    getRegisteredServiceAndVerify(authnRequest);
+            logger.debug("Preparing SAML response to {}", registeredService);
+            final Response samlResponse = responseBuilder.build(authnRequest, request,
+                    response, assertion, registeredService);
         }
         storeAuthnRequest(request, null);
     }
 
-
+    private RegisteredService getRegisteredServiceAndVerify(final AuthnRequest authnRequest) {
+        final String serviceId = authnRequest.getAssertionConsumerServiceURL();
+        final RegisteredService registeredService =
+                this.servicesManager.findServiceBy(this.webApplicationServiceFactory.createService(serviceId));
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        }
+        return registeredService;
+    }
 
     /**
      * Handle profile request.
@@ -196,6 +209,7 @@ public class SSOPostProfileHandlerController {
         final SAMLObject messageContext = decodeAuthnRequest(request);
         if (messageContext instanceof AuthnRequest) {
             final AuthnRequest authnRequest = (AuthnRequest) messageContext;
+            getRegisteredServiceAndVerify(authnRequest);
             storeAuthnRequest(request, authnRequest);
             logAuthnRequest(authnRequest);
             performAuthentication(authnRequest, request, response);
