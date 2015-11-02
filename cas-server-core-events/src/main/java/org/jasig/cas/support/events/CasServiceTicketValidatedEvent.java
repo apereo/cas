@@ -1,46 +1,53 @@
 package org.jasig.cas.support.events;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.validation.Assertion;
 
 /**
- * Concrete subclass of <code>AbstractCasServiceAccessEvent</code> representing validation of a
+ * Concrete subclass of <code>AbstractCasEvent</code> representing validation of a
  * service ticket by a CAS server.
  * This subclass adds {@link Assertion} that is associated with this event to the encapsulated data.
  *
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-public final class CasServiceTicketValidatedEvent extends AbstractCasServiceAccessEvent {
+public final class CasServiceTicketValidatedEvent extends AbstractCasEvent {
 
     private final Assertion assertion;
+
+    private final ServiceTicket serviceTicket;
 
     /**
      * Instantiates a new Cas service ticket validated event.
      *
-     * @param source          the source
-     * @param serviceTicketId the service ticket id
-     * @param service         the service
-     * @param assertion       the assertion
+     * @param source        the source
+     * @param serviceTicket the service ticket
+     * @param assertion     the assertion
      */
     public CasServiceTicketValidatedEvent(final Object source,
-                                          final String serviceTicketId,
-                                          final Service service,
+                                          final ServiceTicket serviceTicket,
                                           final Assertion assertion) {
-        super(source, serviceTicketId, service);
+        super(source);
         this.assertion = assertion;
+        this.serviceTicket = serviceTicket;
     }
 
     public Assertion getAssertion() {
         return assertion;
     }
 
+    public ServiceTicket getServiceTicket() {
+        return serviceTicket;
+    }
+
+
     @Override
     public String toString() {
-        final ToStringBuilder builder = new ToStringBuilder(this);
-        return builder.appendSuper(super.toString())
-               .append("assertion", assertion)
-               .toString();
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("assertion", assertion)
+                .append("serviceTicket", serviceTicket)
+                .toString();
     }
 }
