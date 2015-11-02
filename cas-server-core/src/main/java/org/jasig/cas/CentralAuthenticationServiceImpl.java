@@ -40,6 +40,11 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
+import org.jasig.cas.support.events.CasProxyGrantingTicketCreatedEvent;
+import org.jasig.cas.support.events.CasServiceTicketGrantedEvent;
+import org.jasig.cas.support.events.CasServiceTicketValidatedEvent;
+import org.jasig.cas.support.events.CasTicketGrantingTicketDestroyedEvent;
+import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
@@ -152,6 +157,8 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
             final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
             this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
 
+            doPublishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket));
+
             return logoutRequests;
         } catch (final InvalidTicketException e) {
             logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
@@ -242,10 +249,10 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",
                 serviceTicket.getId(), service.getId(), principal.getId());
 
+        doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
 
         return serviceTicket;
     }
-
 
     @Audit(
         action="SERVICE_TICKET",
@@ -301,6 +308,8 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         logger.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
         this.ticketRegistry.addTicket(proxyGrantingTicket);
+
+        doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, proxyGrantingTicket));
 
         return proxyGrantingTicket;
     }
@@ -361,11 +370,16 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
             final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
 
-            return new ImmutableAssertion(
+            final Assertion assertion = new ImmutableAssertion(
                     builder.build(),
                     serviceTicket.getGrantingTicket().getChainedAuthentications(),
                     serviceTicket.getService(),
                     serviceTicket.isFromNewLogin());
+
+            doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
+
+            return assertion;
+
         } finally {
             if (serviceTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(serviceTicketId);
@@ -394,6 +408,9 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
                     authentication, this.ticketGrantingTicketExpirationPolicy);
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
+
+            doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
+
             return ticketGrantingTicket;
         }
         final String msg = "No credentials were specified in the request for creating a new ticket-granting ticket";
