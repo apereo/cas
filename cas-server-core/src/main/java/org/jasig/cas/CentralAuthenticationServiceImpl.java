@@ -242,6 +242,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",
                 serviceTicket.getId(), service.getId(), principal.getId());
 
+
         return serviceTicket;
     }
 
