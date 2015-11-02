@@ -791,6 +791,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.lmax</groupId>
+                <artifactId>disruptor</artifactId>
+                <version>${disruptor.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons.io.version}</version>
@@ -1705,6 +1711,7 @@
         <c3p0.version>0.9.5.1</c3p0.version>
         <cryptacular.version>1.0</cryptacular.version>
         <taglibs.version>1.1.2</taglibs.version>
+        <disruptor.version>3.3.2</disruptor.version>
 
         <!-- Plugin Versions -->
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
