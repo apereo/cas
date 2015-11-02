@@ -7,8 +7,6 @@ import org.jasig.cas.validation.Assertion;
 /**
  * Concrete subclass of <code>AbstractCasEvent</code> representing validation of a
  * service ticket by a CAS server.
- * This subclass adds {@link Assertion} that is associated with this event to the encapsulated data.
- *
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
@@ -45,7 +43,6 @@ public final class CasServiceTicketValidatedEvent extends AbstractCasEvent {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
                 .append("assertion", assertion)
                 .append("serviceTicket", serviceTicket)
                 .toString();
