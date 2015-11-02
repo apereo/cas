@@ -37,7 +37,6 @@ public final class CasTicketGrantingTicketCreatedEvent extends AbstractCasEvent 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
                 .append("ticketGrantingTicket", ticketGrantingTicket)
                 .toString();
     }
