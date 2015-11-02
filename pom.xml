@@ -1513,6 +1513,7 @@
         <module>cas-server-core-web</module>
         <module>cas-server-core</module>
         <module>cas-server-core-audit</module>
+        <module>cas-server-support-events</module>
         <module>cas-server-support-generic</module>
         <module>cas-server-support-jdbc</module>
         <module>cas-server-support-jdbc-monitor</module>
