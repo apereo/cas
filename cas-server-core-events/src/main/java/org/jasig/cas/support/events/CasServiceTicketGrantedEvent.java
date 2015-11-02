@@ -2,44 +2,52 @@ package org.jasig.cas.support.events;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 
 /**
- * Concrete subclass of {@code AbstractCasServiceAccessEvent} representing granting of a
+ * Concrete subclass of {@code AbstractCasEvent} representing granting of a
  * service ticket by a CAS server.
  * This subclass adds {@link Authentication} that is associated with this event to the encapsulated data.
  *
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-public final class CasServiceTicketGrantedEvent extends AbstractCasServiceAccessEvent {
+public final class CasServiceTicketGrantedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 128616377249711105L;
-    private final Authentication authentication;
+
+    private final TicketGrantingTicket ticketGrantingTicket;
+    private final ServiceTicket serviceTicket;
 
     /**
      * Instantiates a new Cas service ticket granted event.
      *
-     * @param source          the source
-     * @param serviceTicketId the service ticket id
-     * @param service         the service
-     * @param authentication  the authentication
+     * @param source               the source
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @param serviceTicket        the service ticket
      */
-    public CasServiceTicketGrantedEvent(final Object source, final String serviceTicketId, final Service service,
-                                        final Authentication authentication) {
-        super(source, serviceTicketId, service);
-        this.authentication = authentication;
+    public CasServiceTicketGrantedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket, final ServiceTicket serviceTicket) {
+        super(source);
+        this.ticketGrantingTicket = ticketGrantingTicket;
+        this.serviceTicket = serviceTicket;
     }
 
-    public Authentication getAuthentication() {
-        return authentication;
+    public TicketGrantingTicket getTicketGrantingTicket() {
+        return ticketGrantingTicket;
     }
+
+    public ServiceTicket getServiceTicket() {
+        return serviceTicket;
+    }
+
 
     @Override
     public String toString() {
-        final ToStringBuilder builder = new ToStringBuilder(this);
-        return builder.appendSuper(super.toString())
-                .append("authentication", authentication)
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("ticketGrantingTicket", ticketGrantingTicket)
+                .append("serviceTicket", serviceTicket)
                 .toString();
     }
 }

@@ -93,7 +93,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Resource(name="ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-
     /**
      * AuthenticationManager for authenticating credentials for purposes of
      * obtaining tickets.
