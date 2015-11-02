@@ -1,7 +1,6 @@
 package org.jasig.cas.support.events;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
@@ -27,7 +26,8 @@ public final class CasServiceTicketGrantedEvent extends AbstractCasEvent {
      * @param ticketGrantingTicket the ticket granting ticket
      * @param serviceTicket        the service ticket
      */
-    public CasServiceTicketGrantedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket, final ServiceTicket serviceTicket) {
+    public CasServiceTicketGrantedEvent(final Object source, final TicketGrantingTicket ticketGrantingTicket,
+                                        final ServiceTicket serviceTicket) {
         super(source);
         this.ticketGrantingTicket = ticketGrantingTicket;
         this.serviceTicket = serviceTicket;
