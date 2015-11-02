@@ -20,43 +20,40 @@
 package org.jasig.cas.support.events;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.services.RegisteredService;
 
 /**
- * Concrete subclass of {@code AbstractCasEvent} representing single sign on session establishment
- * event e.g. user logged in
- * and <i>TicketGrantingTicket</i> has been vended by a CAS server.
+ * This is {@link CasRegisteredServiceSavedEvent} that is signaled
+ * when a registered service is saved into the CAS registry.
  *
- * @author Dmitriy Kopylenko
- * @since 4.2
+ * @author Misagh Moayyed
+ * @since 4.2.0
  */
-public final class CasProxyGrantingTicketCreatedEvent extends AbstractCasEvent {
+public class CasRegisteredServiceSavedEvent extends AbstractCasEvent {
 
-    private static final long serialVersionUID = -1862937393590213844L;
-
-    private final TicketGrantingTicket ticketGrantingTicket;
+    private static final long serialVersionUID = 291168299766263298L;
+    private final RegisteredService registeredService;
 
     /**
-     * Instantiates a new Cas sso session established event.
+     * Instantiates a new cas sso event.
      *
-     * @param source               the source
-     * @param ticketGrantingTicket the ticket granting ticket
+     * @param source            the source
+     * @param registeredService the registered service
      */
-    public CasProxyGrantingTicketCreatedEvent(final Object source,
-                                              final TicketGrantingTicket ticketGrantingTicket) {
+    public CasRegisteredServiceSavedEvent(final Object source, final RegisteredService registeredService) {
         super(source);
-        this.ticketGrantingTicket = ticketGrantingTicket;
+        this.registeredService = registeredService;
     }
 
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return ticketGrantingTicket;
+    public RegisteredService getRegisteredService() {
+        return registeredService;
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("ticketGrantingTicket", ticketGrantingTicket)
+                .append("registeredService", registeredService)
                 .toString();
     }
 }
