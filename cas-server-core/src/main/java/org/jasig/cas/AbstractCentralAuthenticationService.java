@@ -59,6 +59,7 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -77,7 +78,9 @@ import java.util.Set;
  * @see CentralAuthenticationServiceImpl
  */
 @Component("abstractCentralAuthenticationService")
-public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService {
+public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable {
+    private static final long serialVersionUID = -7572316677901391166L;
+
     /** Log instance for logging events, info, warnings, errors, etc. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
