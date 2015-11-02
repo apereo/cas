@@ -56,7 +56,6 @@ import org.jasig.inspektr.audit.annotation.Audit;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +89,7 @@ import java.util.Set;
  * @since 3.0.0
  */
 @Component("centralAuthenticationService")
-public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService implements Serializable {
+public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
     private static final long serialVersionUID = -8943828074939533986L;
 
