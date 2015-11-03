@@ -44,7 +44,38 @@
     <dependencies>
         <dependency>
             <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core</artifactId>
+            <artifactId>cas-server-core-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-tickets</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-authentication</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-integration-pac4j-core</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -68,6 +99,19 @@
         <dependency>
             <groupId>org.pac4j</groupId>
             <artifactId>pac4j-http</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-services</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-services</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

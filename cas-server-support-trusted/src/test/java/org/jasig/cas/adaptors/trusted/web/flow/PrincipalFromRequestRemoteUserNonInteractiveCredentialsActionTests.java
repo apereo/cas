@@ -31,6 +31,7 @@ import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingP
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
@@ -41,6 +42,7 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -59,6 +61,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     @Before
     public void setUp() throws Exception {
         this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
+        this.action.setPrincipalFactory(new DefaultPrincipalFactory());
 
         final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
         idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
@@ -72,6 +75,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
                 new DefaultTicketRegistry(), authenticationManager, new DefaultUniqueTicketIdGenerator(),
                 idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(),
                 mock(ServicesManager.class), mock(LogoutManager.class));
+        centralAuthenticationService.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.action.setCentralAuthenticationService(centralAuthenticationService);
     }
 
