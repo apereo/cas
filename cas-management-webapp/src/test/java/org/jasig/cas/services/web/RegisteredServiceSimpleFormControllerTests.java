@@ -24,13 +24,13 @@ import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.ui.ModelMap;
@@ -56,7 +56,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     private RegisteredServiceSimpleFormController controller;
 
-    private ServicesManager manager;
+    private DefaultServicesManagerImpl manager;
 
     private StubPersonAttributeDao repository;
 
@@ -70,9 +70,10 @@ public class RegisteredServiceSimpleFormControllerTests {
 
         this.manager = new DefaultServicesManagerImpl(
                 new InMemoryServiceRegistryDaoImpl());
-
+        this.manager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.controller = new RegisteredServiceSimpleFormController(
                 this.manager, this.repository);
+
     }
 
     @Test
