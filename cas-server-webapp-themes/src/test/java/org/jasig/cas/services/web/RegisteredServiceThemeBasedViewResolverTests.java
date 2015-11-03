@@ -26,10 +26,12 @@ import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  *
@@ -41,11 +43,12 @@ public class RegisteredServiceThemeBasedViewResolverTests {
 
     private RegisteredServiceThemeBasedViewResolver registeredServiceThemeBasedViewResolver;
 
-    private ServicesManager servicesManager;
+    private DefaultServicesManagerImpl servicesManager;
 
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.servicesManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setTheme("myTheme");
         r.setId(1000);
