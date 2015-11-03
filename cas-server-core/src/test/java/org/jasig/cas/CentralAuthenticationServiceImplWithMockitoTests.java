@@ -55,6 +55,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.ArrayList;
@@ -149,6 +150,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, mock(AuthenticationManager.class),
                 mock(UniqueTicketIdGenerator.class), ticketIdGenForServiceMock, mock(ExpirationPolicy.class),
                 mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));
+        this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
     private ServicesManager getServicesManager(final Service service1, final Service service2) {
