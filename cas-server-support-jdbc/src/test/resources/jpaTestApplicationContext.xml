@@ -61,8 +61,6 @@
     </property>
   </bean>
 
-  <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
-        abstract="true"/>
 
   <bean id="ticketEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
         p:dataSource-ref="dataSource" />

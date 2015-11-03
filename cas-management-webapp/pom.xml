@@ -71,18 +71,44 @@
 
         <dependency>
             <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-authentication</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
             <artifactId>cas-server-core</artifactId>
             <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.webflow</groupId>
-                    <artifactId>spring-webflow</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.opensaml</groupId>
-                    <artifactId>opensaml</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-logout</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-logging</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-tickets</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-core-audit</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -135,7 +161,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>${jstl.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -151,13 +176,7 @@
             <artifactId>hibernate-validator</artifactId>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jasig.cas</groupId>
-            <artifactId>cas-server-core</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
     <build>
@@ -179,12 +198,21 @@
                     </webResources>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${maven-jetty-plugin.version}</version>
+                <configuration>
+                    <webApp>
+                        <contextPath>/cas-management</contextPath>
+                        <overrideDescriptor>${cs.dir}/etc/jetty/web.xml</overrideDescriptor>
+                    </webApp>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <properties>
-        <taglibs.version>1.1.2</taglibs.version>
-        <jstl.version>1.1.2</jstl.version>
         <cs.dir>${project.parent.basedir}</cs.dir>
     </properties>
 </project>
