@@ -42,6 +42,7 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Map;
@@ -484,6 +485,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         // create a new CASimpl
         final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry,  null, null, null, null, null,
             null, logoutManager);
+        cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         // destroy to mark expired and then delete : the opposite would fail with a "No ticket to update" error from the registry
         cas.destroyTicketGrantingTicket(tgt.getId());
     }
