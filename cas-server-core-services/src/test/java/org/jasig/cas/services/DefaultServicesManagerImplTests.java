@@ -22,12 +22,14 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  *
@@ -54,6 +56,7 @@ public class DefaultServicesManagerImplTests  {
 
         dao.setRegisteredServices(list);
         this.defaultServicesManagerImpl = new DefaultServicesManagerImpl(dao);
+        this.defaultServicesManagerImpl.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
     @Test
