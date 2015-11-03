@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
@@ -43,6 +42,7 @@ import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -71,10 +71,11 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
                 Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
                         new PrincipalBearingCredentialsAuthenticationHandler(),
                         new PrincipalBearingPrincipalResolver()));
-        final CentralAuthenticationService centralAuthenticationService = new CentralAuthenticationServiceImpl(
+        final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
                 new DefaultTicketRegistry(), authenticationManager, new DefaultUniqueTicketIdGenerator(),
                 idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(),
                 mock(ServicesManager.class), mock(LogoutManager.class));
+        centralAuthenticationService.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.action.setCentralAuthenticationService(centralAuthenticationService);
     }
 
