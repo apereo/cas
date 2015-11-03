@@ -56,29 +56,29 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.jasig" level="info" additivity="false">
+        <AsyncLogger  name="org.jasig" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
-        </Logger>
-        <Logger name="org.springframework" level="warn" />
-        <Logger name="org.springframework.webflow" level="warn" />
-        <Logger name="org.springframework.web" level="warn" />
-        <Logger name="org.springframework.security" level="warn" />
-        <Logger name="org.jasig.inspektraudit.spi" level="warn" />
+        </AsyncLogger>
+        <AsyncLogger  name="org.springframework" level="warn" />
+        <AsyncLogger name="org.springframework.webflow" level="warn" />
+        <AsyncLogger name="org.springframework.web" level="warn" />
+        <AsyncLogger name="org.springframework.security" level="warn" />
+        <Logger name="org.jasig.inspektr.audit.spi" level="warn" />
 
-        <Logger name="perfStatsLogger" level="info" additivity="false">
+        <AsyncLogger name="perfStatsLogger" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="perfFileAppender"/>
-        </Logger>
+        </AsyncLogger>
 
-        <Logger name="org.jasig.cas.web.flow" level="info" additivity="true">
+        <AsyncLogger name="org.jasig.cas.web.flow" level="info" additivity="true" includeLocation="true">
             <AppenderRef ref="file"/>
-        </Logger>
-        <Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+        </AsyncLogger>
+        <AsyncLogger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info" includeLocation="true">
             <AppenderRef ref="auditlogfile"/>
             <AppenderRef ref="file"/>
-        </Logger>
-        <Root level="error">
+        </AsyncLogger>
+        <AsyncRoot level="error">
             <AppenderRef ref="console"/>
-        </Root>
+        </AsyncRoot>
     </Loggers>
 </Configuration>

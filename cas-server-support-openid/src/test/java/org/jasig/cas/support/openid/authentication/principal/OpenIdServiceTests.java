@@ -18,7 +18,6 @@
  */
 package org.jasig.cas.support.openid.authentication.principal;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
@@ -28,7 +27,6 @@ import org.openid4java.association.Association;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -60,7 +58,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             openIdService = openIdServiceFactory.createService(request);
 
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
+                    org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
@@ -90,7 +88,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             openIdService = openIdServiceFactory.createService(request);
 
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
+                    org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
