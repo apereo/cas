@@ -26,10 +26,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -40,11 +42,12 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     private ManageRegisteredServicesMultiActionController controller;
 
-    private ServicesManager servicesManager;
+    private DefaultServicesManagerImpl servicesManager;
 
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.servicesManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, "foo");
     }
 

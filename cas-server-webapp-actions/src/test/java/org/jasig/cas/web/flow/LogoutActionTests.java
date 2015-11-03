@@ -29,6 +29,7 @@ import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -84,6 +85,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest 
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
         this.serviceRegistryDao = new InMemoryServiceRegistryDaoImpl();
         this.serviceManager = new DefaultServicesManagerImpl(serviceRegistryDao);
+        this.serviceManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.serviceManager.reload();
 
         this.warnCookieGenerator.setCookieName("test");
