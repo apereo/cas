@@ -21,9 +21,9 @@ package org.jasig.cas.services.web;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServicesManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -46,11 +46,12 @@ public class ServiceThemeResolverTests {
 
     private ServiceThemeResolver serviceThemeResolver;
 
-    private ServicesManager servicesManager;
+    private DefaultServicesManagerImpl servicesManager;
 
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.servicesManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
 
         this.serviceThemeResolver = new ServiceThemeResolver();
         this.serviceThemeResolver.setDefaultThemeName("test");
