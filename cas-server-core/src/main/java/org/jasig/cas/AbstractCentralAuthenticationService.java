@@ -54,6 +54,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -78,7 +79,9 @@ import java.util.Set;
  * @see CentralAuthenticationServiceImpl
  */
 @Component("abstractCentralAuthenticationService")
-public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable {
+public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable,
+        ApplicationEventPublisherAware {
+
     private static final long serialVersionUID = -7572316677901391166L;
 
     /** Log instance for logging events, info, warnings, errors, etc. */
@@ -389,4 +392,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         }
     }
 
+    @Override
+    public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
+        this.eventPublisher = applicationEventPublisher;
+    }
 }
