@@ -33,7 +33,4 @@
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
 
-    <context:component-scan base-package="org.jasig.cas.support.openid"/>
-    <context:annotation-config/>
-
 </beans>

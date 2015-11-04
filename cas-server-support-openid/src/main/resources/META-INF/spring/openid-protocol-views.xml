@@ -35,9 +35,6 @@
     </description>
 
 
-    <context:component-scan base-package="org.jasig.cas"/>
-    <context:annotation-config/>
-
     <bean id="openidDelegatingController" class="org.jasig.cas.web.DelegatingController"
           p:delegates-ref="delegateControllers"/>
 
