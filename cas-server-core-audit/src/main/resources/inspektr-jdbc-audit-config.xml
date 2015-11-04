@@ -70,4 +70,26 @@
           p:isolationLevelName="ISOLATION_READ_COMMITTED"
           p:propagationBehaviorName="PROPAGATION_REQUIRED" />
 
+    <bean id="inspektrAuditEntityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:dataSource-ref="inspektrAuditTrailDataSource">
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+                  p:generateDdl="${cas.audit.database.gen.ddl:true}"
+                  p:showSql="${cas.audit.database.show.sql:true}" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${cas.audit.database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${cas.audit.database.ddl.auto:create-drop}</prop>
+                <prop key="hibernate.jdbc.batch_size">${cas.audit.database.batchSize:1}</prop>
+            </props>
+        </property>
+        <property name="packagesToScan">
+            <set>
+                <value>org.jasig.cas.web.support.entity</value>
+            </set>
+        </property>
+    </bean>
+
 </beans>
