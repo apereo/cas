@@ -72,6 +72,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * Instance of ServiceRegistryDao.
      */
     @NotNull
+    @Autowired
+    @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
     /** Application event publisher. */
