@@ -41,7 +41,7 @@ they cannot apply the rate strictly since requests to CAS hosts would be split a
 The _inspektr_ components, on the other hand, fully support stateless clusters.
 
 
-## Components
+## Configuration
 
 ###IP Address
 Uses a memory map to prevent successive failed login attempts from the same IP address.
@@ -50,7 +50,7 @@ Uses a memory map to prevent successive failed login attempts from the same IP a
 {% endhighlight %}
 
 
-###IP Address + Username
+###IP Address and Username
 Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.
 
 {% highlight xml %}
