@@ -41,23 +41,23 @@ they cannot apply the rate strictly since requests to CAS hosts would be split a
 The _inspektr_ components, on the other hand, fully support stateless clusters.
 
 
-## Components
+## Configuration
 
-###`InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter`
+###IP Address
 Uses a memory map to prevent successive failed login attempts from the same IP address.
 {% highlight xml %}
 <alias name="inMemoryIpAddressThrottle" alias="authenticationThrottle" />
 {% endhighlight %}
 
 
-###`InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
+###IP Address and Username
 Uses a memory map to prevent successive failed login attempts for a particular username from the same IP address.
 
 {% highlight xml %}
 <alias name="inMemoryIpAddressUsernameThrottle" alias="authenticationThrottle" />
 {% endhighlight %}
 
-###`InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter`
+###Inspektr
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
 username from the same IP address. This component requires that the
 [inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
