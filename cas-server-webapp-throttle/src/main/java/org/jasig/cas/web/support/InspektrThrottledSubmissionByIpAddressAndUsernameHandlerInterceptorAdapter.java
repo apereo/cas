@@ -30,6 +30,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -45,7 +46,7 @@ import java.util.List;
  * Defines a new Inspektr Action "THROTTLED_LOGIN_ATTEMPT" which keeps track of failed login attempts that don't result
  * in AUTHENTICATION_FAILED methods
  * <p>
- * This relies on the default Inspektr table layout and username construction.  The username construction can be overriden
+ * This relies on the default Inspektr table layout and username construction.  The username construction can be overridden
  * in a subclass.
  *
  * @author Scott Battaglia
@@ -70,8 +71,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private AuditTrailManager auditTrailManager;
 
     @Autowired(required=false)
-    @Qualifier("auditTrailDataSource")
-    private JdbcTemplate jdbcTemplate;
+    @Qualifier("inspektrAuditTrailDataSource")
+    private DataSource dataSource;
 
     @Value("${cas.throttle.appcode:" + DEFAULT_APPLICATION_CODE + "}")
     private String applicationCode = DEFAULT_APPLICATION_CODE;
@@ -81,6 +82,9 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Value("${cas.throttle.audit.query:" + SQL_AUDIT_QUERY + "}")
     private String sqlQueryAudit;
+
+    private JdbcTemplate jdbcTemplate;
+
 
     /**
      * Instantiates a new Inspektr throttled submission by ip address and username handler interceptor adapter.
@@ -96,7 +100,15 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
             final DataSource dataSource) {
         this.auditTrailManager = auditTrailManager;
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        init();
+    }
+
+    /**
+     * Init the jdbc template.
+     */
+    @PostConstruct
+    public void init() {
+        this.jdbcTemplate = new JdbcTemplate(this.dataSource);
     }
 
     @Override
@@ -124,7 +136,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Override
     protected void recordSubmissionFailure(final HttpServletRequest request) {
-        // No internal counters to update
+        recordThrottle(request);
     }
 
     @Override
@@ -168,8 +180,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      * @return the string
      */
     protected String constructUsername(final HttpServletRequest request, final String usernameParameter) {
-        final String username = request.getParameter(usernameParameter);
-        return "[username: " + (username != null ? username : "") + ']';
+        return request.getParameter(usernameParameter);
     }
 
     @Override
