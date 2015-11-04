@@ -35,26 +35,4 @@
 
     <import resource="classpath:inspektr-jdbc-audit-config.xml" />
 
-    <bean id="throttleInspektrEntityManagerFactory"
-              class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-              p:dataSource-ref="inspektrAuditTrailDataSource">
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-                  p:generateDdl="${cas.throttle.database.gen.ddl:true}"
-                  p:showSql="${cas.throttle.database.show.sql:true}" />
-        </property>
-        <property name="jpaProperties">
-            <props>
-                <prop key="hibernate.dialect">${cas.throttle.database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
-                <prop key="hibernate.hbm2ddl.auto">${cas.throttle.database.ddl.auto:create-drop}</prop>
-                <prop key="hibernate.jdbc.batch_size">${cas.throttle.database.batchSize:1}</prop>
-            </props>
-        </property>
-        <property name="packagesToScan">
-            <set>
-                <value>org.jasig.cas.web.support.entity</value>
-            </set>
-        </property>
-    </bean>
-
 </beans>
