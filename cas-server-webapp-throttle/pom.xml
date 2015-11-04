@@ -47,10 +47,15 @@
             <scope>compile</scope>
         </dependency>
 
-
         <dependency>
             <groupId>org.jasig.inspektr</groupId>
             <artifactId>inspektr-audit</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jasig.inspektr</groupId>
+            <artifactId>inspektr-support-spring</artifactId>
             <scope>compile</scope>
         </dependency>
 
