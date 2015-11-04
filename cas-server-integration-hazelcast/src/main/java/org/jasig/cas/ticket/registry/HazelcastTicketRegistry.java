@@ -90,8 +90,8 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     public void init() {
         logger.info("Setting up Hazelcast Ticket Registry...");
         logger.debug("Hazelcast instance: {} with name {}", this.hz, this.registry.getName());
-        logger.debug("TGT timeout: [{}s]", this.ticketGrantingTicketTimeoutInSeconds);
-        logger.debug("ST timeout: [{}s]", this.serviceTicketTimeoutInSeconds);
+        logger.debug("Ticket-granting ticket timeout: [{}s]", this.ticketGrantingTicketTimeoutInSeconds);
+        logger.debug("Service ticket timeout: [{}s]", this.serviceTicketTimeoutInSeconds);
     }
 
     @Override
