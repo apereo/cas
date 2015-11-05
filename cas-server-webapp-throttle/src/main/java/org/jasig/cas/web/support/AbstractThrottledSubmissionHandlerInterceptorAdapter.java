@@ -157,7 +157,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      * @param request the request
      */
     protected void recordThrottle(final HttpServletRequest request) {
-        logger.warn("Throttling submission from {}.  More than {} failed login attempts within {} seconds. "
+        logger.warn("Throttling submission from {}. More than {} failed login attempts within {} seconds. "
                 + "Authentication attempt exceeds the failure threshold {}",
                 request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
                 this.failureThreshold);

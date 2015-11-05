@@ -68,4 +68,25 @@
             value-ref="serviceTicketUniqueIdGenerator" />
     </util:map>
 
+    <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+
+    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
+          p:order="1000"
+          p:alwaysUseFullPath="true">
+        <property name="mappings">
+            <util:properties>
+                <prop key="/authorizationFailure.html">passThroughController</prop>
+            </util:properties>
+        </property>
+        <!--
+         uncomment this to enable sending PageRequest events.
+         <property
+           name="interceptors">
+           <list>
+             <ref bean="pageRequestHandlerInterceptorAdapter" />
+           </list>
+         </property>
+          -->
+    </bean>
+
 </beans>
