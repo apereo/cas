@@ -35,9 +35,6 @@
        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <context:component-scan base-package="org.jasig.cas.ticket.registry" />
-    <context:annotation-config/>
-
     <util:list id="ticketPackagesToScan">
         <value>org.jasig.cas.ticket</value>
         <value>org.jasig.cas.adaptors.jdbc</value>

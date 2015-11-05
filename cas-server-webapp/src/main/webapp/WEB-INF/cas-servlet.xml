@@ -26,9 +26,11 @@
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
     <import resource="spring-configuration/propertyFileConfigurer.xml"/>
@@ -80,27 +82,6 @@
             p:paramName="${locale.param.name:locale}"/>
 
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
-
-    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
-        p:order="1000"
-        p:alwaysUseFullPath="true">
-        <property name="mappings">
-            <util:properties>
-                <prop key="/authorizationFailure.html">passThroughController</prop>
-            </util:properties>
-        </property>
-        <!--
-         uncomment this to enable sending PageRequest events.
-         <property
-           name="interceptors">
-           <list>
-             <ref bean="pageRequestHandlerInterceptorAdapter" />
-           </list>
-         </property>
-          -->
-    </bean>
-
-    <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 
     <!-- login webflow configuration -->
     <bean id="loginFlowHandlerMapping" class="org.springframework.webflow.mvc.servlet.FlowHandlerMapping"

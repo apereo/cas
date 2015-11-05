@@ -103,7 +103,7 @@ Additional loggers are available to specify the logging level for component cate
 <Logger name="org.jasig.cas.web.flow" level="info" additivity="true">
     <AppenderRef ref="file"/>
 </Logger>
-<Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+<Logger name="org.jasig.inspektr.audit.support" level="info">
     <AppenderRef ref="file"/>
 </Logger>
 <Root level="error">
@@ -140,110 +140,3 @@ SERVER IP ADDRESS: ...
 
 Certain number of characters are left at the trailing end of the ticket id to assist with
 troubleshooting and diagnostics. This is achieved by providing a specific binding for the SLF4j configuration.
-
-
-#Audits
-CAS uses the [Inspektr framework](https://github.com/Jasig/inspektr) for auditing purposes
-and statistics. The Inspektr project allows for non-intrusive auditing and logging of the
-coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations
-and Spring-managed `@Aspect`-style aspects.
-
-##Configuration
-Configuration of the audit trail manager is defined inside `deployerConfigContext.xml`.
-
-
-### File-based Audits
-By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager` and are routed to
-a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
-
-{% highlight properties %}
-# cas.audit.singleline=true
-# cas.audit.singleline.separator=|
-# cas.audit.appcode=CAS
-{% endhighlight %}
-
-###Database Audits
- If you intend to use a database
-for auditing functionality, adjust the audit manager to match the sample configuration below:
-
-{% highlight xml %}
-<bean id="auditCleanupCriteria"
-    class="org.jasig.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria">
-    <constructor-arg index="0" value="180" />
-</bean>
-
-<bean id="auditTrailManager"
-      class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
-      c:transactionTemplate-ref="inspektrTransactionTemplate"
-      p:dataSource-ref="dataSource"
-      p:cleanupCriteria-ref="auditCleanupCriteria" />
-
-<bean id="inspektrTransactionManager"
-      class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
-      p:dataSource-ref="dataSource" />
-
-<bean id="inspektrTransactionTemplate"
-      class="org.springframework.transaction.support.TransactionTemplate"
-      p:transactionManager-ref="inspektrTransactionManager"
-      p:isolationLevelName="ISOLATION_READ_COMMITTED"
-      p:propagationBehaviorName="PROPAGATION_REQUIRED" />
-{% endhighlight %}
-
-You'll need to have a `dataSource` that defines a connection to your database:
-
-{% highlight xml %}
-<bean id="dataSource"
-  class="com.mchange.v2.c3p0.ComboPooledDataSource"
-  p:driverClass="${database.driverClass}"
-  p:jdbcUrl="${database.url}"
-  p:user="${database.user}"
-  p:password="${database.password}"
-  p:initialPoolSize="${database.pool.minSize}"
-  p:minPoolSize="${database.pool.minSize}"
-  p:maxPoolSize="${database.pool.maxSize}"
-  p:maxIdleTimeExcessConnections="${database.pool.maxIdleTime}"
-  p:checkoutTimeout="${database.pool.maxWait}"
-  p:acquireIncrement="${database.pool.acquireIncrement}"
-  p:acquireRetryAttempts="${database.pool.acquireRetryAttempts}"
-  p:acquireRetryDelay="${database.pool.acquireRetryDelay}"
-  p:idleConnectionTestPeriod="${database.pool.idleConnectionTestPeriod}"
-  p:preferredTestQuery="${database.pool.connectionHealthQuery}" />
-{% endhighlight %}
-
-You will also need the dependency for the database driver that you have chosen.
-
-Finally, the following database table needs to be created beforehand:
-
-{% highlight sql %}
-CREATE TABLE COM_AUDIT_TRAIL
-(
-    AUD_USER      VARCHAR(100) NOT NULL,
-    AUD_CLIENT_IP VARCHAR(15)   NOT NULL,
-    AUD_SERVER_IP VARCHAR(15)   NOT NULL,
-    AUD_RESOURCE  VARCHAR(100) NOT NULL,
-    AUD_ACTION    VARCHAR(100) NOT NULL,
-    APPLIC_CD     VARCHAR(15)   NOT NULL,
-    AUD_DATE      TIMESTAMP     NOT NULL
-);
-{% endhighlight %}
-
-You may need to augment the syntax and column types per your specific database implementation.
-
-##Sample Log Output
-{% highlight bash %}
-WHO: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
-WHAT: supplied credentials: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
-ACTION: AUTHENTICATION_SUCCESS
-APPLICATION: CAS
-WHEN: Mon Aug 26 12:35:59 IST 2013
-CLIENT IP ADDRESS: 172.16.5.181
-SERVER IP ADDRESS: 192.168.200.22
-
-WHO: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
-WHAT: TGT-9-qj2jZKQUmu1gQvXNf7tXQOJPOtROvOuvYAxybhZiVrdZ6pCUwW-cas01.example.org
-ACTION: TICKET_GRANTING_TICKET_CREATED
-APPLICATION: CAS
-WHEN: Mon Aug 26 12:35:59 IST 2013
-CLIENT IP ADDRESS: 172.16.5.181
-SERVER IP ADDRESS: 192.168.200.22
-{% endhighlight %}
