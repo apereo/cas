@@ -1,0 +1,19 @@
+
+description = 'Apereo CAS Core Web'
+dependencies {
+  compile project(':cas-server-core-api')
+    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
+exclude(module: 'commons-logging')
+exclude(module: 'spring-context')
+exclude(module: 'spring-web')
+    }
+    compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-web', version:'4.2.1.RELEASE'
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

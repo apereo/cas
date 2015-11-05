@@ -1,0 +1,22 @@
+
+description = 'Apereo CAS OAuth Server Support'
+dependencies {
+  compile project(':cas-server-core-api')
+  compile project(':cas-server-core-services')
+  compile project(':cas-server-core-web')
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.6.1'
+    runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+exclude(module: 'slf4j-api')
+exclude(module: 'jboss-logging')
+    }
+  testCompile project(':cas-server-core-tickets')
+  testCompile project(':cas-server-core-util')
+  testCompile project(':cas-server-core-authentication')
+  testCompile project(':cas-server-core-logout')
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests
