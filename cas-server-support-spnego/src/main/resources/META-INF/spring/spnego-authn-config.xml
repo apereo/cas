@@ -32,13 +32,6 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <!--
-    | The base-package indicates where components stored. Spring will scan this
-    | folder and find out the annotated beans and register it in Spring container.
-    -->
-    <context:component-scan base-package="org.jasig.cas" />
-    <context:annotation-config/>
-
     <bean id="spnegoAuthentication" class="jcifs.spnego.Authentication" />
 
 </beans>

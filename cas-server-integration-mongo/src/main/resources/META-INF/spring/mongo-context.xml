@@ -36,9 +36,6 @@
         http://www.springframework.org/schema/data/mongo
         http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
-    <context:annotation-config/>
-    <context:component-scan base-package="org.jasig.cas.services" />
-
     <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
     <mongo:mapping-converter>
