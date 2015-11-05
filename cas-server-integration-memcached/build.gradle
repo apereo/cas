@@ -1,32 +1,32 @@
 
 description = 'Apereo CAS Memcached Integration'
 dependencies {
-    compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
-exclude(module: 'commons-logging')
-    }
-    compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+  compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+    exclude(module: 'commons-logging')
+  }
+  compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-logging')
   compile project(':cas-server-core-tickets')
   compile project(':cas-server-core-services')
-    compile group: 'net.spy', name: 'spymemcached', version:'2.11.7'
-    compile group: 'com.esotericsoftware', name: 'kryo', version:'3.0.2'
-    compile group: 'de.javakaffee', name: 'kryo-serializers', version:'0.35'
+  compile group: 'net.spy', name: 'spymemcached', version:'2.11.7'
+  compile group: 'com.esotericsoftware', name: 'kryo', version:'3.0.2'
+  compile group: 'de.javakaffee', name: 'kryo-serializers', version:'0.35'
   testCompile project(':cas-server-core-util')
-    testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.memcached', version:'1.06.2'
+  testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.memcached', version:'1.06.2'
   testCompile project(':cas-server-core-authentication')
   testCompile project(':cas-server-core-services')
-    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
-exclude(module: 'slf4j-api')
-exclude(module: 'jboss-logging')
-    }
-    testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
-exclude(module: 'slf4j-api')
-    }
-  providedCompile project(':cas-server-support-saml')
-  providedCompile project(':cas-server-support-saml-googleapps')
+  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+    exclude(module: 'slf4j-api')
+    exclude(module: 'jboss-logging')
+  }
+  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
+    exclude(module: 'slf4j-api')
+  }
+  provided project(':cas-server-support-saml')
+  provided project(':cas-server-support-saml-googleapps')
 }
 
 task packageTests(type: Jar) {
