@@ -19,6 +19,7 @@ dependencies {
     exclude(module: 'spring-beans')
     exclude(module: 'spring-context')
     exclude(module: 'spring-core')
+    exclude(module: 'spring-tx')
   }
   compile(group: 'org.springframework.webflow', name: 'spring-binding', version:'2.4.2.RELEASE') {
     exclude(module: 'commons-logging')
@@ -26,6 +27,7 @@ dependencies {
     exclude(module: 'spring-context')
     exclude(module: 'spring-core')
     exclude(module: 'spring-expression')
+    exclude(module: 'spring-webmvc')
   }
   testCompile project(':cas-server-core-web')
   testCompile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {

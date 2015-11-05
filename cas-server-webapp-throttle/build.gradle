@@ -17,6 +17,13 @@ dependencies {
   compile(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:'1.2.GA') {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
+    exclude(module: 'spring-web')
+    exclude(module: 'spring-webmvc')
+    exclude(module: 'spring-tx')
+    exclude(module: 'spring-beans')
+    exclude(module: 'spring-jdbc')
+    exclude(module: 'aspectjrt')
+    exclude(module: 'validation-api')
   }
   compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
     exclude(module: 'jboss-logging-annotations')

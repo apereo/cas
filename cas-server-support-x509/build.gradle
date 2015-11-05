@@ -10,6 +10,9 @@ dependencies {
     exclude(module: 'spring-context')
     exclude(module: 'spring-web')
     exclude(module: 'spring-beans')
+    exclude(module: 'spring-core')
+    exclude(module: 'spring-expression')
+    exclude(module: 'spring-webmvc')
   }
   compile(group: 'net.sf.ehcache', name: 'ehcache', version:'2.10.0') {
     exclude(module: 'slf4j-api')
