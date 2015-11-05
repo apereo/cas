@@ -1,21 +1,22 @@
 
 description = 'Apereo CAS Web Application Reports'
 dependencies {
-    compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
-exclude(module: 'commons-logging')
-    }
-    compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
-    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
-exclude(module: 'commons-logging')
-exclude(module: 'spring-context')
-exclude(module: 'spring-web')
-    }
-    compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-web', version:'4.2.1.RELEASE'
-    compile(group: 'io.dropwizard.metrics', name: 'metrics-servlets', version:'3.1.2') {
-exclude(module: 'slf4j-api')
-    }
+  compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+    exclude(module: 'commons-logging')
+  }
+  compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
+  compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
+    exclude(module: 'commons-logging')
+    exclude(module: 'spring-context')
+    exclude(module: 'spring-web')
+    exclude(module: 'spring-beans')
+  }
+  compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-web', version:'4.2.1.RELEASE'
+  compile(group: 'io.dropwizard.metrics', name: 'metrics-servlets', version:'3.1.2') {
+    exclude(module: 'slf4j-api')
+  }
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-monitor')

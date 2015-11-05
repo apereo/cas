@@ -4,31 +4,32 @@ dependencies {
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-authentication')
-    compile group: 'org.springframework.security', name: 'spring-security-core', version:'4.0.2.RELEASE'
-    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
-exclude(module: 'commons-logging')
-exclude(module: 'spring-context')
-exclude(module: 'spring-web')
-    }
-    compile(group: 'org.ldaptive', name: 'ldaptive', version:'1.1.0') {
-exclude(module: 'slf4j-api')
-    }
-    compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
-    compile group: 'org.reflections', name: 'reflections', version:'0.9.10'
-    compile group: 'org.ldaptive', name: 'ldaptive-beans', version:'1.1.0'
-    compile group: 'org.springframework', name: 'spring-expression', version:'4.2.1.RELEASE'
-    compile group: 'joda-time', name: 'joda-time', version:'2.8.2'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.6.1'
-    runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
-exclude(module: 'slf4j-api')
-exclude(module: 'jboss-logging')
-    }
-    testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version:'1.1.0'
-    testCompile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
-exclude(module: 'jboss-logging-annotations')
-exclude(module: 'javassist')
-    }
-    testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:'3.0.0'
+  compile group: 'org.springframework.security', name: 'spring-security-core', version:'4.0.2.RELEASE'
+  compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
+    exclude(module: 'commons-logging')
+    exclude(module: 'spring-context')
+    exclude(module: 'spring-web')
+    exclude(module: 'spring-beans')
+  }
+  compile(group: 'org.ldaptive', name: 'ldaptive', version:'1.1.0') {
+    exclude(module: 'slf4j-api')
+  }
+  compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
+  compile group: 'org.reflections', name: 'reflections', version:'0.9.10'
+  compile group: 'org.ldaptive', name: 'ldaptive-beans', version:'1.1.0'
+  compile group: 'org.springframework', name: 'spring-expression', version:'4.2.1.RELEASE'
+  compile group: 'joda-time', name: 'joda-time', version:'2.8.2'
+  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.6.1'
+  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+    exclude(module: 'slf4j-api')
+    exclude(module: 'jboss-logging')
+  }
+  testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version:'1.1.0'
+  testCompile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
+    exclude(module: 'jboss-logging-annotations')
+    exclude(module: 'javassist')
+  }
+  testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:'3.0.0'
 }
 
 task packageTests(type: Jar) {
