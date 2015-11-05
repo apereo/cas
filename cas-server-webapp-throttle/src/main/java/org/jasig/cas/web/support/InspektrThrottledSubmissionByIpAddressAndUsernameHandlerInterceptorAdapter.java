@@ -30,6 +30,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -45,7 +47,7 @@ import java.util.List;
  * Defines a new Inspektr Action "THROTTLED_LOGIN_ATTEMPT" which keeps track of failed login attempts that don't result
  * in AUTHENTICATION_FAILED methods
  * <p>
- * This relies on the default Inspektr table layout and username construction.  The username construction can be overriden
+ * This relies on the default Inspektr table layout and username construction.  The username construction can be overridden
  * in a subclass.
  *
  * @author Scott Battaglia
@@ -69,9 +71,10 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     @Qualifier("auditTrailManager")
     private AuditTrailManager auditTrailManager;
 
+    @Nullable
     @Autowired(required=false)
-    @Qualifier("auditTrailDataSource")
-    private JdbcTemplate jdbcTemplate;
+    @Qualifier("inspektrAuditTrailDataSource")
+    private DataSource dataSource;
 
     @Value("${cas.throttle.appcode:" + DEFAULT_APPLICATION_CODE + "}")
     private String applicationCode = DEFAULT_APPLICATION_CODE;
@@ -81,6 +84,9 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     @Value("${cas.throttle.audit.query:" + SQL_AUDIT_QUERY + "}")
     private String sqlQueryAudit;
+
+    private JdbcTemplate jdbcTemplate;
+
 
     /**
      * Instantiates a new Inspektr throttled submission by ip address and username handler interceptor adapter.
@@ -96,60 +102,84 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final AuditTrailManager auditTrailManager,
             final DataSource dataSource) {
         this.auditTrailManager = auditTrailManager;
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        init();
+    }
+
+    /**
+     * Init the jdbc template.
+     */
+    @PostConstruct
+    public void init() {
+
+        if (this.dataSource != null) {
+            this.jdbcTemplate = new JdbcTemplate(this.dataSource);
+        } else {
+            logger.debug("No data source is defined for {}. Ignoring the construction of JDBC template",
+                    this.getName());
+        }
     }
 
     @Override
     protected boolean exceedsThreshold(final HttpServletRequest request) {
-
-        final String userToUse = constructUsername(request, getUsernameParameter());
-        final Calendar cutoff = Calendar.getInstance();
-        cutoff.add(Calendar.SECOND, -1 * getFailureRangeInSeconds());
-        final List<Timestamp> failures = this.jdbcTemplate.query(
-                sqlQueryAudit,
-                new Object[] {request.getRemoteAddr(), userToUse, this.authenticationFailureCode, this.applicationCode, cutoff.getTime()},
-                new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-                new RowMapper<Timestamp>() {
-                    @Override
-                    public Timestamp mapRow(final ResultSet resultSet, final int i) throws SQLException {
-                        return resultSet.getTimestamp(1);
-                    }
-                });
-        if (failures.size() < 2) {
-            return false;
+        if (this.dataSource != null && this.jdbcTemplate != null) {
+            final String userToUse = constructUsername(request, getUsernameParameter());
+            final Calendar cutoff = Calendar.getInstance();
+            cutoff.add(Calendar.SECOND, -1 * getFailureRangeInSeconds());
+            final List<Timestamp> failures = this.jdbcTemplate.query(
+                    sqlQueryAudit,
+                    new Object[]{request.getRemoteAddr(), userToUse, this.authenticationFailureCode,
+                            this.applicationCode, cutoff.getTime()},
+                    new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
+                    new RowMapper<Timestamp>() {
+                        @Override
+                        public Timestamp mapRow(final ResultSet resultSet, final int i) throws SQLException {
+                            return resultSet.getTimestamp(1);
+                        }
+                    });
+            if (failures.size() < 2) {
+                return false;
+            }
+            // Compute rate in submissions/sec between last two authn failures and compare with threshold
+            return NUMBER_OF_MILLISECONDS_IN_SECOND / (failures.get(0).getTime() - failures.get(1).getTime()) > getThresholdRate();
         }
-        // Compute rate in submissions/sec between last two authn failures and compare with threshold
-        return NUMBER_OF_MILLISECONDS_IN_SECOND / (failures.get(0).getTime() - failures.get(1).getTime()) > getThresholdRate();
+        logger.debug("No data source is defined for {}. Ignoring threshold checking",
+                this.getName());
+        return false;
     }
 
     @Override
     protected void recordSubmissionFailure(final HttpServletRequest request) {
-        // No internal counters to update
+        recordThrottle(request);
     }
 
     @Override
     protected void recordThrottle(final HttpServletRequest request) {
-        super.recordThrottle(request);
-        final String userToUse = constructUsername(request, getUsernameParameter());
-        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-        final AuditPointRuntimeInfo auditPointRuntimeInfo = new AuditPointRuntimeInfo() {
-            private static final long serialVersionUID = 1L;
+        if (this.dataSource != null && this.jdbcTemplate != null) {
+            super.recordThrottle(request);
+            final String userToUse = constructUsername(request, getUsernameParameter());
+            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+            final AuditPointRuntimeInfo auditPointRuntimeInfo = new AuditPointRuntimeInfo() {
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            public String asString() {
-                return String.format("%s.recordThrottle()", this.getClass().getName());
-            }
-        };
-        final AuditActionContext context = new AuditActionContext(
-                userToUse,
-                userToUse,
-                INSPEKTR_ACTION,
-                this.applicationCode,
-                new java.util.Date(),
-                clientInfo.getClientIpAddress(),
-                clientInfo.getServerIpAddress(),
-                auditPointRuntimeInfo);
-        this.auditTrailManager.record(context);
+                @Override
+                public String asString() {
+                    return String.format("%s.recordThrottle()", this.getClass().getName());
+                }
+            };
+            final AuditActionContext context = new AuditActionContext(
+                    userToUse,
+                    userToUse,
+                    INSPEKTR_ACTION,
+                    this.applicationCode,
+                    new java.util.Date(),
+                    clientInfo.getClientIpAddress(),
+                    clientInfo.getServerIpAddress(),
+                    auditPointRuntimeInfo);
+            this.auditTrailManager.record(context);
+        } else {
+            logger.debug("No data source is defined for {}. Ignoring audit record-keeping",
+                    this.getName());
+        }
     }
 
     public final void setApplicationCode(final String applicationCode) {
@@ -168,8 +198,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      * @return the string
      */
     protected String constructUsername(final HttpServletRequest request, final String usernameParameter) {
-        final String username = request.getParameter(usernameParameter);
-        return "[username: " + (username != null ? username : "") + ']';
+        return request.getParameter(usernameParameter);
     }
 
     @Override

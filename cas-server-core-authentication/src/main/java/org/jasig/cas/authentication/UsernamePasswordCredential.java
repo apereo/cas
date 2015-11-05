@@ -39,9 +39,6 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     /** Unique ID for serialization. */
     private static final long serialVersionUID = -700605081472810939L;
 
-    /** Password suffix appended to username in string representation. */
-    private static final String PASSWORD_SUFFIX = "+password";
-
     /** The username. */
     @NotNull
     @Size(min=1, message = "required.username")
@@ -104,7 +101,7 @@ public class UsernamePasswordCredential implements Credential, Serializable {
 
     @Override
     public String toString() {
-        return this.username + PASSWORD_SUFFIX;
+        return this.username;
     }
 
     @Override
