@@ -121,20 +121,17 @@ public abstract class AbstractServletContextInitializer
         this.applicationContext = applicationContext;
 
         try {
-            if (applicationContext.getParent() == null) {
-                logger.info("Initializing {} root application context", contextInitializerName);
-                initializeRootApplicationContext();
-                logger.info("Initialized {} root application context successfully", contextInitializerName);
-            } else {
-                logger.info("Initializing {} application context", contextInitializerName);
-                initializeServletApplicationContext();
-                logger.info("Initialized {} application context successfully", contextInitializerName);
-            }
+            logger.info("Initializing {} root application context", contextInitializerName);
+            initializeRootApplicationContext();
+            logger.info("Initialized {} root application context successfully", contextInitializerName);
+
+            logger.info("Initializing {} servlet application context", contextInitializerName);
+            initializeServletApplicationContext();
+            logger.info("Initialized {} servlet application context successfully", contextInitializerName);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
     }
-
 
     /**
      * Add authentication handler principal resolver.
