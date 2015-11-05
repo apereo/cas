@@ -11,7 +11,7 @@ dependencies {
   compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'1.2.GA') {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
-          exclude(module: 'aspectjrt')
+    exclude(module: 'aspectjrt')
   }
   compile group: 'com.google.guava', name: 'guava', version:'18.0'
   compile group: 'org.springframework', name: 'spring-orm', version:'4.2.1.RELEASE'
