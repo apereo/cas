@@ -86,6 +86,7 @@ org.jasig.cas.web
 org.jasig.cas.web.flow
 org.jasig.cas.web.report
 org.jasig.cas.web.support
+org.jasig.cas.web.support.entity
 org.jasig.cas.web.v3
 org.jasig.cas.web.view
 org.slf4j.impl
