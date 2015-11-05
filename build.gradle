@@ -1,22 +1,9 @@
-buildscript {
-  repositories {
-    maven { url 'http://repo.spring.io/plugins-release' }
-  }
-  dependencies {
-    classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.6'
-  }
-}
-
 defaultTasks "clean", "build"
 
 allprojects  {
   apply plugin: 'idea'
   apply plugin: "eclipse"
   apply plugin: 'maven'
-  apply plugin: 'propdeps'
-  apply plugin: 'propdeps-maven'
-  apply plugin: 'propdeps-idea'
-  apply plugin: 'propdeps-eclipse'
 
   group = 'org.jasig.cas'
   version = '4.2.0-SNAPSHOT'
@@ -24,13 +11,14 @@ allprojects  {
 
 subprojects {
   apply plugin: 'java'
+
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
 
   repositories {
     mavenLocal()
-    jCenter()
-    
+    jcenter()
+
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     maven { url "http://repo.maven.apache.org/maven2" }
     maven { url "https://jitpack.io" }
@@ -39,11 +27,15 @@ subprojects {
     maven { url "http://files.couchbase.com/maven2" }
   }
 
+  configurations {
+    provided
+    provided.extendsFrom(compile)
+  }
+
   configurations.all {
     resolutionStrategy {
       failOnVersionConflict()
     }
-    providedCompile
   }
 
   dependencies {
@@ -69,8 +61,8 @@ subprojects {
       exclude(module: 'hamcrest-core')
     }
     testCompile group: 'org.springframework', name: 'spring-test', version:'4.2.1.RELEASE'
-    provided(group: 'javax.servlet', name: 'javax.servlet-api', version:'3.0.1')
-    provided(group: 'javax.el', name: 'javax.el-api', version:'3.0.0') 
+    provided group: 'javax.servlet', name: 'javax.servlet-api', version:'3.0.1'
+    provided group: 'javax.el', name: 'javax.el-api', version:'3.0.0'
   }
 }
 
