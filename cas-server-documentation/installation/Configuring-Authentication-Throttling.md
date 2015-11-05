@@ -57,7 +57,7 @@ Uses a memory map to prevent successive failed login attempts for a particular u
 <alias name="inMemoryIpAddressUsernameThrottle" alias="authenticationThrottle" />
 {% endhighlight %}
 
-###Inspektr
+###Inspektr + JDBC
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
 username from the same IP address. This component requires that the
 [inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
@@ -65,14 +65,7 @@ username from the same IP address. This component requires that the
 {% highlight xml %}
 
 <alias name="inspektrIpAddressUsernameThrottle" alias="authenticationThrottle" />
-
-<bean id="auditTrailDataSource" ... />
-
-<bean id="auditTrailManager"
-      class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
-      c:transactionTemplate-ref="inspektrTransactionTemplate"
-      p:dataSource-ref="auditTrailDataSource" />
-{% endhighlight %}
+<import resource="classpath:inspektr-throttle-jdbc-config.xml" />
 
 For additional instructions on how to configure auditing via Inspektr,
 please [review the following guide](Logging.html).
@@ -81,10 +74,10 @@ please [review the following guide](Logging.html).
 Login throttling configuration consists of:
 
 {% highlight properties %}
-# cas.throttle.failure.threshold=
-# cas.throttle.failure.range.seconds=
-# cas.throttle.username.parameter=
-# cas.throttle.appcode=
-# cas.throttle.authn.failurecode=
-# cas.throttle.audit.query=
+#cas.throttle.failure.threshold=
+#cas.throttle.failure.range.seconds=
+#cas.throttle.username.parameter=
+#cas.throttle.appcode=
+#cas.throttle.authn.failurecode=
+#cas.throttle.audit.query=
 {% endhighlight %}
