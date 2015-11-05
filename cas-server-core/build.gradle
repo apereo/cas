@@ -26,6 +26,7 @@ dependencies {
     exclude(module: 'spring-beans')
     exclude(module: 'spring-context')
     exclude(module: 'spring-core')
+    exclude(module: 'spring-tx')
   }
   compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
   compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.4'
@@ -58,6 +59,10 @@ dependencies {
   }
   testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
     exclude(module: 'slf4j-api')
+    exclude(module: 'spring-core')
+    exclude(module: 'spring-aop')
+    exclude(module: 'spring-beans')
+    exclude(module: 'spring-context-support')
   }
   testCompile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
     exclude(module: 'javassist')
@@ -65,6 +70,13 @@ dependencies {
   testCompile group: 'javassist', name: 'javassist', version:'3.12.1.GA'
   testCompile(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:'1.2.GA') {
     exclude(module: 'slf4j-api')
+    exclude(module: 'spring-web')
+    exclude(module: 'spring-webmvc')
+    exclude(module: 'spring-tx')
+    exclude(module: 'spring-beans')
+    exclude(module: 'spring-jdbc')
+    exclude(module: 'aspectjrt')
+    exclude(module: 'validation-api')
   }
   testCompile project(':cas-server-core-tickets')
   testCompile project(':cas-server-core-logout')

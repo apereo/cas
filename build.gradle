@@ -34,8 +34,10 @@ subprojects {
 
   configurations.all {
     resolutionStrategy {
-      //failOnVersionConflict()
+      failOnVersionConflict()
     }
+    exclude(group: "cglib", module: "cglib")
+    exclude(group: "cglib", module: "cglib-full")
   }
 
   sourceSets {

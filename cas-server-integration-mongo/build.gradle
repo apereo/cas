@@ -18,6 +18,7 @@ dependencies {
     exclude(module: 'spring-beans')
     exclude(module: 'spring-context')
     exclude(module: 'spring-core')
+    exclude(module: 'spring-tx')
   }
   runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
     exclude(module: 'slf4j-api')
