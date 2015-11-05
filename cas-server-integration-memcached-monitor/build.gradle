@@ -20,6 +20,10 @@ dependencies {
   }
   testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
     exclude(module: 'slf4j-api')
+    exclude(module: 'spring-core')
+    exclude(module: 'spring-beans')
+    exclude(module: 'spring-context-support')
+    exclude(module: 'spring-aop')
   }
   testCompile project(':cas-server-integration-memcached')
   testCompile project(':cas-server-core')

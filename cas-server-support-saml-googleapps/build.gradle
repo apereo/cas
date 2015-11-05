@@ -3,15 +3,19 @@ description = 'Apereo CAS SAML Server Google Apps SAML Support'
 dependencies {
   compile project(':cas-server-core-api')
   compile project(':cas-server-support-saml')
-    runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
-exclude(module: 'slf4j-api')
-exclude(module: 'jboss-logging')
-    }
+  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+    exclude(module: 'slf4j-api')
+    exclude(module: 'jboss-logging')
+  }
   testCompile project(':cas-server-core-util')
-    testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version:'2.3'
-    testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
-exclude(module: 'slf4j-api')
-    }
+  testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version:'2.3'
+  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
+    exclude(module: 'slf4j-api')
+    exclude(module: 'spring-core')
+    exclude(module: 'spring-beans')
+    exclude(module: 'spring-context-support')
+    exclude(module: 'spring-aop')
+  }
   testCompile project(':cas-server-support-saml')
   testCompile project(':cas-server-core-authentication')
   testCompile project(':cas-server-core')

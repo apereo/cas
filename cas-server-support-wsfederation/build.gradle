@@ -7,10 +7,14 @@ dependencies {
   testCompile project(':cas-server-core-logout')
   testCompile project(':cas-server-support-saml')
   testCompile project(':cas-server-core-authentication')
-    testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version:'2.3'
-    testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
-exclude(module: 'slf4j-api')
-    }
+  testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version:'2.3'
+  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
+    exclude(module: 'slf4j-api')
+    exclude(module: 'spring-core')
+    exclude(module: 'spring-beans')
+    exclude(module: 'spring-context-support')
+    exclude(module: 'spring-aop')
+  }
 }
 
 task packageTests(type: Jar) {
