@@ -34,8 +34,14 @@ subprojects {
 
   configurations.all {
     resolutionStrategy {
-      failOnVersionConflict()
+      //failOnVersionConflict()
     }
+  }
+
+  sourceSets {
+    main.compileClasspath += configurations.provided
+    test.compileClasspath += configurations.provided
+    test.runtimeClasspath += configurations.provided
   }
 
   dependencies {
@@ -45,6 +51,7 @@ subprojects {
     compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
     compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:'1.2.GA') {
       exclude(module: 'validation-api')
+      exclude(module: 'aspectjrt')
     }
     runtime(group: 'org.glassfish.web', name: 'javax.el', version:'2.2.6') {
       exclude(module: 'javax.el-api')
