@@ -1,0 +1,20 @@
+
+description = 'Apereo CAS WS-Federation Support'
+dependencies {
+  compile project(':cas-server-core-api')
+  compile project(':cas-server-support-saml')
+  testCompile project(':cas-server-core')
+  testCompile project(':cas-server-core-logout')
+  testCompile project(':cas-server-support-saml')
+  testCompile project(':cas-server-core-authentication')
+    testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version:'2.3'
+    testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
+exclude(module: 'slf4j-api')
+    }
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

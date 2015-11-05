@@ -1,0 +1,47 @@
+
+description = 'Apereo CAS JPA Ticket Registry Support'
+dependencies {
+  compile project(':cas-server-core-api')
+  compile project(':cas-server-core-tickets')
+  compile project(':cas-server-core-monitor')
+  compile project(':cas-server-core-util')
+    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.4'
+    compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.1.RELEASE'
+    compile(group: 'org.quartz-scheduler', name: 'quartz', version:'2.2.1') {
+exclude(module: 'slf4j-api')
+exclude(module: 'c3p0')
+    }
+    compile group: 'org.springframework', name: 'spring-orm', version:'4.2.1.RELEASE'
+    compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
+exclude(module: 'jboss-logging-annotations')
+exclude(module: 'javassist')
+    }
+    compile(group: 'org.apache.shiro', name: 'shiro-core', version:'1.2.4') {
+exclude(module: 'slf4j-api')
+    }
+    compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
+exclude(module: 'javassist')
+    }
+    compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+    runtime group: 'com.mchange', name: 'c3p0', version:'0.9.5.1'
+  testCompile project(':cas-server-core-util')
+    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+exclude(module: 'slf4j-api')
+exclude(module: 'jboss-logging')
+    }
+    testCompile group: 'org.hsqldb', name: 'hsqldb', version:'2.3.3'
+    testCompile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
+exclude(module: 'commons-logging')
+exclude(module: 'spring-context')
+exclude(module: 'spring-web')
+    }
+  testCompile project(':cas-server-core-authentication')
+  testCompile project(':cas-server-core-logout')
+  testCompile project(':cas-server-core-services')
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests
