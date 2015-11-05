@@ -1,0 +1,21 @@
+
+description = 'Apereo CAS RADIUS Support'
+dependencies {
+  compile project(':cas-server-core-api')
+  compile project(':cas-server-core-authentication')
+    compile(group: 'com.github.coova', name: 'jradius', version:'jradius-1.1.5') {
+exclude(module: 'commons-logging')
+exclude(module: 'log4j')
+exclude(module: 'slf4j-api')
+exclude(module: 'commons-collections')
+exclude(module: 'commons-beanutils')
+exclude(module: 'bcprov-jdk15')
+exclude(module: 'slf4j-log4j12')
+    }
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

@@ -1,0 +1,37 @@
+
+description = 'Apereo CAS Core Authentication'
+dependencies {
+  compile project(':cas-server-core-api')
+    compile(group: 'io.dropwizard.metrics', name: 'metrics-annotation', version:'3.1.2') {
+exclude(module: 'slf4j-api')
+    }
+  compile project(':cas-server-core-util')
+    compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'1.2.GA') {
+exclude(module: 'slf4j-api')
+exclude(module: 'validation-api')
+    }
+    compile(group: 'org.jasig.service.persondir', name: 'person-directory-impl', version:'1.7.0') {
+exclude(module: 'commons-logging')
+exclude(module: 'slf4j-api')
+exclude(module: 'commons-lang3')
+exclude(module: 'commons-collections4')
+    }
+    compile(group: 'org.springframework.webflow', name: 'spring-binding', version:'2.4.2.RELEASE') {
+exclude(module: 'commons-logging')
+    }
+  testCompile project(':cas-server-core-web')
+    testCompile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
+exclude(module: 'jboss-logging-annotations')
+exclude(module: 'javassist')
+    }
+    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+exclude(module: 'slf4j-api')
+exclude(module: 'jboss-logging')
+    }
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

@@ -1,0 +1,25 @@
+
+description = 'Apereo CAS ClearPass Extension - DEPRECATED'
+dependencies {
+  compile project(':cas-server-core-api')
+  compile project(':cas-server-core-util')
+  compile project(':cas-server-core-tickets')
+    compile(group: 'net.sf.ehcache', name: 'ehcache', version:'2.10.0') {
+exclude(module: 'slf4j-api')
+    }
+    compile(group: 'org.jasig.cas.client', name: 'cas-client-core', version:'3.4.1') {
+exclude(module: 'servlet-api')
+exclude(module: 'log4j-over-slf4j')
+exclude(module: 'bcprov-jdk15')
+exclude(module: 'slf4j-api')
+    }
+  testCompile project(':cas-server-integration-ehcache')
+  testCompile project(':cas-server-core-authentication')
+  testCompile project(':cas-server-core-util')
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

@@ -1,0 +1,41 @@
+
+description = 'Apereo CAS Web Application Authentication Throttling'
+dependencies {
+    compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+exclude(module: 'commons-logging')
+    }
+    compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.1.RELEASE'
+    compile(group: 'org.quartz-scheduler', name: 'quartz', version:'2.2.1') {
+exclude(module: 'slf4j-api')
+exclude(module: 'c3p0')
+    }
+    compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'1.2.GA') {
+exclude(module: 'slf4j-api')
+exclude(module: 'validation-api')
+    }
+    compile(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:'1.2.GA') {
+exclude(module: 'slf4j-api')
+exclude(module: 'validation-api')
+    }
+    compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
+exclude(module: 'jboss-logging-annotations')
+exclude(module: 'javassist')
+    }
+    compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
+exclude(module: 'javassist')
+    }
+    compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version:'4.2.1.RELEASE'
+    compile group: 'org.reflections', name: 'reflections', version:'0.9.10'
+    compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+  compile project(':cas-server-core-web')
+  compile project(':cas-server-core-util')
+  testCompile project(':cas-server-core-authentication')
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

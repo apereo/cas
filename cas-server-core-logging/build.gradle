@@ -1,0 +1,20 @@
+
+description = 'Apereo CAS Core Logging'
+dependencies {
+  compile project(':cas-server-core-api')
+    compile group: 'org.reflections', name: 'reflections', version:'0.9.10'
+    compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+exclude(module: 'commons-logging')
+    }
+    compile group: 'commons-io', name: 'commons-io', version:'2.4'
+    compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-webmvc', version:'4.2.1.RELEASE'
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

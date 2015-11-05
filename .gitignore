@@ -22,3 +22,4 @@ rebel.xml
 node_modules/
 package.json
 gruntfile.js
+.gradle/
