@@ -1,0 +1,79 @@
+buildscript {
+  repositories {
+    maven { url 'http://repo.spring.io/plugins-release' }
+  }
+  dependencies {
+    classpath 'org.springframework.build.gradle:propdeps-plugin:0.0.6'
+  }
+}
+
+defaultTasks "clean", "build"
+
+allprojects  {
+  apply plugin: 'idea'
+  apply plugin: "eclipse"
+  apply plugin: 'maven'
+  apply plugin: 'propdeps'
+  apply plugin: 'propdeps-maven'
+  apply plugin: 'propdeps-idea'
+  apply plugin: 'propdeps-eclipse'
+
+  group = 'org.jasig.cas'
+  version = '4.2.0-SNAPSHOT'
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.7
+  targetCompatibility = 1.7
+
+  repositories {
+    mavenLocal()
+    jCenter()
+    
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "https://jitpack.io" }
+    maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
+    maven { url "https://build.shibboleth.net/nexus/content/groups/public" }
+    maven { url "http://files.couchbase.com/maven2" }
+  }
+
+  configurations.all {
+    resolutionStrategy {
+      failOnVersionConflict()
+    }
+    providedCompile
+  }
+
+  dependencies {
+    compile group: 'org.aspectj', name: 'aspectjrt', version:'1.8.6'
+    compile group: 'org.aspectj', name: 'aspectjweaver', version:'1.8.6'
+    compile group: 'javax.validation', name: 'validation-api', version:'1.1.0.Final'
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
+    compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:'1.2.GA') {
+      exclude(module: 'validation-api')
+    }
+    runtime(group: 'org.glassfish.web', name: 'javax.el', version:'2.2.6') {
+      exclude(module: 'javax.el-api')
+    }
+    runtime group: 'org.slf4j', name: 'jul-to-slf4j', version:'1.7.12'
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.3'
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.3'
+    runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version:'2.3') {
+      exclude(module: 'slf4j-api')
+    }
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version:'2.3'
+    testCompile group: 'junit', name: 'junit', version:'4.12'
+    testCompile(group: 'org.mockito', name: 'mockito-core', version:'1.10.19') {
+      exclude(module: 'hamcrest-core')
+    }
+    testCompile group: 'org.springframework', name: 'spring-test', version:'4.2.1.RELEASE'
+    provided(group: 'javax.servlet', name: 'javax.servlet-api', version:'3.0.1')
+    provided(group: 'javax.el', name: 'javax.el-api', version:'3.0.0') 
+  }
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.8'
+}

@@ -1,0 +1,36 @@
+
+description = 'Apereo CAS X.509 Client Certificate Support'
+dependencies {
+  compile project(':cas-server-core-authentication')
+  compile project(':cas-server-core-util')
+  compile project(':cas-server-core-web')
+    compile group: 'org.cryptacular', name: 'cryptacular', version:'1.0'
+    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
+exclude(module: 'commons-logging')
+exclude(module: 'spring-context')
+exclude(module: 'spring-web')
+    }
+    compile(group: 'net.sf.ehcache', name: 'ehcache', version:'2.10.0') {
+exclude(module: 'slf4j-api')
+    }
+    compile group: 'org.springframework', name: 'spring-expression', version:'4.2.1.RELEASE'
+    compile(group: 'org.ldaptive', name: 'ldaptive', version:'1.1.0') {
+exclude(module: 'slf4j-api')
+    }
+  testCompile project(':cas-server-support-generic')
+    testCompile group: 'org.jasig.cas', name: 'cas-server-support-legacy', version:'4.2.0-SNAPSHOT'
+  testCompile project(':cas-server-support-ldap')
+    testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:'3.0.0'
+    testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version:'1.1.0'
+    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+exclude(module: 'slf4j-api')
+exclude(module: 'jboss-logging')
+    }
+  testCompile project(':cas-server-core-logout')
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests

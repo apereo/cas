@@ -1,0 +1,27 @@
+
+description = 'Apereo CAS Core Audit'
+dependencies {
+  compile project(':cas-server-core-api')
+    compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'1.2.GA') {
+exclude(module: 'slf4j-api')
+exclude(module: 'validation-api')
+    }
+    compile group: 'org.springframework.security', name: 'spring-security-core', version:'4.0.2.RELEASE'
+  compile project(':cas-server-core-util')
+    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+exclude(module: 'slf4j-api')
+exclude(module: 'jboss-logging')
+    }
+  testCompile project(':cas-server-core-logout')
+  testCompile project(':cas-server-core-monitor')
+  testCompile project(':cas-server-core-util')
+  testCompile project(':cas-server-core-authentication')
+  testCompile project(':cas-server-core')
+  testCompile project(':cas-server-core')
+}
+
+task packageTests(type: Jar) {
+  from sourceSets.test.output
+  classifier = 'tests'
+}
+artifacts.archives packageTests
