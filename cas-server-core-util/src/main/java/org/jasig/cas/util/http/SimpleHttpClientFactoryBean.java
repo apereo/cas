@@ -214,6 +214,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
             final PoolingHttpClientConnectionManager connMgmr = new PoolingHttpClientConnectionManager(registry);
             connMgmr.setMaxTotal(this.maxPooledConnections);
             connMgmr.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
+            connMgmr.setValidateAfterInactivity(DEFAULT_TIMEOUT);
 
             final HttpHost httpHost = new HttpHost(InetAddress.getLocalHost());
             final HttpRoute httpRoute = new HttpRoute(httpHost);
@@ -223,7 +224,6 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
                     .setSocketTimeout(this.readTimeout)
                     .setConnectTimeout(this.connectionTimeout)
                     .setConnectionRequestTimeout(this.connectionTimeout)
-                    .setStaleConnectionCheckEnabled(true)
                     .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
                     .setRedirectsEnabled(this.redirectsEnabled)
                     .setAuthenticationEnabled(this.authenticationEnabled)

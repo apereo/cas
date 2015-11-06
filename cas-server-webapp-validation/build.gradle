@@ -15,13 +15,14 @@ dependencies {
   runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
+    exclude(module: 'xml-apis')  
   }
   testCompile project(':cas-server-core')
   testCompile project(':cas-server-core-logout')
   testCompile project(':cas-server-core-monitor')
-  testCompile project(':cas-server-core')
-  testCompile project(':cas-server-core-authentication')
+  testCompile project(path: ":cas-server-core", configuration: "tests")
+  testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
   testCompile group: 'javax.servlet', name: 'jstl', version:'1.2'
-  testCompile project(':cas-server-core-validation')
+  testCompile project(path: ":cas-server-core-validation", configuration: "tests")
 }
 

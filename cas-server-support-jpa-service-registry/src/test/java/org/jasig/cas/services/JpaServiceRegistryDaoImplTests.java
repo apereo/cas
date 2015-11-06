@@ -44,7 +44,7 @@ public class JpaServiceRegistryDaoImplTests  {
 
     @Test
     public void verifySaveMethodWithNonExistentServiceAndNoAttributes() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("test");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -59,7 +59,7 @@ public class JpaServiceRegistryDaoImplTests  {
     
     @Test
     public void verifySaveAttributeReleasePolicy() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("test");
         r.setServiceId("testId");
         r.setTheme("theme");
@@ -77,7 +77,7 @@ public class JpaServiceRegistryDaoImplTests  {
 
     @Test
     public void verifySaveMethodWithExistingServiceNoAttribute() {
-        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("test");
         r.setServiceId("testId");
         r.setTheme("theme");

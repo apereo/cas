@@ -42,6 +42,7 @@ dependencies {
   compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
     exclude(module: 'jboss-logging-annotations')
     exclude(module: 'javassist')
+    exclude(module: 'xml-apis')  
   }
   compile group: 'commons-io', name: 'commons-io', version:'2.4'
   compile group: 'joda-time', name: 'joda-time', version:'2.8.2'
@@ -57,6 +58,7 @@ dependencies {
   testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
+    exclude(module: 'xml-apis')  
   }
   testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
     exclude(module: 'slf4j-api')
@@ -67,6 +69,7 @@ dependencies {
   }
   testCompile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
     exclude(module: 'javassist')
+    exclude(module: 'xml-apis')  
   }
   testCompile group: 'javassist', name: 'javassist', version:'3.12.1.GA'
   testCompile(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:'1.2.GA') {
