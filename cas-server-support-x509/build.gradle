@@ -22,8 +22,7 @@ dependencies {
     exclude(module: 'slf4j-api')
   }
   testCompile project(':cas-server-support-generic')
-  testCompile group: 'org.jasig.cas', name: 'cas-server-support-legacy', version:'4.2.0-SNAPSHOT'
-  testCompile project(':cas-server-support-ldap')
+  testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
   testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:'3.0.0'
   testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version:'1.1.0'
   testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
@@ -31,4 +30,6 @@ dependencies {
     exclude(module: 'jboss-logging')
   }
   testCompile project(':cas-server-core-logout')
+  testCompile project(':cas-server-core-services')
+  testCompile project(':cas-server-core')
 }

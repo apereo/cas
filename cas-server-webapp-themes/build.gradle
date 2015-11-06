@@ -19,6 +19,6 @@ dependencies {
   }
   compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
   testCompile project(':cas-server-core-services')
-  testCompile project(':cas-server-core-services')
+  testCompile project(path: ":cas-server-core-services", configuration: "tests")
 }
 

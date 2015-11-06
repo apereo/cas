@@ -1,3 +1,4 @@
+
 task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
    baseName = "${project.archivesBaseName}-tests"
    from sourceSets.test.output
@@ -15,4 +16,16 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 
 task wrapper(type: Wrapper, description: "Gradle's wrapper") {
     gradleVersion = project.gradleVersion
+}
+
+task cleanLogs {
+	delete fileTree(dir: project.projectDir, includes: ['**/*.log', '**/*.gz', '**/*.log.gz'])
+}
+
+clean << {
+	cleanLogs
+}
+
+gradle.buildFinished { buildResult ->
+	cleanLogs
 }
