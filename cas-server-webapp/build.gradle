@@ -65,9 +65,5 @@ dependencies {
 	runtime group: 'com.mchange', name: 'c3p0', version:'0.9.5.1'
 }
 
-task packageTests(type: Jar) {
-	from sourceSets.test.output
-	classifier = 'tests'
-}
-artifacts.archives packageTests
+
 
