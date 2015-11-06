@@ -24,11 +24,9 @@ import java.io.Serializable;
 
 /**
  * Base Spring {@code ApplicationEvent} representing a abstract single sign on action executed within running CAS server.
- * <p/>
  * This event encapsulates {@link org.jasig.cas.authentication.Authentication} that is associated with an SSO action
  * executed in a CAS server and an SSO session
  * token in the form of ticket granting ticket id.
- * <p/>
  * More concrete events are expected to subclass this abstract type.
  *
  * @author Dmitriy Kopylenko

@@ -53,7 +53,7 @@ public final class LdapUtils {
      *
      * @param ctx       the ldap entry
      * @param attribute the attribute name
-     * @return <code>true</code> if the attribute's value matches (case-insensitive) <code>"true"</code>, otherwise false
+     * @return {@code true} if the attribute's value matches (case-insensitive) {@code "true"}, otherwise false
      */
     public static Boolean getBoolean(final LdapEntry ctx, final String attribute) {
         return getBoolean(ctx, attribute, Boolean.FALSE);
@@ -65,7 +65,7 @@ public final class LdapUtils {
      * @param ctx       the ldap entry
      * @param attribute the attribute name
      * @param nullValue the value which should be returning in case of a null value
-     * @return <code>true</code> if the attribute's value matches (case-insensitive) <code>"true"</code>, otherwise false
+     * @return {@code true} if the attribute's value matches (case-insensitive) {@code "true"}, otherwise false
      */
     public static Boolean getBoolean(final LdapEntry ctx, final String attribute, final Boolean nullValue) {
         final String v = getString(ctx, attribute, nullValue.toString());

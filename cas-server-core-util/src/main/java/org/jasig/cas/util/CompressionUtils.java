@@ -60,7 +60,7 @@ public final class CompressionUtils {
      * Inflate the given byte array by {@link #INFLATED_ARRAY_LENGTH}.
      *
      * @param bytes the bytes
-     * @return the array as a string with <code>UTF-8</code> encoding
+     * @return the array as a string with {@code UTF-8} encoding
      */
     public static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
@@ -156,7 +156,7 @@ public final class CompressionUtils {
 
     /**
      * Base64 decode operation, which retrieves the equivalent
-     * byte[] of the data in <code>UTF-8</code> encoding
+     * byte[] of the data in {@code UTF-8} encoding
      * and decodes the result.
      *
      * @param data the data to encode

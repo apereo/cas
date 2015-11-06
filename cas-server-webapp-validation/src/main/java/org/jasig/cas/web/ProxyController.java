@@ -84,7 +84,7 @@ public class ProxyController {
      * @param request the request
      * @param response the response
      * @return ModelAndView containing a view name of either
-     * <code>casProxyFailureView</code> or <code>casProxySuccessView</code>
+     * {@code casProxyFailureView} or {@code casProxySuccessView}
      */
     @RequestMapping(path="/proxy", method = RequestMethod.GET)
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {

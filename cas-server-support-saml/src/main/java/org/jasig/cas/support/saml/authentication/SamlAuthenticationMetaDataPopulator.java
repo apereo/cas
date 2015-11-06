@@ -31,7 +31,7 @@ import java.util.Map;
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
  * <p>
  * Note: Authentication Methods are exposed under the key:
- * <code>samlAuthenticationStatement::authMethod</code> in the Authentication
+ * {@code samlAuthenticationStatement::authMethod} in the Authentication
  * attributes map.
  *
  * @author Scott Battaglia
@@ -96,8 +96,8 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
      * defaults. Mapping should be of the following type:
      * <pre>Package/Class Name as String -&gt; Name SAML Type</pre>
      * <p>
-     * Example: (<code>"org.jasig.cas.authentication.HttpBasedServiceCredential"
-     * -&gt; SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client</code>)
+     * Example: ({@code "org.jasig.cas.authentication.HttpBasedServiceCredential"
+     * -&gt; SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client})
      *
      * @param userDefinedMappings map of user defined authentication types.
      */

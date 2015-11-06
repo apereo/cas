@@ -60,7 +60,7 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
     /**
      * Instantiates a new trusted proxy authentication trust store ssl socket factory.
-     * Defaults to <code>TLSv1</code> and {@link SSLConnectionSocketFactory#BROWSER_COMPATIBLE_HOSTNAME_VERIFIER}
+     * Defaults to {@code TLSv1} and {@link SSLConnectionSocketFactory#BROWSER_COMPATIBLE_HOSTNAME_VERIFIER}
      * for the supported protocols and hostname verification.
      * @param trustStoreFile the trust store file
      * @param trustStorePassword the trust store password

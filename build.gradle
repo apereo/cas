@@ -72,6 +72,10 @@ subprojects {
     test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
   }
 
+  javadoc {
+    classpath += configurations.provided
+  }
+
   dependencies {
     compile group: 'org.aspectj', name: 'aspectjrt', version:'1.8.6'
     compile group: 'org.aspectj', name: 'aspectjweaver', version:'1.8.6'

@@ -105,8 +105,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      *
      * @param datasource The database datasource
      * @param sql the sql query to execute which must include a parameter placeholder
-     *            for the user id. (i.e. <code>SELECT * FROM table WHERE username = ?</code>
-     * @param algorithmName the algorithm name (i.e. <code>MessageDigestAlgorithms.SHA_512</code>)
+     *            for the user id. (i.e. {@code SELECT * FROM table WHERE username = ?}
+     * @param algorithmName the algorithm name (i.e. {@code MessageDigestAlgorithms.SHA_512})
      */
 
     public QueryAndEncodeDatabaseAuthenticationHandler(final DataSource datasource,

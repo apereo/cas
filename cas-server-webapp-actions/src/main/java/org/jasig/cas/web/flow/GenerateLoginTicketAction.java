@@ -53,7 +53,7 @@ public class GenerateLoginTicketAction {
      * Generate the login ticket.
      *
      * @param context the context
-     * @return <code>"generated"</code>
+     * @return {@code "generated"}
      */
     public final String generate(final RequestContext context) {
         final String loginTicket = this.ticketIdGenerator.getNewTicketId(PREFIX);
