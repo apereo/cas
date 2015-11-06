@@ -5,6 +5,7 @@ dependencies {
   compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
     exclude(module: 'jboss-logging-annotations')
     exclude(module: 'javassist')
+    exclude(module: 'xml-apis')  
   }
   compile group: 'org.reflections', name: 'reflections', version:'0.9.10'
   compile project(':cas-server-core-authentication')
