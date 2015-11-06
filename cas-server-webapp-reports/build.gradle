@@ -19,6 +19,7 @@ dependencies {
   compile group: 'org.springframework', name: 'spring-web', version:'4.2.1.RELEASE'
   compile(group: 'io.dropwizard.metrics', name: 'metrics-servlets', version:'3.1.2') {
     exclude(module: 'slf4j-api')
+    exclude(module: 'jackson-databind')
   }
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-util')

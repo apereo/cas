@@ -27,6 +27,7 @@ dependencies {
     exclude(module: 'spring-context')
     exclude(module: 'spring-core')
     exclude(module: 'spring-tx')
+    exclude(module: 'ldaptive')
   }
   compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
   compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.4'

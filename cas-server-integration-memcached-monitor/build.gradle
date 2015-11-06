@@ -11,7 +11,9 @@ dependencies {
   compile project(':cas-server-core-monitor')
   compile group: 'net.spy', name: 'spymemcached', version:'2.11.7'
   compile group: 'com.esotericsoftware', name: 'kryo', version:'3.0.2'
-  compile group: 'de.javakaffee', name: 'kryo-serializers', version:'0.35'
+  compile(group: 'de.javakaffee', name: 'kryo-serializers', version:'0.35') {
+    exclude(module: 'kryo')
+  }
   testCompile group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.memcached', version:'1.06.2'
   testCompile project(':cas-server-core-authentication')
   testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
@@ -28,7 +30,9 @@ dependencies {
   testCompile project(':cas-server-integration-memcached')
   testCompile project(':cas-server-core')
   testCompile project(':cas-server-core-logout')
-  provided project(':cas-server-support-saml')
+  provided(project(':cas-server-support-saml')) {
+    exclude(module: 'xml-apis')
+  }
 }
 
 task packageTests(type: Jar) {
