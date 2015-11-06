@@ -1,14 +1,18 @@
 
 description = 'Apereo CAS Authentication handler wrapping pac4j'
 dependencies {
-  compile project(':cas-server-core-api')
-  compile project(':cas-server-core-authentication')
-    compile group: 'org.pac4j', name: 'pac4j-core', version:'1.8.0'
-    compile group: 'org.pac4j', name: 'pac4j-http', version:'1.8.0'
+	compile project(':cas-server-core-api')
+	compile project(':cas-server-core-authentication')
+	compile(group: 'org.pac4j', name: 'pac4j-core', version:'1.8.0') {
+		exclude(module: 'commons-lang3')
+	}
+	compile(group: 'org.pac4j', name: 'pac4j-http', version:'1.8.0') {
+		exclude(module: 'commons-lang3')
+	}
 }
 
 task packageTests(type: Jar) {
-  from sourceSets.test.output
-  classifier = 'tests'
+	from sourceSets.test.output
+	classifier = 'tests'
 }
 artifacts.archives packageTests
