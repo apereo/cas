@@ -58,7 +58,6 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
     /**
      * Prepares the Yubico client with the received clientId and secretKey. By default,
      * all YubiKey accounts are allowed to authenticate.
-     * <p/>
      * <strong>WARNING: THIS CONSTRUCTOR RESULTS IN A
      * CONFIGURATION THAT CONSIDERS ALL Yubikeys VALID FOR ALL USERS. YOU MUST NOT USE
      * THIS CONSTRUCTOR IN PRODUCTION.</strong>
@@ -99,7 +98,6 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     /**
      * {@inheritDoc}
-     * <p/>
      * Attempts to authenticate the received credentials using the Yubico cloud validation platform.
      * In this implementation, the {@link UsernamePasswordCredential#getUsername()}
      * is mapped to the {@code uid} which will be used by the plugged-in instance of the

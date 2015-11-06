@@ -445,7 +445,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      * - a first authentication for a default service
      * - a second authentication with the renew parameter and the same service (and same credentials)
      * - a validation of the second ticket.
-     * <p/>
      * When supplemental authentications were returned with the chained authentications, the validation specification
      * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the
      * chained authentications. Both concepts are orthogonal.
