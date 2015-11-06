@@ -45,7 +45,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 4.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:*Context.xml")
+@ContextConfiguration(locations={
+        "classpath:spring-configuration/*.xml",
+        "classpath:cas-management-servlet.xml",
+        "classpath:managementConfigContext.xml"})
 @WebAppConfiguration
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class WebAppContextConfigurationTests {
@@ -95,12 +98,6 @@ public class WebAppContextConfigurationTests {
     @Test
     public void verifyDeleteServiceByInvalidId() throws Exception {
         this.mvc.perform(post("/deleteRegisteredService.html").param("id", "invalid"))
-                .andExpect(status().isInternalServerError());
-    }
-    
-    @Test
-    public void verifyDeleteServiceByLargeId() throws Exception {
-        this.mvc.perform(post("/deleteRegisteredService.html").param("id", String.valueOf(Double.MAX_VALUE)))
                 .andExpect(status().isInternalServerError());
     }
 

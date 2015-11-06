@@ -36,11 +36,9 @@ import org.springframework.webflow.execution.RequestContextHolder;
  * {@link RegisteredServiceThemeBasedViewResolver} is an alternate Spring View Resolver that utilizes a service's
  * associated theme to selectively choose which set of UI views will be used to generate
  * the standard views (casLoginView.jsp, casLogoutView.jsp etc).
- * <p/>
  * <p>Views associated with a particular theme by default are expected to be found at:
  * {@link #getPrefix()}/{@code themeId/ui}. A starting point may be to
  * clone the default set of view pages into a new directory based on the theme id.</p>
- * <p/>
  * <p>Note: There also exists a {@link org.jasig.cas.services.web.ServiceThemeResolver}
  * that attempts to resolve the view name based on the service theme id. The difference
  * however is that {@link org.jasig.cas.services.web.ServiceThemeResolver} only decorates

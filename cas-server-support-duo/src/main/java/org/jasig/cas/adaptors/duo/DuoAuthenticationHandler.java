@@ -63,8 +63,8 @@ public final class DuoAuthenticationHandler extends AbstractPreAndPostProcessing
      * return a blank String or null.
      * @param credential Credential to authenticate.
      *
-     * @throws GeneralSecurityException
-     * @throws PreventedException
+     * @throws GeneralSecurityException general security exception for errors
+     * @throws PreventedException authentication failed exception
      */
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
