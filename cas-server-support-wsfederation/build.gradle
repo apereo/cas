@@ -2,7 +2,9 @@
 description = 'Apereo CAS WS-Federation Support'
 dependencies {
   compile project(':cas-server-core-api')
-  compile project(':cas-server-support-saml')
+  compile(project(':cas-server-support-saml')) {
+    exclude(module: 'xml-apis')
+  }
   testCompile project(':cas-server-core')
   testCompile project(':cas-server-core-logout')
   testCompile project(':cas-server-support-saml')

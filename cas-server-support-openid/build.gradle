@@ -15,9 +15,11 @@ dependencies {
   }
   compile(group: 'org.openid4java', name: 'openid4java', version:'0.9.8') {
     exclude(module: 'xercesImpl')
+    exclude(module: 'httpclient')
+    exclude(module: 'commons-logging')
   }
   compile(group: 'org.apache.httpcomponents', name: 'httpclient', version:'4.5') {
-      exclude(module: 'commons-codec')
+    exclude(module: 'commons-codec')
   }
   compile project(':cas-server-core-authentication')
   testCompile project(':cas-server-core-logout')
