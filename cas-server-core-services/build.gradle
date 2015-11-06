@@ -5,6 +5,7 @@ dependencies {
   compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
     exclude(module: 'jboss-logging-annotations')
     exclude(module: 'javassist')
+    exclude(module: 'xml-apis')  
   }
   compile group: 'commons-io', name: 'commons-io', version:'2.4'
   compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.6.1'

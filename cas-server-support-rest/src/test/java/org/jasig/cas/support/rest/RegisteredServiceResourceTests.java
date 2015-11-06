@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -145,7 +146,8 @@ public class RegisteredServiceResourceTests {
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
         when(tgt.getAuthentication()).thenReturn(org.jasig.cas.authentication.TestUtils.getAuthentication(
-                org.jasig.cas.authentication.TestUtils.getPrincipal("casuser", new HashMap(TestUtils.getTestAttributes()))));
+                org.jasig.cas.authentication.TestUtils.getPrincipal("casuser",
+                        new HashMap(TestUtils.getTestAttributes()))));
         final Class<TicketGrantingTicket> clazz = TicketGrantingTicket.class;
 
         when(this.casMock.getTicket(anyString(), any(clazz.getClass()))).thenReturn(tgt);

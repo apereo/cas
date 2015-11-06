@@ -8,7 +8,7 @@ dependencies {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
   }
-  testCompile project(':cas-server-support-ldap')
+  testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
   testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:'3.0.0'
   testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version:'1.1.0'
   testCompile project(':cas-server-core-authentication')

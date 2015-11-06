@@ -91,7 +91,5 @@ dependencies {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
   }
-  testRuntime group: 'javax.servlet', name: 'javax.servlet-api', version:'3.0.1'
-  testRuntime group: 'javax.el', name: 'javax.el-api', version:'3.0.0'
 }
 
