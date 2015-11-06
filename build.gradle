@@ -45,7 +45,6 @@ subprojects {
     tests
 
     provided
-    provided.extendsFrom(compile)
   }
 
   configurations.all {
@@ -65,15 +64,22 @@ subprojects {
   }
 
   sourceSets {
-    main.compileClasspath += configurations.provided
-    test.compileClasspath += configurations.provided
-    test.runtimeClasspath += configurations.provided
-
+    main {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
+    }
+    test {
+        compileClasspath += configurations.provided
+        runtimeClasspath += configurations.provided
+    }
     test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
   }
 
   javadoc {
     classpath += configurations.provided
+    onlyIf { task ->
+      return !Boolean.getBoolean("skipJavadocs")
+    }
   }
 
   dependencies {
