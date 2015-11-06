@@ -3,24 +3,34 @@ description = 'Apereo CAS Client Protocols Support using pac4j'
 dependencies {
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-tickets')
-    compile group: 'com.google.guava', name: 'guava', version:'18.0'
+  compile group: 'com.google.guava', name: 'guava', version:'18.0'
   compile project(':cas-server-core-web')
   compile project(':cas-server-integration-pac4j-core')
-    compile group: 'org.pac4j', name: 'pac4j-core', version:'1.8.0'
+  compile(group: 'org.pac4j', name: 'pac4j-core', version:'1.8.0') {
+    exclude(module: 'commons-lang3')
+  }
+  compile(group: 'org.pac4j', name: 'pac4j-oauth', version:'1.8.0') {
+    exclude(module: 'commons-lang3')
+    exclude(module: 'jackson-databind')
+  }
+  compile(group: 'org.pac4j', name: 'pac4j-http', version:'1.8.0') {
+    exclude(module: 'commons-lang3')
+  }
+  compile(group: 'org.pac4j', name: 'pac4j-saml', version:'1.8.0') {
+    exclude(module: 'commons-lang3')
+    exclude(module: 'joda-time')
+    exclude(module: 'spring-beans')
+    exclude(module: 'spring-context')
+    exclude(module: 'spring-core')
+    exclude(module: 'slf4j-api')
+    exclude(module: 'httpclient')
+    exclude(module: 'bcprov-jdk15on')
+    exclude(module: 'commons-codec')
+    exclude(module: 'xml-apis')
+  }
   testCompile project(':cas-server-core-authentication')
-    testCompile group: 'org.pac4j', name: 'pac4j-http', version:'1.8.0'
   testCompile project(':cas-server-core-services')
   testCompile project(':cas-server-core-services')
-    compile(group: 'org.pac4j', name: 'pac4j-oauth', version:'1.8.0') {
-       /* This dependency was originally in the Maven provided scope, but the project was not of type war.
-       This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
-       Please review and delete this closure when resolved. */
-    }
-    compile(group: 'org.pac4j', name: 'pac4j-saml', version:'1.8.0') {
-       /* This dependency was originally in the Maven provided scope, but the project was not of type war.
-       This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
-       Please review and delete this closure when resolved. */
-    }
 }
 
 task packageTests(type: Jar) {

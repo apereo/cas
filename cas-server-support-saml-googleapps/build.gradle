@@ -2,7 +2,9 @@
 description = 'Apereo CAS SAML Server Google Apps SAML Support'
 dependencies {
   compile project(':cas-server-core-api')
-  compile project(':cas-server-support-saml')
+  compile(project(':cas-server-support-saml')) {
+    exclude(module: 'xml-apis')
+  }
   runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
