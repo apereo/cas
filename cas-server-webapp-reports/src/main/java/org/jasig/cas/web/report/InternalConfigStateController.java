@@ -38,7 +38,7 @@ import java.util.Set;
 
 /**
  * Controller that exposes the CAS internal state and beans
- * as JSON. The report is available at <code>/status/config</code>.
+ * as JSON. The report is available at {@code /status/config}.
  * @author Misagh Moayyed
  * @since 4.1
  */

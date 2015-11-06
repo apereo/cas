@@ -32,7 +32,7 @@ package org.jasig.cas.adaptors.yubikey;
 public interface YubiKeyAccountRegistry {
     /**
      * Determines whether the registered
-     * YubiKey public id is allowed for the <code>uid</code> received.
+     * YubiKey public id is allowed for the {@code uid} received.
      * @param uid user id
      * @param yubikeyPublicId public id of the yubi id
      * @return true if the public id is allowed and registered for the uid.

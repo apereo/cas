@@ -180,7 +180,7 @@ public class KryoTranscoder implements Transcoder<Object> {
     /**
      * Maximum size of encoded data supported by this transcoder.
      *
-     * @return  <code>net.spy.memcached.CachedData#MAX_SIZE</code>.
+     * @return  {@code net.spy.memcached.CachedData#MAX_SIZE}.
      */
     @Override
     public int getMaxSize() {

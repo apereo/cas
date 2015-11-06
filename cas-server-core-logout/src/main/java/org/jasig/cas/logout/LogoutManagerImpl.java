@@ -284,7 +284,7 @@ public final class LogoutManagerImpl implements LogoutManager {
 
         /**
          * {@inheritDoc}.
-         * Prepends the string "<code>logoutRequest=</code>" to the message body.
+         * Prepends the string "{@code logoutRequest=}" to the message body.
          */
         @Override
         protected String formatOutputMessageInternal(final String message) {

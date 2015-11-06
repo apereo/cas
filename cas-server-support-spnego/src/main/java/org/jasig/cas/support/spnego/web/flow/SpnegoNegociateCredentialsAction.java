@@ -41,9 +41,9 @@ import org.springframework.webflow.execution.RequestContext;
  * <p>The server checks if the
  * negotiation string is in the request header and this is a supported browser:
  * <ul>
- * <li>If found do nothing and return <code>success()</code></li>
+ * <li>If found do nothing and return {@code success()}</li>
  * <li>else add a WWW-Authenticate response header and a 401 response status,
- * then return <code>success()</code></li>
+ * then return {@code success()}</li>
  * </ul>
  *
  * @author Arnaud Lesueur
@@ -74,10 +74,10 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
      * Instantiates a new Spnego negociate credentials action.
      * Also initializes the list of supported browser user agents with the following:
      * <ul>
-     *     <li><code>MSIE</code></li>
-     *     <li><code>Trident</code></li>
-     *     <li><code>Firefox</code></li>
-     *     <li><code>AppleWebKit</code></li>
+     *     <li>{@code MSIE}</li>
+     *     <li>{@code Trident}</li>
+     *     <li>{@code Firefox}</li>
+     *     <li>{@code AppleWebKit}</li>
      * </ul>
      * @see #setSupportedBrowser(List)
      * @since 4.1

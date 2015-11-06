@@ -141,7 +141,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     }
 
     /**
-     * Inits the binder with the required fields. <code>renew</code> is required.
+     * Inits the binder with the required fields. {@code renew} is required.
      *
      * @param request the request
      * @param binder the binder

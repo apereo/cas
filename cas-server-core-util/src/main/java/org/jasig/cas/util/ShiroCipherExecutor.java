@@ -39,7 +39,7 @@ import java.security.Key;
 public class ShiroCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
     private static final String UTF8_ENCODING = "UTF-8";
 
-    /** Secret key IV algorithm. Default is <code>AES</code>. */
+    /** Secret key IV algorithm. Default is {@code AES}. */
     private String secretKeyAlgorithm = "AES";
 
     private final String encryptionSecretKey;

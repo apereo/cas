@@ -84,7 +84,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
     }
 
     /**
-     * Checks if <code>gateway</code> is present in the request params.
+     * Checks if {@code gateway} is present in the request params.
      *
      * @param context the context
      * @return true, if gateway present

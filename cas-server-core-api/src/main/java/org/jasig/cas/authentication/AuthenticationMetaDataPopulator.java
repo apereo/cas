@@ -42,7 +42,7 @@ public interface AuthenticationMetaDataPopulator {
     /**
      * Determines whether the populator has the capability to perform tasks on the given credential.
      * In practice, the {@link #populateAttributes(AuthenticationBuilder, Credential)} needs to be able
-     * to operate on said credentials only if the return result here is <code>true</code>.
+     * to operate on said credentials only if the return result here is {@code true}.
      *
      * @param credential The credential to check.
      * @return True if populator supports the Credential, false otherwise.
