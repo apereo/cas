@@ -3,23 +3,19 @@ description = 'Apereo CAS JDBC Support'
 dependencies {
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-authentication')
-    compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
-exclude(module: 'jboss-logging-annotations')
-exclude(module: 'javassist')
-    }
-    compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-orm', version:'4.2.1.RELEASE'
+  compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
+    exclude(module: 'jboss-logging-annotations')
+    exclude(module: 'javassist')
+  }
+  compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-orm', version:'4.2.1.RELEASE'
   compile project(':cas-server-core-monitor')
   testCompile project(':cas-server-core-authentication')
   testCompile project(':cas-server-core-util')
-    testCompile group: 'org.hsqldb', name: 'hsqldb', version:'2.3.3'
-    testCompile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
-exclude(module: 'javassist')
-    }
+  testCompile group: 'org.hsqldb', name: 'hsqldb', version:'2.3.3'
+  testCompile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
+    exclude(module: 'javassist')
+  }
 }
 
-task packageTests(type: Jar) {
-  from sourceSets.test.output
-  classifier = 'tests'
-}
-artifacts.archives packageTests
+
