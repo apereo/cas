@@ -38,7 +38,7 @@ import org.springframework.webflow.execution.RequestContextHolder;
  * the standard views (casLoginView.jsp, casLogoutView.jsp etc).
  * <p/>
  * <p>Views associated with a particular theme by default are expected to be found at:
- * {@link #getPrefix()}/<code>themeId/ui</code>. A starting point may be to
+ * {@link #getPrefix()}/{@code themeId/ui}. A starting point may be to
  * clone the default set of view pages into a new directory based on the theme id.</p>
  * <p/>
  * <p>Note: There also exists a {@link org.jasig.cas.services.web.ServiceThemeResolver}

@@ -102,7 +102,7 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
      * <p/>
      * Attempts to authenticate the received credentials using the Yubico cloud validation platform.
      * In this implementation, the {@link UsernamePasswordCredential#getUsername()}
-     * is mapped to the <code>uid</code> which will be used by the plugged-in instance of the
+     * is mapped to the {@code uid} which will be used by the plugged-in instance of the
      * {@link YubiKeyAccountRegistry}
      * and the {@link UsernamePasswordCredential#getPassword()} is the received
      * one-time password token issued by the YubiKey device.

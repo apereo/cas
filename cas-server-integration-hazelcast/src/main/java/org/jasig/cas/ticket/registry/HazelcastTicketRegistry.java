@@ -38,9 +38,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
- * <p/>
  * <p>This implementation just wraps the Hazelcast's {@link IMap}
- * which is an extension of the standard Java's <code>ConcurrentMap</code>.</p>
+ * which is an extension of the standard Java's {@code ConcurrentMap}.</p>
  * <p>The heavy lifting of distributed data partitioning, network cluster discovery and
  * join, data replication, etc. is done by Hazelcast's Map implementation.</p>
  *
@@ -61,7 +60,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
 
 
     /**
-     * @param hz                                  An instance of <code>HazelcastInstance</code>
+     * @param hz                                  An instance of {@code HazelcastInstance}
      * @param mapName                             Name of map to use
      * @param ticketGrantingTicketTimeoutInSeconds TTL for TGT entries
      * @param serviceTicketTimeoutInSeconds       TTL for ST entries

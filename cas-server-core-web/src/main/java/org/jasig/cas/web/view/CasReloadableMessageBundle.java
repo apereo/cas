@@ -34,12 +34,12 @@ import java.util.Locale;
  * default bundles.
  * 
  * <p>Note: By default, if a key not found in a localized bundle, Spring will auto-fallback
- * to the default bundle that is <code>messages.properties</code>. However, if the key is also
+ * to the default bundle that is {@code messages.properties}. However, if the key is also
  * not found in the default bundle, and {@link #setUseCodeAsDefaultMessage(boolean)}
  * is set to true, then only the requested code itself will be used as the message to display.
  * In this case, the class will issue a WARN message instructing the caller that the bundle
  * needs further attention. If {@link #setUseCodeAsDefaultMessage(boolean)} is set to false,
- * only then a <code>null</code> value will be returned, which subsequently causes an instance
+ * only then a {@code null} value will be returned, which subsequently causes an instance
  * of {@link org.springframework.context.NoSuchMessageException} to be thrown.
  * 
  * @author Misagh Moayyed

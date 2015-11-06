@@ -165,7 +165,7 @@ public final class CasLoggerContextInitializer implements ServletContextAware {
      * may be initialized twice, there are safety checks
      * added to ensure we don't create duplicate log
      * environments.</p>
-     * @param servletContext
+     * @param servletContext the servlet context
      */
     @Override
     public void setServletContext(final ServletContext servletContext) {

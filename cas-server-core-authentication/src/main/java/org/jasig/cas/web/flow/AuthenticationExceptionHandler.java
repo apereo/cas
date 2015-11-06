@@ -108,7 +108,7 @@ public class AuthenticationExceptionHandler {
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      * {@link org.jasig.cas.authentication.AuthenticationException#getHandlerErrors()} with highest precedence.
      * Also sets an ERROR severity message in the message context of the form
-     * <code>[messageBundlePrefix][exceptionClassSimpleName]</code> for each handler error that is
+     * {@code [messageBundlePrefix][exceptionClassSimpleName]} for each handler error that is
      * configured. If not match is found, {@value #UNKNOWN} is returned.
      */
     public String handle(final AuthenticationException e, final MessageContext messageContext) {

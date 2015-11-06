@@ -48,7 +48,7 @@ public abstract class AbstractX509CertificateTests {
     protected static class CasX509Certificate extends X509Certificate {
 
         /**
-         * Comment for <code>serialVersionUID</code>
+         * Comment for {@code serialVersionUID}
          */
         private static final long serialVersionUID = -4449243195531417769L;
 

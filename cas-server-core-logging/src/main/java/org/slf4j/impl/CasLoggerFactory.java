@@ -50,7 +50,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
     private final Class<? extends ILoggerFactory> realLoggerFactoryClass;
     /**
      * Instantiates a new Cas logger factory.
-     * Configures the reflection scanning engine to be prepared to scan <code>org.slf4j.impl</code>
+     * Configures the reflection scanning engine to be prepared to scan {@code org.slf4j.impl}
      * in order to find other available factories.
      */
     public CasLoggerFactory() {
@@ -82,7 +82,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
 
     /**
      * {@inheritDoc}
-     * <p>Attempts to find the <strong>real</strong> <code>Logger</code> instance that
+     * <p>Attempts to find the <strong>real</strong> {@code Logger} instance that
      * is doing the heavy lifting and routes the request to an instance of
      * {@link CasDelegatingLogger}. The instance is cached by the logger name.</p>
      */
@@ -101,7 +101,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
     }
 
     /**
-     * Find the actual <code>Logger</code> instance that is available on the classpath.
+     * Find the actual {@code Logger} instance that is available on the classpath.
      * This is usually the logger adapter that is provided by the real logging framework,
      * such as log4j, etc. The method will scan the runtime to find logger factories that
      * are of type {@link org.slf4j.ILoggerFactory}. It will remove itself from this list

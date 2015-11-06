@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * A builder that uses the saml standard's <code>LogoutRequest</code> template in order
+ * A builder that uses the saml standard's {@code LogoutRequest} template in order
  * to build the logout request.
  * @author Misagh Moayyed
  * @see DefaultLogoutRequest

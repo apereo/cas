@@ -48,7 +48,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Implementation of <code>ServiceRegistryDao</code> that reads services definition from JSON
+ * Implementation of {@code ServiceRegistryDao} that reads services definition from JSON
  * configuration file at the Spring Application Context initialization time. JSON files are
  * expected to be found inside a directory location and this DAO will recursively look through
  * the directory structure to find relevant JSON files. Files are expected to have the
@@ -272,7 +272,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
 
     /**
      * Creates a JSON file for a registered service.
-     * The file is named as <code>[SERVICE-NAME]-[SERVICE-ID]-.{@value #FILE_EXTENSION}</code>
+     * The file is named as {@code [SERVICE-NAME]-[SERVICE-ID]-.{@value #FILE_EXTENSION}}
      *
      * @param service Registered service.
      * @return JSON file in service registry directory.

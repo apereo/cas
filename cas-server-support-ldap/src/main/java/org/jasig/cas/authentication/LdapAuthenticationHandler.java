@@ -47,7 +47,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * LDAP authentication handler that uses the ldaptive <code>Authenticator</code> component underneath.
+ * LDAP authentication handler that uses the ldaptive {@code Authenticator} component underneath.
  * This handler provides simple attribute resolution machinery by reading attributes from the entry
  * corresponding to the DN of the bound user (in the bound security context) upon successful authentication.
  * Principal resolution is controlled by the following properties:

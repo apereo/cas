@@ -81,12 +81,12 @@ public final class RegisteredServiceRegexAttributeFilter implements RegisteredSe
      * <ul>
      * <li>The filtering operation is non-recursive. </li>
      * <li>Multi-valued attributes such as those of type {@link Collection} and
-     * {@link Map} are expected to allow casting to <code>Map&lt;String, String&gt;</code>
-     * or <code>Collection&lt;String&gt;</code>.
-     * Values that are of type array are expected to allow casting to <code>String[]</code>.
+     * {@link Map} are expected to allow casting to {@code Map&lt;String, String&gt;}
+     * or {@code Collection&lt;String&gt;}.
+     * Values that are of type array are expected to allow casting to {@code String[]}.
      * </li>
      * <li>Multi-valued attributes are always put back into the final released collection of
-     * attributes as <code>String[]</code>.</li>
+     * attributes as {@code String[]}.</li>
      * <li>If the final filtered collection is empty, it will not be put into the collection of attributes.</li>
      * </ul>
      */

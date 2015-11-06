@@ -23,7 +23,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.validation.Assertion;
 
 /**
- * Concrete subclass of <code>AbstractCasEvent</code> representing validation of a
+ * Concrete subclass of {@code AbstractCasEvent} representing validation of a
  * service ticket by a CAS server.
  * @author Dmitriy Kopylenko
  * @since 4.2

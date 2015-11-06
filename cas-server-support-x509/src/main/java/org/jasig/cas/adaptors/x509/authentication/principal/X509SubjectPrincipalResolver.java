@@ -62,10 +62,10 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * EXAMPLE:
      * </p>
      * {@code
-     * <code>
+     * {@code
      * &lt;bean class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
      *   p:descriptor="$UID@$DC.$DC" /&gt;
-     * </code>
+     * }
      * }
      *
      * The above bean when applied to a certificate with the DN
