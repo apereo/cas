@@ -17,9 +17,3 @@ dependencies {
     	exclude(module: 'spring-core')
 	}
 }
-
-task packageTests(type: Jar) {
-	from sourceSets.test.output
-	classifier = 'tests'
-}
-artifacts.archives packageTests

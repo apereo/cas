@@ -42,8 +42,3 @@ dependencies {
   testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:'3.0.0'
 }
 
-task packageTests(type: Jar) {
-  from sourceSets.test.output
-  classifier = 'tests'
-}
-artifacts.archives packageTests

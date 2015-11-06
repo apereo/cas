@@ -1,12 +1,7 @@
 
 description = 'Apereo CAS DuoSecurity Support'
 dependencies {
-  compile project(':cas-server-core-api')
-  compile project(':cas-server-core-authentication')
+	compile project(':cas-server-core-api')
+	compile project(':cas-server-core-authentication')
 }
 
-task packageTests(type: Jar) {
-  from sourceSets.test.output
-  classifier = 'tests'
-}
-artifacts.archives packageTests

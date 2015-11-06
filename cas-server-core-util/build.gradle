@@ -29,8 +29,3 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-webmvc', version:'4.2.1.RELEASE'
 }
 
-task packageTests(type: Jar) {
-  from sourceSets.test.output
-  classifier = 'tests'
-}
-artifacts.archives packageTests

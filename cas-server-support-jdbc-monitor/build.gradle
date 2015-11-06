@@ -41,8 +41,3 @@ dependencies {
   testCompile project(':cas-server-core-util')
 }
 
-task packageTests(type: Jar) {
-  from sourceSets.test.output
-  classifier = 'tests'
-}
-artifacts.archives packageTests

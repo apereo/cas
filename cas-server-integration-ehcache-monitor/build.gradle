@@ -1,12 +1,8 @@
 
 description = 'Apereo CAS Ehcache Integration Monitor'
 dependencies {
-  compile project(':cas-server-integration-ehcache')
-  compile project(':cas-server-core-monitor')
+	compile project(':cas-server-integration-ehcache')
+	compile project(':cas-server-core-monitor')
 }
 
-task packageTests(type: Jar) {
-  from sourceSets.test.output
-  classifier = 'tests'
-}
-artifacts.archives packageTests
+

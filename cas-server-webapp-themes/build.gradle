@@ -22,8 +22,3 @@ dependencies {
   testCompile project(':cas-server-core-services')
 }
 
-task packageTests(type: Jar) {
-  from sourceSets.test.output
-  classifier = 'tests'
-}
-artifacts.archives packageTests
