@@ -28,7 +28,7 @@ Support is enabled by adding the following module into the Maven overlay:
 {% endhighlight %}
 
 
-# Configuration
+## Configuration
 
 {% highlight xml %}
 <alias name="jpaTicketRegistry" alias="ticketRegistry" />
