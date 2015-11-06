@@ -29,7 +29,7 @@ public class UnauthorizedProxyingException extends UnauthorizedServiceException 
     public static final String CODE = "UNAUTHORIZED_SERVICE_PROXY";
 
     /**
-     * Comment for <code>serialVersionUID</code>.
+     * Comment for {@code serialVersionUID}.
      */
     private static final long serialVersionUID = -7307803750894078575L;
 

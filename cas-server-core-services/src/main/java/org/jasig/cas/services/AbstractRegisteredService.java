@@ -360,7 +360,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     /**
      * {@inheritDoc}
-     * Compares this instance with the <code>other</code> registered service based on
+     * Compares this instance with the {@code other} registered service based on
      * evaluation order, name. The name comparison is case insensitive.
      *
      * @see #getEvaluationOrder()

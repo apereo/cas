@@ -94,7 +94,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
     }
 
     /**
-     * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter).
+     * Return the original url provided (as {@code service} or {@code targetService} request parameter).
      * Used to reconstruct the redirect url.
      *
      * @return the original url provided.

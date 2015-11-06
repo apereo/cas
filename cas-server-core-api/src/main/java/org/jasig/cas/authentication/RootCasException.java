@@ -38,8 +38,8 @@ public abstract class RootCasException extends Exception {
   private final String code;
 
   /**
-   * Constructor that takes a <code>code</code> description of the error along with the exception
-   * <code>msg</code> generally for logging purposes. These codes normally have a corresponding
+   * Constructor that takes a {@code code} description of the error along with the exception
+   * {@code msg} generally for logging purposes. These codes normally have a corresponding
    * entries in the messages file for the internationalization of error messages.
    *
    * @param code the code to describe what type of exception this is.
@@ -74,7 +74,7 @@ public abstract class RootCasException extends Exception {
 
   /**
    * @return Returns the code. If there is a chained exception it recursively
-   * calls <code>getCode()</code> on the cause of the chained exception rather than the returning
+   * calls {@code getCode()} on the cause of the chained exception rather than the returning
    * the code itself.
    */
   public final String getCode() {

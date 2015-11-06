@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Implementation of the NonInteractiveCredentialsAction that looks for a remote
- * user that is set in the <code>HttpServletRequest</code> and attempts to
+ * user that is set in the {@code HttpServletRequest} and attempts to
  * construct a Principal (and thus a PrincipalBearingCredential). If it doesn't
  * find one, this class returns and error event which tells the web flow it
  * could not find any credentials.

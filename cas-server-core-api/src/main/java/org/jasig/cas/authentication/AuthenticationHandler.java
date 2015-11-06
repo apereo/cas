@@ -71,7 +71,7 @@ public interface AuthenticationHandler {
     /**
      * Determines whether the handler has the capability to authenticate the given credential. In practical terms,
      * the {@link #authenticate(Credential)} method MUST be capable of processing a given credential if
-     * <code>supports</code> returns true on the same credential.
+     * {@code supports} returns true on the same credential.
      *
      * @param credential The credential to check.
      *

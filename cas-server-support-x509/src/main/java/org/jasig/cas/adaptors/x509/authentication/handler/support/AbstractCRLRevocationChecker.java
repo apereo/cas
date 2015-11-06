@@ -47,7 +47,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     /**
      * Flag to indicate whether all
      * crls should be checked for the cert resource.
-     * Defaults to <code>false</code>.
+     * Defaults to {@code false}.
      **/
     protected boolean checkAll;
 

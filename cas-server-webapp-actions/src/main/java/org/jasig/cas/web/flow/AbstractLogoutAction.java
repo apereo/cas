@@ -70,7 +70,7 @@ public abstract class AbstractLogoutAction extends AbstractAction {
 
     /**
      * Prevent caching by adding the appropriate headers.
-     * Copied from the <code>preventCaching</code> method in the
+     * Copied from the {@code preventCaching} method in the
      * {@link org.springframework.web.servlet.support.WebContentGenerator} class.
      *
      * @param response the HTTP response.

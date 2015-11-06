@@ -70,7 +70,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
 
     /**
      * Sets shiro configuration to the path of the resource
-     * that points to the <code>shiro.ini</code> file.
+     * that points to the {@code shiro.ini} file.
      *
      * @param resource the resource
      */

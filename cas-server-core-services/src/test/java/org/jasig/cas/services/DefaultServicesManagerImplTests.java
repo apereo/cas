@@ -217,7 +217,7 @@ public class DefaultServicesManagerImplTests  {
     private static class SimpleService implements Service {
 
         /**
-         * Comment for <code>serialVersionUID</code>.
+         * Comment for {@code serialVersionUID}.
          */
         private static final long serialVersionUID = 6572142033945243669L;
 

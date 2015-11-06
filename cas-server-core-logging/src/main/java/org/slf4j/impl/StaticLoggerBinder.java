@@ -24,7 +24,7 @@ import org.slf4j.spi.LoggerFactoryBinder;
 /**
  * The static binder for slf4j logging, which allows CAS
  * to select its own {@link org.slf4j.ILoggerFactory} instance at runtime.
- * Note that this class MUST reside in the <code>org.slf4j.impl</code>
+ * Note that this class MUST reside in the {@code org.slf4j.impl}
  * package so it can be loaded by the runtime dynamic lookup.
  * @author Misagh Moayyed
  * @since 4.1.0
