@@ -11,6 +11,7 @@ allprojects  {
 
 subprojects {
   apply plugin: 'java'
+  apply from: rootProject.file("gradle/tasks.gradle")
 
   sourceCompatibility = 1.7
   targetCompatibility = 1.7
@@ -27,7 +28,22 @@ subprojects {
     maven { url "http://files.couchbase.com/maven2" }
   }
 
+  test {
+    onlyIf { task ->
+      return !Boolean.getBoolean("skipTests")
+    }
+    useJUnit()
+    scanForTestClasses false
+    include '**/*Tests.*'
+    exclude '**/*Abstract*.*'
+    classpath = it.classpath + files("${projectDir}/src/main/resources") +
+                               files("${projectDir}/src/test/resources")
+    
+  }
+
   configurations {
+    tests
+
     provided
     provided.extendsFrom(compile)
   }
@@ -40,10 +56,20 @@ subprojects {
     exclude(group: "cglib", module: "cglib-full")
   }
 
+  artifacts {
+    tests testJar
+
+    archives sourcesJar
+    archives javadocJar
+    archives testJar
+  }
+
   sourceSets {
     main.compileClasspath += configurations.provided
     test.compileClasspath += configurations.provided
     test.runtimeClasspath += configurations.provided
+
+    test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
   }
 
   dependencies {
@@ -73,8 +99,4 @@ subprojects {
     provided group: 'javax.servlet', name: 'javax.servlet-api', version:'3.0.1'
     provided group: 'javax.el', name: 'javax.el-api', version:'3.0.0'
   }
-}
-
-task wrapper(type: Wrapper) {
-  gradleVersion = '2.8'
 }

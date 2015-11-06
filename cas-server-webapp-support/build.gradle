@@ -1,19 +1,13 @@
 
 description = 'Apereo CAS Web Application Support'
 dependencies {
-    compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
-exclude(module: 'commons-logging')
-    }
-    compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+  compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+    exclude(module: 'commons-logging')
+  }
+  compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
   compile project(':cas-server-core-web')
-    compile group: 'org.springframework', name: 'spring-web', version:'4.2.1.RELEASE'
-    compile group: 'org.springframework', name: 'spring-webmvc', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-web', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-webmvc', version:'4.2.1.RELEASE'
 }
-
-task packageTests(type: Jar) {
-  from sourceSets.test.output
-  classifier = 'tests'
-}
-artifacts.archives packageTests
