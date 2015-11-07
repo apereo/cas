@@ -44,7 +44,7 @@ public final class TestUtils {
 
     public static final String CONST_USERNAME = "test";
 
-    public static final String CONST_TEST_URL = "https://test.com";
+    public static final String CONST_TEST_URL = "https://google.com";
 
     public static final String CONST_TEST_URL2 = "https://example.com";
 

@@ -55,12 +55,17 @@ dependencies {
 	}
 	runtime(group: 'io.dropwizard.metrics', name: 'metrics-servlets', version:'3.1.2') {
 		exclude(module: 'slf4j-api')
+		exclude(module: 'jackson-databind')
 	}
 	runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version:'2.3'
 	runtime(group: 'org.jasig', name: 'spring-webflow-client-repo', version:'1.0.0') {
 		exclude(module: 'log4j')
 		exclude(module: 'slf4j-api')
 		exclude(module: 'slf4j-log4j12')
+		exclude(module: 'spring-webflow')
+		exclude(module: 'commons-codec')
+		exclude(module: 'spring-core')
+		exclude(module: 'spring-beans')
 	}
 	runtime group: 'com.mchange', name: 'c3p0', version:'0.9.5.1'
 }
