@@ -18,9 +18,6 @@ allprojects {
   apply plugin: "eclipse"
   apply plugin: "maven"
   apply plugin: "signing"
-
-  group = 'org.jasig.cas'
-  version = '4.2.0-SNAPSHOT'
 }
 
 subprojects {
@@ -30,9 +27,6 @@ subprojects {
   apply plugin: 'aspectj'
   apply plugin: 'project-report'
   apply from: rootProject.file("gradle/tasks.gradle")
-
-  sourceCompatibility = 1.7
-  targetCompatibility = 1.7
 
   repositories {
     mavenLocal()
