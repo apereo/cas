@@ -4,9 +4,9 @@ dependencies {
   compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
     exclude(module: 'commons-logging')
   }
-  compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-context-support', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-monitor')
   compile group: 'net.spy', name: 'spymemcached', version:'2.11.7'

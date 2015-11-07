@@ -5,8 +5,8 @@ dependencies {
 	compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
 		exclude(module: 'commons-logging')
 	}
-	compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
-	compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
+	compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
+	compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
 }
 
 

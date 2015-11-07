@@ -1,183 +1,183 @@
 defaultTasks "clean", "build"
 
 buildscript {
-  repositories {
-    jcenter()
-    maven {
-      url "https://maven.eveoh.nl/content/repositories/releases"
+    repositories {
+        jcenter()
+        maven {
+            url "https://maven.eveoh.nl/content/repositories/releases"
+        }
     }
-  }
 
-  dependencies {
-    classpath "nl.eveoh:gradle-aspectj:1.6"
-  }
+    dependencies {
+        classpath "nl.eveoh:gradle-aspectj:1.6"
+    }
 }
 
 allprojects {
-  apply plugin: "idea"
-  apply plugin: "eclipse"
-  apply plugin: "maven"
-  apply plugin: "signing"
+    apply plugin: "idea"
+    apply plugin: "eclipse"
+    apply plugin: "maven"
+    apply plugin: "signing"
 }
 
 subprojects {
-  apply plugin: 'java'
-  apply plugin: 'checkstyle'
-  apply plugin: 'findbugs'
-  apply plugin: 'aspectj'
-  apply plugin: 'project-report'
-  apply from: rootProject.file("gradle/tasks.gradle")
+    apply plugin: 'java'
+    apply plugin: 'checkstyle'
+    apply plugin: 'findbugs'
+    apply plugin: 'aspectj'
+    apply plugin: 'project-report'
+    apply from: rootProject.file("gradle/tasks.gradle")
 
-  repositories {
-    mavenLocal()
-    mavenCentral()
-    jcenter()
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
 
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-    maven { url "http://repo.maven.apache.org/maven2" }
-    maven { url "https://jitpack.io" }
-    maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
-    maven { url "https://build.shibboleth.net/nexus/content/groups/public" }
-    maven { url "http://files.couchbase.com/maven2" }
-  }
-
-  signing {
-    required { gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
-  }
-
-  test {
-    enabled = !Boolean.getBoolean("skipTests")
-    useJUnit()
-    scanForTestClasses false
-    include '**/*Tests.*'
-    exclude '**/*Abstract*.*'
-    classpath = it.classpath + files("${projectDir}/src/main/resources") +
-    files("${projectDir}/src/test/resources")
-
-  }
-
-  configurations {
-    tests
-
-    provided
-    compile.extendsFrom(provided)
-  }
-
-  configurations.all {
-    resolutionStrategy {
-      if (!Boolean.getBoolean("skipVersionConflict")) {
-        failOnVersionConflict()
-      }
-    }
-    exclude(group: "cglib", module: "cglib")
-    exclude(group: "cglib", module: "cglib-full")
-  }
-
-  artifacts {
-    tests testJar
-
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-    archives testJar
-  }
-
-  sourceSets {
-    test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
-  }
-
-  javadoc {
-    classpath += configurations.provided
-    enabled = !Boolean.getBoolean("skipJavadocs")
-  }
-
-  checkstyle {
-    configFile new File(rootDir, "checkstyle-rules.xml")
-    configProperties = ["checkstyle.suppressions.file": new File(rootDir, "checkstyle-suppressions.xml")]
-    ignoreFailures false
-    showViolations true
-    toolVersion "6.10.1"
-  }
-
-  checkstyleTest {
-    enabled = !Boolean.getBoolean("skipCheckstyle")
-  }
-
-  checkstyleMain {
-    enabled = !Boolean.getBoolean("skipCheckstyle")
-  }
-
-
-  findbugs {
-    toolVersion = "3.0.1"
-    sourceSets = [sourceSets.main]
-    ignoreFailures = true
-    reportsDir = file("$project.buildDir/findbugsReports")
-    effort = "max"
-    reportLevel = "high"
-    visitors = ["FindSqlInjection", "SwitchFallthrough"]
-    omitVisitors = ["FindNonShortCircuit"]
-    includeFilter = file("$rootProject.projectDir/findbugs-rules.xml")
-  }
-
-  findbugsMain {
-    enabled = !Boolean.getBoolean("skipFindbugs")
-  }
-
-  findbugsTest {
-    enabled = !Boolean.getBoolean("skipFindbugs")
-  }
-
-  dependencies {
-    compile group: 'org.aspectj', name: 'aspectjrt', version: "${aspectjVersion}"
-    compile group: 'org.aspectj', name: 'aspectjweaver', version: "${aspectjVersion}"
-    compile group: 'javax.validation', name: 'validation-api', version: '1.1.0.Final'
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'
-
-    if (!Boolean.getBoolean("skipAspectJ")) {
-      compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: '1.2.GA') {
-        exclude(module: 'validation-api')
-        exclude(module: 'aspectjrt')
-      }
-
-      aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: '1.2.GA') {
-        exclude(module: 'validation-api')
-        exclude(module: 'aspectjrt')
-      }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "https://jitpack.io" }
+        maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
+        maven { url "https://build.shibboleth.net/nexus/content/groups/public" }
+        maven { url "http://files.couchbase.com/maven2" }
     }
 
-    if (!Boolean.getBoolean("skipFindBugs")) {
-      findbugs group: 'com.google.code.findbugs', name: 'findbugs', version: '3.0.1'
-      findbugs group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version: '6.2.3'
-      findbugs group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version: '1.4.3'
+    signing {
+        required { gradle.taskGraph.hasTask("uploadArchives") }
+        sign configurations.archives
     }
 
-    runtime(group: 'org.glassfish.web', name: 'javax.el', version: '2.2.6') {
-      exclude(module: 'javax.el-api')
+    test {
+        enabled = !Boolean.getBoolean("skipTests")
+        useJUnit()
+        scanForTestClasses false
+        include '**/*Tests.*'
+        exclude '**/*Abstract*.*'
+        classpath = it.classpath + files("${projectDir}/src/main/resources") +
+                files("${projectDir}/src/test/resources")
+
     }
-    runtime group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.12'
-    runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.3'
-    runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.3'
-    runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.3') {
-      exclude(module: 'slf4j-api')
+
+    configurations {
+        tests
+
+        provided
+        compile.extendsFrom(provided)
     }
-    runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.3'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    testCompile(group: 'org.mockito', name: 'mockito-core', version: '1.10.19') {
-      exclude(module: 'hamcrest-core')
+
+    configurations.all {
+        resolutionStrategy {
+            if (!Boolean.getBoolean("skipVersionConflict")) {
+                failOnVersionConflict()
+            }
+        }
+        exclude(group: "cglib", module: "cglib")
+        exclude(group: "cglib", module: "cglib-full")
     }
-    testCompile group: 'org.springframework', name: 'spring-test', version: '4.2.1.RELEASE'
-    provided group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
-    provided group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
-  }
+
+    artifacts {
+        tests testJar
+
+        archives jar
+        archives sourcesJar
+        archives javadocJar
+        archives testJar
+    }
+
+    sourceSets {
+        test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
+    }
+
+    javadoc {
+        classpath += configurations.provided
+        enabled = !Boolean.getBoolean("skipJavadocs")
+    }
+
+    checkstyle {
+        configFile new File(rootDir, "checkstyle-rules.xml")
+        configProperties = ["checkstyle.suppressions.file": new File(rootDir, "checkstyle-suppressions.xml")]
+        ignoreFailures false
+        showViolations true
+        toolVersion "${checkstyleVersion}"
+    }
+
+    checkstyleTest {
+        enabled = !Boolean.getBoolean("skipCheckstyle")
+    }
+
+    checkstyleMain {
+        enabled = !Boolean.getBoolean("skipCheckstyle")
+    }
+
+
+    findbugs {
+        toolVersion = "${findbugsVersion}"
+        sourceSets = [sourceSets.main]
+        ignoreFailures = true
+        reportsDir = file("$project.buildDir/findbugsReports")
+        effort = "max"
+        reportLevel = "high"
+        visitors = ["FindSqlInjection", "SwitchFallthrough"]
+        omitVisitors = ["FindNonShortCircuit"]
+        includeFilter = file("$rootProject.projectDir/findbugs-rules.xml")
+    }
+
+    findbugsMain {
+        enabled = !Boolean.getBoolean("skipFindbugs")
+    }
+
+    findbugsTest {
+        enabled = !Boolean.getBoolean("skipFindbugs")
+    }
+
+    dependencies {
+        compile group: 'org.aspectj', name: 'aspectjrt', version: "${aspectjVersion}"
+        compile group: 'org.aspectj', name: 'aspectjweaver', version: "${aspectjVersion}"
+        compile group: 'javax.validation', name: 'validation-api', version: "${javaxValidationVersion}"
+        compile group: 'org.slf4j', name: 'slf4j-api', version: "${slf4jVersion}"
+
+        if (!Boolean.getBoolean("skipAspectJ")) {
+            compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: "${inspektrVersion}") {
+                exclude(module: 'validation-api')
+                exclude(module: 'aspectjrt')
+            }
+
+            aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: "${inspektrVersion}") {
+                exclude(module: 'validation-api')
+                exclude(module: 'aspectjrt')
+            }
+        }
+
+        if (!Boolean.getBoolean("skipFindBugs")) {
+            findbugs group: 'com.google.code.findbugs', name: 'findbugs', version: "${findbugsVersion}"
+            findbugs group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version: "${findbugsContribVersion}"
+            findbugs group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version: "${findbugsSecVersion}"
+        }
+
+        runtime(group: 'org.glassfish.web', name: 'javax.el', version: "${javaxElImplVersion}") {
+            exclude(module: 'javax.el-api')
+        }
+        runtime group: 'org.slf4j', name: 'jul-to-slf4j', version: "${slf4jVersion}"
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: "${log4jVersion}"
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: "${log4jVersion}"
+        runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: "${log4jVersion}") {
+            exclude(module: 'slf4j-api')
+        }
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: "${log4jVersion}"
+        testCompile group: 'junit', name: 'junit', version: "${junitVersion}"
+        testCompile(group: 'org.mockito', name: 'mockito-core', version: "${mockitoVersion}") {
+            exclude(module: 'hamcrest-core')
+        }
+        testCompile group: 'org.springframework', name: 'spring-test', version: "${springVersion}"
+        provided group: 'javax.servlet', name: 'javax.servlet-api', version: "${javaxSevletVersion}"
+        provided group: 'javax.el', name: 'javax.el-api', version: "${javaxElVersion}"
+    }
 }
 
 if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")) {
-  uploadArchives {
-    repositories {
-      mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
                 /*
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
@@ -185,52 +185,52 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePass
                 }
                 */
                 snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-                  authentication(userName: sonatypeUsername, password: sonatypePassword);
+                    authentication(userName: sonatypeUsername, password: sonatypePassword);
                 }
 
                 pom.project {
-                  scm {
-                    url 'scm:git@github.com:Jasig/cas.git'
-                    connection 'scm:git@github.com:Jasig/cas.git'
-                    developerConnection 'scm:git@github.com:Jasig/cas.git'
-                  }
+                    scm {
+                        url 'scm:git@github.com:Jasig/cas.git'
+                        connection 'scm:git@github.com:Jasig/cas.git'
+                        developerConnection 'scm:git@github.com:Jasig/cas.git'
+                    }
 
-                  licenses {
-                    license {
-                      name 'The Apache Software License, Version 2.0'
-                      url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                      distribution 'repo'
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
                     }
-                  }
 
-                  developers {
-                    developer {
-                      id 'leleuj'
-                      name 'Jérôme Leleu'
+                    developers {
+                        developer {
+                            id 'leleuj'
+                            name 'Jérôme Leleu'
+                        }
+                        developer {
+                            id 'apetro'
+                            name 'Andrew Petro'
+                        }
+                        developer {
+                            id 'wgthom'
+                            name 'William G. Thompson'
+                        }
+                        developer {
+                            id 'serac'
+                            name 'Marvin S. Addison'
+                        }
+                        developer {
+                            id 'battags'
+                            name 'Scott Battaglia'
+                        }
+                        developer {
+                            id 'mmoayyed'
+                            name 'Misagh Moayyed'
+                        }
                     }
-                    developer {
-                      id 'apetro'
-                      name 'Andrew Petro'
-                    }
-                    developer {
-                      id 'wgthom'
-                      name 'William G. Thompson'
-                    }
-                    developer {
-                      id 'serac'
-                      name 'Marvin S. Addison'
-                    }
-                    developer {
-                      id 'battags'
-                      name 'Scott Battaglia'
-                    }
-                    developer {
-                      id 'mmoayyed'
-                      name 'Misagh Moayyed'
-                    }
-                  }
                 }
-              }
             }
-          }
         }
+    }
+}
