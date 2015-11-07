@@ -9,14 +9,14 @@ dependencies {
   }
   compile group: 'commons-io', name: 'commons-io', version:'2.4'
   compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.6.1'
-  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'1.2.GA') {
+  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'$inspektrVersion') {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
     exclude(module: 'aspectjrt')
   }
   compile group: 'com.google.guava', name: 'guava', version:'18.0'
-  compile group: 'org.springframework', name: 'spring-orm', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-orm', version:springVersion
+  compile group: 'org.springframework', name: 'spring-jdbc', version:springVersion
   compile(group: 'org.quartz-scheduler', name: 'quartz', version:'2.2.1') {
     exclude(module: 'slf4j-api')
     exclude(module: 'c3p0')

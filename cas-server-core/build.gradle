@@ -1,4 +1,3 @@
-
 description = 'Apereo CAS Core'
 dependencies {
   compile project(':cas-server-core-api')
@@ -7,7 +6,7 @@ dependencies {
   compile project(':cas-server-core-tickets')
   compile project(':cas-server-core-validation')
   compile project(':cas-server-core-authentication')
-  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'1.2.GA') {
+  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'$inspektrVersion') {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
     exclude(module: 'aspectjrt')
@@ -31,14 +30,14 @@ dependencies {
   }
   compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
   compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.4'
-  compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
     exclude(module: 'commons-logging')
   }
-  compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
-  compile group: 'org.springframework', name: 'spring-webmvc', version:'$springVersion'
-  compile group: 'org.springframework', name: 'spring-context-support', version:'$springVersion'
-  compile group: 'org.springframework', name: 'spring-tx', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
+  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
+  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+  compile group: 'org.springframework', name: 'spring-tx', version:springVersion
+  compile group: 'org.springframework', name: 'spring-context', version:springVersion
   compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
     exclude(module: 'jboss-logging-annotations')
     exclude(module: 'javassist')

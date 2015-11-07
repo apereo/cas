@@ -11,7 +11,7 @@ dependencies {
     exclude(module: 'spring-tx')
     exclude(module: 'spring-expression')
   }
-  compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
     exclude(module: 'commons-logging')
   }
   compile group: 'org.mongodb', name: 'mongo-java-driver', version:'3.0.3'
@@ -26,7 +26,7 @@ dependencies {
     exclude(module: 'spring-core')
     exclude(module: 'spring-tx')
   }
-  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
   }
