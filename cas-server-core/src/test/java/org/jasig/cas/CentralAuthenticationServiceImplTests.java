@@ -303,7 +303,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test(expected = AbstractTicketException.class)
     public void verifyValidateServiceTicketNonExistantTicket() throws Exception {
-        getCentralAuthenticationService().validateServiceTicket("test",
+        getCentralAuthenticationService().validateServiceTicket("google",
             getService());
     }
 
