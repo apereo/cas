@@ -103,7 +103,7 @@ dependencies {
   compile(group: 'jdom', name: 'jdom', version:'1.0') {
     exclude(module: 'xml-apis')  
   }
-  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
     exclude(module: 'xml-apis')  

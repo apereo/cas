@@ -130,46 +130,46 @@ subprojects {
     }
 
     dependencies {
-        compile group: 'org.aspectj', name: 'aspectjrt', version: "${aspectjVersion}"
-        compile group: 'org.aspectj', name: 'aspectjweaver', version: "${aspectjVersion}"
-        compile group: 'javax.validation', name: 'validation-api', version: "${javaxValidationVersion}"
-        compile group: 'org.slf4j', name: 'slf4j-api', version: "${slf4jVersion}"
+        compile group: 'org.aspectj', name: 'aspectjrt', version:aspectjVersion
+        compile group: 'org.aspectj', name: 'aspectjweaver', version:aspectjVersion
+        compile group: 'javax.validation', name: 'validation-api', version:javaxValidationVersion
+        compile group: 'org.slf4j', name: 'slf4j-api', version:slf4jVersion
 
         if (!Boolean.getBoolean("skipAspectJ")) {
-            compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: "${inspektrVersion}") {
+            compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:inspektrVersion) {
                 exclude(module: 'validation-api')
                 exclude(module: 'aspectjrt')
             }
 
-            aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: "${inspektrVersion}") {
+            aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:inspektrVersion) {
                 exclude(module: 'validation-api')
                 exclude(module: 'aspectjrt')
             }
         }
 
         if (!Boolean.getBoolean("skipFindBugs")) {
-            findbugs group: 'com.google.code.findbugs', name: 'findbugs', version: "${findbugsVersion}"
-            findbugs group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version: "${findbugsContribVersion}"
-            findbugs group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version: "${findbugsSecVersion}"
+            findbugs group: 'com.google.code.findbugs', name: 'findbugs', version:findbugsVersion
+            findbugs group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version:findbugsContribVersion
+            findbugs group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version:findbugsSecVersion
         }
 
-        runtime(group: 'org.glassfish.web', name: 'javax.el', version: "${javaxElImplVersion}") {
+        runtime(group: 'org.glassfish.web', name: 'javax.el', version:javaxElImplVersion) {
             exclude(module: 'javax.el-api')
         }
-        runtime group: 'org.slf4j', name: 'jul-to-slf4j', version: "${slf4jVersion}"
-        runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: "${log4jVersion}"
-        runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: "${log4jVersion}"
-        runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: "${log4jVersion}") {
+        runtime group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4jVersion
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version:log4jVersion
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version:log4jVersion
+        runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version:log4jVersion) {
             exclude(module: 'slf4j-api')
         }
-        runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: "${log4jVersion}"
-        testCompile group: 'junit', name: 'junit', version: "${junitVersion}"
-        testCompile(group: 'org.mockito', name: 'mockito-core', version: "${mockitoVersion}") {
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version:log4jVersion
+        testCompile group: 'junit', name: 'junit', version:junitVersion
+        testCompile(group: 'org.mockito', name: 'mockito-core', version:mockitoVersion) {
             exclude(module: 'hamcrest-core')
         }
-        testCompile group: 'org.springframework', name: 'spring-test', version: "${springVersion}"
-        provided group: 'javax.servlet', name: 'javax.servlet-api', version: "${javaxSevletVersion}"
-        provided group: 'javax.el', name: 'javax.el-api', version: "${javaxElVersion}"
+        testCompile group: 'org.springframework', name: 'spring-test', version:springVersion
+        provided group: 'javax.servlet', name: 'javax.servlet-api', version:javaxSevletVersion
+        provided group: 'javax.el', name: 'javax.el-api', version:javaxElVersion
     }
 }
 
