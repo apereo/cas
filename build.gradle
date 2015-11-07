@@ -1,16 +1,55 @@
 defaultTasks "clean", "build"
 
+buildscript {
+  repositories {
+    jcenter()
+    maven {
+      url "https://maven.eveoh.nl/content/repositories/releases"
+    }
+  }
+
+  dependencies {
+    classpath "net.rdrei.android.buildtimetracker:gradle-plugin:0.5.+"
+    classpath "nl.eveoh:gradle-aspectj:1.6"
+  }
+}
+
 allprojects  {
-  apply plugin: 'idea'
+  apply plugin: "idea"
   apply plugin: "eclipse"
-  apply plugin: 'maven'
+  apply plugin: "maven"
+  apply plugin: "build-time-tracker"
 
   group = 'org.jasig.cas'
   version = '4.2.0-SNAPSHOT'
 }
 
+buildtimetracker {
+  reporters {
+    csv {
+      output "${project.buildDir}/times.csv"
+      append true
+      header false
+    }
+
+    summary {
+      ordered false
+      threshold 50
+      barstyle "unicode"
+    }
+
+    csvSummary {
+      csv "${project.buildDir}/times.csv"
+    }
+  }
+}
+
 subprojects {
   apply plugin: 'java'
+  apply plugin: 'checkstyle'
+  apply plugin: 'findbugs'
+  apply plugin: 'aspectj'
+  apply plugin: 'project-report'
   apply from: rootProject.file("gradle/tasks.gradle")
 
   sourceCompatibility = 1.7
@@ -18,6 +57,7 @@ subprojects {
 
   repositories {
     mavenLocal()
+    mavenCentral()
     jcenter()
 
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
@@ -29,9 +69,7 @@ subprojects {
   }
 
   test {
-    onlyIf { task ->
-      return !Boolean.getBoolean("skipTests")
-    }
+    enabled = !Boolean.getBoolean("skipTests")
     useJUnit()
     scanForTestClasses false
     include '**/*Tests.*'
@@ -50,7 +88,7 @@ subprojects {
 
   configurations.all {
     resolutionStrategy {
-      //failOnVersionConflict()
+      failOnVersionConflict()
     }
     exclude(group: "cglib", module: "cglib")
     exclude(group: "cglib", module: "cglib-full")
@@ -70,20 +108,70 @@ subprojects {
 
   javadoc {
     classpath += configurations.provided
-    onlyIf { task ->
-      return !Boolean.getBoolean("skipJavadocs")
-    }
+    enabled = !Boolean.getBoolean("skipJavadocs")
+  }
+
+  checkstyle {
+    configFile new File(rootDir, "checkstyle-rules.xml")
+    configProperties = ["checkstyle.suppressions.file": new File(rootDir, "checkstyle-suppressions.xml")]
+    ignoreFailures false
+    showViolations true
+    toolVersion "6.10.1"
+  }
+
+  checkstyleTest {
+    enabled = !Boolean.getBoolean("skipCheckstyle")
+  }
+
+  checkstyleMain {
+    enabled = !Boolean.getBoolean("skipCheckstyle")
+  }
+
+
+  findbugs {
+    toolVersion = "3.0.1"
+    sourceSets = [sourceSets.main]
+    ignoreFailures = true
+    reportsDir = file("$project.buildDir/findbugsReports")
+    effort = "max"
+    reportLevel = "high"
+    visitors = ["FindSqlInjection", "SwitchFallthrough"]
+    omitVisitors = ["FindNonShortCircuit"]
+    includeFilter = file("$rootProject.projectDir/findbugs-rules.xml")
+  }
+  
+  findbugsMain {
+    enabled = !Boolean.getBoolean("skipFindbugs")
+  }
+
+  findbugsTest {
+    enabled = !Boolean.getBoolean("skipFindbugs")
   }
 
   dependencies {
-    compile group: 'org.aspectj', name: 'aspectjrt', version:'1.8.6'
-    compile group: 'org.aspectj', name: 'aspectjweaver', version:'1.8.6'
+    compile group: 'org.aspectj', name: 'aspectjrt', version:"${aspectjVersion}"
+    compile group: 'org.aspectj', name: 'aspectjweaver', version:"${aspectjVersion}"
     compile group: 'javax.validation', name: 'validation-api', version:'1.1.0.Final'
     compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
-    compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:'1.2.GA') {
-      exclude(module: 'validation-api')
-      exclude(module: 'aspectjrt')
+
+    if (!Boolean.getBoolean("skipAspectJ")) {
+      compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:'1.2.GA') {
+        exclude(module: 'validation-api')
+        exclude(module: 'aspectjrt')
+      }
+
+      aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:'1.2.GA') {
+        exclude(module: 'validation-api')
+        exclude(module: 'aspectjrt')
+      }
     }
+    
+    if (!Boolean.getBoolean("skipFindBugs")) {
+      findbugs group: 'com.google.code.findbugs', name:'findbugs', version:'3.0.1'
+      findbugs group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version:'6.2.3'
+      findbugs group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version:'1.4.3'
+    }
+
     runtime(group: 'org.glassfish.web', name: 'javax.el', version:'2.2.6') {
       exclude(module: 'javax.el-api')
     }
