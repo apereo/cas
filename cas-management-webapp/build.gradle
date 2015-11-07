@@ -3,7 +3,7 @@ apply plugin: 'war'
 
 description = 'Apereo CAS Management Web Application'
 dependencies {
-  compile(group: 'org.springframework.security', name: 'spring-security-core', version:'$springSecVersion') {
+  compile(group: 'org.springframework.security', name: 'spring-security-core', version:springSecVersion) {
     exclude(module: 'spring-core')
     exclude(module: 'spring-beans')
     exclude(module: 'spring-context')
@@ -16,7 +16,7 @@ dependencies {
     exclude(module: 'validation-api')
     exclude(module: 'aspectjrt')
   }
-  compile(group: 'org.springframework.security', name: 'spring-security-web', version:'$springSecVersion') {
+  compile(group: 'org.springframework.security', name: 'spring-security-web', version:springSecVersion) {
     exclude(module: 'spring-core')
     exclude(module: 'spring-beans')
     exclude(module: 'spring-context')
@@ -24,7 +24,7 @@ dependencies {
     exclude(module: 'spring-expression')
     exclude(module: 'spring-web')
   }
-  compile group: 'org.springframework', name: 'spring-aop', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-aop', version:springVersion
   compile(group: 'org.springframework.webflow', name: 'spring-binding', version:'$inspektrVersion') {
     exclude(module: 'commons-logging')
     exclude(module: 'spring-beans')
@@ -47,15 +47,15 @@ dependencies {
     exclude(module: 'bcprov-jdk15')
     exclude(module: 'slf4j-api')
   }
-  compile group: 'org.springframework', name: 'spring-context-support', version:'$springVersion'
-  compile group: 'org.springframework', name: 'spring-expression', version:'4.2.1.RELEASE'
-  compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+  compile group: 'org.springframework', name: 'spring-expression', version:springVersion
+  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
     exclude(module: 'commons-logging')
   }
-  compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
-  compile group: 'org.springframework', name: 'spring-webmvc', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
+  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
   compile group: 'javax.servlet', name: 'jstl', version:'1.2'
-  runtime(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:'1.2.GA') {
+  runtime(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:'$inspektrVersion') {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
     exclude(module: 'spring-web')
@@ -66,7 +66,7 @@ dependencies {
     exclude(module: 'aspectjrt')
     exclude(module: 'validation-api')
   }
-  runtime(group: 'org.springframework.security', name: 'spring-security-cas', version:'4.0.2.RELEASE') {
+  runtime(group: 'org.springframework.security', name: 'spring-security-cas', version:springSecVersion) {
     exclude(module: 'commons-logging')
     exclude(module: 'spring-core')
     exclude(module: 'spring-beans')
@@ -76,7 +76,7 @@ dependencies {
     exclude(module: 'spring-web')
     exclude(module: 'cas-client-core')
   }
-  runtime(group: 'org.springframework.security', name: 'spring-security-config', version:'4.0.2.RELEASE') {
+  runtime(group: 'org.springframework.security', name: 'spring-security-config', version:springSecVersion) {
     exclude(module: 'commons-logging')
     exclude(module: 'spring-core')
     exclude(module: 'spring-beans')
@@ -85,9 +85,9 @@ dependencies {
     exclude(module: 'spring-expression')
     exclude(module: 'spring-web')
   }
-  runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version:'2.3'
+  runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version:'$log4jVersion'
   runtime group: 'taglibs', name: 'standard', version:'1.1.2'
-  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
   }

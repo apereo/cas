@@ -11,10 +11,10 @@ dependencies {
 		exclude(module: 'spring-expression')
 		exclude(module: 'spring-webmvc')
 	}
-	compile group: 'org.springframework', name: 'spring-context-support', version:'$springVersion'
-	compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
-	compile group: 'org.springframework', name: 'spring-web', version:'4.2.1.RELEASE'
-	compile group: 'org.springframework', name: 'spring-webmvc', version:'$springVersion'
+	compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+	compile group: 'org.springframework', name: 'spring-context', version:springVersion
+	compile group: 'org.springframework', name: 'spring-web', version:springVersion
+	compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
 }
 
 

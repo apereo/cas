@@ -2,12 +2,12 @@
 description = 'Apereo CAS Core Utilities'
 dependencies {
     compile project(':cas-server-core-api')
-    compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+    compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
         exclude(module: 'commons-logging')
     }
-    compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
-    compile group: 'org.springframework', name: 'spring-context-support', version:'$springVersion'
-    compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
+    compile group: 'org.springframework', name: 'spring-beans', version:springVersion
+    compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+    compile group: 'org.springframework', name: 'spring-context', version:springVersion
     compile(group: 'org.apache.shiro', name: 'shiro-core', version:'1.2.4') {
         exclude(module: 'slf4j-api')
     }
@@ -26,6 +26,6 @@ dependencies {
         exclude(module: 'commons-codec')
     }
     compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.4'
-    compile group: 'org.springframework', name: 'spring-webmvc', version:'$springVersion'
+    compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
 }
 

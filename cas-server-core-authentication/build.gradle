@@ -6,7 +6,7 @@ dependencies {
     exclude(module: 'slf4j-api')
   }
   compile project(':cas-server-core-util')
-  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'1.2.GA') {
+  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'$inspektrVersion') {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
     exclude(module: 'aspectjrt')
