@@ -9,7 +9,6 @@ buildscript {
   }
 
   dependencies {
-    classpath "net.rdrei.android.buildtimetracker:gradle-plugin:0.5.+"
     classpath "nl.eveoh:gradle-aspectj:1.6"
   }
 }
@@ -18,30 +17,9 @@ allprojects  {
   apply plugin: "idea"
   apply plugin: "eclipse"
   apply plugin: "maven"
-  apply plugin: "build-time-tracker"
 
   group = 'org.jasig.cas'
   version = '4.2.0-SNAPSHOT'
-}
-
-buildtimetracker {
-  reporters {
-    csv {
-      output "${project.buildDir}/times.csv"
-      append true
-      header false
-    }
-
-    summary {
-      ordered false
-      threshold 50
-      barstyle "unicode"
-    }
-
-    csvSummary {
-      csv "${project.buildDir}/times.csv"
-    }
-  }
 }
 
 subprojects {
@@ -88,7 +66,9 @@ subprojects {
 
   configurations.all {
     resolutionStrategy {
-      failOnVersionConflict()
+      if (!Boolean.getBoolean("skipVersionConflict")) {
+        failOnVersionConflict()
+      }
     }
     exclude(group: "cglib", module: "cglib")
     exclude(group: "cglib", module: "cglib-full")

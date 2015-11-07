@@ -20,6 +20,7 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.services.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -165,7 +166,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter("lt", "LOGIN");
 
         request.addParameter("renew", "true");
-        request.addParameter("service", "test");
+        request.addParameter("service", TestUtils.CONST_TEST_URL);
         request.addParameter("username", "test");
         request.addParameter("password", "test");
 
