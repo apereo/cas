@@ -13,10 +13,11 @@ buildscript {
   }
 }
 
-allprojects  {
+allprojects {
   apply plugin: "idea"
   apply plugin: "eclipse"
   apply plugin: "maven"
+  apply plugin: "signing"
 
   group = 'org.jasig.cas'
   version = '4.2.0-SNAPSHOT'
@@ -46,6 +47,11 @@ subprojects {
     maven { url "http://files.couchbase.com/maven2" }
   }
 
+  signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+  }
+
   test {
     enabled = !Boolean.getBoolean("skipTests")
     useJUnit()
@@ -53,8 +59,8 @@ subprojects {
     include '**/*Tests.*'
     exclude '**/*Abstract*.*'
     classpath = it.classpath + files("${projectDir}/src/main/resources") +
-                               files("${projectDir}/src/test/resources")
-    
+    files("${projectDir}/src/test/resources")
+
   }
 
   configurations {
@@ -77,6 +83,7 @@ subprojects {
   artifacts {
     tests testJar
 
+    archives jar
     archives sourcesJar
     archives javadocJar
     archives testJar
@@ -119,7 +126,7 @@ subprojects {
     omitVisitors = ["FindNonShortCircuit"]
     includeFilter = file("$rootProject.projectDir/findbugs-rules.xml")
   }
-  
+
   findbugsMain {
     enabled = !Boolean.getBoolean("skipFindbugs")
   }
@@ -129,45 +136,107 @@ subprojects {
   }
 
   dependencies {
-    compile group: 'org.aspectj', name: 'aspectjrt', version:"${aspectjVersion}"
-    compile group: 'org.aspectj', name: 'aspectjweaver', version:"${aspectjVersion}"
-    compile group: 'javax.validation', name: 'validation-api', version:'1.1.0.Final'
-    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.12'
+    compile group: 'org.aspectj', name: 'aspectjrt', version: "${aspectjVersion}"
+    compile group: 'org.aspectj', name: 'aspectjweaver', version: "${aspectjVersion}"
+    compile group: 'javax.validation', name: 'validation-api', version: '1.1.0.Final'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.12'
 
     if (!Boolean.getBoolean("skipAspectJ")) {
-      compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:'1.2.GA') {
+      compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: '1.2.GA') {
         exclude(module: 'validation-api')
         exclude(module: 'aspectjrt')
       }
 
-      aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:'1.2.GA') {
+      aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: '1.2.GA') {
         exclude(module: 'validation-api')
         exclude(module: 'aspectjrt')
       }
     }
-    
+
     if (!Boolean.getBoolean("skipFindBugs")) {
-      findbugs group: 'com.google.code.findbugs', name:'findbugs', version:'3.0.1'
-      findbugs group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version:'6.2.3'
-      findbugs group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version:'1.4.3'
+      findbugs group: 'com.google.code.findbugs', name: 'findbugs', version: '3.0.1'
+      findbugs group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version: '6.2.3'
+      findbugs group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version: '1.4.3'
     }
 
-    runtime(group: 'org.glassfish.web', name: 'javax.el', version:'2.2.6') {
+    runtime(group: 'org.glassfish.web', name: 'javax.el', version: '2.2.6') {
       exclude(module: 'javax.el-api')
     }
-    runtime group: 'org.slf4j', name: 'jul-to-slf4j', version:'1.7.12'
-    runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version:'2.3'
-    runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version:'2.3'
-    runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version:'2.3') {
+    runtime group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.12'
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.3'
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.3'
+    runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.3') {
       exclude(module: 'slf4j-api')
     }
-    runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version:'2.3'
-    testCompile group: 'junit', name: 'junit', version:'4.12'
-    testCompile(group: 'org.mockito', name: 'mockito-core', version:'1.10.19') {
+    runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: '2.3'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile(group: 'org.mockito', name: 'mockito-core', version: '1.10.19') {
       exclude(module: 'hamcrest-core')
     }
-    testCompile group: 'org.springframework', name: 'spring-test', version:'4.2.1.RELEASE'
-    provided group: 'javax.servlet', name: 'javax.servlet-api', version:'3.0.1'
-    provided group: 'javax.el', name: 'javax.el-api', version:'3.0.0'
+    testCompile group: 'org.springframework', name: 'spring-test', version: '4.2.1.RELEASE'
+    provided group: 'javax.servlet', name: 'javax.servlet-api', version: '3.0.1'
+    provided group: 'javax.el', name: 'javax.el-api', version: '3.0.0'
   }
 }
+
+if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")) {
+  uploadArchives {
+    repositories {
+      mavenDeployer {
+        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                /*
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                  authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+                */
+                snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+                  authentication(userName: sonatypeUsername, password: sonatypePassword);
+                }
+
+                pom.project {
+                  scm {
+                    url 'scm:git@github.com:Jasig/cas.git'
+                    connection 'scm:git@github.com:Jasig/cas.git'
+                    developerConnection 'scm:git@github.com:Jasig/cas.git'
+                  }
+
+                  licenses {
+                    license {
+                      name 'The Apache Software License, Version 2.0'
+                      url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                      distribution 'repo'
+                    }
+                  }
+
+                  developers {
+                    developer {
+                      id 'leleuj'
+                      name 'Jérôme Leleu'
+                    }
+                    developer {
+                      id 'apetro'
+                      name 'Andrew Petro'
+                    }
+                    developer {
+                      id 'wgthom'
+                      name 'William G. Thompson'
+                    }
+                    developer {
+                      id 'serac'
+                      name 'Marvin S. Addison'
+                    }
+                    developer {
+                      id 'battags'
+                      name 'Scott Battaglia'
+                    }
+                    developer {
+                      id 'mmoayyed'
+                      name 'Misagh Moayyed'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
