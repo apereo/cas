@@ -20,7 +20,7 @@ dependencies {
   compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
     exclude(module: 'javassist')
   }
-  compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
   runtime group: 'com.mchange', name: 'c3p0', version:'0.9.5.1'
   testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
     exclude(module: 'slf4j-api')

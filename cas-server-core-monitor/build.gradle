@@ -7,10 +7,10 @@ dependencies {
   compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
     exclude(module: 'commons-logging')
   }
-  compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-webmvc', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-webmvc', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-context-support', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
   testCompile project(':cas-server-core-tickets')
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
   testCompile project(path: ":cas-server-core-util", configuration: "tests")
