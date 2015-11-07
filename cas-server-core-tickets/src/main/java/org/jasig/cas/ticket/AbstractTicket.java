@@ -48,7 +48,9 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     private static final long serialVersionUID = -8506442397878267555L;
 
-    /** The ExpirationPolicy this ticket will be following. */
+    /**
+     * The {@link ExpirationPolicy} this is associated with.
+     **/
     @Lob
     @Column(name="EXPIRATION_POLICY", length = 1000000, nullable=false)
     private ExpirationPolicy expirationPolicy;
@@ -58,7 +60,9 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Column(name="ID", nullable=false)
     private String id;
 
-    /** The TicketGrantingTicket this is associated with. */
+    /**
+     * The {@link TicketGrantingTicket} this is associated with.
+     **/
     @ManyToOne(targetEntity=TicketGrantingTicketImpl.class)
     private TicketGrantingTicket ticketGrantingTicket;
 
