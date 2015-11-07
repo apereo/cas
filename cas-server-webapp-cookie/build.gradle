@@ -7,8 +7,8 @@ dependencies {
     exclude(module: 'commons-logging')
   }
   compile group: 'org.springframework', name: 'spring-web', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-context-support', version:'$springVersion'
   compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
     exclude(module: 'commons-logging')
     exclude(module: 'spring-context')
@@ -18,6 +18,6 @@ dependencies {
     exclude(module: 'spring-expression')
     exclude(module: 'spring-webmvc')
   }
-  compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
 }
 

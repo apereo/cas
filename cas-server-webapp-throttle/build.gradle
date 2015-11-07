@@ -32,11 +32,11 @@ dependencies {
   compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
     exclude(module: 'javassist')
   }
-  compile group: 'org.springframework', name: 'spring-beans', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-context-support', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-webmvc', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-context-support', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-webmvc', version:'$springVersion'
   compile group: 'org.reflections', name: 'reflections', version:'0.9.10'
-  compile group: 'org.springframework', name: 'spring-context', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
   compile project(':cas-server-core-web')
   compile project(':cas-server-core-util')
   testCompile project(':cas-server-core-authentication')
