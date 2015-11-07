@@ -4,7 +4,7 @@ dependencies {
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-authentication')
-  compile(group: 'org.springframework.security', name: 'spring-security-core', version:'$springSecVersion') {
+  compile(group: 'org.springframework.security', name: 'spring-security-core', version:springSecVersion) {
     exclude(module: 'spring-core')
     exclude(module: 'spring-beans')
     exclude(module: 'spring-context')
@@ -24,13 +24,13 @@ dependencies {
   compile(group: 'org.ldaptive', name: 'ldaptive', version:'1.1.0') {
     exclude(module: 'slf4j-api')
   }
-  compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
   compile group: 'org.reflections', name: 'reflections', version:'0.9.10'
   compile group: 'org.ldaptive', name: 'ldaptive-beans', version:'1.1.0'
-  compile group: 'org.springframework', name: 'spring-expression', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-expression', version:springVersion
   compile group: 'joda-time', name: 'joda-time', version:'2.8.2'
   compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.6.1'
-  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
   }

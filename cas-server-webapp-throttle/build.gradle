@@ -1,15 +1,15 @@
 
 description = 'Apereo CAS Web Application Authentication Throttling'
 dependencies {
-  compile(group: 'org.springframework', name: 'spring-core', version:'4.2.1.RELEASE') {
+  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
     exclude(module: 'commons-logging')
   }
-  compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-jdbc', version:springVersion
   compile(group: 'org.quartz-scheduler', name: 'quartz', version:'2.2.1') {
     exclude(module: 'slf4j-api')
     exclude(module: 'c3p0')
   }
-  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'1.2.GA') {
+  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'$inspektrVersion') {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
     exclude(module: 'aspectjrt')
@@ -32,11 +32,11 @@ dependencies {
   compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
     exclude(module: 'javassist')
   }
-  compile group: 'org.springframework', name: 'spring-beans', version:'$springVersion'
-  compile group: 'org.springframework', name: 'spring-context-support', version:'$springVersion'
-  compile group: 'org.springframework', name: 'spring-webmvc', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
+  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
+  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
   compile group: 'org.reflections', name: 'reflections', version:'0.9.10'
-  compile group: 'org.springframework', name: 'spring-context', version:'$springVersion'
+  compile group: 'org.springframework', name: 'spring-context', version:springVersion
   compile project(':cas-server-core-web')
   compile project(':cas-server-core-util')
   testCompile project(':cas-server-core-authentication')

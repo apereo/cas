@@ -17,7 +17,7 @@ dependencies {
   compile(group: 'net.sf.ehcache', name: 'ehcache', version:'2.10.0') {
     exclude(module: 'slf4j-api')
   }
-  compile group: 'org.springframework', name: 'spring-expression', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-expression', version:springVersion
   compile(group: 'org.ldaptive', name: 'ldaptive', version:'1.1.0') {
     exclude(module: 'slf4j-api')
   }

@@ -19,7 +19,7 @@ dependencies {
     exclude(module: 'spring-expression')
     exclude(module: 'spring-webmvc')
   }
-  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
   }

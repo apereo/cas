@@ -7,8 +7,8 @@ dependencies {
     exclude(module: 'jboss-logging-annotations')
     exclude(module: 'javassist')
   }
-  compile group: 'org.springframework', name: 'spring-jdbc', version:'4.2.1.RELEASE'
-  compile group: 'org.springframework', name: 'spring-orm', version:'4.2.1.RELEASE'
+  compile group: 'org.springframework', name: 'spring-jdbc', version:springVersion
+  compile group: 'org.springframework', name: 'spring-orm', version:springVersion
   compile project(':cas-server-core-monitor')
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
   testCompile project(':cas-server-core-util')
