@@ -162,10 +162,11 @@ subprojects {
             }
         }
 
-        if (!Boolean.getBoolean("skipFindBugs")) {
+        if (!Boolean.getBoolean("skipFindbugs")) {
             findbugs group: 'com.google.code.findbugs', name: 'findbugs', version:findbugsVersion
-            findbugs group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version:findbugsContribVersion
-            findbugs group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version:findbugsSecVersion
+            findbugs configurations.findbugsPlugins.dependencies
+            findbugsPlugins group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version:findbugsContribVersion
+            findbugsPlugins group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version:findbugsSecVersion
         }
 
         runtime(group: 'org.glassfish.web', name: 'javax.el', version:javaxElImplVersion) {
