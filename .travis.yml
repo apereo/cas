@@ -44,8 +44,10 @@ env:
 before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
+- chmod -R 777 ./gradlew
+- chmod -R 777 ./gradlew.bat
 script:
-- gradle clean build --parallel
+- gradlew clean build --parallel
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
