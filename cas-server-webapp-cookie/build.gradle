@@ -9,7 +9,7 @@ dependencies {
   compile group: 'org.springframework', name: 'spring-web', version:springVersion
   compile group: 'org.springframework', name: 'spring-beans', version:springVersion
   compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
-  compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
+  compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
     exclude(module: 'commons-logging')
     exclude(module: 'spring-context')
     exclude(module: 'spring-web')

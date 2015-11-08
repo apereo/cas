@@ -4,31 +4,31 @@ dependencies {
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-monitor')
   compile project(':cas-server-core-authentication')
-  compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.4'
+  compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
   compile group: 'org.springframework', name: 'spring-jdbc', version:springVersion
-  compile(group: 'org.quartz-scheduler', name: 'quartz', version:'2.2.1') {
+  compile(group: 'org.quartz-scheduler', name: 'quartz', version:quartzVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'c3p0')
   }
   compile group: 'org.springframework', name: 'spring-orm', version:springVersion
-  compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
+  compile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
     exclude(module: 'jboss-logging-annotations')
     exclude(module: 'javassist')
   }
-  compile(group: 'org.apache.shiro', name: 'shiro-core', version:'1.2.4') {
+  compile(group: 'org.apache.shiro', name: 'shiro-core', version:shiroVersion) {
     exclude(module: 'slf4j-api')
   }
-  compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:'5.0.0.Final') {
+  compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:hibernateVersion) {
     exclude(module: 'javassist')
   }
   compile group: 'org.springframework', name: 'spring-context', version:springVersion
-  runtime group: 'com.mchange', name: 'c3p0', version:'0.9.5.1'
-  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+  runtime group: 'com.mchange', name: 'c3p0', version:c3p0Version
+  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
   }
-  testCompile group: 'org.hsqldb', name: 'hsqldb', version:'2.3.3'
-  testCompile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
+  testCompile group: 'org.hsqldb', name: 'hsqldb', version:hsqlVersion
+  testCompile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
     exclude(module: 'commons-logging')
     exclude(module: 'spring-context')
     exclude(module: 'spring-web')
