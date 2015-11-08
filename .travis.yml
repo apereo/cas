@@ -36,6 +36,7 @@ jdk:
 cache:
   directories:
     - '$HOME/.m2/repository'
+    - '$HOME/.gradle/caches'
 env:
   global:
   - secure: "JlFTItSTHxmevCoX1fXWkXtQOqP8ERT5ndeYMc378acqZIWEpmoSQelP8unRjtU6sU/4dxdUWpEFLrbcNQsFuPsgzMLGSwuEcjbuSBGMgdAHXSl6+FfBWrCcde2WIfk+eYMm7mrhcySWMvtWss1kDOu+s8+HtRvnRCAsfz+77hs="
@@ -46,8 +47,7 @@ before_install:
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
 - chmod -R 777 ./gradlew.bat
-script:
-- gradlew clean build --parallel
+- ./gradlew clean assemble --parallel -q -DskipJavadocs=true
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
