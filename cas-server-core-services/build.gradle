@@ -2,26 +2,26 @@
 description = 'Apereo CAS Core Services'
 dependencies {
   compile project(':cas-server-core-api')
-  compile(group: 'org.hibernate', name: 'hibernate-core', version:'5.0.0.Final') {
+  compile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
     exclude(module: 'jboss-logging-annotations')
     exclude(module: 'javassist')
     exclude(module: 'xml-apis')  
   }
-  compile group: 'commons-io', name: 'commons-io', version:'2.4'
-  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.6.1'
-  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'$inspektrVersion') {
+  compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
+  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:jacksonDatabindVersion
+  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:inspektrVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
     exclude(module: 'aspectjrt')
   }
-  compile group: 'com.google.guava', name: 'guava', version:'18.0'
+  compile group: 'com.google.guava', name: 'guava', version:guavaVersion
   compile group: 'org.springframework', name: 'spring-orm', version:springVersion
   compile group: 'org.springframework', name: 'spring-jdbc', version:springVersion
-  compile(group: 'org.quartz-scheduler', name: 'quartz', version:'2.2.1') {
+  compile(group: 'org.quartz-scheduler', name: 'quartz', version:quartzVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'c3p0')
   }
-  compile group: 'org.reflections', name: 'reflections', version:'0.9.10'
+  compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-events')
   compile project(':cas-server-core-web')
@@ -29,7 +29,7 @@ dependencies {
   testCompile project(':cas-server-core-authentication')
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
 
-  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
   }

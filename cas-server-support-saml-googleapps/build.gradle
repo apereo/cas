@@ -10,8 +10,8 @@ dependencies {
     exclude(module: 'jboss-logging')
   }
   testCompile project(':cas-server-core-util')
-  testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version:'2.3'
-  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
+  testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version:log4jVersion
+  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:dropwizardMetricsVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'spring-core')
     exclude(module: 'spring-beans')

@@ -4,7 +4,7 @@ dependencies {
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-services')
   compile project(':cas-server-webapp-validation')
-  compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
+  compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
     exclude(module: 'commons-logging')
     exclude(module: 'spring-context')
     exclude(module: 'spring-web')
@@ -13,12 +13,12 @@ dependencies {
     exclude(module: 'spring-expression')
     exclude(module: 'spring-webmvc')
   }
-  compile(group: 'org.openid4java', name: 'openid4java', version:'0.9.8') {
+  compile(group: 'org.openid4java', name: 'openid4java', version:openidVersion) {
     exclude(module: 'xercesImpl')
     exclude(module: 'httpclient')
     exclude(module: 'commons-logging')
   }
-  compile(group: 'org.apache.httpcomponents', name: 'httpclient', version:'4.5') {
+  compile(group: 'org.apache.httpcomponents', name: 'httpclient', version:httpclientVersion) {
     exclude(module: 'commons-codec')
   }
   compile project(':cas-server-core-authentication')
@@ -26,7 +26,7 @@ dependencies {
   testCompile project(':cas-server-core')
   testCompile project(':cas-server-core-util')
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
-  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:'3.1.2') {
+  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:dropwizardMetricsVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'spring-core')
     exclude(module: 'spring-beans')

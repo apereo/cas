@@ -1,12 +1,12 @@
 
 description = 'Apereo CAS Ehcache Integration'
 dependencies {
-  compile(group: 'net.sf.ehcache', name: 'ehcache', version:'2.10.0') {
+  compile(group: 'net.sf.ehcache', name: 'ehcache', version:ehcacheVersion) {
     exclude(module: 'slf4j-api')
   }
   compile project(':cas-server-core-api')
   compile project(':cas-server-core-tickets')
-  compile(group: 'org.ehcache', name: 'jcache', version:'1.0.0') {
+  compile(group: 'org.ehcache', name: 'jcache', version:jcacheVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'ehcache')
   }

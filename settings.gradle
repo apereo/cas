@@ -1,14 +1,15 @@
 rootProject.name = 'cas-server'
+
 include ':cas-server-core-api'
-include ':cas-server-core-logging'
 include ':cas-server-core-util'
+include ':cas-server-core-web'
 include ':cas-server-core-authentication'
+include ':cas-server-core-logging'
 include ':cas-server-core-logout'
 include ':cas-server-core-monitor'
 include ':cas-server-core-services'
 include ':cas-server-core-tickets'
 include ':cas-server-core-validation'
-include ':cas-server-core-web'
 include ':cas-server-core-events'
 include ':cas-server-core-audit'
 include ':cas-server-core'
@@ -52,57 +53,3 @@ include ':cas-server-webapp-actions'
 include ':cas-server-webapp-support'
 include ':cas-server-webapp'
 include ':cas-management-webapp'
-
-project(':cas-server-core-api').projectDir = "$rootDir/cas-server-core-api" as File
-project(':cas-server-core-logging').projectDir = "$rootDir/cas-server-core-logging" as File
-project(':cas-server-core-util').projectDir = "$rootDir/cas-server-core-util" as File
-project(':cas-server-core-authentication').projectDir = "$rootDir/cas-server-core-authentication" as File
-project(':cas-server-core-logout').projectDir = "$rootDir/cas-server-core-logout" as File
-project(':cas-server-core-monitor').projectDir = "$rootDir/cas-server-core-monitor" as File
-project(':cas-server-core-services').projectDir = "$rootDir/cas-server-core-services" as File
-project(':cas-server-core-tickets').projectDir = "$rootDir/cas-server-core-tickets" as File
-project(':cas-server-core-validation').projectDir = "$rootDir/cas-server-core-validation" as File
-project(':cas-server-core-web').projectDir = "$rootDir/cas-server-core-web" as File
-project(':cas-server-core-events').projectDir = "$rootDir/cas-server-core-events" as File
-project(':cas-server-core-audit').projectDir = "$rootDir/cas-server-core-audit" as File
-project(':cas-server-core').projectDir = "$rootDir/cas-server-core" as File
-project(':cas-server-support-generic').projectDir = "$rootDir/cas-server-support-generic" as File
-project(':cas-server-support-jdbc').projectDir = "$rootDir/cas-server-support-jdbc" as File
-project(':cas-server-support-jdbc-monitor').projectDir = "$rootDir/cas-server-support-jdbc-monitor" as File
-project(':cas-server-support-jpa-ticket-registry').projectDir = "$rootDir/cas-server-support-jpa-ticket-registry" as File
-project(':cas-server-support-jpa-service-registry').projectDir = "$rootDir/cas-server-support-jpa-service-registry" as File
-project(':cas-server-support-ldap').projectDir = "$rootDir/cas-server-support-ldap" as File
-project(':cas-server-support-ldap-service-registry').projectDir = "$rootDir/cas-server-support-ldap-service-registry" as File
-project(':cas-server-support-ldap-monitor').projectDir = "$rootDir/cas-server-support-ldap-monitor" as File
-project(':cas-server-support-openid').projectDir = "$rootDir/cas-server-support-openid" as File
-project(':cas-server-support-wsfederation').projectDir = "$rootDir/cas-server-support-wsfederation" as File
-project(':cas-server-support-radius').projectDir = "$rootDir/cas-server-support-radius" as File
-project(':cas-server-support-spnego').projectDir = "$rootDir/cas-server-support-spnego" as File
-project(':cas-server-support-trusted').projectDir = "$rootDir/cas-server-support-trusted" as File
-project(':cas-server-support-x509').projectDir = "$rootDir/cas-server-support-x509" as File
-project(':cas-server-support-oauth').projectDir = "$rootDir/cas-server-support-oauth" as File
-project(':cas-server-support-pac4j').projectDir = "$rootDir/cas-server-support-pac4j" as File
-project(':cas-server-support-saml').projectDir = "$rootDir/cas-server-support-saml" as File
-project(':cas-server-support-saml-googleapps').projectDir = "$rootDir/cas-server-support-saml-googleapps" as File
-project(':cas-server-support-saml-mdui').projectDir = "$rootDir/cas-server-support-saml-mdui" as File
-project(':cas-server-integration-memcached').projectDir = "$rootDir/cas-server-integration-memcached" as File
-project(':cas-server-integration-memcached-monitor').projectDir = "$rootDir/cas-server-integration-memcached-monitor" as File
-project(':cas-server-integration-ehcache').projectDir = "$rootDir/cas-server-integration-ehcache" as File
-project(':cas-server-integration-ehcache-monitor').projectDir = "$rootDir/cas-server-integration-ehcache-monitor" as File
-project(':cas-server-integration-pac4j').projectDir = "$rootDir/cas-server-integration-pac4j" as File
-project(':cas-server-integration-pac4j-core').projectDir = "$rootDir/cas-server-integration-pac4j-core" as File
-project(':cas-server-extension-clearpass').projectDir = "$rootDir/cas-server-extension-clearpass" as File
-project(':cas-server-support-rest').projectDir = "$rootDir/cas-server-support-rest" as File
-project(':cas-server-support-yubikey').projectDir = "$rootDir/cas-server-support-yubikey" as File
-project(':cas-server-support-duo').projectDir = "$rootDir/cas-server-support-duo" as File
-project(':cas-server-integration-hazelcast').projectDir = "$rootDir/cas-server-integration-hazelcast" as File
-project(':cas-server-integration-mongo').projectDir = "$rootDir/cas-server-integration-mongo" as File
-project(':cas-server-webapp-cookie').projectDir = "$rootDir/cas-server-webapp-cookie" as File
-project(':cas-server-webapp-reports').projectDir = "$rootDir/cas-server-webapp-reports" as File
-project(':cas-server-webapp-themes').projectDir = "$rootDir/cas-server-webapp-themes" as File
-project(':cas-server-webapp-throttle').projectDir = "$rootDir/cas-server-webapp-throttle" as File
-project(':cas-server-webapp-validation').projectDir = "$rootDir/cas-server-webapp-validation" as File
-project(':cas-server-webapp-actions').projectDir = "$rootDir/cas-server-webapp-actions" as File
-project(':cas-server-webapp-support').projectDir = "$rootDir/cas-server-webapp-support" as File
-project(':cas-server-webapp').projectDir = "$rootDir/cas-server-webapp" as File
-project(':cas-management-webapp').projectDir = "$rootDir/cas-management-webapp" as File
