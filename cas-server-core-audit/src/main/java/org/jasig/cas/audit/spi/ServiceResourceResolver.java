@@ -8,7 +8,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.util.AopUtils;
 
 /**
- *
+ * Extracts the resource as a CAS service for the audit.
  * @author Scott Battaglia
  * @since 3.1.2
  *

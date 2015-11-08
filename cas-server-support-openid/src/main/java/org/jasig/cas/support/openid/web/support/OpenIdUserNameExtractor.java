@@ -1,6 +1,7 @@
 package org.jasig.cas.support.openid.web.support;
 
 /**
+ * Extract the userid for OpenID protocol.
  *
  * @author Scott Battaglia
  * @since 3.1
