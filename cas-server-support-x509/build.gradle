@@ -4,8 +4,8 @@ dependencies {
   compile project(':cas-server-core-authentication')
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-web')
-  compile group: 'org.cryptacular', name: 'cryptacular', version:'1.0'
-  compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:'2.4.2.RELEASE') {
+  compile group: 'org.cryptacular', name: 'cryptacular', version:cryptacularVersion
+  compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
     exclude(module: 'commons-logging')
     exclude(module: 'spring-context')
     exclude(module: 'spring-web')
@@ -14,18 +14,18 @@ dependencies {
     exclude(module: 'spring-expression')
     exclude(module: 'spring-webmvc')
   }
-  compile(group: 'net.sf.ehcache', name: 'ehcache', version:'2.10.0') {
+  compile(group: 'net.sf.ehcache', name: 'ehcache', version:ehcacheVersion) {
     exclude(module: 'slf4j-api')
   }
   compile group: 'org.springframework', name: 'spring-expression', version:springVersion
-  compile(group: 'org.ldaptive', name: 'ldaptive', version:'1.1.0') {
+  compile(group: 'org.ldaptive', name: 'ldaptive', version:ldaptiveVersion) {
     exclude(module: 'slf4j-api')
   }
   testCompile project(':cas-server-support-generic')
   testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
-  testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:'3.0.0'
-  testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version:'1.1.0'
-  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:'5.2.1.Final') {
+  testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version:unboundidVersion
+  testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version:ldaptiveVersion
+  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
   }

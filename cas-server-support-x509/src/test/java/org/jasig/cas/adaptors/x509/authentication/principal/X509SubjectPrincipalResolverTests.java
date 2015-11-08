@@ -1,16 +1,19 @@
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Unit test for {@link X509SubjectPrincipalResolver}.
@@ -54,13 +57,13 @@ public class X509SubjectPrincipalResolverTests {
      * @return  Test parameter data.
      */
     @Parameters
-    public static Collection<Object[]> getTestParameters() {
+    public static Collection<Object[]> getTestParameters() throws Exception {
         final Collection<Object[]> params = new ArrayList<>();
 
         // Test case #1
         // Use CN for principal ID
         params.add(new Object[] {
-                "target/test-classes/x509-ctop-resolver-hizzy.crt",
+                new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
                 "$CN",
                 "Hizzogarthington I.S. Pleakinsense"
         });
@@ -68,7 +71,7 @@ public class X509SubjectPrincipalResolverTests {
         // Test case #2
         // Use email address for principal ID
         params.add(new Object[] {
-                "target/test-classes/x509-ctop-resolver-hizzy.crt",
+                new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
                 "$EMAILADDRESS",
                 "hizzy@vt.edu"
         });
@@ -76,7 +79,7 @@ public class X509SubjectPrincipalResolverTests {
         // Test case #2
         // Use combination of ou and cn for principal ID
         params.add(new Object[] {
-                "target/test-classes/x509-ctop-resolver-hizzy.crt",
+                new ClassPathResource("x509-ctop-resolver-hizzy.crt").getFile().getCanonicalPath(),
                 "$OU $CN",
                 "Middleware Hizzogarthington I.S. Pleakinsense"
         });
@@ -84,7 +87,7 @@ public class X509SubjectPrincipalResolverTests {
         // Test case #3
         // Use combination of serial number and cn for principal ID
         params.add(new Object[] {
-                "target/test-classes/x509-ctop-resolver-gazzo.crt",
+                new ClassPathResource("x509-ctop-resolver-gazzo.crt").getFile().getCanonicalPath(),
                 "$CN:$SERIALNUMBER",
                 "Gazzaloddi P. Wishwashington:271828183"
         });
@@ -92,7 +95,7 @@ public class X509SubjectPrincipalResolverTests {
         // Test case #4
         // Build principal ID from multivalued attributes
         params.add(new Object[] {
-                "target/test-classes/x509-ctop-resolver-jacky.crt",
+                new ClassPathResource("x509-ctop-resolver-jacky.crt").getFile().getCanonicalPath(),
                 "$UID@$DC.$DC",
                 "jacky@vt.edu"
         });
