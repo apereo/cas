@@ -95,7 +95,7 @@ public class JpaLockingStrategy implements LockingStrategy {
 
     @Override
     public boolean acquire() {
-        Lock lock;
+        final Lock lock;
         try {
             lock = entityManager.find(Lock.class, applicationId, LockModeType.PESSIMISTIC_WRITE);
         } catch (final PersistenceException e) {
