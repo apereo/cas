@@ -1,3 +1,5 @@
+description = "Apereo Cenrtal Authentication Service"
+
 defaultTasks "clean", "build"
 
 buildscript {
@@ -93,6 +95,16 @@ subprojects {
     javadoc {
         classpath += configurations.provided
         enabled = !Boolean.getBoolean("skipJavadocs")
+    }
+
+    jar {
+        manifest {
+            attributes("Implementation-Title": project.name,
+                    "Implementation-Vendor": project.group,
+                    "Created-By": project.group,
+                    "Implementation-Date": new Date(),
+                    "Implementation-Version": project.version)
+        }
     }
 
     checkstyle {
