@@ -118,6 +118,10 @@ public final class CasLoggerContextInitializer implements ServletContextAware {
      */
     private ServletContextListener prepareAndgetContextListener() {
         try {
+            if (this.logConfigurationFile == null || !this.logConfigurationFile.exists()) {
+                throw new RuntimeException("Log4j configuration file cannot be located");
+            }
+
             if (StringUtils.isNotBlank(this.loggerContextPackageName)) {
                 final Collection<URL> set = ClasspathHelper.forPackage(this.loggerContextPackageName);
                 final Reflections reflections = new Reflections(
