@@ -3,6 +3,16 @@ apply plugin: "org.akhikhl.gretty"
 
 description = 'Apereo CAS Web Application'
 
+war {
+    manifest {
+        attributes("Implementation-Title": project.name,
+                "Implementation-Vendor": project.group,
+                "Created-By": project.group,
+                "Implementation-Date": new Date(),
+                "Implementation-Version": project.version)
+    }
+}
+
 dependencies {
     compile project(':cas-server-webapp-support')
     compile project(':cas-server-core')
