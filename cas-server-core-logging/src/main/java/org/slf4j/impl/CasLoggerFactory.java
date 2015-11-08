@@ -29,7 +29,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
 
     private final Map<String, CasDelegatingLogger> loggerMap;
 
-    private final Class<? extends ILoggerFactory> realLoggerFactoryClass;
+    private Class<? extends ILoggerFactory> realLoggerFactoryClass;
     /**
      * Instantiates a new Cas logger factory.
      * Configures the reflection scanning engine to be prepared to scan {@code org.slf4j.impl}
@@ -58,8 +58,21 @@ public final class CasLoggerFactory implements ILoggerFactory {
             Util.report(e.getMessage(), e);
             throw e;
         }
-        this.realLoggerFactoryClass = subTypesOf.iterator().next();
-        Util.report("ILoggerFactory to be used for logging is: " + this.realLoggerFactoryClass.getName());
+        this.realLoggerFactoryClass = null;
+        for (final Class<? extends ILoggerFactory> factory : subTypesOf) {
+            if (getLoggerFactoryBeInstantiated(factory) != null) {
+                this.realLoggerFactoryClass = factory;
+                Util.report("ILoggerFactory to be used for logging is: " + this.realLoggerFactoryClass.getName());
+                break;
+            } else {
+                Util.report("ILoggerFactory [" + factory.getName() + "] could not be used. Trying the next ILoggerFactory...");
+            }
+        }
+
+        if (this.realLoggerFactoryClass == null) {
+            throw new RuntimeException("No ILoggerFactory is available to use. Log configuration is incorrect, "
+                            + "or multiple logging frameworks are at conflict with one another on the classpath.");
+        }
     }
 
     /**
@@ -94,11 +107,22 @@ public final class CasLoggerFactory implements ILoggerFactory {
      */
     private Logger getRealLoggerInstance(final String name) {
         try {
-            final ILoggerFactory factInstance = this.realLoggerFactoryClass.newInstance();
+            final ILoggerFactory factInstance = getLoggerFactoryBeInstantiated(this.realLoggerFactoryClass);
+            if (factInstance == null) {
+                throw new RuntimeException("ILoggerFactory cannot be created from "
+                        + this.realLoggerFactoryClass.getName());
+            }
             return factInstance.getLogger(name);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
+    private ILoggerFactory getLoggerFactoryBeInstantiated(final Class<? extends ILoggerFactory> loggerFactory) {
+        try {
+            return loggerFactory.newInstance();
+        } catch (final Exception e) {
+            return null;
+        }
+    }
 }

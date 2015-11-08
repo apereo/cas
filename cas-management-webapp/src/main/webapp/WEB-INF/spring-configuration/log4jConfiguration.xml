@@ -15,9 +15,5 @@
         Deployers should not have to edit this file.
     </description>
 
-    <bean id="log4jInitialization" class="org.jasig.cas.util.CasLoggerContextInitializer"
-          c:logConfigurationField="log4jConfiguration"
-          c:logConfigurationFile="${log4j.config.location:classpath:log4j2.xml}"
-          c:loggerContextPackageName="org.apache.logging.log4j.web"/>
 
 </beans>
