@@ -11,7 +11,7 @@ dependencies {
     exclude(module: 'spring-expression')
     exclude(module: 'spring-web')
   }
-  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:'$inspektrVersion') {
+  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:inspektrVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
     exclude(module: 'aspectjrt')
@@ -25,7 +25,7 @@ dependencies {
     exclude(module: 'spring-web')
   }
   compile group: 'org.springframework', name: 'spring-aop', version:springVersion
-  compile(group: 'org.springframework.webflow', name: 'spring-binding', version:'$inspektrVersion') {
+  compile(group: 'org.springframework.webflow', name: 'spring-binding', version:springWebflowVersion) {
     exclude(module: 'commons-logging')
     exclude(module: 'spring-beans')
     exclude(module: 'spring-context')
@@ -41,7 +41,7 @@ dependencies {
   compile project(':cas-server-core-tickets')
   compile project(':cas-server-core-audit')
   compile project(':cas-server-support-oauth')
-  compile(group: 'org.jasig.cas.client', name: 'cas-client-core', version:'3.4.1') {
+  compile(group: 'org.jasig.cas.client', name: 'cas-client-core', version:casClientVersion) {
     exclude(module: 'servlet-api')
     exclude(module: 'log4j-over-slf4j')
     exclude(module: 'bcprov-jdk15')
@@ -54,8 +54,8 @@ dependencies {
   }
   compile group: 'org.springframework', name: 'spring-beans', version:springVersion
   compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
-  compile group: 'javax.servlet', name: 'jstl', version:'1.2'
-  runtime(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:'$inspektrVersion') {
+  compile group: 'javax.servlet', name: 'jstl', version:javaxJstlVersion
+  runtime(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:inspektrVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'validation-api')
     exclude(module: 'spring-web')
@@ -85,8 +85,8 @@ dependencies {
     exclude(module: 'spring-expression')
     exclude(module: 'spring-web')
   }
-  runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version:'$log4jVersion'
-  runtime group: 'taglibs', name: 'standard', version:'1.1.2'
+  runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version:log4jVersion
+  runtime group: 'taglibs', name: 'standard', version:taglibsVersion
   runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'jboss-logging')
