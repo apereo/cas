@@ -69,12 +69,27 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * @return sanitized arguments
      */
     private Object[] manipulateLogArguments(final Object... args) {
-        for (int i = 0; i < args.length; i++) {
-            if (args[i] != null) {
-                args[i] = removeTicketId(args[i].toString());
+        try {
+            if (args == null || args.length == 0) {
+                return args;
             }
+
+            for (int i = 0; i < args.length; i++) {
+                if (args[i] != null) {
+                    final String message = args[i].toString();
+                    if (ticketIdPresentInLogMessage(message)) {
+                        args[i] = removeTicketId(message);
+                    }
+                }
+            }
+            return args;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-        return args;
+    }
+
+    private boolean ticketIdPresentInLogMessage(final String msg) {
+        return StringUtils.isNotBlank(msg) && TICKET_ID_PATTERN.matcher(msg).find();
     }
 
     /**

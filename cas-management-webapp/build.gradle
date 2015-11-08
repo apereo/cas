@@ -2,6 +2,17 @@
 apply plugin: 'war'
 
 description = 'Apereo CAS Management Web Application'
+
+war {
+  manifest {
+    attributes("Implementation-Title": project.name,
+            "Implementation-Vendor": project.group,
+            "Created-By": project.group,
+            "Implementation-Date": new Date(),
+            "Implementation-Version": project.version)
+  }
+}
+
 dependencies {
   compile(group: 'org.springframework.security', name: 'spring-security-core', version:springSecVersion) {
     exclude(module: 'spring-core')
