@@ -278,6 +278,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
     private void initializeWatchServiceThread() {
         final Thread thread = new Thread(new JsonServiceRegistryConfigWatcher(this));
         thread.start();
+        LOGGER.debug("Started service registry watcher thread");
     }
 
     /**
