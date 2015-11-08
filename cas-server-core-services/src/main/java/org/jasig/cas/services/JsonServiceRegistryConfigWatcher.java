@@ -47,7 +47,9 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
             this.watcher = FileSystems.getDefault().newWatchService();
             final WatchEvent.Kind[] kinds = (WatchEvent.Kind[])
                     Arrays.asList(ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY).toArray();
+            LOGGER.debug("Created service registry watcher for events of type {}", kinds);
             this.serviceRegistryDao.getServiceRegistryDirectory().register(this.watcher, kinds);
+            LOGGER.debug("Watching service registry directory at {}", this.serviceRegistryDao.getServiceRegistryDirectory());
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
