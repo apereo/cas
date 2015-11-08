@@ -3,7 +3,7 @@ package org.jasig.cas.adaptors.generic.remote;
 import org.jasig.cas.authentication.AbstractCredential;
 
 /**
- *
+ * Represents a remote address as CAS credential.
  * @author Scott Battaglia
  * @since 3.2.1
  *

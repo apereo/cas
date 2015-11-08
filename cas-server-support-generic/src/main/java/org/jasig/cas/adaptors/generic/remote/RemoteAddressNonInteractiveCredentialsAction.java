@@ -9,7 +9,8 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- *
+ * A webflow action that attrmpts to grab the remote address from the reques,
+ * and construct a {@link RemoteAddressCredential} object.
  * @author Scott Battaglia
  * @since 3.2.1
  */
