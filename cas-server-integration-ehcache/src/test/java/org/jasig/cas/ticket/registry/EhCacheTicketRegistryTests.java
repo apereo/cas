@@ -194,7 +194,7 @@ public final class EhCacheTicketRegistryTests {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl("TEST" + i,
                     TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("tests" + i,
-                    org.jasig.cas.authentication.TestUtils.getService(),
+                    org.jasig.cas.services.TestUtils.getService(),
                     new NeverExpiresExpirationPolicy(), false, true);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
@@ -225,7 +225,7 @@ public final class EhCacheTicketRegistryTests {
         final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = org.jasig.cas.services.TestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
