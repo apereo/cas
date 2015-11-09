@@ -745,7 +745,7 @@ Pass in a callback URL for proxying:
         <cas:firstname>John</cas:firstname>
         <cas:lastname>Doe</cas:lastname>
         <cas:title>Mr.</cas:title>
-        <cas:email>jdoe@example.orgmailto:jdoe@example.org</cas:email>
+        <cas:email>jdoe@example.org</cas:email>
         <cas:affiliation>staff</cas:affiliation>
         <cas:affiliation>faculty</cas:affiliation>
       </cas:attributes>
