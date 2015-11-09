@@ -1413,24 +1413,20 @@ SAML 1.0 or 1.1 request XML document of document type "text/xml".
 ### **4.2.4 Example of /samlValidate POST request**
 
 {% highlight bash %}
-POST /cas/samlValidate?ticket=
+POST /cas/samlValidate?TARGET=
 Host: cas.example.com
 Content-Length: 491
 Content-Type: text/xml 
 {% endhighlight %}
 
 {% highlight xml %}
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"http://schemas.xmlsoap.org/soap/envelope/>
-  <SOAP-ENV:Header/>
-  <SOAP-ENV:Body>
-    <samlp:Request xmlns:samlphttp://xmlnssamlp="urn:oasis:names:tc:SAML:1.0:protocol" MajorVersion="1"
-      MinorVersion="1" RequestID="_192.168.16.51.1024506224022"
-      IssueInstant="2002-06-19T17:03:44.022Z">
-      <samlp:AssertionArtifact>
-        ST-1-u4hrm3td92cLxpCvrjylcas.example.com
-      </samlp:AssertionArtifact>
-    </samlp:Request>
-  </SOAP-ENV:Body>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+	<SOAP-ENV:Header/>
+	<SOAP-ENV:Body>
+		<samlp:Request xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" MajorVersion="1" MinorVersion="1" RequestID="_192.168.16.51.1024506224022" IssueInstant="2002-06-19T17:03:44.022Z">
+			<samlp:AssertionArtifact>ST-1-u4hrm3td92cLxpCvrjylcas.example.com</samlp:AssertionArtifact>
+		</samlp:Request>
+	</SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 {% endhighlight %}
 
