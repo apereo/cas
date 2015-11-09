@@ -97,6 +97,7 @@
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
           p:useSingleLine="${cas.audit.singleline:false}"/>
+    <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
     <!-- CAS 2.0 Response Protocol Views -->
 
     <!-- Validation Response Protocol Views: /proxyValidate, /serviceValidate -->
