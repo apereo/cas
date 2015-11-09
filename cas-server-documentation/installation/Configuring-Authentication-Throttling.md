@@ -62,10 +62,11 @@ Queries the data source used by the CAS audit facility to prevent successive fai
 username from the same IP address. This component requires that the
 [inspektr library](https://github.com/Jasig/inspektr) used for CAS auditing be configured with
 `JdbcAuditTrailManager`, which writes audit data to a database.
-{% highlight xml %}
 
+{% highlight xml %}
 <alias name="inspektrIpAddressUsernameThrottle" alias="authenticationThrottle" />
 <import resource="classpath:inspektr-throttle-jdbc-config.xml" />
+{% endhighlight %}
 
 For additional instructions on how to configure auditing via Inspektr,
 please [review the following guide](Logging.html).
