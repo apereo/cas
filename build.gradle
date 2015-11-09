@@ -1,6 +1,6 @@
 description = "Apereo Cenrtal Authentication Service"
 
-defaultTasks "clean", "build"
+defaultTasks "clean", "prod", "build"
 
 buildscript {
     repositories {
