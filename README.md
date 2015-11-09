@@ -17,6 +17,7 @@ It means that the json gem is missing: `gem install json` should solve the probl
 ###Windows
 * You'll need to have Python 2.7.6 installed
 * You'll need to have Ruby 1.9.3 installed
+* You'll need to have Jekyll 2.5.3 installed
 
 ## Getting Started
 
