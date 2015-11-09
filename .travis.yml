@@ -47,7 +47,10 @@ before_install:
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
 - chmod -R 777 ./gradlew.bat
-- ./gradlew clean assemble --parallel -q -DskipJavadocs=true
+install:
+- ./gradlew clean
+script:
+- ./gradlew assemble --parallel -q -DskipJavadocs=true
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
