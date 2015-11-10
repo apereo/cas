@@ -1,5 +1,0 @@
-org.jasig.cas.adaptors.x509.authentication.handler.support
-org.jasig.cas.adaptors.x509.authentication.handler.support.ldap
-org.jasig.cas.adaptors.x509.authentication.principal
-org.jasig.cas.adaptors.x509.util
-org.jasig.cas.adaptors.x509.web.flow
