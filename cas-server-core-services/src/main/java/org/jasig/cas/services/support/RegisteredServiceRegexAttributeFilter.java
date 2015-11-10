@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.services.support;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -81,12 +63,12 @@ public final class RegisteredServiceRegexAttributeFilter implements RegisteredSe
      * <ul>
      * <li>The filtering operation is non-recursive. </li>
      * <li>Multi-valued attributes such as those of type {@link Collection} and
-     * {@link Map} are expected to allow casting to <code>Map&lt;String, String&gt;</code>
-     * or <code>Collection&lt;String&gt;</code>.
-     * Values that are of type array are expected to allow casting to <code>String[]</code>.
+     * {@link Map} are expected to allow casting to {@code Map&lt;String, String&gt;}
+     * or {@code Collection&lt;String&gt;}.
+     * Values that are of type array are expected to allow casting to {@code String[]}.
      * </li>
      * <li>Multi-valued attributes are always put back into the final released collection of
-     * attributes as <code>String[]</code>.</li>
+     * attributes as {@code String[]}.</li>
      * <li>If the final filtered collection is empty, it will not be put into the collection of attributes.</li>
      * </ul>
      */

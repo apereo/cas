@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.web.view;
 
 import org.apache.commons.lang3.StringUtils;
@@ -34,12 +16,12 @@ import java.util.Locale;
  * default bundles.
  * 
  * <p>Note: By default, if a key not found in a localized bundle, Spring will auto-fallback
- * to the default bundle that is <code>messages.properties</code>. However, if the key is also
+ * to the default bundle that is {@code messages.properties}. However, if the key is also
  * not found in the default bundle, and {@link #setUseCodeAsDefaultMessage(boolean)}
  * is set to true, then only the requested code itself will be used as the message to display.
  * In this case, the class will issue a WARN message instructing the caller that the bundle
  * needs further attention. If {@link #setUseCodeAsDefaultMessage(boolean)} is set to false,
- * only then a <code>null</code> value will be returned, which subsequently causes an instance
+ * only then a {@code null} value will be returned, which subsequently causes an instance
  * of {@link org.springframework.context.NoSuchMessageException} to be thrown.
  * 
  * @author Misagh Moayyed

@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.services.web;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -36,11 +18,9 @@ import org.springframework.webflow.execution.RequestContextHolder;
  * {@link RegisteredServiceThemeBasedViewResolver} is an alternate Spring View Resolver that utilizes a service's
  * associated theme to selectively choose which set of UI views will be used to generate
  * the standard views (casLoginView.jsp, casLogoutView.jsp etc).
- * <p/>
  * <p>Views associated with a particular theme by default are expected to be found at:
- * {@link #getPrefix()}/<code>themeId/ui</code>. A starting point may be to
+ * {@link #getPrefix()}/{@code themeId/ui}. A starting point may be to
  * clone the default set of view pages into a new directory based on the theme id.</p>
- * <p/>
  * <p>Note: There also exists a {@link org.jasig.cas.services.web.ServiceThemeResolver}
  * that attempts to resolve the view name based on the service theme id. The difference
  * however is that {@link org.jasig.cas.services.web.ServiceThemeResolver} only decorates

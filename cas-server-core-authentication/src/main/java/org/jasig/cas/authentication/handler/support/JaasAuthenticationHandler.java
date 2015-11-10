@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.authentication.HandlerResult;
@@ -149,15 +131,15 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     /**
-     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos <code>krb5.conf</code> configuration file.
+     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
      * However, if you like, you can instead specify the realm value by setting this following system property value.
      * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosKdcSystemProperty(String)}.
      * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
-     * a <code>krb5.conf</code> file is also provided from which the additional information required for cross-realm authentication
+     * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
      * may be obtained.
      * <p>If you set values for these properties, then they override the default realm and KDC values specified
-     * in <code>krb5.conf</code> (if such a file is found). The <code>krb5.conf</code> file is still consulted if values for items
-     * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
+     * in {@code krb5.conf} (if such a file is found). The {@code krb5.conf} file is still consulted if values for items
+     * other than the default realm and KDC are needed. If no {@code krb5.conf} file is found,
      * then the default values used for these items are implementation-specific.
      * @param kerberosRealmSystemProperty system property to indicate realm.
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
@@ -169,15 +151,15 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     /**
-     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos <code>krb5.conf</code> configuration file.
+     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
      * However, if you like, you can instead specify the kdc value by setting this system property value.
      * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosRealmSystemProperty(String)}.
      * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
-     * a <code>krb5.conf</code> file is also provided from which the additional information required for cross-realm authentication
+     * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
      * may be obtained.
      * <p>If you set values for these properties, then they override the default realm and KDC values specified
-     * in <code>krb5.conf</code> (if such a file is found). The <code>krb5.conf</code> file is still consulted if values for items
-     * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
+     * in {@code krb5.conf} (if such a file is found). The {@code krb5.conf} file is still consulted if values for items
+     * other than the default realm and KDC are needed. If no {@code krb5.conf} file is found,
      * then the default values used for these items are implementation-specific.
      * @param kerberosKdcSystemProperty system property to indicate kdc
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
