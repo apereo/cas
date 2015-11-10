@@ -19,6 +19,7 @@
 package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.RememberMeCredential;
+import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
@@ -94,6 +95,13 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
             }
             response.addCookie(cookie);
         }
+    }
+
+    @Override
+    public void removeCookie(final HttpServletResponse response) {
+        final Cookie cookie = this.createCookie("");
+        cookie.setMaxAge(0);
+        super.addCookie(response, "");
     }
 
     /**
