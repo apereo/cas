@@ -48,6 +48,8 @@ We present a stub configuration here that can be modified accordingly by consult
 </bean>
 {% endhighlight %}
 
+Configuration consists of:
+
 {% highlight properties %}
 # cas.principal.resolver.persondir.principal.attribute=cn
 # cas.principal.resolver.persondir.return.null=false
