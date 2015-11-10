@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.Authentication;
@@ -89,7 +71,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test(expected = TicketCreationException.class)
     public void disallowNullCredentionalsWhenCreatingTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(null);
+            .createTicketGrantingTicket(new Credential[] {null});
 
     }
 
@@ -303,7 +285,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test(expected = AbstractTicketException.class)
     public void verifyValidateServiceTicketNonExistantTicket() throws Exception {
-        getCentralAuthenticationService().validateServiceTicket("test",
+        getCentralAuthenticationService().validateServiceTicket("google",
             getService());
     }
 
@@ -361,7 +343,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 
         final Service svc = getService("TestSsoFalse");
-        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null);
+        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc,
+                new Credential[] {null});
     }
 
     @Test
@@ -445,7 +428,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      * - a first authentication for a default service
      * - a second authentication with the renew parameter and the same service (and same credentials)
      * - a validation of the second ticket.
-     * <p/>
      * When supplemental authentications were returned with the chained authentications, the validation specification
      * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the
      * chained authentications. Both concepts are orthogonal.

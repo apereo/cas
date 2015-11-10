@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.util.http;
 
 import com.google.common.collect.ImmutableList;
@@ -214,6 +196,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
             final PoolingHttpClientConnectionManager connMgmr = new PoolingHttpClientConnectionManager(registry);
             connMgmr.setMaxTotal(this.maxPooledConnections);
             connMgmr.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
+            connMgmr.setValidateAfterInactivity(DEFAULT_TIMEOUT);
 
             final HttpHost httpHost = new HttpHost(InetAddress.getLocalHost());
             final HttpRoute httpRoute = new HttpRoute(httpHost);
@@ -223,7 +206,6 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
                     .setSocketTimeout(this.readTimeout)
                     .setConnectTimeout(this.connectionTimeout)
                     .setConnectionRequestTimeout(this.connectionTimeout)
-                    .setStaleConnectionCheckEnabled(true)
                     .setCircularRedirectsAllowed(this.circularRedirectsAllowed)
                     .setRedirectsEnabled(this.redirectsEnabled)
                     .setAuthenticationEnabled(this.authenticationEnabled)

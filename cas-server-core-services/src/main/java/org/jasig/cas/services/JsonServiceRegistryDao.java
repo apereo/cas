@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.services;
 
 
@@ -48,7 +30,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Implementation of <code>ServiceRegistryDao</code> that reads services definition from JSON
+ * Implementation of {@code ServiceRegistryDao} that reads services definition from JSON
  * configuration file at the Spring Application Context initialization time. JSON files are
  * expected to be found inside a directory location and this DAO will recursively look through
  * the directory structure to find relevant JSON files. Files are expected to have the
@@ -272,7 +254,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
 
     /**
      * Creates a JSON file for a registered service.
-     * The file is named as <code>[SERVICE-NAME]-[SERVICE-ID]-.{@value #FILE_EXTENSION}</code>
+     * The file is named as {@code [SERVICE-NAME]-[SERVICE-ID]-.{@value #FILE_EXTENSION}}
      *
      * @param service Registered service.
      * @return JSON file in service registry directory.
@@ -296,6 +278,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
     private void initializeWatchServiceThread() {
         final Thread thread = new Thread(new JsonServiceRegistryConfigWatcher(this));
         thread.start();
+        LOGGER.debug("Started service registry watcher thread");
     }
 
     /**
