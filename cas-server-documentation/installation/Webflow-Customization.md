@@ -49,7 +49,7 @@ compression turned on. These settings can be controlled via the following settin
 While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and 
 transcoding of the web session state.</p></div>
 
-##Required Service for Authentication Flow
+##Required Service for Authentication
 By default, CAS will present a generic success page if the initial authentication request does not identify
 the target application. In some cases, the ability to login to CAS without logging
 in to a particular service may be considered a misfeature because in practice, too few users and institutions
