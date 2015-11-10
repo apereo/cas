@@ -1,6 +1,6 @@
 description = "Apereo Cenrtal Authentication Service"
 
-defaultTasks "clean", "prod", "build"
+defaultTasks "clean", "build"
 
 buildscript {
     repositories {
@@ -188,6 +188,15 @@ subprojects {
         provided group: 'javax.el', name: 'javax.el-api', version:javaxElVersion
     }
 }
+
+/**
+ * Aggregate all javadocs into a single directory
+**/
+task javadoc(type: Javadoc) { 
+   source subprojects.collect {project -> project.sourceSets.main.allJava } 
+   destinationDir = new File(buildDir, 'javadoc') 
+   classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath}) 
+} 
 
 if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")) {
     uploadArchives {
