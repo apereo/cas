@@ -33,7 +33,7 @@ replication with Ehcache, [see this resource](http://ehcache.org/documentation/u
 
 Enable the registry via:
 
-{% highlight properties %}
+{% highlight xml %}
 <alias name="ehcacheTicketRegistry" alias="ticketRegistry" />
 {% endhighlight %}
 
