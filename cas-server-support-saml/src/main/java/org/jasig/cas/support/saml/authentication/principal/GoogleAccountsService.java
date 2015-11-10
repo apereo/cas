@@ -24,14 +24,13 @@ import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.ApplicationContextProvider;
 import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
-import org.springframework.context.ApplicationContext;
-import org.springframework.util.StringUtils;
-import org.jasig.cas.support.saml.SamlProtocolConstants;
-import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
+import org.jdom.Element;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -40,14 +39,15 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
+import org.springframework.context.ApplicationContext;
+import org.springframework.util.StringUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.StringWriter;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jdom.Element;
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
@@ -68,6 +68,8 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     private final PrivateKey privateKey;
 
     private final String requestId;
+
+    private int skewAllowance;
 
     /**
      * Instantiates a new google accounts service.
@@ -187,7 +189,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
                 notBeforeIssueInstant, BUILDER.generateSecureRandomId());
 
         final Conditions conditions = BUILDER.newConditions(notBeforeIssueInstant,
-                currentDateTime, getId());
+                currentDateTime.minusSeconds(this.skewAllowance), getId());
         assertion.setConditions(conditions);
 
         final Subject subject = BUILDER.newSubject(NameID.EMAIL, userId,
@@ -202,5 +204,21 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         final String result = writer.toString();
         logger.debug("Generated Google SAML response: {}", result);
         return result;
+    }
+
+    /**
+     * Sets the allowance for time skew in seconds
+     * between CAS and the client server.  Default 0s.
+     * This value will be subtracted from the current time when setting the SAML
+     * <code>NotBeforeDate</code> attribute, thereby allowing for the
+     * CAS server to be ahead of the client by as much as the value defined here.
+     * @param skewAllowance allowance in seconds
+     */
+    public void setSkewAllowance(final int skewAllowance) {
+        this.skewAllowance = skewAllowance;
+    }
+
+    public int getSkewAllowance() {
+        return skewAllowance;
     }
 }
