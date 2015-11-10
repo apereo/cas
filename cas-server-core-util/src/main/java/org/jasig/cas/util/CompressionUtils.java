@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.util;
 
 import org.apache.commons.codec.binary.Base64;
@@ -60,7 +42,7 @@ public final class CompressionUtils {
      * Inflate the given byte array by {@link #INFLATED_ARRAY_LENGTH}.
      *
      * @param bytes the bytes
-     * @return the array as a string with <code>UTF-8</code> encoding
+     * @return the array as a string with {@code UTF-8} encoding
      */
     public static String inflate(final byte[] bytes) {
         final Inflater inflater = new Inflater(true);
@@ -156,7 +138,7 @@ public final class CompressionUtils {
 
     /**
      * Base64 decode operation, which retrieves the equivalent
-     * byte[] of the data in <code>UTF-8</code> encoding
+     * byte[] of the data in {@code UTF-8} encoding
      * and decodes the result.
      *
      * @param data the data to encode
