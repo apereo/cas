@@ -19,7 +19,6 @@
 package org.jasig.cas.web.support;
 
 import org.jasig.cas.authentication.RememberMeCredential;
-import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.util.CookieGenerator;
