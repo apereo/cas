@@ -1,22 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas;
 
 import com.codahale.metrics.annotation.Counted;
@@ -91,13 +72,13 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Autowired
     protected ApplicationEventPublisher eventPublisher;
 
-    /** TicketRegistry for storing and retrieving tickets as needed. */
+    /** {@link TicketRegistry}  for storing and retrieving tickets as needed. */
     @NotNull
     @Resource(name="ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
     /**
-     * AuthenticationManager for authenticating credentials for purposes of
+     * {@link AuthenticationManager} for authenticating credentials for purposes of
      * obtaining tickets.
      */
     @NotNull
@@ -105,14 +86,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected AuthenticationManager authenticationManager;
 
     /**
-     * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
+     * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
     @NotNull
     @Resource(name="ticketGrantingTicketUniqueIdGenerator")
     protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
-    /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
+    /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
     @NotNull
     @Resource(name="uniqueIdGeneratorsMap")
     protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
@@ -341,9 +322,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * Ensure that the service is found and enabled in the service registry.
      * @param registeredService the located entry in the registry
      * @param service authenticating service
-     * @throws UnauthorizedServiceException
+     * @throws UnauthorizedServiceException if service is unauthorized
      */
-    protected final void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
+    protected final void verifyRegisteredServiceProperties(final RegisteredService registeredService,
+                                                           final Service service) throws UnauthorizedServiceException {
         if (registeredService == null) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
                     + "Service [%s] is not found in service registry.", service.getId());
