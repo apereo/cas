@@ -23,7 +23,7 @@ This ticket registry implementation is enabled by simply including the module in
 
 Enable the registry via:
 
-{% highlight properties %}
+{% highlight xml %}
 <alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
 {% endhighlight %}
 
@@ -49,9 +49,9 @@ levels:
 
 {% highlight xml %}
 ...
-<Logger name="com.hazelcast" level="debug" additivity="false">
+<AsyncLogger name="com.hazelcast" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</Logger>
+</AsyncLogger>
 ...
 {% endhighlight %}
