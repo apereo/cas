@@ -35,7 +35,6 @@ jdk:
 # - oraclejdk8
 cache:
   directories:
-    - '$HOME/.m2/repository'
     - '$HOME/.gradle/caches'
 env:
   global:
@@ -46,7 +45,6 @@ before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
-- chmod -R 777 ./gradlew.bat
 install:
 - ./gradlew clean
 script:
