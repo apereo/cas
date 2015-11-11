@@ -17,3 +17,6 @@ pom.xml.versionsBackup
 
 **/.checkstyle
 **/*.orig
+.gradle/
+**/build/
+**/MANIFEST.MF

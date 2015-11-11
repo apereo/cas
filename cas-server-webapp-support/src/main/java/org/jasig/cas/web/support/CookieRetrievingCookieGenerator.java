@@ -55,6 +55,13 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         }
     }
 
+    @Override
+    public void removeCookie(final HttpServletResponse response) {
+        final Cookie cookie = this.createCookie("");
+        cookie.setMaxAge(0);
+        super.addCookie(response, "");
+    }
+
     public String retrieveCookieValue(final HttpServletRequest request) {
         final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(
                 request, getCookieName());
