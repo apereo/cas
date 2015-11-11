@@ -9,22 +9,6 @@ ext {
     sonatypePassword = System.getProperty("sonatypePassword")
 }
 
-if (sonatypeUsername == null || sonatypePassword == null) {
-    logger.quiet "Sonatype username/password is undefined. Build will not upload project artifacts."
-} else {
-    if (publishReleases) {
-        logger.quiet "Build will upload project release artifacts"
-    } else {
-        logger.quiet "Build will not upload project release artifacts. Use [-DpublishReleases=true] to enable releases."
-    }
-
-    if (publishSnapshots) {
-        logger.quiet "Build will upload project snapshot artifacts"
-    } else {
-        logger.quiet "Build will not upload project snapshot artifacts. Use [-DpublishSnapshots=true] to enable snapshot."
-    }
-}
-
 buildscript {
     repositories {
         mavenLocal()
@@ -32,7 +16,7 @@ buildscript {
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
         }
-        maven {url "https://plugins.gradle.org/m2/"}
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
@@ -168,212 +152,210 @@ subprojects {
     }
 
     dependencies {
-        compile group: 'org.aspectj', name: 'aspectjrt', version:aspectjVersion
-        compile group: 'org.aspectj', name: 'aspectjweaver', version:aspectjVersion
-        compile group: 'javax.validation', name: 'validation-api', version:javaxValidationVersion
-        compile group: 'org.slf4j', name: 'slf4j-api', version:slf4jVersion
+        compile group: 'org.aspectj', name: 'aspectjrt', version: aspectjVersion
+        compile group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
+        compile group: 'javax.validation', name: 'validation-api', version: javaxValidationVersion
+        compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
 
         if (!Boolean.getBoolean("skipAspectJ")) {
-            compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:inspektrVersion) {
+            compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
                 exclude(module: 'validation-api')
                 exclude(module: 'aspectjrt')
             }
 
-            aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version:inspektrVersion) {
+            aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
                 exclude(module: 'validation-api')
                 exclude(module: 'aspectjrt')
             }
         }
 
         if (!Boolean.getBoolean("skipFindbugs")) {
-            findbugs group: 'com.google.code.findbugs', name: 'findbugs', version:findbugsVersion
+            findbugs group: 'com.google.code.findbugs', name: 'findbugs', version: findbugsVersion
             findbugs configurations.findbugsPlugins.dependencies
-            findbugsPlugins group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version:findbugsContribVersion
-            findbugsPlugins group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version:findbugsSecVersion
+            findbugsPlugins group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version: findbugsContribVersion
+            findbugsPlugins group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version: findbugsSecVersion
         }
 
-        runtime(group: 'org.glassfish.web', name: 'javax.el', version:javaxElImplVersion) {
+        runtime(group: 'org.glassfish.web', name: 'javax.el', version: javaxElImplVersion) {
             exclude(module: 'javax.el-api')
         }
         runtime group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4jVersion
-        runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version:log4jVersion
-        runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version:log4jVersion
-        runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version:log4jVersion) {
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4jVersion
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
+        runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion) {
             exclude(module: 'slf4j-api')
         }
-        runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version:log4jVersion
-        testCompile group: 'junit', name: 'junit', version:junitVersion
-        testCompile(group: 'org.mockito', name: 'mockito-core', version:mockitoVersion) {
+        runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: log4jVersion
+        testCompile group: 'junit', name: 'junit', version: junitVersion
+        testCompile(group: 'org.mockito', name: 'mockito-core', version: mockitoVersion) {
             exclude(module: 'hamcrest-core')
         }
-        testCompile group: 'org.springframework', name: 'spring-test', version:springVersion
-        provided group: 'javax.servlet', name: 'javax.servlet-api', version:javaxSevletVersion
-        provided group: 'javax.el', name: 'javax.el-api', version:javaxElVersion
+        testCompile group: 'org.springframework', name: 'spring-test', version: springVersion
+        provided group: 'javax.servlet', name: 'javax.servlet-api', version: javaxSevletVersion
+        provided group: 'javax.el', name: 'javax.el-api', version: javaxElVersion
     }
 
-    if (sonatypeUsername != null && sonatypePassword != null && (publishReleases != null || publishSnapshots != null)) {
-        uploadArchives {
-            repositories {
-                mavenDeployer {
-                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+    uploadArchives.dependsOn checkArtifactUpload
 
-                    if (publishReleases) {
-                        repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                            authentication(userName: sonatypeUsername, password: sonatypePassword);
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                if (publishReleases) {
+                    repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                        authentication(userName: sonatypeUsername, password: sonatypePassword);
+                    }
+                }
+
+                if (publishSnapshots) {
+                    snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+                        authentication(userName: sonatypeUsername, password: sonatypePassword);
+                    }
+                }
+
+                pom.project {
+                    url "http://www.apereo.org/cas"
+                    inceptionYear 2004
+
+                    issueManagement {
+                        system "Github"
+                        url "https://github.com/Jasig/cas/issues"
+                    }
+
+                    scm {
+                        url 'scm:git@github.com:Jasig/cas.git'
+                        connection 'scm:git@github.com:Jasig/cas.git'
+                        developerConnection 'scm:git@github.com:Jasig/cas.git'
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache Software License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution 'repo'
                         }
                     }
 
-                    if (publishSnapshots) {
-                        snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-                            authentication(userName: sonatypeUsername, password: sonatypePassword);
+                    developers {
+                        developer {
+                            id 'leleuj'
+                            name 'Jérôme Leleu'
+                        }
+                        developer {
+                            id 'apetro'
+                            name 'Andrew Petro'
+                        }
+                        developer {
+                            id 'wgthom'
+                            name 'William G. Thompson'
+                        }
+                        developer {
+                            id 'serac'
+                            name 'Marvin S. Addison'
+                        }
+                        developer {
+                            id 'battags'
+                            name 'Scott Battaglia'
+                        }
+                        developer {
+                            id 'mmoayyed'
+                            name 'Misagh Moayyed'
                         }
                     }
 
-                    pom.project {
-                        url "http://www.apereo.org/cas"
-                        inceptionYear 2004
-
-                        issueManagement {
-                            system "Github"
-                            url "https://github.com/Jasig/cas/issues"
+                    contributors {
+                        contributor {
+                            name "Adam Rybicki"
+                            email "arybicki@unicon.net"
                         }
-
-                        scm {
-                            url 'scm:git@github.com:Jasig/cas.git'
-                            connection 'scm:git@github.com:Jasig/cas.git'
-                            developerConnection 'scm:git@github.com:Jasig/cas.git'
+                        contributor {
+                            name "Andrew Tillinghast"
+                            email "atilling@conncoll.edu"
                         }
-
-                        licenses {
-                            license {
-                                name 'The Apache Software License, Version 2.0'
-                                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                                distribution 'repo'
-                            }
+                        contributor {
+                            name "Arnaud Lesueur"
+                            email "arnaud.lesueur@gmail.com"
                         }
-
-                        developers {
-                            developer {
-                                id 'leleuj'
-                                name 'Jérôme Leleu'
-                            }
-                            developer {
-                                id 'apetro'
-                                name 'Andrew Petro'
-                            }
-                            developer {
-                                id 'wgthom'
-                                name 'William G. Thompson'
-                            }
-                            developer {
-                                id 'serac'
-                                name 'Marvin S. Addison'
-                            }
-                            developer {
-                                id 'battags'
-                                name 'Scott Battaglia'
-                            }
-                            developer {
-                                id 'mmoayyed'
-                                name 'Misagh Moayyed'
-                            }
+                        contributor {
+                            name "Dmitriy Kopylenko"
+                            email "dima767@gmail.com"
                         }
-
-                        contributors {
-                            contributor {
-                                name "Adam Rybicki"
-                                email "arybicki@unicon.net"
-                            }
-                            contributor {
-                                name "Andrew Tillinghast"
-                                email "atilling@conncoll.edu"
-                            }
-                            contributor {
-                                name "Arnaud Lesueur"
-                                email "arnaud.lesueur@gmail.com"
-                            }
-                            contributor {
-                                name "Dmitriy Kopylenko"
-                                email "dima767@gmail.com"
-                            }
-                            contributor {
-                                name "Drew Mazurek"
-                                email "dmazurek@unicon.net"
-                            }
-                            contributor {
-                                name "Eric Dalquist"
-                                email "eric.dalquist@doit.wisc.edu"
-                            }
-                            contributor {
-                                name "Eric Pierce"
-                                email "epierce@usf.edu"
-                            }
-                            contributor {
-                                name "Frederic Esnault"
-                                email "esnault.frederic@gmail.com"
-                            }
-                            contributor {
-                                name "Howard Gilbert"
-                                email "Howard.Gilbert@yale.edu"
-                            }
-                            contributor {
-                                name "Jan Van der Velpen"
-                                email "velpi@industria.be"
-                            }
-                            contributor {
-                                name "John Martin"
-                                email "jmartin@unicon.net"
-                            }
-                            contributor {
-                                name "MarcAntoine Garrigue"
-                                email "marc.antoine.garrigue@gmail.com"
-                            }
-                            contributor {
-                                name "Mihir Patel"
-                                email "exploremihir@gmail.com"
-                            }
+                        contributor {
+                            name "Drew Mazurek"
+                            email "dmazurek@unicon.net"
                         }
-
-                        mailingLists {
-                            mailingList {
-                                name "cas-user"
-                                subscribe "join-cas-user@lists.jasig.org"
-                                unsubscribe "leave-cas-user@lists.jasig.org"
-                                post "cas-user@lists.jasig.org"
-                                archive "https://lists.wisc.edu/read/?forum=cas-user"
-                            }
-                            mailingList {
-                                name "cas-dev"
-                                subscribe "join-cas-dev@lists.jasig.org"
-                                unsubscribe "leave-cas-dev@lists.jasig.org"
-                                post "cas-dev@lists.jasig.org"
-                                archive "https://lists.wisc.edu/read/?forum=cas-dev"
-                            }
-                            mailingList {
-                                name "cas-announce"
-                                subscribe "join-cas-announce@lists.jasig.org"
-                                unsubscribe "leave-cas-announce@lists.jasig.org"
-                                post "cas-announce@lists.jasig.org"
-                                archive "https://lists.wisc.edu/read/?forum=cas-announce"
-                            }
+                        contributor {
+                            name "Eric Dalquist"
+                            email "eric.dalquist@doit.wisc.edu"
                         }
-
+                        contributor {
+                            name "Eric Pierce"
+                            email "epierce@usf.edu"
+                        }
+                        contributor {
+                            name "Frederic Esnault"
+                            email "esnault.frederic@gmail.com"
+                        }
+                        contributor {
+                            name "Howard Gilbert"
+                            email "Howard.Gilbert@yale.edu"
+                        }
+                        contributor {
+                            name "Jan Van der Velpen"
+                            email "velpi@industria.be"
+                        }
+                        contributor {
+                            name "John Martin"
+                            email "jmartin@unicon.net"
+                        }
+                        contributor {
+                            name "MarcAntoine Garrigue"
+                            email "marc.antoine.garrigue@gmail.com"
+                        }
+                        contributor {
+                            name "Mihir Patel"
+                            email "exploremihir@gmail.com"
+                        }
                     }
+
+                    mailingLists {
+                        mailingList {
+                            name "cas-user"
+                            subscribe "join-cas-user@lists.jasig.org"
+                            unsubscribe "leave-cas-user@lists.jasig.org"
+                            post "cas-user@lists.jasig.org"
+                            archive "https://lists.wisc.edu/read/?forum=cas-user"
+                        }
+                        mailingList {
+                            name "cas-dev"
+                            subscribe "join-cas-dev@lists.jasig.org"
+                            unsubscribe "leave-cas-dev@lists.jasig.org"
+                            post "cas-dev@lists.jasig.org"
+                            archive "https://lists.wisc.edu/read/?forum=cas-dev"
+                        }
+                        mailingList {
+                            name "cas-announce"
+                            subscribe "join-cas-announce@lists.jasig.org"
+                            unsubscribe "leave-cas-announce@lists.jasig.org"
+                            post "cas-announce@lists.jasig.org"
+                            archive "https://lists.wisc.edu/read/?forum=cas-announce"
+                        }
+                    }
+
                 }
             }
         }
+
     }
-
-
-
 
 }
 
 /**
  * Aggregate all javadocs into a single directory
-**/
-task javadoc(type: Javadoc) { 
-   source subprojects.collect {project -> project.sourceSets.main.allJava } 
-   destinationDir = new File(buildDir, 'javadoc') 
-   classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath}) 
+ **/
+task javadoc(type: Javadoc) {
+    source subprojects.collect { project -> project.sourceSets.main.allJava }
+    destinationDir = new File(buildDir, 'javadoc')
+    classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 } 
