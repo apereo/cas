@@ -2,6 +2,29 @@ description = "Apereo Cenrtal Authentication Service"
 
 defaultTasks "clean", "build"
 
+ext {
+    publishSnapshots = Boolean.getBoolean("publishSnapshots")
+    publishReleases = Boolean.getBoolean("publishReleases")
+    sonatypeUsername = System.getProperty("sonatypeUsername")
+    sonatypePassword = System.getProperty("sonatypePassword")
+}
+
+if (sonatypeUsername == null || sonatypePassword == null) {
+    logger.quiet "Sonatype username/password is undefined. Build will not upload project artifacts."
+} else {
+    if (publishReleases) {
+        logger.quiet "Build will upload project release artifacts"
+    } else {
+        logger.quiet "Build will not upload project release artifacts. Use [-DpublishReleases=true] to enable releases."
+    }
+
+    if (publishSnapshots) {
+        logger.quiet "Build will upload project snapshot artifacts"
+    } else {
+        logger.quiet "Build will not upload project snapshot artifacts. Use [-DpublishSnapshots=true] to enable snapshot."
+    }
+}
+
 buildscript {
     repositories {
         mavenLocal()
@@ -84,6 +107,7 @@ subprojects {
     }
 
     signing {
+        required = (publishReleases && sonatypeUsername != null && sonatypePassword != null)
         sign configurations.archives
     }
 
@@ -187,25 +211,21 @@ subprojects {
         provided group: 'javax.el', name: 'javax.el-api', version:javaxElVersion
     }
 
-    if (System.getProperty("sonatypeUsername") != null && System.getProperty("sonatypePassword") != null) {
+    if (sonatypeUsername != null && sonatypePassword != null && (publishReleases != null || publishSnapshots != null)) {
         uploadArchives {
             repositories {
                 mavenDeployer {
                     beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-                    if (Boolean.getBoolean("publishReleases")) {
+                    if (publishReleases) {
                         repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                            println "Build will upload project snapshot artifacts for ${project.name}"
-                            authentication(userName: System.getProperty("sonatypeUsername"),
-                                    password: System.getProperty("sonatypePassword"));
+                            authentication(userName: sonatypeUsername, password: sonatypePassword);
                         }
                     }
 
-                    if (Boolean.getBoolean("publishSnapshots")) {
+                    if (publishSnapshots) {
                         snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-                            println "Build will upload project snapshot artifacts for ${project.name}"
-                            authentication(userName: System.getProperty("sonatypeUsername"),
-                                    password: System.getProperty("sonatypePassword"));
+                            authentication(userName: sonatypeUsername, password: sonatypePassword);
                         }
                     }
 
