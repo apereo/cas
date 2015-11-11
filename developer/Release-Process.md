@@ -10,7 +10,7 @@ This page documents the steps that a release engineer should take for cutting a 
 ##Environment Review
 
 - Set up your environment:
-	- Load your SSH key on your local computer and ensure this SSH key is also referenced in Github
+	- Load your SSH key and ensure this SSH key is also referenced in Github
 	- Load your `gradle.properties` file with the following
 
 {% highlight bash %}
@@ -19,12 +19,7 @@ signing.password=
 signing.secretKeyRingFile=/path/to/secring.gpg
 {% endhighlight %}
 
-- Checkout the CAS project:
-{% highlight bash %}
-mkdir casrelease
-cd casrelease
-git clone git@github.com:Jasig/cas.git
-{% endhighlight %}
+- Checkout the CAS project: `git clone git@github.com:Jasig/cas.git casrelease`
 
 ##Preparing the Release
 
