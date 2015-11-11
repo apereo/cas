@@ -36,6 +36,7 @@ Google Accounts integration within CAS is enabled by simply adding an additional
 {% highlight xml %}
 <bean id="googleAccountsArgumentExtractor" 
     class="org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor"
+      p:skewAllowance="${cas.saml.response.skewAllowance:0}"
       c:privateKey-ref="privateKeyFactoryBean"
       c:publicKey-ref="publicKeyFactoryBean" />
 
