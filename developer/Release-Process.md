@@ -7,7 +7,6 @@ title: CAS - Release Process
 # Release Process
 This page documents the steps that a release engineer should take for cutting a CAS server release.
 
-
 ##Environment Review
 
 - Set up your environment:
@@ -29,8 +28,11 @@ git clone git@github.com:Jasig/cas.git
 
 ##Preparing the Release
 
+TBD.
 
 ##Performing the Release
+
+TBD.
 
 Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig.org/display/JCH/Deploying+Maven+Artifacts) via Sonatype OSS repository.  
 
