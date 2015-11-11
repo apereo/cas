@@ -17,3 +17,11 @@ dependencies {
     	exclude(module: 'spring-core')
 	}
 }
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'gnu-getopt') {
+            details.useTarget group: 'gnu.getopt', name: 'java-getopt', version: details.requested.version
+        }
+    }
+}
