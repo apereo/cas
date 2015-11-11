@@ -1,0 +1,9 @@
+description = "Apereo Cenrtal Authentication Service"
+
+allprojects {
+    apply plugin: 'java'
+}
+
+task wrapper(type: Wrapper, description: "Gradle's wrapper") {
+    gradleVersion = "2.8"
+}
