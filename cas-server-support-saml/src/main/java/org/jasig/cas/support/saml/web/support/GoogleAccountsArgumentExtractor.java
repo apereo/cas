@@ -46,6 +46,7 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
     @NotNull
     private final PrivateKey privateKey;
 
+    private int skewAllowance;
 
     /**
      * Instantiates a new google accounts argument extractor.
@@ -61,8 +62,12 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
 
     @Override
     public WebApplicationService extractServiceInternal(final HttpServletRequest request) {
-        return GoogleAccountsService.createServiceFrom(request,
+        final GoogleAccountsService service = GoogleAccountsService.createServiceFrom(request,
                 this.privateKey, this.publicKey);
+        if (service != null) {
+            service.setSkewAllowance(this.skewAllowance);
+        }
+        return service;
     }
 
     /**
@@ -95,5 +100,17 @@ public final class GoogleAccountsArgumentExtractor extends AbstractArgumentExtra
     @Deprecated
     public void setAlternateUsername(final String alternateUsername) {
         LOGGER.warn("setAlternateUsername() is deprecated and has no effect. Instead use the configuration in service registry.");
+    }
+
+    /**
+     * Sets the allowance for time skew in seconds
+     * between CAS and the client server.  Default 0s.
+     * This value will be subtracted from the current time when setting the SAML
+     * <code>NotBeforeDate</code> attribute, thereby allowing for the
+     * CAS server to be ahead of the client by as much as the value defined here.
+     * @param skewAllowance allowance in seconds
+     */
+    public void setSkewAllowance(final int skewAllowance) {
+        this.skewAllowance = skewAllowance;
     }
 }
