@@ -187,18 +187,9 @@ subprojects {
         provided group: 'javax.servlet', name: 'javax.servlet-api', version:javaxSevletVersion
         provided group: 'javax.el', name: 'javax.el-api', version:javaxElVersion
     }
-}
 
-/**
- * Aggregate all javadocs into a single directory
-**/
-task javadoc(type: Javadoc) { 
-   source subprojects.collect {project -> project.sourceSets.main.allJava } 
-   destinationDir = new File(buildDir, 'javadoc') 
-   classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath}) 
-} 
 
-if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePassword")) {
+if (System.getProperty("sonatypeUsername") != null && System.getProperty("sonatypePassword") != null) {
     uploadArchives {
         repositories {
             mavenDeployer {
@@ -210,7 +201,9 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePass
                 }
                 */
                 snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
-                    authentication(userName: sonatypeUsername, password: sonatypePassword);
+                    println "Build will upload project snapshot artifacts for ${project.name}"
+                    authentication(userName: System.getProperty("sonatypeUsername"), 
+                                   password: System.getProperty("sonatypePassword"));
                 }
 
                 pom.project {
@@ -259,3 +252,17 @@ if (project.hasProperty("sonatypeUsername") && project.hasProperty("sonatypePass
         }
     }
 }
+
+
+
+
+}
+
+/**
+ * Aggregate all javadocs into a single directory
+**/
+task javadoc(type: Javadoc) { 
+   source subprojects.collect {project -> project.sourceSets.main.allJava } 
+   destinationDir = new File(buildDir, 'javadoc') 
+   classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath}) 
+} 
