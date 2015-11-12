@@ -61,6 +61,32 @@ public class MongoServiceRegistryDaoTests {
         assertTrue(this.serviceRegistryDao.load().isEmpty());
     }
 
+    @Test
+    public void verifyEdit()  {
+          final RegisteredServiceImpl r = new RegisteredServiceImpl();
+          r.setName("test");
+          r.setServiceId("testId");
+          r.setTheme("theme");
+          r.setDescription("description");
+
+          this.serviceRegistryDao.save(r);
+
+          final List<RegisteredService> services = this.serviceRegistryDao.load();
+
+          final RegisteredService r2 = services.get(0);
+
+          r.setId(r2.getId());
+          r.setTheme("mytheme");
+
+          this.serviceRegistryDao.save(r);
+
+          final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r.getId());
+
+          assertEquals(r, r3);
+          assertEquals(r.getTheme(), r3.getTheme());
+          this.serviceRegistryDao.delete(r);
+    }
+
     private RegisteredService buildService(final int i) {
         return TestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
     }
