@@ -6,6 +6,7 @@ import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -179,8 +180,8 @@ public abstract class AbstractServletContextInitializer
         manager.save(svc);
     }
 
-    protected final ServicesManager getServicesManager() {
-        return this.applicationContext.getBean("servicesManager", ServicesManager.class);
+    protected final ReloadableServicesManager getServicesManager() {
+        return this.applicationContext.getBean("servicesManager", ReloadableServicesManager.class);
     }
 
     /**
