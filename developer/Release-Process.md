@@ -32,7 +32,7 @@ TBD.
 Follow the process for [deploying artifacts to Maven Central](https://wiki.jasig.org/display/JCH/Deploying+Maven+Artifacts) via Sonatype OSS repository.  
 
 - Log into [https://oss.sonatype.org](https://oss.sonatype.org).
-- Find the staged repository for CAS artifacts created by the `mvn release:perform` goal.
+- Find the staged repository for CAS artifacts
 - "Close" the repository.
 - "Release" the repository.  Both c and d should be accompanied by email confirmation.
 
