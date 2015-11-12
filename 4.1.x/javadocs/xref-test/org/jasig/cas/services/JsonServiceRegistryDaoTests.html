@@ -348,7 +348,32 @@
 <a class="jxr_linenumber" name="L340" href="#L340">340</a>         assertNotNull(<strong class="jxr_keyword">this</strong>.dao.findServiceById(r.getId()));
 <a class="jxr_linenumber" name="L341" href="#L341">341</a>     }
 <a class="jxr_linenumber" name="L342" href="#L342">342</a> 
-<a class="jxr_linenumber" name="L343" href="#L343">343</a> }
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>     @Test
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> verifyEdit()  {
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>         <strong class="jxr_keyword">final</strong> RegisteredServiceImpl r = <strong class="jxr_keyword">new</strong> RegisteredServiceImpl();
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>         r.setName(<span class="jxr_string">"test"</span>);
+<a class="jxr_linenumber" name="L347" href="#L347">347</a>         r.setServiceId(<span class="jxr_string">"testId"</span>);
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>         r.setTheme(<span class="jxr_string">"theme"</span>);
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>         r.setDescription(<span class="jxr_string">"description"</span>);
+<a class="jxr_linenumber" name="L350" href="#L350">350</a> 
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>         <strong class="jxr_keyword">this</strong>.dao.save(r);
+<a class="jxr_linenumber" name="L352" href="#L352">352</a> 
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>         <strong class="jxr_keyword">final</strong> List&lt;RegisteredService&gt; services = <strong class="jxr_keyword">this</strong>.dao.load();
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> 
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>         <strong class="jxr_keyword">final</strong> RegisteredService r2 = services.get(0);
+<a class="jxr_linenumber" name="L356" href="#L356">356</a> 
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>         r.setId(r2.getId());
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>         r.setTheme(<span class="jxr_string">"mytheme"</span>);
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> 
+<a class="jxr_linenumber" name="L360" href="#L360">360</a>         <strong class="jxr_keyword">this</strong>.dao.save(r);
+<a class="jxr_linenumber" name="L361" href="#L361">361</a> 
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>         <strong class="jxr_keyword">final</strong> RegisteredService r3 = <strong class="jxr_keyword">this</strong>.dao.findServiceById(r.getId());
+<a class="jxr_linenumber" name="L363" href="#L363">363</a> 
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>         assertEquals(r, r3);
+<a class="jxr_linenumber" name="L365" href="#L365">365</a>         assertEquals(r.getTheme(), r3.getTheme());
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>         <strong class="jxr_keyword">this</strong>.dao.delete(r);
+<a class="jxr_linenumber" name="L367" href="#L367">367</a>     }
+<a class="jxr_linenumber" name="L368" href="#L368">368</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2015 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>
