@@ -83,12 +83,6 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
         try {
 
             final RegisteredService svcToUse = service.toRegisteredService(this.personAttributeDao);
-            if (svcToUse.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-                final RegisteredService curService = this.servicesManager.findServiceBy(svcToUse.getId());
-                if (curService != null && this.servicesManager.delete(curService.getId()) == null) {
-                    throw new IllegalArgumentException("Service " + curService.getId() + " cannot be updated");
-                }
-            }
 
             final RegisteredService newSvc = this.servicesManager.save(svcToUse);
             logger.info("Saved changes to service {}", svcToUse.getId());
