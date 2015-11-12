@@ -15,9 +15,6 @@
 
   <import resource="spring-configuration/propertyFileConfigurer.xml"/>
 
-  <context:component-scan base-package="org.jasig.cas.services.web" />
-  <mvc:annotation-driven />
-
   <!-- View Resolver -->
   <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
         p:order="0">
@@ -38,20 +35,6 @@
         p:prefix="/WEB-INF/view/jsp/"
         p:suffix=".jsp"
         p:order="2"/>
-
-  <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
-
-  <bean id="handlerMappingC"
-        class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
-        p:alwaysUseFullPath="true">
-    <property name="mappings">
-      <util:properties>
-        <prop key="/*.html">passThroughController</prop>
-      </util:properties>
-    </property>
-  </bean>
-
-  <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 
   <bean id="credentialsValidator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"
         p:messageInterpolator-ref="messageInterpolator"/>
