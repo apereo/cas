@@ -29,6 +29,9 @@
         </property>
     </bean>
 
+    <bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"
+          p:order="1"/>
+
     <!--
     <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
             p:order="1000"

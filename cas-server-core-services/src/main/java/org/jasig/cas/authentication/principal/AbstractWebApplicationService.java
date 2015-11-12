@@ -1,6 +1,7 @@
 package org.jasig.cas.authentication.principal;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jasig.cas.validation.ValidationResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,7 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     private final ResponseBuilder<WebApplicationService> responseBuilder;
 
+    private ValidationResponseType format = ValidationResponseType.XML;
 
     /**
      * Instantiates a new abstract web application service.
@@ -153,6 +155,15 @@ public abstract class AbstractWebApplicationService implements SingleLogoutServi
 
     protected ResponseBuilder<? extends WebApplicationService> getResponseBuilder() {
         return responseBuilder;
+    }
+
+    @Override
+    public ValidationResponseType getFormat() {
+        return format;
+    }
+
+    public void setFormat(final ValidationResponseType format) {
+        this.format = format;
     }
 
     @Override
