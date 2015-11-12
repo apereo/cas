@@ -21,6 +21,19 @@
     <context:component-scan base-package="org.jasig.cas" />
     <mvc:annotation-driven />
 
+    <bean id="handlerMappingC"
+          class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"
+          p:alwaysUseFullPath="true">
+        <property name="mappings">
+            <util:properties>
+                <prop key="/*.html">passThroughController</prop>
+            </util:properties>
+        </property>
+    </bean>
+
+    <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+
     <!--
         TODO: Never used, but required for auto-wiring! because cas-core and other dependant modules
         require the following beans to be available in the context.

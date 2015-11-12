@@ -69,13 +69,6 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
         try {
 
             final RegisteredService svcToUse = service.toRegisteredService(this.personAttributeDao);
-            if (svcToUse.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-                final RegisteredService curService = this.servicesManager.findServiceBy(svcToUse.getId());
-                if (curService != null && this.servicesManager.delete(curService.getId()) == null) {
-                    throw new IllegalArgumentException("Service " + curService.getId() + " cannot be updated");
-                }
-            }
-
             final RegisteredService newSvc = this.servicesManager.save(svcToUse);
             logger.info("Saved changes to service {}", svcToUse.getId());
 
@@ -110,7 +103,7 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
 
                 if (service == null) {
                     logger.warn("Invalid service id specified [{}]. Cannot find service in the registry", id);
-                    throw new IllegalArgumentException("Service id cannot be found");
+                    throw new IllegalArgumentException("Service id " + id + " cannot be found");
                 }
                 bean = RegisteredServiceEditBean.fromRegisteredService(service);
             }
