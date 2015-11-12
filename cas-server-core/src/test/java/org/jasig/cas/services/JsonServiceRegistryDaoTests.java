@@ -340,4 +340,29 @@ public class JsonServiceRegistryDaoTests {
         assertNotNull(this.dao.findServiceById(r.getId()));
     }
 
+    @Test
+    public void verifyEdit()  {
+        final RegisteredServiceImpl r = new RegisteredServiceImpl();
+        r.setName("test");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+
+        this.dao.save(r);
+
+        final List<RegisteredService> services = this.dao.load();
+
+        final RegisteredService r2 = services.get(0);
+
+        r.setId(r2.getId());
+        r.setTheme("mytheme");
+
+        this.dao.save(r);
+
+        final RegisteredService r3 = this.dao.findServiceById(r.getId());
+
+        assertEquals(r, r3);
+        assertEquals(r.getTheme(), r3.getTheme());
+        this.dao.delete(r);
+    }
 }

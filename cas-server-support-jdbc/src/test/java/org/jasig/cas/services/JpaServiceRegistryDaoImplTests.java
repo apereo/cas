@@ -93,7 +93,7 @@ public class JpaServiceRegistryDaoImplTests extends AbstractTransactionalJUnit4S
 
         final RegisteredService r3 = this.dao.findServiceById(r.getId());
 
-        assertEquals(r, r2);
+        assertEquals(r, r3);
         assertEquals(r.getTheme(), r3.getTheme());
     }
 
