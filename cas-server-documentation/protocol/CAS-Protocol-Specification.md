@@ -1603,7 +1603,19 @@ to the CAS client.
 
 {% highlight xml %}
 <cas:attributes>
-    <cas:[attribute-name]>VALUE</cas:attribute>
+    ...
+    <cas:[attribute-name]>VALUE</cas:[attribute-name]>
+</cas:attributes>
+{% endhighlight %}
+
+> Example response with custom attribute:
+
+{% highlight xml %}
+<cas:attributes>
+    <cas:authenticationDate>2015-11-12T09:30:10Z</cas:authenticationDate>
+    <cas:longTermAuthenticationRequestTokenUsed>true</cas:longTermAuthenticationRequestTokenUsed>
+    <cas:isFromNewLogin>true</cas:isFromNewLogin>
+    <cas:myAttribute>myValue</cas:myAttribute>
 </cas:attributes>
 {% endhighlight %}
 
