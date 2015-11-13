@@ -30,8 +30,13 @@
 
 </div>
 
+<c:url value="login" var="url">
+  <c:param name="execution" value="${flowExecutionKey}" />
+  <c:param name="_eventId" value="proceed" />
+</c:url>
+
 <div id="big-buttons">
- <a class="button" href="login?execution=${flowExecutionKey}&_eventId=proceed">Continue</a>
+ <a class="button" href="${url}">Continue</a>
 </div>
 
 <jsp:directive.include file="includes/bottom.jsp" />
