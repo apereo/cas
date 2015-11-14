@@ -3,6 +3,7 @@ package org.jasig.cas.support.oauth;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.web.AbstractServletContextInitializer;
@@ -37,16 +38,16 @@ public class OAuthServletContextListener extends AbstractServletContextInitializ
     protected void initializeServletApplicationContext() {
         addControllerToCasServletHandlerMapping(OAuthConstants.ENDPOINT_OAUTH2, "oauth20WrapperController");
 
-        final ServicesManager servicesManager = getServicesManager();
+        final ReloadableServicesManager servicesManager = getServicesManager();
         final Service callbackService = webApplicationServiceFactory.createService(this.callbackAuthorizeUrl);
         if (!servicesManager.matchesExistingService(callbackService))  {
             final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
-            service.setId(new SecureRandom().nextLong());
-            service.setName(service.getClass().getSimpleName());
+            service.setName("OAuth Callback url");
             service.setDescription("OAuth Wrapper Callback Url");
             service.setServiceId(this.callbackAuthorizeUrl);
 
             addRegisteredServiceToServicesManager(service);
+            servicesManager.reload();
         }
 
     }
