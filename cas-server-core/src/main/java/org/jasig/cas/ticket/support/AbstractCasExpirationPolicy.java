@@ -41,7 +41,7 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
     private static final long serialVersionUID = 8042104336580063690L;
 
     /** The Logger instance shared by all children of this class. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Gets the http request based on the
