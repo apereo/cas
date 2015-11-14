@@ -23,37 +23,13 @@ A sample JSON file follows:
 
 {% highlight json %}
 {
-    "@class" : "org.jasig.cas.services.RegexRegisteredService",
-    "id" : 103935657744185,
-    "description" : "Service description",
-    "serviceId" : "https://**",
-    "name" : "testJsonFile",
-    "theme" : "testtheme",
-    "proxyPolicy" : {
-        "@class" : "org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy",
-        "pattern" : "https://.+"
-    },
-    "accessStrategy" : {
-        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy"
-    },
-    "evaluationOrder" : 1000,
-    "usernameAttributeProvider" : {
-        "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
-    },
-    "logoutType" : "BACK_CHANNEL",
-    "requiredHandlers" : [ "java.util.HashSet", [ "handler1", "handler2" ] ],
-    "attributeReleasePolicy" : {
-        "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
-        "attributeFilter" : {
-            "@class" : "org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter",
-            "pattern" : "\\w+"
-        },
-        "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "cn", "sn" ] ]
-    }
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "evaluationOrder" : 0
 }
-
 {% endhighlight %}
-
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have

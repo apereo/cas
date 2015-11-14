@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.saml.authentication;
 
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -31,7 +13,7 @@ import java.util.Map;
  * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
  * <p>
  * Note: Authentication Methods are exposed under the key:
- * <code>samlAuthenticationStatement::authMethod</code> in the Authentication
+ * {@code samlAuthenticationStatement::authMethod} in the Authentication
  * attributes map.
  *
  * @author Scott Battaglia
@@ -96,8 +78,8 @@ public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDa
      * defaults. Mapping should be of the following type:
      * <pre>Package/Class Name as String -&gt; Name SAML Type</pre>
      * <p>
-     * Example: (<code>"org.jasig.cas.authentication.HttpBasedServiceCredential"
-     * -&gt; SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client</code>)
+     * Example: ({@code "org.jasig.cas.authentication.HttpBasedServiceCredential"
+     * -&gt; SAMLAuthenticationStatement.AuthenticationMethod_SSL_TLS_Client})
      *
      * @param userDefinedMappings map of user defined authentication types.
      */

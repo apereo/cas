@@ -1,24 +1,5 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.openid.authentication.principal;
 
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
@@ -28,7 +9,6 @@ import org.openid4java.association.Association;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -60,7 +40,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             openIdService = openIdServiceFactory.createService(request);
 
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
+                    org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
@@ -90,7 +70,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             openIdService = openIdServiceFactory.createService(request);
 
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
+                    org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
