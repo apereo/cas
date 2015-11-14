@@ -13,9 +13,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -25,15 +27,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 /**
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Component
 @Controller("statisticsController")
-@RequestMapping("/statistics")
 public final class StatisticsController implements ServletContextAware {
 
     private static final int NUMBER_OF_MILLISECONDS_IN_A_DAY = 86400000;
@@ -66,34 +70,89 @@ public final class StatisticsController implements ServletContextAware {
     @Qualifier("healthCheckMetrics")
     private HealthCheckRegistry healthCheckRegistry;
 
+
     /**
-     * Handles the request.
+     * Gets memory stats.
      *
-     * @param httpServletRequest the http servlet request
-     * @param httpServletResponse the http servlet response
-     * @return the model and view
+     * @param request  the request
+     * @param response the response
+     * @return the memory stats
      * @throws Exception the exception
      */
-    @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse)
-                throws Exception {
-        final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
-        modelAndView.addObject("startTime", this.upTimeStartDate);
+    @RequestMapping(value="/statistics/stats/getMemoryStats", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> getMemoryStats(final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+
+        final Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
+        responseMap.put("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
+        responseMap.put("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
+        return responseMap;
+
+    }
+
+    /**
+     * Gets lifetime.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the lifetime
+     * @throws Exception the exception
+     */
+    @RequestMapping(value="/statistics/stats/getLifetime", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> getLifetime(final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+
+        final Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("startTime", this.upTimeStartDate);
         final double difference = System.currentTimeMillis() - this.upTimeStartDate.getTime();
 
-        modelAndView.addObject("upTime", calculateUptime(difference, new LinkedList<Integer>(
+        responseMap.put("upTime", calculateUptime(difference, new LinkedList<Integer>(
                         Arrays.asList(NUMBER_OF_MILLISECONDS_IN_A_DAY, NUMBER_OF_MILLISECONDS_IN_AN_HOUR,
-                        NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
-                        new LinkedList<String>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
+                                NUMBER_OF_MILLISECONDS_IN_A_MINUTE, NUMBER_OF_MILLISECONDS_IN_A_SECOND, 1)),
+                new LinkedList<String>(Arrays.asList("day", "hour", "minute", "second", "millisecond"))));
+        return responseMap;
 
-        modelAndView.addObject("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
-        modelAndView.addObject("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
-        modelAndView.addObject("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
-        modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());
-        modelAndView.addObject("serverHostName", httpServletRequest.getServerName());
-        modelAndView.addObject("serverIpAddress", httpServletRequest.getLocalAddr());
-        modelAndView.addObject("casTicketSuffix", this.casTicketSuffix);
+    }
 
+    /**
+     * Gets runtime stats.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the runtime stats
+     * @throws Exception the exception
+     */
+    @RequestMapping(value="/statistics/stats/getRuntimeStats", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> getRuntimeStats(final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+
+        final Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("availableProcessors", Runtime.getRuntime().availableProcessors());
+        responseMap.put("serverHostName", request.getServerName());
+        responseMap.put("serverIpAddress", request.getLocalAddr());
+        responseMap.put("casTicketSuffix", this.casTicketSuffix);
+        return responseMap;
+
+    }
+
+    /**
+     * Gets ticket stats.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the ticket stats
+     * @throws Exception the exception
+     */
+    @RequestMapping(value="/statistics/stats/getTicketStats", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> getTicketStats(final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+
+        final Map<String, Object> responseMap = new HashMap<>();
         int unexpiredTgts = 0;
         int unexpiredSts = 0;
         int expiredTgts = 0;
@@ -118,16 +177,30 @@ public final class StatisticsController implements ServletContextAware {
                 }
             }
         } catch (final UnsupportedOperationException e) {
-            logger.trace("The ticket registry doesn't support this information.");
+            logger.debug("The ticket registry doesn't support this information.", e);
         }
 
-        modelAndView.addObject("unexpiredTgts", unexpiredTgts);
-        modelAndView.addObject("unexpiredSts", unexpiredSts);
-        modelAndView.addObject("expiredTgts", expiredTgts);
-        modelAndView.addObject("expiredSts", expiredSts);
-        modelAndView.addObject("pageTitle", modelAndView.getViewName());
+        responseMap.put("unexpiredTgts", unexpiredTgts);
+        responseMap.put("unexpiredSts", unexpiredSts);
+        responseMap.put("expiredTgts", expiredTgts);
+        responseMap.put("expiredSts", expiredSts);
+        return responseMap;
 
-        return modelAndView;
+    }
+
+
+    /**
+     * Handles the request.
+     *
+     * @param httpServletRequest the http servlet request
+     * @param httpServletResponse the http servlet response
+     * @return the model and view
+     * @throws Exception the exception
+     */
+    @RequestMapping(value="/statistics", method = RequestMethod.GET)
+    protected ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse)
+                throws Exception {
+        return new ModelAndView(MONITORING_VIEW_STATISTICS);
     }
 
     /**
