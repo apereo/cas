@@ -41,7 +41,7 @@ public interface CasViewConstants {
     String MODEL_ATTRIBUTE_NAME_ERROR_CODE = "code";
 
     /** The constant representing the error description in the response. */
-    String MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION = "code";
+    String MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION = "description";
 
     /** The constant representing the validated service in the response. */
     String MODEL_ATTRIBUTE_NAME_SERVICE = "service";

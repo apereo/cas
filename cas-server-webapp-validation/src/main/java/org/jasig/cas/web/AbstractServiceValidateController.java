@@ -18,6 +18,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
+import org.jasig.cas.validation.ValidationResponseType;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -274,9 +275,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     private ModelAndView getModelAndView(final boolean isSuccess, final WebApplicationService service) {
         if (service != null){
-            switch(service.getFormat()) {
-                case JSON:
-                    return new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
+            if (service.getFormat() == ValidationResponseType.JSON) {
+                return new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
             }
         }
         return new ModelAndView(isSuccess ? this.successView : this.failureView);
