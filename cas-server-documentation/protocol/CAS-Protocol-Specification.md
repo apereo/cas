@@ -609,7 +609,7 @@ in the XML schema in Appendix A. Below are example responses:
   "serviceResponse" : {
     "authenticationFailure" : {
       "code" : "INVALID_TICKET",
-      "message" : "Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
+      "description" : "Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
     }
   }
 }
@@ -852,7 +852,7 @@ Response on ticket validation failure:
   "serviceResponse" : {
     "authenticationFailure" : {
       "code" : "INVALID_TICKET",
-      "message" : "Ticket PT-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
+      "description" : "Ticket PT-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
     }
   }
 }
@@ -933,7 +933,7 @@ Response on request failure:
   "serviceResponse" : {
     "authenticationFailure" : {
       "code" : "INVALID_REQUEST",
-      "message" : "'pgt' and 'targetService' parameters are both required"
+      "description" : "'pgt' and 'targetService' parameters are both required"
     }
   }
 }
