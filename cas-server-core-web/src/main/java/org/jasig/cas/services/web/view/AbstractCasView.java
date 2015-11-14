@@ -48,6 +48,26 @@ public abstract class AbstractCasView extends AbstractView {
     }
 
     /**
+     * Gets error code from.
+     *
+     * @param model the model
+     * @return the error code from
+     */
+    protected final String getErrorCodeFrom(final Map<String, Object> model) {
+        return model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE).toString();
+    }
+
+    /**
+     * Gets error description from.
+     *
+     * @param model the model
+     * @return the error description from
+     */
+    protected final String getErrorDescriptionFrom(final Map<String, Object> model) {
+        return model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION).toString();
+    }
+
+    /**
      * Gets the PGT from the model.
      *
      * @param model the model

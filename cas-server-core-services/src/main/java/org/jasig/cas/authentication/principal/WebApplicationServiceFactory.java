@@ -40,23 +40,25 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
             return null;
         }
 
-        final ValidationResponseType formatType;
+        final String id = AbstractServiceFactory.cleanupUrl(serviceToUse);
+        final String artifactId = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
+
+        final Response.ResponseType type = HttpMethod.POST.name().equalsIgnoreCase(method) ? Response.ResponseType.POST
+                : Response.ResponseType.REDIRECT;
+
+        final SimpleWebApplicationServiceImpl webApplicationService =
+                new SimpleWebApplicationServiceImpl(id, serviceToUse,
+                        artifactId, new WebApplicationServiceResponseBuilder(type));
+
         try {
-            formatType = ValidationResponseType.valueOf(format.toUpperCase());
+            if (StringUtils.isNotBlank(format)) {
+                final ValidationResponseType formatType = ValidationResponseType.valueOf(format.toUpperCase());
+                webApplicationService.setFormat(formatType);
+            }
         } catch (final Exception e) {
             logger.error("Format specified in the request [{}] is not recognized", format);
             return null;
         }
-
-        final String id = AbstractServiceFactory.cleanupUrl(serviceToUse);
-        final String artifactId = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
-
-        final  Response.ResponseType type = HttpMethod.POST.name().equalsIgnoreCase(method) ? Response.ResponseType.POST
-                                                        : Response.ResponseType.REDIRECT;
-
-        final SimpleWebApplicationServiceImpl webApplicationService = new SimpleWebApplicationServiceImpl(id, serviceToUse,
-                artifactId, new WebApplicationServiceResponseBuilder(type));
-        webApplicationService.setFormat(formatType);
         return webApplicationService;
     }
 
