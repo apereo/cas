@@ -37,6 +37,12 @@ public interface CasViewConstants {
     /** Constant representing the Assertion in the cas validation model. */
     String MODEL_ATTRIBUTE_NAME_ASSERTION = "assertion";
 
+    /** The constant representing the error code in the response. */
+    String MODEL_ATTRIBUTE_NAME_ERROR_CODE = "code";
+
+    /** The constant representing the error description in the response. */
+    String MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION = "code";
+
     /** The constant representing the validated service in the response. */
     String MODEL_ATTRIBUTE_NAME_SERVICE = "service";
 
