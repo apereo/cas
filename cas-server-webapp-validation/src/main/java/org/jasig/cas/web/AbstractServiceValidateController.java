@@ -266,23 +266,20 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         final ModelAndView modelAndView = getModelAndView(false, service);
         final String convertedDescription = this.context.getMessage(description, args,
             description, request.getLocale());
-        modelAndView.addObject("code", code);
-        modelAndView.addObject("description", convertedDescription);
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, code);
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, convertedDescription);
 
         return modelAndView;
     }
 
     private ModelAndView getModelAndView(final boolean isSuccess, final WebApplicationService service) {
-        final ModelAndView modelAndView;
-        switch(service.getFormat()) {
-            case JSON:
-                modelAndView = new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
-                break;
-            default:
-                modelAndView = new ModelAndView(isSuccess ? this.successView : this.failureView);
-                break;
+        if (service != null){
+            switch(service.getFormat()) {
+                case JSON:
+                    return new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
+            }
         }
-        return modelAndView;
+        return new ModelAndView(isSuccess ? this.successView : this.failureView);
     }
 
     /**
