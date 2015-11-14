@@ -46,6 +46,7 @@ Adjust the following settings in your `cas.properties`:
 # cas.saml.googleapps.publickey.file=file:/etc/cas/public.key
 # cas.saml.googleapps.privatekey.file=file:/etc/cas/private.p8
 # cas.saml.googleapps.key.alg=RSA
+# cas.saml.response.skewAllowance=0
 {% endhighlight %}
 
 Also, ensure that Google Apps is registered in your Service Registry, 
