@@ -38,6 +38,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
     private PrivateKey privateKey;
 
+
     @NotNull
     @Autowired
     @Qualifier("servicesManager")
@@ -51,6 +52,9 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
     @Value("${cas.saml.googleapps.key.alg:}")
     private String keyAlgorithm;
+
+    @Value("${cas.saml.response.skewAllowance:0}")
+    private int skewAllowance;
 
     /**
      * Instantiates a new Google accounts service factory.
@@ -98,6 +102,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
         final GoogleAccountsServiceResponseBuilder builder =
             new GoogleAccountsServiceResponseBuilder(this.privateKey, this.publicKey, BUILDER);
+        builder.setSkewAllowance(this.skewAllowance);
         return new GoogleAccountsService(assertionConsumerServiceUrl, relayState, requestId, builder);
     }
 
@@ -175,5 +180,9 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         return org.apache.commons.lang3.StringUtils.isNotBlank(this.privateKeyLocation)
                 || org.apache.commons.lang3.StringUtils.isNotBlank(this.publicKeyLocation)
                 || org.apache.commons.lang3.StringUtils.isNotBlank(this.keyAlgorithm);
+    }
+
+    public void setSkewAllowance(final int skewAllowance) {
+        this.skewAllowance = skewAllowance;
     }
 }
