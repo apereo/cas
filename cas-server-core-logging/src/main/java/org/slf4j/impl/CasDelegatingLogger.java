@@ -7,10 +7,13 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.helpers.MarkerIgnoringBase;
+import org.slf4j.spi.LocationAwareLogger;
+import org.springframework.util.ReflectionUtils;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,8 +45,6 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
 
     private final transient Logger delegate;
 
-    private Level level = Level.ERROR;
-
     /**
      * Instantiates a new Cas delegating logger.
      * Used for serialization purposes only.
@@ -59,22 +60,6 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      */
     public CasDelegatingLogger(final Logger delegate) {
         this.delegate = delegate;
-
-        if (isErrorEnabled()) {
-            this.level = Level.ERROR;
-        }
-        if (isWarnEnabled()) {
-            this.level = Level.WARN;
-        }
-        if (isInfoEnabled()) {
-            this.level = Level.INFO;
-        }
-        if (isDebugEnabled()) {
-            this.level = Level.DEBUG;
-        }
-        if (isTraceEnabled()) {
-            this.level = Level.TRACE;
-        }
     }
 
     /**
@@ -463,7 +448,24 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
      * @since 4.2
      */
     public Level getLevel() {
-        return this.level;
+        return getRealLogger().getLevel();
+    }
+
+    /**
+     * Set the current log level.
+     *
+     * @param level the level
+     * @since 4.2
+     */
+    public void setLevel(final Level level) {
+        getRealLogger().setLevel(level);
+    }
+
+    private org.apache.logging.log4j.core.Logger getRealLogger() {
+        final LocationAwareLogger delegatedLogger = (LocationAwareLogger) getDelegate();
+        final Field field = ReflectionUtils.findField(delegatedLogger.getClass(), "logger");
+        field.setAccessible(true);
+        return (org.apache.logging.log4j.core.Logger) ReflectionUtils.getField(field, delegatedLogger);
     }
 
     /**
@@ -474,5 +476,19 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     @JsonIgnore
     public Logger getDelegate() {
         return this.delegate;
+    }
+
+
+    public boolean isAdditive() {
+        return getRealLogger().isAdditive();
+    }
+
+    /**
+     * Sets additive.
+     *
+     * @param additive the additive
+     */
+    public void setAdditive(final boolean additive) {
+        getRealLogger().setAdditive(additive);
     }
 }

@@ -33,28 +33,29 @@ import org.apache.logging.log4j.core.appender.RandomAccessFileAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.ConfigurationListener;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Reconfigurable;
 import org.slf4j.LoggerFactory;
 import org.slf4j.impl.CasDelegatingLogger;
 import org.slf4j.impl.CasLoggerFactory;
-import org.slf4j.spi.LocationAwareLogger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,9 +72,28 @@ import java.util.Set;
 public class LoggingConfigController {
 
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
+    private static final String LOGGER_NAME_ROOT = "root";
 
     @Value("${log4j.config.location:classpath:log4j2.xml}")
     private Resource logConfigurationFile;
+
+    private LoggerContext loggerContext;
+
+    /**
+     * Init.
+     *
+     * @throws Exception the exception
+     */
+    @PostConstruct
+    public void initialize() throws Exception {
+        this.loggerContext = Configurator.initialize("CAS", null, this.logConfigurationFile.getURI());
+        this.loggerContext.getConfiguration().addListener(new ConfigurationListener() {
+            @Override
+            public void onChange(final Reconfigurable reconfigurable) {
+                loggerContext.updateLoggers(reconfigurable.reconfigure());
+            }
+        });
+    }
 
     /**
      * Gets default view.
@@ -89,6 +109,29 @@ public class LoggingConfigController {
     }
 
     /**
+     * Gets active loggers.
+     *
+     * @param request  the request
+     * @param response the response
+     * @return the active loggers
+     * @throws Exception the exception
+     */
+    @RequestMapping(value="/getActiveLoggers", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response)
+            throws Exception {
+        final Map<String, Object> responseMap = new HashMap<>();
+        final Set<Map.Entry<String, CasDelegatingLogger>> loggers = getActiveLoggersInFactory();
+        final Collection<CasDelegatingLogger> activeLoggers = new ArrayList<>();
+        for (final Map.Entry<String, CasDelegatingLogger> logger : loggers) {
+            activeLoggers.add(logger.getValue());
+        }
+        responseMap.put("activeLoggers", activeLoggers);
+        return responseMap;
+    }
+
+
+    /**
      * Gets configuration as JSON.
      * Depends on the log4j core API.
      *
@@ -101,18 +144,12 @@ public class LoggingConfigController {
     @ResponseBody
     public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response)
                 throws Exception {
-        final Map<String, Object> responseMap = new HashMap();
-
-        final CasLoggerFactory factory = (CasLoggerFactory) LoggerFactory.getILoggerFactory();
-        final Set<Map.Entry<String, CasDelegatingLogger>> loggers = factory.getLoggers().entrySet();
-        responseMap.put("activeLoggers", loggers);
-
-        final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
-        for (final LoggerConfig config : loggerConfigs) {
-            final Map<String, Object> loggerMap = new HashMap();
-            loggerMap.put("name", StringUtils.defaultIfBlank(config.getName(), "Root"));
+        for (final LoggerConfig config : getLoggerConfigurations()) {
+
+            final Map<String, Object> loggerMap = new HashMap<>();
+            loggerMap.put("name", StringUtils.defaultIfBlank(config.getName(), LOGGER_NAME_ROOT));
             loggerMap.put("state", config.getState());
             if (config.getProperties() != null) {
                 loggerMap.put("properties", config.getProperties());
@@ -131,9 +168,11 @@ public class LoggingConfigController {
 
                 if (appender instanceof FileAppender) {
                     builder.append("file", ((FileAppender) appender).getFileName());
+                    builder.append("filePattern", "(none)");
                 }
                 if (appender instanceof RandomAccessFileAppender) {
                     builder.append("file", ((RandomAccessFileAppender) appender).getFileName());
+                    builder.append("filePattern", "(none)");
                 }
                 if (appender instanceof RollingFileAppender) {
                     builder.append("file", ((RollingFileAppender) appender).getFileName());
@@ -141,6 +180,7 @@ public class LoggingConfigController {
                 }
                 if (appender instanceof MemoryMappedFileAppender) {
                     builder.append("file", ((MemoryMappedFileAppender) appender).getFileName());
+                    builder.append("filePattern", "(none)");
                 }
                 if (appender instanceof RollingRandomAccessFileAppender) {
                     builder.append("file", ((RollingRandomAccessFileAppender) appender).getFileName());
@@ -152,9 +192,20 @@ public class LoggingConfigController {
 
             configuredLoggers.add(loggerMap);
         }
+        final Map<String, Object> responseMap = new HashMap();
         responseMap.put("loggers", configuredLoggers);
         return responseMap;
     }
+
+    private Set<Map.Entry<String, CasDelegatingLogger>> getActiveLoggersInFactory() {
+        final CasLoggerFactory factory = getCasLoggerFactoryInstance();
+        return factory.getLoggers().entrySet();
+    }
+
+    private CasLoggerFactory getCasLoggerFactoryInstance() {
+        return (CasLoggerFactory) LoggerFactory.getILoggerFactory();
+    }
+
 
     /**
      * Gets logger configurations.
@@ -162,11 +213,9 @@ public class LoggingConfigController {
      * @return the logger configurations
      * @throws IOException the iO exception
      */
-    private Collection<LoggerConfig> getLoggerConfigurations() throws IOException {
-        final LoggerContext loggerContext = Configurator.initialize("CAS", null,
-                this.logConfigurationFile.getURI());
-        final Configuration configuration = loggerContext.getConfiguration();
-        return configuration.getLoggers().values();
+    private Set<LoggerConfig> getLoggerConfigurations() throws IOException {
+        final Configuration configuration = this.loggerContext.getConfiguration();
+        return new HashSet<>(configuration.getLoggers().values());
     }
 
     /**
@@ -188,20 +237,19 @@ public class LoggingConfigController {
     @ResponseBody
     public void updateLoggerLevel(@RequestParam final String loggerName,
                                   @RequestParam final String loggerLevel,
-                                  @RequestParam(defaultValue = "true") final boolean additive,
+                                  @RequestParam(defaultValue = "false") final boolean additive,
                                   final HttpServletRequest request,
                                   final HttpServletResponse response)
             throws Exception {
 
-        final CasLoggerFactory factory = (CasLoggerFactory) LoggerFactory.getILoggerFactory();
-        final CasDelegatingLogger casLogger = factory.getLoggers().get(loggerName);
-        final LocationAwareLogger delegatedLogger = (LocationAwareLogger) casLogger.getDelegate();
-        final Field field = ReflectionUtils.findField(delegatedLogger.getClass(), "logger");
-        field.setAccessible(true);
-        final org.apache.logging.log4j.core.Logger logger =
-                (org.apache.logging.log4j.core.Logger) ReflectionUtils.getField(field, delegatedLogger);
-        logger.setLevel(Level.getLevel(loggerLevel));
-        logger.setAdditive(additive);
+        final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
+        for (final LoggerConfig cfg : loggerConfigs) {
+            if (cfg.getName().equals(loggerName)) {
+                cfg.setLevel(Level.getLevel(loggerLevel));
+                cfg.setAdditive(additive);
+            }
+        }
+        this.loggerContext.updateLoggers();
     }
 
     /**
