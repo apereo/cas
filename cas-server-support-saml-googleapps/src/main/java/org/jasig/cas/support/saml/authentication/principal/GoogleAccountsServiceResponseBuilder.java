@@ -38,6 +38,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
     private final GoogleSaml20ObjectBuilder samlObjectBuilder;
+    private int skewAllowance;
 
     /**
      * Instantiates a new Google accounts service response builder.
@@ -103,7 +104,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             notBeforeIssueInstant, samlObjectBuilder.generateSecureRandomId());
 
         final Conditions conditions = samlObjectBuilder.newConditions(notBeforeIssueInstant,
-            currentDateTime, service.getId());
+                currentDateTime.minusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
 
         final Subject subject = samlObjectBuilder.newSubject(NameID.EMAIL, userId,
@@ -118,5 +119,19 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final String result = writer.toString();
         logger.debug("Generated Google SAML response: {}", result);
         return result;
+    }
+
+    /**
+     * Sets the allowance for time skew in seconds
+     * between CAS and the client server.  Default 0s.
+     * This value will be subtracted from the current time when setting the SAML
+     * {@code NotBeforeDate} attribute, thereby allowing for the
+     * CAS server to be ahead of the client by as much as the value defined here.
+     *
+     * @param skewAllowance Number of seconds to allow for variance.
+     */
+    public void setSkewAllowance(final int skewAllowance) {
+        logger.debug("Using {} seconds as skew allowance.", skewAllowance);
+        this.skewAllowance = skewAllowance;
     }
 }
