@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.ticket.registry;
 
 import com.hazelcast.core.HazelcastInstance;
@@ -38,9 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Hazelcast-based implementation of a {@link TicketRegistry}.
- * <p/>
  * <p>This implementation just wraps the Hazelcast's {@link IMap}
- * which is an extension of the standard Java's <code>ConcurrentMap</code>.</p>
+ * which is an extension of the standard Java's {@code ConcurrentMap}.</p>
  * <p>The heavy lifting of distributed data partitioning, network cluster discovery and
  * join, data replication, etc. is done by Hazelcast's Map implementation.</p>
  *
@@ -61,7 +42,7 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
 
 
     /**
-     * @param hz                                  An instance of <code>HazelcastInstance</code>
+     * @param hz                                  An instance of {@code HazelcastInstance}
      * @param mapName                             Name of map to use
      * @param ticketGrantingTicketTimeoutInSeconds TTL for TGT entries
      * @param serviceTicketTimeoutInSeconds       TTL for ST entries
@@ -90,8 +71,8 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
     public void init() {
         logger.info("Setting up Hazelcast Ticket Registry...");
         logger.debug("Hazelcast instance: {} with name {}", this.hz, this.registry.getName());
-        logger.debug("TGT timeout: [{}s]", this.ticketGrantingTicketTimeoutInSeconds);
-        logger.debug("ST timeout: [{}s]", this.serviceTicketTimeoutInSeconds);
+        logger.debug("Ticket-granting ticket timeout: [{}s]", this.ticketGrantingTicketTimeoutInSeconds);
+        logger.debug("Service ticket timeout: [{}s]", this.serviceTicketTimeoutInSeconds);
     }
 
     @Override

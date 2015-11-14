@@ -29,7 +29,7 @@ Note that a change in the set of available cache nodes may produce a different t
 
 Enable the registry via:
 
-{% highlight properties %}
+{% highlight xml %}
 <alias name="memcachedTicketRegistry" alias="ticketRegistry" />
 {% endhighlight %}
 
@@ -84,7 +84,6 @@ compact data, which benefits both storage requirements and throughput.
 # memcached.protocol=BINARY
 # memcached.locatorType=ARRAY_MOD
 # memcached.failureMode=Redistribute
-# memcached.buffersize=8192
 {% endhighlight %}
 
 ## High Availability Considerations

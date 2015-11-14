@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="auditCleanupCriteria"
+          class="org.jasig.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria"
+          c:maxAgeDays="${cas.audit.max.agedays:180}" />
+
+    <bean id="auditTrailManager"
+          class="org.jasig.inspektr.audit.support.JdbcAuditTrailManager"
+          p:cleanupCriteria-ref="auditCleanupCriteria"
+          c:transactionTemplate-ref="inspektrAuditTransactionTemplate"
+          p:dataSource-ref="inspektrAuditTrailDataSource" />
+
+    <bean id="inspektrAuditTrailDataSource"
+          class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          p:driverClass="${cas.audit.database.driverClass:org.hsqldb.jdbcDriver}"
+          p:jdbcUrl="${cas.audit.database.url:jdbc:hsqldb:hsql://localhost}"
+          p:user="${cas.audit.database.user:sa}"
+          p:password="${cas.audit.database.password:}"
+          p:initialPoolSize="${cas.audit.database.pool.minSize:6}"
+          p:minPoolSize="${cas.audit.database.pool.minSize:6}"
+          p:maxPoolSize="${cas.audit.database.pool.maxSize:18}"
+          p:maxIdleTimeExcessConnections="${cas.audit.database.pool.maxIdleTime:1000}"
+          p:checkoutTimeout="${cas.audit.database.pool.maxWait:2000}"
+          p:acquireIncrement="${cas.audit.database.pool.acquireIncrement:16}"
+          p:acquireRetryAttempts="${cas.audit.database.pool.acquireRetryAttempts:5}"
+          p:acquireRetryDelay="${cas.audit.database.pool.acquireRetryDelay:2000}"
+          p:idleConnectionTestPeriod="${cas.audit.database.pool.idleConnectionTestPeriod:30}"
+          p:preferredTestQuery="${cas.audit.database.pool.connectionHealthQuery:select 1}"/>
+
+    <bean id="inspektrAuditTransactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+          p:dataSource-ref="inspektrAuditTrailDataSource" />
+
+    <bean id="inspektrAuditTransactionTemplate"
+          class="org.springframework.transaction.support.TransactionTemplate"
+          p:transactionManager-ref="inspektrAuditTransactionManager"
+          p:isolationLevelName="ISOLATION_READ_COMMITTED"
+          p:propagationBehaviorName="PROPAGATION_REQUIRED" />
+
+    <bean id="inspektrAuditEntityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:dataSource-ref="inspektrAuditTrailDataSource">
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+                  p:generateDdl="${cas.audit.database.gen.ddl:true}"
+                  p:showSql="${cas.audit.database.show.sql:true}" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${cas.audit.database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${cas.audit.database.ddl.auto:create-drop}</prop>
+                <prop key="hibernate.jdbc.batch_size">${cas.audit.database.batchSize:1}</prop>
+            </props>
+        </property>
+        <property name="packagesToScan">
+            <set>
+                <value>org.jasig.cas.web.support.entity</value>
+            </set>
+        </property>
+    </bean>
+
+</beans>

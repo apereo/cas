@@ -1,0 +1,58 @@
+task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
+    baseName = "${project.archivesBaseName}-tests"
+    classifier = "tests"
+    from sourceSets.test.output
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task wrapper(type: Wrapper, description: "Gradle's wrapper") {
+    gradleVersion = project.gradleVersion
+}
+
+task cleanLogs(description: "Clean build log files") {
+    delete fileTree(dir: project.projectDir, includes: ['**/*.log', '**/*.gz', '**/*.log.gz'])
+}
+
+task checkArtifactUpload(description: "Examines the build to see if archives can be uploaded and log the outcome") {
+	if (sonatypeUsername == null || sonatypePassword == null) {
+		logger.info "Sonatype username/password is undefined. Build will not upload project artifacts for $project.name."
+		uploadArchives.enabled = false
+	} else {
+		if (publishReleases) {
+			logger.quiet "Build will upload project release artifacts for $project.name"
+			uploadArchives.enabled = true
+			} else {
+			logger.info "Build will not upload project release artifacts for $project.name. Use [-DpublishReleases=true] to enable releases."
+			uploadArchives.enabled = false
+		}
+
+		if (publishSnapshots) {
+			logger.quiet "Build will upload project snapshot artifacts for $project.name"
+			uploadArchives.enabled = true
+		} else {
+			logger.info "Build will not upload project snapshot artifacts for $project.name. Use [-DpublishSnapshots=true] to enable snapshot."
+			uploadArchives.enabled = false
+		}
+	}
+}
+
+clean << {
+    cleanLogs
+}
+
+task findbugs(type: FindBugs) {
+    pluginClasspath = project.configurations.findbugsPlugins
+}
+
+gradle.buildFinished { buildResult ->
+    cleanLogs
+}
