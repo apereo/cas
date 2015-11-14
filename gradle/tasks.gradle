@@ -24,7 +24,7 @@ task cleanLogs(description: "Clean build log files") {
 
 task checkArtifactUpload(description: "Examines the build to see if archives can be uploaded and log the outcome") {
 	if (sonatypeUsername == null || sonatypePassword == null) {
-		logger.quiet "Sonatype username/password is undefined. Build will not upload project artifacts for $project.name."
+		logger.info "Sonatype username/password is undefined. Build will not upload project artifacts for $project.name."
 		uploadArchives.enabled = false
 	} else {
 		if (publishReleases) {
