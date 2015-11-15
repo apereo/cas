@@ -59,4 +59,5 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
         assertEquals(provider, provider2);
     }
+
 }
