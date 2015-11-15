@@ -162,7 +162,7 @@ public class JpaLockingStrategyTests {
     private LockingStrategy[] getConcurrentLocks(final String appId) {
         final LockingStrategy[] locks = new LockingStrategy[CONCURRENT_SIZE];
         for (int i = 1; i <= locks.length; i++) {
-            locks[i - 1] = newLockTxProxy(appId, appId + "-" + i, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
+            locks[i - 1] = newLockTxProxy(appId, appId + '-' + i, JpaLockingStrategy.DEFAULT_LOCK_TIMEOUT);
         }
         return locks;
     }

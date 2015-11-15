@@ -48,7 +48,7 @@ public final class OAuth20AuthorizeControllerTests {
 
     private static final int CAS_PORT = 443;
 
-    private static final String CAS_URL = CAS_SCHEME + "://" + CAS_SERVER + ":" + CAS_PORT;
+    private static final String CAS_URL = CAS_SCHEME + "://" + CAS_SERVER + ':' + CAS_PORT;
 
     private static final String SERVICE_NAME = "serviceName";
 

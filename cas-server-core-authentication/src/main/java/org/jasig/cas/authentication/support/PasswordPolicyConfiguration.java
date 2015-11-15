@@ -58,7 +58,7 @@ public class PasswordPolicyConfiguration {
 
     @Autowired
     public void setPasswordWarningNumberOfDays(
-            @Value("${password.policy.warningDays:" + DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS + "}") final int days) {
+            @Value("${password.policy.warningDays:" + DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS + '}') final int days) {
         this.passwordWarningNumberOfDays = days;
     }
 }

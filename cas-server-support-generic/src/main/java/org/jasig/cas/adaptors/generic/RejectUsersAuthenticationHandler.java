@@ -1,6 +1,5 @@
 package org.jasig.cas.adaptors.generic;
 
-import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
@@ -13,7 +12,6 @@ import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
-import java.util.Map;
 import java.util.Set;
 
 /**
