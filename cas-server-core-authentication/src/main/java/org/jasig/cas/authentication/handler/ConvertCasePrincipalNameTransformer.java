@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 
 
 /**
@@ -38,7 +37,10 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
                                                    final PrincipalNameTransformer delegate) {
         this.delegateTransformer = delegate;
     }
-    
+
+    /**
+     * Init the default delegate transformer.
+     */
     @PostConstruct
     public void init() {
         if (this.delegateTransformer == null) {

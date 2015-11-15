@@ -60,8 +60,8 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
         try {
             final MessageDigest messageDigest = MessageDigest.getInstance(this.encodingAlgorithm);
 
-            final String encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding) ?
-                    this.characterEncoding : Charset.defaultCharset().name();
+            final String encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding)
+                    ? this.characterEncoding : Charset.defaultCharset().name();
 
             LOGGER.warn("Using {} as the character encoding algorithm to update the digest", encodingCharToUse);
             messageDigest.update(password.getBytes(encodingCharToUse));
