@@ -244,8 +244,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             }
             if (!found) {
                 logger.warn(
-                        "Cannot find authentication handler that supports {}, which suggests a configuration problem.",
-                        credential);
+                        "Cannot find authentication handler that supports {} of type {}, which suggests a configuration problem.",
+                        credential, credential.getClass().getSimpleName());
             }
         }
         evaluateProducedAuthenticationContext(builder);
