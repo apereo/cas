@@ -10,7 +10,12 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -29,27 +34,13 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("yubiKeyAuthenticationHandler")
 public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler
         implements InitializingBean {
 
     private YubiKeyAccountRegistry registry;
 
     private final YubicoClient client;
-
-    /**
-     * Prepares the Yubico client with the received clientId and secretKey. By default,
-     * all YubiKey accounts are allowed to authenticate.
-     * <strong>WARNING: THIS CONSTRUCTOR RESULTS IN A
-     * CONFIGURATION THAT CONSIDERS ALL Yubikeys VALID FOR ALL USERS. YOU MUST NOT USE
-     * THIS CONSTRUCTOR IN PRODUCTION.</strong>
-     *
-     * @param clientId the client id
-     * @param secretKey the secret key
-     */
-    public YubiKeyAuthenticationHandler(@NotNull final Integer clientId,
-                                        @NotNull final String secretKey) {
-        this.client = YubicoClient.getClient(clientId, secretKey);
-    }
 
     /**
      * Prepares the Yubico client with the received clientId and secretKey. If you wish to
@@ -59,19 +50,18 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
      *
      * @param clientId the client id
      * @param secretKey the secret key
-     * @param registry the registry
      */
-    public YubiKeyAuthenticationHandler(@NotNull final Integer clientId, final String secretKey,
-                                        @NotNull final YubiKeyAccountRegistry registry) {
-        this(clientId, secretKey);
-        this.registry = registry;
+    @Autowired
+    public YubiKeyAuthenticationHandler(@NotNull @Value("${yubikey.client.id:}") final Integer clientId,
+                                        @NotNull @Value("${yubikey.secret.key:}") final String secretKey) {
+        this.client = YubicoClient.getClient(clientId, secretKey);
     }
 
     @Override
     @PostConstruct
     public void afterPropertiesSet() throws Exception {
         if (this.registry == null) {
-            logger.warn("No YubiKey account registry is defined. All credentials are considered"
+            logger.warn("No YubiKey account registry is defined. All credentials are considered "
                     + "eligible for YubiKey authentication. Consider providing an account registry via [{}]",
                     YubiKeyAccountRegistry.class.getName());
         }
@@ -118,6 +108,13 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
             logger.error(e.getMessage(), e);
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
+    }
+
+
+    @Autowired(required=false)
+    public void setRegistry(@Qualifier("yubiKeyAccountRegistry")
+                                final YubiKeyAccountRegistry registry) {
+        this.registry = registry;
     }
 
     public YubiKeyAccountRegistry getRegistry() {
