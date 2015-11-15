@@ -79,4 +79,5 @@
         <ref bean="sessionMonitor" />
     </util:list>
 
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
 </beans>
