@@ -1,5 +1,11 @@
 package org.jasig.cas.authentication.handler;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 
@@ -11,37 +17,43 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Component("convertCasePrincipalNameTransformer")
 public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransformer {
     private boolean toUpperCase;
-    
-    @NotNull
-    private final PrincipalNameTransformer delegateTransformer;
+
+    private PrincipalNameTransformer delegateTransformer;
     
     /**
-     * Instantiates a new transformer, while initializing the
-     * inner delegate to {@link NoOpPrincipalNameTransformer}.
+     * Instantiates a new transformer.
      */
-    public ConvertCasePrincipalNameTransformer() {
-        this.delegateTransformer = new NoOpPrincipalNameTransformer();
-    }
+    public ConvertCasePrincipalNameTransformer() {}
     
     /**
      * Instantiates a new transformer, accepting an inner delegate.
      *
      * @param delegate the delegate
      */
-    public ConvertCasePrincipalNameTransformer(final PrincipalNameTransformer delegate) {
+    @Autowired(required = false)
+    public ConvertCasePrincipalNameTransformer(@Qualifier("delegateTransformer")
+                                                   final PrincipalNameTransformer delegate) {
         this.delegateTransformer = delegate;
     }
     
-    
+    @PostConstruct
+    public void init() {
+        if (this.delegateTransformer == null) {
+            this.delegateTransformer = new NoOpPrincipalNameTransformer();
+        }
+    }
+
     @Override
     public String transform(final String formUserId) {
         final String result = this.delegateTransformer.transform(formUserId.trim()).trim();
         return this.toUpperCase ? result.toUpperCase(): result.toLowerCase();
     }
 
-    public final void setToUpperCase(final boolean toUpperCase) {
+    @Autowired
+    public final void setToUpperCase(@Value("${cas.principal.transform.upperCase:false}") final boolean toUpperCase) {
         this.toUpperCase = toUpperCase;
     }
 
