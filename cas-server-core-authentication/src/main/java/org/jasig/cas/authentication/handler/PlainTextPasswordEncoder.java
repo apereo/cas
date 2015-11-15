@@ -1,6 +1,5 @@
 package org.jasig.cas.authentication.handler;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 /**

@@ -58,7 +58,7 @@ public final class OAuth20CallbackAuthorizeControllerTests {
         assertEquals(OAuthConstants.CONFIRM_VIEW, modelAndView.getViewName());
         final Map<String, Object> map = modelAndView.getModel();
         assertEquals(SERVICE_NAME, map.get("serviceName"));
-        assertEquals(REDIRECT_URI + "?" + OAuthConstants.CODE + "=" + SERVICE_TICKET, map.get("callbackUrl"));
+        assertEquals(REDIRECT_URI + '?' + OAuthConstants.CODE + '=' + SERVICE_TICKET, map.get("callbackUrl"));
     }
 
     @Test
@@ -79,7 +79,7 @@ public final class OAuth20CallbackAuthorizeControllerTests {
         assertEquals(OAuthConstants.CONFIRM_VIEW, modelAndView.getViewName());
         final Map<String, Object> map = modelAndView.getModel();
         assertEquals(SERVICE_NAME, map.get("serviceName"));
-        assertEquals(REDIRECT_URI + "?" + OAuthConstants.CODE + "=" + SERVICE_TICKET + "&" + OAuthConstants.STATE + "="
+        assertEquals(REDIRECT_URI + '?' + OAuthConstants.CODE + '=' + SERVICE_TICKET + '&' + OAuthConstants.STATE + '='
                 + STATE, map.get("callbackUrl"));
     }
 }

@@ -58,13 +58,13 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     @Qualifier("inspektrAuditTrailDataSource")
     private DataSource dataSource;
 
-    @Value("${cas.throttle.appcode:" + DEFAULT_APPLICATION_CODE + "}")
+    @Value("${cas.throttle.appcode:" + DEFAULT_APPLICATION_CODE + '}')
     private String applicationCode = DEFAULT_APPLICATION_CODE;
 
-    @Value("${cas.throttle.authn.failurecode:" + DEFAULT_AUTHN_FAILED_ACTION + "}")
+    @Value("${cas.throttle.authn.failurecode:" + DEFAULT_AUTHN_FAILED_ACTION + '}')
     private String authenticationFailureCode = DEFAULT_AUTHN_FAILED_ACTION;
 
-    @Value("${cas.throttle.audit.query:" + SQL_AUDIT_QUERY + "}")
+    @Value("${cas.throttle.audit.query:" + SQL_AUDIT_QUERY + '}')
     private String sqlQueryAudit;
 
     private JdbcTemplate jdbcTemplate;

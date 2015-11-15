@@ -77,7 +77,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @param separator The separator to set.
      */
     @Autowired
-    public final void setSeparator(@Value("${file.authn.separator:" + DEFAULT_SEPARATOR + "}") final String separator) {
+    public final void setSeparator(@Value("${file.authn.separator:" + DEFAULT_SEPARATOR + '}') final String separator) {
         this.separator = separator;
     }
 
