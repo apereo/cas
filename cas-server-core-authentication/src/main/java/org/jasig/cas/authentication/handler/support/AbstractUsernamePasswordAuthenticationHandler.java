@@ -9,6 +9,8 @@ import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.jasig.cas.authentication.support.PasswordPolicyConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.constraints.NotNull;
@@ -94,15 +96,21 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends
      * @param passwordEncoder the PasswordEncoder to use when encoding
      * passwords.
      */
-    public final void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
+    @Autowired(required=false)
+    public final void setPasswordEncoder(@Qualifier("passwordEncoder")
+                                             final PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public final void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
+    @Autowired(required=false)
+    public final void setPrincipalNameTransformer(@Qualifier("principalNameTransformer")
+                                                      final PrincipalNameTransformer principalNameTransformer) {
         this.principalNameTransformer = principalNameTransformer;
     }
-    
-    public final void setPasswordPolicyConfiguration(final PasswordPolicyConfiguration passwordPolicyConfiguration) {
+
+    @Autowired(required=false)
+    public final void setPasswordPolicyConfiguration(@Qualifier("passwordPolicyConfiguration")
+                                                         final PasswordPolicyConfiguration passwordPolicyConfiguration) {
         this.passwordPolicyConfiguration = passwordPolicyConfiguration;
     }
 

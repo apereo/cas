@@ -50,7 +50,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      */
     @PostConstruct
     public void init() {
-        if (StringUtils.isNotBlank(this.acceptedUsers)) {
+        if (StringUtils.isNotBlank(this.acceptedUsers) && this.users == null) {
             final Set<String> usersPasswords = org.springframework.util.StringUtils.commaDelimitedListToSet(this.acceptedUsers);
             final Map<String, String> parsedUsers = new HashedMap<>();
             for (final String usersPassword : usersPasswords) {
