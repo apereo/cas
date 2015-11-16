@@ -9,11 +9,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Base class for all CRL-based revocation checkers.
@@ -22,6 +26,7 @@ import org.slf4j.LoggerFactory;
  * @since 3.4.6
  *
  */
+@Component("abstractCRLRevocationChecker")
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -34,16 +39,22 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     protected boolean checkAll;
 
     /** Policy to apply when CRL data is unavailable. */
-    @NotNull
-    private RevocationPolicy<Void> unavailableCRLPolicy = new DenyRevocationPolicy();
+    private RevocationPolicy<Void> unavailableCRLPolicy;
 
     /** Policy to apply when CRL data has expired. */
-    @NotNull
-    private RevocationPolicy<X509CRL> expiredCRLPolicy = new ThresholdExpiredCRLRevocationPolicy();
+    private RevocationPolicy<X509CRL> expiredCRLPolicy;
 
-    /**
-     * {@inheritDoc}
-     **/
+
+    @PostConstruct
+    public void init() {
+        if (this.unavailableCRLPolicy == null){
+           this.unavailableCRLPolicy = new DenyRevocationPolicy();
+        }
+        if (this.expiredCRLPolicy == null) {
+            this.expiredCRLPolicy = new ThresholdExpiredCRLRevocationPolicy();
+        }
+    }
+
     @Override
     public void check(final X509Certificate cert) throws GeneralSecurityException {
         if (cert == null) {
@@ -113,6 +124,14 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     }
 
 
+    public RevocationPolicy<Void> getUnavailableCRLPolicy() {
+        return unavailableCRLPolicy;
+    }
+
+    public RevocationPolicy<X509CRL> getExpiredCRLPolicy() {
+        return expiredCRLPolicy;
+    }
+
     /**
      * Indicates whether all resources should be checked,
      * or revocation should stop at the first resource
@@ -120,7 +139,9 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
      *
      * @param checkAll the check all
      */
-    public final void setCheckAll(final boolean checkAll) {
+    @Autowired
+    public void setCheckAll(@Value("${cas.x509.authn.crl.checkAll:false}")
+                                final boolean checkAll) {
         this.checkAll = checkAll;
     }
 
