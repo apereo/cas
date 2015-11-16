@@ -11,6 +11,7 @@ import org.jasig.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.jasig.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
+import org.jasig.cas.validation.ValidationResponseType;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.StaticApplicationContext;
@@ -268,6 +269,40 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertEquals(AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME, modelAndView.getViewName());
         assertNull(modelAndView.getModel().get("pgtIou"));
+    }
+
+    @Test
+    public void verifyValidServiceTicketAndFormatAsJson() throws Exception {
+        final TicketGrantingTicket tId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+
+        final Service svc = org.jasig.cas.authentication.TestUtils.getService("proxyService");
+        final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc);
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", svc.getId());
+        request.addParameter("ticket", sId.getId());
+        request.addParameter("format", ValidationResponseType.JSON.name());
+
+        final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        assertEquals(modelAndView.getViewName(), AbstractServiceValidateController.DEFAULT_SERVICE_VIEW_NAME_JSON);
+    }
+
+    @Test
+    public void verifyValidServiceTicketAndBadFormat() throws Exception {
+        final TicketGrantingTicket tId = getCentralAuthenticationService()
+                .createTicketGrantingTicket(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+
+        final Service svc = org.jasig.cas.authentication.TestUtils.getService("proxyService");
+        final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc);
+
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", svc.getId());
+        request.addParameter("ticket", sId.getId());
+        request.addParameter("format", "NOTHING");
+
+        final ModelAndView modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
+        assertEquals(modelAndView.getViewName(), AbstractServiceValidateController.DEFAULT_SERVICE_FAILURE_VIEW_NAME);
     }
 
     protected final ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
