@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;

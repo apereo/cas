@@ -1,6 +1,5 @@
 package org.jasig.cas.adaptors.jdbc;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
