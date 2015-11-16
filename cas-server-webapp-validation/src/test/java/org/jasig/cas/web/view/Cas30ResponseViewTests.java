@@ -1,6 +1,7 @@
 package org.jasig.cas.web.view;
 
 import org.jasig.cas.CasProtocolConstants;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.jasig.cas.services.ServicesManager;
@@ -78,7 +79,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         final String encodedPsw = (String) attributes.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         final String password = decryptCredential(encodedPsw);
         final UsernamePasswordCredential creds =
-                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
+                TestUtils.getCredentialsWithSameUsernameAndPassword();
         assertEquals(password, creds.getPassword());
     }
 
