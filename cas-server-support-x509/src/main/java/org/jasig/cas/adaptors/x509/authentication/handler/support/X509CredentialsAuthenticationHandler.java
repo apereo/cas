@@ -176,7 +176,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * @param allowed Allow CA certs to have unlimited intermediate certs (default=false).
      */
     @Autowired
-    public void setMaxPathLengthAllowUnspecified(@Value("${cas.x509.authn.max.path.length.unspecified:" + DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED + '}')
+    public void setMaxPathLengthAllowUnspecified(@Value("${cas.x509.authn.max.path.length.unspecified:"
+                                                    + DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED + '}')
                                                  final boolean allowed) {
         this.maxPathLengthAllowUnspecified = allowed;
     }

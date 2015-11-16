@@ -1,10 +1,8 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import com.google.common.collect.ImmutableSet;
-import org.jasig.cas.util.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

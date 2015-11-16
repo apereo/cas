@@ -226,7 +226,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * @param numberOfIterationsFieldName the password field name
      */
     @Autowired
-    public final void setNumberOfIterationsFieldName(@Value("${cas.jdbc.authn.query.encode.iterations.field:" + DEFAULT_NUM_ITERATIONS_FIELD + '}')
+    public final void setNumberOfIterationsFieldName(@Value("${cas.jdbc.authn.query.encode.iterations.field:"
+                                                            + DEFAULT_NUM_ITERATIONS_FIELD + '}')
                                                          final String numberOfIterationsFieldName) {
         this.numberOfIterationsFieldName = numberOfIterationsFieldName;
     }
