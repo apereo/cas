@@ -4,7 +4,6 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.ReloadableServicesManager;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
 import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.WebUtils;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
-import java.security.SecureRandom;
 
 /**
  * Initializes the CAS root servlet context to make sure
