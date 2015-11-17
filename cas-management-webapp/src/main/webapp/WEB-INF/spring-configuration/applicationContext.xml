@@ -34,10 +34,6 @@
     <bean id="passThroughController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
     <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
 
-    <!--
-        TODO: Never used, but required for auto-wiring! because cas-core and other dependant modules
-        require the following beans to be available in the context.
-     -->
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
@@ -48,5 +44,5 @@
     <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
     <util:list id="serviceFactoryList" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
-
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
 </beans>

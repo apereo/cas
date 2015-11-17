@@ -50,6 +50,7 @@
   <bean id="jpaLockingStrategy" class="org.jasig.cas.ticket.registry.support.JpaLockingStrategy" />
 
   <!-- CAS Context Core -->
+  <alias name="defaultPrincipalFactory" alias="principalFactory" />
   <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
   <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
   <util:map id="authenticationHandlersResolvers"/>
