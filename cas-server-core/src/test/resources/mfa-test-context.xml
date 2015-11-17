@@ -123,6 +123,6 @@
             </map>
         </constructor-arg>
     </bean>
-
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
 
 </beans>

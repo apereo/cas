@@ -14,6 +14,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -49,7 +50,12 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
+
         try {
+            if (this.fileName == null || !this.fileName.exists()) {
+                throw new FileNotFoundException("Filename does not exist");
+            }
+
             final String username = credential.getUsername();
             final String passwordOnRecord = getPasswordOnRecord(username);
             if (StringUtils.isBlank(passwordOnRecord)) {
@@ -89,20 +95,19 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
-        if (this.fileName != null && this.fileName.exists()) {
-            try (BufferedReader bufferedReader =
-                         new BufferedReader(
-                                 new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
-                String line = bufferedReader.readLine();
-                while (line != null) {
-                    final String[] lineFields = line.split(this.separator);
-                    final String userOnRecord = lineFields[0];
-                    final String passOnRecord = lineFields[1];
-                    if (username.equals(userOnRecord)) {
-                        return passOnRecord;
-                    }
-                    line = bufferedReader.readLine();
+
+        try (BufferedReader bufferedReader =
+                     new BufferedReader(
+                             new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                final String[] lineFields = line.split(this.separator);
+                final String userOnRecord = lineFields[0];
+                final String passOnRecord = lineFields[1];
+                if (username.equals(userOnRecord)) {
+                    return passOnRecord;
                 }
+                line = bufferedReader.readLine();
             }
         }
         return null;
