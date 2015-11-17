@@ -44,6 +44,9 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
     private RevocationPolicy<X509CRL> expiredCRLPolicy;
 
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         if (this.unavailableCRLPolicy == null){
