@@ -18,6 +18,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20ProtocolValidationSpecification;
+import org.jasig.cas.validation.ValidationResponseType;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     /** View if Service Ticket Validation Succeeds. */
     public static final String DEFAULT_SERVICE_SUCCESS_VIEW_NAME = "cas2ServiceSuccessView";
+
+    /** JSON View if Service Ticket Validation Succeeds and if service requires JSON. */
+    public static final String DEFAULT_SERVICE_VIEW_NAME_JSON = "cas3ServiceJsonView";
+
 
     @Autowired
     private ApplicationContext context;
@@ -165,7 +170,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (service == null || serviceTicketId == null) {
             logger.debug("Could not identify service and/or service ticket for service: [{}]", service);
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
-                    CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null, request);
+                    CasProtocolConstants.ERROR_CODE_INVALID_REQUEST, null, request, service);
         }
 
         try {
@@ -176,14 +181,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 if (proxyGrantingTicketId == null) {
                     return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                            new Object[]{serviceCredential.getId()}, request);
+                            new Object[]{serviceCredential.getId()}, request, service);
                 }
             }
 
             final Assertion assertion = this.centralAuthenticationService.validateServiceTicket(serviceTicketId, service);
             if (!validateAssertion(request, serviceTicketId, assertion)) {
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET,
-                        CasProtocolConstants.ERROR_CODE_INVALID_TICKET, null, request);
+                        CasProtocolConstants.ERROR_CODE_INVALID_TICKET, null, request, service);
             }
 
             String proxyIou = null;
@@ -192,7 +197,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                 if (StringUtils.isEmpty(proxyIou)) {
                     return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
                             CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK,
-                            new Object[] {serviceCredential.getId()}, request);
+                            new Object[] {serviceCredential.getId()}, request, service);
                 }
             }
 
@@ -202,14 +207,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
             return generateErrorView(code, code,
-                    new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()}, request);
+                    new Object[] {serviceTicketId, e.getOriginalService().getId(), service.getId()}, request, service);
         } catch (final AbstractTicketException te) {
             return generateErrorView(te.getCode(), te.getCode(),
-                new Object[] {serviceTicketId}, request);
+                new Object[] {serviceTicketId}, request, service);
         } catch (final UnauthorizedProxyingException e) {
-            return generateErrorView(e.getMessage(), e.getMessage(), new Object[] {service.getId()}, request);
+            return generateErrorView(e.getMessage(), e.getMessage(), new Object[] {service.getId()}, request, service);
         } catch (final UnauthorizedServiceException e) {
-            return generateErrorView(e.getMessage(), e.getMessage(), null, request);
+            return generateErrorView(e.getMessage(), e.getMessage(), null, request, service);
         }
     }
 
@@ -255,14 +260,26 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the model and view
      */
     private ModelAndView generateErrorView(final String code, final String description,
-                                           final Object[] args, final HttpServletRequest request) {
-        final ModelAndView modelAndView = new ModelAndView(this.failureView);
+                                           final Object[] args,
+                                           final HttpServletRequest request,
+                                           final WebApplicationService service) {
+
+        final ModelAndView modelAndView = getModelAndView(false, service);
         final String convertedDescription = this.context.getMessage(description, args,
             description, request.getLocale());
-        modelAndView.addObject("code", code);
-        modelAndView.addObject("description", convertedDescription);
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, code);
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_DESCRIPTION, convertedDescription);
 
         return modelAndView;
+    }
+
+    private ModelAndView getModelAndView(final boolean isSuccess, final WebApplicationService service) {
+        if (service != null){
+            if (service.getFormat() == ValidationResponseType.JSON) {
+                return new ModelAndView(DEFAULT_SERVICE_VIEW_NAME_JSON);
+            }
+        }
+        return new ModelAndView(isSuccess ? this.successView : this.failureView);
     }
 
     /**
@@ -278,18 +295,19 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                              final WebApplicationService service,
                                              final TicketGrantingTicket proxyGrantingTicket) {
 
-        final ModelAndView success = new ModelAndView(this.successView);
-        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
-        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
-        success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
+        final ModelAndView modelAndView = getModelAndView(true, service);
+
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, service);
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, proxyIou);
         if (proxyGrantingTicket != null) {
-            success.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
+            modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, proxyGrantingTicket.getId());
         }
         final Map<String, ?> augmentedModelObjects = augmentSuccessViewModelObjects(assertion);
         if (augmentedModelObjects != null) {
-            success.addAllObjects(augmentedModelObjects);
+            modelAndView.addAllObjects(augmentedModelObjects);
         }
-        return success;
+        return modelAndView;
     }
 
     /**
