@@ -68,6 +68,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
 
         this.checker = checker;
         this.checker.setExpiredCRLPolicy(expiredCRLPolicy);
+        this.checker.init();
         this.webServer = new MockWebServer(8085, new FileSystemResource(file), "text/plain");
         logger.debug("Web server listening on port 8085 serving file {}", crlFile);
     }
