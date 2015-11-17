@@ -45,6 +45,9 @@ public interface CasProtocolConstants {
     /** Constant representing the ticket parameter in the request. */
     String PARAMETER_TICKET = "ticket";
 
+    /** Constant representing the format parameter in the request. */
+    String PARAMETER_FORMAT = "format";
+
     /** Constant representing the targetService parameter in the request. */
     String PARAMETER_TARGET_SERVICE = "targetService";
 
