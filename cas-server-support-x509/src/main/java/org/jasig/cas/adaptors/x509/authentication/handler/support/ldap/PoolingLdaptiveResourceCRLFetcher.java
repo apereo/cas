@@ -12,19 +12,26 @@ import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * Fetches a CRL from an LDAP instance.
  * @author Daniel Fisher
  * @since 4.1
  */
+@Component("poolingLdaptiveResourceCRLFetcher")
 public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetcher {
 
     /** Connection pool template. */
-    protected final BlockingConnectionPool connectionPool;
+    protected BlockingConnectionPool connectionPool;
 
     /** Map of connection pools. */
     private final Map<String, PooledConnectionFactory> connectionPoolMap = new HashMap<>();
+
+    /** Serialization support. */
+    protected PoolingLdaptiveResourceCRLFetcher() {}
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
@@ -95,7 +102,7 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
      * @param config to copy properties from
      * @return pool config
      */
-    private PoolConfig newPoolConfig(final PoolConfig config) {
+    private static PoolConfig newPoolConfig(final PoolConfig config) {
         final PoolConfig pc = new PoolConfig();
         pc.setMinPoolSize(config.getMinPoolSize());
         pc.setMaxPoolSize(config.getMaxPoolSize());
@@ -105,4 +112,22 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
         pc.setValidatePeriod(config.getValidatePeriod());
         return pc;
     }
+
+    @Autowired(required=false)
+    public void setConnectionPool(@Qualifier("poolingLdaptiveConnectionPool")  final BlockingConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
+
+    @Autowired(required = false)
+    @Override
+    public void setSearchExecutor(@Qualifier("poolingLdaptiveResourceCRLSearchExecutor") final SearchExecutor searchExecutor) {
+        super.setSearchExecutor(searchExecutor);
+    }
+
+    @Autowired(required=false)
+    @Override
+    public void setConnectionConfig(@Qualifier("poolingLdaptiveResourceCRLConnectionConfig") final ConnectionConfig connectionConfig) {
+        super.setConnectionConfig(connectionConfig);
+    }
+
 }

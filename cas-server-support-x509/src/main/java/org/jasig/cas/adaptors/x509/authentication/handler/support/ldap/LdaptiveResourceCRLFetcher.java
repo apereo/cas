@@ -15,20 +15,27 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.stereotype.Component;
 
 /**
  * Fetches a CRL from an LDAP instance.
  * @author Daniel Fisher
  * @since 4.1
  */
+@Component("ldaptiveResourceCRLFetcher")
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
     /** Search exec that looks for the attribute. */
-    protected final SearchExecutor searchExecutor;
+    protected SearchExecutor searchExecutor;
 
     /** The connection config to prep for connections. **/
-    protected final ConnectionConfig connectionConfig;
+    protected ConnectionConfig connectionConfig;
+
+    /** Serialization support. */
+    protected LdaptiveResourceCRLFetcher() {}
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
@@ -130,5 +137,15 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
         final ConnectionConfig cc = ConnectionConfig.newConnectionConfig(this.connectionConfig);
         cc.setLdapUrl(ldapURL);
         return new DefaultConnectionFactory(cc);
+    }
+
+    @Autowired(required=false)
+    public void setSearchExecutor(@Qualifier("ldaptiveResourceCRLSearchExecutor") final SearchExecutor searchExecutor) {
+        this.searchExecutor = searchExecutor;
+    }
+
+    @Autowired(required=false)
+    public void setConnectionConfig(@Qualifier("ldaptiveResourceCRLConnectionConfig") final ConnectionConfig connectionConfig) {
+        this.connectionConfig = connectionConfig;
     }
 }

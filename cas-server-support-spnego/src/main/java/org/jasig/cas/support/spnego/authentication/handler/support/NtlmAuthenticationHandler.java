@@ -45,7 +45,6 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
     private boolean loadBalance = true;
 
-    @NotNull
     private String domainController = DEFAULT_DOMAIN_CONTROLLER;
 
     private String includePattern;
@@ -134,7 +133,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
      * @param domainController the domain controller
      */
     @Autowired
-    public void setDomainController(@Value("${ntlm.authn.domain.controller:}") final String domainController) {
+    public void setDomainController(@Value("${ntlm.authn.domain.controller:}") @NotNull final String domainController) {
         if (StringUtils.isBlank(domainController)) {
             this.domainController = DEFAULT_DOMAIN_CONTROLLER;
         } else {

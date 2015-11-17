@@ -46,6 +46,7 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
             final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
             checker.setThrowOnFetchFailure(true);
             checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
+            checker.init();
             final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
             checker.check(cert);
         }
@@ -60,6 +61,7 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
             final CRLDistributionPointRevocationChecker checker = new CRLDistributionPointRevocationChecker(cache, fetcher);
             checker.setThrowOnFetchFailure(true);
             checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
+            checker.init();
             final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
             checker.check(cert);
         }

@@ -125,9 +125,11 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
      * @throws Exception the exception
      */
     @PostConstruct
-    public void afterPropertiesSet() throws Exception {
-        initializeResourcesFromContext();
+    @Override
+    public void init()  {
+        super.init();
 
+        initializeResourcesFromContext();
         if (!validateConfiguration()) {
             return;
         }
