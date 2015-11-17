@@ -34,7 +34,6 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     private String rejectedUsersConfig;
 
     /** The collection of users to reject. */
-    @NotNull
     private Set<String> users;
 
     /**
@@ -64,7 +63,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      *
      * @param users The Collection of usernames we should not authenticate.
      */
-    public final void setUsers(final Set<String> users) {
+    public final void setUsers(@NotNull final Set<String> users) {
         this.users = users;
     }
 

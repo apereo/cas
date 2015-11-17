@@ -86,6 +86,7 @@
     <util:list id="monitorsList" />
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultTicketRegistry" alias="ticketRegistry" />
     <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
