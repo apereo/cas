@@ -35,5 +35,6 @@
     <util:list id="userDetailsRoleAttributes">
         <value>uugid</value>
     </util:list>
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
 
 </beans>

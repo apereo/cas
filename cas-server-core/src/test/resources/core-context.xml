@@ -313,4 +313,6 @@
 
     <bean id="persistentIdGenerator" class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
           c:salt="casrox"  />
+
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
 </beans>
