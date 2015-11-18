@@ -27,7 +27,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         when(p.getId()).thenReturn("person");
         when(p.getAttributes()).thenReturn(attrs);
         
-        final String id = provider.resolveUsername(p, TestUtils.getService());
+        final String id = provider.resolveUsername(p, TestUtils.getService("proxyService"));
         assertEquals(id, "TheName");
         
     }
@@ -44,7 +44,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         when(p.getId()).thenReturn("person");
         when(p.getAttributes()).thenReturn(attrs);
         
-        final String id = provider.resolveUsername(p, TestUtils.getService());
+        final String id = provider.resolveUsername(p, TestUtils.getService("proxyService"));
         assertEquals(id, p.getId());
         
     }
