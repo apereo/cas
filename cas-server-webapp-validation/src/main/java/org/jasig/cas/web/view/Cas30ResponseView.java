@@ -11,6 +11,7 @@ import org.jasig.cas.services.web.view.CasViewConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
 import javax.annotation.Resource;
@@ -45,7 +46,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
      *
      * @param view the view
      */
-    protected Cas30ResponseView(final AbstractUrlBasedView view) {
+    protected Cas30ResponseView(final View view) {
         super(view);
     }
 

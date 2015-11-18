@@ -14,7 +14,8 @@ import java.util.Map;
  * @since 4.1.0
  */
 public abstract class AbstractDelegatingCasView extends AbstractCasView {
-   private final View view;
+    /** View to delegate. */
+    private final View view;
 
     /**
      * Instantiates a new Abstract cas jstl view.
@@ -47,4 +48,7 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     protected abstract void prepareMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
                                                      HttpServletResponse response) throws Exception;
 
+    public final View getDelegatedView() {
+        return view;
+    }
 }
