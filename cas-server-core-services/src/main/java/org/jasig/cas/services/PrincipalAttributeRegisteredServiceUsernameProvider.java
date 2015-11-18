@@ -118,15 +118,25 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     protected Map<String, Object> getPrincipalAttributes(final Principal p, final Service service) {
         final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
         if (context != null) {
+            logger.debug("Located application context to locate the service registry entry");
             final ReloadableServicesManager servicesManager = context.getBean(ReloadableServicesManager.class);
-            final RegisteredService registeredService = servicesManager.findServiceBy(service);
+            if (servicesManager != null) {
+                final RegisteredService registeredService = servicesManager.findServiceBy(service);
 
-            if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                logger.debug("Located service {} in the registry. Attempting to resolve attributes for {}",
-                        service.getId(), p.getId());
-                return registeredService.getAttributeReleasePolicy().getAttributes(p);
+                if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+                    logger.debug("Located service {} in the registry. Attempting to resolve attributes for {}",
+                            service.getId(), p.getId());
+
+                    if (registeredService.getAttributeReleasePolicy() == null) {
+                        logger.debug("No attribute release policy is defined for {}. Returning default principal attributes",
+                                service.getId());
+                        return p.getAttributes();
+                    }
+                    return registeredService.getAttributeReleasePolicy().getAttributes(p);
+                }
             }
 
+            logger.debug("Could not locate service {} in the registry.", service.getId());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
         logger.warn("No application context could be detected. Returning default principal attributes");
