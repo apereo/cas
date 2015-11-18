@@ -1,4 +1,4 @@
-description = "Apereo Cenrtal Authentication Service"
+description = "Apereo Central Authentication Service"
 
 defaultTasks "clean", "build"
 
