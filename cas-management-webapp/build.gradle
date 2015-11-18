@@ -120,7 +120,7 @@ configurations {
 }
 
 gretty {
-    jvmArgs = ["-Xdebug", "-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+    jvmArgs = ["-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug","-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
     scanInterval = 5
     contextPath = '/cas-management'
     httpsEnabled = true
