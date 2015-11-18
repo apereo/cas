@@ -54,14 +54,14 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
         final String clientName = credentials.getClientName();
         logger.debug("clientName:  {}", clientName);
 
-        // get client
-        final Client<Credentials, UserProfile> client = this.clients.findClient(clientName);
-        logger.debug("client: {}", client);
-
         // web context
         final HttpServletRequest request = WebUtils.getHttpServletRequest();
         final HttpServletResponse response = WebUtils.getHttpServletResponse();
         final WebContext webContext = new J2EContext(request, response);
+
+        // get client
+        final Client<Credentials, UserProfile> client = this.clients.findClient(webContext, clientName);
+        logger.debug("client: {}", client);
 
         // get user profile
         final UserProfile userProfile = client.getUserProfile(credentials, webContext);

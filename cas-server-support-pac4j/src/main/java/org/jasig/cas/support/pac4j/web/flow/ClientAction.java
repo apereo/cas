@@ -1,5 +1,6 @@
 package org.jasig.cas.support.pac4j.web.flow;
 
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -52,6 +53,11 @@ import javax.validation.constraints.NotNull;
 @Component("clientAction")
 public final class ClientAction extends AbstractAction {
     /**
+     * All the urls and names of the pac4j clients.
+     */
+    public static final String PAC4J_URLS = "pac4jUrls";
+
+    /**
      * Constant for the service parameter.
      */
     public static final String SERVICE = "service";
@@ -67,6 +73,7 @@ public final class ClientAction extends AbstractAction {
      * Constant for the method parameter.
      */
     public static final String METHOD = "method";
+
     /**
      * Supported protocols.
      */
@@ -121,7 +128,7 @@ public final class ClientAction extends AbstractAction {
             // get client
             final BaseClient<Credentials, CommonProfile> client =
                     (BaseClient<Credentials, CommonProfile>) this.clients
-                    .findClient(clientName);
+                    .findClient(webContext, clientName);
             logger.debug("client: {}", client);
 
             // Only supported protocols
@@ -189,14 +196,16 @@ public final class ClientAction extends AbstractAction {
         saveRequestParameter(request, session, LOCALE);
         saveRequestParameter(request, session, METHOD);
 
+        final LinkedHashMap<String, String> urls = new LinkedHashMap<>();
         // for all clients, generate redirection urls
-        for (final Client client : this.clients.findAllClients()) {
-            final String key = client.getName() + "Url";
+        for (final Client client : this.clients.getClients()) {
             final IndirectClient indirectClient = (IndirectClient) client;
+            final String name = client.getName();
             final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
-            logger.debug("{} -> {}", key, redirectionUrl);
-            context.getFlowScope().put(key, redirectionUrl);
+            logger.debug("{} -> {}", name, redirectionUrl);
+            urls.put(name, redirectionUrl);
         }
+        context.getFlowScope().put(PAC4J_URLS, urls);
     }
 
     /**
