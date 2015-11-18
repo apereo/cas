@@ -5,7 +5,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.util.ApplicationContextProvider;
 import org.slf4j.Logger;
@@ -53,14 +52,15 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
     @Override
     public String resolveUsername(final Principal principal, final Service service) {
         String principalId = principal.getId();
-        final Map<String, Object> attributes = getPrincipalAttributes(principal);
+        final Map<String, Object> attributes = getPrincipalAttributes(principal, service);
 
         if (attributes.containsKey(this.usernameAttribute)) {
             principalId = attributes.get(this.usernameAttribute).toString();
         } else {
             logger.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                     + "provide the user attribute the service expects. "
-                    + "CAS will instead return the default principal id [{}]",
+                    + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
+                    + "is allowed to be released by the service attribute release policy.",
                     principalId,
                     this.usernameAttribute,
                     attributes,
@@ -111,23 +111,21 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
      * that instance to locate attributes. If none is available,
      * will use the default principal attributes.
      *
-     * @param p the principal
+     * @param p       the principal
+     * @param service the service
      * @return the principal attributes
      */
-    protected Map<String, Object> getPrincipalAttributes(final Principal p) {
+    protected Map<String, Object> getPrincipalAttributes(final Principal p, final Service service) {
         final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
-        if (context != null) {
-            try {
-                final PrincipalAttributesRepository repository = context.getBean(PrincipalAttributesRepository.class);
-                logger.debug("Found an instance of {} in the context, which will be used to retrieve principal attributes",
-                        PrincipalAttributesRepository.class.getSimpleName());
-                return repository.getAttributes(p);
-            } catch (final Exception e) {
-                logger.trace("No bean of type {} exists in the application context",
-                        PrincipalAttributesRepository.class.getSimpleName(), e);
-            }
+        final ReloadableServicesManager servicesManager = context.getBean(ReloadableServicesManager.class);
+        final RegisteredService registeredService = servicesManager.findServiceBy(service);
+
+        if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            logger.debug("Located service {} in the registry. Attempting to resolve attributes for {}",
+                    service.getId(), p.getId());
+            return registeredService.getAttributeReleasePolicy().getAttributes(p);
         }
-        logger.debug("Retrieving principal attributes from the principal object");
-        return p.getAttributes();
+
+        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
     }
 }
