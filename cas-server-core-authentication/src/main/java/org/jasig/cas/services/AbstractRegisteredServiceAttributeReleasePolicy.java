@@ -78,7 +78,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     @Override
     public final Map<String, Object> getAttributes(final Principal p) {
-        final Map<String, Object> principalAttributes = this.principalAttributesRepository.getAttributes(p);
+        final Map<String, Object> principalAttributes = this.principalAttributesRepository == null
+                ? p.getAttributes() : this.principalAttributesRepository.getAttributes(p);
         final Map<String, Object> attributesToRelease = getAttributesInternal(principalAttributes);
         
         if (this.registeredServiceAttributeFilter != null) {
