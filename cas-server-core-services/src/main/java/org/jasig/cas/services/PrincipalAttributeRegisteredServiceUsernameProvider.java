@@ -117,15 +117,19 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
      */
     protected Map<String, Object> getPrincipalAttributes(final Principal p, final Service service) {
         final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
-        final ReloadableServicesManager servicesManager = context.getBean(ReloadableServicesManager.class);
-        final RegisteredService registeredService = servicesManager.findServiceBy(service);
+        if (context != null) {
+            final ReloadableServicesManager servicesManager = context.getBean(ReloadableServicesManager.class);
+            final RegisteredService registeredService = servicesManager.findServiceBy(service);
 
-        if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            logger.debug("Located service {} in the registry. Attempting to resolve attributes for {}",
-                    service.getId(), p.getId());
-            return registeredService.getAttributeReleasePolicy().getAttributes(p);
+            if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+                logger.debug("Located service {} in the registry. Attempting to resolve attributes for {}",
+                        service.getId(), p.getId());
+                return registeredService.getAttributeReleasePolicy().getAttributes(p);
+            }
+
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
+        logger.warn("No application context could be detected. Returning default principal attributes");
+        return p.getAttributes();
     }
 }
