@@ -16,15 +16,18 @@ JAAS components are provided in the CAS core module and require no additional de
 
 ######`JaasAuthenticationHandler`
 The JAAS handler delegates to the built-in JAAS subsystem to perform authentication according to the
-directives in the JAAS config file. The handler only exposes a single configuration property:
-
-* `realm` - JAAS realm name. (Defaults to _CAS_.)
-
-The following configuration excerpt demonstrates how to configure the JAAS handler in `deployerConfigContext.xml`:
+directives in the JAAS config file.
 
 {% highlight xml %}
-<bean class="org.jasig.cas.authentication.handler.support.JaasAuthenticationHandler"
-      p:realm="CustomCasRealm" />
+<alias name="jaasAuthenticationHandler" alias="primaryAuthenticationHandler" />
+{% endhighlight %}
+
+The following Settings are applicable:
+
+{% highlight properties %}
+# cas.authn.jaas.realm=CAS
+# cas.authn.jaas.kerb.realm=
+# cas.authn.jaas.kerb.kdc=
 {% endhighlight %}
 
 
