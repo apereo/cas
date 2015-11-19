@@ -39,7 +39,7 @@
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
           p:backingMap-ref="attrRepoBackingMap" />
 
-    <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
+    <alias name="${cas.authn.primary.handler:acceptUsersAuthenticationHandler}" alias="primaryAuthenticationHandler" />
 
     <util:map id="attrRepoBackingMap">
         <entry key="uid" value="uid" />
