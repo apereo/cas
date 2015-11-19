@@ -14,20 +14,20 @@ These are:
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
-  <dependency>
-    <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-support-generic</artifactId>
-    <version>${cas.version}</version>
-  </dependency>
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-generic</artifactId>
+  <version>${cas.version}</version>
+</dependency>
 {% endhighlight %}
 
-###`AcceptUsersAuthenticationHandler`
+###`RejectUsersAuthenticationHandler`
 {% highlight xml %}
-<bean class="org.jasig.cas.adaptors.generic.RejectUsersAuthenticationHandler">
-    <property name="users">
-       <map>
-          <entry key="scott" value="password" />
-       </map>
-    </property>
-</bean>
+<alias name="rejectUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
+{% endhighlight %}
+
+The following Settings are applicable:
+
+{% highlight properties %}
+# reject.authn.users=user1,user2
 {% endhighlight %}
