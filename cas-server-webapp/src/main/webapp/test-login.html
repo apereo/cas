@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Test remote Login using JS</title>
+    <script type="text/javascript">
+        function prepareLoginForm() {
+            $('myLoginForm').action = casLoginURL;
+            $("lt").value = loginTicket;
+        }
+
+        function checkForLoginTicket() {
+            var loginTicketProvided = false;
+            var query   = '';
+            casLoginURL = 'http://localhost:8080/login';
+            thisPageURL = 'http://localhost:8080/test-login.html';
+            casLoginURL += '?login-at=' + encodeURIComponent (thisPageURL);
+
+            query   = window.location.search;
+            query   = query.substr (1);
+
+
+            var param   = new Array();
+            //var value = new Array();
+            var temp    = new Array();
+            param   = query.split ('&');
+
+            i = 0;
+            while (param[i]) {
+                temp        = param[i].split ('=');
+                if (temp[0] == 'lt') {
+                    loginTicket = temp[1];
+                    loginTicketProvided = true;
+                }
+                if (temp[0] == 'error_message') {
+                    error = temp[1];
+                }
+                i++;
+            }
+            if (!loginTicketProvided) {
+                location.href = casLoginURL + '&get-lt=true';
+            }
+        }
+
+        function $(id) {
+            return document.getElementById(id);
+        }
+        var loginTicket;
+        var error;
+        var casLoginURL;
+        var thisPageURL;
+
+        checkForLoginTicket();
+        onload = prepareLoginForm;
+    </script>
+</head>
+<body>
+<h2>Test remote Login using JS</h2>
+<form id="myLoginForm" action="" method="post">
+    <input type="hidden" value="submit" name="_eventId"/>
+    <table>
+        <tr>
+                <td id="txt_error" colspan="2">
+             
+                <script type="text/javascript" language="javascript">
+            <!--
+            if ( error ) {
+                error = decodeURIComponent (error);
+                document.write (error);
+            }
+            //-->
+        </script>
+             
+                </td>
+        </tr>
+        <tr>
+                <td>Benutzer:</td>
+                <td><input type="text" value="konrad" name="username" ></td>
+        </tr>
+        <tr>
+                <td>Password:</td>
+                <td><input type="text" value="konrad" name="password" ></td>
+        </tr>
+        <tr>
+                <td>Login Ticket:</td>
+                <td><input type="text" name="lt" id="lt" value=""></td>
+        </tr>
+        <tr>
+                <td>Service:</td>
+                <td><input type="text" name="service" value="http://quiz.jacomac.de"></td>
+        </tr>
+        <tr>
+                <td align="right" colspan="2"><input type="submit" /></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

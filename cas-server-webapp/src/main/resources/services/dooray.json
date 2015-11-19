@@ -1,0 +1,9 @@
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "id" : 0,
+  "description" : "NHNENT 가 서비스하는 웹 기반 협업 툴",
+  "serviceId" : "^https://*.dooray.com",
+  "name" : "Dooray",
+  "theme" : "apereo",
+  "evaluationOrder" : 0
+}

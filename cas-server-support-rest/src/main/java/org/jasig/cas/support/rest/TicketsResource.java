@@ -25,6 +25,10 @@ import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.util.CipherExecutor;
+import org.jasig.cas.util.DefaultCipherExecutor;
+import org.jasig.cas.web.support.DefaultCasCookieValueManager;
+import org.ldaptive.control.util.DefaultCookieManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +67,8 @@ public class TicketsResource {
 
     @Autowired
     private CentralAuthenticationService cas;
+    @Autowired
+    private DefaultCasCookieValueManager cookieValueManager;
 
     /**
      * Create new ticket granting ticket.
@@ -85,6 +91,7 @@ public class TicketsResource {
             fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
                     .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
                     .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
+                    .format("<input type=\"hidden\" value=\"%s\">", cookieValueManager.buildCookieValue(tgtId.getId(), request))
                     .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
             return new ResponseEntity<String>(fmt.toString(), headers, HttpStatus.CREATED);
         } catch (final Throwable e) {

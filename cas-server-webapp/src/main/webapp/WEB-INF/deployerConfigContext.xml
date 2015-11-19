@@ -52,17 +52,22 @@
        | be sufficient in most cases.
        +-->
     <bean id="authenticationManager" class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
+        <!--<constructor-arg>-->
+            <!--<map>-->
+                <!--&lt;!&ndash;-->
+                   <!--| IMPORTANT-->
+                   <!--| Every handler requires a unique name.-->
+                   <!--| If more than one instance of the same handler class is configured, you must explicitly-->
+                   <!--| set its name to something other than its default name (typically the simple class name).-->
+                   <!--&ndash;&gt;-->
+                <!--<entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />-->
+                <!--<entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />-->
+            <!--</map>-->
+        <!--</constructor-arg>-->
         <constructor-arg>
-            <map>
-                <!--
-                   | IMPORTANT
-                   | Every handler requires a unique name.
-                   | If more than one instance of the same handler class is configured, you must explicitly
-                   | set its name to something other than its default name (typically the simple class name).
-                   -->
-                <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
-                <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
-            </map>
+            <list>
+                <ref bean="primaryAuthenticationHandler" />
+            </list>
         </constructor-arg>
 
         <!-- Uncomment the metadata populator to capture the password.
@@ -102,14 +107,141 @@
        | * org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler
        | * org.jasig.cas.support.spnego.authentication.handler.support.JCIFSSpnegoAuthenticationHandler
        -->
+    <!--<bean id="primaryAuthenticationHandler"-->
+          <!--class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">-->
+        <!--<property name="users">-->
+            <!--<map>-->
+                <!--<entry key="casuser" value="Mellon"/>-->
+            <!--</map>-->
+        <!--</property>-->
+    <!--</bean>-->
+
     <bean id="primaryAuthenticationHandler"
-          class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler">
-        <property name="users">
+          class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+          p:principalIdAttribute="cn"
+          init-method="initialize"
+          c:authenticator-ref="authenticator"
+          p:ldapAttributeRetriever-ref="ldapAttributeRetriever">
+        <property name="principalAttributeMap">
             <map>
-                <entry key="casuser" value="Mellon"/>
+                <!--
+                   | This map provides a simple attribute resolution mechanism.
+                   | Keys are LDAP attribute names, values are CAS attribute names.
+                   | Use this facility instead of a PrincipalResolver if LDAP is
+                   | the only attribute source.
+                   -->
+                <entry key="sn" value="sn" />
+                <entry key="chinaname" value="chinaname" />
+                <entry key="engname" value="engname" />
+                <entry key="mail" value="mail" />
+                <entry key="department" value="department" />
+                <entry key="position" value="corp" />
+                <entry key="postalAddress" value="timezone" />
+                <entry key="postalCode" value="language" />
+                <entry key="sex" value="sex" />
+                <entry key="site" value="building" />
+                <entry key="title" value="position" />
+                <entry key="mobile" value="mobile"/>
+                <entry key="telephoneNumber" value="telephoneNumber"/>
             </map>
         </property>
     </bean>
+
+    <bean id="ldapAttributeRetriever" class="org.jasig.cas.authentication.support.LdapAttributeRetriever"
+          p:baseDn="${ldap.baseDn}"
+          p:userFileter="${ldap.authn.searchFilter}"/>
+
+    <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+          c:resolver-ref="dnResolver"
+          c:handler-ref="authHandler" />
+
+    <!--
+   | The following DN format works for many directories, but may need to be
+   | customized.
+   -->
+    <!--<bean id="dnResolver"-->
+          <!--class="org.ldaptive.auth.FormatDnResolver"-->
+          <!--c:format="cn=%s,${ldap.baseDn}" />-->
+    <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
+          p:baseDn="${ldap.baseDn}"
+          p:subtreeSearch="true"
+          p:allowMultipleDns="false"
+          p:connectionFactory-ref="connectionFactory"
+          p:userFilter="${ldap.authn.searchFilter}" />
+
+    <bean id="connectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
+          p:connectionPool-ref="connectionPool" />
+
+    <bean id="connectionPool" parent="abstractConnectionPool"
+            p:connectionFactory-ref="searchConnectionFactory"/>
+
+    <bean id="searchConnectionFactory"
+          class="org.ldaptive.DefaultConnectionFactory"
+          p:connectionConfig-ref="searchConnectionConfig" />
+
+    <bean id="searchConnectionConfig" parent="abstractConnectionConfig"
+          p:connectionInitializer-ref="bindConnectionInitializer" />
+
+    <bean id="bindConnectionInitializer"
+          class="org.ldaptive.BindConnectionInitializer"
+          p:bindDn="${ldap.managerDn}">
+        <property name="bindCredential">
+            <bean class="org.ldaptive.Credential"
+                  c:password="${ldap.managerPassword}" />
+        </property>
+    </bean>
+
+    <bean id="abstractConnectionPool" abstract="true"
+          class="org.ldaptive.pool.BlockingConnectionPool"
+          init-method="initialize"
+          p:poolConfig-ref="ldapPoolConfig"
+          p:blockWaitTime="${ldap.pool.blockWaitTime}"
+          p:validator-ref="searchValidator"
+          p:pruneStrategy-ref="pruneStrategy" />
+
+    <bean id="abstractConnectionConfig" abstract="true"
+          class="org.ldaptive.ConnectionConfig"
+          p:ldapUrl="${ldap.url}"
+          p:connectTimeout="${ldap.connectTimeout}"
+          p:useStartTLS="${ldap.useStartTLS}"
+          p:useSSL="false" />
+
+    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+          p:minPoolSize="${ldap.pool.minSize}"
+          p:maxPoolSize="${ldap.pool.maxSize}"
+          p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+          p:validatePeriodically="${ldap.pool.validatePeriodically}"
+          p:validatePeriod="${ldap.pool.validatePeriod}" />
+
+
+    <!--<bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+        <property name="credentialConfig">
+            <bean class="org.ldaptive.ssl.X509CredentialConfig"
+                  p:trustCertificates="${ldap.trustedCert}" />
+        </property>
+    </bean>-->
+
+    <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+          p:prunePeriod="${ldap.pool.prunePeriod}"
+          p:idleTime="${ldap.pool.idleTime}" />
+
+    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+    <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+          p:connectionFactory-ref="bindPooledLdapConnectionFactory"/>
+
+    <bean id="bindPooledLdapConnectionFactory"
+          class="org.ldaptive.pool.PooledConnectionFactory"
+          p:connectionPool-ref="bindConnectionPool" />
+
+    <bean id="bindConnectionPool" parent="abstractConnectionPool"
+          p:connectionFactory-ref="bindConnectionFactory" />
+
+    <bean id="bindConnectionFactory"
+          class="org.ldaptive.DefaultConnectionFactory"
+          p:connectionConfig-ref="bindConnectionConfig" />
+
+    <bean id="bindConnectionConfig" parent="abstractConnectionConfig" />
 
     <!-- Required for proxy ticket mechanism -->
     <bean id="proxyPrincipalResolver"
@@ -132,17 +264,17 @@
           p:backingMap-ref="attrRepoBackingMap" />
 
     <util:map id="attrRepoBackingMap">
-        <entry key="uid" value="uid" />
-        <entry key="eduPersonAffiliation" value="eduPersonAffiliation" />
-        <entry key="groupMembership" value="groupMembership" />
-        <entry>
-            <key><value>memberOf</value></key>
-            <list>
-                <value>faculty</value>
-                <value>staff</value>
-                <value>org</value>
-            </list>
-        </entry>
+        <entry key="sn" value="sn" />
+        <entry key="chinaname" value="chinaname" />
+        <entry key="engname" value="engname" />
+        <entry key="mail" value="mail" />
+        <entry key="department" value="department" />
+        <entry key="position" value="corp" />
+        <entry key="postalAddress" value="timezone" />
+        <entry key="postalCode" value="language" />
+        <entry key="sex" value="sex" />
+        <entry key="site" value="building" />
+        <entry key="title" value="position" />
     </util:map>
 
     <bean id="serviceRegistryDao" class="org.jasig.cas.services.JsonServiceRegistryDao"

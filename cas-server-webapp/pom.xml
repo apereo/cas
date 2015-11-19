@@ -35,10 +35,27 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-ldap</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-saml</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jasig.cas</groupId>
+      <artifactId>cas-server-support-rest</artifactId>
+      <version>4.1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
       <scope>runtime</scope>
     </dependency>
+
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>

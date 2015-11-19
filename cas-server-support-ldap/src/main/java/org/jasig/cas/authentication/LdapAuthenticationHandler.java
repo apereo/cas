@@ -23,11 +23,9 @@ import com.google.common.collect.Maps;
 import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.support.LdapAttributeRetriever;
 import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;
-import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.ReturnAttributes;
+import org.ldaptive.*;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
@@ -39,12 +37,7 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * LDAP authentication handler that uses the ldaptive <code>Authenticator</code> component underneath.
@@ -88,6 +81,8 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     /** Set of LDAP attributes fetch from an entry as part of the authentication process. */
     private String[] authenticatedEntryAttributes = ReturnAttributes.NONE.value();
+
+    private LdapAttributeRetriever ldapAttributeRetriever;
 
     /**
      * Creates a new authentication handler that delegates to the given authenticator.
@@ -164,6 +159,10 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         this.additionalAttributes = additionalAttributes;
     }
 
+    public void setLdapAttributeRetriever(LdapAttributeRetriever ldapAttributeRetriever) {
+        this.ldapAttributeRetriever = ldapAttributeRetriever;
+    }
+
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc)
             throws GeneralSecurityException, PreventedException {
@@ -174,7 +173,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
                     new org.ldaptive.Credential(password),
                     this.authenticatedEntryAttributes);
+
             response = this.authenticator.authenticate(request);
+
         } catch (final LdapException e) {
             throw new PreventedException("Unexpected LDAP error", e);
         }
@@ -193,7 +194,11 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
         
         if (response.getResult()) {
-            return createHandlerResult(upc, createPrincipal(upc.getUsername(), response.getLdapEntry()), messageList);
+            LdapEntry ldapEntry = response.getLdapEntry();
+            if (ldapAttributeRetriever != null) {
+                ldapEntry = ldapAttributeRetriever.retrieve(upc.getUsername(), this.authenticatedEntryAttributes);
+            }
+            return createHandlerResult(upc, createPrincipal(upc.getUsername(), ldapEntry), messageList);
         }
 
         if (AuthenticationResultCode.DN_RESOLUTION_FAILURE == response.getAuthenticationResultCode()) {
@@ -296,6 +301,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             this.authenticatedEntryAttributes = attributes.toArray(new String[attributes.size()]);
         }
     }
+
 
 
 }
