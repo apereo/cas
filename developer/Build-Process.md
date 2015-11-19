@@ -21,6 +21,8 @@ cd cas-server
 ./gradlew build --parallel -x test -DskipCheckstyle=true -DskipJavadocs=true -DskipAspectJ=true -DskipFindbugs=true
 {% endhighlight %}
 
+The following commandline flags are supported by the build:
+
 | Flag                              | Description
 |-----------------------------------+----------------------------------------------------+
 | `skipCheckstyle`                  | Skip running checkstyle checks. 
