@@ -198,9 +198,10 @@ public final class ClientAction extends AbstractAction {
 
         final LinkedHashMap<String, String> urls = new LinkedHashMap<>();
         // for all clients, generate redirection urls
-        for (final Client client : this.clients.getClients()) {
+        for (final Client client : this.clients.findAllClients(webContext)) {
             final IndirectClient indirectClient = (IndirectClient) client;
-            final String name = client.getName();
+            // clean Client suffix for default names
+            final String name = client.getName().replace("Client", "");
             final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
             logger.debug("{} -> {}", name, redirectionUrl);
             urls.put(name, redirectionUrl);
