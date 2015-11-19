@@ -1,4 +1,4 @@
-description = "Apereo Cenrtal Authentication Service"
+description = "Apereo Central Authentication Service"
 
 defaultTasks "clean", "build"
 
@@ -84,7 +84,6 @@ subprojects {
     artifacts {
         tests testJar
 
-        archives jar
         archives sourcesJar
         archives javadocJar
         archives testJar
@@ -129,7 +128,6 @@ subprojects {
     checkstyleMain {
         enabled = !Boolean.getBoolean("skipCheckstyle")
     }
-
 
     findbugs {
         toolVersion = "${findbugsVersion}"
