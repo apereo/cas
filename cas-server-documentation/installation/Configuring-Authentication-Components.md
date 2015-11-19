@@ -91,45 +91,73 @@ There are some additional handlers for small deployments and special cases:
 * [Whilelist](Whitelist-Authentication.html)
 * [Blacklist](Blacklist-Authentication.html)
 
+## Password Encoding
+Password encoders are responsible during the authentication event to convert and encode
+the credential password to a form that is acceptable by the authentication source.
+
+### Default Encoder
+{% highlight xml %}
+<alias name="defaultPasswordEncoder" alias="passwordEncoder" />
+{% endhighlight %}
+
+The following Settings are applicable:
+
+{% highlight properties %}
+# cas.authn.password.encoding.char=UTF-8
+# cas.authn.password.encoding.alg=SHA-256
+{% endhighlight %}
+
+### Plain Text
+
+{% highlight xml %}
+<alias name="plainTextPasswordEncoder" alias="passwordEncoder" />
+{% endhighlight %}
+
 ##Argument Extractors
 Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction.
 
 ## Principal Resolution
 Please [see this guide](Configuring-Principal-Resolution.html) more full details on principal resolution.
 
-### PrincipalNameTransformer Components
+### Principal Transformation
 Authentication handlers that generally deal with username-password credentials
 can be configured to transform the user id prior to executing the authentication sequence. The following components are available:
 
 ######`NoOpPrincipalNameTransformer`
 Default transformer, that actually does no transformation on the user id.
 
+{% highlight xml %}
+<alias name="noOpPrincipalNameTransformer" alias="principalNameTransformer" />
+{% endhighlight %}
+
+
 ######`PrefixSuffixPrincipalNameTransformer`
 Transforms the user id by adding a postfix or suffix.
+
+{% highlight xml %}
+<alias name="prefixSuffixPrincipalNameTransformer" alias="principalNameTransformer" />
+{% endhighlight %}
+
+The following Settings are applicable:
+
+{% highlight properties %}
+# cas.principal.transform.prefix=
+# cas.principal.transform.suffix=
+{% endhighlight %}
 
 ######`ConvertCasePrincipalNameTransformer`
 A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed.
 The transformer is also able to accept and work on the result of
 a previous transformer that might have modified the uid, such that the two can be chained.
 
-#### Configuration
-Here is an example configuration based for the `AcceptUsersAuthenticationHandler`:
-
 {% highlight xml %}
-<bean id="primaryAuthenticationHandler"
-    class="org.jasig.cas.authentication.AcceptUsersAuthenticationHandler"
-    p:principalNameTransformer-ref="convertCasePrincipalNameTransformer">
-    <property name="users">
-        <map>
-            <entry key="casuser" value="Mellon"/>
-        </map>
-    </property>
-</bean>
+<alias name="convertCasePrincipalNameTransformer" alias="principalNameTransformer" />
+{% endhighlight %}
 
-<bean id="convertCasePrincipalNameTransformer"
-    class="org.jasig.cas.authentication.handler.ConvertCasePrincipalNameTransformer"
-    p:toUpperCase="true" />
+The following Settings are applicable:
 
+{% highlight properties %}
+# cas.principal.transform.upperCase=false
 {% endhighlight %}
 
 ## Authentication Metadata
