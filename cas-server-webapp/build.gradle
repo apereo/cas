@@ -11,7 +11,6 @@ war {
                 "Implementation-Date": new Date(),
                 "Implementation-Version": project.version)
     }
-    classifier = "war"
 }
 
 dependencies {
