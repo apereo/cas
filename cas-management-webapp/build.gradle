@@ -11,8 +11,10 @@ war {
                 "Implementation-Date": new Date(),
                 "Implementation-Version": project.version)
     }
-    classifier = "war"
 }
+
+
+
 
 dependencies {
     compile(group: 'org.springframework.security', name: 'spring-security-core', version: springSecVersion) {
