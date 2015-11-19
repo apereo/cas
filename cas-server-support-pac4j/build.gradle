@@ -33,8 +33,6 @@ dependencies {
     exclude(module: 'pac4j-core')
     exclude(module: 'pac4j-saml')
     exclude(module: 'pac4j-oauth')
-    exclude(module: 'pac4j-cas')
-    exclude(module: 'pac4j-oidc')
   }
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
   testCompile project(':cas-server-core-services')
