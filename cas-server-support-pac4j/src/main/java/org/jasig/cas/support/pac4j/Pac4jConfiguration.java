@@ -12,7 +12,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Initializes the pac4j configuration.
@@ -23,7 +29,7 @@ import java.util.*;
 @Configuration
 public class Pac4jConfiguration {
 
-    private final static String CAS_PAC4J_PREFIX = "cas.pac4j.";
+    private static final String CAS_PAC4J_PREFIX = "cas.pac4j.";
 
     @Value("${server.prefix:http://localhost:8080/cas}/login")
     private String serverLoginUrl;
@@ -42,9 +48,7 @@ public class Pac4jConfiguration {
      */
     @Bean(name = "builtClients")
     public Clients clients() {
-        List<Client> allClients = new ArrayList<>();
-        // add all indirect clients from the Spring context
-        allClients.addAll(Arrays.<Client>asList(clients));
+        final List<Client> allClients = new ArrayList<>();
 
         // turn the properties file into a map of properties
         final Map<String, String> properties = new HashMap<>();
@@ -55,11 +59,13 @@ public class Pac4jConfiguration {
                 properties.put(name.substring(CAS_PAC4J_PREFIX.length()), casProperties.getProperty(name));
             }
         }
-
-        // add the new clients found via properties
+        // add the new clients found via properties first
         final ConfigFactory configFactory = new ConfigPropertiesFactory(properties);
         final Config propertiesConfig = configFactory.build();
         allClients.addAll(propertiesConfig.getClients().getClients());
+
+        // add all indirect clients from the Spring context
+        allClients.addAll(Arrays.<Client>asList(clients));
 
         // build a Clients configuration
         if (allClients == null || allClients.size() == 0) {
