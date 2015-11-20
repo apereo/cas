@@ -82,7 +82,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
      * @param fieldPassword The fieldPassword to set.
      */
     @Autowired
-    public final void setFieldPassword(@Value("${cas.jdbc.authn.search.field:}") final String fieldPassword) {
+    public final void setFieldPassword(@Value("${cas.jdbc.authn.search.password:}") final String fieldPassword) {
         this.fieldPassword = fieldPassword;
     }
 

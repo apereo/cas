@@ -22,7 +22,7 @@ directives in the JAAS config file.
 <alias name="jaasAuthenticationHandler" alias="primaryAuthenticationHandler" />
 {% endhighlight %}
 
-The following Settings are applicable:
+The following settings are applicable:
 
 {% highlight properties %}
 # cas.authn.jaas.realm=CAS

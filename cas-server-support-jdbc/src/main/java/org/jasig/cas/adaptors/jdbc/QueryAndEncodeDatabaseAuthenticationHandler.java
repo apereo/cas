@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -39,6 +40,7 @@ import java.util.Map;
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
  * @since 4.1.0
  */
+@Component("queryAndEncodeDatabaseAuthenticationHandler")
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private static final String DEFAULT_PASSWORD_FIELD = "password";
