@@ -307,7 +307,7 @@ LPPE is also able to warn the user when the account is about to expire. The expi
 <alias name="ldapPasswordPolicyConfiguration" alias="passwordPolicyConfiguration" />
 {% endhighlight %}
 
-The following Settings are applicable:
+The following settings are applicable:
 
 {% highlight properties %}
 # password.policy.warnAll=false

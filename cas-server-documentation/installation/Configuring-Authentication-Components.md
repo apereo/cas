@@ -100,7 +100,7 @@ the credential password to a form that is acceptable by the authentication sourc
 <alias name="defaultPasswordEncoder" alias="passwordEncoder" />
 {% endhighlight %}
 
-The following Settings are applicable:
+The following settings are applicable:
 
 {% highlight properties %}
 # cas.authn.password.encoding.char=UTF-8
@@ -138,7 +138,7 @@ Transforms the user id by adding a postfix or suffix.
 <alias name="prefixSuffixPrincipalNameTransformer" alias="principalNameTransformer" />
 {% endhighlight %}
 
-The following Settings are applicable:
+The following settings are applicable:
 
 {% highlight properties %}
 # cas.principal.transform.prefix=
@@ -154,7 +154,7 @@ a previous transformer that might have modified the uid, such that the two can b
 <alias name="convertCasePrincipalNameTransformer" alias="principalNameTransformer" />
 {% endhighlight %}
 
-The following Settings are applicable:
+The following settings are applicable:
 
 {% highlight properties %}
 # cas.principal.transform.upperCase=false
