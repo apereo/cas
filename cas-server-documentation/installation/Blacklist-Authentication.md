@@ -26,7 +26,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 <alias name="rejectUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
 {% endhighlight %}
 
-The following Settings are applicable:
+The following settings are applicable:
 
 {% highlight properties %}
 # reject.authn.users=user1,user2

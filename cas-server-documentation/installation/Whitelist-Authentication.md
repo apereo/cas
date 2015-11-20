@@ -28,7 +28,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 <alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
 {% endhighlight %}
 
-The following Settings are applicable:
+The following settings are applicable:
 
 {% highlight properties %}
 accept.authn.users=casuser::Mellon
@@ -40,7 +40,7 @@ accept.authn.users=casuser::Mellon
 <alias name="fileAuthenticationHandler" alias="primaryAuthenticationHandler" />
 {% endhighlight %}
 
-The following Settings are applicable:
+The following settings are applicable:
 
 {% highlight properties %}
 # file.authn.filename=classpath:people.txt
