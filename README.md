@@ -34,8 +34,7 @@ customizations to further ease future upgrades and maintenance.
 git clone git@github.com:Jasig/cas.git
 ```
 
-**Note:** If building CAS from the source, running the test cases currently requires an active Internet connection.
-Please [see the maven docs][skip] on how to disable the tests.
+**Note:** If building CAS from the source, running test cases currently requires an active Internet connection.
 
 ## Documentation 
 - [Official Documentation][wiki]
@@ -50,7 +49,6 @@ Please [see the maven docs][skip] on how to disable the tests.
 
 [wiki]: http://jasig.github.io/cas
 [overlay]: http://jasig.github.io/cas/development/installation/Maven-Overlay-Installation.html
-[skip]: http://maven.apache.org/general.html#skip-test
 [contribute]: http://jasig.github.io/cas/developer/Contributor-Guidelines.html
 [downloadcas]: http://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/
