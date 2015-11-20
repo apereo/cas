@@ -30,7 +30,7 @@ for the given authentication handler to check their presence and report back.
 <alias name="shiroAuthenticationHandler" alias="primaryAuthenticationHandler" />
 {% endhighlight %}
 
-The following Settings are applicable:
+The following settings are applicable:
 
 {% highlight properties %}
 # shiro.authn.requiredRoles=role1,role2
