@@ -20,3 +20,5 @@ pom.xml.versionsBackup
 .gradle/
 **/build/
 **/MANIFEST.MF
+
+classes/
