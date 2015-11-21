@@ -212,22 +212,20 @@
     <pluginManagement>
       <plugins>
         <plugin>
-                        <jettyXml>${cs.dir}/etc/jetty/jetty.xml,${cs.dir}/etc/jetty/jetty-ssl.xml,${cs.dir}/etc/jetty/jetty-https.xml</jettyXml>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.12.4</version>
-          <configuration>
-            <forkMode>once</forkMode>
-            <includes>
-              <include>**/*Tests.java</include>
-            </includes>
-            <excludes>
-              <exclude>**/Abstract*.java</exclude>
-            </excludes>
-            <additionalClasspathElements>
-              <additionalClasspathElement>${project.build.directory}/test-lib/jdbc-driver.jar</additionalClasspathElement>
-            </additionalClasspathElements>
-          </configuration>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-maven-plugin</artifactId>
+            <version>${maven-jetty-plugin.version}</version>
+            <configuration>
+                <jettyXml>${cs.dir}/etc/jetty/jetty.xml,${cs.dir}/etc/jetty/jetty-ssl.xml,${cs.dir}/etc/jetty/jetty-https.xml</jettyXml>
+                <systemProperties>
+                    <systemProperty>
+                        <name>org.eclipse.jetty.annotations.maxWait</name>
+                        <value>240</value>
+                    </systemProperty>
+                </systemProperties>
+                <!-- Works with remote debugging and mvn jetty:run-forked -->
+                <jvmArgs>-Xdebug -Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n</jvmArgs>
+            </configuration>
         </plugin>
 
       </plugins>

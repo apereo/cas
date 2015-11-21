@@ -60,6 +60,18 @@ This project includes:
   Mockito under The MIT License
   MXP1: Xml Pull Parser 3rd Edition (XPP3) under Indiana University Extreme! Lab Software License, vesion 1.1.1 or Public Domain
   Objenesis under MIT License
+  org.springframework:spring-aop under Apache License, Version 2.0
+  org.springframework:spring-beans under Apache License, Version 2.0
+  org.springframework:spring-context under Apache License, Version 2.0
+  org.springframework:spring-context-support under Apache License, Version 2.0
+  org.springframework:spring-core under Apache License, Version 2.0
+  org.springframework:spring-expression under Apache License, Version 2.0
+  org.springframework:spring-jdbc under Apache License, Version 2.0
+  org.springframework:spring-orm under Apache License, Version 2.0
+  org.springframework:spring-test under Apache License, Version 2.0
+  org.springframework:spring-tx under Apache License, Version 2.0
+  org.springframework:spring-web under Apache License, Version 2.0
+  org.springframework:spring-webmvc under Apache License, Version 2.0
   Perf4J under Apache 2
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
@@ -68,19 +80,7 @@ This project includes:
   SLF4J API Module under MIT License
   SLF4J LOG4J-12 Binding under MIT License
   SOJO under The Apache Software License, Version 2.0
-  Spring AOP under The Apache Software License, Version 2.0
-  Spring Beans under The Apache Software License, Version 2.0
-  Spring Context under The Apache Software License, Version 2.0
-  Spring Context Support under The Apache Software License, Version 2.0
-  Spring Core under The Apache Software License, Version 2.0
-  Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
-  Spring JDBC under The Apache Software License, Version 2.0
   Spring Json View under The Apache Software License, Version 2.0
-  Spring Object/Relational Mapping under The Apache Software License, Version 2.0
-  Spring TestContext Framework under The Apache Software License, Version 2.0
-  Spring Transaction under The Apache Software License, Version 2.0
-  Spring Web under The Apache Software License, Version 2.0
-  Spring Web MVC under The Apache Software License, Version 2.0
   spring-security-cas under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
