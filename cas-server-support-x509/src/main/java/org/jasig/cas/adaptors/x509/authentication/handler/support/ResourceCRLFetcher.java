@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.io.InputStream;
@@ -22,6 +23,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Component("resourceCrlFetcher")
 public class ResourceCRLFetcher implements CRLFetcher {
     /** Logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -47,7 +49,7 @@ public class ResourceCRLFetcher implements CRLFetcher {
     @Override
     public X509CRL fetch(final Object crl) throws Exception {
         final Set<X509CRL> results = fetch(Collections.singleton(crl));
-        if (results.size() > 0) {
+        if (!results.isEmpty()) {
             return results.iterator().next();
         }
         logger.warn("Unable to fetch {}", crl);

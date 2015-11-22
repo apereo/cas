@@ -8,8 +8,12 @@ import org.apache.shiro.util.ByteSource;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -36,6 +40,7 @@ import java.util.Map;
  * @author Charles Hasegawa (mailto:chasegawa@unicon.net)
  * @since 4.1.0
  */
+@Component("queryAndEncodeDatabaseAuthenticationHandler")
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     private static final String DEFAULT_PASSWORD_FIELD = "password";
@@ -46,13 +51,13 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * The Algorithm name.
      */
     @NotNull
-    protected final String algorithmName;
+    protected String algorithmName;
 
     /**
      * The Sql statement to execute.
      */
     @NotNull
-    protected final String sql;
+    protected String sql;
 
     /**
      * The Password field name.
@@ -90,19 +95,29 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      *            for the user id. (i.e. {@code SELECT * FROM table WHERE username = ?}
      * @param algorithmName the algorithm name (i.e. {@code MessageDigestAlgorithms.SHA_512})
      */
-
-    public QueryAndEncodeDatabaseAuthenticationHandler(final DataSource datasource,
+    @Autowired(required = false)
+    public QueryAndEncodeDatabaseAuthenticationHandler(@Qualifier("queryEncodeDatabaseDataSource")
+                                                           final DataSource datasource,
+                                                       @Value("${cas.jdbc.authn.query.encode.sql:}")
                                                        final String sql,
+                                                       @Value("${cas.jdbc.authn.query.encode.alg:}")
                                                        final String algorithmName) {
         super();
-        setDataSource(datasource);
-        this.sql = sql;
-        this.algorithmName = algorithmName;
+        if (datasource != null) {
+            setDataSource(datasource);
+            this.sql = sql;
+            this.algorithmName = algorithmName;
+        }
     }
 
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential)
             throws GeneralSecurityException, PreventedException {
+
+        if (StringUtils.isBlank(this.sql) || StringUtils.isBlank(this.algorithmName) || getJdbcTemplate() == null) {
+            throw new GeneralSecurityException("Authentication handler is not configured correctly");
+        }
+
         final String username = getPrincipalNameTransformer().transform(transformedCredential.getUsername());
         final String encodedPsw = this.getPasswordEncoder().encode(transformedCredential.getPassword());
 
@@ -179,7 +194,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      * <p>If you configure this attribute, you can obtain this additional very important safety feature.</p>
      * @param staticSalt the static salt
      */
-    public final void setStaticSalt(final String staticSalt) {
+    @Autowired
+    public final void setStaticSalt(@Value("${cas.jdbc.authn.query.encode.salt.static:}")
+                                    final String staticSalt) {
         this.staticSalt = staticSalt;
     }
 
@@ -188,7 +205,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      *
      * @param passwordFieldName the password field name
      */
-    public final void setPasswordFieldName(final String passwordFieldName) {
+    @Autowired
+    public final void setPasswordFieldName(@Value("${cas.jdbc.authn.query.encode.password:" + DEFAULT_PASSWORD_FIELD + '}')
+                                               final String passwordFieldName) {
         this.passwordFieldName = passwordFieldName;
     }
 
@@ -197,7 +216,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      *
      * @param saltFieldName the password field name
      */
-    public final void setSaltFieldName(final String saltFieldName) {
+    @Autowired
+    public final void setSaltFieldName(@Value("${cas.jdbc.authn.query.encode.salt:" + DEFAULT_SALT_FIELD + '}')
+                                       final String saltFieldName) {
         this.saltFieldName = saltFieldName;
     }
 
@@ -206,7 +227,10 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      *
      * @param numberOfIterationsFieldName the password field name
      */
-    public final void setNumberOfIterationsFieldName(final String numberOfIterationsFieldName) {
+    @Autowired
+    public final void setNumberOfIterationsFieldName(@Value("${cas.jdbc.authn.query.encode.iterations.field:"
+                                                            + DEFAULT_NUM_ITERATIONS_FIELD + '}')
+                                                         final String numberOfIterationsFieldName) {
         this.numberOfIterationsFieldName = numberOfIterationsFieldName;
     }
 
@@ -215,7 +239,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      *
      * @param numberOfIterations the number of iterations
      */
-    public final void setNumberOfIterations(final long numberOfIterations) {
+    @Autowired
+    public final void setNumberOfIterations(@Value("${cas.jdbc.authn.query.encode.iterations:0}")
+                                                final long numberOfIterations) {
         this.numberOfIterations = numberOfIterations;
     }
 

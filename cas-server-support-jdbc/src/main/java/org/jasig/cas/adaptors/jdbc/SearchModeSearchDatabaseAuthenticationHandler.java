@@ -1,12 +1,19 @@
 package org.jasig.cas.adaptors.jdbc;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
+import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
@@ -22,7 +29,7 @@ import java.security.GeneralSecurityException;
  *
  * @since 3.0.0
  */
-
+@Component("searchModeSearchDatabaseAuthenticationHandler")
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler
         implements InitializingBean {
 
@@ -39,12 +46,13 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
 
     private String sql;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
+
+        if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
+            throw new GeneralSecurityException("Authentication handler is not configured correctly");
+        }
 
         final String username = credential.getUsername();
         final String encyptedPassword = getPasswordEncoder().encode(credential.getPassword());
@@ -60,31 +68,43 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
+    @PostConstruct
     @Override
     public void afterPropertiesSet() throws Exception {
-        this.sql = SQL_PREFIX + this.tableUsers + " WHERE " + this.fieldUser + " = ? AND " + this.fieldPassword
-                + " = ?";
+        if (StringUtils.isNotBlank(this.tableUsers) || StringUtils.isNotBlank(this.fieldUser)
+                || StringUtils.isNotBlank(this.fieldPassword)) {
+            this.sql = SQL_PREFIX + this.tableUsers + " WHERE " + this.fieldUser + " = ? AND " + this.fieldPassword
+                    + " = ?";
+        }
     }
 
     /**
      * @param fieldPassword The fieldPassword to set.
      */
-    public final void setFieldPassword(final String fieldPassword) {
+    @Autowired
+    public final void setFieldPassword(@Value("${cas.jdbc.authn.search.password:}") final String fieldPassword) {
         this.fieldPassword = fieldPassword;
     }
 
     /**
      * @param fieldUser The fieldUser to set.
      */
-    public final void setFieldUser(final String fieldUser) {
+    @Autowired
+    public final void setFieldUser(@Value("${cas.jdbc.authn.search.user:}") final String fieldUser) {
         this.fieldUser = fieldUser;
     }
 
     /**
      * @param tableUsers The tableUsers to set.
      */
-    public final void setTableUsers(final String tableUsers) {
+    @Autowired
+    public final void setTableUsers(@Value("${cas.jdbc.authn.search.table:}") final String tableUsers) {
         this.tableUsers = tableUsers;
     }
 
+    @Autowired(required=false)
+    @Override
+    public void setDataSource(@Qualifier("searchModeDatabaseDataSource") final DataSource dataSource) {
+        super.setDataSource(dataSource);
+    }
 }

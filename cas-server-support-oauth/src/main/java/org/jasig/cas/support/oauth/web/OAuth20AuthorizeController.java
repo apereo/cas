@@ -71,7 +71,7 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
         session.setAttribute(OAuthConstants.OAUTH20_STATE, state);
 
         final String callbackAuthorizeUrl = request.getRequestURL().toString()
-                .replace("/" + OAuthConstants.AUTHORIZE_URL, "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL);
+                .replace('/' + OAuthConstants.AUTHORIZE_URL, '/' + OAuthConstants.CALLBACK_AUTHORIZE_URL);
         logger.debug("{} : {}", OAuthConstants.CALLBACK_AUTHORIZE_URL, callbackAuthorizeUrl);
 
         final String loginUrlWithService = OAuthUtils.addParameter(loginUrl, OAuthConstants.SERVICE,
