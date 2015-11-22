@@ -21,6 +21,8 @@ import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Map;
+
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -82,11 +84,12 @@ public final class ClientActionTests {
         assertEquals(MY_LOCALE, mockSession.getAttribute(ClientAction.LOCALE));
         assertEquals(MY_METHOD, mockSession.getAttribute(ClientAction.METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
-        assertTrue(((String) flowScope.get("FacebookClientUrl"))
+        final Map<String, String> urls = (Map<String, String>) flowScope.get(ClientAction.PAC4J_URLS);
+        assertTrue(((String) urls.get("Facebook"))
                 .startsWith("https://www.facebook.com/v2.2/dialog/oauth?client_id=my_key&redirect_uri=http%3A%2F%2Fcasserver%2Flogin%3F"
                         + Clients.DEFAULT_CLIENT_NAME_PARAMETER + "%3DFacebookClient&state="));
         assertEquals(MY_LOGIN_URL + '?' + Clients.DEFAULT_CLIENT_NAME_PARAMETER
-                + "=TwitterClient&needs_client_redirection=true", flowScope.get("TwitterClientUrl"));
+                + "=TwitterClient&needs_client_redirection=true", urls.get("Twitter"));
     }
 
     @Test

@@ -109,6 +109,19 @@
     <div class="sidebar-content">
         <p><spring:message code="screen.welcome.security" /></p>
 
+        <c:if test="${!empty pac4jUrls}">
+            <div id="list-providers">
+                <h3><spring:message code="screen.welcome.label.loginwith" /></h3>
+                <form>
+                    <ul>
+                        <c:forEach var="entry" items="${pac4jUrls}">
+                            <li><a href="${entry.value}">${entry.key}</a></li>
+                        </c:forEach>
+                    </ul>
+                </form>
+            </div>
+        </c:if>
+
         <div id="list-languages">
             <%final String queryString = request.getQueryString() == null ? "" : request.getQueryString().replaceAll("&locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]|^locale=([A-Za-z][A-Za-z]_)?[A-Za-z][A-Za-z]", "");%>
             <c:set var='query' value='<%=queryString%>' />
