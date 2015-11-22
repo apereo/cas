@@ -22,7 +22,7 @@
 
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
-        <entry key-ref="passwordHandler" value-ref="primaryPrincipalResolver"/>
+        <entry key-ref="passwordHandler" value-ref="personDirectoryPrincipalResolver"/>
         <entry key-ref="oneTimePasswordHandler">
             <null/>
         </entry>
