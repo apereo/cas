@@ -5,7 +5,7 @@ title: CAS - X.509 Authentication
 
 # X.509 Authentication
 CAS X.509 authentication components provide a mechanism to authenticate users who present client certificates during
-the SSL/TLS handshake process. The X.509 components require configuration ouside the CAS application since the
+the SSL/TLS handshake process. The X.509 components require configuration outside the CAS application since the
 SSL handshake happens outside the servlet layer where the CAS application resides. There is no particular requirement
 on deployment architecture (i.e. Apache reverse proxy, load balancer SSL termination) other than any client
 certificate presented in the SSL handshake be accessible to the servlet container as a request attribute named
@@ -34,44 +34,61 @@ by the Web server terminating the SSL connection. Since an SSL peer may be confi
 certificates, the CAS X.509 handler provides a number of properties that place additional restrictions on
 acceptable client certificates.
 
-* `trustedIssuerDnPattern` - Regular expression defining allowed issuer DNs. (must be specified)
-* `subjectDnPattern` - Regular expression defining allowed subject DNs. (default=`.*`)
-* `maxPathLength` - Maximum number of certs allowed in certificate chain. (default=1)
-* `maxPathLengthAllowUnspecified` - True to allow unspecified path length, false otherwise. (default=false)
-* `checkKeyUsage` - True to enforce certificate `keyUsage` field (if present), false otherwise. (default=false)
-* `requireKeyUsage` - True to require the existence of a `keyUsage` certificate field, false otherwise. (default=false)
-* `revocationChecker` - Instance of `RevocationChecker` used for certificate expiration checks.
-(default=`NoOpRevocationChecker`)
+{% highlight xml %}
+<alias name="x509CredentialsAuthenticationHandler" alias="primaryAuthenticationHandler" />
+{% endhighlight %}
 
+The following settings are applicable:
+
+{% highlight properties %}
+# cas.x509.authn.crl.checkAll=false
+# cas.x509.authn.crl.throw.failure=true
+# cas.x509.authn.crl.refresh.interval=
+# cas.x509.authn.revocation.policy.threshold=
+# cas.x509.authn.trusted.issuer.dnpattern=
+# cas.x509.authn.max.path.length=
+# cas.x509.authn.max.path.length.unspecified=
+# cas.x509.authn.check.key.usage=
+# cas.x509.authn.require.key.usage=
+# cas.x509.authn.subject.dnpattern=
+# cas.x509.authn.principal.descriptor=
+# cas.x509.authn.principal.serial.no.prefix=
+# cas.x509.authn.principal.value.delim=
+{% endhighlight %}
 
 ### Principal Resolver Components
 
 ######`X509SubjectPrincipalResolver`
 Creates a principal ID from a format string composed of components from the subject distinguished name.
-The following configuration snippet produces prinicpals of the form _cn@example.com_. For example, given a
-certificate with the subject _DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto_ it would produce the ID
-_jacky@vt.edu_.
+The following configuration snippet produces principals of the form `cn@example.com`. For example, given a
+certificate with the subject `DC=edu, DC=vt/UID=jacky, CN=Jascarnella Ellagwonto` it would produce the ID
+`jacky@vt.edu`.
 
 {% highlight xml %}
-<bean id="x509SubjectResolver"
-      class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
-      p:descriptor="$CN@$DC.$DC" />
+<alias name="x509SubjectPrincipalResolver" alias="primaryPrincipalResolver" />
 {% endhighlight %}
-
-See the Javadocs for a thorough discussion of the format string specification.
-
 
 ######`X509SubjectDNPrincipalResolver`
 Creates a principal ID from the certificate subject distinguished name.
 
+{% highlight xml %}
+<alias name="x509SubjectDNPrincipalResolver" alias="primaryPrincipalResolver" />
+{% endhighlight %}
 
 ######`X509SerialNumberPrincipalResolver`
 Creates a principal ID from the certificate serial number.
 
+{% highlight xml %}
+<alias name="x509SerialNumberPrincipalResolver" alias="primaryPrincipalResolver" />
+{% endhighlight %}
 
 ######`X509SerialNumberAndIssuerDNPrincipalResolver`
 Creates a principal ID by concatenating the certificate serial number, a delimiter, and the issuer DN.
-The serial number may be prefixed with an optional string. See the Javadocs for more information.
+The serial number may be prefixed with an optional string.
+
+{% highlight xml %}
+<alias name="x509SerialNumberAndIssuerDNPrincipalResolver" alias="primaryPrincipalResolver" />
+{% endhighlight %}
 
 ######`X509SubjectAlternativeNameUPNPrincipalResolver`
 Adds support the embedding of a `UserPrincipalName` object as a `SubjectAlternateName` extension within an X509 certificate,
@@ -79,25 +96,8 @@ allowing properly-empowered certificates to be used for network logon (via Smart
 This resolver extracts the Subject Alternative Name UPN extension from the provided certificate if available as a resolved principal id.
 
 {% highlight xml %}
-<bean id="authenticationManager"
-      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
-    <constructor-arg>
-        <map>
-            <entry key-ref="x509AuthenticationHandler"
-                   value-ref="x509UPNPrincipalResolver" />
-            ...
-        </map>
-    </constructor-arg>
-</bean>
-...
-
-<bean id="x509AuthenticationHandler"
-      class="org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler">
-
-<bean id="x509UPNPrincipalResolver"
-      class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectAlternativeNameUPNPrincipalResolver">
+<alias name="x509SubjectAlternativeNameUPNPrincipalResolver" alias="primaryPrincipalResolver" />
 {% endhighlight %}
-
 
 ### Certificate Revocation Checking Components
 CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of
@@ -107,15 +107,15 @@ The following configuration is shared by all components:
 
 | Field                             | Description
 |-----------------------------------+---------------------------------------------------------+
-| `unavailableCRLPolicy`   | Policy applied when CRL data is unavailable upon fetching. (default=`DenyRevocationPolicy`)
-| `expiredCRLPolicy`   | Policy applied when CRL data is expired. (default=`ThresholdExpiredCRLRevocationPolicy`)
+| `unavailableCRLPolicy`    | Policy applied when CRL data is unavailable upon fetching. (default=`DenyRevocationPolicy`)
+| `expiredCRLPolicy`        | Policy applied when CRL data is expired. (default=`ThresholdExpiredCRLRevocationPolicy`)
 
 The following policies are available by default:
 
-| Policy                             | Description
-|-----------------------------------+---------------------------------------------------------+
-| `AllowRevocationPolicy`   | Allow policy
-| `DenyRevocationPolicy`   | Deny policy
+| Policy                                  | Description
+|-----------------------------------------+---------------------------------------------------------+
+| `AllowRevocationPolicy`                 | Allow policy
+| `DenyRevocationPolicy`                  | Deny policy
 | `ThresholdExpiredCRLRevocationPolicy`   | Deny if CRL is more than X seconds expired.
 
 
@@ -166,7 +166,7 @@ Configuration properties:
 | `cache`               | Ehcache `Cache` component.
 | `fetcher`             | Component responsible for fetching of the CRL resource. (default=`ResourceCRLFetcher`)
 | `throwOnFetchFailure` | Throws errors if fetching of the CRL resource fails.
-| `checkAll`   | Flag to indicate whether all CRLs should be checked for the certificate resource. 
+| `checkAll`   | Flag to indicate whether all CRLs should be checked for the certificate resource.
 
 `CRLDistributionPointRevocationChecker` Example:
 

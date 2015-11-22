@@ -38,7 +38,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @since 3.0.0.4
+ * @since 3.0.4
  */
 @Component("x509CredentialsAuthenticationHandler")
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
