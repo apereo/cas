@@ -128,7 +128,7 @@ public final class ClientAction extends AbstractAction {
             // get client
             final BaseClient<Credentials, CommonProfile> client =
                     (BaseClient<Credentials, CommonProfile>) this.clients
-                    .findClient(webContext, clientName);
+                    .findClient(clientName);
             logger.debug("client: {}", client);
 
             // Only supported protocols
@@ -198,7 +198,7 @@ public final class ClientAction extends AbstractAction {
 
         final LinkedHashMap<String, String> urls = new LinkedHashMap<>();
         // for all clients, generate redirection urls
-        for (final Client client : this.clients.findAllClients(webContext)) {
+        for (final Client client : this.clients.findAllClients()) {
             final IndirectClient indirectClient = (IndirectClient) client;
             // clean Client suffix for default names
             final String name = client.getName().replace("Client", "");
