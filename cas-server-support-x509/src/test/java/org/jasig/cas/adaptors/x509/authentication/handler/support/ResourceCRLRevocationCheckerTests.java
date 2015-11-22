@@ -44,7 +44,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
         this.checker = checker;
         this.checker.setExpiredCRLPolicy(expiredCRLPolicy);
         try {
-            this.checker.afterPropertiesSet();
+            this.checker.init();
         } catch (final Exception e) {
             throw new RuntimeException("ResourceCRLRevocationChecker initialization failed", e);
         }

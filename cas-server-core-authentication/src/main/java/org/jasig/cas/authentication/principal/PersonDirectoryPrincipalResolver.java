@@ -28,7 +28,7 @@ import java.util.Map;
  * @since 4.0.0
  *
  */
-@Component("primaryPrincipalResolver")
+@Component("personDirectoryPrincipalResolver")
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /** Log instance. */

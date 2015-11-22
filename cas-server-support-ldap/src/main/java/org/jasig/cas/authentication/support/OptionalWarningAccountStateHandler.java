@@ -32,7 +32,6 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
 
     /** Name of user attribute that describes whether or not to display expiration warnings. */
     @Value("${password.policy.warn.attribute.name:}")
-
     private String warningAttributeName;
 
     /** Attribute value to match. */

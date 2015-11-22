@@ -1,8 +1,12 @@
 package org.jasig.cas.authentication.handler;
 
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-import javax.validation.constraints.NotNull;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -17,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
  * @author Stephen More
  * @since 3.1
  */
+@Component("defaultPasswordEncoder")
 public final class DefaultPasswordEncoder implements PasswordEncoder {
 
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
@@ -24,9 +29,11 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
 
-    @NotNull
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordEncoder.class);
+
     private final String encodingAlgorithm;
 
+    @Value("${cas.authn.password.encoding.char:}")
     private String characterEncoding;
 
     /**
@@ -34,7 +41,8 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
      *
      * @param encodingAlgorithm the encoding algorithm
      */
-    public DefaultPasswordEncoder(final String encodingAlgorithm) {
+    @Autowired
+    public DefaultPasswordEncoder(@Value("${cas.authn.password.encoding.alg:}") final String encodingAlgorithm) {
         this.encodingAlgorithm = encodingAlgorithm;
     }
 
@@ -44,15 +52,19 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
             return null;
         }
 
+        if (StringUtils.isBlank(this.encodingAlgorithm)) {
+            LOGGER.warn("No encoding algorithm is defined. Password cannot be encoded; Returning null");
+            return null;
+        }
+
         try {
             final MessageDigest messageDigest = MessageDigest.getInstance(this.encodingAlgorithm);
 
-            if (StringUtils.hasText(this.characterEncoding)) {
-                messageDigest.update(password.getBytes(this.characterEncoding));
-            } else {
-                messageDigest.update(password.getBytes(Charset.defaultCharset()));
-            }
+            final String encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding)
+                    ? this.characterEncoding : Charset.defaultCharset().name();
 
+            LOGGER.warn("Using {} as the character encoding algorithm to update the digest", encodingCharToUse);
+            messageDigest.update(password.getBytes(encodingCharToUse));
 
             final byte[] digest = messageDigest.digest();
 
@@ -70,7 +82,7 @@ public final class DefaultPasswordEncoder implements PasswordEncoder {
      * @param bytes the raw bytes from the digest.
      * @return the formatted bytes.
      */
-    private String getFormattedText(final byte[] bytes) {
+    private static String getFormattedText(final byte[] bytes) {
         final StringBuilder buf = new StringBuilder(bytes.length * 2);
 
         for (int j = 0; j < bytes.length; j++) {

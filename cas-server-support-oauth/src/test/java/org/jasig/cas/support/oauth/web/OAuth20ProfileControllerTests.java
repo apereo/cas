@@ -128,7 +128,7 @@ public final class OAuth20ProfileControllerTests {
     public void verifyOKWithAuthorizationHeader() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
-        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + " " + TGT_ID);
+        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' ' + TGT_ID);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());

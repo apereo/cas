@@ -1,5 +1,9 @@
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import javax.validation.constraints.NotNull;
 import java.security.cert.X509Certificate;
 
@@ -19,6 +23,7 @@ import java.security.cert.X509Certificate;
  * @author Jan Van der Velpen
  * @since 3.1
  */
+@Component("x509SerialNumberAndIssuerDNPrincipalResolver")
 public final class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /** Prefix for Certificate Serial Number. */
@@ -34,7 +39,9 @@ public final class X509SerialNumberAndIssuerDNPrincipalResolver extends Abstract
      *
      * @param serialNumberPrefix The serialNumberPrefix to set.
      */
-    public void setSerialNumberPrefix(final String serialNumberPrefix) {
+    @Autowired
+    public void setSerialNumberPrefix(@Value("${cas.x509.authn.principal.serial.no.prefix:SERIALNUMBER=}")
+                                          final String serialNumberPrefix) {
         this.serialNumberPrefix = serialNumberPrefix;
     }
 
@@ -44,7 +51,9 @@ public final class X509SerialNumberAndIssuerDNPrincipalResolver extends Abstract
      *
      * @param valueDelimiter The valueDelimiter to set.
      */
-    public void setValueDelimiter(final String valueDelimiter) {
+    @Autowired
+    public void setValueDelimiter(@Value("${cas.x509.authn.principal.value.delim:, }")
+                                      final String valueDelimiter) {
         this.valueDelimiter = valueDelimiter;
     }
 
