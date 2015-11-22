@@ -1,14 +1,17 @@
 package org.jasig.cas.authentication.handler;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 /**
  * Transform the user id by adding a prefix or suffix.
  *
  * @author Howard Gilbert
  * @author Scott Battaglia
-
  * @since 3.3.6
  */
-
+@Component("prefixSuffixPrincipalNameTransformer")
 public final class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private String prefix;
@@ -29,7 +32,9 @@ public final class PrefixSuffixPrincipalNameTransformer implements PrincipalName
      * @param prefix the prefix
      * @param suffix the suffix
      */
-    public PrefixSuffixPrincipalNameTransformer(final String prefix, final String suffix) {
+    @Autowired
+    public PrefixSuffixPrincipalNameTransformer(@Value("${cas.principal.transform.prefix:}") final String prefix,
+                                                @Value("${cas.principal.transform.suffix:}") final String suffix) {
         setPrefix(prefix);
         setSuffix(suffix);
     }

@@ -3,6 +3,9 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import org.jasig.cas.adaptors.x509.util.CertUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Min;
 import java.security.GeneralSecurityException;
@@ -18,6 +21,7 @@ import java.util.Calendar;
  * @since 3.4.6
  *
  */
+@Component("thresholdExpiredCRLRevocationPolicy")
 public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
     /** Default threshold is 48 hours. */
     private static final int DEFAULT_THRESHOLD = 172800;
@@ -60,7 +64,9 @@ public final class ThresholdExpiredCRLRevocationPolicy implements RevocationPoli
      *
      * @param threshold Number of seconds; MUST be non-negative integer.
      */
-    public void setThreshold(final int threshold) {
+    @Autowired
+    public void setThreshold(@Value("${cas.x509.authn.revocation.policy.threshold:" + DEFAULT_THRESHOLD + '}')
+                                 final int threshold) {
         this.threshold = threshold;
     }
 }

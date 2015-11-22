@@ -47,6 +47,7 @@ public class PoolingLdaptiveResourceCRLFetcherTests extends AbstractX509LdapTest
             checker.setThrowOnFetchFailure(true);
             checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
             final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+            checker.init();
             checker.check(cert);
         }
     }
@@ -61,6 +62,7 @@ public class PoolingLdaptiveResourceCRLFetcherTests extends AbstractX509LdapTest
             checker.setThrowOnFetchFailure(true);
             checker.setUnavailableCRLPolicy(new AllowRevocationPolicy());
             final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
+            checker.init();
             checker.check(cert);
         }
     }
