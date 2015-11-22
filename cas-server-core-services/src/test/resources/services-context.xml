@@ -18,7 +18,7 @@
 
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
-        <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver"/>
+        <entry key-ref="primaryAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
     </util:map>
     <util:list id="authenticationMetadataPopulators">
         <ref bean="cacheCredentialsMetaDataPopulator" />
@@ -231,5 +231,5 @@
         </bean>
 
     </util:list>
-
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
 </beans>

@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Component("principalFactory")
+@Component("defaultPrincipalFactory")
 @Scope("prototype")
 public final class DefaultPrincipalFactory implements PrincipalFactory {
     private static final long serialVersionUID = -3999695695604948495L;

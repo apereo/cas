@@ -270,7 +270,7 @@ public final class LogoutManagerImpl implements LogoutManager {
          */
         @Override
         protected String formatOutputMessageInternal(final String message) {
-            return LOGOUT_PARAMETER_NAME + "=" + super.formatOutputMessageInternal(message);
+            return LOGOUT_PARAMETER_NAME + '=' + super.formatOutputMessageInternal(message);
         }        
     }
 }
