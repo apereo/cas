@@ -23,7 +23,7 @@ public class MockFacebookClient extends FacebookClient {
     }
 
     @Override
-    protected void internalInit() {
+    protected void internalInit(final WebContext context) {
     }
 
     @Override
