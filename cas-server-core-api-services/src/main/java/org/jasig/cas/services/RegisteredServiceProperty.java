@@ -13,13 +13,6 @@ import java.util.Set;
 public interface RegisteredServiceProperty extends Serializable {
 
     /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    String getName();
-
-    /**
      * Gets values.
      *
      * @return the values
