@@ -1,6 +1,6 @@
 package org.jasig.cas.extension.clearpass;
 
-import org.jasig.cas.monitor.TicketRegistryState;
+import org.jasig.cas.ticket.registry.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.AbstractTicketRegistry;

@@ -1,7 +1,7 @@
 
 description = 'Apereo CAS Client Protocols Support using pac4j'
 dependencies {
-  compile project(':cas-server-core-api')
+  
   compile project(':cas-server-core-tickets')
   compile group: 'com.google.guava', name: 'guava', version:guavaVersion
   compile project(':cas-server-core-web')

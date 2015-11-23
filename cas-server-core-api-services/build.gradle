@@ -1,0 +1,9 @@
+
+description = 'Apereo CAS Core Services APIs'
+dependencies {
+    
+    compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
+    compile group: 'joda-time', name: 'joda-time', version:jodaTimeVersion
+    compile project(':cas-server-core-api-authentication')
+}
+
