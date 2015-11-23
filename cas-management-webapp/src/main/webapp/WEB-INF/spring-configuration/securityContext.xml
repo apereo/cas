@@ -19,9 +19,6 @@
         <constructor-arg name="callbackUrl" value="${cas-management.securityContext.serviceProperties.service}" />
         <constructor-arg name="client">
             <bean class="org.pac4j.cas.client.CasClient">
-                <property name="logoutHandler">
-                    <bean class="org.pac4j.cas.logout.CasSingleSignOutHandler" />
-                </property>
                 <property name="casLoginUrl" value="${cas.securityContext.casProcessingFilterEntryPoint.loginUrl}" />
                 <property name="authorizationGenerator" ref="authorizationGenerator" />
             </bean>
