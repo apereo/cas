@@ -13,17 +13,22 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -116,6 +121,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "public_key", nullable = true)
     private RegisteredServicePublicKey publicKey;
 
+    @Column(name = "properties")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "RegisteredServiceImpl")
+    private Map<String, Serializable> properties;
+
     @Override
     public long getId() {
         return this.id;
@@ -178,6 +187,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         if (this.accessStrategy == null) {
             this.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         }
+        if (this.properties == null) {
+            this.properties = new HashMap<>();
+        }
     }
 
     @Override
@@ -212,6 +224,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey, that.publicKey)
                 .append(this.logoutUrl, that.logoutUrl)
                 .append(this.requiredHandlers, that.requiredHandlers)
+                .append(this.proxyPolicy, that.properties)
                 .isEquals();
     }
 
@@ -232,6 +245,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey)
                 .append(this.logoutUrl)
                 .append(this.requiredHandlers)
+                .append(this.properties)
                 .toHashCode();
     }
 
@@ -338,6 +352,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setLogoutUrl(source.getLogoutUrl());
         this.setPublicKey(source.getPublicKey());
         this.setRequiredHandlers(source.getRequiredHandlers());
+        this.setProperties(source.getProperties());
     }
 
     /**
@@ -374,6 +389,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logo", this.logo);
         toStringBuilder.append("logoutUrl", this.logoutUrl);
         toStringBuilder.append("requiredHandlers", this.requiredHandlers);
+        toStringBuilder.append("properties", this.properties);
 
         return toStringBuilder.toString();
     }
@@ -438,5 +454,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setPublicKey(@NotNull final RegisteredServicePublicKey publicKey) {
         this.publicKey = publicKey;
+    }
+
+    @Override
+    public Map<String, Serializable> getProperties() {
+        return this.properties;
+    }
+
+    public void setProperties(final Map<String, Serializable> properties) {
+        this.properties = properties;
     }
 }
