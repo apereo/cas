@@ -1,7 +1,7 @@
 package org.jasig.cas.support.wsfederation.authentication.handler.support;
 
 import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-import org.jasig.cas.MessageDescriptor;
+import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;

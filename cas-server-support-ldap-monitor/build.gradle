@@ -1,7 +1,7 @@
 
 description = 'Apereo CAS LDAP Monitor Support'
 dependencies {
-  compile project(':cas-server-core-api')
+  
   compile project(':cas-server-support-ldap')
   compile project(':cas-server-core-monitor')
   testCompile project(':cas-server-core-tickets')
