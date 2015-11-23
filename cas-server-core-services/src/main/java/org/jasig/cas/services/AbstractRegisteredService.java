@@ -11,16 +11,21 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.MapKey;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
@@ -123,11 +128,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "public_key", nullable = true)
     private RegisteredServicePublicKey publicKey;
 
-    @Column(name = "properties")
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @MapKey(name = "id")
-    private Map<String, DefaultRegisteredServiceProperty> properties =
-            new HashMap<>();
+    @JoinTable(name="RegisteredServiceImpl_Properties")
+    private Set<DefaultRegisteredServiceProperty> properties = new HashSet<>();
 
     @Override
     public long getId() {
@@ -192,7 +195,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
             this.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         }
         if (this.properties == null) {
-            this.properties = new HashMap<>();
+            this.properties = new HashSet<>();
         }
     }
 
@@ -462,11 +465,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public Map<String, Serializable> getProperties() {
-        return (Map) this.properties;
+    public Set<RegisteredServiceProperty> getProperties() {
+        return (Set) this.properties;
     }
 
-    public void setProperties(final Map<String, Serializable> properties) {
-        this.properties = properties;
+    public void setProperties(final Set<RegisteredServiceProperty> properties) {
+        this.properties = (Set) properties;
     }
 }

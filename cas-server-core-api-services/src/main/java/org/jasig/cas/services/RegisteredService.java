@@ -170,5 +170,5 @@ public interface RegisteredService extends Cloneable, Serializable {
      * @return map of custom metadata.
      * @since 4.2
      */
-    Map<String, Serializable> getProperties();
+    Set<RegisteredServiceProperty> getProperties();
 }
