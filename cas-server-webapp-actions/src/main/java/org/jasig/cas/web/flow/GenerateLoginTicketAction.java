@@ -2,7 +2,7 @@ package org.jasig.cas.web.flow;
 
 import javax.validation.constraints.NotNull;
 
-import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

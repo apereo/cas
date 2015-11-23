@@ -11,10 +11,10 @@ import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.0.5
+ * @since 3.0.5
  */
 public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests {
 

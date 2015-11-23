@@ -22,7 +22,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements Vali
      * Instantiates a new abstract cas protocol validation specification.
      */
     public AbstractCasProtocolValidationSpecification() {
-            }
+    }
 
     /**
      * Instantiates a new abstract cas protocol validation specification.
