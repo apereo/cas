@@ -11,7 +11,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.services.web.view.CasViewConstants;
+import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.AbstractTicketValidationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;

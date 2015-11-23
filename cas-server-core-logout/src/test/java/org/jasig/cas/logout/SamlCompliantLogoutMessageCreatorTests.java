@@ -1,6 +1,5 @@
 package org.jasig.cas.logout;
 
-import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.services.TestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
