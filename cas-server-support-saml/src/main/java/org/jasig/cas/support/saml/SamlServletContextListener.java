@@ -3,7 +3,7 @@ package org.jasig.cas.support.saml;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.support.saml.web.SamlValidateController;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;

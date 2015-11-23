@@ -1,5 +1,6 @@
 package org.jasig.cas.monitor;
 
+import org.jasig.cas.ticket.registry.TicketRegistryState;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
