@@ -4,6 +4,9 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.security.auth.callback.Callback;
@@ -56,6 +59,7 @@ import java.util.Set;
  * @see javax.security.auth.callback.NameCallback
  * @since 3.0.0.5
  */
+@Component("jaasAuthenticationHandler")
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** If no realm is specified, we default to CAS. */
@@ -90,9 +94,6 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
@@ -120,13 +121,15 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         Principal principal = null;
         final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
-        if (principals != null && principals.size() > 0) {
-            principal = this.principalFactory.createPrincipal(principals.iterator().next().getName());
+        if (principals != null && !principals.isEmpty()) {
+            final java.security.Principal secPrincipal = principals.iterator().next();
+            principal = this.principalFactory.createPrincipal(secPrincipal.getName());
         }
         return createHandlerResult(credential, principal, null);
     }
 
-    public void setRealm(final String realm) {
+    @Autowired
+    public void setRealm(@Value("${cas.authn.jaas.realm:" + DEFAULT_REALM + '}') final String realm) {
         this.realm = realm;
     }
 
@@ -146,7 +149,9 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      *      Oracle documentation</a>
      * @since 4.1.0
      */
-    public final void setKerberosRealmSystemProperty(final String kerberosRealmSystemProperty) {
+    @Autowired
+    public final void setKerberosRealmSystemProperty(@Value("${cas.authn.jaas.kerb.realm:}")
+                                                         final String kerberosRealmSystemProperty) {
         this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
     }
 
@@ -166,7 +171,9 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      *      Oracle documentation</a>
      * @since 4.1.0
      */
-    public final void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
+    @Autowired
+    public final void setKerberosKdcSystemProperty(@Value("${cas.authn.jaas.kerb.kdc:}")
+                                                       final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
     }
     

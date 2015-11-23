@@ -1,7 +1,8 @@
 
 description = 'Apereo CAS Core Utilities'
 dependencies {
-    compile project(':cas-server-core-api')
+    compile project(':cas-server-core-api-authentication')
+    compile project(':cas-server-core-api-util')
     compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
         exclude(module: 'commons-logging')
     }

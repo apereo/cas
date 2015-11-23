@@ -303,17 +303,16 @@ LPPE is also able to warn the user when the account is about to expire. The expi
 </ul></p></div>
 
 ## Configuration
-LPPE is by default turned off. To enable the functionally, navigate to `src/main/webapp/WEB-INF/unused-spring-configuration` and move the `lppe-configuration.xml` xml file over to the `spring-configuration` directory.
-
 {% highlight xml %}
-<bean id="passwordPolicy" class="org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration"
-        p:alwaysDisplayPasswordExpirationWarning="${password.policy.warnAll}"
-        p:passwordWarningNumberOfDays="${password.policy.warningDays}"
-        p:passwordPolicyUrl="${password.policy.url}"
-        p:accountStateHandler-ref="accountStateHandler" />
+<alias name="ldapPasswordPolicyConfiguration" alias="passwordPolicyConfiguration" />
+{% endhighlight %}
 
-  <!-- This component is suitable for most cases but can be replaced with a custom component for special cases. -->
-<bean id="accountStateHandler" class="org.jasig.cas.authentication.support.DefaultAccountStateHandler" />
+The following settings are applicable:
+
+{% highlight properties %}
+# password.policy.warnAll=false
+# password.policy.warningDays=30
+# password.policy.url=https://password.example.edu/change
 {% endhighlight %}
 
 Next, in your `ldapAuthenticationHandler` bean, configure the password policy configuration above:
@@ -321,8 +320,7 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
-      p:passwordPolicyConfiguration-ref="passwordPolicy">
-
+      p:passwordPolicyConfiguration-ref="passwordPolicyConfiguration">
       ...
 </bean>
 {% endhighlight %}  
@@ -340,22 +338,21 @@ Next, make sure `Authenticator` is set to enable/use password policy:
 ### Components
 
 #### `DefaultAccountStateHandler`
-The default account state handler, that calculates the password expiration warning period, maps LDAP errors to the CAS workflow.
+The default account state handler, that calculates the password expiration warning period,
+maps LDAP errors to the CAS workflow.
 
 #### `OptionalWarningAccountStateHandler`
 Supports both opt-in and opt-out warnings on a per-user basis.
 
 {% highlight xml %}
-<bean id="accountStateHandler" class="org.jasig.cas.authentication.support.OptionalWarningAccountStateHandler"
-        p:warningAttributeName="${password.warning.attr.name}"
-        p:warningAttributeValue="${password.warning.attr.value}"
-        p:displayWarningOnMatch="${password.warning.display.match}" />
-{% endhighlight %}  
+<alias name="optionalWarningAccountStateHandler" alias="passwordPolicyConfiguration" />
+{% endhighlight %}
 
-The first two parameters define an attribute on the user entry to match on, and the third parameter determines
-whether password expiration warnings should be displayed on match.
-
-**Note:** Deployers MUST configure LDAP components to provide `warningAttributeName` in the set of attributes returned from the LDAP query for user details.
+{% highlight properties %}
+# password.policy.warn.attribute.name=attributeName
+# password.policy.warn.attribute.value=attributeValue
+# password.policy.warn.display.matched=true
+{% endhighlight %}
 
 ## Troubleshooting
 To enable additional logging, modify the log4j configuration file to add the following:

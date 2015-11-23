@@ -1,6 +1,5 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.monitor.TicketRegistryState;
 import org.jasig.cas.ticket.Ticket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

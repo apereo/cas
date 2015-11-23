@@ -1,7 +1,7 @@
 package org.jasig.cas.web.view;
 
 import org.jasig.cas.CasProtocolConstants;
-import org.jasig.cas.services.web.view.CasViewConstants;
+import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.web.AbstractServiceValidateControllerTests;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

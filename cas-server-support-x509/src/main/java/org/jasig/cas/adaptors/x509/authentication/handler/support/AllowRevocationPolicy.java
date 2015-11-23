@@ -4,6 +4,7 @@ import java.security.GeneralSecurityException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
  * @since 3.4.6
  *
  */
+@Component("allowRevocationPolicy")
 public final class AllowRevocationPolicy implements RevocationPolicy<Void> {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

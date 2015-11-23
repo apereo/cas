@@ -1,7 +1,7 @@
 package org.jasig.cas.authentication.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.MessageDescriptor;
+import org.jasig.cas.authentication.MessageDescriptor;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -32,7 +32,6 @@ public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandl
 
     /** Name of user attribute that describes whether or not to display expiration warnings. */
     @Value("${password.policy.warn.attribute.name:}")
-
     private String warningAttributeName;
 
     /** Attribute value to match. */

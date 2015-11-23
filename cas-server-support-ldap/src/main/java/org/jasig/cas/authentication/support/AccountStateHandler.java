@@ -3,7 +3,7 @@ package org.jasig.cas.authentication.support;
 import java.util.List;
 import javax.security.auth.login.LoginException;
 
-import org.jasig.cas.MessageDescriptor;
+import org.jasig.cas.authentication.MessageDescriptor;
 import org.ldaptive.auth.AuthenticationResponse;
 
 /**

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * An abstraction that encapsulates interaction with Duo 2fa authentication service via its public API.
  * @author Michael Kennedy
@@ -33,10 +35,24 @@ public final class DuoAuthenticationService {
      * @param duoApiHost duo API host url
      */
     @Autowired
-    public DuoAuthenticationService(@Value("${cas.duo.integration.key:}") final String duoIntegrationKey,
-                                    @Value("${cas.duo.secret.key:}") final String duoSecretKey,
-                                    @Value("${cas.duo.application.key:}") final String duoApplicationKey,
-                                    @Value("${cas.duo.api.host:}") final String duoApiHost) {
+    public DuoAuthenticationService(@NotNull @Value("${cas.duo.integration.key:}") final String duoIntegrationKey,
+                                    @NotNull @Value("${cas.duo.secret.key:}") final String duoSecretKey,
+                                    @NotNull @Value("${cas.duo.application.key:}") final String duoApplicationKey,
+                                    @NotNull @Value("${cas.duo.api.host:}") final String duoApiHost) {
+
+        if (StringUtils.isBlank(duoIntegrationKey)) {
+            throw new IllegalArgumentException("Duo integration key cannot be blank");
+        }
+        if (StringUtils.isBlank(duoSecretKey)) {
+            throw new IllegalArgumentException("Duo secret key cannot be blank");
+        }
+        if (StringUtils.isBlank(duoApplicationKey)) {
+            throw new IllegalArgumentException("Duo application key cannot be blank");
+        }
+        if (StringUtils.isBlank(duoApiHost)) {
+            throw new IllegalArgumentException("Duo api host cannot be blank");
+        }
+
         this.duoIntegrationKey = duoIntegrationKey;
         this.duoSecretKey = duoSecretKey;
         this.duoApplicationKey = duoApplicationKey;
