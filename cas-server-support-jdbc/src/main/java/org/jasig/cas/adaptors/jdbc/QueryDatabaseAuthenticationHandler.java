@@ -1,31 +1,19 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.adaptors.jdbc;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 
@@ -41,17 +29,19 @@ import java.security.GeneralSecurityException;
  *
  * @since 3.0.0
  */
+@Component("queryDatabaseAuthenticationHandler")
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     @NotNull
     private String sql;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
+
+        if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
+            throw new GeneralSecurityException("Authentication handler is not configured correctly");
+        }
 
         final String username = credential.getUsername();
         final String encryptedPassword = this.getPasswordEncoder().encode(credential.getPassword());
@@ -75,7 +65,14 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     /**
      * @param sql The sql to set.
      */
-    public void setSql(final String sql) {
+    @Autowired
+    public void setSql(@Value("${cas.jdbc.authn.query.sql:}") final String sql) {
         this.sql = sql;
+    }
+
+    @Override
+    @Autowired(required = false)
+    public void setDataSource(@Qualifier("queryDatabaseDataSource") final DataSource dataSource) {
+        super.setDataSource(dataSource);
     }
 }

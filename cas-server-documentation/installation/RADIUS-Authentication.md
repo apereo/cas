@@ -17,16 +17,7 @@ RADIUS support is enabled by including the following dependency in the Maven WAR
 ## Configuration
 
 {% highlight xml %}
-<bean id="radiusAuthenticationHandler"
-      class="org.jasig.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler"
-      p:failoverOnAuthenticationFailure="${cas.radius.failover.authn:false}"
-      p:failoverOnException="${cas.radius.failover.exception:false}"
-      p:servers-ref="radiusServers" />
-
-<util:list id="radiusServers">
-     <ref bean="radiusServer" />
-</util:list>
-
+<alias name="radiusAuthenticationHandler" alias="primaryAuthenticationHandler" />
 {% endhighlight %}
 
 The following settings may control the configuration RADIUS server and client:
@@ -49,5 +40,3 @@ The following settings may control the configuration RADIUS server and client:
 # cas.radius.failover.authn=false
 # cas.radius.failover.exception=false
 {% endhighlight %}
-
-
