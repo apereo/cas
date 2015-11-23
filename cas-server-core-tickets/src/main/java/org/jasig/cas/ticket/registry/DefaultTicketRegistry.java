@@ -199,7 +199,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
     public void scheduleCleanerJob() {
         try {
             if (shouldScheduleCleanerJob()) {
-                logger.info("Preparing to schedule cleaner job");
+                logger.info("Preparing to schedule job to clean up after tickets...");
 
                 final JobDetail job = JobBuilder.newJob(this.getClass())
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
