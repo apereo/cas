@@ -1,6 +1,7 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.net.URL;
 
@@ -41,4 +42,5 @@ public final class RefuseRegisteredServiceProxyPolicy implements RegisteredServi
         final HashCodeBuilder bldr = new HashCodeBuilder(13, 133);
         return bldr.appendSuper(super.hashCode()).toHashCode();
     }
+
 }
