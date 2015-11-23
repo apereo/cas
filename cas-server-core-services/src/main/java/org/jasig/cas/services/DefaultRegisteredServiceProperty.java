@@ -32,9 +32,6 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Column(name = "property_values")
     private HashSet<String> values = new HashSet<>();
 
-    @Column(name = "name", nullable = false)
-    private String name;
-
     @Override
     public Set<String> getValues() {
         if (this.values == null) {
@@ -42,16 +39,6 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         }
         return values;
     }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     /**
      * Sets values.
      *
@@ -80,7 +67,6 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         }
         final DefaultRegisteredServiceProperty rhs = (DefaultRegisteredServiceProperty) obj;
         return new EqualsBuilder()
-                .append(this.name, rhs.name)
                 .append(this.values, rhs.values)
                 .isEquals();
     }
@@ -88,7 +74,6 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(this.name)
                 .append(this.values)
                 .toHashCode();
     }
