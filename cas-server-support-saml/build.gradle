@@ -1,7 +1,7 @@
 
 description = 'Apereo CAS SAML Server and Validation Support'
 dependencies {
-  compile project(':cas-server-core-api')
+  
   compile(group: 'org.opensaml', name: 'opensaml-core', version:opensamlVersion) {
     exclude(module: 'log4j-over-slf4j')
     exclude(module: 'slf4j-api')

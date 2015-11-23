@@ -4,7 +4,6 @@ dependencies {
   compile(group: 'net.sf.ehcache', name: 'ehcache', version:ehcacheVersion) {
     exclude(module: 'slf4j-api')
   }
-  compile project(':cas-server-core-api')
   compile project(':cas-server-core-tickets')
   compile(group: 'org.ehcache', name: 'jcache', version:jcacheVersion) {
     exclude(module: 'slf4j-api')

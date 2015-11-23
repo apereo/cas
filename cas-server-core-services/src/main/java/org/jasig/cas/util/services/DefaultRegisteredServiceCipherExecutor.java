@@ -1,6 +1,7 @@
 package org.jasig.cas.util.services;
 
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceCipherExecutor;
 import org.jasig.cas.util.CompressionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
