@@ -11,31 +11,23 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ConstraintMode;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
-import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**

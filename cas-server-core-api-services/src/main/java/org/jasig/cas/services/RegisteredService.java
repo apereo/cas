@@ -4,7 +4,6 @@ import org.jasig.cas.authentication.principal.Service;
 
 import java.io.Serializable;
 import java.net.URL;
-import java.util.Map;
 import java.util.Set;
 
 /**
