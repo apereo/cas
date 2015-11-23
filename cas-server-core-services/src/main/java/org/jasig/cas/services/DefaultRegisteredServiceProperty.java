@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +20,7 @@ import java.util.Set;
  * @since 4.2
  */
 @Entity
-@Table(name = "RegisteredServiceProperty")
+@Table(name="RegisteredServiceImplProperty")
 public class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
     private static final long serialVersionUID = 1349556364689133211L;
 
@@ -31,24 +30,42 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
 
     @Lob
     @Column(name = "property_values")
-    private Set<String> values = new HashSet<>();
+    private HashSet<String> values = new HashSet<>();
 
-    public long getId() {
-        return id;
-    }
+    @Column(name = "name", nullable = false)
+    private String name;
 
-    public void setId(final long id) {
-        this.id = id;
-    }
-
+    @Override
     public Set<String> getValues() {
+        if (this.values == null) {
+            this.values = new HashSet<>();
+        }
         return values;
     }
 
-    public void setValues(final Set<String> values) {
-        this.values = values;
+    @Override
+    public String getName() {
+        return this.name;
     }
 
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    /**
+     * Sets values.
+     *
+     * @param values the values
+     */
+    public void setValues(final Set<String> values) {
+        getValues().clear();
+        if (values == null) {
+            return;
+        }
+        for (final String handler : values) {
+            getValues().add(handler);
+        }
+    }
 
     @Override
     public boolean equals(final Object obj) {
@@ -63,7 +80,7 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         }
         final DefaultRegisteredServiceProperty rhs = (DefaultRegisteredServiceProperty) obj;
         return new EqualsBuilder()
-                .append(this.id, rhs.id)
+                .append(this.name, rhs.name)
                 .append(this.values, rhs.values)
                 .isEquals();
     }
@@ -71,8 +88,8 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(id)
-                .append(values)
+                .append(this.name)
+                .append(this.values)
                 .toHashCode();
     }
 }

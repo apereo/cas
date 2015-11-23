@@ -311,4 +311,36 @@ public class JsonServiceRegistryDaoTests {
         assertNotNull(this.dao.findServiceById(r.getId()));
     }
 
+    @Test
+    public void persistCustomServiceProperties() throws Exception {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("persistCustomServiceProperties");
+        r.setId(4245);
+
+        final Set<RegisteredServiceProperty> properties = new HashSet<>();
+        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        property.setName("field1");
+        final Set<String> values = new HashSet<>();
+        values.add("value1");
+        values.add("value2");
+        property.setValues(values);
+        properties.add(property);
+
+
+        final DefaultRegisteredServiceProperty property2 = new DefaultRegisteredServiceProperty();
+        property2.setName("field12");
+        final Set<String> values2 = new HashSet<>();
+        values2.add("value12");
+        values2.add("value22");
+        property2.setValues(values2);
+        properties.add(property2);
+
+        r.setProperties(properties);
+
+        this.dao.save(r);
+        final List<RegisteredService> list = this.dao.load();
+        assertNotNull(this.dao.findServiceById(r.getId()));
+    }
+
 }
