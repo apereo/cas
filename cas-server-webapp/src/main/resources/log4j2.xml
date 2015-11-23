@@ -37,19 +37,11 @@
         <AsyncLogger  name="org.jasig" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
-<<<<<<< HEAD
-        </Logger>
-        <Logger name="org.springframework" level="warn" />
-        <Logger name="org.springframework.webflow" level="warn" />
-        <Logger name="org.springframework.web" level="warn" />
-        <Logger name="org.pac4j" level="warn" />
-=======
         </AsyncLogger>
         <AsyncLogger  name="org.springframework" level="warn" />
         <AsyncLogger name="org.springframework.webflow" level="warn" />
         <AsyncLogger name="org.springframework.web" level="warn" />
-        <AsyncLogger name="org.springframework.security" level="warn" />
->>>>>>> 22fb8611c653c0b1577ce7ce3c3ed37ee46e4f02
+        <Logger name="org.pac4j" level="warn" />
 
         <AsyncLogger name="perfStatsLogger" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="perfFileAppender"/>
