@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.spnego.web.flow;
 
 import java.util.ArrayList;
@@ -41,9 +23,9 @@ import org.springframework.webflow.execution.RequestContext;
  * <p>The server checks if the
  * negotiation string is in the request header and this is a supported browser:
  * <ul>
- * <li>If found do nothing and return <code>success()</code></li>
+ * <li>If found do nothing and return {@code success()}</li>
  * <li>else add a WWW-Authenticate response header and a 401 response status,
- * then return <code>success()</code></li>
+ * then return {@code success()}</li>
  * </ul>
  *
  * @author Arnaud Lesueur
@@ -74,10 +56,10 @@ public final class SpnegoNegociateCredentialsAction extends AbstractAction {
      * Instantiates a new Spnego negociate credentials action.
      * Also initializes the list of supported browser user agents with the following:
      * <ul>
-     *     <li><code>MSIE</code></li>
-     *     <li><code>Trident</code></li>
-     *     <li><code>Firefox</code></li>
-     *     <li><code>AppleWebKit</code></li>
+     *     <li>{@code MSIE}</li>
+     *     <li>{@code Trident}</li>
+     *     <li>{@code Firefox}</li>
+     *     <li>{@code AppleWebKit}</li>
      * </ul>
      * @see #setSupportedBrowser(List)
      * @since 4.1

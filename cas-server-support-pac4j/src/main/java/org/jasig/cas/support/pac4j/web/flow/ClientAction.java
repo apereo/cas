@@ -1,23 +1,6 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.pac4j.web.flow;
 
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
@@ -70,6 +53,11 @@ import javax.validation.constraints.NotNull;
 @Component("clientAction")
 public final class ClientAction extends AbstractAction {
     /**
+     * All the urls and names of the pac4j clients.
+     */
+    public static final String PAC4J_URLS = "pac4jUrls";
+
+    /**
      * Constant for the service parameter.
      */
     public static final String SERVICE = "service";
@@ -85,6 +73,7 @@ public final class ClientAction extends AbstractAction {
      * Constant for the method parameter.
      */
     public static final String METHOD = "method";
+
     /**
      * Supported protocols.
      */
@@ -207,14 +196,17 @@ public final class ClientAction extends AbstractAction {
         saveRequestParameter(request, session, LOCALE);
         saveRequestParameter(request, session, METHOD);
 
+        final LinkedHashMap<String, String> urls = new LinkedHashMap<>();
         // for all clients, generate redirection urls
         for (final Client client : this.clients.findAllClients()) {
-            final String key = client.getName() + "Url";
             final IndirectClient indirectClient = (IndirectClient) client;
+            // clean Client suffix for default names
+            final String name = client.getName().replace("Client", "");
             final String redirectionUrl = indirectClient.getRedirectionUrl(webContext);
-            logger.debug("{} -> {}", key, redirectionUrl);
-            context.getFlowScope().put(key, redirectionUrl);
+            logger.debug("{} -> {}", name, redirectionUrl);
+            urls.put(name, redirectionUrl);
         }
+        context.getFlowScope().put(PAC4J_URLS, urls);
     }
 
     /**

@@ -1,22 +1,8 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.adaptors.x509.authentication.principal;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.security.cert.X509Certificate;
@@ -37,6 +23,7 @@ import java.security.cert.X509Certificate;
  * @author Jan Van der Velpen
  * @since 3.1
  */
+@Component("x509SerialNumberAndIssuerDNPrincipalResolver")
 public final class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /** Prefix for Certificate Serial Number. */
@@ -52,7 +39,9 @@ public final class X509SerialNumberAndIssuerDNPrincipalResolver extends Abstract
      *
      * @param serialNumberPrefix The serialNumberPrefix to set.
      */
-    public void setSerialNumberPrefix(final String serialNumberPrefix) {
+    @Autowired
+    public void setSerialNumberPrefix(@Value("${cas.x509.authn.principal.serial.no.prefix:SERIALNUMBER=}")
+                                          final String serialNumberPrefix) {
         this.serialNumberPrefix = serialNumberPrefix;
     }
 
@@ -62,7 +51,9 @@ public final class X509SerialNumberAndIssuerDNPrincipalResolver extends Abstract
      *
      * @param valueDelimiter The valueDelimiter to set.
      */
-    public void setValueDelimiter(final String valueDelimiter) {
+    @Autowired
+    public void setValueDelimiter(@Value("${cas.x509.authn.principal.value.delim:, }")
+                                      final String valueDelimiter) {
         this.valueDelimiter = valueDelimiter;
     }
 

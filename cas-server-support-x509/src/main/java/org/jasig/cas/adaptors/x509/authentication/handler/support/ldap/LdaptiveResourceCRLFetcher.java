@@ -1,22 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.adaptors.x509.authentication.handler.support.ldap;
 
 import java.security.cert.CertificateException;
@@ -34,20 +15,27 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.stereotype.Component;
 
 /**
  * Fetches a CRL from an LDAP instance.
  * @author Daniel Fisher
  * @since 4.1
  */
+@Component("ldaptiveResourceCRLFetcher")
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
 
     /** Search exec that looks for the attribute. */
-    protected final SearchExecutor searchExecutor;
+    protected SearchExecutor searchExecutor;
 
     /** The connection config to prep for connections. **/
-    protected final ConnectionConfig connectionConfig;
+    protected ConnectionConfig connectionConfig;
+
+    /** Serialization support. */
+    protected LdaptiveResourceCRLFetcher() {}
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
@@ -149,5 +137,15 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
         final ConnectionConfig cc = ConnectionConfig.newConnectionConfig(this.connectionConfig);
         cc.setLdapUrl(ldapURL);
         return new DefaultConnectionFactory(cc);
+    }
+
+    @Autowired(required=false)
+    public void setSearchExecutor(@Qualifier("ldaptiveResourceCRLSearchExecutor") final SearchExecutor searchExecutor) {
+        this.searchExecutor = searchExecutor;
+    }
+
+    @Autowired(required=false)
+    public void setConnectionConfig(@Qualifier("ldaptiveResourceCRLConnectionConfig") final ConnectionConfig connectionConfig) {
+        this.connectionConfig = connectionConfig;
     }
 }

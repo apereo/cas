@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.authentication;
 
 
@@ -38,8 +20,8 @@ public abstract class RootCasException extends Exception {
   private final String code;
 
   /**
-   * Constructor that takes a <code>code</code> description of the error along with the exception
-   * <code>msg</code> generally for logging purposes. These codes normally have a corresponding
+   * Constructor that takes a {@code code} description of the error along with the exception
+   * {@code msg} generally for logging purposes. These codes normally have a corresponding
    * entries in the messages file for the internationalization of error messages.
    *
    * @param code the code to describe what type of exception this is.
@@ -74,7 +56,7 @@ public abstract class RootCasException extends Exception {
 
   /**
    * @return Returns the code. If there is a chained exception it recursively
-   * calls <code>getCode()</code> on the cause of the chained exception rather than the returning
+   * calls {@code getCode()} on the cause of the chained exception rather than the returning
    * the code itself.
    */
   public final String getCode() {

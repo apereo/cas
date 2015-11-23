@@ -15,14 +15,14 @@ CAS provides enterprise single sign-on service:
 - Community documentation and implementation support
 - An extensive community of adopters
 
-## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png)](http://travis-ci.org/Jasig/cas) [![Codeship Status for Jasig/cas](https://www.codeship.io/projects/a204a3a0-727c-0131-ab14-4e46b2fa20d2/status)](https://www.codeship.io/projects/13661) [![Dependency Management](https://www.versioneye.com/user/projects/54ac6d74b6c7ff65b8000072/badge.svg?style=flat)](https://www.versioneye.com/user/projects/54ac6d74b6c7ff65b8000072) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/issue?style=flat)](http://www.issuestats.com/github/Jasig/cas)
+## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png?branch=master)](http://travis-ci.org/Jasig/cas) [![Codeship Status for Jasig/cas](https://www.codeship.io/projects/a204a3a0-727c-0131-ab14-4e46b2fa20d2/status)](https://www.codeship.io/projects/13661) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/issue?style=flat)](http://www.issuestats.com/github/Jasig/cas)
 
 It is recommended to build and deploy CAS locally using the [Maven War Overlay method][overlay]. 
 This approach does not require the adopter to *explicitly* download any version of CAS, but 
 rather utilizes Maven's overlay mechanism to combine CAS original artifacts and local 
 customizations to further ease future upgrades and maintenance.
 
-## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) 
+## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/Jasig/cas.svg)](https://github.com/Jasig/cas/releases)
 
 - Binary releases may be downloaded from [here][downloadcas].
 - CAS artifacts are published to the [Maven Central Repository][casmavencentral].
@@ -34,8 +34,7 @@ customizations to further ease future upgrades and maintenance.
 git clone git@github.com:Jasig/cas.git
 ```
 
-**Note:** If building CAS from the source, running the test cases currently requires an active Internet connection.
-Please [see the maven docs][skip] on how to disable the tests.
+**Note:** If building CAS from the source, running test cases currently requires an active Internet connection.
 
 ## Documentation 
 - [Official Documentation][wiki]
@@ -50,7 +49,6 @@ Please [see the maven docs][skip] on how to disable the tests.
 
 [wiki]: http://jasig.github.io/cas
 [overlay]: http://jasig.github.io/cas/development/installation/Maven-Overlay-Installation.html
-[skip]: http://maven.apache.org/general.html#skip-test
 [contribute]: http://jasig.github.io/cas/developer/Contributor-Guidelines.html
 [downloadcas]: http://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/jasig/cas/

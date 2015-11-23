@@ -1,26 +1,7 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.openid.web.flow;
 
 
-import org.jasig.cas.CentralAuthenticationServiceImpl;
-import org.jasig.cas.TestUtils;
+import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.support.openid.AbstractOpenIdTests;
@@ -58,7 +39,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private CentralAuthenticationServiceImpl impl;
+    private CentralAuthenticationService impl;
 
     @Test
     public void verifyNoTgt() throws Exception {
@@ -105,7 +86,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
     public void verifySuccessfulServiceTicket() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final Authentication authentication = TestUtils.getAuthentication("scootman28");
+        final Authentication authentication = org.jasig.cas.authentication.TestUtils.getAuthentication("scootman28");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("TGT-11", authentication,
                 new NeverExpiresExpirationPolicy());
 
