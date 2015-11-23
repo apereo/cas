@@ -1,7 +1,7 @@
 
 description = 'Apereo CAS JPA Ticket Registry Support'
 dependencies {
-  compile project(':cas-server-core-api')
+  
   compile project(':cas-server-core-tickets')
   compile project(':cas-server-core-monitor')
   compile project(':cas-server-core-util')

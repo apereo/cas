@@ -2,7 +2,6 @@ package org.jasig.cas.authentication;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
-import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.support.LdapPasswordPolicyConfiguration;

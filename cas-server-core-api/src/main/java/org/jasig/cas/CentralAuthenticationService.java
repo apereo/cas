@@ -1,6 +1,6 @@
 package org.jasig.cas;
 
-import org.apache.commons.collections4.Predicate;
+import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
@@ -83,7 +83,7 @@ public interface CentralAuthenticationService {
      * @return the tickets
      * @since 4.1.0
      */
-    Collection<Ticket> getTickets(@NotNull Predicate predicate);
+    Collection<Ticket> getTickets(@NotNull Predicate<Ticket> predicate);
 
     /**
      * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.
