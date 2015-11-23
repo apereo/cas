@@ -8,7 +8,7 @@ import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;

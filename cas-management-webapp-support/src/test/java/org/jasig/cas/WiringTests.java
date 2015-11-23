@@ -25,7 +25,7 @@ public class WiringTests {
         applicationContext.setConfigLocations(
                 "classpath:/cas-management-servlet.xml",
                 "classpath:/managementConfigContext.xml",
-        "classpath:/spring-configuration/*.xml");
+                "classpath:/spring-configuration/*.xml");
         applicationContext.setServletContext(new MockServletContext(new ResourceLoader() {
             @Override
             public Resource getResource(final String location) {
@@ -34,7 +34,7 @@ public class WiringTests {
 
             @Override
             public ClassLoader getClassLoader() {
-                return getClassLoader();
+                return WiringTests.class.getClassLoader();
             }
         }));
         applicationContext.refresh();

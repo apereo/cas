@@ -1,5 +1,7 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.springframework.stereotype.Component;
+
 import java.security.GeneralSecurityException;
 
 
@@ -10,6 +12,7 @@ import java.security.GeneralSecurityException;
  * @since 3.4.6
  *
  */
+@Component("denyRevocationPolicy")
 public final class DenyRevocationPolicy implements RevocationPolicy<Void> {
 
     /**

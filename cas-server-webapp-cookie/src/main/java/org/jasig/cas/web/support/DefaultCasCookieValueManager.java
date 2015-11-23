@@ -1,7 +1,7 @@
 package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.util.CipherExecutor;
+import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.util.NoOpCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

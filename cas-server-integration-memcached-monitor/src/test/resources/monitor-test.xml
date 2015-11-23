@@ -93,4 +93,5 @@
     <!-- Post View -->
     <bean id="postResponseView" class="org.springframework.web.servlet.view.JstlView"
           c:url="/WEB-INF/view/jsp/protocol/casPostResponseView.jsp" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
 </beans>

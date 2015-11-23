@@ -98,21 +98,21 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     @Autowired
     public final void setFailureThreshold(@Value("${cas.throttle.failure.threshold:"
-                                            + DEFAULT_FAILURE_THRESHOLD + "}")
+                                            + DEFAULT_FAILURE_THRESHOLD + '}')
                                           final int failureThreshold) {
         this.failureThreshold = failureThreshold;
     }
 
     @Autowired
     public final void setFailureRangeInSeconds(@Value("${cas.throttle.failure.range.seconds:"
-                                                        + DEFAULT_FAILURE_RANGE_IN_SECONDS + "}")
+                                                        + DEFAULT_FAILURE_RANGE_IN_SECONDS + '}')
                                                final int failureRangeInSeconds) {
         this.failureRangeInSeconds = failureRangeInSeconds;
     }
 
     @Autowired
     public final void setUsernameParameter(@Value("${cas.throttle.username.parameter:"
-                                                + DEFAULT_USERNAME_PARAMETER + "}")
+                                                + DEFAULT_USERNAME_PARAMETER + '}')
                                                final String usernameParameter) {
         this.usernameParameter = usernameParameter;
     }

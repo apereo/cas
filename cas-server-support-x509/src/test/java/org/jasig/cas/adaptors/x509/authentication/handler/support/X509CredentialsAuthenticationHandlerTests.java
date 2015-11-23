@@ -178,7 +178,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         // Test case #10: Valid certificate with CRL checking
         handler = new X509CredentialsAuthenticationHandler();
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
-        checker.afterPropertiesSet();
+        checker.init();
         handler.setRevocationChecker(checker);
         handler.setTrustedIssuerDnPattern(".*");
         credential = new X509CertificateCredential(createCertificates("user-valid.crt"));
@@ -192,7 +192,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         // Test case #11: Revoked end user certificate
         handler = new X509CredentialsAuthenticationHandler();
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-valid.crl"));
-        checker.afterPropertiesSet();
+        checker.init();
         handler.setRevocationChecker(checker);
         handler.setTrustedIssuerDnPattern(".*");
         params.add(new Object[] {
@@ -209,7 +209,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         handler.setTrustedIssuerDnPattern(".*");
         checker = new ResourceCRLRevocationChecker(new ClassPathResource("userCA-expired.crl"));
         checker.setExpiredCRLPolicy(zeroThresholdPolicy);
-        checker.afterPropertiesSet();
+        checker.init();
         handler.setRevocationChecker(checker);
         params.add(new Object[] {
                 handler,

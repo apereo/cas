@@ -5,11 +5,16 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
+
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -28,6 +33,7 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Component("fileAuthenticationHandler")
 public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** The default separator in the file. */
@@ -38,14 +44,18 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     private String separator = DEFAULT_SEPARATOR;
 
     /** The filename to read the list of usernames from. */
-    @NotNull
     private Resource fileName;
 
 
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
+
         try {
+            if (this.fileName == null || !this.fileName.exists()) {
+                throw new FileNotFoundException("Filename does not exist");
+            }
+
             final String username = credential.getUsername();
             final String passwordOnRecord = getPasswordOnRecord(username);
             if (StringUtils.isBlank(passwordOnRecord)) {
@@ -64,14 +74,16 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * @param fileName The fileName to set.
      */
-    public final void setFileName(final Resource fileName) {
+    @Autowired
+    public final void setFileName(@Value("${file.authn.filename:}") final Resource fileName) {
         this.fileName = fileName;
     }
 
     /**
      * @param separator The separator to set.
      */
-    public final void setSeparator(final String separator) {
+    @Autowired
+    public final void setSeparator(@Value("${file.authn.separator:" + DEFAULT_SEPARATOR + '}') final String separator) {
         this.separator = separator;
     }
 
@@ -83,9 +95,10 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
+
         try (BufferedReader bufferedReader =
                      new BufferedReader(
-                     new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
+                             new InputStreamReader(this.fileName.getInputStream(), Charset.defaultCharset()))) {
             String line = bufferedReader.readLine();
             while (line != null) {
                 final String[] lineFields = line.split(this.separator);

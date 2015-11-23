@@ -98,6 +98,7 @@
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <util:list id="monitorsList" />
     <alias name="defaultTicketRegistry" alias="ticketRegistry" />
     <util:map id="uniqueIdGeneratorsMap"/>

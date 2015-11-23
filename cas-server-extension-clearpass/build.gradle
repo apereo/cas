@@ -1,7 +1,7 @@
 
 description = 'Apereo CAS ClearPass Extension - DEPRECATED'
 dependencies {
-  compile project(':cas-server-core-api')
+  
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-tickets')
   compile(group: 'net.sf.ehcache', name: 'ehcache', version:ehcacheVersion) {

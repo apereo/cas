@@ -1,6 +1,6 @@
 package org.jasig.cas.adaptors.duo;
 
-import org.jasig.cas.MessageDescriptor;
+import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
@@ -30,7 +30,6 @@ public final class DuoAuthenticationHandler extends AbstractPreAndPostProcessing
      * @param duoAuthenticationService the duo authentication service
      */
     @Autowired
-
     public DuoAuthenticationHandler(@Qualifier("duoAuthenticationService")
                                         final DuoAuthenticationService duoAuthenticationService) {
         this.duoAuthenticationService = duoAuthenticationService;
@@ -38,8 +37,8 @@ public final class DuoAuthenticationHandler extends AbstractPreAndPostProcessing
 
 
     /**
-     * Do an out of band request using the DuoWeb api (encapsulated in DuoAuthenticationService) to the hosted duo service,
-     * if it is successful
+     * Do an out of band request using the DuoWeb api (encapsulated in DuoAuthenticationService)
+     * to the hosted duo service. If it is successful
      * it will return a String containing the username of the successfully authenticated user, but if not - will
      * return a blank String or null.
      * @param credential Credential to authenticate.
