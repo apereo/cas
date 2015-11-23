@@ -3,7 +3,6 @@ package org.jasig.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.apache.commons.collections4.map.HashedMap;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
@@ -34,9 +33,9 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.inspektr.audit.annotation.Audit;
@@ -44,6 +43,7 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -198,7 +198,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         if (releasePolicy != null) {
             principalAttrs = releasePolicy.getAttributes(principal);
         } else {
-            principalAttrs = new HashedMap<>();
+            principalAttrs = new HashMap<>();
         }
 
         if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
