@@ -46,7 +46,7 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
                 attr.addBinaryValue(value);
 
                 final LDAPConnection serverCon = getDirectory().getConnection();
-                final String address = "ldap://" + serverCon.getConnectedAddress() + ":" + serverCon.getConnectedPort();
+                final String address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
                 final Connection conn = DefaultConnectionFactory.getConnection(address);
                 conn.open();
                 final ModifyOperation modify = new ModifyOperation(conn);

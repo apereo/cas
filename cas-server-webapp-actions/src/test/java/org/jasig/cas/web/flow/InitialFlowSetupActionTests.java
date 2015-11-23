@@ -69,8 +69,8 @@ public class InitialFlowSetupActionTests {
 
         this.action.doExecute(context);
 
-        assertEquals(CONST_CONTEXT_PATH + "/", this.warnCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + "/", this.tgtCookieGenerator.getCookiePath());
+        assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
+        assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
     }
 
     @Test
@@ -82,16 +82,16 @@ public class InitialFlowSetupActionTests {
 
         this.action.doExecute(context);
 
-        assertEquals(CONST_CONTEXT_PATH + "/", this.warnCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + "/", this.tgtCookieGenerator.getCookiePath());
+        assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
+        assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
 
         request.setContextPath(CONST_CONTEXT_PATH_2);
         this.action.doExecute(context);
 
-        assertNotSame(CONST_CONTEXT_PATH_2 + "/", this.warnCookieGenerator.getCookiePath());
-        assertNotSame(CONST_CONTEXT_PATH_2 + "/", this.tgtCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + "/", this.warnCookieGenerator.getCookiePath());
-        assertEquals(CONST_CONTEXT_PATH + "/", this.tgtCookieGenerator.getCookiePath());
+        assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.warnCookieGenerator.getCookiePath());
+        assertNotSame(CONST_CONTEXT_PATH_2 + '/', this.tgtCookieGenerator.getCookiePath());
+        assertEquals(CONST_CONTEXT_PATH + '/', this.warnCookieGenerator.getCookiePath());
+        assertEquals(CONST_CONTEXT_PATH + '/', this.tgtCookieGenerator.getCookiePath());
     }
 
     @Test

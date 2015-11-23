@@ -1,5 +1,7 @@
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
+import org.springframework.stereotype.Component;
+
 import java.security.cert.X509Certificate;
 
 /**
@@ -8,6 +10,7 @@ import java.security.cert.X509Certificate;
  * @author Scott Battaglia
  * @since 3.0.0.4
  */
+@Component("x509SerialNumberPrincipalResolver")
 public final class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
 
     @Override

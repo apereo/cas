@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Component("ldapPasswordPolicyCOnfiguration")
+@Component("ldapPasswordPolicyConfiguration")
 public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration {
 
     /** Directory-specific account state handler component. */

@@ -15,10 +15,8 @@ import javax.validation.constraints.NotNull;
 public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
             AbstractUsernamePasswordAuthenticationHandler {
 
-    @NotNull
     private JdbcTemplate jdbcTemplate;
 
-    @NotNull
     private DataSource dataSource;
 
     /**
@@ -26,7 +24,7 @@ public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends
      *
      * @param dataSource the datasource to use.
      */
-    public final void setDataSource(final DataSource dataSource) {
+    public void setDataSource(@NotNull final DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.dataSource = dataSource;
     }
