@@ -1,7 +1,6 @@
 
 description = 'Apereo CAS SAML Server MDUI Support'
 dependencies {
-  compile project(':cas-server-core-api')
   compile(group: 'org.quartz-scheduler', name: 'quartz', version:quartzVersion) {
     exclude(module: 'slf4j-api')
     exclude(module: 'c3p0')

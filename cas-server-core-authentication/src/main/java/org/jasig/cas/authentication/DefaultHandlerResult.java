@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.jasig.cas.MessageDescriptor;
 import org.jasig.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;

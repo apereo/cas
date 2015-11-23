@@ -1,8 +1,8 @@
 package org.jasig.cas.logout;
 
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.util.ISOStandardDateFormat;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
