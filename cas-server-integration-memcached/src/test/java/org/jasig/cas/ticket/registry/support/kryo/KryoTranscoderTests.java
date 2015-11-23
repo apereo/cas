@@ -3,7 +3,6 @@ package org.jasig.cas.ticket.registry.support.kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.serializers.FieldSerializer;
 import net.spy.memcached.CachedData;
-import org.apache.commons.collections4.map.ListOrderedMap;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.jasig.cas.authentication.Authentication;
@@ -182,7 +181,7 @@ public class KryoTranscoderTests {
         final Credential userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         @SuppressWarnings("unchecked")
         final TicketGrantingTicket expectedTGT =
-                new MockTicketGrantingTicket(TGT_ID, userPassCredential, ListOrderedMap.listOrderedMap(this.principalAttributes));
+                new MockTicketGrantingTicket(TGT_ID, userPassCredential, this.principalAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
     }

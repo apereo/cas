@@ -2,6 +2,7 @@ package org.jasig.cas;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jasig.cas.authentication.MessageDescriptor;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;

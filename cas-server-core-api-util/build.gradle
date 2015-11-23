@@ -1,0 +1,8 @@
+
+description = 'Apereo CAS Core Utility APIs'
+dependencies {
+    compile group: 'com.google.guava', name: 'guava', version:guavaVersion
+    compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
+    compile group: 'joda-time', name: 'joda-time', version:jodaTimeVersion
+}
+
