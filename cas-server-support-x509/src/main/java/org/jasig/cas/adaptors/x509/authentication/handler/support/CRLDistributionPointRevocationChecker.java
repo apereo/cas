@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 
@@ -30,6 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.jasig.cas.adaptors.x509.util.CertUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
@@ -40,6 +25,7 @@ import org.cryptacular.x509.ExtensionReader;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 
@@ -56,15 +42,23 @@ import javax.validation.constraints.NotNull;
  * @since 3.4.6
  *
  */
+@Component("crlDistributionPointRevocationChecker")
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
 
     /** CRL cache. */
-    private final Cache crlCache;
+    @Autowired(required = false)
+    @Qualifier("x509CrlCache")
+    private Cache crlCache;
 
     /** The CRL fetcher instance. **/
-    private final CRLFetcher fetcher;
+    @Autowired(required = false)
+    @Qualifier("x509CrlFetcher")
+    private CRLFetcher fetcher;
 
     private boolean throwOnFetchFailure;
+
+    /** Used for serialization and auto wiring. */
+    private CRLDistributionPointRevocationChecker() {}
 
     /**
      * Creates a new instance that uses the given cache instance for CRL caching.
@@ -93,8 +87,10 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param crlCache the crl cache
      * @param fetcher the fetcher
      */
-    public CRLDistributionPointRevocationChecker(@NotNull final Cache crlCache,
-                                                 @NotNull final CRLFetcher fetcher) {
+    public CRLDistributionPointRevocationChecker(@NotNull
+                                                 final Cache crlCache,
+                                                 @NotNull
+                                                 final CRLFetcher fetcher) {
         this.crlCache = crlCache;
         this.fetcher = fetcher;
     }
@@ -105,7 +101,9 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      *
      * @param throwOnFetchFailure the throw on fetch failure
      */
-    public void setThrowOnFetchFailure(final boolean throwOnFetchFailure) {
+    @Autowired
+    public void setThrowOnFetchFailure(@Value("${cas.x509.authn.crl.throw.failure:false}")
+                                           final boolean throwOnFetchFailure) {
         this.throwOnFetchFailure = throwOnFetchFailure;
     }
 
@@ -115,6 +113,20 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      */
     @Override
     protected List<X509CRL> getCRLs(final X509Certificate cert) {
+
+        if (this.crlCache == null) {
+            throw new IllegalArgumentException("CRL cache is not defined");
+        }
+        if (this.fetcher == null) {
+            throw new IllegalArgumentException("CRL fetcher is not defined");
+        }
+        if (getExpiredCRLPolicy() == null) {
+            throw new IllegalArgumentException("Expiration CRL policy is not defined");
+        }
+        if (getUnavailableCRLPolicy() == null) {
+            throw new IllegalArgumentException("Unavailable CRL policy is not defined");
+        }
+
         final URI[] urls = getDistributionPoints(cert);
         logger.debug("Distribution points for {}: {}.", CertUtils.toString(cert), Arrays.asList(urls));
         final List<X509CRL> listOfLocations = new ArrayList<>(urls.length);
@@ -226,7 +238,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * Build URI by components to facilitate proper encoding of querystring.
      * e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
      *
-     * <p>If <code>uriString</code> is encoded, it will be decoded with <code>UTF-8</code>
+     * <p>If {@code uriString} is encoded, it will be decoded with {@code UTF-8}
      * first before it's added to the list.</p>
      * @param list the list
      * @param uriString the uri string
@@ -244,6 +256,20 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         } catch (final Exception e) {
             logger.warn("{} is not a valid distribution point URI.", uriString);
         }
+    }
+
+
+
+    @Autowired(required=false)
+    @Override
+    public void setUnavailableCRLPolicy(@Qualifier("x509CrlUnavailableRevocationPolicy") final RevocationPolicy policy) {
+        super.setUnavailableCRLPolicy(policy);
+    }
+
+    @Autowired(required=false)
+    @Override
+    public void setExpiredCRLPolicy(@Qualifier("x509CrlExpiredRevocationPolicy") final RevocationPolicy policy) {
+        super.setExpiredCRLPolicy(policy);
     }
 
 }

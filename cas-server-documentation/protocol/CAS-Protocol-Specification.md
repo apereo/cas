@@ -609,7 +609,7 @@ in the XML schema in Appendix A. Below are example responses:
   "serviceResponse" : {
     "authenticationFailure" : {
       "code" : "INVALID_TICKET",
-      "message" : "Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
+      "description" : "Ticket ST-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
     }
   }
 }
@@ -745,7 +745,7 @@ Pass in a callback URL for proxying:
         <cas:firstname>John</cas:firstname>
         <cas:lastname>Doe</cas:lastname>
         <cas:title>Mr.</cas:title>
-        <cas:email>jdoe@example.orgmailto:jdoe@example.org</cas:email>
+        <cas:email>jdoe@example.org</cas:email>
         <cas:affiliation>staff</cas:affiliation>
         <cas:affiliation>faculty</cas:affiliation>
       </cas:attributes>
@@ -852,7 +852,7 @@ Response on ticket validation failure:
   "serviceResponse" : {
     "authenticationFailure" : {
       "code" : "INVALID_TICKET",
-      "message" : "Ticket PT-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
+      "description" : "Ticket PT-1856339-aA5Yuvrxzpv8Tau1cYQ7 not recognized"
     }
   }
 }
@@ -933,7 +933,7 @@ Response on request failure:
   "serviceResponse" : {
     "authenticationFailure" : {
       "code" : "INVALID_REQUEST",
-      "message" : "'pgt' and 'targetService' parameters are both required"
+      "description" : "'pgt' and 'targetService' parameters are both required"
     }
   }
 }
@@ -1413,24 +1413,20 @@ SAML 1.0 or 1.1 request XML document of document type "text/xml".
 ### **4.2.4 Example of /samlValidate POST request**
 
 {% highlight bash %}
-POST /cas/samlValidate?ticket=
+POST /cas/samlValidate?TARGET=
 Host: cas.example.com
 Content-Length: 491
 Content-Type: text/xml 
 {% endhighlight %}
 
 {% highlight xml %}
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"http://schemas.xmlsoap.org/soap/envelope/>
-  <SOAP-ENV:Header/>
-  <SOAP-ENV:Body>
-    <samlp:Request xmlns:samlphttp://xmlnssamlp="urn:oasis:names:tc:SAML:1.0:protocol" MajorVersion="1"
-      MinorVersion="1" RequestID="_192.168.16.51.1024506224022"
-      IssueInstant="2002-06-19T17:03:44.022Z">
-      <samlp:AssertionArtifact>
-        ST-1-u4hrm3td92cLxpCvrjylcas.example.com
-      </samlp:AssertionArtifact>
-    </samlp:Request>
-  </SOAP-ENV:Body>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+	<SOAP-ENV:Header/>
+	<SOAP-ENV:Body>
+		<samlp:Request xmlns:samlp="urn:oasis:names:tc:SAML:1.0:protocol" MajorVersion="1" MinorVersion="1" RequestID="_192.168.16.51.1024506224022" IssueInstant="2002-06-19T17:03:44.022Z">
+			<samlp:AssertionArtifact>ST-1-u4hrm3td92cLxpCvrjylcas.example.com</samlp:AssertionArtifact>
+		</samlp:Request>
+	</SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
 {% endhighlight %}
 
@@ -1607,7 +1603,19 @@ to the CAS client.
 
 {% highlight xml %}
 <cas:attributes>
-    <cas:[attribute-name]>VALUE</cas:attribute>
+    ...
+    <cas:[attribute-name]>VALUE</cas:[attribute-name]>
+</cas:attributes>
+{% endhighlight %}
+
+> Example response with custom attribute:
+
+{% highlight xml %}
+<cas:attributes>
+    <cas:authenticationDate>2015-11-12T09:30:10Z</cas:authenticationDate>
+    <cas:longTermAuthenticationRequestTokenUsed>true</cas:longTermAuthenticationRequestTokenUsed>
+    <cas:isFromNewLogin>true</cas:isFromNewLogin>
+    <cas:myAttribute>myValue</cas:myAttribute>
 </cas:attributes>
 {% endhighlight %}
 

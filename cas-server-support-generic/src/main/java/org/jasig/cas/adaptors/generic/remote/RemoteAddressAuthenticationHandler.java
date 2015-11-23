@@ -1,32 +1,17 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.adaptors.generic.remote;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
@@ -39,29 +24,30 @@ import java.security.GeneralSecurityException;
  * @since 3.2.1
  *
  */
+@Component("remoteAddressAuthenticationHandler")
 public final class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 0xff;
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** The network netmask. */
-    @NotNull
     private InetAddress inetNetmask;
 
     /** The network base address. */
-    @NotNull
     private InetAddress inetNetwork;
 
     @Override
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final RemoteAddressCredential c = (RemoteAddressCredential) credential;
-        try {
-            final InetAddress inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
-            if (containsAddress(this.inetNetwork, this.inetNetmask, inetAddress)) {
-                return new DefaultHandlerResult(this, c, this.principalFactory.createPrincipal(c.getId()));
+        if (this.inetNetmask != null && this.inetNetwork != null) {
+            try {
+                final InetAddress inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
+                if (containsAddress(this.inetNetwork, this.inetNetmask, inetAddress)) {
+                    return new DefaultHandlerResult(this, c, this.principalFactory.createPrincipal(c.getId()));
+                }
+            } catch (final UnknownHostException e) {
+                logger.debug("Unknown host {}", c.getRemoteAddress());
             }
-        } catch (final UnknownHostException e) {
-            logger.debug("Unknown host {}", c.getRemoteAddress());
         }
         throw new FailedLoginException(c.getRemoteAddress() + " not in allowed range.");
     }
@@ -113,11 +99,14 @@ public final class RemoteAddressAuthenticationHandler extends AbstractAuthentica
     }
 
     /**
-     * @param ipAddressRange the IP address range that should be allowed trusted logins     *
+     * Sets ip network range.
+     *
+     * @param ipAddressRange the IP address range that should be allowed trusted logins
      */
-    public void setIpNetworkRange(final String ipAddressRange) {
+    @Autowired
+    public void setIpNetworkRange(@Value("${ip.address.range:}") final String ipAddressRange) {
 
-        if(ipAddressRange != null) {
+        if (StringUtils.isNotBlank(ipAddressRange)) {
 
             final String[] splitAddress = ipAddressRange.split("/");
 

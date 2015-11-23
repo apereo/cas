@@ -1,25 +1,6 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -233,12 +214,13 @@ public final class OAuth20AccessTokenControllerTests {
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal p = TestUtils.getPrincipal(ID, map);
+        final Principal p = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
         final TicketGrantingTicketImpl impl = new TicketGrantingTicketImpl(TGT_ID,
-            TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
 
         ((OAuth20WrapperController) oauth20WrapperController)
-            .getTicketRegistry().addTicket(new ServiceTicketImpl("ST1", impl, TestUtils.getService(), false,
+            .getTicketRegistry().addTicket(new ServiceTicketImpl("ST1", impl,
+                org.jasig.cas.authentication.TestUtils.getService(), false,
             new ExpirationPolicy() {
                 private static final long serialVersionUID = -7321055962209199811L;
 
@@ -272,12 +254,13 @@ public final class OAuth20AccessTokenControllerTests {
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal p = TestUtils.getPrincipal(ID, map);
+        final Principal p = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
         final TicketGrantingTicketImpl impl = new TicketGrantingTicketImpl(TGT_ID,
-            TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
+                org.jasig.cas.authentication.TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
 
         ((OAuth20WrapperController) oauth20WrapperController)
-            .getTicketRegistry().addTicket(new ServiceTicketImpl(CODE, impl, TestUtils.getService(), false,
+            .getTicketRegistry().addTicket(new ServiceTicketImpl(CODE, impl,
+                org.jasig.cas.authentication.TestUtils.getService(), false,
             new ExpirationPolicy() {
                 private static final long serialVersionUID = -7321055962209199811L;
 
@@ -296,10 +279,10 @@ public final class OAuth20AccessTokenControllerTests {
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
-        assertTrue(body.startsWith(OAuthConstants.ACCESS_TOKEN + "=" + TGT_ID + "&" + OAuthConstants.EXPIRES + "="));
+        assertTrue(body.startsWith(OAuthConstants.ACCESS_TOKEN + '=' + TGT_ID + '&' + OAuthConstants.EXPIRES + '='));
         // delta = 2 seconds
         final int delta = 2;
-        final int timeLeft = Integer.parseInt(StringUtils.substringAfter(body, "&" + OAuthConstants.EXPIRES + "="));
+        final int timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuthConstants.EXPIRES + '='));
         assertTrue(timeLeft >= TIMEOUT - 10 - delta);
     }
 

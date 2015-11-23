@@ -84,25 +84,14 @@ Registered applications with CAS have the option to control single logout behavi
 
 Sample configuration follows:
 
-{% highlight xml %}
-
-<!-- Turning single logout off for this application -->
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.NONE"/>
-
-<!--
-For back-channel requests:
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.BACK_CHANNEL"/>
-
-For front-channel requests:
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.FRONT_CHANNEL"/>
--->
-
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-         p:id="10000001" p:name="HTTP and IMAP"
-         p:description="Allows HTTP(S) and IMAP(S) protocols"
-         p:serviceId="^https://web.application.net"
-         p:evaluationOrder="10000001"
-         p:logoutType-ref="LOGOUTTYPE" />
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "logoutType" : "BACK_CHANNEL"
+}
 {% endhighlight %}
 
 ###Service Endpoint for Logout Requests
@@ -112,27 +101,16 @@ does not exactly use a CAS client that supports intercepting such requests and i
 
 To configure a service specific endpoint, try the following example:
 
-{% highlight xml %}
-
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.NONE"/>
-
-<!--
-For back-channel requests:
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.BACK_CHANNEL"/>
-
-For front-channel requests:
-<util:constant id="LOGOUTTYPE" static-field="org.jasig.cas.services.LogoutType.FRONT_CHANNEL"/>
--->
-
-<bean class="org.jasig.cas.services.RegexRegisteredService"
-        p:id="10000001" p:name="HTTP and IMAP"
-        p:description="Allows HTTP(S) and IMAP(S) protocols"
-        p:serviceId="^https://web.application.net/login"
-        p:evaluationOrder="10000001"
-        p:logoutType-ref="LOGOUTTYPE"
-        p:logoutUrl="https://web.application.net/logout" />
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "testId",
+  "name" : "testId",
+  "id" : 1,
+  "logoutType" : "BACK_CHANNEL",
+  "logoutUrl" : "https://web.application.net/logout",
+}
 {% endhighlight %}
-
 
 ###Aynchronous SLO Messages
 By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `cas.properties`:
