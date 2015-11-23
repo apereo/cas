@@ -1,22 +1,6 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.authentication.principal;
+
+import org.jasig.cas.validation.ValidationResponseType;
 
 /**
  * Represents a service using CAS that comes from the web.
@@ -42,10 +26,20 @@ public interface WebApplicationService extends Service {
     String getArtifactId();
 
     /**
-     * Return the original url provided (as <code>service</code> or <code>targetService</code> request parameter).
+     * Return the original url provided (as {@code service} or {@code targetService} request parameter).
      * Used to reconstruct the redirect url.
      *
      * @return the original url provided.
      */
     String getOriginalUrl();
+
+    /**
+     *  Ticket validation response MUST be produced based on the parameter value.
+     *  Supported values are XML and JSON. If this parameter is not set,
+     *  the default XML format will be used. If the parameter value is not supported by the CAS server,
+     *  an error must be produced.
+     * @return the requested format
+     * @since 4.2
+     */
+    ValidationResponseType getFormat();
 }

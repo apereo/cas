@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import java.security.GeneralSecurityException;
@@ -33,7 +15,12 @@ import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessing
 import org.jasig.cas.authentication.Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 
@@ -51,8 +38,9 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
  * @author Jan Van der Velpen
- * @since 3.0.0.4
+ * @since 3.0.4
  */
+@Component("x509CredentialsAuthenticationHandler")
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /** Default setting to limit the number of intermediate certificates. */
@@ -120,8 +108,21 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     }
 
     /**
-     * {@inheritDoc}
+     * Init and ensure configuration is correct.
      */
+    @PostConstruct
+    public void init() {
+        if (this.regExSubjectDnPattern == null) {
+            throw new IllegalArgumentException("Subject DN pattern is not configured");
+        }
+        if (this.revocationChecker == null) {
+            throw new IllegalArgumentException("Revocation checker is not configured");
+        }
+        if (this.regExTrustedIssuerDnPattern == null) {
+            throw new IllegalArgumentException("Trusted issuer DN pattern is not configured");
+        }
+    }
+
     @Override
     protected final HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 
@@ -157,39 +158,51 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         throw new FailedLoginException();
     }
 
-    public void setTrustedIssuerDnPattern(final String trustedIssuerDnPattern) {
+    @Autowired
+    public void setTrustedIssuerDnPattern(@Value("${cas.x509.authn.trusted.issuer.dnpattern:}") final String trustedIssuerDnPattern) {
         this.regExTrustedIssuerDnPattern = Pattern.compile(trustedIssuerDnPattern);
     }
 
     /**
      * @param maxPathLength The maxPathLength to set.
      */
-    public void setMaxPathLength(final int maxPathLength) {
+    @Autowired
+    public void setMaxPathLength(@Value("${cas.x509.authn.max.path.length:" + DEFAULT_MAXPATHLENGTH + '}')
+                                 final int maxPathLength) {
         this.maxPathLength = maxPathLength;
     }
 
     /**
      * @param allowed Allow CA certs to have unlimited intermediate certs (default=false).
      */
-    public void setMaxPathLengthAllowUnspecified(final boolean allowed) {
+    @Autowired
+    public void setMaxPathLengthAllowUnspecified(@Value("${cas.x509.authn.max.path.length.unspecified:"
+                                                    + DEFAULT_MAXPATHLENGTH_ALLOW_UNSPECIFIED + '}')
+                                                 final boolean allowed) {
         this.maxPathLengthAllowUnspecified = allowed;
     }
 
     /**
      * @param checkKeyUsage The checkKeyUsage to set.
      */
-    public void setCheckKeyUsage(final boolean checkKeyUsage) {
+    @Autowired
+    public void setCheckKeyUsage(@Value("${cas.x509.authn.check.key.usage:" + DEFAULT_CHECK_KEYUSAGE + '}')
+                                 final boolean checkKeyUsage) {
         this.checkKeyUsage = checkKeyUsage;
     }
 
     /**
      * @param requireKeyUsage The requireKeyUsage to set.
      */
-    public void setRequireKeyUsage(final boolean requireKeyUsage) {
+    @Autowired
+    public void setRequireKeyUsage(@Value("${cas.x509.authn.require.key.usage:" + DEFAULT_REQUIRE_KEYUSAGE + '}')
+                                   final boolean requireKeyUsage) {
         this.requireKeyUsage = requireKeyUsage;
     }
 
-    public void setSubjectDnPattern(final String subjectDnPattern) {
+    @Autowired
+    public void setSubjectDnPattern(@Value("${cas.x509.authn.subject.dnpattern:.*}")
+                                    final String subjectDnPattern) {
         this.regExSubjectDnPattern = Pattern.compile(subjectDnPattern);
     }
 
@@ -201,7 +214,9 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      *
      * @param checker Revocation checker component.
      */
-    public void setRevocationChecker(final RevocationChecker checker) {
+    @Autowired(required=false)
+    public void setRevocationChecker(@Qualifier("x509RevocationChecker")
+                                         final RevocationChecker checker) {
         this.revocationChecker = checker;
     }
 
@@ -272,7 +287,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * @param extensionOid the extension oid
      * @return true, if  critical
      */
-    private boolean isCritical(final X509Certificate certificate, final String extensionOid) {
+    private static boolean isCritical(final X509Certificate certificate, final String extensionOid) {
         final Set<String> criticalOids = certificate.getCriticalExtensionOIDs();
 
         if (criticalOids == null || criticalOids.isEmpty()) {

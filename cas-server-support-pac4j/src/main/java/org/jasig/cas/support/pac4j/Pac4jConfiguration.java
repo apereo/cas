@@ -1,30 +1,11 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.pac4j;
 
-import org.apache.commons.lang3.StringUtils;
+import org.pac4j.config.client.ConfigPropertiesFactory;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
-import org.pac4j.oauth.client.FacebookClient;
-import org.pac4j.oauth.client.TwitterClient;
-import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.client.SAML2ClientConfiguration;
+import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.config.Config;
+import org.pac4j.core.config.ConfigFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +13,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Initializes the pac4j configuration.
@@ -43,41 +29,17 @@ import java.util.List;
 @Configuration
 public class Pac4jConfiguration {
 
+    private static final String CAS_PAC4J_PREFIX = "cas.pac4j.";
+
     @Value("${server.prefix:http://localhost:8080/cas}/login")
     private String serverLoginUrl;
 
-    @Value("${cas.pac4j.facebook.id:}")
-    private String facebookId;
-    @Value("${cas.pac4j.facebook.secret:}")
-    private String facebookSecret;
-    @Value("${cas.pac4j.facebook.scope:}")
-    private String facebookScope;
-    @Value("${cas.pac4j.facebook.fields:}")
-    private String facebookFields;
+    @Autowired(required = true)
+    @Qualifier("casProperties")
+    private Properties casProperties;
 
-    @Value("${cas.pac4j.twitter.id:}")
-    private String twitterId;
-    @Value("${cas.pac4j.twitter.secret:}")
-    private String twitterSecret;
-
-    @Value("${cas.pac4j.saml.keystorePassword:}")
-    private String samlKeystorePassword;
-    @Value("${cas.pac4j.saml.privateKeyPassword:}")
-    private String samlPrivateKeyPassword;
-    @Value("${cas.pac4j.saml.keystorePath:}")
-    private String samlKeystorePath;
-    @Value("${cas.pac4j.saml.identityProviderMetadataPath:}")
-    private String samlIdentityProviderMetadataPath;
-    @Value("${cas.pac4j.saml.maximumAuthenticationLifetime:}")
-    private String samlMaximumAuthenticationLifetime;
-    @Value("${cas.pac4j.saml.serviceProviderEntityId:}")
-    private String samlServiceProviderEntityId;
-    @Value("${cas.pac4j.saml.serviceProviderMetadataPath:}")
-    private String samlServiceProviderMetadataPath;
-
-    @Autowired(required = false)
-    @Qualifier("clients")
-    private Clients clients;
+    @Autowired(required = true)
+    private IndirectClient[] clients;
 
     /**
      * Returning the built clients.
@@ -86,65 +48,29 @@ public class Pac4jConfiguration {
      */
     @Bean(name = "builtClients")
     public Clients clients() {
-        String callbackUrl = serverLoginUrl;
-        List<Client> allClients = new ArrayList<>();
-        // we already have a global Clients configuration defined in a Spring context
-        if (clients != null) {
-            final String clientsCallbackUrl = clients.getCallbackUrl();
-            if (StringUtils.isNotBlank(clientsCallbackUrl)) {
-                callbackUrl = clientsCallbackUrl;
+        final List<Client> allClients = new ArrayList<>();
+
+        // turn the properties file into a map of properties
+        final Map<String, String> properties = new HashMap<>();
+        final Enumeration names = casProperties.propertyNames();
+        while (names.hasMoreElements()) {
+            final String name = (String) names.nextElement();
+            if (name.startsWith(CAS_PAC4J_PREFIX)) {
+                properties.put(name.substring(CAS_PAC4J_PREFIX.length()), casProperties.getProperty(name));
             }
-            allClients = clients.findAllClients();
         }
+        // add the new clients found via properties first
+        final ConfigFactory configFactory = new ConfigPropertiesFactory(properties);
+        final Config propertiesConfig = configFactory.build();
+        allClients.addAll(propertiesConfig.getClients().getClients());
 
-        // add new clients by properties
-        autoCreateFacebookClient(allClients);
-        autoCreateTwitterClient(allClients);
-        autoCreateSaml2Client(allClients);
+        // add all indirect clients from the Spring context
+        allClients.addAll(Arrays.<Client>asList(clients));
 
-        // rebuild a new Clients configuration
+        // build a Clients configuration
         if (allClients == null || allClients.size() == 0) {
             throw new IllegalArgumentException("At least one pac4j client must be defined");
         }
-        return new Clients(callbackUrl, allClients);
-    }
-
-    private void autoCreateFacebookClient(final List<Client> clients) {
-        if (StringUtils.isNotBlank(facebookId) && StringUtils.isNotBlank(facebookSecret)) {
-            final FacebookClient facebookClient = new FacebookClient(facebookId, facebookSecret);
-            if (StringUtils.isNotBlank(facebookScope)) {
-                facebookClient.setScope(facebookScope);
-            }
-            if (StringUtils.isNotBlank(facebookFields)) {
-                facebookClient.setFields(facebookFields);
-            }
-            clients.add(facebookClient);
-        }
-    }
-
-    private void autoCreateTwitterClient(final List<Client> clients) {
-        if (StringUtils.isNotBlank(twitterId) && StringUtils.isNotBlank(twitterSecret)) {
-            final TwitterClient twitterClient = new TwitterClient(twitterId, twitterSecret);
-            clients.add(twitterClient);
-        }
-    }
-
-    private void autoCreateSaml2Client(final List<Client> clients) {
-        if (StringUtils.isNotBlank(samlKeystorePassword) && StringUtils.isNotBlank(samlPrivateKeyPassword)
-                && StringUtils.isNotBlank(samlKeystorePath) && StringUtils.isNotBlank(samlIdentityProviderMetadataPath)) {
-            final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(samlKeystorePath, samlKeystorePassword,
-                    samlPrivateKeyPassword, samlIdentityProviderMetadataPath);
-            if (StringUtils.isNotBlank(samlMaximumAuthenticationLifetime)) {
-                cfg.setMaximumAuthenticationLifetime(Integer.parseInt(samlMaximumAuthenticationLifetime));
-            }
-            if (StringUtils.isNotBlank(samlServiceProviderEntityId)) {
-                cfg.setServiceProviderEntityId(samlServiceProviderEntityId);
-            }
-            if (StringUtils.isNotBlank(samlServiceProviderMetadataPath)) {
-                cfg.setServiceProviderMetadataPath(samlServiceProviderMetadataPath);
-            }
-            final SAML2Client saml2Client = new SAML2Client(cfg);
-            clients.add(saml2Client);
-        }
+        return new Clients(serverLoginUrl, allClients);
     }
 }

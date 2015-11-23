@@ -43,6 +43,7 @@ host all CAS configuration.
 # http.client.truststore.psw=changeit
 {% endhighlight %}
 
+
 ##Returning PGT in Validation Response
 In situations where using `CAS20ProxyHandler` may be undesirable, such that invoking a callback url to receive the proxy granting ticket is not feasible,
 CAS may be configured to return the proxy-granting ticket id directly in the validation response. In order to successfully establish trust between the
@@ -56,31 +57,35 @@ will **not** support the additional returning of the proxy granting ticket.
 
 ###Configuration
 
-####Register the public key for service
-Once you have received the public key from the client application owner, it must be first registered inside the CAS server's service registry:
+###Register Service
+Once you have received the public key from the client application owner, it must be first
+registered inside the CAS server's service registry. The service that holds the public key above must also
+be authorized to receive the PGT
+as an attribute for the given attribute release policy of choice.
 
-{% highlight xml %}
-...
-<property name="publicKey">
-    <bean class="org.jasig.cas.services.RegisteredServicePublicKeyImpl"
-          c:location="classpath:RSA1024Public.key"
-          c:algorithm="RSA" />
-</property>
-...
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "test",
+  "id" : 1,
+  "evaluationOrder" : 0,
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
+    },
+    "authorizedToReleaseCredentialPassword" : false,
+    "authorizedToReleaseProxyGrantingTicket" : true
+  },
+  "publicKey" : {
+    "@class" : "org.jasig.cas.services.RegisteredServicePublicKeyImpl",
+    "location" : "classpath:RSA1024Public.key",
+    "algorithm" : "RSA"
+  }
+}
 {% endhighlight %}
 
-####Authorize PGT for Service
-The service that holds the public key above must also be authorized to receive the proxy granting ticket id
-as an attribute for the given attribute release policy of choice:
-
-{% highlight xml %}
-...
-<property name="attributeReleasePolicy">
-    <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy"
-            p:authorizedToReleaseProxyGrantingTicket="true" />
-</property>
-...
-{% endhighlight %}
 
 ####Decrypt the PGT id
 Once the client application has received the `proxyGrantingTicket` id attribute in the CAS validation response, it can decrypt it

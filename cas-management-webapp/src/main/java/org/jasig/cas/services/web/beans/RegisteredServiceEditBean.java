@@ -1,22 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.services.web.beans;
 
 import org.apache.commons.codec.binary.Base64;
@@ -27,10 +8,10 @@ import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-import org.jasig.cas.services.AbstractAttributeReleasePolicy;
+import org.jasig.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
-import org.jasig.cas.services.AttributeFilter;
+import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.LogoutType;
@@ -216,14 +197,15 @@ public final class RegisteredServiceEditBean implements Serializable {
      * @param bean the bean
      */
     private static void configureAttributeReleasePolicy(final RegisteredService svc, final ServiceData bean) {
-        final AbstractAttributeReleasePolicy attrPolicy = (AbstractAttributeReleasePolicy) svc.getAttributeReleasePolicy();
+        final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy =
+                (AbstractRegisteredServiceAttributeReleasePolicy) svc.getAttributeReleasePolicy();
         if (attrPolicy != null) {
             final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();
 
             attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
             attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
 
-            final AttributeFilter filter = attrPolicy.getAttributeFilter();
+            final RegisteredServiceAttributeFilter filter = attrPolicy.getAttributeFilter();
             if (filter != null) {
                 if (filter instanceof RegisteredServiceRegexAttributeFilter) {
                     final RegisteredServiceRegexAttributeFilter regex =
@@ -255,7 +237,7 @@ public final class RegisteredServiceEditBean implements Serializable {
      * @param attrPolicy the attr policy
      * @param attrPolicyBean the attr policy bean
      */
-    private static void configurePrincipalRepository(final AbstractAttributeReleasePolicy attrPolicy,
+    private static void configurePrincipalRepository(final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy,
                                                      final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean) {
         final PrincipalAttributesRepository pr = attrPolicy.getPrincipalAttributesRepository();
         if (pr instanceof DefaultPrincipalAttributesRepository) {
@@ -583,7 +565,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                         this.attrRelease.getAttrPolicy();
                 final String policyType = policyBean.getType();
 
-                AbstractAttributeReleasePolicy policy = null;
+                AbstractRegisteredServiceAttributeReleasePolicy policy = null;
                 if (StringUtils.equalsIgnoreCase(policyType,
                         AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
                     policy = new ReturnAllAttributeReleasePolicy();

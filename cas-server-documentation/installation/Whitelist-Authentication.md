@@ -25,28 +25,30 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ###`AcceptUsersAuthenticationHandler`
 {% highlight xml %}
-<bean class="org.jasig.cas.adaptors.generic.AcceptUsersAuthenticationHandler">
-    <property name="users">
-       <map>
-          <entry key="scott" value="password" />
-       </map>
-    </property>
-</bean>
+<alias name="acceptUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
 {% endhighlight %}
 
+The following settings are applicable:
 
+{% highlight properties %}
+accept.authn.users=casuser::Mellon
+{% endhighlight %}
 
 ###`FileAuthenticationHandler`
+
 {% highlight xml %}
-<bean class="org.jasig.cas.adaptors.generic.FileAuthenticationHandler"
-   p:fileName="file:/opt/cas/file_of_passwords.txt" />
+<alias name="fileAuthenticationHandler" alias="primaryAuthenticationHandler" />
 {% endhighlight %}
 
+The following settings are applicable:
+
+{% highlight properties %}
+# file.authn.filename=classpath:people.txt
+# file.authn.separator=::
+{% endhighlight %}
 
 ####Example Password File
 {% highlight bash %}
 scott::password
 bob::password2
 {% endhighlight %}
-
-
