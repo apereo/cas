@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -19,6 +20,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.Lob;
+import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
@@ -122,8 +124,10 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private RegisteredServicePublicKey publicKey;
 
     @Column(name = "properties")
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "RegisteredServiceImpl")
-    private Map<String, Serializable> properties;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @MapKey(name = "id")
+    private Map<String, DefaultRegisteredServiceProperty> properties =
+            new HashMap<>();
 
     @Override
     public long getId() {
@@ -224,7 +228,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey, that.publicKey)
                 .append(this.logoutUrl, that.logoutUrl)
                 .append(this.requiredHandlers, that.requiredHandlers)
-                .append(this.proxyPolicy, that.properties)
+                .append(this.proxyPolicy, that.proxyPolicy)
+                .append(this.properties, that.properties)
                 .isEquals();
     }
 
@@ -245,6 +250,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey)
                 .append(this.logoutUrl)
                 .append(this.requiredHandlers)
+                .append(this.proxyPolicy)
                 .append(this.properties)
                 .toHashCode();
     }
@@ -348,7 +354,6 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
         this.setAccessStrategy(source.getAccessStrategy());
         this.setLogo(source.getLogo());
-        this.setPublicKey(source.getPublicKey());
         this.setLogoutUrl(source.getLogoutUrl());
         this.setPublicKey(source.getPublicKey());
         this.setRequiredHandlers(source.getRequiredHandlers());
@@ -458,7 +463,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @Override
     public Map<String, Serializable> getProperties() {
-        return this.properties;
+        return (Map) this.properties;
     }
 
     public void setProperties(final Map<String, Serializable> properties) {
