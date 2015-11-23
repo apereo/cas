@@ -1,5 +1,6 @@
 package org.jasig.cas.services.web.view;
 
+import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Principal;

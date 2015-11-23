@@ -3,9 +3,9 @@ package org.jasig.cas.ticket.registry.encrypt;
 
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry;
-import org.jasig.cas.util.CipherExecutor;
 import org.jasig.cas.util.CompressionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

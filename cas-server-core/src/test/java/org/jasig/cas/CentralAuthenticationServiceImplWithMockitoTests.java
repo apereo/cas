@@ -1,6 +1,6 @@
 package org.jasig.cas;
 
-import org.apache.commons.collections4.functors.TruePredicate;
+import com.google.common.base.Predicates;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
@@ -29,9 +29,9 @@ import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -187,7 +187,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void getTicketsWithNoPredicate() {
-        final Collection<Ticket> c = this.cas.getTickets(TruePredicate.INSTANCE);
+        final Collection<Ticket> c = this.cas.getTickets(Predicates.<Ticket>alwaysTrue());
         assertEquals(c.size(), this.ticketRegMock.getTickets().size());
     }
 
@@ -216,7 +216,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return tgtRootMock;
     }
     
-    private TicketGrantingTicket createMockTicketGrantingTicket(final String id,
+    private static TicketGrantingTicket createMockTicketGrantingTicket(final String id,
             final ServiceTicket svcTicket, final boolean isExpired, 
             final TicketGrantingTicket root, final List<Authentication> chainedAuthnList) {
         final TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);

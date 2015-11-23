@@ -5,7 +5,7 @@ dependencies {
     exclude(module: 'commons-logging')
   }
   compile group: 'org.springframework', name: 'spring-beans', version:springVersion
-  compile project(':cas-server-core-api')
+  
   compile project(':cas-server-core-web')
   compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
   compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
