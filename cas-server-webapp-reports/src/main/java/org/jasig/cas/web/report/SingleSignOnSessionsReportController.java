@@ -1,6 +1,6 @@
 package org.jasig.cas.web.report;
 
-import org.apache.commons.collections4.Predicate;
+import com.google.common.base.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -157,11 +158,11 @@ public final class SingleSignOnSessionsReportController {
      * @return the non expired ticket granting tickets
      */
     private Collection<Ticket> getNonExpiredTicketGrantingTickets() {
-        return this.centralAuthenticationService.getTickets(new Predicate() {
+        return this.centralAuthenticationService.getTickets(new Predicate<Ticket>() {
             @Override
-            public boolean evaluate(final Object ticket) {
+            public boolean apply(@Nullable final Ticket ticket) {
                 if (ticket instanceof TicketGrantingTicket) {
-                    return !((TicketGrantingTicket) ticket).isExpired();
+                    return !ticket.isExpired();
                 }
                 return false;
             }

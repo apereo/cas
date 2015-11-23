@@ -5,7 +5,7 @@ import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.web.view.CasViewConstants;
+import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.jasig.cas.web.AbstractServiceValidateControllerTests;

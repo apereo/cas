@@ -1,6 +1,6 @@
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.MessageDescriptor;
+import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;

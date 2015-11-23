@@ -1,5 +1,6 @@
 package org.jasig.cas.util;
 
+import org.jasig.cas.CipherExecutor;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.keys.AesKey;

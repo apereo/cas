@@ -1,7 +1,7 @@
 package org.jasig.cas.authentication.support;
 
 import org.jasig.cas.DefaultMessageDescriptor;
-import org.jasig.cas.MessageDescriptor;
+import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AccountPasswordMustChangeException;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
