@@ -7,7 +7,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -41,7 +43,17 @@ public class MongoServiceRegistryDaoTests {
         assertTrue(this.serviceRegistryDao.load().isEmpty());
     }
 
-    private RegisteredService buildService(final int i) {
-        return TestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
+    private static RegisteredService buildService(final int i) {
+        final AbstractRegisteredService rs = TestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
+        final Set<RegisteredServiceProperty> propertyMap = new HashSet<>();
+        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        property.setName("field1");
+        final Set<String> values = new HashSet<>();
+        values.add("value1");
+        values.add("value2");
+        property.setValues(values);
+        propertyMap.add(property);
+        rs.setProperties(propertyMap);
+        return rs;
     }
 }
