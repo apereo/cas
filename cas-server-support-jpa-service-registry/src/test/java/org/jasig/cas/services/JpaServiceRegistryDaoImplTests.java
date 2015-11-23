@@ -80,4 +80,23 @@ public class JpaServiceRegistryDaoImplTests  {
         assertEquals(r.getTheme(), r3.getTheme());
     }
 
+    @Test
+    public void verifyRegisteredServiceProperties() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("test");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setProperties(new HashMap
+        );
+
+        this.dao.save(r);
+
+        final List<RegisteredService> services = this.dao.load();
+
+        final RegisteredService r2 = services.get(0);
+
+
+    }
+
 }
