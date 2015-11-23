@@ -75,6 +75,7 @@
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
     <util:map id="serviceThemeResolverSupportedBrowsers" />
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>

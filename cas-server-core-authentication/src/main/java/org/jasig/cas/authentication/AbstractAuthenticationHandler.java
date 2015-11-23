@@ -2,6 +2,8 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.validation.constraints.NotNull;
 
@@ -42,7 +44,8 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      *
      * @param principalFactory the principal factory
      */
-    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+    @Autowired
+    public void setPrincipalFactory(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 }

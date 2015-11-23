@@ -20,6 +20,10 @@
     <util:constant static-field="org.jasig.cas.adaptors.radius.RadiusServer.DEFAULT_PORT_AUTHENTICATION"
                    id="authenticationPort" />
 
+    <util:list id="radiusServers">
+        <ref bean="radiusServer" />
+    </util:list>
+
     <bean id="radiusServer"
           class="org.jasig.cas.adaptors.radius.JRadiusServerImpl"
           c:protocol="${cas.radius.server.protocol:EAP_MSCHAPv2}"

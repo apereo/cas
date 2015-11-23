@@ -9,6 +9,7 @@ import jcifs.ntlmssp.Type3Message;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbSession;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultHandlerResult;
@@ -16,6 +17,9 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.jasig.cas.support.spnego.authentication.principal.SpnegoCredential;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
@@ -29,17 +33,19 @@ import java.security.GeneralSecurityException;
  * @author Arnaud Lesueur
  * @since 3.1
  */
-
+@Component("ntlmAuthenticationHandler")
 public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private static final int NBT_ADDRESS_TYPE = 0x1C;
     private static final int NTLM_TOKEN_TYPE_FIELD_INDEX = 8;
     private static final int NTLM_TOKEN_TYPE_ONE = 1;
     private static final int NTLM_TOKEN_TYPE_THREE = 3;
+
+    private static final String DEFAULT_DOMAIN_CONTROLLER = Config.getProperty("jcifs.smb.client.domain");
+
     private boolean loadBalance = true;
 
-    @NotNull
-    private String domainController = Config.getProperty("jcifs.smb.client.domain");
+    private String domainController = DEFAULT_DOMAIN_CONTROLLER;
 
     private String includePattern;
 
@@ -56,8 +62,8 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         try {
             if (this.loadBalance) {
                 // find the first dc that matches the includepattern
-                if (this.includePattern != null) {
-                    final NbtAddress[] dcs= NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
+                if (StringUtils.isNotBlank(this.includePattern)) {
+                    final NbtAddress[] dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
                     for (final NbtAddress dc2 : dcs) {
                         if(dc2.getHostAddress().matches(this.includePattern)){
                             dc = new UniAddress(dc2);
@@ -116,15 +122,27 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         return credential instanceof SpnegoCredential;
     }
 
-    public void setLoadBalance(final boolean loadBalance) {
+    @Autowired
+    public void setLoadBalance(@Value("${ntlm.authn.load.balance:true}") final boolean loadBalance) {
         this.loadBalance = loadBalance;
     }
 
-    public void setDomainController(final String domainController) {
-        this.domainController = domainController;
+    /**
+     * Sets domain controller. Will default if none is defined or passed.
+     *
+     * @param domainController the domain controller
+     */
+    @Autowired
+    public void setDomainController(@Value("${ntlm.authn.domain.controller:}") @NotNull final String domainController) {
+        if (StringUtils.isBlank(domainController)) {
+            this.domainController = DEFAULT_DOMAIN_CONTROLLER;
+        } else {
+            this.domainController = domainController;
+        }
     }
 
-    public void setIncludePattern(final String includePattern) {
+    @Autowired
+    public void setIncludePattern(@Value("${ntlm.authn.include.pattern:}") final String includePattern) {
         this.includePattern = includePattern;
     }
 

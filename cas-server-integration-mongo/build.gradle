@@ -1,7 +1,7 @@
 
 description = 'Apereo CAS Mongo Integration'
 dependencies {
-  compile project(':cas-server-core-api')
+  
   compile project(':cas-server-core-services')
   compile(group: 'org.springframework.data', name: 'spring-data-mongodb', version:springDataVersion) {
     exclude(module: 'mongo-java-driver')

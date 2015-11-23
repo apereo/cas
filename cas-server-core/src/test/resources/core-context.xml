@@ -20,7 +20,7 @@
 
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver"/>
-        <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver"/>
+        <entry key-ref="primaryAuthenticationHandler" value-ref="personDirectoryPrincipalResolver"/>
     </util:map>
     <util:list id="authenticationMetadataPopulators">
         <ref bean="cacheCredentialsMetaDataPopulator" />
@@ -313,4 +313,6 @@
 
     <bean id="persistentIdGenerator" class="org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator"
           c:salt="casrox"  />
+
+    <alias name="defaultPrincipalFactory" alias="principalFactory" />
 </beans>

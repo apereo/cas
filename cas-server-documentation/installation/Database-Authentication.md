@@ -18,14 +18,10 @@ Database authentication components are enabled by including the following depend
 All database authentication components require a `DataSource` for acquiring connections to the underlying database.
 The use of connection pooling is _strongly_ recommended, and the [c3p0 library](http://www.mchange.com/projects/c3p0/)
 is a good choice that we discuss here.
-[Tomcat JDBC Pool](http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html) is another competent alternative.
-Note that the connection pool dependency mentioned above should be modified according to the choice of connection pool
-components.
-
 
 ### Pooled Data Source Example
-A bean named `dataSource` must be defined for CAS components that use a database. A bean like the following should be
-defined in `deployerConfigContext.xml`.
+A bean named `dataSource` must be defined for CAS components that use a database.
+
 {% highlight xml %}
 <bean id="dataSource"
   class="com.mchange.v2.c3p0.ComboPooledDataSource"
@@ -94,53 +90,34 @@ CAS provides the following components to accommodate different database authenti
 
 ######`QueryDatabaseAuthenticationHandler`
 Authenticates a user by comparing the (hashed) user password against the password on record determined by a
-configurable database query. `QueryDatabaseAuthenticationHandler` is by far the most flexible and easiest to
-configure for anyone proficient with SQL, but `SearchModeSearchDatabaseAuthenticationHandler` provides an alternative
-for simple queries based solely on username and password and builds the SQL query using straightforward inputs.
+configurable database query.
 
-The following database schema for user data is assumed in the following two examples that leverage SQL queries
-to authenticate users.
-
-{% highlight sql %}
-    create table users (
-        username varchar(50) not null,
-        password varchar(50) not null,
-        active bit not null );
-{% endhighlight %}
-
-The following example uses an MD5 hash algorithm and searches exclusively for _active_ users.
 {% highlight xml %}
-<bean id="passwordEncoder"
-      class="org.jasig.cas.authentication.handler.DefaultPasswordEncoder"
-      c:encodingAlgorithm="MD5"
-      p:characterEncoding="UTF-8" />
-
-<bean id="dbAuthHandler"
-      class="org.jasig.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler"
-      p:dataSource-ref="dataSource"
-      p:passwordEncoder-ref="passwordEncoder"
-      p:sql="select password from users where username=? and active=1" />
+<alias name="queryDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
+<alias name="dataSource" alias="queryDatabaseDataSource" />
 {% endhighlight %}
 
+The following settings are applicable:
+
+{% highlight properties %}
+# cas.jdbc.authn.query.sql=select password from users where username=?
+{% endhighlight %}
 
 ######`SearchModeSearchDatabaseAuthenticationHandler`
-Searches for a user record by querying against a username and (hashed) password; the user is authenticated if at
+Searches for a user record by querying against a username and password; the user is authenticated if at
 least one result is found.
 
-The following example uses a SHA1 hash algorithm to authenticate users.
 {% highlight xml %}
-<bean id="passwordEncoder"
-      class="org.jasig.cas.authentication.handler.DefaultPasswordEncoder"
-      c:encodingAlgorithm="SHA1"
-      p:characterEncoding="UTF-8" />
+<alias name="searchModeSearchDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
+<alias name="dataSource" alias="searchModeDatabaseDataSource" />
+{% endhighlight %}
 
-<bean id="dbAuthHandler"
-      class="org.jasig.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler"
-      p:dataSource-ref="dataSource"
-      p:passwordEncoder-ref="passwordEncoder"
-      p:tableUsers="users"
-      p:fieldUser="username"
-      p:fieldPassword="password" />
+The following settings are applicable:
+
+{% highlight properties %}
+# cas.jdbc.authn.search.password=
+# cas.jdbc.authn.search.user=
+# cas.jdbc.authn.search.table=
 {% endhighlight %}
 
 
@@ -151,12 +128,11 @@ The following example does not perform any password encoding since most JDBC dri
 passwords to the appropriate format required by the underlying database. Note authentication is equivalent to the
 ability to establish a connection with username/password credentials. This handler is the easiest to configure
 (usually none required), but least flexible, of the database authentication components.
-{% highlight xml %}
-<bean id="dbAuthHandler"
-      class="org.jasig.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler"
-      p:dataSource-ref="dataSource" />
-{% endhighlight %}
 
+{% highlight xml %}
+<alias name="bindModeSearchDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
+<alias name="dataSource" alias="bindSearchDatabaseDataSource" />
+{% endhighlight %}
 
 ######`QueryAndEncodeDatabaseAuthenticationHandler`
 A JDBC querying handler that will pull back the password and
@@ -165,22 +141,25 @@ password using the public salt value. Assumes everything
 is inside the same database table. Supports settings for
 number of iterations as well as private salt.
 
-This password encoding method, combines the private Salt and the public salt which it prepends to the password before hashing.
-If multiple iterations are used, the bytecode Hash of the first iteration is rehashed without the salt values.
+This password encoding method, combines the private Salt and the public salt which it
+prepends to the password before hashing.
+If multiple iterations are used, the bytecode Hash of the first iteration is
+rehashed without the salt values.
 The final hash is converted to Hex before comparing it to the database value.
 
 {% highlight xml %}
+<alias name="queryAndEncodeDatabaseAuthenticationHandler" alias="primaryAuthenticationHandler" />
+<alias name="dataSource" alias="queryEncodeDatabaseDataSource" />
+{% endhighlight %}
 
-<util:constant id="ALG" static-field="org.apache.commons.codec.digest.MessageDigestAlgorithms.SHA_512"/>
+The following settings are applicable:
 
-<bean id="dbAuthHandler"
-      class="org.jasig.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler"
-      c:dataSource-ref="dataSource"
-      c:algorithmName-ref="ALG"
-      c:sql="SELECT * FROM table WHERE username = ?"
-      p:staticSalt="private_salt"
-      p:passwordFieldName="password"
-      p:saltFieldName="public_salt"
-      p:numberOfIterationsFieldName="num_iter"
-      p:numberOfIterations="10" />
+{% highlight properties %}
+# cas.jdbc.authn.query.encode.sql=
+# cas.jdbc.authn.query.encode.alg=
+# cas.jdbc.authn.query.encode.salt.static=
+# cas.jdbc.authn.query.encode.password=
+# cas.jdbc.authn.query.encode.salt=
+# cas.jdbc.authn.query.encode.iterations.field=
+# cas.jdbc.authn.query.encode.iterations=
 {% endhighlight %}

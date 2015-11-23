@@ -1,6 +1,7 @@
 package org.jasig.cas.authentication.principal;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.jasig.cas.logout.SingleLogoutService;
 import org.jasig.cas.validation.ValidationResponseType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

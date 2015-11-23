@@ -2,6 +2,9 @@ package org.jasig.cas.authentication.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Container for password policy configuration.
@@ -10,6 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("defaultPasswordPolicyConfiguration")
 public class PasswordPolicyConfiguration {
 
     private static final int DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS = 30;
@@ -31,7 +35,10 @@ public class PasswordPolicyConfiguration {
         return this.alwaysDisplayPasswordExpirationWarning;
     }
 
-    public void setAlwaysDisplayPasswordExpirationWarning(final boolean alwaysDisplayPasswordExpirationWarning) {
+
+    @Autowired
+    public void setAlwaysDisplayPasswordExpirationWarning(@Value("${password.policy.warnAll:false}")
+                                                              final boolean alwaysDisplayPasswordExpirationWarning) {
         this.alwaysDisplayPasswordExpirationWarning = alwaysDisplayPasswordExpirationWarning;
     }
 
@@ -39,7 +46,9 @@ public class PasswordPolicyConfiguration {
         return this.passwordPolicyUrl;
     }
 
-    public void setPasswordPolicyUrl(final String passwordPolicyUrl) {
+    @Autowired
+    public void setPasswordPolicyUrl(@Value("${password.policy.url:https://password.example.edu/change}")
+                                         final String passwordPolicyUrl) {
         this.passwordPolicyUrl = passwordPolicyUrl;
     }
 
@@ -47,7 +56,9 @@ public class PasswordPolicyConfiguration {
         return passwordWarningNumberOfDays;
     }
 
-    public void setPasswordWarningNumberOfDays(final int days) {
+    @Autowired
+    public void setPasswordWarningNumberOfDays(
+            @Value("${password.policy.warningDays:" + DEFAULT_PASSWORD_WARNING_NUMBER_OF_DAYS + '}') final int days) {
         this.passwordWarningNumberOfDays = days;
     }
 }
