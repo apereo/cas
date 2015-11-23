@@ -1,7 +1,6 @@
 package org.jasig.cas.services;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.net.URL;
 
