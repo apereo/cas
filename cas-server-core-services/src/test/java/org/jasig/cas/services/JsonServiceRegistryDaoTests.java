@@ -318,29 +318,32 @@ public class JsonServiceRegistryDaoTests {
         r.setName("persistCustomServiceProperties");
         r.setId(4245);
 
-        final Set<RegisteredServiceProperty> properties = new HashSet<>();
+        final Map<String, RegisteredServiceProperty> properties = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
-        property.setName("field1");
         final Set<String> values = new HashSet<>();
         values.add("value1");
         values.add("value2");
         property.setValues(values);
-        properties.add(property);
+        properties.put("field1", property);
 
 
         final DefaultRegisteredServiceProperty property2 = new DefaultRegisteredServiceProperty();
-        property2.setName("field12");
         final Set<String> values2 = new HashSet<>();
         values2.add("value12");
         values2.add("value22");
         property2.setValues(values2);
-        properties.add(property2);
+        properties.put("field2", property2);
 
         r.setProperties(properties);
 
         this.dao.save(r);
         final List<RegisteredService> list = this.dao.load();
         assertNotNull(this.dao.findServiceById(r.getId()));
+        assertEquals(r.getProperties().size(), 2);
+        assertNotNull(r.getProperties().get("field1"));
+
+        final RegisteredServiceProperty prop = r.getProperties().get("field1");
+        assertEquals(prop.getValues().size(), 2);
     }
 
 }
