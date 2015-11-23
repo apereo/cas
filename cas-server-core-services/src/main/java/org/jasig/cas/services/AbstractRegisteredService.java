@@ -27,7 +27,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -122,7 +124,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name="RegisteredServiceImpl_Properties")
-    private Set<DefaultRegisteredServiceProperty> properties = new HashSet<>();
+    private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
     @Override
     public long getId() {
@@ -187,7 +189,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
             this.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         }
         if (this.properties == null) {
-            this.properties = new HashSet<>();
+            this.properties = new HashMap<>();
         }
     }
 
@@ -457,11 +459,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public Set<RegisteredServiceProperty> getProperties() {
-        return (Set) this.properties;
+    public Map<String, RegisteredServiceProperty> getProperties() {
+        return (Map) this.properties;
     }
 
-    public void setProperties(final Set<RegisteredServiceProperty> properties) {
-        this.properties = (Set) properties;
+    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
+        this.properties = (Map) properties;
     }
 }

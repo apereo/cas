@@ -4,8 +4,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -91,24 +93,21 @@ public class JpaServiceRegistryDaoImplTests  {
         r.setTheme("theme");
         r.setDescription("description");
 
-        final Set<RegisteredServiceProperty> propertyMap = new HashSet<>();
-
+        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
-        property.setName("field1");
         final Set<String> values = new HashSet<>();
         values.add("value1");
         values.add("value2");
         property.setValues(values);
-        propertyMap.add(property);
+        propertyMap.put("field1", property);
 
         final DefaultRegisteredServiceProperty property2 = new DefaultRegisteredServiceProperty();
-        property2.setName("field2");
 
         final Set<String> values2 = new HashSet<>();
         values2.add("value1");
         values2.add("value2");
         property2.setValues(values2);
-        propertyMap.add(property2);
+        propertyMap.put("field2", property2);
 
         r.setProperties(propertyMap);
 
