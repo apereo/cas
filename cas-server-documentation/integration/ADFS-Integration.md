@@ -11,7 +11,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% highlight xml %}
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-support-wsfederation</artifactId>
+  <artifactId>cas-server-support-wsfederation-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -21,7 +21,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 ### WsFed Configuration
 
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS signing certificate
-and made it available to CAS at a location that can be resolved at runtime. 
+and made it available to CAS at a location that can be resolved at runtime.
 
 {% highlight properties %}
 # The claim from ADFS that should be used as the user's identifier.
@@ -63,7 +63,7 @@ public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMu
 The mutator then needs to be declared in your configuration:
 
 {% highlight xml %}
-<bean id="wsfedAttributeMutator" 
+<bean id="wsfedAttributeMutator"
     class="org.jasig.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
 {% endhighlight %}
 
@@ -79,4 +79,4 @@ An optional step, it is recommended that the `casLogoutView.jsp` be replace to r
 {% highlight jsp %}
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:redirect url="https://adfs.example.org/adfs/ls/?wa=wsignout1.0"/>
-{% endhighlight %} 
+{% endhighlight %}
