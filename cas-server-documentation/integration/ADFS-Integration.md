@@ -64,39 +64,11 @@ The mutator then needs to be declared in your configuration:
 
 {% highlight xml %}
 <bean id="wsfedAttributeMutator" 
-	class="org.jasig.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
-{% endhighlight %} 
+    class="org.jasig.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
+{% endhighlight %}
 
 
-### Webflow Changes
-
-The login Spring Webflow needs to adjusted to route to ADFS.
-
-This snippet should be added right after the `on-start` element. This checks to see if we have a returning WS-Federation 
-request and handles it as necessary, otherwise we route through the normal flows.
-
-{% highlight xml %}
-<action-state id="wsFederationAction">
-  <evaluate expression="wsFederationAction" />
-  <transition on="success" to="sendTicketGrantingTicket" />
-  <transition on="error" to="ticketGrantingTicketCheck" />
-</action-state>
-<view-state id="WsFederationRedirect" view="externalRedirect:#{flowScope.WsFederationIdentityProviderUrl}"/>
-{% endhighlight %} 
-
-
-Next, we need to redirect to ADFS instead of displaying the CAS Login view. 
-This accomplished by adjusting the `generateLoginTicket` state. This is a modified snippet:
-
-{% highlight xml %}
-<action-state id="generateLoginTicket">
-    <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)" />
- 	<!--Redirect to ADFS instead of showing the login form -->
-    <transition on="generated" to="WsFederationRedirect" />
-</action-state>
-{% endhighlight %} 
-
-Finally, ensure that the attributes send from ADFS are available and mapped in
+Finally, ensure that the attributes sent from ADFS are available and mapped in
 your `attributeRepository` configuration.
 
 
