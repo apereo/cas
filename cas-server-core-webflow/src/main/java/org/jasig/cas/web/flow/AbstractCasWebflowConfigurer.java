@@ -1,7 +1,6 @@
 package org.jasig.cas.web.flow;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +67,10 @@ public abstract class AbstractCasWebflowConfigurer {
      * The transition state 'success'.
      */
     protected static final String TRANSITION_ID_SUCCESS = "success";
+    /**
+     * The transition state 'submit'.
+     */
+    protected static final String TRANSITION_ID_SUBMIT = "submit";
     /**
      * The transition state 'generated'.
      */
@@ -241,8 +244,8 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param targetStateId the target state id
      * @param clazz         the exception class
      */
-    protected void addGlobalTransitionIfExceptionIsThrown(final Flow flow, final String targetStateId,
-                                                          final Class<? extends Throwable> clazz) {
+    protected void createGlobalTransition(final Flow flow, final String targetStateId,
+                                                             final Class<? extends Throwable> clazz) {
 
         try {
             final TransitionExecutingFlowExecutionExceptionHandler handler = new TransitionExecutingFlowExecutionExceptionHandler();
@@ -312,7 +315,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param state the state to include the default transition
      * @param targetState the id of the destination state to which the flow should transfer
      */
-    protected void addDefaultTransitionToState(final TransitionableState state, final String targetState) {
+    protected void createStateDefaultTransition(final TransitionableState state, final String targetState) {
         if (state == null) {
             logger.debug("Cannot add default transition of [{}] to the given state is null and cannot be found in the flow.", targetState);
             return;
@@ -324,17 +327,16 @@ public abstract class AbstractCasWebflowConfigurer {
     /**
      * Add transition to action state.
      *
-     * @param actionState     the action state
+     * @param state     the action state
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
      */
-    protected void addTransitionToActionState(final ActionState actionState,
-                                              final String criteriaOutcome, final String targetState) {
+    protected void createTransitionForState(final TransitionableState state,
+                                               final String criteriaOutcome, final String targetState) {
         try {
             final Transition transition = createTransition(criteriaOutcome, targetState);
-            actionState.getTransitionSet().add(transition);
-
-            logger.debug("Added transition {} to the action state {}", transition.getId(), actionState.getId());
+            state.getTransitionSet().add(transition);
+            logger.debug("Added transition {} to the state {}", transition.getId(), state.getId());
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -410,7 +412,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param id     the id
      * @param viewId the view id
      */
-    protected void addEndState(final Flow flow, final String id, final String viewId) {
+    protected void createEndState(final Flow flow, final String id, final String viewId) {
         try {
             final EndState endState = new EndState(flow, id);
             final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
@@ -436,7 +438,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param id     the id
      * @param viewId the view id
      */
-    protected void addViewState(final Flow flow, final String id, final String viewId) {
+    protected ViewState createViewState(final Flow flow, final String id, final String viewId) {
         try {
             final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
                     new LiteralExpression(viewId),
@@ -448,10 +450,11 @@ public abstract class AbstractCasWebflowConfigurer {
 
             final ViewState viewState = new ViewState(flow, id, viewFactory);
             logger.debug("Added view state {}", viewState.getId());
-
+            return viewState;
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
+        return null;
     }
 
     /**
