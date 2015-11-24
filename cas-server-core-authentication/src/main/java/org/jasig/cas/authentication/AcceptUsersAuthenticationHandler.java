@@ -1,6 +1,5 @@
 package org.jasig.cas.authentication;
 
-import org.apache.commons.collections4.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,8 +11,10 @@ import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -38,6 +39,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
 
     /** The default separator in the file. */
     private static final String DEFAULT_SEPARATOR = "::";
+    private static final Pattern USERS_PASSWORDS_SPLITTER_PATTERN = Pattern.compile(DEFAULT_SEPARATOR);
 
     /** The list of users we will accept. */
     private Map<String, String> users;
@@ -52,9 +54,9 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     public void init() {
         if (StringUtils.isNotBlank(this.acceptedUsers) && this.users == null) {
             final Set<String> usersPasswords = org.springframework.util.StringUtils.commaDelimitedListToSet(this.acceptedUsers);
-            final Map<String, String> parsedUsers = new HashedMap<>();
+            final Map<String, String> parsedUsers = new HashMap<>();
             for (final String usersPassword : usersPasswords) {
-                final String[] splitArray = usersPassword.split(DEFAULT_SEPARATOR);
+                final String[] splitArray = USERS_PASSWORDS_SPLITTER_PATTERN.split(usersPassword);
                 parsedUsers.put(splitArray[0], splitArray[1]);
             }
             setUsers(parsedUsers);

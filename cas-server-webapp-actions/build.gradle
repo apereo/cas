@@ -1,7 +1,6 @@
 
 description = 'Apereo CAS Web Application Spring Webflow Actions'
 dependencies {
-  compile project(':cas-server-core-api')
   compile project(':cas-server-webapp-cookie')
   compile project(':cas-server-core-web')
   compile project(':cas-server-core-authentication')
