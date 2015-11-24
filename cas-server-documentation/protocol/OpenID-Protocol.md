@@ -15,7 +15,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% highlight xml %}
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-support-openid</artifactId>
+  <artifactId>cas-server-support-openid-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
