@@ -74,15 +74,20 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
                 return args;
             }
 
+            final Object[] out = new Object[args.length];
             for (int i = 0; i < args.length; i++) {
                 if (args[i] != null) {
                     final String message = args[i].toString();
                     if (ticketIdPresentInLogMessage(message)) {
-                        args[i] = removeTicketId(message);
+                        out[i] = removeTicketId(message);
+                    } else {
+                        out[i] = args[i];
                     }
+                } else {
+                    out[i] = null;
                 }
             }
-            return args;
+            return out;
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
