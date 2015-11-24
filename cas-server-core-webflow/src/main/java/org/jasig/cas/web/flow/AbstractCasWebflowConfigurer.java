@@ -56,6 +56,10 @@ public abstract class AbstractCasWebflowConfigurer {
      */
     protected static final String TRANSITION_ID_SUCCESS = "success";
     /**
+     * The transition state 'generated'.
+     */
+    protected static final String TRANSITION_ID_GENERATED = "generated";
+    /**
      * The transition state 'error'.
      */
     protected static final String TRANSITION_ID_ERROR = "error";
@@ -74,6 +78,10 @@ public abstract class AbstractCasWebflowConfigurer {
      */
     protected static final String TRANSITION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
 
+    /**
+     * The action state 'generateLoginTicket'.
+     */
+    protected static final String STATE_ID_GENERATE_LOGIN_TICKET = "generateLoginTicket";
 
     private static final String FLOW_ID_LOGIN = "login";
 
@@ -224,7 +232,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param targetType the target type
      * @return the conversion executor
      */
-    private ConversionExecutor fromStringTo(final Class targetType) {
+    protected ConversionExecutor fromStringTo(final Class targetType) {
         return this.flowBuilderServices.getConversionService().getConversionExecutor(String.class, targetType);
     }
 
