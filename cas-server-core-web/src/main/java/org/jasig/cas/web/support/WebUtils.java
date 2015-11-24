@@ -75,7 +75,11 @@ public final class WebUtils {
      */
     public static HttpServletRequest getHttpServletRequest() {
         final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
-        return (HttpServletRequest) servletExternalContext.getNativeRequest();
+        if (servletExternalContext != null) {
+            return (HttpServletRequest) servletExternalContext.getNativeRequest();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -101,7 +105,11 @@ public final class WebUtils {
      */
     public static HttpServletResponse getHttpServletResponse() {
         final ServletExternalContext servletExternalContext = (ServletExternalContext) ExternalContextHolder.getExternalContext();
-        return (HttpServletResponse) servletExternalContext.getNativeResponse();
+        if (servletExternalContext != null) {
+            return (HttpServletResponse) servletExternalContext.getNativeResponse();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -395,13 +403,15 @@ public final class WebUtils {
     public static String getAuthenticatedUsername() {
         final HttpServletRequest request = getHttpServletRequest();
         final HttpServletResponse response = getHttpServletResponse();
-        final J2EContext context = new J2EContext(request, response);
-        final ProfileManager manager = new ProfileManager(context);
-        final UserProfile profile = manager.get(true);
-        if (profile != null) {
-            final String id = profile.getId();
-            if (id != null) {
-                return id;
+        if (request != null && response != null) {
+            final J2EContext context = new J2EContext(request, response);
+            final ProfileManager manager = new ProfileManager(context);
+            final UserProfile profile = manager.get(true);
+            if (profile != null) {
+                final String id = profile.getId();
+                if (id != null) {
+                    return id;
+                }
             }
         }
         return UNKNOWN_USER;
