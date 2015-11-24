@@ -23,7 +23,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% highlight xml %}
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-support-pac4j</artifactId>
+    <artifactId>cas-server-support-pac4j-webflow</artifactId>
     <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -66,27 +66,27 @@ Or like any bean, in a dedicated `WEB-INF/spring-configuration/pac4jContext.xml`
 <bean id="facebook1" class="org.pac4j.oauth.client.FacebookClient">
   <property name="key" value="fbkey" />
   <property name="secret" value="fbsecret" />
-  <property name="scope" 
+  <property name="scope"
     value="email,user_likes,user_about_me,user_birthday,user_education_history,user_hometown" />
-  <property name="fields" 
+  <property name="fields"
     value="id,name,first_name,middle_name,last_name,gender,locale,languages,link,username,third_party_id,timezone,updated_time" />
 </bean>
- 
+
 <bean id="twitter1" class="org.pac4j.oauth.client.TwitterClient">
   <property name="key" value="twkey" />
   <property name="secret" value="twsecret" />
 </bean>
- 
+
 <bean id="caswrapper1" class="org.pac4j.oauth.client.CasOAuthWrapperClient">
   <property name="key" value="this_is_the_key" />
   <property name="secret" value="this_is_the_secret" />
   <property name="casOAuthUrl" value="http://mycasserver2/oauth2.0" />
 </bean>
-  
+
 <bean id="cas1" class="org.pac4j.cas.client.CasClient">
   <property name="casLoginUrl" value="http://mycasserver2/login" />
 </bean>
- 
+
 <bean id="myopenid1" class="org.pac4j.openid.client.MyOpenIdClient" />
 {% endhighlight %}
 
