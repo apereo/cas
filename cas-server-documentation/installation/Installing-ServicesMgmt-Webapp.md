@@ -4,18 +4,22 @@ title: CAS - Services Management Webapp
 ---
 # Services Management Webapp
 
-The services management webapp is no longer part of the CAS server and is a standalone web application: `cas-management-webapp`.
-
-Nonetheless, one MUST keep in mind that both applications (the CAS server and the services management webapp)
-share the _same_ configuration for the CAS services:
+The services management webapp is no longer part of the CAS server and
+is a standalone web application: `cas-management-webapp`.
 
 * The management webapp is used to add/edit/delete all the CAS services
 * The CAS server loads/relies on all these defined CAS services to process all incoming requests.
 
+<div class="alert alert-warning"><strong>Synchronized Configuration</strong><p>
+You MUST keep in mind that both applications (the CAS server and the services management webapp)
+share the <strong>same</strong> configuration for the CAS services.
+</p></div>
+
 You can install the services management webapp in your favorite applications server, there is no restriction.
 Though, you need to configure it according to your environment. Towards that goal, the best way to
 proceed is to create your own services management webapp using
-a [Maven overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html) based on the CAS services management webapp:
+a [Maven overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html)
+based on the CAS services management webapp:
 
 {% highlight xml %}
 <dependency>
@@ -27,6 +31,11 @@ a [Maven overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html
 </dependency>
 {% endhighlight %}
 
+## Services Registry
+
+You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml`
+file and set the appropriate `serviceRegistryDao`. The [persistence storage](Service-Management.html) MUST be the same.
+It should be the same configuration you already use in your CAS server in the `WEB-INF/deployerConfigContext.xml` file.
 
 ## Authentication method
 
@@ -135,9 +144,3 @@ cas-management.securityContext.serviceProperties.adminRoles=hasRole('ROLE_ADMIN'
 
 When authenticating against a CAS server, the services management webapp will be processed as a
 regular CAS service and thus, needs to be defined in the services registry of the CAS server.
-
-## Services Registry
-
-You also need to define the *common* services registry by overriding the `WEB-INF/managementConfigContext.xml`
-file and set the appropriate `serviceRegistryDao`. The [persistence storage](Service-Management.html) MUST be the same.
-It should be the same configuration you already use in your CAS server in the `WEB-INF/deployerConfigContext.xml` file.
