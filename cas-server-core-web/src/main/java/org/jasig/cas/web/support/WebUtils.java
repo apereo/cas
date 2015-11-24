@@ -40,6 +40,7 @@ public final class WebUtils {
     /** Default CAS Servlet name. **/
     public static final String CAS_SERVLET_NAME = "cas";
 
+    private static final String UNKNOWN_USER = "audit:unknown";
 
     /** Request attribute that contains message key describing details of authorization failure.*/
     public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
@@ -399,8 +400,11 @@ public final class WebUtils {
         final ProfileManager manager = new ProfileManager(context);
         final UserProfile profile = manager.get(true);
         if (profile != null) {
-            return profile.getId();
+            final String id = profile.getId();
+            if (id != null) {
+                return id;
+            }
         }
-        return null;
+        return UNKNOWN_USER;
     }
 }
