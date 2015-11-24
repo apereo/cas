@@ -4,12 +4,14 @@ import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
+import org.jasig.cas.services.DefaultRegisteredServiceProperty;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.RegisteredServiceProperty;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.ServiceRegistryDao;
@@ -23,8 +25,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -137,7 +142,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         assertEquals(0, this.dao.load().size());
     }
 
-    private RegisteredService getRegisteredService() {
+    private static RegisteredService getRegisteredService() {
         final AbstractRegisteredService rs = new RegisteredServiceImpl();
         rs.setName("Service Name1");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
@@ -150,10 +155,20 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setEvaluationOrder(123);
         rs.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler8", "handle92")));
+
+        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap();
+        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+
+        final Set<String> values = new HashSet<>();
+        values.add("value1");
+        values.add("value2");
+        property.setValues(values);
+        propertyMap.put("field1", property);
+        rs.setProperties(propertyMap);
         return rs;
     }
 
-    private RegisteredService getRegexRegisteredService() {
+    private static RegisteredService getRegexRegisteredService() {
         final AbstractRegisteredService rs  = new RegexRegisteredService();
         rs.setName("Service Name Regex");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
@@ -166,6 +181,19 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setEvaluationOrder(123);
         rs.setDescription("Here is another description");
         rs.setRequiredHandlers(new HashSet<String>(Arrays.asList("handler1", "handler2")));
+
+        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap();
+        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+
+        final Set<String> values = new HashSet<>();
+        values.add("value1");
+        values.add("value2");
+        property.setValues(values);
+        propertyMap.put("field1", property);
+        rs.setProperties(propertyMap);
+
         return rs;
     }
+
+
 }
