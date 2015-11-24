@@ -13,7 +13,7 @@ Trusted authentication handler support is enabled by including the following dep
 {% highlight xml %}
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-support-trusted</artifactId>
+  <artifactId>cas-server-support-trusted-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
