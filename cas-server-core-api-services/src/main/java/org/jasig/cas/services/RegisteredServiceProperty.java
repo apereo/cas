@@ -18,4 +18,20 @@ public interface RegisteredServiceProperty extends Serializable {
      * @return the values
      */
     Set<String> getValues();
+
+    /**
+     * Gets the first single value.
+     *
+     *
+     * @return the value, or null if the collection is empty.
+     */
+    String getValue();
+
+    /**
+     * Contains elements?
+     *
+     * @param value the value
+     * @return true/false
+     */
+    boolean contains(String value);
 }
