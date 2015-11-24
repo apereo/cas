@@ -40,13 +40,12 @@ public final class WebUtils {
     /** Default CAS Servlet name. **/
     public static final String CAS_SERVLET_NAME = "cas";
 
-    private static final String UNKNOWN_USER = "audit:unknown";
-
     /** Request attribute that contains message key describing details of authorization failure.*/
     public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
 
+    private static final String UNKNOWN_USER = "audit:unknown";
 
     /**
      * Instantiates a new web utils instance.
