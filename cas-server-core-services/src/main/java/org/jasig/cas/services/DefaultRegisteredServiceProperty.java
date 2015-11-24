@@ -1,5 +1,6 @@
 package org.jasig.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -41,6 +42,21 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         }
         return values;
     }
+
+    @Override
+    @JsonIgnore
+    public String getValue() {
+        if (this.values.isEmpty()) {
+            return null;
+        }
+        return this.values.iterator().next();
+    }
+
+    @Override
+    public boolean contains(final String value) {
+        return this.values.contains(value);
+    }
+
     /**
      * Sets values.
      *
