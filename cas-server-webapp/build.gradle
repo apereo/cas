@@ -32,6 +32,8 @@ dependencies {
     compile project(':cas-server-webapp-reports')
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
+    compile project(':cas-server-support-wsfederation-webflow')
+
     compile(group: 'org.springframework.security', name: 'spring-security-config', version: springSecVersion) {
         exclude(module: 'commons-logging')
         exclude(module: 'spring-core')
@@ -77,6 +79,7 @@ dependencies {
         exclude(module: 'commons-codec')
         exclude(module: 'spring-core')
         exclude(module: 'spring-beans')
+        exclude(module: 'bcprov-jdk15on')
     }
     runtime group: 'com.mchange', name: 'c3p0', version: c3p0Version
 }
