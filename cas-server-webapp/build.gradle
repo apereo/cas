@@ -32,7 +32,6 @@ dependencies {
     compile project(':cas-server-webapp-reports')
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
-    compile project(':cas-server-support-wsfederation-webflow')
 
     compile(group: 'org.springframework.security', name: 'spring-security-config', version: springSecVersion) {
         exclude(module: 'commons-logging')
