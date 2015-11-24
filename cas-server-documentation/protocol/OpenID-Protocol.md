@@ -20,31 +20,6 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-##Configuration
-
-###Update the webflow
-
-CAS uses a spring webflow to describe the authentication process. We need to change it to switch to OpenID authentication if it recognizes one. This is done in the `login-webflow.xml` file. After the on-start element just add these two blocks:
-
-{% highlight xml %}
-<!-- If the request contains a parameter called openid.mode and is not an association request, switch to openId. Otherwise, continue normal webflow. -->
-<decision-state id="selectFirstAction">
-    <if
-       test="externalContext.requestParameterMap['openid.mode'] ne ''
-        &amp;&amp; externalContext.requestParameterMap['openid.mode'] ne null
-        &amp;&amp; externalContext.requestParameterMap['openid.mode'] ne 'associate'"
-       then="openIdSingleSignOnAction" else="ticketGrantingTicketCheck" />
-</decision-state>
-
-<!-- The OpenID authentication action. If authentication is successful, send the ticket granting ticker. Otherwise, redirect to the login form. -->
-<action-state id="openIdSingleSignOnAction">
-    <evaluate expression="openIdSingleSignOnAction" />
-    <transition on="success" to="sendTicketGrantingTicket" />
-    <transition on="error" to="viewLoginForm" />
-    <transition on="warn" to="warn" />
-</action-state>
-{% endhighlight %}
-
 ##OpenID v2.0 support
 
 By default, the CAS server is defined as an OpenID provider v1.0. This definition is held in the `user.jsp` file (in the `WEB-INF/view/jsp/protocol/openid` directory):
