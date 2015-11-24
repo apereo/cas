@@ -1,0 +1,6 @@
+
+description = 'Apereo CAS Pac4j Webflow Support'
+dependencies {
+    compile project(':cas-server-core-webflow')
+    compile project(':cas-server-support-pac4j')
+}

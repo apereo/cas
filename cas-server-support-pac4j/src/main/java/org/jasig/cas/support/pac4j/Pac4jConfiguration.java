@@ -38,7 +38,7 @@ public class Pac4jConfiguration {
     @Qualifier("casProperties")
     private Properties casProperties;
 
-    @Autowired(required = true)
+    @Autowired(required = false)
     private IndirectClient[] clients;
 
     /**
@@ -65,10 +65,12 @@ public class Pac4jConfiguration {
         allClients.addAll(propertiesConfig.getClients().getClients());
 
         // add all indirect clients from the Spring context
-        allClients.addAll(Arrays.<Client>asList(clients));
+        if (clients != null && clients.length > 0) {
+            allClients.addAll(Arrays.<Client>asList(clients));
+        }
 
         // build a Clients configuration
-        if (allClients == null || allClients.size() == 0) {
+        if (allClients.isEmpty()) {
             throw new IllegalArgumentException("At least one pac4j client must be defined");
         }
         return new Clients(serverLoginUrl, allClients);
