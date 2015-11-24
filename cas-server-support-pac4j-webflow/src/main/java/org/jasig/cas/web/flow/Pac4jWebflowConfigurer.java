@@ -22,6 +22,6 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
         actionState.getTransitionSet().add(createTransition(TRANSITION_ID_ERROR, getStartState(flow).getId()));
         actionState.getTransitionSet().add(createTransition("stop", "stopWebflow"));
         setStartState(flow, actionState);
-        addViewState(flow, "stopWebflow", "stopWebflow");
+        createViewState(flow, "stopWebflow", "stopWebflow");
     }
 }
