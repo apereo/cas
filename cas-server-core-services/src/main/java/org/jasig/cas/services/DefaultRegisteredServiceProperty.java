@@ -14,7 +14,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * The {@link DefaultRegisteredServiceProperty} is responsible for...
+ * The {@link DefaultRegisteredServiceProperty} represents
+ * a single property associated with a registered service.
+ * Properties are assumed to be a set a String values.
  *
  * @author Misagh Moayyed
  * @since 4.2
