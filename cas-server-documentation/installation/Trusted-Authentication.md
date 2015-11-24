@@ -24,22 +24,10 @@ Update `deployerConfigContext.xml` according to the following template:
 
 {% highlight xml %}
 ...
-<entry key-ref="trustedHandler" value-ref="trustedPrincipalResolver" />
+<entry key-ref="principalBearingCredentialsAuthenticationHandler"
+       value-ref="trustedPrincipalResolver" />
 <util:list id="authenticationMetadataPopulators">
   <ref bean="successfulHandlerMetaDataPopulator" />
 </util:list>
 ...
 {% endhighlight %}
-
-## Configure Webflow Components
-Add an additional state to `login-webflow.xml`:
-
-{% highlight xml %}
-<action-state id="remoteAuthenticate">
-  <evaluate expression="principalFromRemoteAction" />
-  <transition on="success" to="sendTicketGrantingTicket" />
-  <transition on="error" to="viewLoginForm" />
-</action-state>
-{% endhighlight %}
-
-Replace references to `viewLoginForm` in existing states with `remoteAuthenticate`.
