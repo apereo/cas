@@ -37,10 +37,6 @@
             <mvc:exclude-mapping path="/logout*" />
             <mvc:exclude-mapping path="/loggedOut.html" />
             <mvc:exclude-mapping path="/authorizationFailure.html" />
-            <mvc:exclude-mapping path="/css/**" />
-            <mvc:exclude-mapping path="/images/**" />
-            <mvc:exclude-mapping path="/js/**" />
-            <mvc:exclude-mapping path="/themes/**" />
             <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor">
                 <constructor-arg name="config" ref="config" />
                 <constructor-arg name="clientName" value="CasClient" />
