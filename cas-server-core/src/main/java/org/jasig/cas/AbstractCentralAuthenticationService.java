@@ -3,7 +3,7 @@ package org.jasig.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.apache.commons.collections4.Predicate;
+import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationManager;
@@ -24,10 +24,10 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -283,11 +283,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Metered(name = "GET_TICKETS_METER")
     @Counted(name="GET_TICKETS_COUNTER", monotonic=true)
     @Override
-    public final Collection<Ticket> getTickets(final Predicate predicate) {
+    public final Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
         final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
         final Iterator<Ticket> it = c.iterator();
         while (it.hasNext()) {
-            if (!predicate.evaluate(it.next())) {
+            if (!predicate.apply(it.next())) {
                 it.remove();
             }
         }

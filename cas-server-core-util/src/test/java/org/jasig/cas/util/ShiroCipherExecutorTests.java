@@ -1,5 +1,6 @@
 package org.jasig.cas.util;
 
+import org.jasig.cas.CipherExecutor;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

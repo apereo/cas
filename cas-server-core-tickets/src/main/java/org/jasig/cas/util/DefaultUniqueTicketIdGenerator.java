@@ -1,6 +1,7 @@
 package org.jasig.cas.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

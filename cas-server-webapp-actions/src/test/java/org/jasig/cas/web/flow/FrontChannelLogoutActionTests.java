@@ -1,7 +1,7 @@
 package org.jasig.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.SingleLogoutService;
+import org.jasig.cas.logout.SingleLogoutService;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutManager;
