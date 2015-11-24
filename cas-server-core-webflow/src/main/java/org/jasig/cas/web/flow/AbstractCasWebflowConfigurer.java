@@ -4,6 +4,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -28,6 +29,7 @@ import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
+import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
@@ -41,14 +43,38 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * The {@link CasWebflowConfigurer} is responsible for
+ * The {@link AbstractCasWebflowConfigurer} is responsible for
  * providing an entry point into the CAS webflow.
  *
  * @author Misagh Moayyed
  * @since 4.2
  */
 @Component("casWebflowConfigurer")
-public class CasWebflowConfigurer {
+public abstract class AbstractCasWebflowConfigurer {
+    /**
+     * The transition state 'success'.
+     */
+    protected static final String TRANSITION_ID_SUCCESS = "success";
+    /**
+     * The transition state 'error'.
+     */
+    protected static final String TRANSITION_ID_ERROR = "error";
+    /**
+     * The transition state 'warn'.
+     */
+    protected static final String TRANSITION_ID_WARN = "warn";
+
+    /**
+     * The transition state 'sendTicketGrantingTicket'.
+     */
+    protected static final String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
+
+    /**
+     * The transition state 'ticketGrantingTicketCheck'.
+     */
+    protected static final String TRANSITION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
+
+
     private static final String FLOW_ID_LOGIN = "login";
 
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -57,7 +83,12 @@ public class CasWebflowConfigurer {
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
-    private FlowDefinitionRegistry flowDefinitionRegistry;
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    @Qualifier("logoutFlowRegistry")
+    private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -71,6 +102,7 @@ public class CasWebflowConfigurer {
     public final void initialize() throws Exception {
         try {
             logger.debug("Initializing CAS webflow configuration...");
+            doInitialize();
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -81,7 +113,7 @@ public class CasWebflowConfigurer {
      *
      * @throws Exception the exception
      */
-    protected void doInitialize() throws Exception {}
+    protected abstract void doInitialize() throws Exception;
 
     /**
      * Gets login flow.
@@ -89,12 +121,12 @@ public class CasWebflowConfigurer {
      * @return the login flow
      */
     protected Flow getLoginFlow() {
-        final Flow flow = (Flow) this.flowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
+        final Flow flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         return flow;
     }
 
     protected List<String> getFlowDefinitionIds() {
-        return Arrays.asList(flowDefinitionRegistry.getFlowDefinitionIds());
+        return Arrays.asList(loginFlowDefinitionRegistry.getFlowDefinitionIds());
     }
 
     /**
@@ -104,7 +136,7 @@ public class CasWebflowConfigurer {
      * @return the flow definition ids
      */
     protected List<String> getFlowDefinitionIds(final String[] excludedFlowIds) {
-        String[] flowIds = flowDefinitionRegistry.getFlowDefinitionIds();
+        String[] flowIds = loginFlowDefinitionRegistry.getFlowDefinitionIds();
 
         for (final String flowId : excludedFlowIds) {
             flowIds = ArrayUtils.removeElement(flowIds, flowId);
@@ -137,6 +169,28 @@ public class CasWebflowConfigurer {
         actionState.getActionList().addAll(actions);
         logger.debug("Added action to the action state {} list of actions: {}", actionState.getId(), actionState.getActionList());
         return actionState;
+    }
+
+    /**
+     * Sets start state.
+     *
+     * @param flow  the flow
+     * @param state the state
+     */
+    protected void setStartState(final Flow flow, final String state) {
+        flow.setStartState(state);
+        final TransitionableState startState = getStartState(flow);
+        logger.debug("Start state is now set to {}", startState.getId());
+    }
+
+    /**
+     * Sets start state.
+     *
+     * @param flow  the flow
+     * @param state the state
+     */
+    protected void setStartState(final Flow flow, final TransitionableState state) {
+        setStartState(flow, state.getId());
     }
 
     /**
@@ -277,7 +331,7 @@ public class CasWebflowConfigurer {
      * @param id     the id
      * @param viewId the view id
      */
-    protected void addEndStateBackedByView(final Flow flow, final String id, final String viewId) {
+    protected void addEndState(final Flow flow, final String id, final String viewId) {
         try {
             final EndState endState = new EndState(flow, id);
             final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
@@ -297,6 +351,31 @@ public class CasWebflowConfigurer {
     }
 
     /**
+     * Add view state.
+     *
+     * @param flow   the flow
+     * @param id     the id
+     * @param viewId the view id
+     */
+    protected void addViewState(final Flow flow, final String id, final String viewId) {
+        try {
+            final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
+                    new LiteralExpression(viewId),
+                    this.flowBuilderServices.getExpressionParser(),
+                    this.flowBuilderServices.getConversionService(),
+                    null,
+                    this.flowBuilderServices.getValidator(),
+                    this.flowBuilderServices.getValidationHintResolver());
+
+            final ViewState viewState = new ViewState(flow, id, viewFactory);
+            logger.debug("Added view state {}", viewState.getId());
+
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
      * Create subflow state.
      *
      * @param flow the flow
@@ -308,7 +387,7 @@ public class CasWebflowConfigurer {
     protected SubflowState createSubflowState(final Flow flow, final String id, final String subflow,
                                               final Action entryAction) {
 
-        final SubflowState state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.flowDefinitionRegistry));
+        final SubflowState state = new SubflowState(flow, id, new BasicSubflowExpression(subflow, this.loginFlowDefinitionRegistry));
         if (entryAction != null) {
             state.getEntryActionList().add(entryAction);
         }
