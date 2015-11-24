@@ -94,22 +94,6 @@ Notice that for each OAuth provider, the CAS server is considered as an OAuth cl
 
 For the CAS OAuth wrapping, the *casOAuthUrl* property must be set to the OAuth wrapping url of the other CAS server which is using OAuth wrapping (for example: *http://mycasserver2/oauth2.0*).
 
-
-###Uncomment the client action in webflow
-
-In the `login-webflow.xml` file, the `ClientAction` must be uncommented at the beginning of the webflow. Its role is to intercept callback calls from providers (like Facebook, Twitter...) after a delegated authentication:
-
-{% highlight xml %}
-<action-state id="clientAction">
-  <evaluate expression="clientAction" />
-  <transition on="success" to="sendTicketGrantingTicket" />
-  <transition on="error" to="ticketGrantingTicketCheck" />
-  <transition on="stop" to="stopWebflow" />
-</action-state>
-<view-state id="stopWebflow" />
-{% endhighlight %}
-
-
 ###Add links on the login page to authenticate on remote providers
 
 All available clients are automatically displayed on the login page as clickable buttons under the "Or login with:" label.
