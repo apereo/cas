@@ -3,7 +3,6 @@ package org.jasig.cas.logout;
 import java.net.URL;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.authentication.principal.SingleLogoutService;
 
 /**
  * Define a logout request for a service accessed by a user.

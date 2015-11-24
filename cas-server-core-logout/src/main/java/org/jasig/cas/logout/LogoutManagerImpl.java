@@ -1,7 +1,6 @@
 package org.jasig.cas.logout;
 
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.authentication.principal.SingleLogoutService;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;

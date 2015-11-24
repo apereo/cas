@@ -1,7 +1,7 @@
 
 description = 'Apereo CAS Core Tickets'
 dependencies {
-  compile project(':cas-server-core-api')
+  compile project(':cas-server-core-api-ticket')
   compile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
     exclude(module: 'jboss-logging-annotations')
     exclude(module: 'javassist')
