@@ -3,11 +3,6 @@ package org.jasig.cas.web.flow;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.TargetStateResolver;
-import org.springframework.webflow.engine.Transition;
-import org.springframework.webflow.engine.TransitionableState;
-
-import java.util.Iterator;
 
 /**
  * The {@link Pac4jWebflowConfigurer} is responsible for
