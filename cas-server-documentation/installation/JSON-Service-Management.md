@@ -44,8 +44,8 @@ file additions, removals and updates and will auto-refresh CAS so changes do hap
 Please make sure all field values in the JSON blob are correctly escaped, specially for the service id. If the service is defined as a regular expression, certain regex constructs such as "." and "\d" need to be doubly escaped.
 </p></div>
 
-The naming convention for new JSON files is recommended to be the following:
 
+The naming convention for new JSON files is recommended to be the following:
 
 {% highlight bash %}
 
