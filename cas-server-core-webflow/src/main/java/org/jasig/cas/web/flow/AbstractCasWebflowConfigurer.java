@@ -1,6 +1,7 @@
 package org.jasig.cas.web.flow;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +11,14 @@ import org.springframework.binding.convert.service.RuntimeBindingConversionExecu
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
 import org.springframework.binding.expression.ParserContext;
+import org.springframework.binding.expression.spel.SpringELExpressionParser;
 import org.springframework.binding.expression.support.FluentParserContext;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
+import org.springframework.expression.spel.SpelParserConfiguration;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.WebApplicationContext;
@@ -22,14 +26,17 @@ import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
+import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.TargetStateResolver;
 import org.springframework.webflow.engine.Transition;
+import org.springframework.webflow.engine.TransitionCriteria;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
+import org.springframework.webflow.engine.WildcardTransitionCriteria;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
@@ -37,6 +44,12 @@ import org.springframework.webflow.engine.support.GenericSubflowAttributeMapper;
 import org.springframework.webflow.engine.support.TransitionExecutingFlowExecutionExceptionHandler;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.ViewFactory;
+import org.springframework.webflow.expression.spel.ActionPropertyAccessor;
+import org.springframework.webflow.expression.spel.BeanFactoryPropertyAccessor;
+import org.springframework.webflow.expression.spel.FlowVariablePropertyAccessor;
+import org.springframework.webflow.expression.spel.MapAdaptablePropertyAccessor;
+import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor;
+import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -72,6 +85,12 @@ public abstract class AbstractCasWebflowConfigurer {
      * The transition state 'sendTicketGrantingTicket'.
      */
     protected static final String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
+
+    /**
+     * The transition state 'viewLoginForm'.
+     */
+    protected static final String TRANSITION_ID_VIEW_LOGIN_FORM = "viewLoginForm";
+
 
     /**
      * The transition state 'ticketGrantingTicketCheck'.
@@ -179,6 +198,20 @@ public abstract class AbstractCasWebflowConfigurer {
         return actionState;
     }
 
+    protected DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
+                                                final String thenStateId, final String elseStateId) {
+        final DecisionState decisionState = new DecisionState(flow, id);
+
+        final Expression expression = createExpression(flow, testExpression, Boolean.class);
+        final Transition thenTransition = createTransition(expression, thenStateId);
+        decisionState.getTransitionSet().add(thenTransition);
+
+        final Transition elseTransition = createTransition("*", elseStateId);
+        decisionState.getTransitionSet().add(elseTransition);
+
+        return decisionState;
+
+    }
     /**
      * Sets start state.
      *
@@ -315,12 +348,50 @@ public abstract class AbstractCasWebflowConfigurer {
      * @return the transition
      */
     protected Transition createTransition(final String criteriaOutcome, final String targetState) {
-        final DefaultTransitionCriteria criteria = new DefaultTransitionCriteria(new LiteralExpression(criteriaOutcome));
-        final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
+        return createTransition(new LiteralExpression(criteriaOutcome), targetState);
+    }
 
+    /**
+     * Create transition.
+     *
+     * @param targetState               the target state
+     * @param criteriaOutcomeExpression the criteria outcome expression
+     * @return the transition
+     */
+    protected Transition createTransition(final Expression criteriaOutcomeExpression, final String targetState) {
+        final TransitionCriteria criteria;
+
+        if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
+            criteria = WildcardTransitionCriteria.INSTANCE;
+        } else {
+            criteria = new DefaultTransitionCriteria(criteriaOutcomeExpression);
+        }
+
+        final DefaultTargetStateResolver resolver = new DefaultTargetStateResolver(targetState);
         return new Transition(criteria, resolver);
     }
 
+    protected Expression createExpression(final Flow flow, final String expression, final Class expectedType) {
+        final ParserContext parserContext = new FluentParserContext()
+                .expectResult(expectedType);
+        return getSpringExpressionParser().parseExpression(expression, parserContext);
+    }
+
+    protected SpringELExpressionParser getSpringExpressionParser() {
+        final SpelParserConfiguration configuration = new SpelParserConfiguration();
+        final SpelExpressionParser spelExpressionParser = new SpelExpressionParser(configuration);
+        final SpringELExpressionParser parser = new SpringELExpressionParser(spelExpressionParser,
+                this.flowBuilderServices.getConversionService());
+
+        parser.addPropertyAccessor(new ActionPropertyAccessor());
+        parser.addPropertyAccessor(new BeanFactoryPropertyAccessor());
+        parser.addPropertyAccessor(new FlowVariablePropertyAccessor());
+        parser.addPropertyAccessor(new MapAdaptablePropertyAccessor());
+        parser.addPropertyAccessor(new MessageSourcePropertyAccessor());
+        parser.addPropertyAccessor(new ScopeSearchingPropertyAccessor());
+        return parser;
+
+    }
     /**
      * Create transition without a criteria.
      *
