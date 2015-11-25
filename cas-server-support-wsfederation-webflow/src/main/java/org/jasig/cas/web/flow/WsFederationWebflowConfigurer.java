@@ -23,7 +23,7 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
 
-        addViewState(flow, "wsFederationRedirect", "externalRedirect:#{flowScope.WsFederationIdentityProviderUrl}");
+        createViewState(flow, "wsFederationRedirect", "externalRedirect:#{flowScope.WsFederationIdentityProviderUrl}");
         final ActionState actionState = createActionState(flow, "wsFederationAction", createEvaluateAction("wsFederationAction"));
         actionState.getTransitionSet().add(createTransition(TRANSITION_ID_SUCCESS, TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
         actionState.getTransitionSet().add(createTransition(TRANSITION_ID_ERROR, getStartState(flow).getId()));
