@@ -1,36 +1,28 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.support.saml.web.idp.profile;
 
 import net.shibboleth.idp.attribute.IdPAttribute;
 import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.cryptacular.util.CertUtil;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.support.saml.OpenSamlConfigBean;
+import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
+import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.joda.time.DateTime;
+import org.opensaml.core.config.Configuration;
+import org.opensaml.core.criterion.EntityIdCriterion;
+import org.opensaml.core.xml.XMLObjectBuilder;
+import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.common.messaging.SAMLMessageSecuritySupport;
+import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -42,15 +34,39 @@ import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectLocality;
+import org.opensaml.saml.saml2.metadata.SSODescriptor;
+import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver;
 import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.CredentialResolver;
+import org.opensaml.security.credential.impl.FilesystemCredentialResolver;
+import org.opensaml.security.credential.impl.StaticCredentialResolver;
+import org.opensaml.security.x509.BasicX509Credential;
+import org.opensaml.security.x509.X509Credential;
+import org.opensaml.xmlsec.SignatureSigningConfiguration;
+import org.opensaml.xmlsec.SignatureSigningParameters;
+import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
+import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
+import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
+import org.opensaml.xmlsec.signature.SignableXMLObject;
+import org.opensaml.xmlsec.signature.Signature;
+import org.opensaml.xmlsec.signature.support.SignatureSupport;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.URL;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,6 +77,7 @@ import java.util.Map;
  * The {@link SSOPostProfileSamlResponseBuilder} is responsible for...
  *
  * @author Misagh Moayyed
+ * @since 4.2
  */
 @Component("ssoPostProfileSamlResponseBuilder")
 public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder implements SamlResponseBuilder {
@@ -68,6 +85,15 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
 
     @Value("${cas.samlidp.entityid:}")
     private String entityId;
+
+    @Value("${cas.samlidp.metadata.location:}/idp-signing.crt")
+    private File signingCertFile;
+
+    @Value("${cas.samlidp.metadata.location:}/idp-signing.key")
+    private File signingKeyFile;
+
+    @Autowired
+    private OpenSamlConfigBean openSamlConfigBean;
 
     private SubjectLocality buildSubjectLocality(final AuthnRequest authnRequest) throws Exception {
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
@@ -85,7 +111,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
     private AuthnStatement buildAuthnStatement(final Assertion assertion, final AuthnRequest authnRequest)
             throws Exception {
         final AuthnStatement statement = newAuthnStatement(getAuthenticationMethodFromAssertion(assertion),
-                new DateTime(assertion.getAuthenticationDate());
+                new DateTime(assertion.getAuthenticationDate()));
         if (assertion.getValidUntilDate() != null) {
             statement.setSessionNotOnOrAfter(new DateTime(assertion.getValidUntilDate()));
         }
@@ -93,7 +119,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         return statement;
     }
 
-    private String getAuthenticationMethodFromAssertion(final Assertion assertion) {
+    private static String getAuthenticationMethodFromAssertion(final Assertion assertion) {
         return "";
     }
 
@@ -205,11 +231,8 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         org.opensaml.saml.saml2.core.Assertion assertion = null;
         if (statements != null && !statements.isEmpty()) {
             assertion = newAssertion(statements, this.entityId, new DateTime(), id);
-
-
             assertion.setSubject(buildSubject(authnRequest, casAssertion, service));
-
-            signAssertion(authnRequest, casAssertion, service);
+            signAssertion(authnRequest, statements, assertion, service);
             samlResponse.getAssertions().add(assertion);
         }
 
@@ -221,7 +244,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
 
     private void signAssertion(final AuthnRequest authnRequest,
                                final List<Statement> statements,
-                               final Assertion casAssertion,
+                               final org.opensaml.saml.saml2.core.Assertion assertion,
                                final SamlRegisteredService service)
             throws SAMLException {
         logger.debug("Determining if SAML assertion to {} should be signed", service.getServiceId());
@@ -237,26 +260,84 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         }
 
         logger.debug("Signing assertion to relying party {}", service.getServiceId());
-        Signature signature = signatureBuilder.buildObject(Signature.DEFAULT_ELEMENT_NAME);
-
-        signature.setSigningCredential(signatureCredential);
-        try {
-            // TODO pull SecurityConfiguration from SAMLMessageContext? needs to be added
-            // TODO how to pull what keyInfoGenName to use?
-            SecurityHelper.prepareSignatureParams(signature, signatureCredential, null, null);
-        } catch (SecurityException e) {
-            throw new ProfileException("Error preparing signature for signing", e);
+        final XMLObjectBuilder signatureBuilder = openSamlConfigBean.getBuilderFactory().getBuilder(Signature.DEFAULT_ELEMENT_NAME);
+        if (signatureBuilder == null) {
+            throw new SAMLException("No signature builder can be determined");
         }
-
+        final Signature signature = (Signature) signatureBuilder.buildObject(Signature.DEFAULT_ELEMENT_NAME);
+        signature.setSigningCredential(signatureCredential);
         assertion.setSignature(signature);
 
-        Marshaller assertionMarshaller = Configuration.getMarshallerFactory().getMarshaller(assertion);
         try {
+            final Marshaller assertionMarshaller = this.openSamlConfigBean.getMarshallerFactory().getMarshaller(assertion);
+            if (assertionMarshaller == null) {
+                throw new SAMLException("No signature marshaller is available");
+            }
+
             assertionMarshaller.marshall(assertion);
-            Signer.signObject(signature);
+
+            final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(service.getSsoDescriptor());
+            SignatureSupport.signObject(assertion, signingParameters);
         } catch (final Exception e) {
             logger.error("Unable to marshall assertion for signing", e);
             throw new SAMLException("Unable to marshall assertion for signing", e);
+        }
+    }
+
+    private SignatureSigningParameters buildSignatureSigningParameters(final SSODescriptor descriptor) throws SAMLException {
+        try {
+            final CriteriaSet criteria = new CriteriaSet();
+            criteria.add(new SignatureSigningConfigurationCriterion(getSignatureSigningConfiguration()));
+            criteria.add(new RoleDescriptorCriterion(descriptor));
+            final SAMLMetadataSignatureSigningParametersResolver resolver =
+                    new SAMLMetadataSignatureSigningParametersResolver();
+
+            final SignatureSigningParameters params = resolver.resolveSingle(criteria);
+            if (params == null) {
+                throw new SAMLException("No signature signing parameter is available");
+            }
+
+            logger.info("Created signature signing parameters." +
+                            "\nSignature algorithm: {}" +
+                            "\nSignature canonicalization algorithm: {}" +
+                            "\nSignature reference digest methods: {}",
+                    params.getSignatureAlgorithm(), params.getSignatureCanonicalizationAlgorithm(),
+                    params.getSignatureReferenceDigestMethod());
+
+            return params;
+        } catch (final Exception e) {
+            throw new SAMLException(e.getMessage(), e);
+        }
+    }
+
+    private SignatureSigningConfiguration getSignatureSigningConfiguration() throws Exception {
+        final BasicSignatureSigningConfiguration config =
+                DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
+
+        /*
+        config.setBlacklistedAlgorithms(this.configuration.getBlackListedSignatureSigningAlgorithms());
+        config.setSignatureAlgorithms(this.configuration.getSignatureAlgorithms());
+        config.setSignatureCanonicalizationAlgorithm(this.configuration.getSignatureCanonicalizationAlgorithm());
+        config.setSignatureReferenceDigestMethods(this.configuration.getSignatureReferenceDigestMethods());
+        */
+
+        final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
+        privateKeyFactoryBean.setLocation(new FileSystemResource(this.signingKeyFile));
+        privateKeyFactoryBean.setAlgorithm("RSA");
+        final PrivateKey privateKey = privateKeyFactoryBean.getObject();
+
+        final X509Certificate certificate = readCertificate(new FileSystemResource(this.signingCertFile));
+        final List<Credential> creds = new ArrayList<>();
+        creds.add(new BasicX509Credential(certificate, privateKey));
+        config.setSigningCredentials(creds);
+        return config;
+    }
+
+    private static X509Certificate readCertificate(final Resource resource) {
+        try (final InputStream in = resource.getInputStream()) {
+            return CertUtil.readCertificate(in);
+        } catch (final Exception e) {
+            throw new RuntimeException("Error reading certificate " + resource, e);
         }
     }
 
