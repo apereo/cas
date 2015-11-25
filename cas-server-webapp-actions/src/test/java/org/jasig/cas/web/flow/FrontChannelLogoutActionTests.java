@@ -1,25 +1,7 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.SingleLogoutService;
+import org.jasig.cas.logout.SingleLogoutService;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutManager;
@@ -147,9 +129,9 @@ public class FrontChannelLogoutActionTests {
         final List<LogoutRequest> list = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get(FrontChannelLogoutAction.DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL);
-        assertTrue(url.startsWith(TEST_URL + "?" + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + "="));
+        assertTrue(url.startsWith(TEST_URL + '?' + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + '='));
         final byte[] samlMessage = CompressionUtils.decodeBase64ToByteArray(
-                URLDecoder.decode(StringUtils.substringAfter(url, "?" + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + "="), "UTF-8"));
+                URLDecoder.decode(StringUtils.substringAfter(url, '?' + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + '='), "UTF-8"));
         final Inflater decompresser = new Inflater();
         decompresser.setInput(samlMessage);
         final byte[] result = new byte[1000];

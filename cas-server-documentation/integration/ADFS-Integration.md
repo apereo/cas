@@ -11,7 +11,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% highlight xml %}
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-support-wsfederation</artifactId>
+  <artifactId>cas-server-support-wsfederation-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -21,7 +21,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 ### WsFed Configuration
 
 Adjust and provide settings for the ADFS instance, and make sure you have obtained the ADFS signing certificate
-and made it available to CAS at a location that can be resolved at runtime. 
+and made it available to CAS at a location that can be resolved at runtime.
 
 {% highlight properties %}
 # The claim from ADFS that should be used as the user's identifier.
@@ -63,40 +63,12 @@ public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMu
 The mutator then needs to be declared in your configuration:
 
 {% highlight xml %}
-<bean id="wsfedAttributeMutator" 
-	class="org.jasig.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
-{% endhighlight %} 
+<bean id="wsfedAttributeMutator"
+    class="org.jasig.cas.support.wsfederation.WsFederationAttributeMutatorImpl" />
+{% endhighlight %}
 
 
-### Webflow Changes
-
-The login Spring Webflow needs to adjusted to route to ADFS.
-
-This snippet should be added right after the `on-start` element. This checks to see if we have a returning WS-Federation 
-request and handles it as necessary, otherwise we route through the normal flows.
-
-{% highlight xml %}
-<action-state id="wsFederationAction">
-  <evaluate expression="wsFederationAction" />
-  <transition on="success" to="sendTicketGrantingTicket" />
-  <transition on="error" to="ticketGrantingTicketCheck" />
-</action-state>
-<view-state id="WsFederationRedirect" view="externalRedirect:#{flowScope.WsFederationIdentityProviderUrl}"/>
-{% endhighlight %} 
-
-
-Next, we need to redirect to ADFS instead of displaying the CAS Login view. 
-This accomplished by adjusting the `generateLoginTicket` state. This is a modified snippet:
-
-{% highlight xml %}
-<action-state id="generateLoginTicket">
-    <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)" />
- 	<!--Redirect to ADFS instead of showing the login form -->
-    <transition on="generated" to="WsFederationRedirect" />
-</action-state>
-{% endhighlight %} 
-
-Finally, ensure that the attributes send from ADFS are available and mapped in
+Finally, ensure that the attributes sent from ADFS are available and mapped in
 your `attributeRepository` configuration.
 
 
@@ -107,4 +79,4 @@ An optional step, it is recommended that the `casLogoutView.jsp` be replace to r
 {% highlight jsp %}
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:redirect url="https://adfs.example.org/adfs/ls/?wa=wsignout1.0"/>
-{% endhighlight %} 
+{% endhighlight %}

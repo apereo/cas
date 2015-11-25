@@ -5,7 +5,7 @@ title: CAS - Shiro Authentication
 
 
 # Shiro Authentication
-CAS support handling the authentication event via [Apache Shiro](http://shiro.apache.org/). This is handled by an instance of `ShiroAuthenticationHandler`. 
+CAS support handling the authentication event via [Apache Shiro](http://shiro.apache.org/). This is handled by an instance of `ShiroAuthenticationHandler`.
 
 
 ## Authentication Components
@@ -20,14 +20,22 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% endhighlight %}
 
 ###Shiro Configuration
+Apache Shiro supports retrieving and checking roles and permissions for an authenticated
+subject. CAS exposes a modest configuration to enforce roles and permissions as part
+of the authentication, so that in their absence, the authentication may fail.
+While by default these settings are optional, you may configure roles and/or permissions
+for the given authentication handler to check their presence and report back.
+
 {% highlight xml %}
-<bean class="org.jasig.cas.adaptors.generic.ShiroAuthenticationHandler"
-	p:shiroConfiguration="classpath:shiro.ini"
-	p:requiredRoles-ref="shiroRequiredRoles"
-	p:requiredPermissions-ref="shiroRequiredPermissions" />
-    
-<util:set id="shiroRequiredRoles" />
-<util:set id="shiroRequiredPermissions" />
+<alias name="shiroAuthenticationHandler" alias="primaryAuthenticationHandler" />
+{% endhighlight %}
+
+The following settings are applicable:
+
+{% highlight properties %}
+# shiro.authn.requiredRoles=role1,role2
+# shiro.authn.requiredPermissions=perm1,perm2
+# shiro.authn.config.file=classpath:shiro.ini
 {% endhighlight %}
 
 Sample `shiro.ini` that needs be placed on the classpath based on the example above:
@@ -43,23 +51,3 @@ casuser = Mellon, admin
 [roles]
 admin = system,admin,staff,superuser:*
 {% endhighlight %}
-
-###Roles and Permissions
-Apache Shiro supports retrieving and checking roles and permissions for an authenticated 
-subject. CAS exposes a modest configuration to enforce roles and permissions as part
-of the authentication, so that in their absence, the authentication may fail.
-While by default these settings are optional, you may configure roles and/or permissions
-for the given authentication handler to check their presence and report back. 
-
-An example might be:
-
-{% highlight xml %}
-<util:set id="shiroRequiredRoles">
-	<value>admin</value>
-</util:set>
-
-<util:set id="shiroRequiredPermissions">
-	<value>superuser:canDeleteAll</value>
-</util:set>
-{% endhighlight %} 
-
