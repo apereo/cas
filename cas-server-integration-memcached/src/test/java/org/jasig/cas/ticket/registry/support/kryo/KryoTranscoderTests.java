@@ -22,6 +22,7 @@ import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -244,8 +245,8 @@ public class KryoTranscoderTests {
         }
 
         @Override
-        public TicketGrantingTicket grantTicketGrantingTicket(final String id, final Authentication authentication,
-                                                              final ExpirationPolicy expirationPolicy) {
+        public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication,
+                                                            final ExpirationPolicy expirationPolicy) {
             return null;
         }
 
