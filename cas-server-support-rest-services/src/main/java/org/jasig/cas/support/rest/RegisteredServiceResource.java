@@ -28,12 +28,12 @@ import java.util.HashSet;
 import java.util.Map;
 
 /**
- * {@link org.springframework.web.bind.annotation.RestController} implementation of a REST API
+ * {@link RestController} implementation of a REST API
  * that allows for registration of CAS services.
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RestController("registeredServiceResource")
+@RestController("registeredServiceResourceRestController")
 public class RegisteredServiceResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceResource.class);
 
@@ -73,7 +73,6 @@ public class RegisteredServiceResource {
                 throw new InvalidTicketException("Ticket-granting ticket " + tgtId + " is not found");
             }
             final Map<String, Object> attributes = ticket.getAuthentication().getPrincipal().getAttributes();
-
             if (attributes.containsKey(this.attributeName)) {
                 final Collection<String> attributeValuesToCompare = new HashSet<>();
                 final Object value = attributes.get(this.attributeName);
