@@ -7,7 +7,7 @@ import org.springframework.webflow.engine.ViewState;
 
 /**
  * The {@link AcceptableUsagePolicyWebflowConfigurer} is responsible for
- * adjusting the CAS webflow context for remote address integration.
+ * adjusting the CAS webflow context for aup integration.
  *
  * @author Misagh Moayyed
  * @since 4.2
