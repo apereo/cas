@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.TestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -190,6 +191,8 @@ public class HazelcastTicketRegistryTests {
     }
 
     private static class MockSt implements ServiceTicket {
+        private static final long serialVersionUID = -761672450629794769L;
+
         @Override
         public Service getService() {
             return null;
@@ -206,9 +209,9 @@ public class HazelcastTicketRegistryTests {
         }
 
         @Override
-        public TicketGrantingTicket grantTicketGrantingTicket(final String id,
-                                                              final Authentication authentication,
-                                                              final ExpirationPolicy expirationPolicy) {
+        public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
+                                                            final Authentication authentication,
+                                                            final ExpirationPolicy expirationPolicy) {
             return null;
         }
 
