@@ -1,22 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.support.saml.web.idp.profile;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
@@ -32,9 +13,10 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.support.saml.SamlIdPConstants;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
+import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
@@ -63,7 +45,7 @@ import java.security.SecureRandom;
  * handling profile requests for SAML2 Web SSO.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.2
  */
 @Controller("ssoPostProfileHandlerController")
 public class SSOPostProfileHandlerController {
@@ -89,7 +71,7 @@ public class SSOPostProfileHandlerController {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ReloadableServicesManager servicesManager;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -116,27 +98,28 @@ public class SSOPostProfileHandlerController {
     @PostConstruct
     public void initialize() {
         this.callbackService = webApplicationServiceFactory.createService(
-                this.casServerPrefix.concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK));
+                this.casServerPrefix.concat(SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK));
         logger.debug("Initialized callback service url {}", this.callbackService);
 
         if (!servicesManager.matchesExistingService(this.callbackService))  {
             final RegexRegisteredService service = new RegexRegisteredService();
             service.setId(new SecureRandom().nextLong());
             service.setName(service.getClass().getSimpleName());
-            service.setDescription(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(" Callback Url"));
+            service.setDescription(SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(" Callback Url"));
             service.setServiceId(this.callbackService.getId());
 
             logger.debug("Saving callback service {} into the registry", service);
             this.servicesManager.save(service);
+            this.servicesManager.reload();
         }
     }
 
-    private void storeAuthnRequest(final HttpServletRequest request, final AuthnRequest authnRequest) {
+    private static void storeAuthnRequest(final HttpServletRequest request, final AuthnRequest authnRequest) {
         final HttpSession session = request.getSession();
         session.setAttribute(AuthnRequest.class.getName(), authnRequest);
     }
 
-    private AuthnRequest retrieveAuthnRequest(final HttpServletRequest request) {
+    private static AuthnRequest retrieveAuthnRequest(final HttpServletRequest request) {
         final HttpSession session = request.getSession();
         return (AuthnRequest) session.getAttribute(AuthnRequest.class.getName());
     }
@@ -148,7 +131,7 @@ public class SSOPostProfileHandlerController {
      * @param request  the request
      * @throws Exception the exception
      */
-    @RequestMapping(path=SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
+    @RequestMapping(path= SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
     protected void handleCallbackProfileRequest(final HttpServletResponse response,
                                         final HttpServletRequest request) throws Exception {
         logger.info("Received SAML callback profile request {}", request.getRequestURI());
@@ -175,8 +158,7 @@ public class SSOPostProfileHandlerController {
         final Assertion assertion = validator.validate(ticket, serviceUrl);
         logValidationAssertion(assertion);
         if (assertion.isValid()) {
-            final RegisteredService registeredService =
-                    getRegisteredServiceAndVerify(authnRequest);
+            final SamlRegisteredService registeredService = getRegisteredServiceAndVerify(authnRequest);
             logger.debug("Preparing SAML response to {}", registeredService);
             final Response samlResponse = responseBuilder.build(authnRequest, request,
                     response, assertion, registeredService);
@@ -184,14 +166,19 @@ public class SSOPostProfileHandlerController {
         storeAuthnRequest(request, null);
     }
 
-    private RegisteredService getRegisteredServiceAndVerify(final AuthnRequest authnRequest) {
+    private SamlRegisteredService getRegisteredServiceAndVerify(final AuthnRequest authnRequest) {
         final String serviceId = authnRequest.getAssertionConsumerServiceURL();
         final RegisteredService registeredService =
                 this.servicesManager.findServiceBy(this.webApplicationServiceFactory.createService(serviceId));
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-        return registeredService;
+
+        if (registeredService instanceof SamlRegisteredService) {
+            return (SamlRegisteredService) registeredService;
+        }
+        logger.error("Service {} is found in registry but it is not a SAML service", serviceId);
+        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
     }
 
     /**
@@ -201,7 +188,7 @@ public class SSOPostProfileHandlerController {
      * @param request the request
      * @throws Exception the exception
      */
-    @RequestMapping(path= SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST, method = RequestMethod.POST)
+    @RequestMapping(path= SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST, method = RequestMethod.POST)
     protected void handleProfileRequest(final HttpServletResponse response,
                                         final HttpServletRequest request) throws Exception {
         logger.info("Received SAML profile request {}", request.getRequestURI());
@@ -289,7 +276,7 @@ public class SSOPostProfileHandlerController {
     }
 
 
-    private String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
+    private static String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
                                        final String service, final String serverName) {
         return CommonUtils.constructServiceUrl(request, response,
                 service, serverName,

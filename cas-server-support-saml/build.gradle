@@ -78,7 +78,7 @@ dependencies {
     exclude(module: 'xml-apis')
   }
   compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:bouncyCastleVersion
-  compile(group: 'net.shibboleth.idp', name: 'idp-profile-spring', version:opensamlVersion) {
+  compile(group: 'net.shibboleth.idp', name: 'idp-profile-spring', version: opensamlVersion) {
     exclude(module: 'commons-logging')
     exclude(module: 'slf4j-api')
     exclude(module: 'bcprov-jdk15on')
