@@ -40,7 +40,7 @@ public final class ServiceTicketImpl extends AbstractTicket implements ServiceTi
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
     private Boolean grantedTicketAlready = Boolean.FALSE;
 
-    private final Object lock = new Object();
+    private final transient Object lock = new Object();
 
     /**
      * Instantiates a new service ticket impl.
