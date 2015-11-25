@@ -19,9 +19,9 @@ public class OpenIdWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void doInitialize() throws Exception {
         final Flow flow = getLoginFlow();
 
-        final String condition = "externalContext.requestParameterMap['openid.mode'] ne '' " +
-                "&& externalContext.requestParameterMap['openid.mode'] ne null " +
-                "&& externalContext.requestParameterMap['openid.mode'] ne 'associate'";
+        final String condition = "externalContext.requestParameterMap['openid.mode'] ne '' "
+                + "&& externalContext.requestParameterMap['openid.mode'] ne null "
+                + "&& externalContext.requestParameterMap['openid.mode'] ne 'associate'";
 
         final DecisionState decisionState = createDecisionState(flow, "selectFirstAction",
                 condition, "openIdSingleSignOnAction",
