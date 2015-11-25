@@ -12,6 +12,10 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.Operation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 
@@ -22,19 +26,27 @@ import javax.validation.constraints.NotNull;
  * @author Sean Baker
  * @since 4.1
  */
+@Component("ldapSpnegoClientAction")
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
     /** Attribute name in LDAP to indicate spnego invocation. **/
     public static final String DEFAULT_SPNEGO_ATTRIBUTE = "distinguishedName";
 
     /** The must-have attribute name.*/
-    protected final String spnegoAttributeName;
+    @Value("${cas.spnego.ldap.attribute:spnegoAttribute}")
+    protected String spnegoAttributeName;
 
     /** The connection configuration to ldap.*/
-    protected final ConnectionFactory connectionFactory;
+    @Autowired(required=false)
+    @Qualifier("spnegoClientActionConnectionFactory")
+    protected ConnectionFactory connectionFactory;
 
     /** The search request. */
-    protected final SearchRequest searchRequest;
-    
+    @Autowired(required=false)
+    @Qualifier("spnegoClientActionSearchRequest")
+    protected SearchRequest searchRequest;
+
+    private LdapSpnegoKnownClientSystemsFilterAction() {}
+
     /**
      * Instantiates new action. Initializes the default attribute
      * to be {@link #DEFAULT_SPNEGO_ATTRIBUTE}.
@@ -78,6 +90,22 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
     @Override
     protected boolean shouldDoSpnego(final String remoteIp) {
+
+        if (StringUtils.isBlank(this.spnegoAttributeName)) {
+            logger.warn("Ignoring Spnego. Attribute name is not configured");
+            return false;
+        }
+
+        if (this.connectionFactory == null) {
+            logger.warn("Ignoring Spnego. LDAP connection factory is not configured");
+            return false;
+        }
+
+        if (this.searchRequest == null) {
+            logger.warn("Ignoring Spnego. LDAP search request is not configured");
+            return false;
+        }
+
         final boolean ipCheck = ipPatternCanBeChecked(remoteIp);
         if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;

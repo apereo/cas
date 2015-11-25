@@ -67,6 +67,17 @@ public abstract class AbstractCasWebflowConfigurer {
      * The transition state 'success'.
      */
     protected static final String TRANSITION_ID_SUCCESS = "success";
+
+    /**
+     * The transition state 'yes'.
+     */
+    protected static final String TRANSITION_ID_YES = "yes";
+
+    /**
+     * The transition state 'no'.
+     */
+    protected static final String TRANSITION_ID_NO = "no";
+
     /**
      * The transition state 'submit'.
      */
@@ -471,6 +482,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param flow   the flow
      * @param id     the id
      * @param viewId the view id
+     * @return the view state
      */
     protected ViewState createViewState(final Flow flow, final String id, final String viewId) {
         try {
