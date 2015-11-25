@@ -12,6 +12,16 @@ and/or acceptance of the policy would be handled via an external storage mechani
 
 ##Configuration
 
+Support is enabled by including the following dependency in the Maven WAR overlay:
+
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-webapp-actions-aup-webflow</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
+
 ###Enable Webflow
 
 - In the `login-webflow.xml` file, enable the transition to `acceptableUsagePolicyCheck`
