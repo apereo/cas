@@ -1,24 +1,6 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.support.saml.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -26,6 +8,8 @@ import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.metadata.SSODescriptor;
+import org.opensaml.security.credential.Credential;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +26,20 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     private List<String> supportedNameFormats = new ArrayList<>();
     private boolean signAssertions;
 
+    @JsonIgnore
+    private Credential signingCredential;
+
+    @JsonIgnore
+    private SSODescriptor ssoDescriptor;
+
+    /**
+     * Instantiates a new Saml registered service.
+     */
     public SamlRegisteredService() {
         super();
         this.supportedNameFormats.add(NameID.UNSPECIFIED);
     }
+
     @Override
     public String toString() {
         final ToStringBuilder builder = new ToStringBuilder(this);
@@ -57,7 +51,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     @Override
     public void copyFrom(final RegisteredService source) {
         super.copyFrom(source);
-        final SamlRegisteredService oAuthRegisteredService = (SamlRegisteredService) source;
+        final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) source;
     }
 
     @Override
@@ -103,6 +97,18 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     }
 
     public List<String> getSupportedNameFormats() {
-        return this.supportedNameFormats
+        return this.supportedNameFormats;
+    }
+
+    public Credential getSigningCredential() {
+        return signingCredential;
+    }
+
+    public void setSigningCredential(final Credential signingCredential) {
+        this.signingCredential = signingCredential;
+    }
+
+    public SSODescriptor getSsoDescriptor() {
+        return ssoDescriptor;
     }
 }
