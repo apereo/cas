@@ -29,7 +29,7 @@ import java.net.URI;
 import java.util.Formatter;
 
 /**
- * {@link org.springframework.web.bind.annotation.RestController} implementation of CAS' REST API.
+ * {@link RestController} implementation of CAS' REST API.
  *
  * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
  *
@@ -42,7 +42,7 @@ import java.util.Formatter;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
-@RestController
+@RestController("ticketResourceRestController")
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
