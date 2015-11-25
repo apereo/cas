@@ -3,7 +3,6 @@ package org.jasig.cas.support.rest;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.util.Formatter;
@@ -50,6 +50,20 @@ public class TicketsResource {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
+    @Autowired(required=false)
+    @Qualifier("restCredentialCollector")
+    private RestCredentialCollector restCredentialCollector;
+
+    /**
+     * Initialize.
+     */
+    @PostConstruct
+    public void init() {
+        if (this.restCredentialCollector == null) {
+            this.restCredentialCollector = new DefaultRestCredentialCollector();
+        }
+    }
+
     /**
      * Create new ticket granting ticket.
      *
@@ -61,7 +75,8 @@ public class TicketsResource {
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                                    final HttpServletRequest request) {
         try (Formatter fmt = new Formatter()) {
-            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
+            final Credential credential = this.restCredentialCollector.collect(requestBody);
+            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(credential);
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
@@ -114,15 +129,7 @@ public class TicketsResource {
         return new ResponseEntity<String>(tgtId, HttpStatus.OK);
     }
 
-    /**
-     * Obtain credential from the request. Could be overridden by subclasses.
-     *
-     * @param requestBody raw entity request body
-     * @return the credential instance
-     */
-    protected Credential obtainCredential(final MultiValueMap<String, String> requestBody) {
-        return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
-    }
+
 
     public CentralAuthenticationService getCas() {
         return cas;
