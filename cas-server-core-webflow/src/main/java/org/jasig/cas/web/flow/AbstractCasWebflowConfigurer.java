@@ -201,6 +201,16 @@ public abstract class AbstractCasWebflowConfigurer {
         return actionState;
     }
 
+    /**
+     * Create decision state decision state.
+     *
+     * @param flow           the flow
+     * @param id             the id
+     * @param testExpression the test expression
+     * @param thenStateId    the then state id
+     * @param elseStateId    the else state id
+     * @return the decision state
+     */
     protected DecisionState createDecisionState(final Flow flow, final String id, final String testExpression,
                                                 final String thenStateId, final String elseStateId) {
         final DecisionState decisionState = new DecisionState(flow, id);
@@ -356,6 +366,17 @@ public abstract class AbstractCasWebflowConfigurer {
     /**
      * Create transition.
      *
+     * @param criteriaOutcome the criteria outcome
+     * @param targetState     the target state
+     * @return the transition
+     */
+    protected Transition createTransition(final String criteriaOutcome, final TransitionableState targetState) {
+        return createTransition(new LiteralExpression(criteriaOutcome), targetState.getId());
+    }
+
+    /**
+     * Create transition.
+     *
      * @param targetState               the target state
      * @param criteriaOutcomeExpression the criteria outcome expression
      * @return the transition
@@ -373,12 +394,25 @@ public abstract class AbstractCasWebflowConfigurer {
         return new Transition(criteria, resolver);
     }
 
+    /**
+     * Create expression expression.
+     *
+     * @param flow         the flow
+     * @param expression   the expression
+     * @param expectedType the expected type
+     * @return the expression
+     */
     protected Expression createExpression(final Flow flow, final String expression, final Class expectedType) {
         final ParserContext parserContext = new FluentParserContext()
                 .expectResult(expectedType);
         return getSpringExpressionParser().parseExpression(expression, parserContext);
     }
 
+    /**
+     * Gets spring expression parser.
+     *
+     * @return the spring expression parser
+     */
     protected SpringELExpressionParser getSpringExpressionParser() {
         final SpelParserConfiguration configuration = new SpelParserConfiguration();
         final SpelExpressionParser spelExpressionParser = new SpelExpressionParser(configuration);
