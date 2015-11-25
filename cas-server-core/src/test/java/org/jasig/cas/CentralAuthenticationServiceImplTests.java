@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.Authentication;
@@ -31,6 +13,7 @@ import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -42,6 +25,7 @@ import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Map;
@@ -88,7 +72,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test(expected = TicketCreationException.class)
     public void disallowNullCredentionalsWhenCreatingTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(null);
+            .createTicketGrantingTicket(new Credential[] {null});
 
     }
 
@@ -208,7 +192,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             .grantServiceTicket(ticketId.getId(), getService());
         final TicketGrantingTicket pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
             serviceTicketId.getId(), org.jasig.cas.services.TestUtils.getHttpBasedServiceCredentials());
-        assertTrue(pgt.getId().startsWith(TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
+        assertTrue(pgt.getId().startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
     }
 
     @Test(expected = AbstractTicketException.class)
@@ -302,7 +286,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test(expected = AbstractTicketException.class)
     public void verifyValidateServiceTicketNonExistantTicket() throws Exception {
-        getCentralAuthenticationService().validateServiceTicket("test",
+        getCentralAuthenticationService().validateServiceTicket("google",
             getService());
     }
 
@@ -360,7 +344,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 
         final Service svc = getService("TestSsoFalse");
-        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null);
+        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc,
+                new Credential[] {null});
     }
 
     @Test
@@ -444,7 +429,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      * - a first authentication for a default service
      * - a second authentication with the renew parameter and the same service (and same credentials)
      * - a validation of the second ticket.
-     * <p/>
      * When supplemental authentications were returned with the chained authentications, the validation specification
      * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the
      * chained authentications. Both concepts are orthogonal.
@@ -484,6 +468,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         // create a new CASimpl
         final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry,  null, null, null, null, null,
             null, logoutManager);
+        cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         // destroy to mark expired and then delete : the opposite would fail with a "No ticket to update" error from the registry
         cas.destroyTicketGrantingTicket(tgt.getId());
     }

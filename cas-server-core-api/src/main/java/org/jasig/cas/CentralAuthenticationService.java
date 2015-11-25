@@ -1,24 +1,6 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas;
 
-import org.apache.commons.collections4.Predicate;
+import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
@@ -62,9 +44,7 @@ public interface CentralAuthenticationService {
      * that at least one credential MUST be authenticated for ticket creation to succeed.
      *
      * @param credentials One or more credentials that may be authenticated in order to create the ticket.
-     *
-     * @return Non-null ticket-granting ticket identifier.
-     *
+     * @return Non -null ticket-granting ticket identifier.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if ticket cannot be created
      */
@@ -79,11 +59,11 @@ public interface CentralAuthenticationService {
      * it exists and has not expired yet, etc. This method is specifically
      * designed to remove the need to access the ticket registry.
      *
+     * @param <T>      the generic ticket type to return that extends {@link Ticket}
      * @param ticketId the ticket granting ticket id
-     * @param clazz the ticket type that is reques to be found
-     * @param <T> the generic ticket type to return that extends {@link Ticket}
+     * @param clazz    the ticket type that is reques to be found
      * @return the ticket object
-     * @throws org.jasig.cas.ticket.InvalidTicketException if ticket is not found or has expired.
+     * @throws InvalidTicketException the invalid ticket exception
      * @since 4.1.0
      */
     <T extends Ticket> T getTicket(@NotNull String ticketId, @NotNull Class<? extends Ticket> clazz)
@@ -101,16 +81,14 @@ public interface CentralAuthenticationService {
      * @return the tickets
      * @since 4.1.0
      */
-    Collection<Ticket> getTickets(@NotNull Predicate predicate);
+    Collection<Ticket> getTickets(@NotNull Predicate<Ticket> predicate);
 
     /**
      * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.
      *
      * @param ticketGrantingTicketId Proof of prior authentication.
-     * @param service The target service of the ServiceTicket.
-     *
-     * @return Non-null service ticket identifier.
-     *
+     * @param service                The target service of the ServiceTicket.
+     * @return Non -null service ticket identifier.
      * @throws AbstractTicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(@NotNull String ticketGrantingTicketId, @NotNull Service service) throws AbstractTicketException;
@@ -127,11 +105,9 @@ public interface CentralAuthenticationService {
      * </p>
      *
      * @param ticketGrantingTicketId Proof of prior authentication.
-     * @param service The target service of the ServiceTicket.
-     * @param credentials One or more credentials to authenticate prior to granting the service ticket.
-     *
-     * @return Non-null service ticket identifier.
-     *
+     * @param service                The target service of the ServiceTicket.
+     * @param credentials            One or more credentials to authenticate prior to granting the service ticket.
+     * @return Non -null service ticket identifier.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if the ticket could not be created.
      */
@@ -143,10 +119,8 @@ public interface CentralAuthenticationService {
      * Validate a ServiceTicket for a particular Service.
      *
      * @param serviceTicketId Proof of prior authentication.
-     * @param service Service wishing to validate a prior authentication.
-     *
-     * @return Non-null ticket validation assertion.
-     *
+     * @param service         Service wishing to validate a prior authentication.
+     * @return Non -null ticket validation assertion.
      * @throws AbstractTicketException if there was an error validating the ticket.
      */
     Assertion validateServiceTicket(@NotNull String serviceTicketId, @NotNull Service service) throws AbstractTicketException;
@@ -165,13 +139,10 @@ public interface CentralAuthenticationService {
      * Delegate a TicketGrantingTicket to a Service for proxying authentication
      * to other Services.
      *
-     * @param serviceTicketId The service ticket identifier that will delegate to a
-     * {@link org.jasig.cas.ticket.TicketGrantingTicket}.
-     * @param credentials One or more credentials to authenticate prior to delegating the ticket.
-     *
-     * @return Non-null ticket-granting ticket identifier that can grant {@link org.jasig.cas.ticket.ServiceTicket}
-     * that proxy authentication.
-     *
+     * @param serviceTicketId The service ticket identifier that will delegate to a {@link org.jasig.cas.ticket.TicketGrantingTicket}.
+     * @param credentials     One or more credentials to authenticate prior to delegating the ticket.
+     * @return Non -null ticket-granting ticket identifier that can grant
+     * {@link org.jasig.cas.ticket.ServiceTicket} that proxy authentication.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if there was an error creating the ticket
      */

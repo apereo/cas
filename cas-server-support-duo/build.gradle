@@ -1,0 +1,7 @@
+
+description = 'Apereo CAS DuoSecurity Support'
+dependencies {
+	
+	compile project(':cas-server-core-authentication')
+}
+

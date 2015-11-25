@@ -53,7 +53,7 @@ public final class DuoWeb {
             return ERR_UNKNOWN;
         }
 
-        return duo_sig + ":" + app_sig;
+        return duo_sig + ':' + app_sig;
     }
 
     public static String verifyResponse(final String ikey, final String skey, final String akey, final String sig_response)
@@ -85,11 +85,11 @@ public final class DuoWeb {
         final long expire_ts = time + expire;
         final String exp = Long.toString(expire_ts);
 
-        final String val = username + "|" + ikey + "|" + exp;
-        final String cookie = prefix + "|" + Base64.encodeBytes(val.getBytes());
+        final String val = username + '|' + ikey + '|' + exp;
+        final String cookie = prefix + '|' + Base64.encodeBytes(val.getBytes());
         final String sig = Util.hmacSign(key, cookie);
 
-        return cookie + "|" + sig;
+        return cookie + '|' + sig;
     }
 
     private static String parseVals(final String key, final String val, final String prefix, final String ikey, final long time)
@@ -104,7 +104,7 @@ public final class DuoWeb {
         final String u_b64 = parts[1];
         final String u_sig = parts[2];
 
-        final String sig = Util.hmacSign(key, u_prefix + "|" + u_b64);
+        final String sig = Util.hmacSign(key, u_prefix + '|' + u_b64);
         if (!Util.hmacSign(key, sig).equals(Util.hmacSign(key, u_sig))) {
             throw new DuoWebException("Invalid response");
         }

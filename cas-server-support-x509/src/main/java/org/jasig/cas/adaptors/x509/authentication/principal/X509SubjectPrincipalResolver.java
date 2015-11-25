@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
 import java.security.cert.X509Certificate;
@@ -34,6 +16,9 @@ import org.cryptacular.x509.dn.NameReader;
 import org.cryptacular.x509.dn.RDN;
 import org.cryptacular.x509.dn.RDNSequence;
 import org.cryptacular.x509.dn.StandardAttributeType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 
 /**
@@ -44,6 +29,7 @@ import org.cryptacular.x509.dn.StandardAttributeType;
  * @since 3.4.4
  *
  */
+@Component("x509SubjectPrincipalResolver")
 public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /** Pattern used to extract attribute names from descriptor. */
@@ -62,10 +48,10 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * EXAMPLE:
      * </p>
      * {@code
-     * <code>
+     * {@code
      * &lt;bean class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
      *   p:descriptor="$UID@$DC.$DC" /&gt;
-     * </code>
+     * }
      * }
      *
      * The above bean when applied to a certificate with the DN
@@ -94,7 +80,8 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      * {@link org.cryptacular.x509.dn.StandardAttributeType}.
      *
      */
-    public void setDescriptor(final String s) {
+    @Autowired
+    public void setDescriptor(@Value("${cas.x509.authn.principal.descriptor:}") final String s) {
         this.descriptor = s;
     }
 

@@ -29,7 +29,7 @@ Note that a change in the set of available cache nodes may produce a different t
 
 Enable the registry via:
 
-{% highlight properties %}
+{% highlight xml %}
 <alias name="memcachedTicketRegistry" alias="ticketRegistry" />
 {% endhighlight %}
 

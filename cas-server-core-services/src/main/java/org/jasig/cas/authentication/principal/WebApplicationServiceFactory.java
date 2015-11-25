@@ -1,27 +1,11 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.authentication.principal;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
+import org.jasig.cas.validation.ValidationResponseType;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,27 +25,40 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
         final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
         final String serviceAttribute = (String) request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
         final String method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
+        final String format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
+
         final String serviceToUse;
-        if (StringUtils.hasText(targetService)) {
+        if (StringUtils.isNotBlank(targetService)) {
             serviceToUse = targetService;
-        } else if (StringUtils.hasText(service)) {
+        } else if (StringUtils.isNotBlank(service)) {
             serviceToUse = service;
         } else {
             serviceToUse = serviceAttribute;
         }
 
-        if (!StringUtils.hasText(serviceToUse)) {
+        if (StringUtils.isBlank(serviceToUse)) {
             return null;
         }
 
         final String id = AbstractServiceFactory.cleanupUrl(serviceToUse);
         final String artifactId = request.getParameter(CasProtocolConstants.PARAMETER_TICKET);
 
-        final  Response.ResponseType type = "POST".equalsIgnoreCase(method) ? Response.ResponseType.POST
-                                                        : Response.ResponseType.REDIRECT;
+        final Response.ResponseType type = HttpMethod.POST.name().equalsIgnoreCase(method) ? Response.ResponseType.POST
+                : Response.ResponseType.REDIRECT;
 
-        final WebApplicationService webApplicationService = new SimpleWebApplicationServiceImpl(id, serviceToUse,
-                artifactId, new WebApplicationServiceResponseBuilder(type));
+        final SimpleWebApplicationServiceImpl webApplicationService =
+                new SimpleWebApplicationServiceImpl(id, serviceToUse,
+                        artifactId, new WebApplicationServiceResponseBuilder(type));
+
+        try {
+            if (StringUtils.isNotBlank(format)) {
+                final ValidationResponseType formatType = ValidationResponseType.valueOf(format.toUpperCase());
+                webApplicationService.setFormat(formatType);
+            }
+        } catch (final Exception e) {
+            logger.error("Format specified in the request [{}] is not recognized", format);
+            return null;
+        }
         return webApplicationService;
     }
 
