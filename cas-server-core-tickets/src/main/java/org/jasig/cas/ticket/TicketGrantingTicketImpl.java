@@ -33,7 +33,7 @@ import java.util.Map;
  */
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
-public final class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
+public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -8608149809180911599L;
@@ -110,7 +110,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
 
 
     @Override
-    public Authentication getAuthentication() {
+    public final Authentication getAuthentication() {
         return this.authentication;
     }
 
@@ -122,7 +122,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * configuration, the ticket may be considered expired.
      */
     @Override
-    public synchronized ServiceTicket grantServiceTicket(final String id,
+    public final synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
         final boolean credentialsProvided, final boolean onlyTrackMostRecentSession) {
         final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
@@ -160,7 +160,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * @param service the service to normalize
      * @return the normalized path
      */
-    private String normalizePath(final Service service) {
+    private static String normalizePath(final Service service) {
         String path = service.getId();
         path = StringUtils.substringBefore(path, "?");
         path = StringUtils.substringBefore(path, ";");
@@ -177,7 +177,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
     */
     @Override
-    public synchronized Map<String, Service> getServices() {
+    public final synchronized Map<String, Service> getServices() {
         return ImmutableMap.copyOf(this.services);
     }
 
@@ -185,7 +185,7 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * Remove all services of the TGT (at logout).
      */
     @Override
-    public void removeAllServices() {
+    public final void removeAllServices() {
         services.clear();
     }
 
@@ -195,19 +195,19 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * @return if the TGT has no parent.
      */
     @Override
-    public boolean isRoot() {
+    public final boolean isRoot() {
         return this.getGrantingTicket() == null;
     }
 
 
     @Override
-    public void markTicketExpired() {
+    public final void markTicketExpired() {
         this.expired = Boolean.TRUE;
     }
 
 
     @Override
-    public TicketGrantingTicket getRoot() {
+    public final TicketGrantingTicket getRoot() {
         TicketGrantingTicket current = this;
         TicketGrantingTicket parent = current.getGrantingTicket();
         while (parent != null) {
@@ -223,19 +223,19 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
      * @return if the TGT is expired.
      */
     @Override
-    public boolean isExpiredInternal() {
+    public final boolean isExpiredInternal() {
         return this.expired;
     }
 
 
     @Override
-    public List<Authentication> getSupplementalAuthentications() {
+    public final List<Authentication> getSupplementalAuthentications() {
         return this.supplementalAuthentications;
     }
 
 
     @Override
-    public List<Authentication> getChainedAuthentications() {
+    public final List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<>();
 
         list.add(getAuthentication());
@@ -249,13 +249,13 @@ public final class TicketGrantingTicketImpl extends AbstractTicket implements Ti
     }
 
     @Override
-    public Service getProxiedBy() {
+    public final Service getProxiedBy() {
         return this.proxiedBy;
     }
 
 
     @Override
-    public boolean equals(final Object object) {
+    public final boolean equals(final Object object) {
         if (object == null) {
             return false;
         }

@@ -3,6 +3,7 @@ package org.jasig.cas.ticket.registry;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -147,7 +148,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
          * @param serviceTicket the service ticket
          * @param callback the callback
          */
-        protected ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
+        ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
                 final ServiceTicket serviceTicket, final boolean callback) {
             super(ticketRegistry, serviceTicket, callback);
         }
@@ -170,9 +171,10 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
         }
 
         @Override
-        public TicketGrantingTicket grantTicketGrantingTicket(final String id,
-                final Authentication authentication, final ExpirationPolicy expirationPolicy) {
-            final TicketGrantingTicket t = this.getTicket().grantTicketGrantingTicket(id,
+        public ProxyGrantingTicket grantProxyGrantingTicket(final String id,
+                                                             final Authentication authentication,
+                                                             final ExpirationPolicy expirationPolicy) {
+            final ProxyGrantingTicket t = this.getTicket().grantProxyGrantingTicket(id,
                     authentication, expirationPolicy);
             updateTicket();
             return t;
