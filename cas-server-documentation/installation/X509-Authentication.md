@@ -20,7 +20,7 @@ X.509 support is enabled by including the following dependency in the Maven WAR 
 {% highlight xml %}
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-support-x509</artifactId>
+  <artifactId>cas-server-support-x509-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
