@@ -35,7 +35,6 @@
             <mvc:mapping path="/**" />
             <mvc:exclude-mapping path="/callback*" />
             <mvc:exclude-mapping path="/logout*" />
-            <mvc:exclude-mapping path="/loggedOut.html" />
             <mvc:exclude-mapping path="/authorizationFailure.html" />
             <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor">
                 <constructor-arg name="config" ref="config" />
