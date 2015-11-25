@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.ticket;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -41,8 +23,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name="SERVICETICKET")
-public final class ServiceTicketImpl extends AbstractTicket implements
-    ServiceTicket {
+public final class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4223319704861765405L;
@@ -58,6 +39,8 @@ public final class ServiceTicketImpl extends AbstractTicket implements
 
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
     private Boolean grantedTicketAlready = Boolean.FALSE;
+
+    private final transient Object lock = new Object();
 
     /**
      * Instantiates a new service ticket impl.
@@ -137,18 +120,18 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     }
 
     @Override
-    public TicketGrantingTicket grantTicketGrantingTicket(
+    public ProxyGrantingTicket grantProxyGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
-        synchronized (this) {
+        synchronized (this.lock) {
             if(this.grantedTicketAlready) {
                 throw new IllegalStateException(
-                    "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
+                    "PGT already generated for this ST. Cannot grant more than one TGT for ST");
             }
             this.grantedTicketAlready = Boolean.TRUE;
         }
 
-        return new TicketGrantingTicketImpl(id, service,
+        return new ProxyGrantingTicketImpl(id, service,
                 this.getGrantingTicket(), authentication, expirationPolicy);
     }
 

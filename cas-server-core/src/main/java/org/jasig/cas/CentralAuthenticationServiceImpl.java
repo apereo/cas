@@ -1,84 +1,50 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas;
 
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.apache.commons.collections4.Predicate;
-import org.apache.commons.collections4.map.HashedMap;
-import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
-import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.MixedPrincipalException;
-import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
-import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
-import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
+import org.jasig.cas.support.events.CasProxyGrantingTicketCreatedEvent;
+import org.jasig.cas.support.events.CasServiceTicketGrantedEvent;
+import org.jasig.cas.support.events.CasServiceTicketValidatedEvent;
+import org.jasig.cas.support.events.CasTicketGrantingTicketDestroyedEvent;
+import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
-import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.jasig.inspektr.audit.annotation.Audit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
-import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -91,17 +57,17 @@ import java.util.Set;
  * </p>
  * This class has the following properties that must be set:
  * <ul>
- * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
+ * <li> {@code ticketRegistry} - The Ticket Registry to maintain the list
  * of available tickets.</li>
- * <li> <code>authenticationManager</code> - The service that will handle
+ * <li> {@code authenticationManager} - The service that will handle
  * authentication.</li>
- * <li> <code>ticketGrantingTicketUniqueTicketIdGenerator</code> - Plug in to
+ * <li> {@code ticketGrantingTicketUniqueTicketIdGenerator} - Plug in to
  * generate unique secure ids for TicketGrantingTickets.</li>
- * <li> <code>serviceTicketUniqueTicketIdGenerator</code> - Plug in to
+ * <li> {@code serviceTicketUniqueTicketIdGenerator} - Plug in to
  * generate unique secure ids for ServiceTickets.</li>
- * <li> <code>ticketGrantingTicketExpirationPolicy</code> - The expiration
+ * <li> {@code ticketGrantingTicketExpirationPolicy} - The expiration
  * policy for TicketGrantingTickets.</li>
- * <li> <code>serviceTicketExpirationPolicy</code> - The expiration policy for
+ * <li> {@code serviceTicketExpirationPolicy} - The expiration policy for
  * ServiceTickets.</li>
  * </ul>
  *
@@ -111,86 +77,16 @@ import java.util.Set;
  * @since 3.0.0
  */
 @Component("centralAuthenticationService")
-public final class CentralAuthenticationServiceImpl implements CentralAuthenticationService, Serializable {
+public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthenticationService {
 
     private static final long serialVersionUID = -8943828074939533986L;
-
-    /** Log instance for logging events, info, warnings, errors, etc. */
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    /** TicketRegistry for storing and retrieving tickets as needed. */
-    @NotNull
-    @Resource(name="ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
-
-    /**
-     * AuthenticationManager for authenticating credentials for purposes of
-     * obtaining tickets.
-     */
-    @NotNull
-    @Resource(name="authenticationManager")
-    private AuthenticationManager authenticationManager;
-
-    /**
-     * UniqueTicketIdGenerator to generate ids for TicketGrantingTickets
-     * created.
-     */
-    @NotNull
-    @Resource(name="ticketGrantingTicketUniqueIdGenerator")
-    private UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
-
-    /** Map to contain the mappings of service->UniqueTicketIdGenerators. */
-    @NotNull
-    @Resource(name="uniqueIdGeneratorsMap")
-    private Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
-
-    /** Implementation of Service Manager. */
-    @NotNull
-    @Resource(name="servicesManager")
-    private ServicesManager servicesManager;
-
-    /** The logout manager. **/
-    @NotNull
-    @Resource(name="logoutManager")
-    private LogoutManager logoutManager;
-
-    /** Expiration policy for ticket granting tickets. */
-    @NotNull
-    @Resource(name="grantingTicketExpirationPolicy")
-    private ExpirationPolicy ticketGrantingTicketExpirationPolicy;
-
-    /** ExpirationPolicy for Service Tickets. */
-    @NotNull
-    @Resource(name="serviceTicketExpirationPolicy")
-    private ExpirationPolicy serviceTicketExpirationPolicy;
-
-    /**
-     * Authentication policy that uses a service context to produce stateful security policies to apply when
-     * authenticating credentials.
-     */
-    @NotNull
-    @Resource(name="authenticationPolicyFactory")
-    private ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory =
-            new AcceptAnyAuthenticationPolicyFactory();
-
-    /** Factory to create the principal type. **/
-    @NotNull
-    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
-
-    /** Default instance for the ticket id generator. */
-    @NotNull
-    private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
-            = new DefaultUniqueTicketIdGenerator();
-
-    /** Whether we should track the most recent session by keeping the latest service ticket. */
-    @Value("${tgt.onlyTrackMostRecentSession:true}")
-    private boolean onlyTrackMostRecentSession = true;
 
     /**
      * Instantiates a new Central authentication service impl.
      */
-    protected CentralAuthenticationServiceImpl() {}
+    public CentralAuthenticationServiceImpl() {
+        super();
+    }
 
     /**
      * Build the central authentication service implementation.
@@ -214,14 +110,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final ServicesManager servicesManager,
         final LogoutManager logoutManager) {
 
-        this.ticketRegistry = ticketRegistry;
-        this.authenticationManager = authenticationManager;
-        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
-        this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
-        this.servicesManager = servicesManager;
-        this.logoutManager = logoutManager;
+        super(ticketRegistry, authenticationManager, ticketGrantingTicketUniqueTicketIdGenerator,
+                uniqueTicketIdGeneratorsForService, ticketGrantingTicketExpirationPolicy,
+                serviceTicketExpirationPolicy, servicesManager, logoutManager);
     }
 
     /**
@@ -248,6 +139,8 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
             final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
             this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+
+            doPublishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket));
 
             return logoutRequests;
         } catch (final InvalidTicketException e) {
@@ -288,7 +181,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         }
 
         if (currentAuthentication == null && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
-            logger.warn("ServiceManagement: Service [{}] is not allowed to use SSO.", service.getId());
+            logger.warn("Service [{}] is not allowed to use SSO.", service.getId());
             throw new UnauthorizedSsoServiceException();
         }
 
@@ -306,11 +199,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         if (releasePolicy != null) {
             principalAttrs = releasePolicy.getAttributes(principal);
         } else {
-            principalAttrs = new HashedMap<>();
+            principalAttrs = new HashMap<>();
         }
 
         if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
-            logger.warn("ServiceManagement: Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
+            logger.warn("Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
                     service.getId(), principal);
             throw new UnauthorizedServiceForPrincipalException();
         }
@@ -339,60 +232,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",
                 serviceTicket.getId(), service.getId(), principal.getId());
 
+        doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
+
         return serviceTicket;
-    }
-
-    /**
-     * Evaluate proxied service if needed.
-     *
-     * @param service the service
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @param registeredService the registered service
-     */
-    private void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket,
-                                                final RegisteredService registeredService) {
-        final Service proxiedBy = ticketGrantingTicket.getProxiedBy();
-        if (proxiedBy != null) {
-            logger.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
-            final RegisteredService proxyingService = servicesManager.findServiceBy(proxiedBy);
-
-            if (proxyingService != null) {
-                logger.debug("Located proxying service [{}] in the service registry", proxyingService);
-                if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
-                    logger.warn("Found proxying service {}, but it is not authorized to fulfill the proxy attempt made by {}",
-                            proxyingService.getId(), service.getId());
-                    throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
-                            + registeredService.getId());
-                }
-            } else {
-                logger.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
-                        service.getId(), registeredService.getId());
-                throw new UnauthorizedProxyingException("Proxying is not allowed for registered service "
-                        + registeredService.getId());
-            }
-        } else {
-            logger.trace("TGT is not proxied by another service");
-        }
-    }
-
-    /**
-     * Attempts to sanitize the array of credentials by removing
-     * all null elements from the collection.
-     * @param credentials credentials to sanitize
-     * @return a set of credentials with no null values
-     */
-    private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
-        if (credentials != null && credentials.length > 0) {
-            final Set<Credential> set = new HashSet<>(Arrays.asList(credentials));
-            final Iterator<Credential> it = set.iterator();
-            while (it.hasNext()) {
-                if (it.next() == null) {
-                    it.remove();
-                }
-            }
-            return set;
-        }
-        return Collections.emptySet();
     }
 
     @Audit(
@@ -443,12 +285,14 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
         final String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(
-                TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
-        final TicketGrantingTicket proxyGrantingTicket = serviceTicket.grantTicketGrantingTicket(pgtId,
+                ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
+        final ProxyGrantingTicket proxyGrantingTicket = serviceTicket.grantProxyGrantingTicket(pgtId,
                                     authentication, this.ticketGrantingTicketExpirationPolicy);
 
         logger.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
         this.ticketRegistry.addTicket(proxyGrantingTicket);
+
+        doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, proxyGrantingTicket));
 
         return proxyGrantingTicket;
     }
@@ -509,11 +353,16 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(authentication);
             builder.setPrincipal(modifiedPrincipal);
 
-            return new ImmutableAssertion(
+            final Assertion assertion = new ImmutableAssertion(
                     builder.build(),
                     serviceTicket.getGrantingTicket().getChainedAuthentications(),
                     serviceTicket.getService(),
                     serviceTicket.isFromNewLogin());
+
+            doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));
+
+            return assertion;
+
         } finally {
             if (serviceTicket.isExpired()) {
                 this.ticketRegistry.deleteTicket(serviceTicketId);
@@ -542,6 +391,9 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     authentication, this.ticketGrantingTicketExpirationPolicy);
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
+
+            doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
+
             return ticketGrantingTicket;
         }
         final String msg = "No credentials were specified in the request for creating a new ticket-granting ticket";
@@ -549,139 +401,5 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         throw new TicketCreationException(new IllegalArgumentException(msg));
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Note:
-     * Synchronization on ticket object in case of cache based registry doesn't serialize
-     * access to critical section. The reason is that cache pulls serialized data and
-     * builds new object, most likely for each pull. Is this synchronization needed here?
-     */
-    @Timed(name = "GET_TICKET_TIMER")
-    @Metered(name = "GET_TICKET_METER")
-    @Counted(name="GET_TICKET_COUNTER", monotonic=true)
-    @Override
-    public <T extends Ticket> T getTicket(final String ticketId, final Class<? extends Ticket> clazz)
-            throws InvalidTicketException {
-        Assert.notNull(ticketId, "ticketId cannot be null");
-        final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
 
-        if (ticket == null) {
-            logger.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", ticketId, clazz.getSimpleName());
-            throw new InvalidTicketException(ticketId);
-        }
-
-        if (ticket instanceof TicketGrantingTicket) {
-            synchronized (ticket) {
-                if (ticket.isExpired()) {
-                    this.ticketRegistry.deleteTicket(ticketId);
-                    logger.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticketId);
-                    throw new InvalidTicketException(ticketId);
-                }
-            }
-        }
-        return (T) ticket;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Timed(name = "GET_TICKETS_TIMER")
-    @Metered(name = "GET_TICKETS_METER")
-    @Counted(name="GET_TICKETS_COUNTER", monotonic=true)
-    @Override
-    public Collection<Ticket> getTickets(final Predicate predicate) {
-        final Collection<Ticket> c = new HashSet<>(this.ticketRegistry.getTickets());
-        final Iterator<Ticket> it = c.iterator();
-        while (it.hasNext()) {
-            if (!predicate.evaluate(it.next())) {
-                it.remove();
-            }
-        }
-        return c;
-    }
-
-    public void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
-        this.serviceContextAuthenticationPolicyFactory = policy;
-    }
-
-    /**
-     * @param ticketGrantingTicketExpirationPolicy a TGT expiration policy.
-     */
-    public void setTicketGrantingTicketExpirationPolicy(final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-    }
-
-    /**
-     * @param serviceTicketExpirationPolicy a ST expiration policy.
-     */
-    public void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
-    }
-
-
-    /**
-     * Sets principal factory to create principal objects.
-     *
-     * @param principalFactory the principal factory
-     */
-    @Autowired
-    public void setPrincipalFactory(@Qualifier("principalFactory")
-                                    final PrincipalFactory principalFactory) {
-        this.principalFactory = principalFactory;
-    }
-
-   
-    /**
-     * Gets the authentication satisfied by policy.
-     *
-     * @param ticket the ticket
-     * @param context the context
-     * @return the authentication satisfied by policy
-     * @throws AbstractTicketException the ticket exception
-     */
-    private Authentication getAuthenticationSatisfiedByPolicy(
-            final TicketGrantingTicket ticket, final ServiceContext context) throws AbstractTicketException {
-
-        final ContextualAuthenticationPolicy<ServiceContext> policy =
-                serviceContextAuthenticationPolicyFactory.createPolicy(context);
-        if (policy.isSatisfiedBy(ticket.getAuthentication())) {
-            return ticket.getAuthentication();
-        }
-        for (final Authentication auth : ticket.getSupplementalAuthentications()) {
-            if (policy.isSatisfiedBy(auth)) {
-                return auth;
-            }
-        }
-        throw new UnsatisfiedAuthenticationPolicyException(policy);
-    }
-    
-    /**
-     * Ensure that the service is found and enabled in the service registry.
-     * @param registeredService the located entry in the registry
-     * @param service authenticating service
-     * @throws UnauthorizedServiceException
-     */
-    private void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
-        if (registeredService == null) {
-            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service [%s] is not found in service registry.", service.getId());
-            logger.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-        }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service [%s] is not enabled in service registry.", service.getId());
-
-            logger.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-        }
-    }
-
-    public boolean isOnlyTrackMostRecentSession() {
-        return onlyTrackMostRecentSession;
-    }
-
-    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
-        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
-    }
 }

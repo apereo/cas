@@ -34,19 +34,7 @@ configuration for two common examples:
 * [Database (JDBC)](https://wiki.jasig.org/x/bBjP)
 * [LDAP](https://wiki.jasig.org/x/iBjP)
 
-We present a stub configuration here that can be modified accordingly by consulting the Person Directory documentation.
-
-{% highlight xml %}
-<bean id="attributeRepository" class="org.jasig.services.persondir.support.StubPersonAttributeDao">
-  <property name="backingMap">
-    <map>
-      <entry key="uid" value="username"/>
-      <entry key="eduPersonAffiliation" value="affiliation"/>
-      <entry key="member" value="member"/>
-    </map>
-  </property>
-</bean>
-{% endhighlight %}
+Configuration consists of:
 
 {% highlight properties %}
 # cas.principal.resolver.persondir.principal.attribute=cn

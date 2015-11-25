@@ -1,0 +1,12 @@
+
+description = 'Apereo CAS Hazelcast Integration'
+dependencies {
+	
+	compile project(':cas-server-core-tickets')
+	compile group: 'com.hazelcast', name: 'hazelcast', version:hazelcastVersion
+	testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+	testCompile project(':cas-server-core-util')
+	testCompile project(':cas-server-core-services')
+	testCompile project(path: ":cas-server-core-services", configuration: "tests")
+}
+

@@ -1,22 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.adaptors.x509.authentication.handler.support.ldap;
 
 import java.util.HashMap;
@@ -31,19 +12,26 @@ import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ConnectionPool;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 /**
  * Fetches a CRL from an LDAP instance.
  * @author Daniel Fisher
  * @since 4.1
  */
+@Component("poolingLdaptiveResourceCRLFetcher")
 public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetcher {
 
     /** Connection pool template. */
-    protected final BlockingConnectionPool connectionPool;
+    protected BlockingConnectionPool connectionPool;
 
     /** Map of connection pools. */
     private final Map<String, PooledConnectionFactory> connectionPoolMap = new HashMap<>();
+
+    /** Serialization support. */
+    protected PoolingLdaptiveResourceCRLFetcher() {}
 
     /**
      * Instantiates a new Ldap resource cRL fetcher.
@@ -114,7 +102,7 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
      * @param config to copy properties from
      * @return pool config
      */
-    private PoolConfig newPoolConfig(final PoolConfig config) {
+    private static PoolConfig newPoolConfig(final PoolConfig config) {
         final PoolConfig pc = new PoolConfig();
         pc.setMinPoolSize(config.getMinPoolSize());
         pc.setMaxPoolSize(config.getMaxPoolSize());
@@ -124,4 +112,22 @@ public class PoolingLdaptiveResourceCRLFetcher extends LdaptiveResourceCRLFetche
         pc.setValidatePeriod(config.getValidatePeriod());
         return pc;
     }
+
+    @Autowired(required=false)
+    public void setConnectionPool(@Qualifier("poolingLdaptiveConnectionPool")  final BlockingConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
+    }
+
+    @Autowired(required = false)
+    @Override
+    public void setSearchExecutor(@Qualifier("poolingLdaptiveResourceCRLSearchExecutor") final SearchExecutor searchExecutor) {
+        super.setSearchExecutor(searchExecutor);
+    }
+
+    @Autowired(required=false)
+    @Override
+    public void setConnectionConfig(@Qualifier("poolingLdaptiveResourceCRLConnectionConfig") final ConnectionConfig connectionConfig) {
+        super.setConnectionConfig(connectionConfig);
+    }
+
 }

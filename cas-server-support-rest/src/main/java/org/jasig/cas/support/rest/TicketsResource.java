@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.rest;
 
 import org.jasig.cas.CasProtocolConstants;
@@ -42,11 +24,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Formatter;
 
 /**
- * {@link org.springframework.web.bind.annotation.RestController} implementation of CAS' REST API.
+ * {@link RestController} implementation of CAS' REST API.
  *
  * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
  *
@@ -59,7 +42,7 @@ import java.util.Formatter;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
-@RestController
+@RestController("ticketResourceRestController")
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
@@ -67,6 +50,10 @@ public class TicketsResource {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
+
+    @Autowired(required = false)
+    private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
+
 
     /**
      * Create new ticket granting ticket.
@@ -79,7 +66,7 @@ public class TicketsResource {
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                                    final HttpServletRequest request) {
         try (Formatter fmt = new Formatter()) {
-            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
+            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(this.credentialFactory.fromRequestBody(requestBody));
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
@@ -129,20 +116,18 @@ public class TicketsResource {
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
     public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.cas.destroyTicketGrantingTicket(tgtId);
-        return new ResponseEntity<String>(tgtId, HttpStatus.OK);
+        return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }
 
     /**
-     * Obtain credential from the request. Could be overridden by subclasses.
-     *
-     * @param requestBody raw entity request body
-     * @return the credential instance
+     * Default implementation of CredentialFactory.
      */
-    protected Credential obtainCredential(final MultiValueMap<String, String> requestBody) {
-        return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
-    }
 
-    public CentralAuthenticationService getCas() {
-        return cas;
+    public static class DefaultCredentialFactory implements CredentialFactory {
+
+        @Override
+        public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
+            return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
+        }
     }
 }

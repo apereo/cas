@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
+
+    <webflow:flow-builder-services id="builder" view-factory-creator="viewFactoryCreator"
+                                   expression-parser="expressionParser"/>
+
+    <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+        <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
+    </webflow:flow-registry>
+
+    <webflow:flow-executor id="logoutFlowExecutor" flow-registry="logoutFlowRegistry">
+        <webflow:flow-execution-attributes>
+            <webflow:always-redirect-on-pause value="false"/>
+            <webflow:redirect-in-same-state value="false"/>
+        </webflow:flow-execution-attributes>
+    </webflow:flow-executor>
+
+    <webflow:flow-registry id="logoutFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
+        <webflow:flow-location-pattern value="/logout/*-webflow.xml"/>
+    </webflow:flow-registry>
+
+    <bean id="expressionParser" class="org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser"
+          c:conversionService-ref="logoutConversionService">
+        <constructor-arg>
+            <bean class="org.springframework.expression.spel.standard.SpelExpressionParser"/>
+        </constructor-arg>
+    </bean>
+
+    <bean id="viewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator">
+        <property name="viewResolvers">
+            <util:list>
+                <ref bean="viewResolver"/>
+                <ref bean="internalViewResolver"/>
+            </util:list>
+        </property>
+    </bean>
+
+    <bean id="logoutConversionService" class="org.jasig.cas.web.flow.LogoutConversionService"/>
+
+    <!-- View Resolver  -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.ResourceBundleViewResolver"
+          p:order="0">
+        <property name="basenames">
+            <util:list>
+                <value>cas_views</value>
+            </util:list>
+        </property>
+    </bean>
+
+    <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+          p:viewClass="org.springframework.web.servlet.view.JstlView"
+          p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/default/ui/"
+          p:suffix=".jsp"
+          p:order="10000"/>
+
+
+</beans>
