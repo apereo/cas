@@ -23,8 +23,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name="SERVICETICKET")
-public final class ServiceTicketImpl extends AbstractTicket implements
-    ServiceTicket {
+public final class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4223319704861765405L;
@@ -40,6 +39,8 @@ public final class ServiceTicketImpl extends AbstractTicket implements
 
     @Column(name="TICKET_ALREADY_GRANTED", nullable=false)
     private Boolean grantedTicketAlready = Boolean.FALSE;
+
+    private final Object lock = new Object();
 
     /**
      * Instantiates a new service ticket impl.
@@ -119,18 +120,18 @@ public final class ServiceTicketImpl extends AbstractTicket implements
     }
 
     @Override
-    public TicketGrantingTicket grantTicketGrantingTicket(
+    public ProxyGrantingTicket grantProxyGrantingTicket(
         final String id, final Authentication authentication,
         final ExpirationPolicy expirationPolicy) {
-        synchronized (this) {
+        synchronized (this.lock) {
             if(this.grantedTicketAlready) {
                 throw new IllegalStateException(
-                    "TicketGrantingTicket already generated for this ServiceTicket.  Cannot grant more than one TGT for ServiceTicket");
+                    "PGT already generated for this ST. Cannot grant more than one TGT for ST");
             }
             this.grantedTicketAlready = Boolean.TRUE;
         }
 
-        return new TicketGrantingTicketImpl(id, service,
+        return new ProxyGrantingTicketImpl(id, service,
                 this.getGrantingTicket(), authentication, expirationPolicy);
     }
 

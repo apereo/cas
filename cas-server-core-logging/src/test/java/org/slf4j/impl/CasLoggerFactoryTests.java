@@ -3,6 +3,7 @@ package org.slf4j.impl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.After;
 import org.junit.Before;
@@ -29,9 +30,9 @@ public class CasLoggerFactoryTests {
 
     private static final String ID1 = TicketGrantingTicket.PREFIX
             + "-1-B0tjWgMIhUU4kgCZdXbxnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
-    private static final String ID2 = TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+    private static final String ID2 = ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
             + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
-    private static final String ID3 = TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX
+    private static final String ID3 = ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX
             + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
 
     private Logger logger;
