@@ -34,6 +34,7 @@ import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectLocality;
+import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
 import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver;
 import org.opensaml.security.credential.Credential;
@@ -284,7 +285,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         }
     }
 
-    private SignatureSigningParameters buildSignatureSigningParameters(final SSODescriptor descriptor) throws SAMLException {
+    private SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor) throws SAMLException {
         try {
             final CriteriaSet criteria = new CriteriaSet();
             criteria.add(new SignatureSigningConfigurationCriterion(getSignatureSigningConfiguration()));
