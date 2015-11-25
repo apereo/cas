@@ -30,10 +30,10 @@ have been developed.
 
 Platforms:
 
-* Apache httpd Server ([mod_auth_cas module](https://wiki.jasig.org/display/CASC/mod_auth_cas))
-* Java ([Java CAS Client](https://wiki.jasig.org/display/CASC/CAS+Client+for+Java+3.1))
-* .NET ([.NET CAS Client](https://wiki.jasig.org/display/CASC/.Net+Cas+Client))
-* PHP ([phpCAS](https://wiki.jasig.org/display/CASC/phpCAS))
+* Apache httpd Server ([mod_auth_cas module](https://github.com/Jasig/mod_auth_cas))
+* Java ([Java CAS Client](https://github.com/Jasig/java-cas-client))
+* .NET ([.NET CAS Client](https://github.com/Jasig/dotnet-cas-client))
+* PHP ([phpCAS](https://github.com/Jasig/phpCAS))
 * Perl (PerlCAS)
 * Python (pycas)
 * Ruby (rubycas-client)

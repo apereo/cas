@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
@@ -297,10 +279,10 @@ public final class OAuth20AccessTokenControllerTests {
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
-        assertTrue(body.startsWith(OAuthConstants.ACCESS_TOKEN + "=" + TGT_ID + "&" + OAuthConstants.EXPIRES + "="));
+        assertTrue(body.startsWith(OAuthConstants.ACCESS_TOKEN + '=' + TGT_ID + '&' + OAuthConstants.EXPIRES + '='));
         // delta = 2 seconds
         final int delta = 2;
-        final int timeLeft = Integer.parseInt(StringUtils.substringAfter(body, "&" + OAuthConstants.EXPIRES + "="));
+        final int timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuthConstants.EXPIRES + '='));
         assertTrue(timeLeft >= TIMEOUT - 10 - delta);
     }
 

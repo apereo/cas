@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.services.web;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -23,13 +5,14 @@ import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServicesManager;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  *
@@ -41,11 +24,12 @@ public class RegisteredServiceThemeBasedViewResolverTests {
 
     private RegisteredServiceThemeBasedViewResolver registeredServiceThemeBasedViewResolver;
 
-    private ServicesManager servicesManager;
+    private DefaultServicesManagerImpl servicesManager;
 
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
+        this.servicesManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         final RegisteredServiceImpl r = new RegisteredServiceImpl();
         r.setTheme("myTheme");
         r.setId(1000);

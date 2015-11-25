@@ -1,28 +1,14 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.adaptors.generic;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
@@ -41,11 +27,24 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Component("rejectUsersAuthenticationHandler")
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
+    @Value("${reject.authn.users:}")
+    private String rejectedUsersConfig;
+
     /** The collection of users to reject. */
-    @NotNull
     private Set<String> users;
+
+    /**
+     * Initialize map of rejected users.
+     */
+    @PostConstruct
+    public void init() {
+        if (StringUtils.isNotBlank(this.rejectedUsersConfig) && this.users == null) {
+            setUsers(org.springframework.util.StringUtils.commaDelimitedListToSet(this.rejectedUsersConfig));
+        }
+    }
 
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
@@ -64,7 +63,7 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      *
      * @param users The Collection of usernames we should not authenticate.
      */
-    public final void setUsers(final Set<String> users) {
+    public final void setUsers(@NotNull final Set<String> users) {
         this.users = users;
     }
 

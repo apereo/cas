@@ -1,24 +1,6 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas;
 
-import org.apache.commons.collections4.functors.TruePredicate;
+import com.google.common.base.Predicates;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
@@ -47,14 +29,15 @@ import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.ArrayList;
@@ -149,6 +132,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, mock(AuthenticationManager.class),
                 mock(UniqueTicketIdGenerator.class), ticketIdGenForServiceMock, mock(ExpirationPolicy.class),
                 mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));
+        this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
     private ServicesManager getServicesManager(final Service service1, final Service service2) {
@@ -203,7 +187,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void getTicketsWithNoPredicate() {
-        final Collection<Ticket> c = this.cas.getTickets(TruePredicate.INSTANCE);
+        final Collection<Ticket> c = this.cas.getTickets(Predicates.<Ticket>alwaysTrue());
         assertEquals(c.size(), this.ticketRegMock.getTickets().size());
     }
 
@@ -232,7 +216,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return tgtRootMock;
     }
     
-    private TicketGrantingTicket createMockTicketGrantingTicket(final String id,
+    private static TicketGrantingTicket createMockTicketGrantingTicket(final String id,
             final ServiceTicket svcTicket, final boolean isExpired, 
             final TicketGrantingTicket root, final List<Authentication> chainedAuthnList) {
         final TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);

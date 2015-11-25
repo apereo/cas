@@ -238,11 +238,11 @@ Sample configuration follows:
   "attributeReleasePolicy" : {
     "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository",
+      "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
       "duration" : {
         "@class" : "javax.cache.expiry.Duration",
         "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
-        "durationAmount" : 2
+        "expiration" : 2
       },
       "mergingStrategy" : "NONE"
     }
@@ -274,11 +274,11 @@ For example:
   "attributeReleasePolicy" : {
     "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository",
+      "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
       "duration" : {
         "@class" : "javax.cache.expiry.Duration",
         "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
-        "durationAmount" : 2
+        "expiration" : 2
       },
       "mergingStrategy" : "MULTIVALUED"
     }
@@ -304,11 +304,11 @@ For example:
   "attributeReleasePolicy" : {
     "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository",
+      "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
       "duration" : {
         "@class" : "javax.cache.expiry.Duration",
         "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
-        "durationAmount" : 2
+        "expiration" : 2
       },
       "mergingStrategy" : "ADD"
     }
@@ -335,11 +335,11 @@ For example:
   "attributeReleasePolicy" : {
     "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
     "principalAttributesRepository" : {
-      "@class" : "org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository",
+      "@class" : "org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository",
       "duration" : {
         "@class" : "javax.cache.expiry.Duration",
         "timeUnit" : [ "java.util.concurrent.TimeUnit", "HOURS" ],
-        "durationAmount" : 2
+        "expiration" : 2
       },
       "mergingStrategy" : "REPLACE"
     }
