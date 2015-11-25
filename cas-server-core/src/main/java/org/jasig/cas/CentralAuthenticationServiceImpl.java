@@ -29,6 +29,7 @@ import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -83,7 +84,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     /**
      * Instantiates a new Central authentication service impl.
      */
-    protected CentralAuthenticationServiceImpl() {
+    public CentralAuthenticationServiceImpl() {
         super();
     }
 
@@ -284,8 +285,8 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
         final String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(
-                TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
-        final TicketGrantingTicket proxyGrantingTicket = serviceTicket.grantTicketGrantingTicket(pgtId,
+                ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
+        final ProxyGrantingTicket proxyGrantingTicket = serviceTicket.grantProxyGrantingTicket(pgtId,
                                     authentication, this.ticketGrantingTicketExpirationPolicy);
 
         logger.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
