@@ -78,7 +78,7 @@ public final class WsFederationAction extends AbstractAction {
             // it's an authentication
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 final String wresult = request.getParameter(WRESULT);
-                logger.debug("Parameter [wresult] received: {}", wresult);
+                logger.debug("Parameter [{}] received: {}", WRESULT, wresult);
 
                 // create credentials
                 final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
