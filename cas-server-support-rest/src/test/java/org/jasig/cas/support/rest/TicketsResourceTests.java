@@ -44,6 +44,7 @@ public class TicketsResourceTests {
 
     @Before
     public void setup() {
+        this.ticketsResourceUnderTest.init();
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")
                 .contextPath("/cas")
