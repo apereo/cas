@@ -2,6 +2,7 @@ package org.jasig.cas.adaptors.trusted.authentication.principal;
 
 import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
+import org.springframework.stereotype.Component;
 
 /**
  * Extracts the Principal out of PrincipalBearingCredential. It is very simple
@@ -11,6 +12,7 @@ import org.jasig.cas.authentication.Credential;
  * @author Andrew Petro
  * @since 3.0.0.5
  */
+@Component("trustedPrincipalResolver")
 public final class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
