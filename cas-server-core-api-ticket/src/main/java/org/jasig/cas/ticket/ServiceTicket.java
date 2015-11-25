@@ -53,7 +53,8 @@ public interface ServiceTicket extends Ticket {
      * @param authentication The Authentication we wish to grant a ticket for.
      * @param expirationPolicy expiration policy associated with this ticket
      * @return The ticket granting ticket.
+     * @since 4.2
      */
-    TicketGrantingTicket grantTicketGrantingTicket(String id,
+    ProxyGrantingTicket grantProxyGrantingTicket(String id,
         Authentication authentication, ExpirationPolicy expirationPolicy);
 }
