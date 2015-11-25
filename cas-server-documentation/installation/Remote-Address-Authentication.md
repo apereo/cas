@@ -30,7 +30,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% highlight xml %}
 <dependency>
   <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-server-support-generic</artifactId>
+  <artifactId>cas-server-support-generic-remote-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -47,17 +47,5 @@ The following settings are applicable:
 # ip.address.range=192.168.1.0/255.255.255.0
 {% endhighlight %}
 
-
-### Configuring Webflow
-
-Add the following action to the webflow configuration file:
-
-{% highlight xml %}
-<action-state id="startAuthenticate">
-   <action bean="remoteAddressCheck" />
-   <transition on="success" to="sendTicketGrantingTicket" />
-   <transition on="error" to="viewLoginForm" />
-</action-state>
-{% endhighlight %}
-
-You should appropriately evaluate your configuration to route the flow to `startAuthenticate` where needed.
+You should appropriately evaluate your webflow configuration
+to route the flow to the state `startAuthenticate` where needed.
