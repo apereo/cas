@@ -6,7 +6,8 @@ import org.springframework.util.MultiValueMap;
 import javax.validation.constraints.NotNull;
 
 /**
- * Strategy interface for enabling plug-in point for constructing {@link org.jasig.cas.authentication.Credential} instances from HTTP request body.
+ * Strategy interface for enabling plug-in point for constructing {@link org.jasig.cas.authentication.Credential}
+ * instances from HTTP request body.
  *
  * @author Dmitriy Kopylenko
  * @since 4.2.0

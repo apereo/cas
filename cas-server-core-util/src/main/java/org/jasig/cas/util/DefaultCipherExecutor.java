@@ -15,8 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The {@link org.jasig.cas.util.DefaultCipherExecutor} is the default
- * implementation of {@link org.jasig.cas.util.CipherExecutor}. It provides
+ * The {@link DefaultCipherExecutor} is the default
+ * implementation of {@link org.jasig.cas.CipherExecutor}. It provides
  * a facade API to encrypt, sign, and verify values.
  *
  * @author Misagh Moayyed
