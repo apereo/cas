@@ -45,4 +45,15 @@ public final class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl impl
         super(id, proxiedBy, ticketGrantingTicket, authentication, policy);
     }
 
+    @Override
+    public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
+                                        final boolean onlyTrackMostRecentSession) {
+        final ProxyTicket serviceTicket = new ProxyTicketImpl(id, this,
+                service, this.getCountOfUses() == 0,
+                expirationPolicy);
+
+        updateServiceAndTrackSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        return serviceTicket;
+    }
+
 }

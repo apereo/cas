@@ -23,7 +23,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name="SERVICETICKET")
-public final class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
+public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4223319704861765405L;
