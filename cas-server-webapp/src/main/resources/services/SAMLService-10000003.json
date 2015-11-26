@@ -1,0 +1,23 @@
+{
+  "@class" : "org.jasig.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "^http:\/\/mmoayyed.+",
+  "name" : "SAMLService",
+  "id" : 10000003,
+  "logoutType" : "BACK_CHANNEL",
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true,
+    "requireAllAttributes" : true
+  },
+  "supportedNameFormats" : [ "java.util.ArrayList", [ "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified", "urn:oasis:names:tc:SAML:2.0:nameid-format:transient", "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" ] ],
+  "signAssertions" : true,
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
+    },
+    "authorizedToReleaseCredentialPassword" : false,
+    "authorizedToReleaseProxyGrantingTicket" : false
+  }
+}
