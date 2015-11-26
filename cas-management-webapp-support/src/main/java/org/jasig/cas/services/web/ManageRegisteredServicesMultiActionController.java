@@ -5,7 +5,6 @@ import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.jasig.cas.services.web.view.JsonViewUtils;
 import org.springframework.beans.factory.annotation.Autowired;
