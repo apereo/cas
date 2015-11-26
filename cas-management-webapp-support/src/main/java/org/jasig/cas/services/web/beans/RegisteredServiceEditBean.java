@@ -1,6 +1,5 @@
 package org.jasig.cas.services.web.beans;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.PersistentIdGenerator;
@@ -8,10 +7,9 @@ import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-import org.jasig.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
-import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.jasig.cas.services.LogoutType;
@@ -21,6 +19,7 @@ import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAccessStrategy;
+import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServicePublicKey;
