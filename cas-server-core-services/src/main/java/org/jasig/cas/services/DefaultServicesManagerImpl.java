@@ -228,10 +228,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     private boolean shouldScheduleLoaderJob() {
         if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
-            if (WebUtils.isCasServletInitializing(this.applicationContext)) {
-                LOGGER.debug("Found CAS servlet application context for service management");
-                return true;
-            }
+            LOGGER.debug("Found CAS servlet application context for service management");
+            return true;
         }
 
         return false;
