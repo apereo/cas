@@ -6,6 +6,7 @@ import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.cryptacular.util.CertUtil;
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
@@ -98,9 +99,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
 
     private SubjectLocality buildSubjectLocality(final AuthnRequest authnRequest) throws Exception {
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
-        final InetAddress address = InetAddress.getByName(
-                new URL(authnRequest.getIssuer().getValue()).getHost());
-        subjectLocality.setAddress(address.getHostAddress());
+        subjectLocality.setAddress(authnRequest.getIssuer().getValue());
         return subjectLocality;
     }
 
@@ -121,6 +120,10 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
     }
 
     private static String getAuthenticationMethodFromAssertion(final Assertion assertion) {
+        final Object object = assertion.getAttributes().get(CasProtocolConstants.VALIDATION_AUTHENTICATION_METHOD_ATTRIBUTE_NAME);
+        if (object != null) {
+            return object.toString();
+        }
         return "";
     }
 
