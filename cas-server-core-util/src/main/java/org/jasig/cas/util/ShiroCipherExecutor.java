@@ -10,7 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 
 /**
- * A {@link CipherExecutor} implementation that is based on algorithms
+ * A implementation that is based on algorithms
  * provided by the default platform's JCE. By default AES encryption is
  * used which requires both the secret key and the IV length to be of size 16.
  * @author Misagh Moayyed
