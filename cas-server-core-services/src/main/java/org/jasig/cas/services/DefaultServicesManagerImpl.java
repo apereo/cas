@@ -4,7 +4,6 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.jasig.cas.support.events.CasRegisteredServiceSavedEvent;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
-import org.jasig.cas.web.support.WebUtils;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.joda.time.DateTime;
 import org.quartz.Job;
