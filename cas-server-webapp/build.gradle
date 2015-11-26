@@ -3,6 +3,10 @@ apply plugin: "org.akhikhl.gretty"
 
 description = 'Apereo CAS Web Application'
 
+javadoc {
+    enabled false
+}
+
 war {
     manifest {
         attributes("Implementation-Title": project.name,
