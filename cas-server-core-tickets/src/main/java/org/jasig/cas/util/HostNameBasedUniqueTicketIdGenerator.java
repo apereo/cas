@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
- * An implementation of {@link UniqueTicketIdGenerator} that is able auto-configure
+ * An implementation of {@link org.jasig.cas.ticket.UniqueTicketIdGenerator} that is able auto-configure
  * the suffix based on the underlying host name.
  *
  * <p>In order to assist with multi-node deployments, in scenarios where CAS configuration
