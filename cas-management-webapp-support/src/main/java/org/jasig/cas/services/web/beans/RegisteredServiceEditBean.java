@@ -311,12 +311,12 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final ShibbolethCompatiblePersistentIdGenerator sh =
                         (ShibbolethCompatiblePersistentIdGenerator) generator;
 
-                String salt = new String(sh.getSalt(), Charset.defaultCharset());
-                if (Base64.isBase64(salt)) {
-                    salt = new String(Base64.decodeBase64(salt));
+                if (sh.getSalt() != null) {
+                    final String salt = new String(sh.getSalt(), Charset.defaultCharset());
+                    uBean.setValue(salt);
+                } else {
+                    throw new IllegalArgumentException("Salt cannot be null");
                 }
-
-                uBean.setValue(salt);
             }
         } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
             final PrincipalAttributeRegisteredServiceUsernameProvider p =
