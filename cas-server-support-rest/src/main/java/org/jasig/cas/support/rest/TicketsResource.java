@@ -52,7 +52,8 @@ public class TicketsResource {
     private CentralAuthenticationService cas;
 
     @Autowired(required = false)
-    private CredentialFactory credentialFactory = new DefaultCredentialFactory();
+    private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
+
 
     /**
      * Create new ticket granting ticket.
@@ -121,10 +122,11 @@ public class TicketsResource {
     /**
      * Default implementation of CredentialFactory.
      */
+
     public static class DefaultCredentialFactory implements CredentialFactory {
 
         @Override
-        public Credential fromRequestBody(@NotNull MultiValueMap<String, String> requestBody) {
+        public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
             return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
         }
     }
