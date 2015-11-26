@@ -42,6 +42,7 @@ import java.util.Map;
  */
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
+    private static final long serialVersionUID = -4325127376598205277L;
 
     /**
      * Gets name id.
@@ -158,13 +159,11 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param attributes         the attributes
      * @return the attribute statement
      */
-    public AttributeStatement newAttributeStatement(
-                                                    final Map<String, Object> attributes) {
+    public AttributeStatement newAttributeStatement(final Map<String, Object> attributes) {
 
         final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
         for (final Map.Entry<String, Object> e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
-                //don't add the attribute, it causes a org.opensaml.MalformedException
                 logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
                 continue;
             }

@@ -22,6 +22,9 @@ public interface CasProtocolConstants {
     /** Constant representing the remember-me long term token in the validation payload. */
     String VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME = "longTermAuthenticationRequestTokenUsed";
 
+    /** Constant representing the authentication method token in the validation payload. */
+    String VALIDATION_AUTHENTICATION_METHOD_ATTRIBUTE_NAME = "authenticationMethod";
+
     /** Represents the collection of attributes in the view. */
     String VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES = "attributes";
 

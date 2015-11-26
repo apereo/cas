@@ -23,10 +23,14 @@ import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
 import org.opensaml.security.credential.Credential;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.annotation.PostConstruct;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +56,10 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     @JsonIgnore
     private SSODescriptor ssoDescriptor;
 
-    private Resource metadataLocation;
+    @JsonIgnore
+    private Resource metadataLocationResource;
+
+    private String metadataLocation;
 
     @JsonIgnore
     private transient ChainingMetadataResolver metadataResolver;;
@@ -70,64 +77,31 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         this.supportedNameFormats.add(NameID.EMAIL);
     }
 
-    @Override
-    public String toString() {
-        final ToStringBuilder builder = new ToStringBuilder(this);
-        builder.appendSuper(super.toString());
-
-        return builder.toString();
-    }
-
-    @Override
-    public void copyFrom(final RegisteredService source) {
-        super.copyFrom(source);
-        final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) source;
-        setSignAssertions(samlRegisteredService.isSignAssertions());
-        setSigningCredential(samlRegisteredService.getSigningCredential());
-        setSupportedNameFormats(samlRegisteredService.getSupportedNameFormats());
-    }
-
-    @Override
-    protected AbstractRegisteredService newInstance() {
-        return new SamlRegisteredService();
-    }
-
-    public Resource getMetadataLocation() {
-        return metadataLocation;
-    }
-
     /**
-     * Sets metadata location.
-     *
-     * @param metadataLocation the metadata location
+     * Init.
      */
-    public void setMetadataLocation(final Resource metadataLocation) {
-        this.metadataLocation = metadataLocation;
+    @PostConstruct
+    public void init() {
+        try {
+            if (metadataLocation.startsWith("http")) {
+                this.metadataLocationResource = new UrlResource(metadataLocation);
+            } else if (metadataLocation.startsWith("classpath")) {
+                this.metadataLocationResource = new ClassPathResource(metadataLocation);
+            } else {
+                this.metadataLocationResource = new FileSystemResource(metadataLocation);
+            }
+            if (!this.metadataLocationResource.exists() || !this.metadataLocationResource.isReadable()) {
+                throw new FileNotFoundException("Resource does not exist or is unreadable");
+            }
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Metadata location " + metadataLocation + " cannot be determined");
+        }
+
         loadMetadataFromResource();
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final SamlRegisteredService rhs = (SamlRegisteredService) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
+    public void setMetadataLocation(final String metadataLocation) {
+        this.metadataLocation = metadataLocation;
     }
 
     public void setSupportedNameFormats(final List<String> supportedNameFormats) {
@@ -150,9 +124,6 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         return signingCredential;
     }
 
-    public void setSigningCredential(final Credential signingCredential) {
-        this.signingCredential = signingCredential;
-    }
 
     /**
      * Gets sso descriptor.
@@ -162,7 +133,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     public RoleDescriptor getSsoDescriptor() {
         try {
             final CriteriaSet criterions = new CriteriaSet(new EntityIdCriterion(getServiceId()));
-            final EntityDescriptor entityDescriptor = metadataResolver.resolveSingle(criterions);
+            final EntityDescriptor entityDescriptor = this.metadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 throw new SAMLException("Cannot find entity " + getServiceId() + " in metadata provider");
             }
@@ -176,19 +147,11 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         }
     }
 
-    private InputStream getResourceInputStream() throws IOException {
-        logger.debug("Locating metadata resource from input stream.");
-        if (!this.metadataLocation.exists() || !this.metadataLocation.isReadable()) {
-            throw new FileNotFoundException("Resource does not exist or is unreadable");
-        }
-        return this.metadataLocation.getInputStream();
-    }
-
     private void loadMetadataFromResource() {
 
         final OpenSamlConfigBean configBean = ApplicationContextProvider.getApplicationContext().getBean(OpenSamlConfigBean.class);
-        try (final InputStream in = getResourceInputStream()) {
-            logger.debug("Parsing [{}]", this.metadataLocation.getFilename());
+        try (final InputStream in = this.metadataLocationResource.getInputStream()) {
+            logger.debug("Parsing [{}]", this.metadataLocationResource.getFilename());
             final Document document = configBean.getParserPool().parse(in);
 
             final List<MetadataResolver> resolvers = buildSingleMetadataResolver(document);
@@ -215,7 +178,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         metadataProvider.setFailFastInitialization(true);
         metadataProvider.setRequireValidMetadata(true);
         metadataProvider.setId(metadataProvider.getClass().getCanonicalName());
-        logger.debug("Initializing metadata resolver for [{}]", this.metadataLocation.getURL());
+        logger.debug("Initializing metadata resolver for [{}]", this.metadataLocationResource.getURL());
 
         try {
             metadataProvider.initialize();
@@ -224,5 +187,54 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         }
         resolvers.add(metadataProvider);
         return resolvers;
+    }
+
+    @Override
+    public void copyFrom(final RegisteredService source) {
+        super.copyFrom(source);
+        final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) source;
+        setSignAssertions(samlRegisteredService.isSignAssertions());
+        setSupportedNameFormats(samlRegisteredService.getSupportedNameFormats());
+    }
+
+    @Override
+    protected AbstractRegisteredService newInstance() {
+        return new SamlRegisteredService();
+    }
+
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final SamlRegisteredService rhs = (SamlRegisteredService) obj;
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(13, 17)
+                .appendSuper(super.hashCode())
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .appendSuper(super.toString())
+                .append("supportedNameFormats", supportedNameFormats)
+                .append("signAssertions", signAssertions)
+                .append("metadataLocation", metadataLocation)
+                .toString();
     }
 }
