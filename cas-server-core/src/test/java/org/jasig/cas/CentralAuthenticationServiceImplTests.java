@@ -14,6 +14,7 @@ import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ProxyGrantingTicket;
+import org.jasig.cas.ticket.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -141,12 +142,12 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService());
-        final TicketGrantingTicket pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
+        final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), org.jasig.cas.services.TestUtils.getHttpBasedServiceCredentials());
 
-        final ServiceTicket pt = getCentralAuthenticationService().grantServiceTicket(pgt.getId(),
-                getService(), new Credential[]{});
-        assertTrue(pt.getId().startsWith(ServiceTicket.PROXY_TICKET_PREFIX));
+        final ProxyTicket pt = getCentralAuthenticationService().grantProxyTicket(pgt.getId(),
+                getService());
+        assertTrue(pt.getId().startsWith(ProxyTicket.PROXY_TICKET_PREFIX));
     }
 
     @Test(expected = AbstractTicketException.class)
@@ -190,7 +191,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService());
-        final TicketGrantingTicket pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
+        final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), org.jasig.cas.services.TestUtils.getHttpBasedServiceCredentials());
         assertTrue(pgt.getId().startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
     }
@@ -203,7 +204,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService());
         getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId.getId());
-        getCentralAuthenticationService().delegateTicketGrantingTicket(
+        getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), org.jasig.cas.services.TestUtils.getHttpBasedServiceCredentials());
     }
 

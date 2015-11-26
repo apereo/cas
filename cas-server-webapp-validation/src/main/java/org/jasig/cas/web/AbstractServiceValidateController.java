@@ -148,7 +148,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         TicketGrantingTicket proxyGrantingTicketId = null;
 
         try {
-            proxyGrantingTicketId = this.centralAuthenticationService.delegateTicketGrantingTicket(serviceTicketId,
+            proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
                     serviceCredential);
             logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
                     proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
