@@ -31,6 +31,11 @@ public class JpaServiceRegistryDaoImplTests  {
         final ClassPathXmlApplicationContext ctx = new
             ClassPathXmlApplicationContext("classpath:/jpaSpringContext.xml");
         this.dao = ctx.getBean("jpaServiceRegistryDao", ServiceRegistryDao.class);
+
+        final List<RegisteredService> services = this.dao.load();
+        for (final RegisteredService service : services) {
+            this.dao.delete(service);
+        }
     }
 
     @Test
@@ -68,6 +73,7 @@ public class JpaServiceRegistryDaoImplTests  {
 
     @Test
     public void verifySaveMethodWithExistingServiceNoAttribute() {
+
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("test");
         r.setServiceId("testId");
@@ -98,6 +104,7 @@ public class JpaServiceRegistryDaoImplTests  {
         r.setDescription("description");
 
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
+
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
         final Set<String> values = new HashSet<>();
         values.add("value1");
@@ -117,9 +124,7 @@ public class JpaServiceRegistryDaoImplTests  {
 
         this.dao.save(r);
 
-        final List<RegisteredService> services = this.dao.load();
-        final RegisteredService r2 = services.get(0);
-
+        final RegisteredService r2 = this.dao.load().get(0);
         assertEquals(r2.getProperties().size(), 2);
     }
 
