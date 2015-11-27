@@ -27,3 +27,4 @@ build/
 MANIFEST.MF
 
 classes/
+*.bin
