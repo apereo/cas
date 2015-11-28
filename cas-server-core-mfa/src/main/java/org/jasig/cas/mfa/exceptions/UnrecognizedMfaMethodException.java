@@ -8,17 +8,27 @@ package org.jasig.cas.mfa.exceptions;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class UnrecognizedMfaMethodException extends AbstractMfaTicketValidationException {
+public class UnrecognizedMfaMethodException extends RuntimeException {
 
-    private static final long serialVersionUID = -8544747236126342213L;
+    private static final long serialVersionUID = 7880539766094343828L;
+
+    private final String authenticationMethod;
+    private final String code = "unrecognized.authentication.method";
 
     /**
-     * Constructor to spin up the exception instance.
-     * @param code  error code
-     * @param msg error message
-     * @param authnMethod authentication method associated with the error
+     * Initialize the exception object.
+     * @param msg the error message describing this exception
+     * @param authnMethod the authentication method requested
      */
-    public UnrecognizedMfaMethodException(final String code, final String msg, final String authnMethod) {
-        super(code, msg, authnMethod);
+    public UnrecognizedMfaMethodException(final String msg, final String authnMethod) {
+        this.authenticationMethod = authnMethod;
+    }
+
+    public final String getAuthenticationMethod() {
+        return this.authenticationMethod;
+    }
+
+    public final String getCode() {
+        return this.code;
     }
 }
