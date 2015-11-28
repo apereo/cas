@@ -23,6 +23,27 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     private static final long serialVersionUID = -3557247044344135788L;
     private static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
 
+    public enum GrouperGroupField {
+        /**
+         * Name grouper group field.
+         */
+        NAME,
+        /**
+         * Extension grouper group field.
+         */
+        EXTENSION,
+        /**
+         * Display name grouper group field.
+         */
+        DISPLAY_NAME,
+        /**
+         * Display extension grouper group field.
+         */
+        DISPLAY_EXTENSION
+    }
+
+    private GrouperGroupField groupField = GrouperGroupField.NAME;
+
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         final Map<String, Object> allAttributes = new HashMap<>(principalAttributes);
@@ -46,7 +67,6 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
         }
 
         for (final WsGetGroupsResult groupsResult : results) {
-
             if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
                 logger.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
                 return false;
@@ -59,10 +79,18 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
             }
         }
         logger.debug("Adding [{}] under attribute name [{}] to collection of CAS attributes",
-                grouperGroups, constructGrouperGroupsAttribute());
+                grouperGroups, GROUPER_GROUPS_ATTRIBUTE_NAME);
 
-        allAttributes.put(constructGrouperGroupsAttribute(), grouperGroups);
+        allAttributes.put(GROUPER_GROUPS_ATTRIBUTE_NAME, grouperGroups);
         return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
+    }
+
+    public void setGroupField(final GrouperGroupField groupField) {
+        this.groupField = groupField;
+    }
+
+    public GrouperGroupField getGroupField() {
+        return groupField;
     }
 
     /**
@@ -73,16 +101,15 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
      * @return the final attribute name
      */
     protected String constructGrouperGroupAttribute(final WsGroup group) {
+        switch (this.groupField) {
+            case DISPLAY_EXTENSION:
+                return group.getDisplayExtension();
+            case DISPLAY_NAME:
+                return group.getDisplayName();
+            case EXTENSION:
+                return group.getExtension();
+        }
         return group.getName();
     }
 
-    /**
-     * Construct grouper groups attribute.
-     * This is the name of the attribute that CAS can use
-     * to decide whether access is allowed.
-     * @return the attribute name
-     */
-    protected String constructGrouperGroupsAttribute() {
-        return GROUPER_GROUPS_ATTRIBUTE_NAME;
-    }
 }
