@@ -1,7 +1,5 @@
 package org.jasig.cas.grouper.services;
 
-
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.io.FileUtils;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.JsonServiceRegistryDao;
@@ -33,7 +31,7 @@ public class GrouperRegisteredServiceAccessStrategyRegistryTests {
     }
 
     @Test
-    public void testAccessStrategyJson() throws Exception {
+    public void checkAccessStrategyJson() throws Exception {
 
         final Map<String, Set<String>> attributes = new HashMap<>();
         final Set<String> v1 = new HashSet<>();
