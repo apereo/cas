@@ -149,7 +149,7 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
 
     @Override
     @PreDestroy
-    public void close() throws IOException {
+    public void close() {
         LOGGER.debug("Shutting down LDAP server...");
         this.directoryServer.shutDown(true);
         LOGGER.debug("Shut down LDAP server.");
