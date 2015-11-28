@@ -22,7 +22,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
-    public void testGrouperAttributes() {
+    public void checkGrouperAttributes() {
         final ClassPathResource resource = new ClassPathResource("grouper.client.properties");
         if (resource.exists()) {
             final GrouperRegisteredServiceAccessStrategy strategy = new GrouperRegisteredServiceAccessStrategy();
