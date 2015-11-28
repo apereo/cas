@@ -21,18 +21,46 @@ import java.util.Map;
 public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -3557247044344135788L;
+    private static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         final Map<String, Object> allAttributes = new HashMap<>(principalAttributes);
         final List<String> grouperGroups = new ArrayList<>();
 
-        final GcGetGroups groupsClient = new GcGetGroups().addSubjectId(principal);
-        for (final WsGetGroupsResult groupsResult : groupsClient.execute().getResults()) {
+        final WsGetGroupsResult[] results;
+
+        try {
+            final GcGetGroups groupsClient = new GcGetGroups().addSubjectId(principal);
+            results = groupsClient.execute().getResults();
+        } catch (final Exception e) {
+            logger.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
+                    + ", the url endpoint for Grouper WS is correctly configured and the subject " + principal
+                    + "  exists in Grouper.", e);
+            return false;
+        }
+
+        if (results == null || results.length == 0) {
+            logger.warn("Subject id [{}] could not be located. Access denied", principal);
+            return false;
+        }
+
+        for (final WsGetGroupsResult groupsResult : results) {
+
+            if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
+                logger.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
+                return false;
+            }
+
             for (final WsGroup group : groupsResult.getWsGroups()) {
-                grouperGroups.add(constructGrouperGroupAttribute(group));
+                final String groupName = constructGrouperGroupAttribute(group);
+                logger.debug("Found group name [{}] for [{}]", groupName, principal);
+                grouperGroups.add(groupName);
             }
         }
+        logger.debug("Adding [{}] under attribute name [{}] to collection of CAS attributes",
+                grouperGroups, constructGrouperGroupsAttribute());
+
         allAttributes.put(constructGrouperGroupsAttribute(), grouperGroups);
         return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
     }
@@ -55,6 +83,6 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
      * @return the attribute name
      */
     protected String constructGrouperGroupsAttribute() {
-        return "grouperAttributes";
+        return GROUPER_GROUPS_ATTRIBUTE_NAME;
     }
 }
