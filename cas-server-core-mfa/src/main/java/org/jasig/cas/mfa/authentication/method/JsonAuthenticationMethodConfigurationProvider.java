@@ -76,17 +76,12 @@ public final class JsonAuthenticationMethodConfigurationProvider implements Auth
         this.authnMethods = new TreeSet<>();
     }
 
-    /**
-     * {@inheritDoc}
-     **/
+
     @Override
     public boolean contains(final String name) {
         return get(name) != null;
     }
 
-    /**
-     * {@inheritDoc}
-     **/
     @Override
     public AuthenticationMethod get(final String name) {
         for (final Iterator<AuthenticationMethod> it = this.authnMethods.iterator(); it.hasNext();) {
