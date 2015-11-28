@@ -23,6 +23,9 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     private static final long serialVersionUID = -3557247044344135788L;
     private static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
 
+    /**
+     * The enum Grouper group field.
+     */
     public enum GrouperGroupField {
         /**
          * Name grouper group field.
@@ -108,8 +111,9 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
                 return group.getDisplayName();
             case EXTENSION:
                 return group.getExtension();
+            default:
+                return group.getName();
         }
-        return group.getName();
     }
 
 }
