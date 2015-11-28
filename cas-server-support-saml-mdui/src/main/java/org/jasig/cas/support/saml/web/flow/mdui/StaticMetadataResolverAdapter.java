@@ -57,7 +57,6 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
 
     /**
      * Refresh metadata. Schedules the job to retrieve metadata.
-     * @throws SchedulerException the scheduler exception
      */
     @PostConstruct
     public void refreshMetadata() {
