@@ -11,4 +11,5 @@ dependencies {
         exclude(module: 'commons-beanutils')
     }
     compile project(':cas-server-core-services')
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
 }
