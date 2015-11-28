@@ -372,7 +372,7 @@ public final class CachingPrincipalAttributesRepository implements PrincipalAttr
 
     @Override
     @PreDestroy
-    public void close() throws IOException {
+    public void close() {
         this.cache.close();
         this.cache.getCacheManager().close();
     }

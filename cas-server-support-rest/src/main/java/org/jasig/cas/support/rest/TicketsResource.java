@@ -138,7 +138,8 @@ public class TicketsResource {
     public static class DefaultCredentialFactory implements CredentialFactory {
 
         @Override
-        public Credential fromRequestBody(@NotNull MultiValueMap<String, String> requestBody) {
+        public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
             return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
         }
+    }
 }
