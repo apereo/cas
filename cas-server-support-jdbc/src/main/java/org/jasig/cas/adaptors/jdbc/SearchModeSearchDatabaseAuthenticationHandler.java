@@ -70,7 +70,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
 
     @PostConstruct
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (StringUtils.isNotBlank(this.tableUsers) || StringUtils.isNotBlank(this.fieldUser)
                 || StringUtils.isNotBlank(this.fieldPassword)) {
             this.sql = SQL_PREFIX + this.tableUsers + " WHERE " + this.fieldUser + " = ? AND " + this.fieldPassword
