@@ -1,7 +1,7 @@
 package org.jasig.cas.services.web;
 
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
 import org.jasig.cas.services.web.view.JsonViewUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
@@ -47,7 +47,7 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
     @Autowired
     public RegisteredServiceSimpleFormController(
         @Qualifier("servicesManager")
-        final ServicesManager servicesManager,
+        final ReloadableServicesManager servicesManager,
         @Qualifier("attributeRepository")
         final IPersonAttributeDao personAttributeDao) {
         super(servicesManager);
@@ -108,8 +108,7 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                 bean = RegisteredServiceEditBean.fromRegisteredService(service);
             }
             final RegisteredServiceEditBean.FormData formData = bean.getFormData();
-            final List<String> possibleAttributeNames = new ArrayList<>();
-            possibleAttributeNames.addAll(this.personAttributeDao.getPossibleUserAttributeNames());
+            final List<String> possibleAttributeNames = new ArrayList<>(this.personAttributeDao.getPossibleUserAttributeNames());
             Collections.sort(possibleAttributeNames);
             formData.setAvailableAttributes(possibleAttributeNames);
 
