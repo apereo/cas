@@ -8,14 +8,10 @@ import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.DefaultTicketFactory;
-import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -27,11 +23,9 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.security.Principal;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Scott Battaglia
@@ -46,10 +40,6 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         this.action = new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction();
         this.action.setPrincipalFactory(new DefaultPrincipalFactory());
 
-        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
-        idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
-
-
         final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
                 Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
                         new PrincipalBearingCredentialsAuthenticationHandler(),
@@ -57,7 +47,6 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
 
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
                 new DefaultTicketRegistry(), authenticationManager, new DefaultTicketFactory(),
-                idGenerators, new NeverExpiresExpirationPolicy(),
                 mock(ServicesManager.class), mock(LogoutManager.class));
         centralAuthenticationService.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.action.setCentralAuthenticationService(centralAuthenticationService);

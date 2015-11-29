@@ -3,7 +3,7 @@ package org.jasig.cas.web;
 import java.util.Map;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ProxyGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Before;

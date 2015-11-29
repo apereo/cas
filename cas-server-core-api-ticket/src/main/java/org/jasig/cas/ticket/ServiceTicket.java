@@ -2,6 +2,7 @@ package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 
 /**
  * Interface for a Service Ticket. A service ticket is used to grant access to a
@@ -51,5 +52,5 @@ public interface ServiceTicket extends Ticket {
      * @since 4.2
      */
     ProxyGrantingTicket grantProxyGrantingTicket(String id,
-        Authentication authentication, ExpirationPolicy expirationPolicy);
+                                                 Authentication authentication, ExpirationPolicy expirationPolicy);
 }
