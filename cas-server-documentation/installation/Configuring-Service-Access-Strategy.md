@@ -58,8 +58,7 @@ The following properties are available:
 
 | Field                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `groupField`                | Decides which attribute of the Grouper group should be used when converting the group to a CAS attribute.
-Possible values are `NAME`, `EXTENSION`, `DISPLAY_NAME`, `DISPLAY_EXTENSION`. 
+| `groupField`                | Decides which attribute of the Grouper group should be used when converting the group to a CAS attribute. Possible values are `NAME`, `EXTENSION`, `DISPLAY_NAME`, `DISPLAY_EXTENSION`. 
 
 You will also need to ensure `grouper.client.properties` is available on the classpath:
 
