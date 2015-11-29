@@ -1,4 +1,6 @@
-package org.jasig.cas.ticket;
+package org.jasig.cas.ticket.proxy;
+
+import org.jasig.cas.ticket.ServiceTicket;
 
 /**
  * The {@link ProxyTicket} represents a CAS proxy ticket. A proxy ticket is an opaque string that a

@@ -1,6 +1,8 @@
-package org.jasig.cas.ticket;
+package org.jasig.cas.ticket.proxy;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketFactory;
 
 /**
  * The {@link ProxyGrantingTicketFactory} is responsible for
