@@ -2,7 +2,7 @@ package org.jasig.cas.web;
 
 import java.util.Map;
 
-import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ProxyGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTest {
+public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 
     private ProxyController proxyController;
 

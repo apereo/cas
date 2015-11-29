@@ -1,6 +1,7 @@
 package org.jasig.cas.adaptors.trusted.web.flow;
 
-import org.jasig.cas.CentralAuthenticationServiceImpl;
+import org.jasig.cas.AbstractCentralAuthenticationService;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -8,16 +9,8 @@ import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.jasig.cas.logout.LogoutManager;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.ticket.DefaultTicketFactory;
-import org.jasig.cas.ticket.UniqueTicketIdGenerator;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -25,38 +18,35 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0.5
  *
  */
-public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests {
+public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction action;
 
     @Before
     public void setUp() throws Exception {
+
+
         this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
         this.action.setPrincipalFactory(new DefaultPrincipalFactory());
-
-        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
-        idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
 
 
         final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
                 Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
                         new PrincipalBearingCredentialsAuthenticationHandler(),
                         new PrincipalBearingPrincipalResolver()));
-        final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
-                new DefaultTicketRegistry(), authenticationManager, new DefaultTicketFactory(),
-                mock(ServicesManager.class), mock(LogoutManager.class));
-        centralAuthenticationService.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+
+        final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
+                getCentralAuthenticationService();
+        centralAuthenticationService.setAuthenticationManager(authenticationManager);
+        this.action.setCentralAuthenticationService(centralAuthenticationService);
         this.action.setCentralAuthenticationService(centralAuthenticationService);
     }
 
