@@ -23,6 +23,7 @@ import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
@@ -85,14 +86,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Resource(name="authenticationManager")
     protected AuthenticationManager authenticationManager;
 
-    /**
-     * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s
-     * created.
-     */
-    @NotNull
-    @Resource(name="ticketGrantingTicketUniqueIdGenerator")
-    protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
-
     /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
     @NotNull
     @Resource(name="uniqueIdGeneratorsMap")
@@ -108,10 +101,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Resource(name="logoutManager")
     protected LogoutManager logoutManager;
 
-    /** Expiration policy for ticket granting tickets. */
+    /** The ticket factory. **/
     @NotNull
-    @Resource(name="grantingTicketExpirationPolicy")
-    protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
+    @Resource(name="defaultTicketFactory")
+    protected TicketFactory ticketFactory;
 
     /** ExpirationPolicy for Service Tickets. */
     @NotNull
@@ -148,44 +141,34 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * Build the central authentication service implementation.
      *
-     * @param ticketRegistry the tickets registry.
-     * @param authenticationManager the authentication manager.
-     * @param ticketGrantingTicketUniqueTicketIdGenerator the TGT id generator.
+     * @param ticketRegistry                     the tickets registry.
+     * @param ticketFactory                      the ticket factory
+     * @param authenticationManager              the authentication manager.
      * @param uniqueTicketIdGeneratorsForService the map with service and ticket id generators.
-     * @param ticketGrantingTicketExpirationPolicy the TGT expiration policy.
-     * @param serviceTicketExpirationPolicy the service ticket expiration policy.
-     * @param servicesManager the services manager.
-     * @param logoutManager the logout manager.
+     * @param serviceTicketExpirationPolicy      the service ticket expiration policy.
+     * @param servicesManager                    the services manager.
+     * @param logoutManager                      the logout manager.
      */
     public AbstractCentralAuthenticationService(
             final TicketRegistry ticketRegistry,
+            final TicketFactory ticketFactory,
             final AuthenticationManager authenticationManager,
-            final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
             final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
-            final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
             final ExpirationPolicy serviceTicketExpirationPolicy,
             final ServicesManager servicesManager,
             final LogoutManager logoutManager) {
 
         this.ticketRegistry = ticketRegistry;
         this.authenticationManager = authenticationManager;
-        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
+        this.ticketFactory = ticketFactory;
     }
 
     public final void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
         this.serviceContextAuthenticationPolicyFactory = policy;
-    }
-
-    /**
-     * @param ticketGrantingTicketExpirationPolicy a TGT expiration policy.
-     */
-    public final void setTicketGrantingTicketExpirationPolicy(final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
     }
 
     /**
@@ -195,6 +178,9 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
     }
 
+    public void setTicketFactory(final TicketFactory ticketFactory) {
+        this.ticketFactory = ticketFactory;
+    }
 
     /**
      * Sets principal factory to create principal objects.
