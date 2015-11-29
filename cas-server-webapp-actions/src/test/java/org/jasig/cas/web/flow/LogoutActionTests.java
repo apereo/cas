@@ -1,6 +1,6 @@
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class LogoutActionTests extends AbstractCentralAuthenticationServiceTest {
+public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String COOKIE_TGC_ID = "CASTGC";
 
