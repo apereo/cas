@@ -32,13 +32,14 @@ public interface RegisteredServiceAccessStrategy extends Serializable {
      * Verify authorization policy by checking the pre-configured rules
      * that may depend on what the principal might be carrying.
      *
+     * @param principal The authenticated principal
      * @param principalAttributes the principal attributes. Rather than passing the principal
      *                            directly, we are only allowing principal attributes
      *                            given they may be coming from a source external to the principal
      *                            itself. (Cached principal attributes, etc)
      * @return true/false if service access can be granted to principal
      */
-    boolean doPrincipalAttributesAllowServiceAccess(Map<String, Object> principalAttributes);
+    boolean doPrincipalAttributesAllowServiceAccess(String principal, Map<String, Object> principalAttributes);
 
     /**
      * Redirect the request to a separate and possibly external URL
