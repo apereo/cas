@@ -12,9 +12,6 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
-import org.jasig.cas.ticket.DefaultProxyGrantingTicketFactory;
-import org.jasig.cas.ticket.DefaultTicketFactory;
-import org.jasig.cas.ticket.DefaultTicketGrantingTicketFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ProxyTicket;
@@ -22,10 +19,8 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
@@ -35,8 +30,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Scott Battaglia
