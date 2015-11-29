@@ -19,7 +19,7 @@
 
 package org.jasig.cas.services;
 
-import org.jasig.cas.TestUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for {@link MongoServiceRegistryDao}.
@@ -42,6 +43,14 @@ public class MongoServiceRegistryDaoTests {
 
     @Autowired
     private ServiceRegistryDao serviceRegistryDao;
+
+    @Before
+    public void setup() {
+        final List<RegisteredService> services = this.serviceRegistryDao.load();
+        for (final RegisteredService service : services) {
+            this.serviceRegistryDao.delete(service);
+        }
+    }
 
     @Test
     public void verifySaveAndLoad() {
@@ -90,4 +99,6 @@ public class MongoServiceRegistryDaoTests {
     private RegisteredService buildService(final int i) {
         return TestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
     }
+
+
 }

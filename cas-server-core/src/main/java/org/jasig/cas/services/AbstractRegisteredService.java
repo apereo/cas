@@ -64,7 +64,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     /** The logger instance. */
     @Transient
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The unique identifier for this service. */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
