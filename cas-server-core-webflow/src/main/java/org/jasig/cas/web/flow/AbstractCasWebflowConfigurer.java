@@ -140,7 +140,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * @throws Exception the exception
      */
     @PostConstruct
-    public final void initialize() throws Exception {
+    public final void initialize() {
         try {
             logger.debug("Initializing CAS webflow configuration...");
             doInitialize();
