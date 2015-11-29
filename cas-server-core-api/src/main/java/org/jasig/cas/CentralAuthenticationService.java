@@ -7,8 +7,8 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
-import org.jasig.cas.ticket.ProxyTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -118,7 +118,7 @@ public interface CentralAuthenticationService {
             throws AuthenticationException, AbstractTicketException;
 
     /**
-     * Grant a {@link org.jasig.cas.ticket.ProxyTicket} that may be used to access the given service
+     * Grant a {@link ProxyTicket} that may be used to access the given service
      * by authenticating the given credentials.
      * The details of the security policy around credential authentication and the definition
      * of authentication success are dependent on the implementation, but it SHOULD be safe to assume

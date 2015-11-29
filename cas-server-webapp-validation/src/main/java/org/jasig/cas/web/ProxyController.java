@@ -6,7 +6,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
-import org.jasig.cas.ticket.ProxyTicket;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
