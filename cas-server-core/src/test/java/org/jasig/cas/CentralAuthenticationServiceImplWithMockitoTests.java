@@ -159,13 +159,13 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test(expected=InvalidTicketException.class)
     public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.cas.delegateTicketGrantingTicket("bad-st",
+        this.cas.createProxyGrantingTicket("bad-st",
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected=UnauthorizedServiceException.class)
     public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.cas.delegateTicketGrantingTicket(ST_ID,
+        this.cas.createProxyGrantingTicket(ST_ID,
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
@@ -233,7 +233,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return tgtMock;
     }
     
-    private ServiceTicket createMockServiceTicket(final String id, final Service svc) {
+    private static ServiceTicket createMockServiceTicket(final String id, final Service svc) {
         final ServiceTicket stMock = mock(ServiceTicket.class);
         when(stMock.getService()).thenReturn(svc);
         when(stMock.getId()).thenReturn(id);
@@ -241,7 +241,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return stMock;
     }
     
-    private RegisteredServiceProxyPolicy getServiceProxyPolicy(final boolean canProxy) {
+    private static RegisteredServiceProxyPolicy getServiceProxyPolicy(final boolean canProxy) {
         if (!canProxy) {
             return new RefuseRegisteredServiceProxyPolicy();
         }
@@ -249,7 +249,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return new RegexMatchingRegisteredServiceProxyPolicy(".*");
     }
 
-    private RegisteredService createMockRegisteredService(final String svcId,
+    private static RegisteredService createMockRegisteredService(final String svcId,
             final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
         final RegisteredService mockRegSvc = mock(RegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
@@ -262,7 +262,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return mockRegSvc;
     }
 
-    private Service getService(final String name) {
+    private static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
         return new WebApplicationServiceFactory().createService(request);
