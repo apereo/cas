@@ -25,7 +25,7 @@ public class DefaultTicketFactory implements TicketFactory {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private Map<String, TicketFactory> factoryMap;
+    private Map<String, Object> factoryMap;
 
     @Autowired
     @Qualifier("defaultProxyTicketFactory")
@@ -50,6 +50,15 @@ public class DefaultTicketFactory implements TicketFactory {
     public void initialize() {
         this.factoryMap = new HashMap<>();
 
+        validateFactoryInstances();
+
+        this.factoryMap.put(ProxyGrantingTicket.class.getCanonicalName(), this.proxyGrantingTicketFactory);
+        this.factoryMap.put(TicketGrantingTicket.class.getCanonicalName(), this.ticketGrantingTicketFactory);
+        this.factoryMap.put(ServiceTicket.class.getCanonicalName(), this.serviceTicketFactory);
+        this.factoryMap.put(ProxyTicket.class.getCanonicalName(), this.proxyTicketFactory);
+    }
+
+    private void validateFactoryInstances() {
         if (this.ticketGrantingTicketFactory == null) {
             throw new RuntimeException("ticketGrantingTicketFactory cannot be null");
         }
@@ -62,17 +71,13 @@ public class DefaultTicketFactory implements TicketFactory {
         if (this.proxyTicketFactory == null) {
             throw new RuntimeException("proxyTicketFactory cannot be null");
         }
-
-        this.factoryMap.put(ProxyGrantingTicket.class.getCanonicalName(), this.proxyGrantingTicketFactory);
-        this.factoryMap.put(TicketGrantingTicket.class.getCanonicalName(), this.ticketGrantingTicketFactory);
-        this.factoryMap.put(ServiceTicket.class.getCanonicalName(), this.serviceTicketFactory);
-        this.factoryMap.put(ProxyTicket.class.getCanonicalName(), this.proxyTicketFactory);
     }
 
     @Override
     public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
-        final TicketFactory factory = this.factoryMap.get(clazz.getCanonicalName());
-        return (T) factory;
+        validateFactoryInstances();
+
+        return (T) this.factoryMap.get(clazz.getCanonicalName());
     }
 
     public void setTicketGrantingTicketFactory(final TicketGrantingTicketFactory ticketGrantingTicketFactory) {
