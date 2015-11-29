@@ -13,9 +13,18 @@ dependencies {
         exclude(module: 'spring-expression')
         exclude(module: 'spring-webmvc')
     }
+    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
+        exclude(module: 'slf4j-api')
+        exclude(module: 'jboss-logging')
+        exclude(module: 'xml-apis')
+    }
     testCompile project(':cas-server-core')
     testCompile project(':cas-server-core-tickets')
+    testCompile project(':cas-server-core-logout')
+    testCompile project(':cas-server-core-monitor')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":cas-server-core", configuration: "tests")
 }
+
 
 
