@@ -193,7 +193,7 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
          * @param ticketGrantingTicket the ticket granting ticket
          * @param callback the callback
          */
-        protected TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
+        TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
                 final TicketGrantingTicket ticketGrantingTicket, final boolean callback) {
             super(ticketRegistry, ticketGrantingTicket, callback);
         }
