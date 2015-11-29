@@ -52,5 +52,6 @@ public interface ServiceTicket extends Ticket {
      * @since 4.2
      */
     ProxyGrantingTicket grantProxyGrantingTicket(String id,
-                                                 Authentication authentication, ExpirationPolicy expirationPolicy);
+                                                 Authentication authentication,
+                                                 ExpirationPolicy expirationPolicy);
 }
