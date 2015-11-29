@@ -3,6 +3,7 @@ package org.jasig.cas.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -33,6 +34,7 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
     private boolean dropCollection;
 
     @Autowired
+    @Qualifier("mongoTemplate")
     @NotNull
     private MongoOperations mongoTemplate;
 
@@ -45,7 +47,7 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
     @PostConstruct
     public void afterPropertiesSet() {
         if (this.mongoTemplate == null) {
-            LOGGER.warn("Mongo template is not correctly configured");
+            throw new RuntimeException("Mongo template is not correctly configured");
         } else {
             if (this.dropCollection) {
                 LOGGER.debug("Dropping database collection: {}", this.collectionName);
