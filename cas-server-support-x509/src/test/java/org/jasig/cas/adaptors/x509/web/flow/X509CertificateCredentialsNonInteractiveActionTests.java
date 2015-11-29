@@ -1,6 +1,6 @@
 package org.jasig.cas.adaptors.x509.web.flow;
 
-import org.jasig.cas.CentralAuthenticationServiceImpl;
+import org.jasig.cas.AbstractCentralAuthenticationService;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
@@ -8,13 +8,8 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.jasig.cas.logout.LogoutManager;
-import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.ticket.DefaultTicketFactory;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -25,7 +20,6 @@ import java.security.cert.X509Certificate;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
 /**
  * @author Marvin S. Addison
@@ -46,12 +40,10 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
                 Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
                         handler, new X509SerialNumberPrincipalResolver()));
 
-        final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
-                new DefaultTicketRegistry(), authenticationManager, new DefaultTicketFactory(),
-                mock(ServicesManager.class), mock(LogoutManager.class));
-        centralAuthenticationService.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+        final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
+                getCentralAuthenticationService();
+        centralAuthenticationService.setAuthenticationManager(authenticationManager);
         this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.afterPropertiesSet();
     }
 
     @Test
