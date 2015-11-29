@@ -12,6 +12,9 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.DefaultProxyGrantingTicketFactory;
+import org.jasig.cas.ticket.DefaultTicketFactory;
+import org.jasig.cas.ticket.DefaultTicketGrantingTicketFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ProxyTicket;
@@ -19,9 +22,10 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.TicketState;
+import org.jasig.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
@@ -158,30 +162,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId.getId());
         getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
             getService());
-    }
-
-    @Test(expected = AbstractTicketException.class)
-    public void verifyGrantServiceTicketWithExpiredTicketGrantingTicket() throws Exception {
-        ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(
-            new ExpirationPolicy() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public boolean isExpired(final TicketState ticket) {
-                    return true;
-                }
-            });
-
-        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        try {
-            getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
-                getService());
-        } finally {
-            ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(
-                new NeverExpiresExpirationPolicy());
-        }
     }
 
     @Test
@@ -467,8 +447,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         // consider authentication has happened and the TGT is in the registry
         registry.addTicket(tgt);
         // create a new CASimpl
-        final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry,  null, null, null, null, null,
-            null, logoutManager);
+        final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry, null, null, null, null,
+                null, logoutManager);
         cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         // destroy to mark expired and then delete : the opposite would fail with a "No ticket to update" error from the registry
         cas.destroyTicketGrantingTicket(tgt.getId());

@@ -31,11 +31,13 @@ import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ProxyGrantingTicket;
+import org.jasig.cas.ticket.ProxyGrantingTicketFactory;
 import org.jasig.cas.ticket.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
+import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.TicketGrantingTicketFactory;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
@@ -94,27 +96,25 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     /**
      * Build the central authentication service implementation.
      *
-     * @param ticketRegistry the tickets registry.
-     * @param authenticationManager the authentication manager.
-     * @param ticketGrantingTicketUniqueTicketIdGenerator the TGT id generator.
-     * @param uniqueTicketIdGeneratorsForService the map with service and ticket id generators.
-     * @param ticketGrantingTicketExpirationPolicy the TGT expiration policy.
-     * @param serviceTicketExpirationPolicy the service ticket expiration policy.
-     * @param servicesManager the services manager.
-     * @param logoutManager the logout manager.
+     * @param ticketRegistry                              the tickets registry.
+     * @param authenticationManager                       the authentication manager.
+     * @param ticketFactory                               the ticket factory
+     * @param uniqueTicketIdGeneratorsForService          the map with service and ticket id generators.
+     * @param serviceTicketExpirationPolicy               the service ticket expiration policy.
+     * @param servicesManager                             the services manager.
+     * @param logoutManager                               the logout manager.
      */
     public CentralAuthenticationServiceImpl(
-        final TicketRegistry ticketRegistry,
-        final AuthenticationManager authenticationManager,
-        final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
-        final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
-        final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
-        final ExpirationPolicy serviceTicketExpirationPolicy,
-        final ServicesManager servicesManager,
-        final LogoutManager logoutManager) {
+            final TicketRegistry ticketRegistry,
+            final AuthenticationManager authenticationManager,
+            final TicketFactory ticketFactory,
+            final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
+            final ExpirationPolicy serviceTicketExpirationPolicy,
+            final ServicesManager servicesManager,
+            final LogoutManager logoutManager) {
 
-        super(ticketRegistry, authenticationManager, ticketGrantingTicketUniqueTicketIdGenerator,
-                uniqueTicketIdGeneratorsForService, ticketGrantingTicketExpirationPolicy,
+        super(ticketRegistry, ticketFactory, authenticationManager,
+                uniqueTicketIdGeneratorsForService,
                 serviceTicketExpirationPolicy, servicesManager, logoutManager);
     }
 
@@ -357,12 +357,10 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
             throw new UnauthorizedProxyingException();
         }
 
-        final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        final String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(
-                ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
-        final ProxyGrantingTicket proxyGrantingTicket = serviceTicket.grantProxyGrantingTicket(pgtId,
-                                    authentication, this.ticketGrantingTicketExpirationPolicy);
+        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+        final ProxyGrantingTicketFactory factory = this.ticketFactory.get(ProxyGrantingTicket.class);
+        final ProxyGrantingTicket proxyGrantingTicket = factory.create(serviceTicket, authentication);
 
         logger.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
         this.ticketRegistry.addTicket(proxyGrantingTicket);
@@ -370,6 +368,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         doPublishEvent(new CasProxyGrantingTicketCreatedEvent(this, proxyGrantingTicket));
 
         return proxyGrantingTicket;
+
     }
 
     /**
@@ -459,11 +458,8 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
         if (!sanitizedCredentials.isEmpty()) {
             final Authentication authentication = this.authenticationManager.authenticate(credentials);
-
-            final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-                    this.ticketGrantingTicketUniqueTicketIdGenerator
-                            .getNewTicketId(TicketGrantingTicket.PREFIX),
-                    authentication, this.ticketGrantingTicketExpirationPolicy);
+            final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);
+            final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
 
             this.ticketRegistry.addTicket(ticketGrantingTicket);
 
