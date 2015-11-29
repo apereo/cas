@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTest {
+public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test(expected = AuthenticationException.class)
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() throws Exception {

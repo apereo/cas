@@ -319,4 +319,20 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
     }
+
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
+
+    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setLogoutManager(final LogoutManager logoutManager) {
+        this.logoutManager = logoutManager;
+    }
 }

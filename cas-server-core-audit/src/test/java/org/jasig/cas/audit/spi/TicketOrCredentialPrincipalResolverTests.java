@@ -1,7 +1,7 @@
 package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
-import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAuthenticationServiceTest {
+public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test
     public void verifyResolverByUnknownUser() {

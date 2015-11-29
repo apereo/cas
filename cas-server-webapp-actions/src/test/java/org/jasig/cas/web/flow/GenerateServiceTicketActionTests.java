@@ -1,6 +1,6 @@
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0.4
  */
-public final class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTest {
+public final class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private GenerateServiceTicketAction action;
 
