@@ -1,13 +1,5 @@
 package org.jasig.cas.adaptors.x509.web.flow;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-
-import java.security.cert.X509Certificate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
@@ -16,14 +8,10 @@ import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.DefaultTicketFactory;
-import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,6 +20,12 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.security.cert.X509Certificate;
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Marvin S. Addison
@@ -44,9 +38,6 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
     @Before
     public void setUp() throws Exception {
         this.action = new X509CertificateCredentialsNonInteractiveAction();
-        final Map<String, UniqueTicketIdGenerator> idGenerators = new HashMap<>();
-        idGenerators.put(SimpleWebApplicationServiceImpl.class.getName(), new DefaultUniqueTicketIdGenerator());
-
 
         final X509CredentialsAuthenticationHandler handler = new X509CredentialsAuthenticationHandler();
         handler.setTrustedIssuerDnPattern("CN=\\w+,DC=jasig,DC=org");
@@ -57,7 +48,6 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
 
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
                 new DefaultTicketRegistry(), authenticationManager, new DefaultTicketFactory(),
-                idGenerators, new NeverExpiresExpirationPolicy(),
                 mock(ServicesManager.class), mock(LogoutManager.class));
         centralAuthenticationService.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.action.setCentralAuthenticationService(centralAuthenticationService);

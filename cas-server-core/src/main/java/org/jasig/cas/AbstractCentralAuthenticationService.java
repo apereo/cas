@@ -20,20 +20,16 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
-import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -48,7 +44,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -86,11 +81,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Resource(name="authenticationManager")
     protected AuthenticationManager authenticationManager;
 
-    /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
-    @NotNull
-    @Resource(name="uniqueIdGeneratorsMap")
-    protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
-
     /** Implementation of Service Manager. */
     @NotNull
     @Resource(name="servicesManager")
@@ -106,11 +96,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Resource(name="defaultTicketFactory")
     protected TicketFactory ticketFactory;
 
-    /** ExpirationPolicy for Service Tickets. */
-    @NotNull
-    @Resource(name="serviceTicketExpirationPolicy")
-    protected ExpirationPolicy serviceTicketExpirationPolicy;
-
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
@@ -124,15 +109,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @NotNull
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
-    /** Default instance for the ticket id generator. */
-    @NotNull
-    protected final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
-            = new DefaultUniqueTicketIdGenerator();
-
-    /** Whether we should track the most recent session by keeping the latest service ticket. */
-    @Value("${tgt.onlyTrackMostRecentSession:true}")
-    protected boolean onlyTrackMostRecentSession = true;
-
     /**
      * Instantiates a new Central authentication service impl.
      */
@@ -144,8 +120,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param ticketRegistry                     the tickets registry.
      * @param ticketFactory                      the ticket factory
      * @param authenticationManager              the authentication manager.
-     * @param uniqueTicketIdGeneratorsForService the map with service and ticket id generators.
-     * @param serviceTicketExpirationPolicy      the service ticket expiration policy.
      * @param servicesManager                    the services manager.
      * @param logoutManager                      the logout manager.
      */
@@ -153,15 +127,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
             final TicketRegistry ticketRegistry,
             final TicketFactory ticketFactory,
             final AuthenticationManager authenticationManager,
-            final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
-            final ExpirationPolicy serviceTicketExpirationPolicy,
             final ServicesManager servicesManager,
             final LogoutManager logoutManager) {
 
         this.ticketRegistry = ticketRegistry;
         this.authenticationManager = authenticationManager;
-        this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
@@ -169,13 +139,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     public final void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
         this.serviceContextAuthenticationPolicyFactory = policy;
-    }
-
-    /**
-     * @param serviceTicketExpirationPolicy a ST expiration policy.
-     */
-    public final void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
     }
 
     public void setTicketFactory(final TicketFactory ticketFactory) {
@@ -191,14 +154,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     public final void setPrincipalFactory(@Qualifier("principalFactory")
                                     final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
-    }
-
-    public final boolean isOnlyTrackMostRecentSession() {
-        return onlyTrackMostRecentSession;
-    }
-
-    public final void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
-        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 
     /**

@@ -1,12 +1,5 @@
 package org.jasig.cas.adaptors.trusted.web.flow;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jasig.cas.CentralAuthenticationServiceImpl;
 import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
@@ -21,7 +14,6 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.DefaultTicketFactory;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +23,13 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 /**
  * @author Scott Battaglia
@@ -56,7 +55,6 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
                         new PrincipalBearingPrincipalResolver()));
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
                 new DefaultTicketRegistry(), authenticationManager, new DefaultTicketFactory(),
-                idGenerators, new NeverExpiresExpirationPolicy(),
                 mock(ServicesManager.class), mock(LogoutManager.class));
         centralAuthenticationService.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.action.setCentralAuthenticationService(centralAuthenticationService);

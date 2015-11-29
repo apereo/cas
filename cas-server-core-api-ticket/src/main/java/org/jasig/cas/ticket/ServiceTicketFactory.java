@@ -3,27 +3,24 @@ package org.jasig.cas.ticket;
 import org.jasig.cas.authentication.principal.Service;
 
 /**
- * The {@link TicketGrantingTicketFactory} is responsible for
- * creating instances of {@link TicketGrantingTicket}.
+ * The {@link ServiceTicketFactory} is responsible for
+ * creating instances of {@link ServiceTicket}.
  *
  * @author Misagh Moayyed
- * @param <T> the type parameter
  * @since 4.2
  */
-public interface ServiceTicketFactory<T extends Ticket> extends TicketFactory {
+public interface ServiceTicketFactory extends TicketFactory {
 
     /**
      * Create the ticket object.
      *
-     * @param <T>                        the type parameter
-     * @param service                    the service
-     * @param expirationPolicy           the expiration policy
-     * @param credentialsProvided        the credentials provided
-     * @param onlyTrackMostRecentSession the only track most recent session
+     * @param <T>                  the type parameter
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @param service              the service
+     * @param credentialsProvided  the credentials provided
      * @return the t
      */
-    <T extends Ticket> T create(Service service,
-                                ExpirationPolicy expirationPolicy,
-                                boolean credentialsProvided,
-                                boolean onlyTrackMostRecentSession);
+    <T extends Ticket> T create(TicketGrantingTicket ticketGrantingTicket,
+                                Service service,
+                                boolean credentialsProvided);
 }

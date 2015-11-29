@@ -1,8 +1,8 @@
 package org.jasig.cas.support.events;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
-import org.jasig.cas.ticket.ProxyTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing granting of a

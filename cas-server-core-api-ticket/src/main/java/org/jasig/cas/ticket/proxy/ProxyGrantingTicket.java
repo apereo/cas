@@ -1,6 +1,8 @@
-package org.jasig.cas.ticket;
+package org.jasig.cas.ticket.proxy;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 
 /**
  * Interface for a proxy granting ticket. A proxy-granting ticket is an opaque string that is
