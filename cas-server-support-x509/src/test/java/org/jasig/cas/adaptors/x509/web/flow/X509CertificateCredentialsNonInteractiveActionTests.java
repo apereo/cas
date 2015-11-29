@@ -19,6 +19,7 @@ import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.ticket.DefaultTicketFactory;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -55,8 +56,8 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
                         handler, new X509SerialNumberPrincipalResolver()));
 
         final CentralAuthenticationServiceImpl centralAuthenticationService = new CentralAuthenticationServiceImpl(
-                new DefaultTicketRegistry(), authenticationManager, new DefaultUniqueTicketIdGenerator(),
-                idGenerators, new NeverExpiresExpirationPolicy(), new NeverExpiresExpirationPolicy(),
+                new DefaultTicketRegistry(), authenticationManager, new DefaultTicketFactory(),
+                idGenerators, new NeverExpiresExpirationPolicy(),
                 mock(ServicesManager.class), mock(LogoutManager.class));
         centralAuthenticationService.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         this.action.setCentralAuthenticationService(centralAuthenticationService);
