@@ -19,7 +19,7 @@
 
 package org.jasig.cas.services.web;
 
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.web.view.JsonViewUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,14 +48,14 @@ public abstract class AbstractManagementController {
 
     /** Instance of ServicesManager. */
     @NotNull
-    protected final ServicesManager servicesManager;
+    protected final ReloadableServicesManager servicesManager;
 
     /**
      * Instantiates a new manage registered services multi action controller.
      *
      * @param servicesManager the services manager
      */
-    public AbstractManagementController(final ServicesManager servicesManager) {
+    public AbstractManagementController(final ReloadableServicesManager servicesManager) {
         this.servicesManager = servicesManager;
     }
 
