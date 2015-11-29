@@ -263,14 +263,14 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         }
 
         final ProxyTicketFactory factory = this.ticketFactory.get(ProxyTicket.class);
-        final ProxyTicket serviceTicket = factory.create(proxyGrantingTicketObject, service);
-        this.ticketRegistry.addTicket(serviceTicket);
+        final ProxyTicket proxyTicket = factory.create(proxyGrantingTicketObject, service);
+        this.ticketRegistry.addTicket(proxyTicket);
 
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",
-                serviceTicket.getId(), service.getId(), principal.getId());
+                proxyTicket.getId(), service.getId(), principal.getId());
 
-        doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, serviceTicket));
-        return serviceTicket;
+        doPublishEvent(new CasProxyTicketGrantedEvent(this, proxyGrantingTicketObject, proxyTicket));
+        return proxyTicket;
     }
 
 
