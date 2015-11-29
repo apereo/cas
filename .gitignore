@@ -27,3 +27,4 @@ gruntfile.js
 **/MANIFEST.MF
 
 classes/
+*.gradle
