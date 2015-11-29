@@ -278,7 +278,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
             principalAttrs = new HashMap<>();
         }
 
-        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalAttrs)) {
+        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principalAttrs)) {
             logger.warn("Cannot grant proxy ticket because Service [{}] is not authorized for use by [{}].",
                     service.getId(), principal);
             throw new UnauthorizedServiceForPrincipalException();
