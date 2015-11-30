@@ -304,8 +304,9 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final ShibbolethCompatiblePersistentIdGenerator sh =
                         (ShibbolethCompatiblePersistentIdGenerator) generator;
 
-                if (sh.getSalt() != null) {
-                    final String salt = new String(sh.getSalt(), Charset.defaultCharset());
+                final byte[] saltByte = sh.getSalt();
+                if (saltByte != null) {
+                    final String salt = new String(saltByte, Charset.defaultCharset());
                     uBean.setValue(salt);
                 } else {
                     throw new IllegalArgumentException("Salt cannot be null");
