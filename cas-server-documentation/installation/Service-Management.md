@@ -417,6 +417,7 @@ registered service storage.
 
 <util:list id="packagesToScan">
     <value>org.jasig.cas.services</value>
+    <value>org.jasig.cas.support.oauth.services</value>
 </util:list>
 
 <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
