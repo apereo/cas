@@ -501,11 +501,14 @@
                         <schema>SCRIPT_STYLE</schema>]
                         <ldif>SCRIPT_STYLE</ldif>
                         <yml>SCRIPT_STYLE</yml>
+                        <ini>SCRIPT_STYLE</ini>
                         <conf>JAVADOC_STYLE</conf>
                         <less>JAVADOC_STYLE</less>
                     </mapping>
                     <excludes>
                         <exclude>**/bin/**</exclude>
+                        <exclude>**/build/**</exclude>
+                        <exclude>**/.gradle/**</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>**/INSTALL*</exclude>
                         <exclude>**/NOTICE*</exclude>
@@ -513,6 +516,8 @@
                         <exclude>**/readme*</exclude>
                         <exclude>**/*.log</exclude>
                         <exclude>**/*.license</exclude>
+                        <exclude>**/*.donotdelete</exclude>
+                        <exclude>**/*.orig</exclude>
                         <exclude>**/*.txt</exclude>
                         <exclude>**/*.crt</exclude>
                         <exclude>**/*.cer</exclude>
@@ -537,6 +542,8 @@
                         <exclude>**/*.pdf</exclude>
                         <exclude>**/*.pem</exclude>
                         <exclude>**/*.p8</exclude>
+                        <exclude>**/*.bin</exclude>
+                        <exclude>**/*.idx</exclude>
                     </excludes>
                 </configuration>
                 <executions>
