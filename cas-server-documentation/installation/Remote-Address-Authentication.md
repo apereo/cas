@@ -52,7 +52,7 @@ Add the following action to the webflow configuration file:
 
 {% highlight xml %}
 <action-state id="startAuthenticate">
-   <action bean="remoteAddressCheck" />
+   <evaluate expression="x509Check" />
    <transition on="success" to="sendTicketGrantingTicket" />
    <transition on="error" to="viewLoginForm" />
 </action-state>

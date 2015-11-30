@@ -25,6 +25,22 @@ or OpenLDAP. There are numerous directory architectures and we provide configura
 
 See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
+You also need to make sure component scanning is turned on when you configure LDAP authentication. Be sure to include the following in the same configuration file that houses the LDAP configuration for CAS:
+
+{% highlight xml %}
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+     ...
+     <context:component-scan base-package="org.jasig.cas" />
+     <context:annotation-config/>
+     ...
+{% endhighlight %}
+
 ## Ldap Authentication Principal Attributes
 The `LdapAuthenticationHandler` is capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html). 
 
