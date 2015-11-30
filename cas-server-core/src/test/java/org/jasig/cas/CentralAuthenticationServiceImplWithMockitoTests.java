@@ -89,7 +89,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
         private final String id;
 
-        public VerifyServiceByIdMatcher(final String id) {
+        VerifyServiceByIdMatcher(final String id) {
             this.id = id;
         }
 

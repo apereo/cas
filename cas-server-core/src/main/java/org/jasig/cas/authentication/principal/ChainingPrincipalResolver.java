@@ -97,7 +97,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
          *
          * @param id the credential id
          */
-        public IdentifiableCredential(final String id) {
+        IdentifiableCredential(final String id) {
             this.id = id;
         }
 
