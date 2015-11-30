@@ -193,7 +193,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         assertion.setConditions(conditions);
 
         final Subject subject = BUILDER.newSubject(NameID.EMAIL, userId,
-                getId(), currentDateTime, this.requestId);
+                getId(), currentDateTime.minusSeconds(this.skewAllowance), this.requestId);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
