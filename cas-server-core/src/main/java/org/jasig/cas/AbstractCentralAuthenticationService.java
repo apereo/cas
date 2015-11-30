@@ -73,14 +73,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Resource(name="ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-    /**
-     * {@link AuthenticationManager} for authenticating credentials for purposes of
-     * obtaining tickets.
-     */
-    @NotNull
-    @Resource(name="authenticationManager")
-    protected AuthenticationManager authenticationManager;
-
     /** Implementation of Service Manager. */
     @NotNull
     @Resource(name="servicesManager")
@@ -119,19 +111,16 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      *
      * @param ticketRegistry                     the tickets registry.
      * @param ticketFactory                      the ticket factory
-     * @param authenticationManager              the authentication manager.
      * @param servicesManager                    the services manager.
      * @param logoutManager                      the logout manager.
      */
     public AbstractCentralAuthenticationService(
             final TicketRegistry ticketRegistry,
             final TicketFactory ticketFactory,
-            final AuthenticationManager authenticationManager,
             final ServicesManager servicesManager,
             final LogoutManager logoutManager) {
 
         this.ticketRegistry = ticketRegistry;
-        this.authenticationManager = authenticationManager;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
@@ -322,10 +311,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
-    }
-
-    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {
