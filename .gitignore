@@ -18,3 +18,4 @@ _site
 **/.checkstyle
 .gradle/
 build/
+classes
