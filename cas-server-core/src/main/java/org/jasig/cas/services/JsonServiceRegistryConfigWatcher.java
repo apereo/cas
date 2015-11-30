@@ -60,7 +60,7 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
      *
      * @param serviceRegistryDao the registry to callback
      */
-    public JsonServiceRegistryConfigWatcher(final JsonServiceRegistryDao serviceRegistryDao) {
+    JsonServiceRegistryConfigWatcher(final JsonServiceRegistryDao serviceRegistryDao) {
         try {
             this.serviceRegistryDao = serviceRegistryDao;
             this.watcher = FileSystems.getDefault().newWatchService();

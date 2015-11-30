@@ -63,8 +63,8 @@ public final class JCIFSSpnegoAuthenticationHandler extends AbstractPreAndPostPr
     @Override
     protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
-        java.security.Principal principal;
-        byte[] nextToken;
+        final java.security.Principal principal;
+        final byte[] nextToken;
         if (!this.isNTLMallowed && spnegoCredential.isNtlm()) {
             throw new FailedLoginException("NTLM not allowed");
         }
