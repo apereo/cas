@@ -1,7 +1,10 @@
 package org.jasig.cas.support.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
@@ -27,6 +30,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Formatter;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -54,6 +61,11 @@ public class TicketsResource {
     @Autowired(required = false)
     private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
 
+    /**
+     * JSON ObjectMapper.
+     */
+    private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
+
 
     /**
      * Create new ticket granting ticket.
@@ -64,7 +76,7 @@ public class TicketsResource {
      */
     @RequestMapping(value = "/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                                   final HttpServletRequest request) {
+                                                                   final HttpServletRequest request) throws JsonProcessingException {
         try (Formatter fmt = new Formatter()) {
             final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(this.credentialFactory.fromRequestBody(requestBody));
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
@@ -72,15 +84,33 @@ public class TicketsResource {
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
             fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-            //IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
             fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
                     .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
                     .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
                     .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
             return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
-        } catch (final Throwable e) {
+        }
+        catch(AuthenticationException e) {
+            final List<String> authnExceptions = new LinkedList<>();
+            for (Map.Entry<String, Class<? extends Exception>> handlerErrorEntry: e.getHandlerErrors().entrySet()) {
+                authnExceptions.add(handlerErrorEntry.getValue().getSimpleName());
+            }
+            final Map<String, List<String>> errorsMap = new HashMap<>();
+            errorsMap.put("authentication_exceptions", authnExceptions);
+            LOGGER.error(e.getMessage(), e);
+            LOGGER.error(String.format("Caused by: %s", authnExceptions));
+            return new ResponseEntity<>(this.jacksonObjectMapper
+                    .writer()
+                    .withDefaultPrettyPrinter()
+                    .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+        }
+        catch(BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        catch (final Throwable e) {
+            LOGGER.error(e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -102,7 +132,7 @@ public class TicketsResource {
             return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -127,7 +157,21 @@ public class TicketsResource {
 
         @Override
         public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
+            final String username = requestBody.getFirst("username");
+            final String password = requestBody.getFirst("password");
+            if(username == null || password == null) {
+                throw new BadRequestException("Invalid payload. 'username' and 'password' form fields are required.");
+            }
             return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
+        }
+    }
+
+    /**
+     * Exception to indicate bad payload.
+     */
+    public static class BadRequestException extends IllegalArgumentException {
+        public BadRequestException(String s) {
+            super(s);
         }
     }
 }

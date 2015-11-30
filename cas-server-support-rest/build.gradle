@@ -7,6 +7,7 @@ dependencies {
     testCompile project(':cas-server-core-util')
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    testCompile 'org.skyscreamer:jsonassert:1.2.3'
 }
 
 
