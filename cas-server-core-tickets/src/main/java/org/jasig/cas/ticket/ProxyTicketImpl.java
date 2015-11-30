@@ -1,6 +1,7 @@
 package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 
 import javax.validation.constraints.NotNull;
 
