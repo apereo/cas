@@ -66,9 +66,10 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      *
      * @param salt the the salt
      */
-    public ShibbolethCompatiblePersistentIdGenerator(@NotNull final String salt) {        this.salt = salt.getBytes(Charset.defaultCharset());
+    public ShibbolethCompatiblePersistentIdGenerator(@NotNull final String salt) {
         this.salt = salt;
     }
+
 
     /**
      * @deprecated As of 4.1.
@@ -113,6 +114,14 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
         }
     }
 
+    /**
+     * Convert salt to byte array byte [].
+     *
+     * @return the byte  []
+     */
+    private byte[] convertSaltToByteArray() {
+        return this.salt.getBytes(Charset.defaultCharset());
+    }
 
     @Override
     public boolean equals(final Object obj) {

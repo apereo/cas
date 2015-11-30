@@ -35,6 +35,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-server-support-oauth</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
             <version>${spring.data.mongo.version}</version>

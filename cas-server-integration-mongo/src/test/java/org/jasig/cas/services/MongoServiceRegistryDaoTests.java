@@ -19,6 +19,11 @@
 
 package org.jasig.cas.services;
 
+import org.jasig.cas.TestUtils;
+import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -96,7 +101,47 @@ public class MongoServiceRegistryDaoTests {
           this.serviceRegistryDao.delete(r);
     }
 
-    private RegisteredService buildService(final int i) {
+    @Test
+    public void verifyOAuthServices() {
+        final OAuthRegisteredService r = new OAuthRegisteredService();
+        r.setName("test456");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        r.setClientId("testoauthservice");
+        r.setClientSecret("anothertest");
+        r.setBypassApprovalPrompt(true);
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        assertEquals(r, r2);
+    }
+
+    @Test
+    public void verifyOAuthServicesCallback() {
+        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
+        r.setName("test345");
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        assertEquals(r, r2);
+    }
+
+    @Test
+    public void verifyOAuthRegisteredServicesCallback() {
+        final OAuthRegisteredCallbackAuthorizeService r = new OAuthRegisteredCallbackAuthorizeService();
+        r.setName("testoauth");
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        assertEquals(r, r2);
+    }
+
+
+    private static RegisteredService buildService(final int i) {
         return TestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
     }
 
