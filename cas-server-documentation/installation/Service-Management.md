@@ -13,7 +13,7 @@ containing metadata that drives a number of CAS behaviors:
 * Forced authentication - Provides administrative control for forced authentication.
 * Attribute release - Provide user details to services for authorization and personalization.
 * Proxy control - Further restrict authorized services by granting/denying proxy authentication capability.
-* Theme control - Define alternate CAS themese to be used for particular services.
+* Theme control - Define alternate CAS themes to be used for particular services.
 
 The service management webapp is a Web application that may be deployed along side CAS that provides a GUI
 to manage service registry data.
@@ -280,7 +280,7 @@ The JSON service registry is also able to auto detect changes to the specified d
 file additions, removals and updates and will auto-refresh CAS so changes do happen instantly.
 
 <div class="alert alert-info"><strong>Escaping Characters</strong><p>
-Please make sure all field values in the JSON blob are correctly escaped, specially for the service id. If the service is defined as a regular expression, certain regex constructs such as "." and "\d" need to be doubly escaped. 
+Please make sure all field values in the JSON blob are correctly escaped, specially for the service id. If the service is defined as a regular expression, certain regex constructs such as "." and "\d" need to be doubly escaped.
 </p></div>
 
 The naming convention for new JSON files is recommended to be the following:
@@ -476,7 +476,7 @@ In `deployerConfigContext.xml`:
 <prop key="hibernate.dialect">${database.hibernate.dialect}</prop>
 {% endhighlight %}
 
-You will also need to ensure that the xml configuration file contains the `tx` and `aop` namespaces:
+You will also need to ensure that the xml configuration file contains the `tx`, `util` and `aop` namespaces:
 
 {% highlight xml %}
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -484,6 +484,7 @@ You will also need to ensure that the xml configuration file contains the `tx` a
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
