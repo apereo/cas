@@ -34,4 +34,7 @@ dependencies {
     testCompile project(':cas-server-core-logout')
     testCompile project(':cas-server-core-services')
     testCompile project(':cas-server-core')
+    testCompile project(':cas-server-core-monitor')
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core", configuration: "tests")
 }

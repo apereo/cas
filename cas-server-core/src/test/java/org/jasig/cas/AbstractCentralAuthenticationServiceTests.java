@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "classpath:/core-context.xml"
 })
 @RunWith(SpringJUnit4ClassRunner.class)
-public abstract class AbstractCentralAuthenticationServiceTest {
+public abstract class AbstractCentralAuthenticationServiceTests {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
