@@ -36,7 +36,7 @@ Google Accounts integration within CAS is enabled by simply adding an additional
 {% highlight xml %}
 <bean id="googleAccountsArgumentExtractor" 
     class="org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor"
-      c:servicesManager-ref="servicesManager"
+      p:skewAllowance="${cas.saml.response.skewAllowance:0}"
       c:privateKey-ref="privateKeyFactoryBean"
       c:publicKey-ref="publicKeyFactoryBean" />
 
@@ -47,9 +47,26 @@ Google Accounts integration within CAS is enabled by simply adding an additional
 <bean id="publicKeyFactoryBean"	class="org.jasig.cas.util.PublicKeyFactoryBean"
       p:location="classpath:public.key"
       p:algorithm="RSA" />
+      
+<util:list id="argumentExtractors">
+...
+    <ref bean="googleAccountsArgumentExtractor" />
+</util:list>
 {% endhighlight %}
 
-Replace the public.key and private.key with the names of your key files. If they are not available on the classpath, change the location to point to the location of the keys. If you are using DSA instead of RSA, change the algorithm as appropriate.
+Replace the `public.key` and `private.key` with the names of your key files. If they are not available on the classpath, change the location to point to the location of the keys. If you are using DSA instead of RSA, change the algorithm as appropriate.
+
+Ensure the 
+You’ll also need to add a new generator in the `WEB-INF/spring-configuration/uniqueIdGenerators.xml` file:
+
+{% highlight xml %}
+<util:map id="uniqueIdGeneratorsMap">
+...
+  <entry
+    key="org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService"
+    value-ref="serviceTicketUniqueIdGenerator" />
+</util:map>
+{% endhighlight %}
 
 Also, ensure that Google Apps is registered in your Service Registry, by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
 
