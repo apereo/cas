@@ -97,19 +97,17 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
      * Build the central authentication service implementation.
      *
      * @param ticketRegistry                              the tickets registry.
-     * @param authenticationManager                       the authentication manager.
      * @param ticketFactory                               the ticket factory
      * @param servicesManager                             the services manager.
      * @param logoutManager                               the logout manager.
      */
     public CentralAuthenticationServiceImpl(
             final TicketRegistry ticketRegistry,
-            final AuthenticationManager authenticationManager,
             final TicketFactory ticketFactory,
             final ServicesManager servicesManager,
             final LogoutManager logoutManager) {
 
-        super(ticketRegistry, ticketFactory, authenticationManager, servicesManager, logoutManager);
+        super(ticketRegistry, ticketFactory, servicesManager, logoutManager);
     }
 
     /**
