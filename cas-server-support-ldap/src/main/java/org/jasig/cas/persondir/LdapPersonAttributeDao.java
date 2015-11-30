@@ -160,7 +160,7 @@ public class LdapPersonAttributeDao extends AbstractQueryPersonAttributeDao<Sear
                 if (attributes.containsKey(userNameAttribute)) {
                     person = new CaseInsensitiveAttributeNamedPersonImpl(userNameAttribute, attributes);
                 } else {
-                    person = new CaseInsensitiveNamedPersonImpl(userName , attributes);
+                    person = new CaseInsensitiveNamedPersonImpl(userName, attributes);
                 }
                 peopleAttributes.add(person);
             }

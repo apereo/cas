@@ -257,7 +257,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         private final JpaLockingStrategy jpaLock;
         private final PlatformTransactionManager txManager;
 
-        public TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
+        TransactionalLockInvocationHandler(final JpaLockingStrategy lock,
                                       final PlatformTransactionManager txManager) {
             jpaLock = lock;
             this.txManager = txManager;
@@ -293,7 +293,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         private final Logger logger = LoggerFactory.getLogger(this.getClass());
         private final LockingStrategy lock;
 
-        public Locker(final LockingStrategy l) {
+        Locker(final LockingStrategy l) {
             lock = l;
         }
 
@@ -315,7 +315,7 @@ public class JpaLockingStrategyTests implements InitializingBean {
         private final Logger logger = LoggerFactory.getLogger(this.getClass());
         private final LockingStrategy lock;
 
-        public Releaser(final LockingStrategy l) {
+        Releaser(final LockingStrategy l) {
             lock = l;
         }
 

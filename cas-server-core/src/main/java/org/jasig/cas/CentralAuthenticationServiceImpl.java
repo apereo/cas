@@ -595,7 +595,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @param ticket the ticket
      * @param context the context
      * @return the authentication satisfied by policy
-     * @throws org.jasig.cas.ticket.TicketException the ticket exception
+     * @throws TicketException the ticket exception
      */
     private Authentication getAuthenticationSatisfiedByPolicy(
             final TicketGrantingTicket ticket, final ServiceContext context) throws TicketException {
