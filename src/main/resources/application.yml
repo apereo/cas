@@ -1,0 +1,11 @@
+issuebot:
+  triage:
+    repositories:
+      - organization: spring-projects
+        name: spring-boot
+        label: waiting-for-triage
+        collaborators:
+          - awilkinson
+          - dsyer
+          - philwebb
+          - snicoll
