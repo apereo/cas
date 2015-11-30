@@ -89,13 +89,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         }
 
         try {
-            WebUtils.putTicketGrantingTicketInScopes(
-                context,
-                this.centralAuthenticationService
-                    .createTicketGrantingTicket(credential));
+            WebUtils.putTicketGrantingTicketInScopes(context, this.centralAuthenticationService.createTicketGrantingTicket(credential));
             onSuccess(context, credential);
             return success();
         } catch (final Exception e) {
+            logger.warn(e.getMessage(), e);
             onError(context, credential);
             return error();
         }

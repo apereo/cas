@@ -2,6 +2,8 @@ package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 
 /**
  * Concrete implementation of a proxy granting ticket (PGT). A PGT is
