@@ -94,6 +94,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     public void setUp() throws Exception {
         this.googleAccountsService = getGoogleAccountsService();
         this.googleAccountsService.setPrincipal(TestUtils.getPrincipal());
+        this.googleAccountsService.setSkewAllowance(500);
     }
 
     @Test
