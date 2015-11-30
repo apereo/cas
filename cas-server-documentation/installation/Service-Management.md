@@ -493,13 +493,14 @@ In `deployerConfigContext.xml`:
 <prop key="hibernate.dialect">${database.hibernate.dialect}</prop>
 {% endhighlight %}
 
-You will also need to ensure that the xml configuration file contains the `tx` namespace:
+You will also need to ensure that the xml configuration file contains the `tx` and `util` namespaces:
 
 {% highlight xml %}
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 {% endhighlight %}
