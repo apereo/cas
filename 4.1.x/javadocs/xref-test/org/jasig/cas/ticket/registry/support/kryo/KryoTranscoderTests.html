@@ -251,7 +251,7 @@
 <a class="jxr_linenumber" name="L243" href="#L243">243</a> 
 <a class="jxr_linenumber" name="L244" href="#L244">244</a>         MockServiceTicket() { <em class="jxr_comment">/* for serialization */</em> }
 <a class="jxr_linenumber" name="L245" href="#L245">245</a> 
-<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockServiceTicket</a>(<strong class="jxr_keyword">final</strong> String id) {
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>         <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockServiceTicket</a>(<strong class="jxr_keyword">final</strong> String id) {
 <a class="jxr_linenumber" name="L247" href="#L247">247</a>             <strong class="jxr_keyword">this</strong>.id = id;
 <a class="jxr_linenumber" name="L248" href="#L248">248</a>         }
 <a class="jxr_linenumber" name="L249" href="#L249">249</a> 
@@ -329,7 +329,7 @@
 <a class="jxr_linenumber" name="L321" href="#L321">321</a>             <strong class="jxr_keyword">this</strong>.authentication = <strong class="jxr_keyword">null</strong>;
 <a class="jxr_linenumber" name="L322" href="#L322">322</a>         }
 <a class="jxr_linenumber" name="L323" href="#L323">323</a> 
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <strong class="jxr_keyword">public</strong> <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockTicketGrantingTicket</a>(<strong class="jxr_keyword">final</strong> String id, <strong class="jxr_keyword">final</strong> Credential credential, <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; principalAttributes) {
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>         <a href="../../../../../../../org/jasig/cas/ticket/registry/support/kryo/KryoTranscoderTests.html">MockTicketGrantingTicket</a>(<strong class="jxr_keyword">final</strong> String id, <strong class="jxr_keyword">final</strong> Credential credential, <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; principalAttributes) {
 <a class="jxr_linenumber" name="L325" href="#L325">325</a>             <strong class="jxr_keyword">this</strong>.id = id;
 <a class="jxr_linenumber" name="L326" href="#L326">326</a>             <strong class="jxr_keyword">final</strong> CredentialMetaData credentialMetaData = <strong class="jxr_keyword">new</strong> BasicCredentialMetaData(credential);
 <a class="jxr_linenumber" name="L327" href="#L327">327</a>             <strong class="jxr_keyword">final</strong> DefaultAuthenticationBuilder builder = <strong class="jxr_keyword">new</strong> DefaultAuthenticationBuilder();
