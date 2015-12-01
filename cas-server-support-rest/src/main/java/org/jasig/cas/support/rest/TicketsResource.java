@@ -73,6 +73,7 @@ public class TicketsResource {
      * @param requestBody username and password application/x-www-form-urlencoded values
      * @param request raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
+     * @throws JsonProcessingException in case of JSON parsing failure
      */
     @RequestMapping(value = "/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
@@ -90,9 +91,9 @@ public class TicketsResource {
                     .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
             return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
         }
-        catch(AuthenticationException e) {
+        catch(final AuthenticationException e) {
             final List<String> authnExceptions = new LinkedList<>();
-            for (Map.Entry<String, Class<? extends Exception>> handlerErrorEntry: e.getHandlerErrors().entrySet()) {
+            for (final Map.Entry<String, Class<? extends Exception>> handlerErrorEntry: e.getHandlerErrors().entrySet()) {
                 authnExceptions.add(handlerErrorEntry.getValue().getSimpleName());
             }
             final Map<String, List<String>> errorsMap = new HashMap<>();
@@ -103,12 +104,10 @@ public class TicketsResource {
                     .writer()
                     .withDefaultPrettyPrinter()
                     .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
-        }
-        catch(BadRequestException e) {
+        } catch(final BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -170,8 +169,12 @@ public class TicketsResource {
      * Exception to indicate bad payload.
      */
     public static class BadRequestException extends IllegalArgumentException {
-        public BadRequestException(String s) {
-            super(s);
+        /**
+         * Ctor.
+         * @param msg error message
+         */
+        public BadRequestException(final String msg) {
+            super(msg);
         }
     }
 }
