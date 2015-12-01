@@ -19,6 +19,8 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,12 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
 
     /** Serialization support. */
     private static final long serialVersionUID = -5704993954986738308L;
+
+    /**
+     * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
+     * deserialization the field is null.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultiTimeUseOrTimeoutExpirationPolicy.class);
 
     /** The time to kill in milliseconds. */
     private final long timeToKillInMilliSeconds;
