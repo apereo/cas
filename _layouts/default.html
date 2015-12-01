@@ -5,24 +5,24 @@
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
     <meta name="description" content="CAS - Single Sign-On for the Web" />
-    {% feed_meta %}
+    
     {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
-	
-    <link rel="stylesheet" 
+
+    <link rel="stylesheet"
 	  href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" 
+    <link rel="stylesheet"
           href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/themes/redmond/jquery-ui.css" />
-	
+
     <link rel="stylesheet" type="text/css" media="screen"
           href="{{ relative }}stylesheets/stylesheet.css">
     <link rel="stylesheet" type="text/css" media="print"
           href="{{ relative }}stylesheets/print.css">
-		  
+
     <title>{{ page.title }}</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>	
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
     <script src="{{ relative }}javascripts/URI.js"></script>
     <script src="{{ relative }}javascripts/main.js"></script>
   </head>
@@ -41,7 +41,7 @@
         </header>
     </div>
 
-    <!-- NAVBAR -->    
+    <!-- NAVBAR -->
     <div id="navbar_wrap" class="outer">
       <header id="navbar_content" class="inner">
         {% include navbar.html %}
@@ -54,14 +54,14 @@
           <span id="sidebartoc"></span>
         </header >
       </div>
-      
+
       <!-- PAGE TABLE OF CONTENTS -->
       <div id="table_contents" class="outer">
         <header id="sidebar_content" class="inner">
           <span id="tableOfContents"></span>
         </header>
       </div>
-      
+
       <!-- MAIN CONTENT -->
       <div id="main_content_wrap" class="outer">
         <section id="main_content" class="inner">
@@ -71,7 +71,7 @@
           	as development makes progress. To view the documentation for a specific CAS server version,
           	please <a href="/cas/Older-Versions.html">choose an appropriate version.</a></p>
           </div>
-          
+
           <span id="toolbarIcons" align="right" style="float:right"></span>
           {{ content }}
         </section>
