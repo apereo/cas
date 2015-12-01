@@ -78,8 +78,30 @@ public class TicketsResourceTests {
         this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().json("{\"authentication_exceptions\" : [ \"LoginException\" ]}"));
+    }
+
+    @Test
+    public void creationOfTGTWithUnexpectedRuntimeException() throws Throwable {
+        configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
+
+        this.mockMvc.perform(post("/cas/v1/tickets")
+                .param("username", "test")
+                .param("password", "test"))
+                .andExpect(status().is5xxServerError())
+                .andExpect(content().string("Other exception"));
+    }
+
+    @Test
+    public void creationOfTGTWithBadPayload() throws Throwable {
+        configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
+
+        this.mockMvc.perform(post("/cas/v1/tickets")
+                .param("no_username_param", "test")
+                .param("no_password_param", "test"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(content().string("1 errors, 0 successes"));
+                .andExpect(content().string("Invalid payload. 'username' and 'password' form fields are required."));
     }
 
     @Test
@@ -109,7 +131,7 @@ public class TicketsResourceTests {
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
                 .param("service", "https://www.google.com"))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().is5xxServerError())
                 .andExpect(content().string("Other exception"));
     }
 
@@ -129,6 +151,10 @@ public class TicketsResourceTests {
         final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>(1);
         handlerErrors.put("TestCaseAuthenticationHander", LoginException.class);
         when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenThrow(new AuthenticationException(handlerErrors));
+    }
+
+    private void configureCasMockTGTCreationToThrow(final Throwable e) throws Throwable {
+        when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenThrow(e);
     }
 
     private void configureCasMockSTCreationToThrow(final Throwable e) throws Throwable {
