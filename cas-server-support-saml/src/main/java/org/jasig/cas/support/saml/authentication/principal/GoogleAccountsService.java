@@ -189,11 +189,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
                 notBeforeIssueInstant, BUILDER.generateSecureRandomId());
 
         final Conditions conditions = BUILDER.newConditions(notBeforeIssueInstant,
-                currentDateTime.minusSeconds(this.skewAllowance), getId());
+                currentDateTime.plusSeconds(this.skewAllowance), getId());
         assertion.setConditions(conditions);
 
         final Subject subject = BUILDER.newSubject(NameID.EMAIL, userId,
-                getId(), currentDateTime.minusSeconds(this.skewAllowance), this.requestId);
+                getId(), currentDateTime.plusSeconds(this.skewAllowance), this.requestId);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
