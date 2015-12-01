@@ -22,7 +22,6 @@ import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReloadableServicesManager;
-import org.jasig.cas.services.ServicesManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
