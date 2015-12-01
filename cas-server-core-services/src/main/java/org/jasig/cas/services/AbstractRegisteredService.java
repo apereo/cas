@@ -76,7 +76,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * By default, the policy is {@link RefuseRegisteredServiceProxyPolicy}.
      */
     @Lob
-    @Column(name = "proxy_policy", nullable = true)
+    @Column(name = "proxy_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
     @Column(name = "evaluation_order", nullable = false)
@@ -87,7 +87,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * By default the resolver is {@link DefaultRegisteredServiceUsernameProvider}.
      */
     @Lob
-    @Column(name = "username_attr", nullable = true)
+    @Column(name = "username_attr", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
         new DefaultRegisteredServiceUsernameProvider();
 
@@ -99,12 +99,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
-    @Column(name = "required_handlers")
+    @Column(name = "required_handlers", length = Integer.MAX_VALUE)
     private HashSet<String> requiredHandlers = new HashSet<>();
 
     /** The attribute filtering policy. */
     @Lob
-    @Column(name = "attribute_release", nullable = true)
+    @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy;
 
     @Column(name = "logo")
@@ -114,12 +114,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private URL logoutUrl;
 
     @Lob
-    @Column(name = "access_strategy", nullable = true)
+    @Column(name = "access_strategy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceAccessStrategy accessStrategy =
             new DefaultRegisteredServiceAccessStrategy();
 
     @Lob
-    @Column(name = "public_key", nullable = true)
+    @Column(name = "public_key", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServicePublicKey publicKey;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
