@@ -7,6 +7,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 /**
  * This is an {@link org.jasig.cas.ticket.support.AbstractCasExpirationPolicy}
@@ -22,7 +24,7 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
     private static final long serialVersionUID = 8042104336580063690L;
 
     /** The Logger instance shared by all children of this class. */
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Gets the http request based on the
@@ -39,5 +41,17 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
             logger.trace("Unable to obtain the http request", e);
         }
         return null;
+    }
+
+    /**
+     * Override readObject to initialize the transient logger.
+     *
+     * @param in ObjectInputStream that this object will be read from
+     * @throws ClassNotFoundException if the class of a serialized object could not be found.
+     * @throws IOException            if an I/O error occurs.
+     */
+    private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        logger = LoggerFactory.getLogger(this.getClass());
     }
 }
