@@ -3,21 +3,7 @@
 
 
 ## Requirements
-Strictly speaking, the only tools required to craft documentation are the standard development tools. You'll need [jekyll](http://jekyllrb.com/) to generate the site for preview purposes, but it's not strictly required.  
-If you encounter the following error:
-
-```ruby
-runner.rb:365:in 'require_program': program version required (Commander::Runner::CommandError)
-...
-custom_require.rb:36:in 'gem_original_require': no such file to load -- json (LoadError)
-```
-
-It means that the json gem is missing: `gem install json` should solve the problem...
-
-###Windows
-* You'll need to have Python 2.7.6 installed
-* You'll need to have Ruby 1.9.3 installed
-* You'll need to have Jekyll 2.5.3 installed
+Install the build dependencies and tools via: [https://help.github.com/articles/using-jekyll-with-pages/](https://help.github.com/articles/using-jekyll-with-pages/).
 
 ## Getting Started
 
@@ -26,30 +12,19 @@ It means that the json gem is missing: `gem install json` should solve the probl
 3. Change documentation as necessary
 4. `git push --set-upstream origin gh-pages`
 
-The changes should be almost immediately available at http://jasig.github.io/cas/.
-
-
 ## Local Site Generation
 
-### Markdown Engine
-[kramdown](http://kramdown.gettalong.org/) is the markdown engine used by the site. You'll need to download kramdown before attempting to run the build. See [documentation](http://kramdown.gettalong.org/installation.html) for platform-specific details.
-
-### Build
-Generating the site to preview changes _before_ commit is encouraged. Install [jekyll](http://jekyllrb.com/) and execute the following command from the documentation root directory:
-
 ```bash
-jekyll build --safe
+./build[sh|bat]
 ```
 
-Browse to the output directory `_site` in a browser to preview the generated site.
-
-Alternatively, you may also invoke the documentation build script:
+To view the site locally:
 
 ```bash
-build.[bat|sh]
+bundle exec jekyll serve
 ```
 
-The build will auto-generate tags for section headers.
+Navigate to http://localhost:4000 to see the local site.
 
 ## Site Structure
 The documentation site is composed of the following blocks:
@@ -62,11 +37,3 @@ Jekyll layout, the site will load the appropriate version of the TOC on `jasig.g
 - The root `index.html` always points to the `current\index.html` page.
 - Page titles are auto-calculated based on the first `h1` element on the page, followed by the version of the
 documentation (i.e. `Service Management (x.y.z)`)
-
-
-## Troubleshooting
-If you have trouble getting jekyll to build, try the following:
-
-* Make sure python is included in your $PATH
-* If you are receiving unicode incompatibility errors, try the command `chcp 65001`
-* There exists a bug with Jekyll 1.4.3 that does not properly utilize file separators. You may have to downgrade to Jekyll 1.4.2 or upgrade to the next 2.x release.

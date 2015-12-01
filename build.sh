@@ -1,3 +1,3 @@
 #!/bin/sh
 #
-jekyll build --safe
+bundle exec jekyll build --safe

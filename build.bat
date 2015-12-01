@@ -5,4 +5,4 @@ chcp 65001
 
 echo.
 echo "Invoking Jekyll..."
-cmd /c "jekyll build --safe --trace"
+cmd /c "bundle exec jekyll build --safe --trace"
