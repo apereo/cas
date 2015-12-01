@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.persistence.Transient;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -22,6 +23,7 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
     private static final long serialVersionUID = 8042104336580063690L;
 
     /** The Logger instance shared by all children of this class. */
+    @Transient
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
