@@ -1,6 +1,7 @@
 package org.slf4j.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
@@ -26,7 +27,7 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
     private static final long serialVersionUID = 6182834493563598289L;
 
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile('(' + TicketGrantingTicket.PREFIX + '|'
-            + TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+            + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
             + ")(-)*(\\w)*(-)*(\\w)*");
 
     /**

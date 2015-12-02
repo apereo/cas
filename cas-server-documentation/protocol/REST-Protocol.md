@@ -83,6 +83,18 @@ DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 {% endhighlight %}
 
 ##Add Service
+
+Support is enabled by including the following in your maven overlay:
+
+{% highlight xml %}
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-rest-services</artifactId>
+    <version>${cas.version}</version>
+    <scope>runtime</scope>
+</dependency>
+{% endhighlight %}
+
 Invoke CAS to register applications into its own service registry. The REST
 call must be authenticated as it requires a TGT from the CAS server, and furthermore,
 the authenticated principal that submits the request must be authorized with a

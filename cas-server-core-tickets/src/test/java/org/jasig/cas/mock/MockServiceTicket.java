@@ -3,6 +3,7 @@ package org.jasig.cas.mock;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
@@ -53,7 +54,7 @@ public class MockServiceTicket implements ServiceTicket {
     }
 
     @Override
-    public TicketGrantingTicket grantTicketGrantingTicket(
+    public ProxyGrantingTicket grantProxyGrantingTicket(
             final String id,
             final Authentication authentication,
             final ExpirationPolicy expirationPolicy) {
