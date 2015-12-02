@@ -39,7 +39,7 @@
             <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor">
                 <constructor-arg name="config" ref="config" />
                 <constructor-arg name="clientName" value="CasClient" />
-                <constructor-arg name="authorizerName" value="RequireAnyRoleAuthorizer" />
+                <constructor-arg name="authorizerName" value="securityHeaders,csrfToken,RequireAnyRoleAuthorizer" />
             </bean>
         </mvc:interceptor>
     </mvc:interceptors>
