@@ -58,7 +58,7 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     @Override
     @PostConstruct
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         if (this.registry == null) {
             logger.warn("No YubiKey account registry is defined. All credentials are considered "
                     + "eligible for YubiKey authentication. Consider providing an account registry via [{}]",

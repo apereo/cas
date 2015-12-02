@@ -1,6 +1,6 @@
 package org.jasig.cas.web;
 
-import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.mock.MockValidationSpecification;
@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTest {
+public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
 
     protected AbstractServiceValidateController serviceValidateController;
 

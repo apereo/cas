@@ -2,9 +2,9 @@ package org.jasig.cas.web;
 
 import java.util.Map;
 
-import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.ProxyGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTest {
+public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 
     private ProxyController proxyController;
 
@@ -53,15 +53,13 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
     @Test
     public void verifyExistingPGT() throws Exception {
-        final TicketGrantingTicket ticket = new TicketGrantingTicketImpl(
+        final ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl(
                 "ticketGrantingTicketId", org.jasig.cas.authentication.TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request
-        .addParameter("pgt", ticket.getId());
-        request.addParameter(
-                "targetService", "testDefault");
+        request.addParameter("pgt", ticket.getId());
+        request.addParameter("targetService", "testDefault");
 
         assertTrue(this.proxyController.handleRequestInternal(request,
                 new MockHttpServletResponse()).getModel().containsKey(
@@ -70,7 +68,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
 
     @Test
     public void verifyNotAuthorizedPGT() throws Exception {
-        final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("ticketGrantingTicketId",
+        final ProxyGrantingTicket ticket = new ProxyGrantingTicketImpl("ticketGrantingTicketId",
                 org.jasig.cas.authentication.TestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         getTicketRegistry().addTicket(ticket);

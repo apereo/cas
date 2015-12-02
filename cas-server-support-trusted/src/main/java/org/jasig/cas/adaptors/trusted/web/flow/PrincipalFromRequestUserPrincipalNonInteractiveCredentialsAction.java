@@ -6,6 +6,7 @@ import org.jasig.cas.web.flow.AbstractNonInteractiveCredentialsAction;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,8 +20,9 @@ import java.security.Principal;
  * it could not find any credentials.
  *
  * @author Scott Battaglia
- * @since 3.0.0.5
+ * @since 3.0.5
  */
+@Component("principalFromRemoteUserPrincipalAction")
 public final class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction
             extends AbstractNonInteractiveCredentialsAction {
 

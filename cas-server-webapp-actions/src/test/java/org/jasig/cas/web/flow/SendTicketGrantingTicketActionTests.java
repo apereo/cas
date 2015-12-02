@@ -1,6 +1,6 @@
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTest {
+public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
     private SendTicketGrantingTicketAction action;
     private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private MockRequestContext context;

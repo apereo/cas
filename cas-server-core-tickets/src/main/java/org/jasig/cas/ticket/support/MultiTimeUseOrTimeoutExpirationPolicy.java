@@ -1,6 +1,8 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -19,6 +21,12 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
 
     /** Serialization support. */
     private static final long serialVersionUID = -5704993954986738308L;
+
+    /**
+     * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
+     * deserialization the field is null.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultiTimeUseOrTimeoutExpirationPolicy.class);
 
     /** The time to kill in milliseconds. */
     @Value("#{${st.timeToKillInSeconds:10}*1000}")
@@ -67,12 +75,12 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
     @Override
     public boolean isExpired(final TicketState ticketState) {
         if (ticketState == null) {
-            logger.debug("Ticket state is null for {}", this.getClass().getSimpleName());
+            LOGGER.debug("Ticket state is null for {}", this.getClass().getSimpleName());
             return true;
         }
         final long countUses = ticketState.getCountOfUses();
         if (countUses >= this.numberOfUses) {
-            logger.debug("Ticket usage count {} is greater than or equal to {}", countUses, this.numberOfUses);
+            LOGGER.debug("Ticket usage count {} is greater than or equal to {}", countUses, this.numberOfUses);
             return true;
         }
 
@@ -81,7 +89,7 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
         final long difference = systemTime - lastTimeUsed;
 
         if (difference >= this.timeToKillInMilliSeconds) {
-            logger.debug("Ticket has expired because the difference between current time [{}] "
+            LOGGER.debug("Ticket has expired because the difference between current time [{}] "
                 + "and ticket time [{}] is greater than or equal to [{}]", systemTime, lastTimeUsed,
                 this.timeToKillInMilliSeconds);
             return true;

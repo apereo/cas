@@ -3,6 +3,7 @@ package org.jasig.cas.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -33,8 +34,9 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
     private boolean dropCollection;
 
     @Autowired
+    @Qualifier("mongoTemplate")
     @NotNull
-    private final MongoOperations mongoTemplate = null;
+    private MongoOperations mongoTemplate;
 
     /**
      * Initialized registry post construction.
@@ -43,17 +45,20 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
      * @throws Exception thrown if collection cant be dropped/created.
      */
     @PostConstruct
-    public void afterPropertiesSet() throws Exception {
-        if (this.dropCollection) {
-            LOGGER.debug("Dropping database collection: {}", this.collectionName);
-            this.mongoTemplate.dropCollection(this.collectionName);
-        }
+    public void afterPropertiesSet() {
+        if (this.mongoTemplate == null) {
+            throw new RuntimeException("Mongo template is not correctly configured");
+        } else {
+            if (this.dropCollection) {
+                LOGGER.debug("Dropping database collection: {}", this.collectionName);
+                this.mongoTemplate.dropCollection(this.collectionName);
+            }
 
-        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: {}", this.collectionName);
-            this.mongoTemplate.createCollection(this.collectionName);
+            if (!this.mongoTemplate.collectionExists(this.collectionName)) {
+                LOGGER.debug("Creating database collection: {}", this.collectionName);
+                this.mongoTemplate.createCollection(this.collectionName);
+            }
         }
-
 
     }
 
