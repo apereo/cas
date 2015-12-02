@@ -12,8 +12,8 @@
 <head>
     <title><spring:message code="management.services.header.apptitle" /></title>
     <meta name="version" content="<%=org.jasig.cas.CasVersion.getVersion()%>" />
-    <meta name="_csrf" content="${_csrf.token}"/>
-    <meta name="_csrf_header" content="${_csrf.headerName}"/>
+    <meta name="_csrf" content="${pac4jCsrfToken}"/>
+    <meta name="_csrf_header" content="pac4jCsrfToken"/>
     <link rel="icon" href="<c:url value="/images/favicon.ico" />" type="image/x-icon" />
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
@@ -64,7 +64,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="${pageContext.request.contextPath}/logout?url=${pageContext.request.contextPath}/logout.html" target="_self" id="logoutUrlLink">
+                        <a href="${pageContext.request.contextPath}/logout?url=/logout.html" target="_self" id="logoutUrlLink">
                             <i class="fa fa-sign-out"></i>
                             <spring:message code="management.services.header.navbar.navitem.logout" />
                         </a>
