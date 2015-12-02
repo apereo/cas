@@ -168,7 +168,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @return the SAML response
      */
     private String constructSamlResponse() {
-        final DateTime currentDateTime = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
+        final DateTime currentDateTime = new DateTime();
         final DateTime notBeforeIssueInstant = DateTime.parse("2003-04-17T00:46:02Z");
 
         final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
