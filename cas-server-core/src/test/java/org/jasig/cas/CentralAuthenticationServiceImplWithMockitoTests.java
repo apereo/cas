@@ -24,14 +24,17 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.DefaultProxyGrantingTicketFactory;
+import org.jasig.cas.ticket.DefaultProxyTicketFactory;
+import org.jasig.cas.ticket.DefaultServiceTicketFactory;
+import org.jasig.cas.ticket.DefaultTicketFactory;
+import org.jasig.cas.ticket.DefaultTicketGrantingTicketFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.jasig.cas.validation.Assertion;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -47,8 +50,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests with the help of Mockito framework.
@@ -124,18 +136,20 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         //Mock ServicesManager
         final ServicesManager smMock = getServicesManager(service1, service2);
-        
-        final Map ticketIdGenForServiceMock = mock(Map.class);
-        when(ticketIdGenForServiceMock.containsKey(any())).thenReturn(true);
-        when(ticketIdGenForServiceMock.get(any())).thenReturn(new DefaultUniqueTicketIdGenerator());
-        
+        final DefaultTicketFactory factory = new DefaultTicketFactory();
+        factory.setTicketGrantingTicketFactory(new DefaultTicketGrantingTicketFactory());
+        factory.setProxyGrantingTicketFactory(new DefaultProxyGrantingTicketFactory());
+        factory.setServiceTicketFactory(new DefaultServiceTicketFactory());
+        factory.setProxyTicketFactory(new DefaultProxyTicketFactory());
+
+        factory.initialize();
+
         this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, mock(AuthenticationManager.class),
-                mock(UniqueTicketIdGenerator.class), ticketIdGenForServiceMock, mock(ExpirationPolicy.class),
-                mock(ExpirationPolicy.class), smMock, mock(LogoutManager.class));
+                factory, smMock, mock(LogoutManager.class));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
-    private ServicesManager getServicesManager(final Service service1, final Service service2) {
+    private static ServicesManager getServicesManager(final Service service1, final Service service2) {
         final RegisteredService mockRegSvc1 = createMockRegisteredService(service1.getId(), true, getServiceProxyPolicy(false));
         final RegisteredService mockRegSvc2 = createMockRegisteredService("test", false, getServiceProxyPolicy(true));
         final RegisteredService mockRegSvc3 = createMockRegisteredService(service2.getId(), true, getServiceProxyPolicy(true));
@@ -159,13 +173,13 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test(expected=InvalidTicketException.class)
     public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.cas.delegateTicketGrantingTicket("bad-st",
+        this.cas.createProxyGrantingTicket("bad-st",
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test(expected=UnauthorizedServiceException.class)
     public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.cas.delegateTicketGrantingTicket(ST_ID,
+        this.cas.createProxyGrantingTicket(ST_ID,
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
@@ -233,7 +247,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return tgtMock;
     }
     
-    private ServiceTicket createMockServiceTicket(final String id, final Service svc) {
+    private static ServiceTicket createMockServiceTicket(final String id, final Service svc) {
         final ServiceTicket stMock = mock(ServiceTicket.class);
         when(stMock.getService()).thenReturn(svc);
         when(stMock.getId()).thenReturn(id);
@@ -241,7 +255,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return stMock;
     }
     
-    private RegisteredServiceProxyPolicy getServiceProxyPolicy(final boolean canProxy) {
+    private static RegisteredServiceProxyPolicy getServiceProxyPolicy(final boolean canProxy) {
         if (!canProxy) {
             return new RefuseRegisteredServiceProxyPolicy();
         }
@@ -249,7 +263,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return new RegexMatchingRegisteredServiceProxyPolicy(".*");
     }
 
-    private RegisteredService createMockRegisteredService(final String svcId,
+    private static RegisteredService createMockRegisteredService(final String svcId,
             final boolean enabled, final RegisteredServiceProxyPolicy proxy) {
         final RegisteredService mockRegSvc = mock(RegisteredService.class);
         when(mockRegSvc.getServiceId()).thenReturn(svcId);
@@ -262,7 +276,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return mockRegSvc;
     }
 
-    private Service getService(final String name) {
+    private static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
         return new WebApplicationServiceFactory().createService(request);
