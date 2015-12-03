@@ -10,4 +10,5 @@ package org.jasig.cas.authentication;
  * @since 4.2
  */
 public interface AuthenticationSupervisor {
+
 }
