@@ -28,7 +28,6 @@ import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.ApplicationContextProvider;
-import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.joda.time.DateTime;
