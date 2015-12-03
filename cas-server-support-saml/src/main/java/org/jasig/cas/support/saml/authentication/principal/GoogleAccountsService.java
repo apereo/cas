@@ -28,7 +28,6 @@ import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.ApplicationContextProvider;
-import org.jasig.cas.util.ISOStandardDateFormat;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.joda.time.DateTime;
@@ -168,7 +167,7 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
      * @return the SAML response
      */
     private String constructSamlResponse() {
-        final DateTime currentDateTime = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
+        final DateTime currentDateTime = new DateTime();
         final DateTime notBeforeIssueInstant = DateTime.parse("2003-04-17T00:46:02Z");
 
         final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
