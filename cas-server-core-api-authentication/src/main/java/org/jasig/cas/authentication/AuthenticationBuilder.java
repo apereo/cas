@@ -67,6 +67,14 @@ public interface AuthenticationBuilder extends Serializable {
     AuthenticationBuilder addSuccess(String key, HandlerResult value);
 
     /**
+     * Adds authentication successes to the map of handler names to successful authentication handler results.
+     *
+     * @param successes the successes
+     * @return This builder instance.
+     */
+    AuthenticationBuilder addSuccesses(Map<String, HandlerResult> successes);
+
+    /**
      * Sets the authentication date and returns this instance.
      *
      * @param d Authentication date.
@@ -98,6 +106,15 @@ public interface AuthenticationBuilder extends Serializable {
      * @return This builder instance.
      */
     AuthenticationBuilder addFailure(String key, Class<? extends Exception> value);
+
+    /**
+     * Adds an authentication failure to the map of handler names to the authentication handler failures.
+     *
+     * @param failures Authentication failures.
+     *
+     * @return This builder instance.
+     */
+    AuthenticationBuilder addFailures(Map<String, Class<? extends Exception>> failures);
 
     /**
      * Sets the authentication metadata attributes.

@@ -16,6 +16,7 @@ import java.util.Map;
  * @since 4.0.0
  */
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
+    private static final long serialVersionUID = -8504842011648432398L;
     /** Authenticated principal. */
     private Principal principal;
 
