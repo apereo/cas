@@ -1,6 +1,7 @@
 package org.jasig.cas;
 
 import com.google.common.base.Predicate;
+import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
@@ -45,12 +46,12 @@ public interface CentralAuthenticationService {
      * of authentication success are dependent on the implementation, but it SHOULD be safe to assume
      * that at least one credential MUST be authenticated for ticket creation to succeed.
      *
-     * @param credentials One or more credentials that may be authenticated in order to create the ticket.
+     * @param context the current authentication context in order to create the ticket.
      * @return Non -null ticket-granting ticket identifier.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if ticket cannot be created
      */
-    TicketGrantingTicket createTicketGrantingTicket(@NotNull Credential... credentials)
+    TicketGrantingTicket createTicketGrantingTicket(@NotNull AuthenticationContext context)
         throws AuthenticationException, AbstractTicketException;
 
 
@@ -162,12 +163,12 @@ public interface CentralAuthenticationService {
      * to other Services.
      *
      * @param serviceTicketId The service ticket identifier that will delegate to a {@link org.jasig.cas.ticket.TicketGrantingTicket}.
-     * @param credentials     One or more credentials to authenticate prior to delegating the ticket.
+     * @param context     The current authentication context before this ticket can be granted.
      * @return Non -null ticket-granting ticket identifier that can grant
      * {@link org.jasig.cas.ticket.ServiceTicket} that proxy authentication.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if there was an error creating the ticket
      */
-    ProxyGrantingTicket createProxyGrantingTicket(@NotNull String serviceTicketId, @NotNull Credential... credentials)
+    ProxyGrantingTicket createProxyGrantingTicket(@NotNull String serviceTicketId, @NotNull AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException;
 }

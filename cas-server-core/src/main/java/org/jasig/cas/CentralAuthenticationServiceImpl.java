@@ -5,6 +5,7 @@ import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.Credential;
@@ -297,8 +298,14 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     @Metered(name = "CREATE_PROXY_GRANTING_TICKET_METER")
     @Counted(name="CREATE_PROXY_GRANTING_TICKET_COUNTER", monotonic=true)
     @Override
-    public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final Credential... credentials)
+    public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException {
+
+        if (context.isEmpty()) {
+            final String msg = "No authentication context is available in the request for creating a new proxy-granting ticket";
+            logger.warn(msg);
+            throw new TicketCreationException(new IllegalArgumentException(msg));
+        }
 
         final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
@@ -317,8 +324,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
             throw new UnauthorizedProxyingException();
         }
 
-
-        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+        final Authentication authentication = context.getPrimaryAuthentication();
         final ProxyGrantingTicketFactory factory = this.ticketFactory.get(ProxyGrantingTicket.class);
         final ProxyGrantingTicket proxyGrantingTicket = factory.create(serviceTicket, authentication);
 
@@ -412,24 +418,26 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     @Metered(name = "CREATE_TICKET_GRANTING_TICKET_METER")
     @Counted(name="CREATE_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
     @Override
-    public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
+    public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException {
 
-        final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
-        if (!sanitizedCredentials.isEmpty()) {
-            final Authentication authentication = this.authenticationManager.authenticate(credentials);
-            final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);
-            final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
-
-            this.ticketRegistry.addTicket(ticketGrantingTicket);
-
-            doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
-
-            return ticketGrantingTicket;
+        if (context.isEmpty()) {
+            final String msg = "No authentication context is available in the request for creating a new ticket-granting ticket";
+            logger.warn(msg);
+            throw new TicketCreationException(new IllegalArgumentException(msg));
         }
-        final String msg = "No credentials were specified in the request for creating a new ticket-granting ticket";
-        logger.warn(msg);
-        throw new TicketCreationException(new IllegalArgumentException(msg));
+
+        final Authentication authentication = context.getPrimaryAuthentication();
+        final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);
+        final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
+
+        this.ticketRegistry.addTicket(ticketGrantingTicket);
+
+        doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
+
+        return ticketGrantingTicket;
+
+
     }
 
 
