@@ -99,7 +99,6 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
     }
 
     /**
-
      * @throws IllegalArgumentException if the Ticket is null.
      */
     @Override
