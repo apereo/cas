@@ -34,6 +34,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceContextType;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,9 +49,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.2.1
- *
  */
 @Component("jpaTicketRegistry")
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
@@ -74,14 +73,14 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     private LockingStrategy jpaLockingStrategy;
 
     @NotNull
-    @PersistenceContext(unitName = "ticketEntityManagerFactory")
+    @PersistenceContext(unitName = "ticketEntityManagerFactory", type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
 
     @NotNull
     private String ticketGrantingTicketPrefix = TicketGrantingTicket.PREFIX;
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
         logger.debug("Updated ticket [{}].", ticket);
     }
