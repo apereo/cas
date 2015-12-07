@@ -66,21 +66,31 @@
     <bean id="ticketTransactionManager" parent="abstractTransactionManager"
           p:entityManagerFactory-ref="ticketEntityManagerFactory" />
 
-    <tx:advice id="txAdviceTicketReg" transaction-manager="ticketTransactionManager">
+    <tx:advice id="txRegistryAdvice" transaction-manager="ticketTransactionManager">
         <tx:attributes>
-            <tx:method name="delete*" read-only="false"/>
-            <tx:method name="save*" read-only="false"/>
-            <tx:method name="update*" read-only="false"/>
-            <tx:method name="*" />
+            <tx:method name="deleteTicket" read-only="false" />
+            <tx:method name="addTicket" read-only="false" />
+            <tx:method name="updateTicket" read-only="false" />
+            <tx:method name="getTicket" read-only="true" />
+            <tx:method name="getTickets" read-only="true" />
+            <tx:method name="sessionCount" read-only="true" />
+            <tx:method name="serviceTicketCount" read-only="true" />
         </tx:attributes>
     </tx:advice>
 
+    <tx:advice id="txRegistryLockingAdvice" transaction-manager="ticketTransactionManager">
+        <tx:attributes>
+            <tx:method name="getOwner" read-only="true" />
+            <tx:method name="acquire" read-only="false" />
+            <tx:method name="release" read-only="false" />
+        </tx:attributes>
+    </tx:advice>
 
     <aop:config>
         <aop:pointcut id="ticketRegistryOperations" expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
         <aop:pointcut id="ticketRegistryLockingOperations" expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
-        <aop:advisor advice-ref="txAdviceTicketReg" pointcut-ref="ticketRegistryOperations"/>
-        <aop:advisor advice-ref="txAdviceTicketReg" pointcut-ref="ticketRegistryLockingOperations"/>
+        <aop:advisor advice-ref="txRegistryAdvice" pointcut-ref="ticketRegistryOperations"/>
+        <aop:advisor advice-ref="txRegistryLockingAdvice" pointcut-ref="ticketRegistryLockingOperations"/>
     </aop:config>
 
 
