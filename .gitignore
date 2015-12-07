@@ -28,3 +28,7 @@ gruntfile.js
 
 classes/
 *.gradle
+
+**/gradle/*
+**/gradlew
+**/gradlew.bat
