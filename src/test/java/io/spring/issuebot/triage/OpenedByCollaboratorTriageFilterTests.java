@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.filter;
+package io.spring.issuebot.triage;
 
 import java.util.Arrays;
 

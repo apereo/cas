@@ -16,13 +16,14 @@
 
 package io.spring.issuebot.triage;
 
+import java.util.Arrays;
+
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import io.spring.issuebot.github.GitHubTemplate;
-import io.spring.issuebot.github.RegexLinkParser;
-import io.spring.issuebot.triage.filter.StandardTriageFilters;
+import io.spring.issuebot.github.GitHubOperations;
 
 /**
  * Central configuration for the beans involved in identifying issues that require triage.
@@ -31,39 +32,20 @@ import io.spring.issuebot.triage.filter.StandardTriageFilters;
  */
 @Configuration
 @EnableScheduling
+@EnableConfigurationProperties(TriageProperties.class)
 class TriageConfiguration {
 
 	@Bean
-	TriageProperties triageProperties() {
-		return new TriageProperties();
+	TriageIssueListener triageIssueListener(GitHubOperations gitHubOperations,
+			TriageProperties triageProperties) {
+		return new TriageIssueListener(
+				Arrays.asList(
+						new OpenedByCollaboratorTriageFilter(
+								triageProperties.getCollaborators()),
+						new LabelledTriageFilter(), new MilestoneAppliedTriageFilter(),
+						new CommentedByCollaboratorTriageFilter(
+								triageProperties.getCollaborators(), gitHubOperations)),
+				new LabelApplyingTriageListener(gitHubOperations,
+						triageProperties.getLabel()));
 	}
-
-	@Bean
-	LabelApplyingTriageListener triageListener() {
-		return new LabelApplyingTriageListener(gitHubTemplate());
-	}
-
-	@Bean
-	RepositoryMonitor repositoryMonitor() {
-		return new RepositoryMonitor(gitHubTemplate(), triageFilters(), triageListener(),
-				triageProperties().getRepositories());
-	}
-
-	@Bean
-	GitHubTemplate gitHubTemplate() {
-		TriageProperties triageProperties = triageProperties();
-		return new GitHubTemplate(triageProperties.getUsername(),
-				triageProperties.getPassword(), linkParser());
-	}
-
-	@Bean
-	StandardTriageFilters triageFilters() {
-		return new StandardTriageFilters(gitHubTemplate());
-	}
-
-	@Bean
-	RegexLinkParser linkParser() {
-		return new RegexLinkParser();
-	}
-
 }

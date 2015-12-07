@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.filter;
+package io.spring.issuebot;
 
-import io.spring.issuebot.triage.MonitoredRepository;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
- * {@code TriageFilters} is used to retrieve a {@code TriageFilter} for a particular
- * {@link MonitoredRepository repository}.
+ * A repository that should be monitored.
  *
  * @author Andy Wilkinson
  */
-public interface TriageFilters {
+@RequiredArgsConstructor
+@Getter
+public class MonitoredRepository {
 
 	/**
-	 * Returns the {@code TriageFilter} that should be used to process issues for the
-	 * given {@code repository}.
-	 *
-	 * @param repository the repository
-	 * @return the filter for the repository
+	 * The name of the organization that owns the repository.
 	 */
-	TriageFilter filterForRepository(MonitoredRepository repository);
+	private final String organization;
+
+	/**
+	 * The name of the repository.
+	 */
+	private final String name;
 
 }

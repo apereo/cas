@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.filter;
+package io.spring.issuebot.triage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import io.spring.issuebot.github.Issue;
  *
  * @author Andy Wilkinson
  */
-public class MilestoneAppliedTriageFilter implements TriageFilter {
+final class MilestoneAppliedTriageFilter implements TriageFilter {
 
 	private static final Logger log = LoggerFactory.getLogger(LabelledTriageFilter.class);
 

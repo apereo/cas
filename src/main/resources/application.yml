@@ -1,11 +1,12 @@
 issuebot:
+  github:
+    repository:
+      organization: spring-projects
+      name: spring-boot
   triage:
-    repositories:
-      - organization: spring-projects
-        name: spring-boot
-        label: waiting-for-triage
-        collaborators:
-          - dsyer
-          - philwebb
-          - snicoll
-          - wilkinsona
+    label: waiting-for-triage
+    collaborators:
+      - dsyer
+      - philwebb
+      - snicoll
+      - wilkinsona

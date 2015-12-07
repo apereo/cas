@@ -14,38 +14,22 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.filter;
-
-import org.junit.Test;
+package io.spring.issuebot;
 
 import io.spring.issuebot.github.Issue;
-import io.spring.issuebot.github.Milestone;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 /**
- * Tests for {@link MilestoneAppliedTriageFilter}.
+ * An {@code IssueListener} is notified of issues found during repository monitoring.
  *
  * @author Andy Wilkinson
- *
  */
-public class MilestoneAppliedTriageFilterTests {
+public interface IssueListener {
 
-	private TriageFilter filter = new MilestoneAppliedTriageFilter();
-
-	@Test
-	public void issueWithMilestoneApplied() {
-		assertThat(
-				this.filter.triaged(
-						new Issue(null, null, null, null, new Milestone("test"))),
-				is(true));
-	}
-
-	@Test
-	public void issueWithNoMilestoneApplied() {
-		assertThat(this.filter.triaged(new Issue(null, null, null, null, null)),
-				is(false));
-	}
+	/**
+	 * Notification that the given {@code issue} is open.
+	 *
+	 * @param issue the open issue
+	 */
+	void onOpenIssue(Issue issue);
 
 }

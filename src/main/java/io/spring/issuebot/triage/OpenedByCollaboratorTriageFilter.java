@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.filter;
+package io.spring.issuebot.triage;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -24,29 +25,30 @@ import org.slf4j.LoggerFactory;
 import io.spring.issuebot.github.Issue;
 
 /**
- * A {@link TriageFilter} that delegates to one or more filters.
+ * A {@link TriageFilter} that considers an issue as having been triaged if it was opened
+ * by a collaborator.
  *
  * @author Andy Wilkinson
  */
-final class DelegatingTriageFilter implements TriageFilter {
+final class OpenedByCollaboratorTriageFilter implements TriageFilter {
 
 	private static final Logger log = LoggerFactory
-			.getLogger(DelegatingTriageFilter.class);
+			.getLogger(OpenedByCollaboratorTriageFilter.class);
 
-	private final List<TriageFilter> filters;
+	private final List<String> collaborators;
 
-	DelegatingTriageFilter(List<TriageFilter> filters) {
-		this.filters = filters;
+	OpenedByCollaboratorTriageFilter(List<String> collaborators) {
+		this.collaborators = collaborators == null ? Collections.emptyList()
+				: collaborators;
 	}
 
 	@Override
 	public boolean triaged(Issue issue) {
-		for (TriageFilter filter : this.filters) {
-			if (filter.triaged(issue)) {
-				return true;
-			}
+		if (this.collaborators.contains(issue.getUser().getLogin())) {
+			log.debug("{} has been triaged. It was opened by {}", issue.getUrl(),
+					issue.getUser().getLogin());
+			return true;
 		}
-		log.info("{} is waiting for triage", issue.getUrl());
 		return false;
 	}
 

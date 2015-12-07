@@ -32,21 +32,16 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "issuebot.triage")
-public class TriageProperties {
+class TriageProperties {
 
 	/**
-	 * Repositories that will be monitored.
+	 * The names of the project collaborators whose issues do not require triage.
 	 */
-	private List<MonitoredRepository> repositories;
+	private List<String> collaborators;
 
 	/**
-	 * GitHub username.
+	 * The name of the label that should be applied to issues that are waiting for triage.
 	 */
-	private String username;
-
-	/**
-	 * GitHub password.
-	 */
-	private String password;
+	private String label;
 
 }

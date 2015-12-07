@@ -14,24 +14,38 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.filter;
+package io.spring.issuebot.triage;
+
+import org.junit.Test;
 
 import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.Milestone;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
- * A {@code TriageFilter} is used to identify issues which are waiting for triage.
+ * Tests for {@link MilestoneAppliedTriageFilter}.
  *
  * @author Andy Wilkinson
+ *
  */
-public interface TriageFilter {
+public class MilestoneAppliedTriageFilterTests {
 
-	/**
-	 * Returns {@code true} if the given issue has already been triaged, otherwise
-	 * {@code false}.
-	 *
-	 * @param issue the issue
-	 * @return {@code true} if the issue has been triaged, {@code false} otherwise
-	 */
-	boolean triaged(Issue issue);
+	private TriageFilter filter = new MilestoneAppliedTriageFilter();
+
+	@Test
+	public void issueWithMilestoneApplied() {
+		assertThat(
+				this.filter.triaged(
+						new Issue(null, null, null, null, new Milestone("test"))),
+				is(true));
+	}
+
+	@Test
+	public void issueWithNoMilestoneApplied() {
+		assertThat(this.filter.triaged(new Issue(null, null, null, null, null)),
+				is(false));
+	}
 
 }

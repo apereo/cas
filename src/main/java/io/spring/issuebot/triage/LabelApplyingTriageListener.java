@@ -24,23 +24,28 @@ import io.spring.issuebot.github.Issue;
  *
  * @author Andy Wilkinson
  */
-public class LabelApplyingTriageListener implements TriageListener {
+final class LabelApplyingTriageListener implements TriageListener {
 
 	private final GitHubOperations gitHub;
 
+	private final String label;
+
 	/**
 	 * Creates a new {@code LabelApplyingTriageListener} that will use the given
-	 * {@code gitHubOperations} to apply a label to any issues that require triage.
+	 * {@code gitHubOperations} to apply the given {@code label} to any issues that
+	 * require triage.
 	 *
 	 * @param gitHubOperations the GitHubOperations
+	 * @param label the label
 	 */
-	public LabelApplyingTriageListener(GitHubOperations gitHubOperations) {
+	LabelApplyingTriageListener(GitHubOperations gitHubOperations, String label) {
 		this.gitHub = gitHubOperations;
+		this.label = label;
 	}
 
 	@Override
-	public void requiresTriage(Issue issue, MonitoredRepository repository) {
-		this.gitHub.addLabel(issue, repository.getLabel());
+	public void requiresTriage(Issue issue) {
+		this.gitHub.addLabel(issue, this.label);
 	}
 
 }

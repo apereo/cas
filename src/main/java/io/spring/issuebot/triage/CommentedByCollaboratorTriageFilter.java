@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.filter;
+package io.spring.issuebot.triage;
 
 import java.util.Collections;
 import java.util.List;
@@ -28,8 +28,8 @@ import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Page;
 
 /**
- * A {@code TriageFilter} that considers an issue has having been triaged if a
- * collaborator has commented on it.
+ * A {@code TriageFilter} that considers an issue as having been triaged if a collaborator
+ * has commented on it.
  *
  * @author Andy Wilkinson
  */

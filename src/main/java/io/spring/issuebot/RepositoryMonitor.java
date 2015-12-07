@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage;
+package io.spring.issuebot;
 
 import java.util.List;
 
@@ -25,12 +25,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Page;
-import io.spring.issuebot.triage.filter.TriageFilter;
-import io.spring.issuebot.triage.filter.TriageFilters;
 
 /**
- * Central class for monitoring the configured repositories and labeling issues as waiting
- * for triage.
+ * Central class for monitoring the configured repository.
  *
  * @author Andy Wilkinson
  */
@@ -38,44 +35,35 @@ class RepositoryMonitor {
 
 	private static final Logger log = LoggerFactory.getLogger(RepositoryMonitor.class);
 
-	private final List<MonitoredRepository> repositoryConfigurations;
-
-	private final TriageFilters filters;
-
 	private final GitHubOperations gitHub;
 
-	private final TriageListener listener;
+	private final MonitoredRepository repository;
 
-	RepositoryMonitor(GitHubOperations gitHub, TriageFilters filters,
-			TriageListener listener, List<MonitoredRepository> repositoryConfigurations) {
+	private final List<IssueListener> issueListeners;
+
+	RepositoryMonitor(GitHubOperations gitHub, MonitoredRepository repository,
+			List<IssueListener> issueListeners) {
 		this.gitHub = gitHub;
-		this.filters = filters;
-		this.listener = listener;
-		this.repositoryConfigurations = repositoryConfigurations;
+		this.repository = repository;
+		this.issueListeners = issueListeners;
 	}
 
 	@Scheduled(fixedRate = 5 * 60 * 1000)
 	void monitor() {
-		for (MonitoredRepository configuration : this.repositoryConfigurations) {
-			monitor(configuration);
-		}
-	}
-
-	private void monitor(MonitoredRepository repository) {
-		log.info("Monitoring {}/{}", repository.getOrganization(), repository.getName());
-		TriageFilter filter = this.filters.filterForRepository(repository);
-		Page<Issue> page = this.gitHub.getIssues(repository.getOrganization(),
-				repository.getName());
+		log.info("Monitoring {}/{}", this.repository.getOrganization(),
+				this.repository.getName());
+		Page<Issue> page = this.gitHub.getIssues(this.repository.getOrganization(),
+				this.repository.getName());
 		while (page != null) {
 			for (Issue issue : page.getContent()) {
-				if (!filter.triaged(issue)) {
-					this.listener.requiresTriage(issue, repository);
+				for (IssueListener issueListener : this.issueListeners) {
+					issueListener.onOpenIssue(issue);
 				}
 			}
 			page = page.next();
 		}
-		log.info("Monitoring of {}/{} completed", repository.getOrganization(),
-				repository.getName());
+		log.info("Monitoring of {}/{} completed", this.repository.getOrganization(),
+				this.repository.getName());
 	}
 
 }

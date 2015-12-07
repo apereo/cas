@@ -23,13 +23,12 @@ import io.spring.issuebot.github.Issue;
  *
  * @author Andy Wilkinson
  */
-public interface TriageListener {
+interface TriageListener {
 
 	/**
 	 * Notification that the given {@code issue} requires triage.
 	 *
 	 * @param issue the issue
-	 * @param repository the monitored repository to which the issue belongs
 	 */
-	void requiresTriage(Issue issue, MonitoredRepository repository);
+	void requiresTriage(Issue issue);
 }

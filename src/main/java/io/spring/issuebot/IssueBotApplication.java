@@ -16,8 +16,16 @@
 
 package io.spring.issuebot;
 
+import java.util.List;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+
+import io.spring.issuebot.github.GitHubOperations;
+import io.spring.issuebot.github.GitHubTemplate;
+import io.spring.issuebot.github.RegexLinkParser;
 
 /**
  * Main class for launching Issue Bot.
@@ -25,10 +33,27 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Andy Wilkinson
  */
 @SpringBootApplication
+@EnableConfigurationProperties(GitHubProperties.class)
 public class IssueBotApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(IssueBotApplication.class, args);
+	}
+
+	@Bean
+	GitHubTemplate gitHubTemplate(GitHubProperties gitHubProperties) {
+		return new GitHubTemplate(gitHubProperties.getCredentials().getUsername(),
+				gitHubProperties.getCredentials().getPassword(), new RegexLinkParser());
+	}
+
+	@Bean
+	RepositoryMonitor repositoryMonitor(GitHubOperations gitHub,
+			GitHubProperties gitHubProperties, List<IssueListener> issueListeners) {
+		return new RepositoryMonitor(gitHub,
+				new MonitoredRepository(
+						gitHubProperties.getRepository().getOrganization(),
+						gitHubProperties.getRepository().getName()),
+				issueListeners);
 	}
 
 }

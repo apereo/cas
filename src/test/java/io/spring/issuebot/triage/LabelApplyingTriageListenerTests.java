@@ -33,16 +33,13 @@ public class LabelApplyingTriageListenerTests {
 
 	private GitHubOperations gitHub = mock(GitHubOperations.class);
 
-	private final MonitoredRepository repository = new MonitoredRepository();
-
 	private final LabelApplyingTriageListener listener = new LabelApplyingTriageListener(
-			this.gitHub);
+			this.gitHub, "test");
 
 	@Test
 	public void requiresTriage() {
 		Issue issue = new Issue(null, null, null, null, null);
-		this.repository.setLabel("test");
-		this.listener.requiresTriage(issue, this.repository);
+		this.listener.requiresTriage(issue);
 		verify(this.gitHub).addLabel(issue, "test");
 	}
 

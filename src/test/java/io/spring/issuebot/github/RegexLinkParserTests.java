@@ -20,9 +20,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import io.spring.issuebot.github.LinkParser;
-import io.spring.issuebot.github.RegexLinkParser;
-
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

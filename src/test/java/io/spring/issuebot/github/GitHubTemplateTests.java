@@ -33,12 +33,6 @@ import org.springframework.test.web.client.response.DefaultResponseCreator;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
-import io.spring.issuebot.github.Comment;
-import io.spring.issuebot.github.GitHubTemplate;
-import io.spring.issuebot.github.Issue;
-import io.spring.issuebot.github.Page;
-import io.spring.issuebot.github.RegexLinkParser;
-
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;

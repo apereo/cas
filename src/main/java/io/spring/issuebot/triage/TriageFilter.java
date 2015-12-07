@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.filter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package io.spring.issuebot.triage;
 
 import io.spring.issuebot.github.Issue;
 
 /**
- * A {@link TriageFilter} that considers an issue as having been triaged if any labels
- * have been applied to it.
+ * A {@code TriageFilter} is used to identify issues which are waiting for triage.
  *
  * @author Andy Wilkinson
  */
-final class LabelledTriageFilter implements TriageFilter {
+interface TriageFilter {
 
-	private static final Logger log = LoggerFactory.getLogger(LabelledTriageFilter.class);
-
-	@Override
-	public boolean triaged(Issue issue) {
-		if (issue.getLabels() != null && !issue.getLabels().isEmpty()) {
-			log.debug("{} has been triaged. It has been labelled.", issue.getUrl());
-			return true;
-		}
-		return false;
-	}
+	/**
+	 * Returns {@code true} if the given issue has already been triaged, otherwise
+	 * {@code false}.
+	 *
+	 * @param issue the issue
+	 * @return {@code true} if the issue has been triaged, {@code false} otherwise
+	 */
+	boolean triaged(Issue issue);
 
 }
