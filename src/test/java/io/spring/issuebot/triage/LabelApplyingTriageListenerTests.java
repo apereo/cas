@@ -18,8 +18,8 @@ package io.spring.issuebot.triage;
 
 import org.junit.Test;
 
-import io.spring.issuebot.triage.github.GitHubOperations;
-import io.spring.issuebot.triage.github.Issue;
+import io.spring.issuebot.github.GitHubOperations;
+import io.spring.issuebot.github.Issue;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;

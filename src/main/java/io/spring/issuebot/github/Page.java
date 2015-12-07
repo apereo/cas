@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.github;
+package io.spring.issuebot.github;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
+import java.util.List;
 
 /**
- * A milestone to which a GitHub Issue can be added.
+ * A page of results.
  *
+ * @param <T> the type of the contents of the page
  * @author Andy Wilkinson
  */
-@Getter
-public class Milestone {
-
-	private final String title;
+public interface Page<T> {
 
 	/**
-	 * Creates a new {@code Milestone} with the given {@code title}.
+	 * Returns the next page, if any.
 	 *
-	 * @param title the title
+	 * @return The next page or {@code null}
 	 */
-	@JsonCreator
-	public Milestone(@JsonProperty("title") String title) {
-		this.title = title;
-	}
+	Page<T> next();
+
+	/**
+	 * Returns the contents of the page.
+	 *
+	 * @return the contents
+	 */
+	List<T> getContent();
 
 }

@@ -14,25 +14,30 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.github;
+package io.spring.issuebot.github;
 
-import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
 /**
- * A {@code LinkParser} can be used to parse the
- * <a href="https://developer.github.com/v3/#link-header">{@code Link} header</a> that is
- * returned by the GitHub API.
+ * A comment that has been made on a GitHub issue.
  *
  * @author Andy Wilkinson
  */
-interface LinkParser {
+@Getter
+public final class Comment {
+
+	private final User user;
 
 	/**
-	 * Parse the given {@code header} into a map of rel:url pairs.
+	 * Creates a new comment that was authored by the given {@code user}.
 	 *
-	 * @param header the header to parse
-	 * @return the map of links
+	 * @param user the user
 	 */
-	Map<String, String> parse(String header);
+	@JsonCreator
+	public Comment(@JsonProperty("user") User user) {
+		this.user = user;
+	}
 
 }

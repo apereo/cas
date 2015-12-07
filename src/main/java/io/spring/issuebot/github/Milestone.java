@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.github;
+package io.spring.issuebot.github;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 /**
- * A comment that has been made on a GitHub issue.
+ * A milestone to which a GitHub Issue can be added.
  *
  * @author Andy Wilkinson
  */
 @Getter
-public final class Comment {
+public class Milestone {
 
-	private final User user;
+	private final String title;
 
 	/**
-	 * Creates a new comment that was authored by the given {@code user}.
+	 * Creates a new {@code Milestone} with the given {@code title}.
 	 *
-	 * @param user the user
+	 * @param title the title
 	 */
 	@JsonCreator
-	public Comment(@JsonProperty("user") User user) {
-		this.user = user;
+	public Milestone(@JsonProperty("title") String title) {
+		this.title = title;
 	}
 
 }

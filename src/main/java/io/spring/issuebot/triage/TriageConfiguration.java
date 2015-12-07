@@ -20,9 +20,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import io.spring.issuebot.github.GitHubTemplate;
+import io.spring.issuebot.github.RegexLinkParser;
 import io.spring.issuebot.triage.filter.StandardTriageFilters;
-import io.spring.issuebot.triage.github.GitHubTemplate;
-import io.spring.issuebot.triage.github.RegexLinkParser;
 
 /**
  * Central configuration for the beans involved in identifying issues that require triage.

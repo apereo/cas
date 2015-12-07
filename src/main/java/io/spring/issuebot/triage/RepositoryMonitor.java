@@ -22,11 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import io.spring.issuebot.github.GitHubOperations;
+import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.Page;
 import io.spring.issuebot.triage.filter.TriageFilter;
 import io.spring.issuebot.triage.filter.TriageFilters;
-import io.spring.issuebot.triage.github.GitHubOperations;
-import io.spring.issuebot.triage.github.Issue;
-import io.spring.issuebot.triage.github.Page;
 
 /**
  * Central class for monitoring the configured repositories and labeling issues as waiting

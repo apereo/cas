@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.github;
+package io.spring.issuebot.github;
 
 import java.util.List;
 import java.util.function.Supplier;

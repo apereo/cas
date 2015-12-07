@@ -18,8 +18,8 @@ package io.spring.issuebot.triage.filter;
 
 import org.junit.Test;
 
-import io.spring.issuebot.triage.github.Issue;
-import io.spring.issuebot.triage.github.Milestone;
+import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.Milestone;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

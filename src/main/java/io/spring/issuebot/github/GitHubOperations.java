@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.github;
+package io.spring.issuebot.github;
 
 /**
  * Operations that can be performed against the GitHub API.

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.github;
+package io.spring.issuebot.github;
 
 import java.util.Map;
 
 import org.junit.Test;
+
+import io.spring.issuebot.github.LinkParser;
+import io.spring.issuebot.github.RegexLinkParser;
 
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;

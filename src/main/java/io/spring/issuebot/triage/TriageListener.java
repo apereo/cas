@@ -16,7 +16,7 @@
 
 package io.spring.issuebot.triage;
 
-import io.spring.issuebot.triage.github.Issue;
+import io.spring.issuebot.github.Issue;
 
 /**
  * A {@code TriageListener} is notified of issues that require triage.

@@ -16,7 +16,7 @@
 
 package io.spring.issuebot.triage.filter;
 
-import io.spring.issuebot.triage.github.Issue;
+import io.spring.issuebot.github.Issue;
 
 /**
  * A {@code TriageFilter} is used to identify issues which are waiting for triage.

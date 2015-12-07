@@ -20,11 +20,11 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import io.spring.issuebot.github.GitHubOperations;
+import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.Page;
 import io.spring.issuebot.triage.filter.TriageFilter;
 import io.spring.issuebot.triage.filter.TriageFilters;
-import io.spring.issuebot.triage.github.GitHubOperations;
-import io.spring.issuebot.triage.github.Issue;
-import io.spring.issuebot.triage.github.Page;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;

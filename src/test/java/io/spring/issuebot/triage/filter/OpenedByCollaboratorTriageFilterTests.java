@@ -20,8 +20,8 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import io.spring.issuebot.triage.github.Issue;
-import io.spring.issuebot.triage.github.User;
+import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.User;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

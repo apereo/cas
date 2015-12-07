@@ -18,8 +18,8 @@ package io.spring.issuebot.triage.filter;
 
 import java.util.Arrays;
 
+import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.triage.MonitoredRepository;
-import io.spring.issuebot.triage.github.GitHubOperations;
 
 /**
  * Standard implementation of {@code TriageFilters}.

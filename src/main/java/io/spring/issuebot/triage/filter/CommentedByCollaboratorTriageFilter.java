@@ -22,10 +22,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.spring.issuebot.triage.github.Comment;
-import io.spring.issuebot.triage.github.GitHubOperations;
-import io.spring.issuebot.triage.github.Issue;
-import io.spring.issuebot.triage.github.Page;
+import io.spring.issuebot.github.Comment;
+import io.spring.issuebot.github.GitHubOperations;
+import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.Page;
 
 /**
  * A {@code TriageFilter} that considers an issue has having been triaged if a

@@ -14,30 +14,25 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage.github;
+package io.spring.issuebot.github;
 
-import java.util.List;
+import java.util.Map;
 
 /**
- * A page of results.
+ * A {@code LinkParser} can be used to parse the
+ * <a href="https://developer.github.com/v3/#link-header">{@code Link} header</a> that is
+ * returned by the GitHub API.
  *
- * @param <T> the type of the contents of the page
  * @author Andy Wilkinson
  */
-public interface Page<T> {
+interface LinkParser {
 
 	/**
-	 * Returns the next page, if any.
+	 * Parse the given {@code header} into a map of rel:url pairs.
 	 *
-	 * @return The next page or {@code null}
+	 * @param header the header to parse
+	 * @return the map of links
 	 */
-	Page<T> next();
-
-	/**
-	 * Returns the contents of the page.
-	 *
-	 * @return the contents
-	 */
-	List<T> getContent();
+	Map<String, String> parse(String header);
 
 }
