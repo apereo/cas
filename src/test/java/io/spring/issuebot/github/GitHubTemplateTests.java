@@ -16,7 +16,6 @@
 
 package io.spring.issuebot.github;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import org.junit.Rule;
@@ -33,6 +32,7 @@ import org.springframework.test.web.client.response.DefaultResponseCreator;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.RestTemplate;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -121,8 +121,8 @@ public class GitHubTemplateTests {
 		this.server.expect(requestTo("commentsUrl")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth())
 				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
-		Page<Comment> comments = this.gitHub
-				.getComments(new Issue(null, "commentsUrl", null, null, null));
+		Page<Comment> comments = this.gitHub.getComments(
+				new Issue(null, "commentsUrl", null, null, null, null, null, null));
 		assertThat(comments.getContent().size(), is(0));
 		assertThat(comments.next(), is(nullValue()));
 	}
@@ -132,8 +132,8 @@ public class GitHubTemplateTests {
 		this.server.expect(requestTo("commentsUrl")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth())
 				.andRespond(withResource("comments-page-one.json"));
-		Page<Comment> comments = this.gitHub
-				.getComments(new Issue(null, "commentsUrl", null, null, null));
+		Page<Comment> comments = this.gitHub.getComments(
+				new Issue(null, "commentsUrl", null, null, null, null, null, null));
 		assertThat(comments.getContent().size(), is(17));
 		assertThat(comments.next(), is(nullValue()));
 	}
@@ -148,8 +148,8 @@ public class GitHubTemplateTests {
 		this.server.expect(requestTo("page-two")).andExpect(method(HttpMethod.GET))
 				.andExpect(basicAuth())
 				.andRespond(withResource("comments-page-two.json"));
-		Page<Comment> pageOne = this.gitHub
-				.getComments(new Issue(null, "commentsUrl", null, null, null));
+		Page<Comment> pageOne = this.gitHub.getComments(
+				new Issue(null, "commentsUrl", null, null, null, null, null, null));
 		assertThat(pageOne.getContent().size(), is(17));
 		Page<Comment> pageTwo = pageOne.next();
 		assertThat(pageTwo, is(not(nullValue())));
@@ -157,25 +157,75 @@ public class GitHubTemplateTests {
 	}
 
 	@Test
-	public void addLabelToUnlabelledIssue() {
+	public void addLabelToIssue() {
 		this.server.expect(requestTo("issueUrl")).andExpect(method(HttpMethod.POST))
 				.andExpect(basicAuth())
-				.andExpect(content().string("{\"labels\":[\"test\"]}"))
-				.andRespond(withResource("issue-single-label.json"));
-		Issue issue = new Issue("issueUrl", null, null, Arrays.asList(), null);
-		Issue labelledIssue = this.gitHub.addLabel(issue, "test");
-		assertThat(labelledIssue.getLabels(), hasSize(1));
+				.andExpect(content().string("{\"labels\":[\"test\"]}")).andRespond(
+						withSuccess("[{\"name\":\"test\"}]", MediaType.APPLICATION_JSON));
+		Issue issue = new Issue("issueUrl", null, null, null, null, null, null, null);
+		Issue modifiedIssue = this.gitHub.addLabel(issue, "test");
+		assertThat(modifiedIssue.getLabels(), hasSize(1));
 	}
 
 	@Test
-	public void addAdditionalLabelToIssue() {
-		this.server.expect(requestTo("issueUrl")).andExpect(method(HttpMethod.POST))
+	public void removeLabelFromIssue() {
+		this.server.expect(requestTo("labels/test")).andExpect(method(HttpMethod.DELETE))
 				.andExpect(basicAuth())
-				.andExpect(content().string("{\"labels\":[\"test\"]}"))
-				.andRespond(withResource("issue-two-labels.json"));
-		Issue issue = new Issue("issueUrl", null, null, Arrays.asList(), null);
-		Issue labelledIssue = this.gitHub.addLabel(issue, "test");
-		assertThat(labelledIssue.getLabels(), hasSize(2));
+				.andRespond(withSuccess("[]", MediaType.APPLICATION_JSON));
+		Issue issue = new Issue(null, null, null, "labels{/name}", null, null, null,
+				null);
+		Issue modifiedIssue = this.gitHub.removeLabel(issue, "test");
+		assertThat(modifiedIssue.getLabels(), hasSize(0));
+	}
+
+	@Test
+	public void addCommentToIssue() {
+		this.server.expect(requestTo("commentsUrl")).andExpect(method(HttpMethod.POST))
+				.andExpect(basicAuth())
+				.andExpect(content().string("{\"body\":\"A test comment\"}"))
+				.andRespond(withResource("new-comment.json"));
+		Issue issue = new Issue(null, "commentsUrl", null, null, null, null, null, null);
+		Comment comment = this.gitHub.addComment(issue, "A test comment");
+		assertThat(comment, is(not(nullValue())));
+	}
+
+	@Test
+	public void singlePageOfEvents() {
+		this.server.expect(requestTo("eventsUrl")).andExpect(method(HttpMethod.GET))
+				.andExpect(basicAuth()).andRespond(withResource("events-page-one.json"));
+		Page<Event> events = this.gitHub.getEvents(
+				new Issue(null, null, "eventsUrl", null, null, null, null, null));
+		assertThat(events.getContent().size(), is(12));
+		assertThat(events.next(), is(nullValue()));
+	}
+
+	@Test
+	public void multiplePagesOfEvents() {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Link", "<page-two>; rel=\"next\"");
+		this.server.expect(requestTo("eventsUrl")).andExpect(method(HttpMethod.GET))
+				.andExpect(basicAuth()).andRespond(withResource("events-page-one.json",
+						"Link:<page-two>; rel=\"next\""));
+		this.server.expect(requestTo("page-two")).andExpect(method(HttpMethod.GET))
+				.andExpect(basicAuth()).andRespond(withResource("events-page-two.json"));
+		Page<Event> pageOne = this.gitHub.getEvents(
+				new Issue(null, null, "eventsUrl", null, null, null, null, null));
+		assertThat(pageOne.getContent().size(), is(12));
+		Page<Event> pageTwo = pageOne.next();
+		assertThat(pageTwo, is(not(nullValue())));
+		assertThat(pageTwo.getContent().size(), is(3));
+	}
+
+	@Test
+	public void closeIssue() {
+		this.server.expect(requestTo("issueUrl")).andExpect(method(HttpMethod.PATCH))
+				.andExpect(basicAuth())
+				.andExpect(content().string("{\"state\":\"closed\"}"))
+				.andRespond(withSuccess("{\"url\":\"updatedIssueUrl\"}",
+						MediaType.APPLICATION_JSON));
+		Issue closedIssue = this.gitHub
+				.close(new Issue("issueUrl", null, null, null, null, null, null, null));
+		assertThat(closedIssue.getUrl(), is(equalTo("updatedIssueUrl")));
 	}
 
 	private DefaultResponseCreator withResource(String resource, String... headers) {

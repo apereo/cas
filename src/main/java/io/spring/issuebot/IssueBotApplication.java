@@ -22,6 +22,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.GitHubTemplate;
@@ -33,6 +34,7 @@ import io.spring.issuebot.github.RegexLinkParser;
  * @author Andy Wilkinson
  */
 @SpringBootApplication
+@EnableScheduling
 @EnableConfigurationProperties(GitHubProperties.class)
 public class IssueBotApplication {
 

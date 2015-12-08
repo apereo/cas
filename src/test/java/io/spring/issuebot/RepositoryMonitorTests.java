@@ -57,8 +57,8 @@ public class RepositoryMonitorTests {
 	public void repositoryWithOpenIssues() {
 		@SuppressWarnings("unchecked")
 		Page<Issue> page = mock(Page.class);
-		Issue issueOne = new Issue(null, null, null, null, null);
-		Issue issueTwo = new Issue(null, null, null, null, null);
+		Issue issueOne = new Issue(null, null, null, null, null, null, null, null);
+		Issue issueTwo = new Issue(null, null, null, null, null, null, null, null);
 		given(page.getContent()).willReturn(Arrays.asList(issueOne, issueTwo));
 		given(this.gitHub.getIssues("test", "test")).willReturn(page);
 		this.repositoryMonitor.monitor();

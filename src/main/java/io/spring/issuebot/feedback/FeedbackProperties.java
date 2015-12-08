@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage;
+package io.spring.issuebot.feedback;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,19 +22,35 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
- * {@link EnableConfigurationProperties Configuration properties} for triaging GitHub
- * issues.
+ * {@link EnableConfigurationProperties Configuration properties} for configuring the
+ * monitoring of issues that require user feedback.
  *
  * @author Andy Wilkinson
  */
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "issuebot.triage")
-class TriageProperties {
+@ConfigurationProperties(prefix = "issuebot.feedback")
+final class FeedbackProperties {
 
 	/**
-	 * The name of the label that should be applied to issues that are waiting for triage.
+	 * Name of the label that is applied when feedback is required.
 	 */
-	private String label;
+	private String requiredLabel;
+
+	/**
+	 * Name of the label that is applied when feedback has been provided.
+	 */
+	private String providedLabel;
+
+	/**
+	 * The text of the comment that is added as a reminder that feedback is required.
+	 */
+	private String reminderComment;
+
+	/**
+	 * The text of the comment that is added when an issue is clsed as feedback has not
+	 * been provided.
+	 */
+	private String closeComment;
 
 }

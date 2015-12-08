@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage;
-
-import java.util.Arrays;
+package io.spring.issuebot.feedback;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,26 +24,25 @@ import io.spring.issuebot.GitHubProperties;
 import io.spring.issuebot.github.GitHubOperations;
 
 /**
- * Central configuration for the beans involved in identifying issues that require triage.
+ * Central configuration for the beans involved in managing issues that are waiting for
+ * feedback.
  *
  * @author Andy Wilkinson
  */
 @Configuration
-@EnableConfigurationProperties(TriageProperties.class)
-class TriageConfiguration {
+@EnableConfigurationProperties(FeedbackProperties.class)
+class FeedbackConfiguration {
 
 	@Bean
-	TriageIssueListener triageIssueListener(GitHubOperations gitHubOperations,
-			TriageProperties triageProperties, GitHubProperties gitHubProperties) {
-		return new TriageIssueListener(
-				Arrays.asList(
-						new OpenedByCollaboratorTriageFilter(
-								gitHubProperties.getRepository().getCollaborators()),
-						new LabelledTriageFilter(), new MilestoneAppliedTriageFilter(),
-						new CommentedByCollaboratorTriageFilter(
-								gitHubProperties.getRepository().getCollaborators(),
-								gitHubOperations)),
-				new LabelApplyingTriageListener(gitHubOperations,
-						triageProperties.getLabel()));
+	FeedbackIssueListener feedbackIssueListener(GitHubOperations gitHub,
+			GitHubProperties githubProperties, FeedbackProperties feedbackProperties) {
+		return new FeedbackIssueListener(gitHub, feedbackProperties.getRequiredLabel(),
+				githubProperties.getRepository().getCollaborators(),
+				new StandardFeedbackListener(gitHub,
+						feedbackProperties.getProvidedLabel(),
+						feedbackProperties.getRequiredLabel(),
+						feedbackProperties.getReminderComment(),
+						feedbackProperties.getCloseComment()));
 	}
+
 }

@@ -14,33 +14,34 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage;
+package io.spring.issuebot.feedback;
 
-import org.junit.Test;
+import java.time.OffsetDateTime;
 
-import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 /**
- * Tests for {@link LabelApplyingTriageListener}.
+ * A {@code FeedbackListener} is notified when feedback has been provided or is still
+ * required for an {@link Issue}.
  *
  * @author Andy Wilkinson
  */
-public class LabelApplyingTriageListenerTests {
+public interface FeedbackListener {
 
-	private GitHubOperations gitHub = mock(GitHubOperations.class);
+	/**
+	 * Notification that feedback has been provided for the given {@code issue}.
+	 *
+	 * @param issue the issue
+	 */
+	void feedbackProvided(Issue issue);
 
-	private final LabelApplyingTriageListener listener = new LabelApplyingTriageListener(
-			this.gitHub, "test");
-
-	@Test
-	public void requiresTriage() {
-		Issue issue = new Issue(null, null, null, null, null, null, null, null);
-		this.listener.requiresTriage(issue);
-		verify(this.gitHub).addLabel(issue, "test");
-	}
+	/**
+	 * Notification that feedback is still required for the given {@code issue} having
+	 * been requested at the given {@code requestTime}.
+	 *
+	 * @param issue the issue
+	 * @param requestTime the time when feedback was requested
+	 */
+	void feedbackRequired(Issue issue, OffsetDateTime requestTime);
 
 }

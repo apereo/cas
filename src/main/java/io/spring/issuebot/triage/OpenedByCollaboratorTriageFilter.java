@@ -45,8 +45,7 @@ final class OpenedByCollaboratorTriageFilter implements TriageFilter {
 	@Override
 	public boolean triaged(Issue issue) {
 		if (this.collaborators.contains(issue.getUser().getLogin())) {
-			log.debug("{} has been triaged. It was opened by {}", issue.getUrl(),
-					issue.getUser().getLogin());
+			log.debug("{} has been triaged. It was opened by {}", issue, issue.getUser());
 			return true;
 		}
 		return false;

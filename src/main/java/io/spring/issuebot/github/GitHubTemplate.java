@@ -73,10 +73,6 @@ public class GitHubTemplate implements GitHubOperations {
 		this.linkParser = linkParser;
 	}
 
-	RestOperations getRestOperations() {
-		return this.rest;
-	}
-
 	static RestTemplate createDefaultRestTemplate(String username, String password) {
 		RestTemplate rest = new RestTemplate();
 		rest.setErrorHandler(new DefaultResponseErrorHandler() {
@@ -103,16 +99,26 @@ public class GitHubTemplate implements GitHubOperations {
 	public Page<Issue> getIssues(String organization, String repository) {
 		String url = "https://api.github.com/repos/" + organization + "/" + repository
 				+ "/issues";
-		return getIssues(url);
+		return getPage(url, Issue[].class);
 	}
 
-	private Page<Issue> getIssues(String url) {
+	@Override
+	public Page<Comment> getComments(Issue issue) {
+		return getPage(issue.getCommentsUrl(), Comment[].class);
+	}
+
+	@Override
+	public Page<Event> getEvents(Issue issue) {
+		return getPage(issue.getEventsUrl(), Event[].class);
+	}
+
+	private <T> Page<T> getPage(String url, Class<T[]> type) {
 		if (!StringUtils.hasText(url)) {
 			return null;
 		}
-		ResponseEntity<Issue[]> issues = this.rest.getForEntity(url, Issue[].class);
-		return new StandardPage<Issue>(Arrays.asList(issues.getBody()),
-				() -> getIssues(getNextUrl(issues)));
+		ResponseEntity<T[]> contents = this.rest.getForEntity(url, type);
+		return new StandardPage<T>(Arrays.asList(contents.getBody()),
+				() -> getPage(getNextUrl(contents), type));
 	}
 
 	private String getNextUrl(ResponseEntity<?> response) {
@@ -120,31 +126,56 @@ public class GitHubTemplate implements GitHubOperations {
 	}
 
 	@Override
-	public Page<Comment> getComments(Issue issue) {
-		return getComments(issue.getCommentsUrl());
-	}
-
-	private Page<Comment> getComments(String url) {
-		if (!StringUtils.hasText(url)) {
-			return null;
-		}
-		ResponseEntity<Comment[]> comments = this.rest.getForEntity(url, Comment[].class);
-		return new StandardPage<Comment>(Arrays.asList(comments.getBody()),
-				() -> getComments(getNextUrl(comments)));
-	}
-
-	@Override
 	public Issue addLabel(Issue issue, String labelName) {
 		Map<String, Object> body = new HashMap<>();
 		body.put("labels", Arrays.asList(labelName));
-		ResponseEntity<Issue> exchange = this.rest.exchange(
+		ResponseEntity<Label[]> response = this.rest.exchange(
 				new RequestEntity<>(body, HttpMethod.POST, URI.create(issue.getUrl())),
-				Issue.class);
-		if (exchange.getStatusCode() != HttpStatus.OK) {
+				Label[].class);
+		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to add label to issue. Response status: "
-					+ exchange.getStatusCode());
+					+ response.getStatusCode());
 		}
-		return exchange.getBody();
+		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
+				issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
+				issue.getMilestone(), issue.getPullRequest());
+	}
+
+	@Override
+	public Issue removeLabel(Issue issue, String labelName) {
+		ResponseEntity<Label[]> response = this.rest.exchange(
+				new RequestEntity<Void>(HttpMethod.DELETE, URI.create(
+						issue.getLabelsUrl().replace("{/name}", "/" + labelName))),
+				Label[].class);
+		if (response.getStatusCode() != HttpStatus.OK) {
+			log.warn("Failed to remove label from issue. Response status: "
+					+ response.getStatusCode());
+		}
+		return new Issue(issue.getUrl(), issue.getCommentsUrl(), issue.getEventsUrl(),
+				issue.getLabelsUrl(), issue.getUser(), Arrays.asList(response.getBody()),
+				issue.getMilestone(), issue.getPullRequest());
+	}
+
+	@Override
+	public Comment addComment(Issue issue, String comment) {
+		Map<String, String> body = new HashMap<>();
+		body.put("body", comment);
+		return this.rest.postForEntity(issue.getCommentsUrl(), body, Comment.class)
+				.getBody();
+	}
+
+	@Override
+	public Issue close(Issue issue) {
+		Map<String, String> body = new HashMap<>();
+		body.put("state", "closed");
+		ResponseEntity<Issue> response = this.rest.exchange(
+				new RequestEntity<>(body, HttpMethod.PATCH, URI.create(issue.getUrl())),
+				Issue.class);
+		if (response.getStatusCode() != HttpStatus.OK) {
+			log.warn("Failed to close issue. Response status: "
+					+ response.getStatusCode());
+		}
+		return response.getBody();
 	}
 
 	private static class BasicAuthorizationInterceptor

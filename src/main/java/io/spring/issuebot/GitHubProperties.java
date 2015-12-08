@@ -16,6 +16,8 @@
 
 package io.spring.issuebot;
 
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -53,6 +55,11 @@ public class GitHubProperties {
 		 * The name of the repository.
 		 */
 		private String name;
+
+		/**
+		 * The names of the repository's collaborators.
+		 */
+		private List<String> collaborators;
 
 	}
 

@@ -16,6 +16,8 @@
 
 package io.spring.issuebot.github;
 
+import java.time.OffsetDateTime;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -30,14 +32,20 @@ public final class Comment {
 
 	private final User user;
 
+	private final OffsetDateTime creationTime;
+
 	/**
-	 * Creates a new comment that was authored by the given {@code user}.
+	 * Creates a new comment that was authored by the given {@code user} at the given
+	 * {@code creationTime}.
 	 *
 	 * @param user the user
+	 * @param creationTime the creation time
 	 */
 	@JsonCreator
-	public Comment(@JsonProperty("user") User user) {
+	public Comment(@JsonProperty("user") User user,
+			@JsonProperty("created_at") OffsetDateTime creationTime) {
 		this.user = user;
+		this.creationTime = creationTime;
 	}
 
 }

@@ -38,16 +38,15 @@ public class OpenedByCollaboratorTriageFilterTests {
 
 	@Test
 	public void openedByCollaborator() {
-		assertThat(
-				this.filter.triaged(new Issue(null, null, new User("Adam"), null, null)),
+		assertThat(this.filter.triaged(
+				new Issue(null, null, null, null, new User("Adam"), null, null, null)),
 				is(true));
 	}
 
 	@Test
 	public void openedByAnotherUser() {
-		assertThat(
-				this.filter
-						.triaged(new Issue(null, null, new User("Debbie"), null, null)),
+		assertThat(this.filter.triaged(
+				new Issue(null, null, null, null, new User("Debbie"), null, null, null)),
 				is(false));
 	}
 

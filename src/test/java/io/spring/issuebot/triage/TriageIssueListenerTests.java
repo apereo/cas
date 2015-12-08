@@ -46,7 +46,7 @@ public class TriageIssueListenerTests {
 
 	@Test
 	public void listenerIsCalledWhenIssueRequiresTriage() {
-		Issue issue = new Issue(null, null, null, null, null);
+		Issue issue = new Issue(null, null, null, null, null, null, null, null);
 		given(this.triageFilterOne.triaged(issue)).willReturn(false);
 		given(this.triageFilterTwo.triaged(issue)).willReturn(false);
 		this.issueListener.onOpenIssue(issue);
@@ -57,7 +57,7 @@ public class TriageIssueListenerTests {
 
 	@Test
 	public void listenerIsNotCalledWhenIssueHasAlreadyBeenTriaged() {
-		Issue issue = new Issue(null, null, null, null, null);
+		Issue issue = new Issue(null, null, null, null, null, null, null, null);
 		given(this.triageFilterOne.triaged(issue)).willReturn(true);
 		this.issueListener.onOpenIssue(issue);
 		verify(this.triageFilterOne).triaged(issue);

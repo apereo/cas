@@ -34,7 +34,7 @@ final class LabelledTriageFilter implements TriageFilter {
 	@Override
 	public boolean triaged(Issue issue) {
 		if (issue.getLabels() != null && !issue.getLabels().isEmpty()) {
-			log.debug("{} has been triaged. It has been labelled.", issue.getUrl());
+			log.debug("{} has been triaged. It has been labelled.", issue);
 			return true;
 		}
 		return false;

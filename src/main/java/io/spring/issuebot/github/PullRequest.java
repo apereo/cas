@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package io.spring.issuebot.triage;
+package io.spring.issuebot.github;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 /**
- * {@link EnableConfigurationProperties Configuration properties} for triaging GitHub
- * issues.
+ * Details of a GitHub pull request.
  *
  * @author Andy Wilkinson
  */
 @Getter
-@Setter
-@ConfigurationProperties(prefix = "issuebot.triage")
-class TriageProperties {
+public class PullRequest {
+
+	private final String url;
 
 	/**
-	 * The name of the label that should be applied to issues that are waiting for triage.
+	 * Creates a new {@code PullRequest} that has the given {@code url} in the GitHub API.
+	 * @param url the url
 	 */
-	private String label;
+	@JsonCreator
+	public PullRequest(@JsonProperty("url") String url) {
+		this.url = url;
+	}
 
 }

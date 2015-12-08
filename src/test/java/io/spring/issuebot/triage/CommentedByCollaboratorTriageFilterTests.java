@@ -45,7 +45,7 @@ public class CommentedByCollaboratorTriageFilterTests {
 	private final TriageFilter filter = new CommentedByCollaboratorTriageFilter(
 			Arrays.asList("Adam", "Brenda", "Charlie"), this.gitHub);
 
-	private final Issue issue = new Issue(null, null, null, null, null);
+	private final Issue issue = new Issue(null, null, null, null, null, null, null, null);
 
 	@Test
 	@SuppressWarnings("unchecked")
@@ -61,7 +61,7 @@ public class CommentedByCollaboratorTriageFilterTests {
 	public void noCommentsByCollaborators() {
 		Page<Comment> pageOne = mock(Page.class);
 		given(pageOne.getContent())
-				.willReturn(Arrays.asList(new Comment(new User("Debbie"))));
+				.willReturn(Arrays.asList(new Comment(new User("Debbie"), null)));
 		given(this.gitHub.getComments(this.issue)).willReturn(pageOne);
 		assertThat(this.filter.triaged(this.issue), is(false));
 	}
@@ -71,7 +71,7 @@ public class CommentedByCollaboratorTriageFilterTests {
 	public void commentByCollaboratorOnFirstPage() {
 		Page<Comment> pageOne = mock(Page.class);
 		given(pageOne.getContent())
-				.willReturn(Arrays.asList(new Comment(new User("Brenda"))));
+				.willReturn(Arrays.asList(new Comment(new User("Brenda"), null)));
 		given(this.gitHub.getComments(this.issue)).willReturn(pageOne);
 		assertThat(this.filter.triaged(this.issue), is(true));
 	}
@@ -81,10 +81,10 @@ public class CommentedByCollaboratorTriageFilterTests {
 	public void commentByCollaboratorOnLaterPage() {
 		Page<Comment> pageOne = mock(Page.class);
 		given(pageOne.getContent())
-				.willReturn(Arrays.asList(new Comment(new User("Debbie"))));
+				.willReturn(Arrays.asList(new Comment(new User("Debbie"), null)));
 		Page<Comment> pageTwo = mock(Page.class);
 		given(pageTwo.getContent())
-				.willReturn(Arrays.asList(new Comment(new User("Brenda"))));
+				.willReturn(Arrays.asList(new Comment(new User("Brenda"), null)));
 		given(pageOne.next()).willReturn(pageTwo);
 		given(this.gitHub.getComments(this.issue)).willReturn(pageOne);
 		assertThat(this.filter.triaged(this.issue), is(true));

@@ -55,8 +55,8 @@ final class CommentedByCollaboratorTriageFilter implements TriageFilter {
 		while (page != null) {
 			for (Comment comment : page.getContent()) {
 				if (this.collaborators.contains(comment.getUser().getLogin())) {
-					log.debug("{} has been triaged. It was commented on by {}",
-							issue.getUrl(), comment.getUser().getLogin());
+					log.debug("{} has been triaged. It was commented on by {}", issue,
+							comment.getUser());
 					return true;
 				}
 			}

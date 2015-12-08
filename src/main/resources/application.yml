@@ -3,10 +3,20 @@ issuebot:
     repository:
       organization: spring-projects
       name: spring-boot
+      collaborators:
+        - dsyer
+        - philwebb
+        - snicoll
+        - wilkinsona
   triage:
     label: waiting-for-triage
-    collaborators:
-      - dsyer
-      - philwebb
-      - snicoll
-      - wilkinsona
+  feedback:
+    required_label: waiting-for-feedback
+    provided_label: feedback-provided
+    reminder_comment: >
+      If you would like us to look at this issue, please provide the requested
+      information. If the information is not provided within the next 7 days this issue
+      will be closed.
+    close_comment: >
+      Closing due to lack of requested feedback. If you would like us to look at this
+      issue, please provide the requested information and we will re-open the issue.
