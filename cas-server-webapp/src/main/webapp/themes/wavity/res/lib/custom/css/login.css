@@ -1,0 +1,187 @@
+.form-control {
+	box-shadow : none;
+}
+#loginColumns {	
+	margin: 0 auto;
+    max-width: 900px;
+    padding: 150px 40px 10px;
+}
+#loginColumns .form-group .form-control {
+	border-bottom-left-radius: 0;
+    border-bottom-right-radius: 20px;
+    border-color: #808080;
+    border-image: none;
+    border-style: none solid solid none;
+    border-top-right-radius: 0;
+    border-width: medium 1px 1px medium;
+    height: 50px;
+    width: 100%;
+}
+#loginColumns .socialNetWorks {
+    border-color: #808080;
+    border-image: none;
+    border-style: solid none none solid;
+    border-top-left-radius: 20px;
+    border-width: 1px medium medium 1px;
+    height: 50px;
+    width: 100%;
+}
+#loginColumns .socialNetWorks label {
+	padding: 15px;
+	color: #777;
+}
+#loginColumns .socialNetWorks a {
+	padding: 16px;
+}
+#loginColumns p.text-muted {
+	margin : 13px 0 10px 10px;
+	font-size: 16px;
+}
+.usertext:focus, .passwordtext:focus {
+	box-shadow : none;
+}
+#top_notification {
+	position: relative;
+	margin-bottom: 10px;
+}
+
+.notification_container {
+	z-index: 91;
+	-webkit-transform: translateY(0);
+	transform: translateY(0);
+}
+
+.notification_error .notification_inner {
+	background: #e03e45;
+	background: rgba(166, 44, 56, .9);
+	box-shadow: 0 2px 1px rgba(1, 1, 1, .25);
+	border: 1px solid #850a16;
+	background-clip: padding-box;
+	color: #fff;
+}
+
+.notification_inner {
+	height: 30px;
+	padding: 0 11px;
+	font-size: 11px;
+	margin: 0 auto;
+	border-radius: 5px !important;
+	-webkit-border-radius: 5px !important;
+	width: 100% !important;
+	text-align: center;
+	margin-bottom: 10px;
+	display: none;
+}
+
+.notification_message {
+	padding-top: 10px;
+	font-size: 14px;
+	margin-left: 5px;
+	font-family: 'Fira Sans', sans-serif;
+}
+
+.notification-close {
+	position: relative;
+	font-weight: bold;
+	float: right;
+	cursor: pointer;
+}
+
+.notification-close>.fa-times {
+	color: #fff;
+	height: px;
+}
+
+.timesIcon {
+	font-size: 13px !important;
+}
+
+.btn {
+  display: inline-block;
+  padding: 6px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  background-image: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 10px 16px;
+}
+ 
+.btn-primary {
+  color: #fff;
+  background-color: #428bca;
+  border-color: #357ebd;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open .dropdown-toggle.btn-primary {
+  color: #fff;
+  background-color: none !important;
+  border-color: none !important;
+}
+
+/***********************
+  OUTLINE BUTTONS
+************************/
+
+.btn.outline {
+    background: none;
+    padding: 7px 0 0;
+    font-size : 24px;
+    font-weight: normal;
+}
+.btn-primary.outline {    
+    color: #337ab7;
+}
+.btn-primary.outline:hover, .btn-primary.outline:focus, .btn-primary.outline:active, .btn-primary.outline.active, .open > .dropdown-toggle.btn-primary {
+    color: none !important;
+    border-color: none !important;
+}
+.btn-primary.outline:active, .btn-primary.outline.active {
+    border-color: none !important;
+    color: none !important;
+    box-shadow: none ;
+}
+
+/***********************
+  CUSTON BTN VALUES
+************************/
+
+.btn {
+    padding: 14px 24px;
+    border: 0 none;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.btn:focus, .btn:active:focus, .btn.active:focus {
+    outline: 0 none;
+    background-color: none !important;
+  	border-color: none !important;
+}
+.btn-primary:active:hover,
+.btn-primary.active:hover,
+.open > .dropdown-toggle.btn-primary:hover,
+.btn-primary:active:focus,
+.btn-primary.active:focus,
+.open > .dropdown-toggle.btn-primary:focus,
+.btn-primary:active.focus,
+.btn-primary.active.focus,
+.open > .dropdown-toggle.btn-primary.focus {
+  color: #337ab7;
+  background-color: #fff !important;
+  border-color: #122b40;
+}
