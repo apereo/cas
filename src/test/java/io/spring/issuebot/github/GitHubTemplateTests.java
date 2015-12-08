@@ -158,11 +158,12 @@ public class GitHubTemplateTests {
 
 	@Test
 	public void addLabelToIssue() {
-		this.server.expect(requestTo("issueUrl")).andExpect(method(HttpMethod.POST))
+		this.server.expect(requestTo("labelsUrl")).andExpect(method(HttpMethod.POST))
 				.andExpect(basicAuth())
 				.andExpect(content().string("{\"labels\":[\"test\"]}")).andRespond(
 						withSuccess("[{\"name\":\"test\"}]", MediaType.APPLICATION_JSON));
-		Issue issue = new Issue("issueUrl", null, null, null, null, null, null, null);
+		Issue issue = new Issue("issueUrl", null, null, "labelsUrl{/name}", null, null,
+				null, null);
 		Issue modifiedIssue = this.gitHub.addLabel(issue, "test");
 		assertThat(modifiedIssue.getLabels(), hasSize(1));
 	}

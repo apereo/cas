@@ -130,7 +130,8 @@ public class GitHubTemplate implements GitHubOperations {
 		Map<String, Object> body = new HashMap<>();
 		body.put("labels", Arrays.asList(labelName));
 		ResponseEntity<Label[]> response = this.rest.exchange(
-				new RequestEntity<>(body, HttpMethod.POST, URI.create(issue.getUrl())),
+				new RequestEntity<>(body, HttpMethod.POST,
+						URI.create(issue.getLabelsUrl().replace("{/name}", ""))),
 				Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
 			log.warn("Failed to add label to issue. Response status: "
