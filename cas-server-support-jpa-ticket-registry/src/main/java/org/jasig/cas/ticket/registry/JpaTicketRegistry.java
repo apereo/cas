@@ -48,9 +48,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.2.1
- *
  */
 @Component("jpaTicketRegistry")
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
@@ -81,7 +79,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     private String ticketGrantingTicketPrefix = TicketGrantingTicket.PREFIX;
 
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
         logger.debug("Updated ticket [{}].", ticket);
     }
