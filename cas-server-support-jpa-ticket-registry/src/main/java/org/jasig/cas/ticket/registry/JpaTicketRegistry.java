@@ -34,7 +34,6 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,7 +72,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     private LockingStrategy jpaLockingStrategy;
 
     @NotNull
-    @PersistenceContext(unitName = "ticketEntityManagerFactory", type = PersistenceContextType.EXTENDED)
+    @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
     @NotNull
