@@ -17,4 +17,13 @@ public interface AttributeFilterMapper {
      * @param bean   the destination data bean
      */
     void mapAttributeFilter(RegisteredServiceAttributeFilter filter, ServiceData bean);
+
+    /**
+     * Create a {@link RegisteredServiceAttributeFilter} represented by the specified {@link ServiceData} bean. Return
+     * null if a supported {@link RegisteredServiceAttributeFilter} couldn't be created.
+     *
+     * @param data a source data bean
+     * @return the attribute filter represented by the specified data bean
+     */
+    RegisteredServiceAttributeFilter toAttributeFilter(ServiceData data);
 }
