@@ -25,6 +25,7 @@ import io.spring.issuebot.github.Issue;
 import io.spring.issuebot.github.Page;
 
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -66,6 +67,25 @@ public class RepositoryMonitorTests {
 		verify(this.issueListenerOne).onOpenIssue(issueTwo);
 		verify(this.issueListenerTwo).onOpenIssue(issueOne);
 		verify(this.issueListenerTwo).onOpenIssue(issueTwo);
+	}
+
+	@Test
+	public void exceptionFromAnIssueListenerIsHandledGracefully() {
+		@SuppressWarnings("unchecked")
+		Page<Issue> page = mock(Page.class);
+		Issue issue = new Issue(null, null, null, null, null, null, null, null);
+		given(page.getContent()).willReturn(Arrays.asList(issue));
+		given(this.gitHub.getIssues("test", "test")).willReturn(page);
+		willThrow(new RuntimeException()).given(this.issueListenerOne).onOpenIssue(issue);
+		this.repositoryMonitor.monitor();
+		verify(this.issueListenerOne).onOpenIssue(issue);
+		verify(this.issueListenerTwo).onOpenIssue(issue);
+	}
+
+	@Test
+	public void exceptionFromGitHubIsHandledGracefully() {
+		given(this.gitHub.getIssues("test", "test")).willThrow(new RuntimeException());
+		this.repositoryMonitor.monitor();
 	}
 
 }
