@@ -6,6 +6,10 @@ import org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.services.web.beans.RegisteredServiceSupportAccessEditBean;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Default mapper for converting {@link RegisteredServiceAccessStrategy} to/from {@link ServiceData}.
  *
@@ -31,5 +35,31 @@ public final class DefaultAccessStrategyMapper implements AccessStrategyMapper {
             accessBean.setStartingTime(def.getStartingDateTime());
             accessBean.setEndingTime(def.getEndingDateTime());
         }
+    }
+
+    @Override
+    public RegisteredServiceAccessStrategy toAccessStrategy(final ServiceData bean) {
+        final RegisteredServiceSupportAccessEditBean supportAccess = bean.getSupportAccess();
+
+        final TimeBasedRegisteredServiceAccessStrategy accessStrategy = new TimeBasedRegisteredServiceAccessStrategy();
+
+        accessStrategy.setEnabled(supportAccess.isCasEnabled());
+        accessStrategy.setSsoEnabled(supportAccess.isSsoEnabled());
+        accessStrategy.setRequireAllAttributes(supportAccess.isRequireAll());
+
+        final Map<String, Set<String>> requiredAttrs = supportAccess.getRequiredAttr();
+        final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
+        final Iterator<Map.Entry<String, Set<String>>> it = entries.iterator();
+        while (it.hasNext()) {
+            final Map.Entry<String, Set<String>> entry = it.next();
+            if (entry.getValue().isEmpty()) {
+                it.remove();
+            }
+        }
+        accessStrategy.setRequiredAttributes(requiredAttrs);
+
+        accessStrategy.setEndingDateTime(supportAccess.getEndingTime());
+        accessStrategy.setStartingDateTime(supportAccess.getStartingTime());
+        return accessStrategy;
     }
 }
