@@ -96,7 +96,7 @@ public class JpaTicketRegistryTests {
                 assertNotNull(result.get());
             }
         } catch (final Exception e) {
-            logger.debug("testConcurrentServiceTicketGeneration produced an error", e);
+            logger.error("testConcurrentServiceTicketGeneration produced an error", e);
             fail("testConcurrentServiceTicketGeneration failed.");
         } finally {
             executor.shutdownNow();
