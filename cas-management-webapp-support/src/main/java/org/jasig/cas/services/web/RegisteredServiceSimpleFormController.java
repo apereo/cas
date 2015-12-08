@@ -3,6 +3,7 @@ package org.jasig.cas.services.web;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
+import org.jasig.cas.services.web.factory.RegisteredServiceFactory;
 import org.jasig.cas.services.web.view.JsonViewUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,19 +40,28 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
     private final IPersonAttributeDao personAttributeDao;
 
     /**
+     * Instance of the RegisteredServiceFactory.
+     */
+    @NotNull
+    private final RegisteredServiceFactory registeredServiceFactory;
+
+    /**
      * Instantiates a new registered service simple form controller.
      *
-     * @param servicesManager    the services manager
-     * @param personAttributeDao the attribute repository
+     * @param servicesManager          the services manager
+     * @param personAttributeDao       the attribute repository
+     * @param registeredServiceFactory the registered service factory
      */
     @Autowired
     public RegisteredServiceSimpleFormController(
         @Qualifier("servicesManager")
         final ReloadableServicesManager servicesManager,
         @Qualifier("attributeRepository")
-        final IPersonAttributeDao personAttributeDao) {
+        final IPersonAttributeDao personAttributeDao,
+        final RegisteredServiceFactory registeredServiceFactory) {
         super(servicesManager);
         this.personAttributeDao = personAttributeDao;
+        this.registeredServiceFactory = registeredServiceFactory;
     }
 
     /**
@@ -94,9 +104,8 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                                final HttpServletRequest request, final HttpServletResponse response) {
 
         try {
-            RegisteredServiceEditBean bean = null;
+            final RegisteredServiceEditBean bean = new RegisteredServiceEditBean();
             if (id == -1) {
-                bean = new RegisteredServiceEditBean();
                 bean.setServiceData(null);
             } else {
                 final RegisteredService service = this.servicesManager.findServiceBy(id);
@@ -105,7 +114,7 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                     logger.warn("Invalid service id specified [{}]. Cannot find service in the registry", id);
                     throw new IllegalArgumentException("Service id " + id + " cannot be found");
                 }
-                bean = RegisteredServiceEditBean.fromRegisteredService(service);
+                bean.setServiceData(registeredServiceFactory.createServiceData(service));
             }
             final RegisteredServiceEditBean.FormData formData = bean.getFormData();
             final List<String> possibleAttributeNames = new ArrayList<>(this.personAttributeDao.getPossibleUserAttributeNames());
