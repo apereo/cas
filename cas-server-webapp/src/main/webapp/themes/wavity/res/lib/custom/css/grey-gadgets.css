@@ -1,0 +1,1491 @@
+/*--------- apple ipad--------*/
+@media only screen and (min-width:768px) and (max-width:769px){
+	.logincarousel
+	{
+		clear:both;
+		position:absolute;
+		margin-top:30px;
+		text-align:center;
+		width:380px;
+		font-size:12px;
+		margin-left:40px;
+	}
+	#login .box
+	{
+		margin-top: 25% !important;
+	}
+	.containerfooter .col-sm-6,.desktop .col-sm-6
+	{
+		width:50% !important;
+	}
+	.login-container {
+		left:28%;
+		width:350px;
+	}
+	.mobile
+	{
+		display:none;
+	} 
+	.carouselheading{
+		margin-left:-80px;
+	}
+	.carouselheading1
+	{
+		margin-left:-130px;
+	}
+	.carouselheading2
+	{
+		margin-left:-60px;
+	}
+	.fc-center{
+		font-size:6px !important;
+	}
+	.fc-toolbar .fc-center h2 {
+    	color: #8c8c8c;
+    	font-size: 12px !important;
+    	font-weight: bold;
+    	padding:5px !important;
+	}
+	.tile .tile-title .tile-config a, .tile .tile-title .tile-config i{		
+		width:30px !important;		
+	}		
+	.tab-vertical {		
+	 	width:60px !important;	
+	}		
+	#navbar-header-collapse .navbar-form, #navbar-header-collapse .serach-control {		
+     	margin-right: 33px;		
+     	width: 86px !important;		
+    }		
+    #navbar-header-collapse .expandWindow{		
+     	display:none;		
+    }		
+    .navbar-default .navbar-nav > li > a{	
+     	color:#fff;		
+    }		
+    .navbar-nav a.briefcase:hover, .navbar-nav a.addapp:hover, .navbar-nav a.hasnotifications:hover, .navbar-nav a.getSpaceNames:hover,.navbar-nav li.admin a:hover, .navbar-nav li.admin a {		
+	 	border-right: 0px solid #78464e;		
+	 	color:#fff !important;	
+    }		
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{		
+		 color:#fff !important;		
+		 background:transparent;		
+		 border-right: 1px solid #000 !important;	
+    }		
+   #sidebar-left{		
+	 	margin-top:60px !important;		
+	}		
+			
+	#adminContent{		
+		 min-height:500px;		
+		 height:100%;		
+		 margin-top:60px;		
+	}		
+	
+ 	.taskicon{		
+ 		color:#000 !important;		
+ 	}		
+	
+	#navbar-header-collapse span.caret{		
+		border-top:5px solid #fff !important;		
+	}		
+	.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{		
+		background:#232329 !important;		
+		color:#fff;		
+	}		
+	.navbar-default .navbar-nav > li > a:hover,		
+	.navbar-default .navbar-nav > li > a:focus, 		
+	.navbar-default .navbar-nav > li > a:hover span.icon-bg i.fa, 		
+	.navbar-default .navbar-nav > li > a.addapp:hover,		
+	a:hover .fa-user-secret {		
+  		color: #FFF;	
+  		background: #090B0A !important;		
+	}		
+	.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{		
+		color: #FFF;		
+  		background: #090B0A !important;		
+	}		
+	#apps-dropdown{		
+		width:350px !important;		
+	}		
+	.form-group div.col-sm-3{		
+		margin-left:10px;		
+	}
+	.navApp > li > a {		
+	     padding: 5px 5px 6px !important;		
+	    }
+	    #user-profile-1 .space-info{
+		margin-left:0px !important;
+	}
+	 #user-profile-1 .label-info{
+		 width:105px !important;
+		 margin-left:0px !important;
+	 }
+	 #spaceListGroup{
+	 	width:100px;
+	 }
+	 /*  .ribbon-wrapper{
+	   height: 50px !important;
+       width: 50px !important;
+       margin-right: 8px !important;
+	   }
+	 .ribbon-wrapper .ribbon-inner { 
+	   top:-1px !important
+	  } */
+	.cmenuactions {
+		background: none repeat scroll 0 0 #f0f0f0 !important;
+	}
+	 .profileImage .ajax-file-upload {		
+		margin-left:10px !important;		
+	  }
+	.info-box1 {
+		width:180px !important;
+    }
+	.usersList {
+	   font-size:11px;
+	   height:45px !important;
+	}
+	.info-box img {
+	  height:71px !important;
+	  width:54px !important;
+	  margin-right:5px !important;
+    }
+    label.taskDescription{
+    	width:76% !important;
+    }
+    /*profile page related*/
+    span.taskTimeColor {
+		margin-top: 0px !important;
+		width:87px !important;
+	}
+	/* Apple iPad devices appbuilder related CSS */
+	.categoryerror {
+		float: left;
+	}
+	.labelclass {
+		 width:89px;
+	}	
+ 	.hintClass {
+		padding-left: 10px;
+	}
+	.textMandMsg {
+		margin-left:115px;
+	}
+	.textManClass {
+		margin-left:110px;
+	}
+	#apps-dropdown /* by sheershika */ {
+		width:517px;
+	}			
+	  	
+}
+/*---------End apple ipad--------*/
+
+/*Ipad  rotation view*/
+@media (min-width: 1024px) {	
+    /* --------------------------------------------------------
+        Template Blur Skins for Desktop
+    -----------------------------------------------------------*/
+    [id^="style-"] {
+        background-size: 100% 100%;
+        background-attachment: fixed;
+    }
+    #style-red {
+        background-image: url(../img/body/violate.jpg);
+    }
+    #style-grey {
+        background: #ecf0f1 !important;
+    } 
+    /* Sidebar */
+    .side-menu > li > a:hover, .side-menu > li.active > a, .side-menu > li > a.active:hover, .side-menu > li.hovered > a {
+        background-color: rgba(0, 0, 0, 0.35);
+        color: #fff;
+        opacity: 1;
+        border-bottom:  1px solid #000;
+    }    
+    .profile-menu > li i {
+        position: absolute;
+        top: 8px;
+        color: #fff;
+    }    
+    .profile-menu > li i.right {
+        right: -30px;
+    }       
+    .profile-menu > li i.left {
+        left: -30px;
+    }    
+    .profile-menu > li:hover i.right {
+        right: 15px;
+    }    
+    .profile-menu > li:hover i.left {
+        left: 15px;
+    }
+    .info-box {
+	    padding: 10px;
+	    margin: 0 0 15px;
+	    max-width: auto;
+	    min-height: auto;    
+	    width: auto;
+    }
+    .profileImage .ajax-file-upload {		
+		margin-left:50px !important;		
+	}
+	#spaceListGroup{
+	    /* width:156px !important; */
+	}
+}
+/*End Ipad  rotation view*/
+
+/*Ipad design for task*/		
+@media (min-width: 768px) {		
+    .tile .tile-title .tile-config a, .tile .tile-title .tile-config i{		
+    width:30px !important;		
+    }		
+    .tab-vertical{		
+    width:60px !important;		
+    		
+    }
+}		
+
+/*--------- samsung tab--------*/
+@media only screen and (min-width:600px) and (max-width: 620px){
+	.logincarousel
+	{
+		clear:both;
+		position:absolute;
+		margin-top:30px;
+		text-align:center;
+		width:380px;
+		font-size:12px;
+		margin-left:40px;
+	}
+	#login .box
+	{
+		margin-top: 30% !important;
+	}
+	.logincarousel
+	{
+		clear:both;
+		position:absolute;
+		margin-top:30px;
+		text-align:center;
+		width:350px;
+		font-size:12px;
+		margin-left:40px;
+	}
+	.carouselitems
+	{
+		margin-left:10px;
+	}
+	.desktop{
+		display:none;
+	}
+	.login-container {
+		left:23%;
+		width:330px;
+	}	
+	.mobile .col-sm-3
+	{
+		width:25%;
+		float:left;
+	}	
+	.containerfooter .col-sm-6
+	{	
+		width:50%;
+		float:left;
+	}	
+	#footer {
+		height: 30px;
+	}
+	.carouselheading{
+		margin-left:-80px;
+	}
+	.carouselheading1
+	{
+		margin-left:-130px;
+	}
+	.carouselheading2
+	{
+		margin-left:-60px;
+	}
+	.content
+	{		
+		margin-left: 20px;
+	}
+	.carouselCaption
+	{
+		bottom:auto !important;
+		background-color:rgba(0, 0, 0, 0.0) !important;
+		margin-top:-0px !important;
+		width:70% ;
+	}
+	.spaceslistbox {
+		color: #FFF !important;
+	}
+	.yamm .yamm-content h2.yamm-category,
+	.yamm .yamm-content h3.yamm-category,
+	.yamm .yamm-content h4.yamm-category {
+  		color: #FFF !important;
+	}
+	.yamm .yamm-content ul li a {
+  		color: #FFF !important;
+	}
+	.yamm-col span i.fa-plus, .yamm-col ul.list-unstyled li span i.fa-trash-o, .yamm-col ul.list-unstyled li span i.fa-edit {
+		color: #FFF !important;
+	}
+	.navbar-nav > li > a {
+     padding: 12px 32px;
+    }
+    .navbar-nav > li > a > span > img {
+     width : 2% !important;
+    }
+    .navbar-form button.btn-search {
+      right: 0;
+      top: 18px;
+    }
+    .navbar-form {
+      border-bottom: 0 solid transparent !important;
+      border-top: 0 solid transparent !important;
+      box-shadow: 0 0 0 rgba(255, 255, 255, 0.1) inset, 0 0 0 rgba(255, 255, 255, 0.1) !important;
+    }
+    .navbar-default .navbar-nav > li > a {
+     color: #fff !important;
+    }
+    .dropdown span {
+     color: #fff !important;
+    }
+    .navbar-form .form-control {
+     width: 168px;
+     margin-left: 13px;
+    }
+    .navbar-nav li.expandWindow {
+     border-right: 0px solid #0b0b0d !important; 
+    }
+    /* .navbar-form button.btn-search {
+     right: 0 !important;
+    top: -2px !important;
+    } */
+    .navbar-form button.btn-search {
+      left: 178px !important;
+      top: -5px !important;
+    }
+    .expandWindow .hidden-xs {
+      display: inline-block !important;
+    }
+     header .dropdown-menu.spacesinfo::after, header .dropdown-menu.applicatioInfo::after {
+     left: 32px !important;
+     top: 34px !important;
+     }
+    header .dropdown-menu.appsinfo::after {		
+	      left: 32px !important;		
+	      top: 35px !important;		
+	    }
+    
+    header .toolbar .dropdown-menu.userinfo:after {
+     
+       top: 42px !important;
+       right: 262px !important;
+    }
+    .applicatioInfo{
+     width: 480px;
+    }
+    .appsinfo {
+     min-height: 27px !important;
+     padding-bottom:20px;
+     width: 596px !important;
+    }
+    #myApps{
+    margin-right:5px;
+    }
+    .navbar-nav .open .dropdown-menu {
+     margin-left: 27px !important;
+     margin-right: 18px !important;
+    }
+    .searchwidth{
+     width: 590px !important;
+    }
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
+     background-color:transparent !important;
+     margin-right: 7px;
+    }
+    .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
+      background-color:rgba(0,0,0,0.15) !important;
+    }
+     ul.dropdown-menu.spacesinfo {		
+	     min-width: 208px !important;		
+	     width: 596px !important;		
+	    }
+    .applicatioInfo {
+     width: 596px !important;
+     margin-bottom: 6px !important;
+    }
+    .navbar-nav > li > a {
+     line-height: 13px !important;
+    }
+    .dropdown span {
+      color: #fff !important;
+    }
+    .navbar-form {
+      margin: -15px !important;
+    }
+    
+    .nav .open > a > img, .nav .open > a:hover > img, .nav .open > a:focus > img {
+       margin-right: 246px;
+    }
+     .navbar-collapse.in
+     {
+ 		overflow-y:visible !important;
+ 
+     }
+     .navApp > li > a {
+     padding: 5px 115px 6px !important;
+    }
+    .info-box img{
+     padding: 0px !important;
+    }
+    #users-setting {
+    padding-bottom: 35px;
+    }
+    
+   .ribbon-wrapper {		
+	    margin-right:162px !important;		
+	    }		
+	    #user-profile-1 .space-info{		
+	    margin-left:211px !important;		
+	    }		
+	    #user-profile-1 .label-info{		
+	     margin-left:190px !important;		
+	    }		
+	     .profileImage .ajax-file-upload {		
+		margin-left:222px !important;		
+	  }		
+	  		
+	  #avatar{		
+	  padding-left:126px;		
+	  padding-right:126px;		
+	  }
+.heading a.pull-left {
+	  margin-top:-11px !important;
+	}
+	#navbar-header-collapse {
+	background:#2f2f37;
+	margin-top:-4px;
+	}
+}
+/*---------EOF samsung tab--------*/
+/* Samsung Tab devices CSS for appbuilder related*/
+	 @media only screen and (orientation:portrait)
+	  	{
+		  	.labelclass
+		  	{
+		  		width:100px;
+		  	}	
+		  	.hintClass
+		  	{
+			  	padding-left: 10px;
+			}
+			.categoryerror
+			{
+			  	float: none;
+			}
+			.progressRequired
+			{
+			  	margin-bottom:5px;
+			}
+			.textMandMsg,.textManClass
+			{
+			  	margin-left:20px;
+			}
+	  	} 
+ /* Samsung Tab devices CSS for appbuilder related*/
+
+/*--------- samsung s5 mobile--------*/
+@media only screen and (min-width: 360px) and (max-width: 361px){
+	.login-container 
+	{
+    	right: 32px !important;
+	}
+	#footer
+	{
+		bottom: 0px !important;
+	}
+
+	ul.dropdown-menu.spacesinfo {
+     min-width: 208px !important;
+     width: 356px !important;
+   }
+   .applicatioInfo, .appsinfo {
+    margin-bottom: 6px !important;
+    width: 356px !important;
+   }
+   header .dropdown-menu.applicatioInfo::after {
+     left: 32px !important;
+     top: 33px !important;
+    }
+    .profileImage .ajax-file-upload {		
+     margin-left:10px !important;		
+	}
+}
+ /*---------EOF sravan---------*/
+/*---------End of samsung s5--------*/
+
+ /*---------sravan---------*/
+/*---------Rotation samsung s5--------*/
+@media only screen and (min-width: 640px) and (max-width: 641px){	
+    .logincarousel
+	{
+		clear:both;
+		position:absolute;
+		margin-top:30px;
+		text-align:center;
+		width:300px;
+		font-size:12px;
+		margin-left:40px;
+	}
+	.login-container 
+	{
+    	right: 160px !important;
+	}
+	.desktop{
+		display:none;
+	}
+	.mobile .col-sm-3
+	{
+		width:25%;
+		float:left;
+	}	
+	.containerfooter .col-sm-6
+	{	
+		width:50%;
+		float:left;
+	}	
+	#footer {
+		height: 50px;
+		bottom : -240px !important;
+	}
+	.carouselheading{
+		margin-left:-20px;
+	}
+	.carouselheading1
+	{
+		margin-left:-70px;
+	}
+	.carouselCaption
+	{
+		bottom:auto !important;
+		background-color:rgba(0, 0, 0, 0.0) !important;
+		margin-top:-0px !important;
+		width:60% ;
+	}
+	#footer
+	{
+		bottom: -260px !important;
+	}
+	.navbar-form button.btn-search {
+    	right: 2px !important;
+    	top: 17px !important;
+	}
+	.navbar-form .form-control {
+		width: 100px;
+	}
+	.navbar-nav > li > a {
+     padding: 10px 32px;
+    }
+    .navbar-nav > li > a > span > img {
+     width: 3% !important;
+    }
+    .navbar-form button.btn-search {
+      right: 0;
+      top: 18px;
+    }
+    .navbar-form {
+      border-bottom: 0 solid transparent !important;
+      border-top: 0 solid transparent !important;
+      box-shadow: 0 0 0 rgba(255, 255, 255, 0.1) inset, 0 0 0 rgba(255, 255, 255, 0.1) !important;
+    }
+    .navbar-default .navbar-nav > li > a {
+     color: #fff !important;
+    }
+    .dropdown span {
+     color: #fff !important;
+    }
+    .navbar-form .form-control {
+     width: 168px;
+     margin-left: 13px;
+    }
+    .navbar-nav li.expandWindow {
+     border-right: 0px solid #0b0b0d !important; 
+    }
+    .navbar-nav > li > .appsinfo {
+      margin-top: 0 !important;
+     }
+    .navbar-form button.btn-search {
+      left: 178px !important;
+      top: -5px !important;
+    }
+    .expandWindow .hidden-xs {
+      display: inline-block !important;
+    }
+    *::before, *::after {
+    box-sizing: border-box;
+    }
+    #topnav.navbar-default .spacesinfo .row.yamm-col-bordered .row > .yamm-col:not(:last-child) {
+    border-right: 1px solid #2f2f37 !important;
+    }
+    header .dropdown-menu.spacesinfo::after, header .dropdown-menu.appsinfo::after {
+     left: 32px !important;
+     top: 32px !important;
+    }
+    header .dropdown-menu.applicatioInfo::after{
+     left: 32px !important;
+     top: 37px !important;
+    }
+    header .toolbar .dropdown-menu.userinfo::after {
+      top: 44px !important;
+      right: 262px !important;
+    }
+    .appsinfo {
+     min-height: 37px !important;
+     padding: 18px 0 !important;
+     width: 636px !important
+    }
+    .navbar-nav .open .dropdown-menu {
+     margin-left: 27px !important;
+     margin-right: 18px !important;
+    }
+    .searchwidth{
+     width: 590px !important;
+    }
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
+     background-color:transparent !important;
+     margin-right: -1px;
+    }
+    .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
+     background-color: rgba(0,0,0,0.15) !important;
+    }
+    .applicatioInfo {
+     width: 636px !important;
+     margin-bottom: 6px !important;
+    }
+    .navbar-nav > li > a {
+     line-height: 12px !important;
+    }
+    .dropdown span {
+      color: #fff !important;
+    }
+    .navbar-form {
+      margin: -15px !important;
+    }
+    .nav .open > a > img, .nav .open > a:hover > img, .nav .open > a:focus > img {
+       margin-right: 246px;
+    }
+    .navbar-collapse.in
+    {
+      overflow-y: visible !important;
+    }
+     ul.dropdown-menu.spacesinfo {
+      min-width: 208px !important;
+      width: 636px !important;
+     }
+     .childsptoggle{
+      margin-right:7px !important;
+     }
+     .info-box {
+      height: 50px !important;
+      width: 77% !important;
+     }
+     .info-box img {
+      height: 71% !important;
+      margin-right: 5px !important;
+      padding-right: 5px !important;
+      width: 35% !important;
+      padding: 1% 2% !important;
+    }
+    /*---------EOF sravan---------*/
+     .profileImage .ajax-file-upload {		
+		margin-left:150px !important;		
+	  }
+    
+}    
+ 
+/*---------EOF samsung s5 Rotation--------*/
+
+/*--------- iphone 5--------*/
+ @media only screen and (min-width:320px) and (max-width: 568px) {
+	 .logincarousel
+	{
+		clear:both;
+		position:absolute;
+		margin-top:30px;
+		text-align:center;
+		width:330px !important;
+		font-size:12px;
+		margin-left:40px;
+	}
+	#footer
+	{
+		bottom: -10px !important;
+	}
+	.login-container {
+		width:290px;
+	}
+	.desktop
+	{
+	display:none;
+	}
+	.mobile .col-sm-3
+	{
+		width:25%;
+		float:left;
+	}
+	.containerfooter .col-sm-6
+	{	
+		width:50%;
+		float:left;
+	}	
+	#footer {
+		height: 50px;
+	}	
+	.carouselCaption
+	{
+		bottom:auto !important;
+		background-color:rgba(0, 0, 0, 0.0) !important;
+		margin-top:-0px !important;
+		width:70% ;
+	}
+	.yamm .yamm-content h2.yamm-category,
+	.yamm .yamm-content h3.yamm-category,
+	.yamm .yamm-content h4.yamm-category {
+  		color: #FFF !important;
+	}
+	.yamm .yamm-content ul li a {
+  		color: #FFF !important;
+	}
+	.yamm-col span i.fa-plus, .yamm-col ul.list-unstyled li span i.fa-trash-o, .yamm-col ul.list-unstyled li span i.fa-edit {
+		color: #FFF !important;
+	}
+	.navbar-default .navbar-nav > li > a {
+		color: #FFF !important;
+	}
+	.navbar-form button.btn-search {
+    	right: 2px !important;
+    	top: 17px !important;
+	}
+	.navbar-form .form-control {
+		width: 100px;
+	}
+	.fc-center{
+		font-size:6px !important;
+	}
+	.fc-toolbar .fc-center h2 {
+    	color: #8c8c8c;
+    	font-size: 12px !important;
+    	font-weight: bold;
+    	padding:5px !important;
+	}
+	.navApp > li > a {
+	padding: 4px 45px 14px;
+	}
+	.navbar-nav > li > a {
+     padding: 10px 32px;       /*sravan*/
+    }
+    .navbar-nav > li > a > span > img {
+     width : 4% !important;
+    }
+    .navbar-form button.btn-search {
+      right: 0;
+      top: 18px;
+    }
+    .navbar-form {
+      border-bottom: 0 solid transparent !important;
+      border-top: 0 solid transparent !important;
+      box-shadow: 0 0 0 rgba(255, 255, 255, 0.1) inset, 0 0 0 rgba(255, 255, 255, 0.1) !important;
+    }
+    .navbar-default .navbar-nav > li > a {
+     color: #fff !important;
+    }
+    .dropdown span {
+     color: #fff !important;
+    }
+    
+    .navbar-form .form-control {
+     width: 168px;
+     margin-left: 13px;
+    }
+    .navbar-nav li.expandWindow {
+     border-right: 0px solid #0b0b0d !important; 
+    }
+    /*-------sravan-------------*/
+    .navbar-nav > li > .appsinfo {
+      margin-top: 0 !important;
+     }
+    .navbar-form button.btn-search {
+      left: 178px !important;
+      top: -5px !important;
+    }
+    .expandWindow .hidden-xs {
+      display: inline-block !important;
+    }
+    #topnav.navbar-default .spacesinfo .row.yamm-col-bordered .row > .yamm-col:not(:last-child) {
+    border-right: 1px solid #2f2f37 !important;
+    }
+    header .dropdown-menu.spacesinfo::after, header .dropdown-menu.appsinfo::after, header .dropdown-menu.applicatioInfo::after {
+     left: 32px !important;
+     top: 31px !important;
+    }
+     header .toolbar .dropdown-menu.userinfo::after {
+      top: 44px !important;
+      right: 262px !important;
+    }
+    .appsinfo {
+     min-height: 37px !important;
+     width: 316px !important;
+     padding: 20px 0 !important;
+    }
+    .navbar-nav .open .dropdown-menu {
+     margin-left: 27px !important;
+     margin-right: 18px !important;
+    }
+    .searchwidth{
+     width: 590px !important;
+    }
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
+     background-color:transparent !important;
+     margin-right: -1px;
+    }
+    .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
+     background-color: rgba(0,0,0,0.15) !important;
+    }
+    .applicatioInfo {
+     width: 316px !important;
+     margin-bottom: 6px !important;
+    }
+    .navbar-nav > li > a {
+     line-height: 12px !important;
+    }
+    .dropdown span {
+      color: #fff !important;
+    }
+    .navbar-form {
+      margin: -15px !important;
+    }
+    .nav .open > a > img, .nav .open > a:hover > img, .nav .open > a:focus > img {
+       margin-right: 246px;
+    }
+    .navbar-collapse.in
+    {
+      overflow-y: visible !important;
+    }
+     ul.dropdown-menu.spacesinfo {
+      min-width: 208px !important;
+      width: 299px !important;
+     }
+     .childsptoggle{
+      margin-right:7px !important;
+     }
+     .info-box {
+      height: 50px !important;
+      width: 77% !important;
+     }
+     .info-box img {
+      height: 71% !important;
+      margin-right: 5px !important;
+      padding-right: 5px !important;
+      width: 35% !important;
+      padding: 1% 2% !important;
+    } 
+    /*---------EOF sravan---------*/
+    .ribbon-wrapper {		
+	  margin-right:20px !important;		
+	 }		
+	 #user-profile-1 .space-info{		
+	  margin-left:70px !important;		
+	  }		
+	  #user-profile-1 .label-info{		
+	   margin-left:50px !important;		
+	   }		
+	   .profileImage .ajax-file-upload {		
+		margin-left:106px !important;		
+	   }
+}
+/*---------EOF iphone 5--------*/
+/*---------sravan---------*/
+/*--------- iphone 5 Roattion--------*/
+@media only screen and (min-width: 568px) and (max-width: 569px) {
+	ul.dropdown-menu.spacesinfo, .appsinfo {
+		min-width: 208px !important;
+     	width: 546px !important;
+}
+	.login-container 
+	{
+    	right: 105px !important;
+	}
+	#footer
+	{
+		bottom: -260px !important;
+	}
+	.appsinfo {
+     min-width: 208px !important;
+     width: 564px  !important;
+     
+    }
+	.navbar-nav > li > a > span > img {
+     width: 3% !important;
+    }
+    .applicatioInfo {
+     width: 564px !important;
+    }
+    header .dropdown-menu.applicatioInfo::after {
+     top: 35px !important;
+    }
+    .navbar-collapse.in
+    {
+      overflow-y: visible !important;
+    }
+    /*---------EOF sravan---------*/
+    .ribbon-wrapper {		
+      margin-right:148px !important;		
+	 }		
+	 #user-profile-1 .space-info{		
+	 margin-left:192px !important;		
+	 }		
+	 #user-profile-1 .label-info{		
+	 margin-left:167px !important;		
+	 }		
+	 .profileImage .ajax-file-upload {		
+      margin-left:208px !important;		
+	 }		
+	 #avatar{		
+	  padding-left:170px !important;		
+	  padding-right:170px !important;		
+	 }
+}
+/*---------EOF iphone 5--------*/
+/*---------sravan---------*/
+
+/*--------sravan---------------/
+/*--------- iphone 6--------*/
+ @media only screen and (min-width:375px) and (max-width: 376px) {
+ .logincarousel
+	{
+		clear:both;
+		position:absolute;
+		margin-top:30px;
+		text-align:center;
+		width:300px;
+		font-size:12px;
+		margin-left:40px;
+	}
+	#footer
+	{
+		bottom: 0px !important;
+	}
+	.login-container {
+		right: 38px;
+		width:300px;
+	}
+	.desktop{
+		display:none;
+	}
+	.mobile .col-sm-3
+	{
+		width:25%;
+		float:left;
+	}	
+	.containerfooter .col-sm-6
+	{	
+		width:50%;
+		float:left;
+	}	
+	#footer {
+		height: 50px;
+	}
+	.carouselheading{
+		margin-left:-20px;
+	}
+	.carouselheading1
+	{
+		margin-left:-70px;
+	}
+	.carouselCaption
+	{
+		bottom:auto !important;
+		background-color:rgba(0, 0, 0, 0.0) !important;
+		margin-top:-0px !important;
+		width:60% ;
+	}
+	.yamm .yamm-content h2.yamm-category,
+	.yamm .yamm-content h3.yamm-category,
+	.yamm .yamm-content h4.yamm-category {
+  		color: #FFF !important;
+	}
+	.yamm .yamm-content ul li a {
+  		color: #FFF !important;
+	}
+	.yamm-col span i.fa-plus, .yamm-col ul.list-unstyled li span i.fa-trash-o, .yamm-col ul.list-unstyled li span i.fa-edit {
+		color: #FFF !important;
+	}
+	.navApp > li > a {
+	padding: 4px 58px 14px;
+	}	
+	 .ribbon-wrapper {		
+	 margin-right:52px !important;		
+	} 		
+	  #user-profile-1 .space-info {		
+	  margin-left:102px !important;		
+	}		
+	  #user-profile-1 .label-info {		
+	  margin-left:76px !important;		
+	}			
+	  #avatar {		
+	  padding-left:70px !important;		
+	  padding-right:70px !important;		
+	 }	
+	 ul.dropdown-menu.spacesinfo {
+     min-width: 208px !important;
+     width: 371px !important;
+    }
+    .applicatioInfo, .appsinfo {
+     margin-bottom: 6px !important;
+     width: 371px !important;
+    }
+    header .dropdown-menu.applicatioInfo::after {
+    left: 32px !important;
+    top: 33px !important;
+    }	
+	 
+}
+/*----------sravan-------------*/
+/*--------- iphone 6 rotation--------*/
+@media only screen and (min-width:667px) and (max-width: 668px){
+	.logincarousel
+	{
+		clear:both;
+		position:absolute;
+		margin-top:30px;
+		text-align:center;
+		width:300px;
+		font-size:12px;
+		margin-left:40px;
+	}
+	.login-container 
+	{
+    	right: 168px !important;
+	}
+	.desktop{
+		display:none;
+	}
+	.mobile .col-sm-3
+	{
+		width:25%;
+		float:left;
+	}	
+	.containerfooter .col-sm-6
+	{	
+		width:50%;
+		float:left;
+	}	
+	#footer 
+	{
+		height: 50px;
+		bottom : -240px !important;
+	}
+	.carouselheading{
+		margin-left:-20px;
+	}
+	.carouselheading1
+	{
+		margin-left:-70px;
+	}
+	.carouselCaption
+	{
+		bottom:auto !important;
+		background-color:rgba(0, 0, 0, 0.0) !important;
+		margin-top:-0px !important;
+		width:60% ;
+	}
+	.navbar-form button.btn-search {
+    	right: 2px !important;
+    	top: 17px !important;
+	}
+	.navbar-form .form-control {
+		width: 100px;
+	}
+	.navApp > li > a {
+	padding: 4px 45px 14px;
+	}
+	.navbar-nav > li > a {
+     padding: 10px 32px;
+    }
+    .navbar-nav > li > a > span > img {
+     width : 3% !important;
+    }
+    .navbar-form button.btn-search {
+      right: 0;
+      top: 18px;
+    }
+    .navbar-form {
+      border-bottom: 0 solid transparent !important;
+      border-top: 0 solid transparent !important;
+      box-shadow: 0 0 0 rgba(255, 255, 255, 0.1) inset, 0 0 0 rgba(255, 255, 255, 0.1) !important;
+    }
+    .navbar-default .navbar-nav > li > a {
+     color: #fff !important;
+    }
+    .dropdown span {
+     color: #fff !important;
+    }
+    .navbar-form .form-control {
+     width: 168px;
+     margin-left: 13px;
+    }
+    .navbar-nav li.expandWindow {
+     border-right: 0px solid #0b0b0d !important; 
+    }
+    .navbar-nav > li > .appsinfo {
+      margin-top: 0 !important;
+     }
+    .navbar-form button.btn-search {
+      left: 178px !important;
+      top: -5px !important;
+    }
+    .expandWindow .hidden-xs {
+      display: inline-block !important;
+    }
+    #topnav.navbar-default .spacesinfo .row.yamm-col-bordered .row > .yamm-col:not(:last-child) {
+    border-right: 1px solid #2f2f37 !important;
+    }
+    header .dropdown-menu.spacesinfo::after, header .dropdown-menu.appsinfo::after {
+     left: 32px !important;
+     top: 31px !important;
+    }
+    header .dropdown-menu.applicatioInfo::after{
+     left: 32px !important;
+     top: 38px !important;
+    }
+    header .toolbar .dropdown-menu.userinfo::after {
+      top: 44px !important;
+      right: 262px !important;
+    }
+    ul.dropdown-menu.spacesinfo {
+     min-width: 208px !important;
+     width: 663px !important;
+    }
+	.applicatioInfo{
+     margin-bottom: 6px !important;
+     width: 354px !important;
+    }
+    .appsinfo {
+     min-height: 37px !important;
+     width: 663px !important;
+     padding: 20px 0 !important;
+    }
+    .navbar-nav .open .dropdown-menu {
+     margin-left: 27px !important;
+     margin-right: 18px !important;
+    }
+    .searchwidth {
+     width: 615px !important;
+    }
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
+     background-color:transparent !important;
+     margin-right: -1px;
+    }
+    .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
+     background-color: rgba(0,0,0,0.15) !important;
+    }
+    .applicatioInfo {
+     width: 663px !important;
+     margin-bottom: 6px !important;
+    }
+    .navbar-nav > li > a {
+     line-height: 12px !important;
+    }
+    .dropdown span {
+      color: #fff !important;
+    }
+    .navbar-form {
+      margin: -15px !important;
+    }
+    .nav .open > a > img, .nav .open > a:hover > img, .nav .open > a:focus > img {
+       margin-right: 246px;
+    }
+    .navbar-collapse.in
+    {
+      overflow-y: visible !important;
+    }
+    ul.dropdown-menu.sapceinfo{
+    	min-width: 208px !important;
+    	width : 549px !important;
+    }    
+     .childsptoggle{
+      margin-right:7px !important;
+     }
+     .info-box {
+      height: 50px !important;
+      width: 77% !important;
+     }
+     .info-box img {
+      height: 71% !important;
+      margin-right: 5px !important;
+      padding-right: 5px !important;
+      width: 35% !important;
+      padding: 1% 2% !important;
+    } 
+     .ribbon-wrapper {		
+	    margin-right:197px !important;		
+	    }		
+	     #user-profile-1 .space-info{		
+	    margin-left:244px !important;		
+	    }		
+	    #user-profile-1 .label-info{		
+	     margin-left:215px !important;		
+	    }		
+	    .profileImage .ajax-file-upload {		
+		margin-left:256px !important;		
+	  }		
+	   #avatar{		
+	  padding-left:189px !important;		
+	  padding-right:189px !important;		
+	  }
+}
+/*---------EOF iphone 6 rotation--------*/
+/*---------EOF sravan--------*/
+
+/*---------sravan--------*/
+/*--------- iphone 6 Plus--------*/
+@media only screen and (min-width: 414px) and (max-width: 415px) {
+	.login-container 
+	{
+    	right: 60px !important;
+	}
+	#footer 
+	{
+		bottom : 0px !important;
+	}
+	ul.dropdown-menu.spacesinfo  {
+     min-width: 208px !important;
+     width: 409px !important;
+   }
+   .appsinfo {
+    width: 409px !important;
+   }
+   .applicatioInfo {
+    margin-bottom: 6px !important;
+    width: 410px !important;
+   }
+   header .dropdown-menu.applicatioInfo::after {
+    top: 36px !important;
+   } 
+   	.ribbon-wrapper {		
+	    margin-right:68px !important;		
+	    }		
+	     #user-profile-1 .space-info{		
+	    margin-left:116px !important;		
+	    }		
+	    #user-profile-1 .label-info{		
+	     margin-left:94px !important;		
+	    }		
+	      .profileImage .ajax-file-upload {		
+		margin-left:131px !important;		
+	    }		
+	    #avatar{		
+	  padding-left:70px !important;		
+	  padding-right:70px !important;		
+	  }
+}
+/*---------EOF sravan--------*/
+/*--------- end of iphone 6plus--------*/
+/*------------sravan------------------*/
+/*--------- iphone 6 Plus rotation--------*/
+@media only screen and (min-width: 736px) and (max-width: 737px){	
+	.logincarousel
+	{
+		clear:both;
+		position:absolute;
+		margin-top:30px;
+		text-align:center;
+		width:300px;
+		font-size:12px;
+		margin-left:40px;
+	}
+	.login-container 
+	{
+    	right: 211px !important;
+	}
+	.desktop{
+		display:none;
+	}
+	.mobile .col-sm-3
+	{
+		width:25%;
+		float:left;
+	}	
+	.containerfooter .col-sm-6
+	{	
+		width:50%;
+		float:left;
+	}	
+	#footer 
+	{
+		height: 50px;
+		bottom : -240px !important;
+	}
+	.carouselheading{
+		margin-left:-20px;
+	}
+	.carouselheading1
+	{
+		margin-left:-70px;
+	}
+	.carouselCaption
+	{
+		bottom:auto !important;
+		background-color:rgba(0, 0, 0, 0.0) !important;
+		margin-top:-0px !important;
+		width:60% ;
+	}
+	.navbar-form button.btn-search {
+    	right: 2px !important;
+    	top: 17px !important;
+	}
+	.navbar-form .form-control {
+		width: 100px;
+	}
+	.navApp > li > a {
+	padding: 4px 45px 14px;
+	}
+	.navbar-form button.btn-search {
+    	right: 2px !important;
+    	top: 17px !important;
+	}
+	.navbar-form .form-control {
+		width: 100px;
+	}
+	.navbar-nav > li > a {
+     padding: 10px 32px;
+    }
+    .navbar-nav > li > a > span > img {
+     width : 3% !important;
+    }
+    .navbar-form {
+      border-bottom: 0 solid transparent !important;
+      border-top: 0 solid transparent !important;
+      box-shadow: 0 0 0 rgba(255, 255, 255, 0.1) inset, 0 0 0 rgba(255, 255, 255, 0.1) !important;
+    }
+    .navbar-default .navbar-nav > li > a {
+     color: #fff !important;
+    }
+    .dropdown span {
+     color: #fff !important;
+    }
+    .navbar-form .form-control {
+     width: 168px;
+     margin-left: 13px;
+    }
+    .navbar-nav li.expandWindow {
+     border-right: 0px solid #0b0b0d !important; 
+    }
+    .navbar-nav > li > .appsinfo {
+      margin-top: 0 !important;
+     }
+    .navbar-form button.btn-search {
+      left: 178px !important;
+      top: -5px !important;
+    }
+    .expandWindow .hidden-xs {
+      display: inline-block !important;
+    }
+    #topnav.navbar-default .spacesinfo .row.yamm-col-bordered .row > .yamm-col:not(:last-child) {
+    border-right: 1px solid #2f2f37 !important;
+    }
+    header .dropdown-menu.spacesinfo::after,  header .dropdown-menu.appsinfo::after {
+     left: 32px !important;
+     top: 32px !important;
+    }
+    header .dropdown-menu.applicatioInfo::after{
+     left: 32px !important;
+     top: 40px !important;
+    }
+    header .toolbar .dropdown-menu.userinfo::after {
+      top: 44px !important;
+      right: 262px !important;
+    }
+    ul.dropdown-menu.spacesinfo {
+     min-width: 208px !important;
+     width: 732px !important;
+   }
+   .appsinfo {
+     min-height: 37px !important;
+     width: 731px !important;
+     padding: 20px 0 !important;
+    }
+    .navbar-nav .open .dropdown-menu {
+     margin-left: 27px !important;
+     margin-right: 18px !important;
+    }
+    .searchwidth{
+     width: 684px !important;
+    }
+    .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
+     background-color:transparent !important;
+     margin-right: -1px;
+    }
+    .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
+     background-color: rgba(0,0,0,0.15) !important;
+    }
+    .applicatioInfo {
+     width: 732px !important;
+     margin-bottom: 6px !important;
+    }
+    .navbar-nav > li > a {
+     line-height: 12px !important;
+    }
+    .navbar-form {
+      margin: -15px !important;
+    }
+    .nav .open > a > img, .nav .open > a:hover > img, .nav .open > a:focus > img {
+       margin-right: 246px;
+    }
+    .navbar-collapse.in
+    {
+      overflow-y: visible !important;
+    }
+    .childsptoggle{
+      margin-right:7px !important;
+     }
+     .info-box {
+      height: 50px !important;
+      width: 77% !important;
+     }
+     .info-box img {
+      height: 71% !important;
+      margin-right: 5px !important;
+      padding-right: 5px !important;
+      width: 35% !important;
+      padding: 1% 2% !important;
+    } 
+    /* .ribbon-wrapper {		
+	    margin-right:231px !important;		
+	    }		
+	     #user-profile-1 .space-info{		
+	    margin-left:279px !important;		
+	    }		 */
+	    #user-profile-1 .label-info{		
+	     margin-left:256px !important;		
+	    }		
+	    .profileImage .ajax-file-upload {		
+		margin-left:295px !important;		
+	  }		
+	    #avatar{		
+	  padding-left:195px !important;		
+	  padding-right:195px !important;		
+	  }
+.dropdown .fa-th-large {
+	    margin-left:15px;
+	  }
+	  .heading a.pull-left {
+	    margin-top:-11px !important;
+	  }
+}
+/*---------EOF iphone 6 Plus rotation--------*/
+/*------------sravan------------------*/

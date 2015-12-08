@@ -1,0 +1,37 @@
+.widget-side-buffer {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.widget-layout {
+	background-color: white;
+	overflow: hidden;
+}
+
+.widget-content {
+	overflow: hidden;
+	max-height: 500px;
+}
+
+.widget-content::-webkit-scrollbar{
+  width:0px; 
+  background:transparent;
+} 
+
+.widget-content:hover {
+	overflow-y: auto;
+}
+
+.widget-box {
+	border: 1px solid rgb(124,124,124);
+}
+
+.widget-padding {
+	padding-left:1px;
+}
+
+.widget-title {
+	margin-top: 5px;
+	margin-left: 15px;
+	font-size: 25px;
+}

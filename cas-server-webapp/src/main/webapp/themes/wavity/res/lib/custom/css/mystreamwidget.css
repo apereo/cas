@@ -1,0 +1,98 @@
+
+.bottom-buffer { 
+	margin-bottom:10px;
+}
+
+.bottom-small-buffer {
+	margin-bottom:5px;
+}
+
+.top-buffer { 
+	margin-top:10px;
+}
+
+.padding-right {
+	padding-right: 15px;
+}
+
+.myapp-box {
+	height: 100px;
+	width: 100px;
+}
+
+.contact-widget {
+	border: 1px solid;
+	border-color: black;
+}
+
+.sidemenuwidget {
+	background-color: white;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.mystream-content {
+	color: black;
+}
+
+.mystream-comment-like-big {
+	font-size: 14px;
+}
+
+.mystream-comment-like-small {
+	font-size: 10px;
+}
+
+.mystream-date {
+	font-size: 11px;
+}
+
+.mystream-bottom-border {
+	border-bottom: 1px solid rgb(124,124,124);
+}
+
+.grey-font {
+	color: rgb(124,124,124);
+}
+
+.blue-font {
+	color: rgb(0,151,206);
+}
+
+.orange-font {
+	color: rgb(255,120,0);
+}
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+.nopadding-left {
+	padding-left: 0 !important;
+	margin-left: 0 !important;
+}
+
+.nopadding-right {
+	padding-right: 0 !important;
+	margin-right: 0 !important;
+}
+.widget-img {
+	max-width: 100%;
+    height: auto;
+    width: auto;
+}
+
+.streamLikedList {
+	font-size: 12px;
+}
+
+#userComment {
+	width: 100%;
+	border: none;
+	resize: none;
+}
+
+.float-right {
+	float: right;
+}

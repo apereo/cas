@@ -1,0 +1,58 @@
+/* Override Navbar color */
+.navbar {
+	background-image: none;
+}
+
+.navbar-default {
+	background-color: #25313e;
+	border-color: #25313e;
+}
+
+/* header menu */
+.space-parent {
+	border-style: solid;
+	border-width: 1px;
+}
+
+.space-default {
+	border-radius: 15px 50px;
+	background: #8AC007;
+	padding: 20px;
+}
+
+.dropdown-applistmenu {
+	min-width: 300px;
+}
+
+.dropdown-spacelist {
+	min-width: 250px;
+}
+
+.based-on-text {
+	display: inline-block;
+}
+
+.spacetreetable td {
+	font-family: Tahoma;
+	font-size: 15px;
+	color: #ff0000;
+	display: inline-block;
+}
+
+.top-buffer {
+	margin-top: 10px;
+}
+
+.navbar .navbar-nav li a {
+	line-height: 50px;
+}
+
+.side-padding {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+  background-color: transparent;

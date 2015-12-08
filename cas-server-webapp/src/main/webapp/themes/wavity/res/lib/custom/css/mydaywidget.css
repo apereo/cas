@@ -1,0 +1,52 @@
+.text-danger, .text-primary {
+	font-size: 10px;
+}
+.nav-tabs li.text-primary, .nav-tabs li.text-muted {
+	font-size: 18px;	
+}
+.nav-tabs {
+	border-bottom: none !important;
+}
+.nav-tabs li.text-primary:FIRST-CHILD {
+	border-right: 1px solid #8C8C8C;
+	padding: 0 20px 0 0;	
+}
+.nav-tabs li.text-muted {
+	padding : 0 0 0 20px;
+}
+h3.text-primary {
+	font-size: 18px;
+}
+.checkbox .text-primary {
+	font-size: 18px;
+}
+.checkbox .status {
+	font-size: 13px;
+}
+#taskEvents .checkbox {
+	margin-bottom: 15px;
+}
+.myDayTabs > li > a {
+	padding: 0 20px 0 0 !important;
+	color: #555;	
+}
+
+.myDayTabs > li:FIRST-CHILD {
+	border-right: 1px solid #555;
+}
+
+.myDayTabs > li.active > a,
+.myDayTabs > li.active > a:hover,
+.myDayTabs > li.active > a:focus {
+  color: #337ab7;
+  cursor: default;
+  background-color: none !important;
+  border: none !important;
+  border-bottom-color: transparent;
+}
+.myDayTabs > li > a:hover,
+.myDayTabs > li > a:focus {
+  text-decoration: none !important;
+  background-color: #FFF !important;
+  border-color: #FFF !important;
+}
