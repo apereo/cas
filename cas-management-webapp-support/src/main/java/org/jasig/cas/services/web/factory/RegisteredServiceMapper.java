@@ -17,4 +17,12 @@ public interface RegisteredServiceMapper {
      * @param bean the destination data bean
      */
     void mapRegisteredService(RegisteredService svc, ServiceData bean);
+
+    /**
+     * Create a RegisteredService represented by the specified {@link ServiceData} bean.
+     *
+     * @param data a source data bean
+     * @return the registered service represented by the specified data bean
+     */
+    RegisteredService toRegisteredService(ServiceData data);
 }

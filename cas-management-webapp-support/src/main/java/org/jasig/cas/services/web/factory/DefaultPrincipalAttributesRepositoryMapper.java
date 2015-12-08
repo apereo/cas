@@ -1,14 +1,18 @@
 package org.jasig.cas.services.web.factory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.jasig.cas.services.web.beans.RegisteredServiceAttributeReleasePolicyEditBean;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Default mapper for converting {@link PrincipalAttributesRepository} to/from {@link ServiceData}.
@@ -45,5 +49,22 @@ public class DefaultPrincipalAttributesRepositoryMapper implements PrincipalAttr
                 }
             }
         }
+    }
+
+    @Override
+    public PrincipalAttributesRepository toPrincipalRepository(final ServiceData data) {
+        final RegisteredServiceAttributeReleasePolicyEditBean attrRelease = data.getAttrRelease();
+        final String attrType = attrRelease.getAttrOption();
+
+        if (StringUtils.equalsIgnoreCase(attrType, RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED
+                .toString())) {
+            return new CachingPrincipalAttributesRepository(TimeUnit.valueOf(attrRelease.getCachedTimeUnit()
+                    .toUpperCase()), attrRelease.getCachedExpiration());
+        } else if (StringUtils.equalsIgnoreCase(attrType, RegisteredServiceAttributeReleasePolicyEditBean.Types
+                .DEFAULT.toString())) {
+            return new DefaultPrincipalAttributesRepository();
+        }
+
+        return null;
     }
 }

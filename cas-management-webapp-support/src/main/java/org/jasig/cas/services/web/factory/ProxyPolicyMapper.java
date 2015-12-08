@@ -17,4 +17,13 @@ public interface ProxyPolicyMapper {
      * @param bean   the destination data bean
      */
     void mapProxyPolicy(RegisteredServiceProxyPolicy policy, ServiceData bean);
+
+    /**
+     * Create a {@link RegisteredServiceProxyPolicy} represented by the specified {@link ServiceData} bean. Return null
+     * if a supported {@link RegisteredServiceProxyPolicy} couldn't be created.
+     *
+     * @param data a source data bean
+     * @return the proxy policy represented by the specified data bean
+     */
+    RegisteredServiceProxyPolicy toProxyPolicy(ServiceData data);
 }

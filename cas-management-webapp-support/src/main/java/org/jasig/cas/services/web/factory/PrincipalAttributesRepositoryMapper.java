@@ -17,4 +17,13 @@ public interface PrincipalAttributesRepositoryMapper {
      * @param bean       the destination data bean
      */
     void mapPrincipalRepository(PrincipalAttributesRepository repository, ServiceData bean);
+
+    /**
+     * Create a {@link PrincipalAttributesRepository} represented by the specified {@link ServiceData} bean. Return null
+     * if a supported {@link PrincipalAttributesRepository} couldn't be created.
+     *
+     * @param data a source data bean
+     * @return the principal attribute repository config represented by the specified data bean
+     */
+    PrincipalAttributesRepository toPrincipalRepository(ServiceData data);
 }

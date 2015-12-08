@@ -17,4 +17,12 @@ public interface RegisteredServiceFactory {
      * @return the data bean representing the provided service
      */
     ServiceData createServiceData(RegisteredService svc);
+
+    /**
+     * Create a {@link RegisteredService} object from the provided {@link ServiceData} data bean.
+     *
+     * @param data the data bean being converted
+     * @return the registered service created from the provided data bean
+     */
+    RegisteredService createRegisteredService(ServiceData data);
 }

@@ -78,7 +78,7 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                             final BindingResult result) {
         try {
 
-            final RegisteredService svcToUse = service.toRegisteredService(this.personAttributeDao);
+            final RegisteredService svcToUse = registeredServiceFactory.createRegisteredService(service);
             final RegisteredService newSvc = this.servicesManager.save(svcToUse);
             logger.info("Saved changes to service {}", svcToUse.getId());
 

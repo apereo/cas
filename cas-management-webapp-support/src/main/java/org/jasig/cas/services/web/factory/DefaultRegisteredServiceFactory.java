@@ -1,6 +1,11 @@
 package org.jasig.cas.services.web.factory;
 
+import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategy;
+import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.jasig.cas.services.RegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -96,5 +101,38 @@ public final class DefaultRegisteredServiceFactory implements RegisteredServiceF
         attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
 
         return bean;
+    }
+
+    @Override
+    public RegisteredService createRegisteredService(final ServiceData data) {
+        final RegisteredService svc = registeredServiceMapper.toRegisteredService(data);
+
+        if (svc instanceof AbstractRegisteredService) {
+            final AbstractRegisteredService absSvc = (AbstractRegisteredService) svc;
+
+            final RegisteredServiceAccessStrategy accessStrategy = accessStrategyMapper.toAccessStrategy(data);
+            if (accessStrategy != null) {
+                absSvc.setAccessStrategy(accessStrategy);
+            }
+
+            final RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
+                    usernameAttributeProviderMapper.toUsernameAttributeProvider(data);
+            if (usernameAttributeProvider != null) {
+                absSvc.setUsernameAttributeProvider(usernameAttributeProvider);
+            }
+
+            final RegisteredServiceProxyPolicy proxyPolicy = proxyPolicyMapper.toProxyPolicy(data);
+            if (proxyPolicy != null) {
+                absSvc.setProxyPolicy(proxyPolicy);
+            }
+
+            final RegisteredServiceAttributeReleasePolicy attrPolicy = attributeReleasePolicyMapper
+                    .toAttributeReleasePolicy(data);
+            if (attrPolicy != null) {
+                absSvc.setAttributeReleasePolicy(attrPolicy);
+            }
+        }
+
+        return svc;
     }
 }

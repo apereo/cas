@@ -17,4 +17,13 @@ public interface UsernameAttributeProviderMapper {
      * @param bean     the destination data bean
      */
     void mapUsernameAttributeProvider(RegisteredServiceUsernameAttributeProvider provider, ServiceData bean);
+
+    /**
+     * Create a {@link RegisteredServiceUsernameAttributeProvider} represented by the specified {@link ServiceData}
+     * bean. Return null if a supported {@link RegisteredServiceUsernameAttributeProvider} couldn't be created.
+     *
+     * @param data a source data bean
+     * @return the username attribute provider represented by the specified data bean
+     */
+    RegisteredServiceUsernameAttributeProvider toUsernameAttributeProvider(ServiceData data);
 }
