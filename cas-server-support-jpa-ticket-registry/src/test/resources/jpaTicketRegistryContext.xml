@@ -58,7 +58,7 @@
             p:preferredTestQuery="${ticketreg.database.pool.connectionHealthQuery:select 1}"/>
 
     <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
-            abstract="true"/>
+          abstract="true"/>
 
     <bean id="ticketEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
           p:dataSource-ref="dataSourceTicket" />
@@ -66,6 +66,7 @@
     <bean id="ticketTransactionManager" parent="abstractTransactionManager"
           p:entityManagerFactory-ref="ticketEntityManagerFactory" />
 
+    <!--
     <tx:advice id="txCentralAuthenticationServiceAdvice" transaction-manager="ticketTransactionManager">
         <tx:attributes>
             <tx:method name="destroyTicketGrantingTicket" read-only="false" />
@@ -80,7 +81,7 @@
             <tx:method name="getTickets" read-only="true" />
         </tx:attributes>
     </tx:advice>
-
+    -->
 
     <tx:advice id="txRegistryAdvice" transaction-manager="ticketTransactionManager">
         <tx:attributes>
@@ -125,8 +126,10 @@
         <aop:pointcut id="ticketRegistryTicketGrantingTicketDelegatorOperations"
                       expression="execution(* org.jasig.cas.ticket.registry.TicketGrantingTicketDelegator.*(..))"/>
 
+        <!--
         <aop:pointcut id="casOperations"
                       expression="execution(* org.jasig.cas.CentralAuthenticationServiceImpl.*(..))"/>
+        -->
 
         <aop:advisor advice-ref="txRegistryAdvice"
                      pointcut-ref="ticketRegistryOperations"/>
@@ -136,8 +139,11 @@
                      pointcut-ref="ticketRegistryServiceTicketDelegatorOperations"/>
         <aop:advisor advice-ref="txRegistryServiceTicketDelegatorAdvice"
                      pointcut-ref="ticketRegistryTicketGrantingTicketDelegatorOperations"/>
+
+        <!--
         <aop:advisor advice-ref="txCentralAuthenticationServiceAdvice"
                      pointcut-ref="casOperations"/>
+        -->
 
     </aop:config>
 
