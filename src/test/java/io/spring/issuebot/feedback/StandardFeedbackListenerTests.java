@@ -64,6 +64,8 @@ public class StandardFeedbackListenerTests {
 	public void feedbackRequiredAndOverdue() {
 		this.listener.feedbackRequired(this.issue, OffsetDateTime.now().minusDays(15));
 		verify(this.gitHub).addComment(this.issue, "closing");
+		verify(this.gitHub).close(this.issue);
+		verify(this.gitHub).removeLabel(this.issue, "required");
 	}
 
 }

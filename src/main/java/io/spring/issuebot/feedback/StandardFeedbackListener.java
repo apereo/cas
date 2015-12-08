@@ -67,6 +67,7 @@ final class StandardFeedbackListener implements FeedbackListener {
 	private void close(Issue issue) {
 		this.gitHub.addComment(issue, this.closeComment);
 		this.gitHub.close(issue);
+		this.gitHub.removeLabel(issue, this.requiredLabel);
 	}
 
 	private void remind(Issue issue) {
