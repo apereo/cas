@@ -1,0 +1,135 @@
+.sidebar{
+      z-index: 999999;
+      position: fixed;
+      top: -1px;
+      bottom: -1px;
+      padding:0px;
+      width: auto;
+      /* background-color: #fff; */
+      -webkit-background-clip: padding-box;
+      background-clip: padding-box;
+     /*  border: 1px solid #ccc;
+      border: 1px solid rgba(0, 0, 0, .15); */
+      -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+     /*  box-shadow: 0 6px 12px rgba(0, 0, 0, .175); */
+     
+}
+
+.sidebar > .row > .col-xs-12, .sidebar > .row > .col-sm-12, .sidebar > .row > .col-md-12, .sidebar > .row > .col-lg-12{
+      padding:0px;
+      /* position: absolute; */
+      bottom: 0px;
+      top: 0px;
+      overflow: auto;           
+}
+
+.sidebar >.row{
+      margin:0px;
+}
+
+.sidebar {
+      width: auto;
+}
+
+.sidebar.sidebar-right{
+      right:0px;
+      left:20px;
+}
+
+@media (min-width: 400px) {
+
+}
+@media (min-width: 528px) {
+      .sidebar {
+            width: 300px;
+      }
+      .sidebar.sidebar-right{
+            right:0px;
+            left:auto;
+      }
+}
+@media (min-width: 768px) {
+      .sidebar {
+            width: 230px;
+            margin-top:192.5px;
+            margin-bottom: 410px;
+      }
+      .sidebar.sidebar-right{
+            right:0px;
+            left:auto;
+      }
+}
+@media (min-width: 992px) {
+      .sidebar {
+            width: 230px;
+      }
+      .sidebar.sidebar-right{
+            right:0px;
+            left:auto;
+      }
+}
+@media (min-width: 1200px) {
+      .sidebar {
+            width: 230px;
+      }
+      .sidebar.sidebar-right{
+            right:0px;
+            left:auto;
+      }
+}
+.toggler{
+      -webkit-background-clip: padding-box;
+      background-clip: padding-box;
+      border: 1px solid #ccc;
+      border: 1px solid rgba(0, 0, 0, .15);
+      width: 20px;
+      /* height: 48px; */
+      height: 45px;
+      position: absolute;
+      /* top: 45%; */
+      top: -1px;
+      cursor: pointer;
+}
+
+.sidebar-right > .toggler{
+      -webkit-border-top-left-radius: 4px;
+      -webkit-border-bottom-left-radius: 4px;
+      -moz-border-radius-topleft: 4px;
+      -moz-border-radius-bottomleft: 4px;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+      /* border-right: 1px solid #fff; */
+      -webkit-box-shadow: -1px 0px 8px rgba(0, 0, 0, .175);
+      box-shadow: -1px 0px 8px rgba(0, 0, 0, .175);      		
+      left: -20px;      
+} 
+
+.sidebar-right > .toggler > span{
+      margin:15px 4px;
+}
+
+.sidebar-right > .toggler > .fa-chevron-left{
+      display:none;
+}
+
+.sidebar .submenu{
+      /* display: none;
+      position: fixed; */
+} 
+
+/*Native BootStrap Hack*/
+/* .sidebar .list-group-item:last-child, .sidebar .list-group-item:first-child{
+      border-radius:0px;
+}
+
+.sidebar .list-group{
+      margin-bottom:0px;
+}
+.sidebar .list-group-item{
+      padding: 5px;
+      border: 1px solid #DDD;
+      border-left: 0px;
+      border-right: 0px;
+      margin-bottom: 0px;
+      margin-top: -1px;
+} */

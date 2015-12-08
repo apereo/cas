@@ -1,0 +1,69 @@
+<script type="text/template">
+<!-- New UI for login Screen by Sridhar -->
+<!-- begin Content -->
+<% var nls = getLoginNLS(); %>
+<section id="loginColumns" class="animated fadeInDown">
+	<div class="row">		
+
+		<div class="col-md-6 hidden-xs">			
+			<img id="domainIcon" width="400px" height="400px" class="m-t-50" />
+		</div>
+
+		<div class="col-md-6">
+			<div id="top_notification" data-module="notifications">
+				<div class="notification_container notification_error is-open" data-type="error" role="alert">
+					<div class="notification_outer">
+						<div class="notification_inner">
+							<div class="notification_message p-r-15 p-t-5" id="errorMsg"><%= getErrorMessage() %></div>
+							<div class="notification-close"><i class="fa fa-times timesIcon"></i></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<img id="appIcon" src="themes/wavity/res/lib/custom/img/LogInScreen/LogInScreen_OneTeam_logo.png" width="200px" height="200px" />
+			<div class="clearfix">&nbsp;</div>
+			<form id="fm1" class="box tile animated active login-container p-b-0" action="/auth/login" method="post">
+				<input type="hidden" name="lt" value="" />
+				<input type="hidden" name="execution" value="" />
+				<input type="hidden" name="_eventId" value="submit" />
+				<div class="form-group">
+					<div class="col-sm-12">
+      					<!--<input type="text" class="form-control usertext" name="ot_username" id="inputEmail" maxlength="30"  placeholder="<%= nls.ENTEREMAIL %>" onfocus="this.placeholder=''" onblur="this.placeholder='<%= nls.ENTEREMAIL %>'">-->
+						<input id="username" name="username" class="form-control usertext" placeholder="Enter Email" tabindex="1" accesskey="u" type="text" value="" size="25" autocomplete="off">						
+						<span class="help-inline"></span>
+    				</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-12">
+	    				<!--<input type="password" class="form-control passwordtext" id="inputpassword" name="ot_password" maxlength="30" placeholder="<%= nls.PASSWORD %>" onfocus="this.placeholder=''" onblur="this.placeholder='<%= nls.PASSWORD %>'">-->
+						<input id="password" name="password" class="form-control passwordtext" name="ot_password" placeholder="Password" tabindex="2" accesskey="p" type="password" value="" size="25" autocomplete="off">
+						<span class="help-inline"></span>
+    				</div>
+				</div>
+				<div class="form-group">
+    				<div class="col-sm-12">
+						<input type="submit" class="btn btn-primary outline pull-left" name="submit" id="submit" value="<%= nls.LOGIN %>">
+						<a href="javascript:;;" class="pull-right"><p class="text-muted">Forgot Password</p></a>
+	    			</div>
+  				</div>
+			</form>
+			<div class="clearfix">&nbsp;</div>
+			<div class="socialNetWorks">
+				<label>LOGIN WITH</label>
+				<a href="javascript:;;"><img src="themes/wavity/res/lib/custom/img/LogInScreen/ICN_FaceBook_120x120.png" width="32px" height="32px" /></a>
+				<a href="javascript:;;"><img src="themes/wavity/res/lib/custom/img/LogInScreen/ICN_Gplus_120x120.png" width="32px" height="32px" /></a>
+				<a href="javascript:;;"><img src="themes/wavity/res/lib/custom/img/LogInScreen/ICN_Twitter_120x120.png" width="32px" height="32px" /></a>
+				<a href="javascript:;;"><img src="themes/wavity/res/lib/custom/img/LogInScreen/ICN_LinkedIn_120x120.png" width="32px" height="32px" /></a>
+			</div>			
+
+			<!--div>
+				<a href="javascript:;;" class="pull-left"><p class="text-primary">SIGN OUT</p></a>
+			</div-->
+
+		</div>
+	</div>
+	
+</section>
+
+<!-- end Content -->
+</script>

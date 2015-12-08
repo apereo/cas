@@ -1,0 +1,147 @@
+/* Width */
+.w-100 {
+    width: 100%;
+}
+
+/* Position */
+.p-relative { position: relative; }
+.p-absolute { position: absolute; }
+
+/* Background */
+.bg-none { background: none !important; }
+
+/* Overflow + Text */
+.o-hidden { overflow: hidden; }
+.o-visible { overflow: visible; }
+.o-auto { overflow: auto; }fbfbfb
+.t-overflow { width: 54%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; float: left; }
+
+/* Line height */
+.l-100 { line-height: 100%; }
+
+/* Display */
+.d-block { display: block; }
+
+/* Shadow */
+.t-s-0 { text-shadow: none; }
+.b-s-0 { box-shadow: none; }
+
+/* Border */
+.b-0 { border: 0; }
+
+/* Font */
+.f-bold { font-weight: bold; }
+
+/* Paddings */
+.p-0 { padding: 0 !important; }
+.p-5 { padding: 5px !important; }
+.p-10 { padding: 10px !important; }
+.p-15 { padding: 15px !important; }
+.p-20 { padding: 20px !important; }
+
+.p-t-0 { padding-top: 0 !important; }
+.p-t-5 { padding-top: 5px !important; }
+.p-t-10 { padding-top: 10px !important; }
+.p-t-15 { padding-top: 15px !important; }
+.p-t-20 { padding-top: 20px !important; }
+.p-t-40 { padding-top: 40px !important; }
+
+.p-b-0 { padding-bottom: 0 !important; }
+.p-b-5 { padding-bottom: 5px !important; }
+.p-b-10 { padding-bottom: 10px !important; }
+.p-b-15 { padding-bottom: 15px !important; }
+.p-b-20 { padding-bottom: 20px !important; }
+
+.p-l-0 { padding-left: 0 !important; }
+.p-l-5 { padding-left: 5px !important; }
+.p-l-10 { padding-left: 10px !important; }
+.p-l-15 { padding-left: 15px !important; }
+.p-l-20 { padding-left: 20px !important; }
+.p-l-25 { padding-left: 25px !important; }
+
+.p-r-0 { padding-right: 0 !important; }
+.p-r-5 { padding-right: 5px !important; }
+.p-r-10 { padding-right: 10px !important; }
+.p-r-15 { padding-right: 15px !important; }
+.p-r-20 { padding-right: 20px !important; }
+.p-r-40 { padding-right: 40px !important; }
+
+/* Margin */
+.m-0 { margin: 0 !important; }
+.m-5 { margin: 5px !important; }
+.m-10 { margin: 10px !important; }
+.m-15 { margin: 15px !important; }
+.m-20 { margin: 20px !important; }
+
+.m-t-0 { margin-top: 0 !important; }
+.m-t-2 { margin-top: 2px !important; }
+.m-t-5 { margin-top: 5px !important; }
+.m-t-10 { margin-top: 10px !important; }
+.m-t-15 { margin-top: 15px !important; }
+.m-t-20 { margin-top: 20px !important; }
+.m-t-30 { margin-top: 30px !important; }
+.m-t-35 { margin-top: 35px !important; }
+.m-t-40 { margin-top: 40px !important; }
+.m-t-45 { margin-top: 45px !important; }
+.m-t-50 { margin-top: 50px !important; }
+.m-t-70 { margin-top: 70px !important; }
+.m-t-90 { margin-top: 90px !important; }
+.m-t-100 { margin-top: 100px !important; }
+
+.m-b-0 { margin-bottom: 0 !important; }
+.m-b-5 { margin-bottom: 5px !important; }
+.m-b-10 { margin-bottom: 10px !important; }
+.m-b-15 { margin-bottom: 15px !important; }
+.m-b-20 { margin-bottom: 20px !important; }
+.m-b-25 { margin-bottom: 25px !important; }
+
+.m-l-0 { margin-left: 0 !important; }
+.m-l-5 { margin-left: 5px !important; }
+.m-l-7 { margin-left: 7px !important; }
+.m-l-10 { margin-left: 10px !important; }
+.m-l-15 { margin-left: 15px !important; }
+.m-l-20 { margin-left: 20px !important; }
+.m-l-30 { margin-left: 30px !important; }
+.m-l-35 { margin-left: 35px !important; }
+.m-l-40 { margin-left: 40px !important; }
+.m-l-60 { margin-left: 60px !important; }
+.m-l-70 { margin-left: 70px !important; }
+.m-l-90 { margin-left: 90px !important; }
+.m-l-120 { margin-left: 120px !important; }
+.m-l-150 { margin-left: 150px !important; }
+.m-l-180 { margin-left: 180px !important; }
+.m-l-200 { margin-left: 200px !important; }
+.m-l-250 { margin-left: 250px !important; }
+
+.m-r-0 { margin-right: 0 !important; }
+.m-r-2 { margin-right: 2px !important; }
+.m-r-5 { margin-right: 5px !important; }
+.m-r-10 { margin-right: 10px !important; }
+.m-r-9 { margin-right: 9px !important; }
+.m-r-15 { margin-right: 15px !important; }
+.m-r-20 { margin-right: 20px !important; }
+.m-r-40 { margin-right: 50px !important; }
+
+/* Carousel Control */
+.control-box {
+    text-align: right;
+    width: 100%;
+    }
+.carousel-control{
+    /* background: #666;
+    border: 0px;
+    border-radius: 0px; */
+    display: inline-block;
+    font-size: 34px;
+    font-weight: 200;
+    line-height: 18px;
+    opacity: 0.5;
+    padding: 4px 25px 4px 4px;
+    position: absolute;
+    height: 30px;
+    width: 15px;
+}
+
+html,body{
+    height: 100%
+}
