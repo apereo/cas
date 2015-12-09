@@ -4,9 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationSupervisor;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -58,9 +61,17 @@ public class TicketsResource {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
+    @NotNull
+    @Autowired
+    @Qualifier("authenticationSupervisor")
+    private AuthenticationSupervisor authenticationSupervisor;
+
     @Autowired(required = false)
     private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
 
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
     /**
      * JSON ObjectMapper.
      */
@@ -79,17 +90,24 @@ public class TicketsResource {
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                                    final HttpServletRequest request) throws JsonProcessingException {
         try (Formatter fmt = new Formatter()) {
-            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(this.credentialFactory.fromRequestBody(requestBody));
-            final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
-            final HttpHeaders headers = new HttpHeaders();
-            headers.setLocation(ticketReference);
-            headers.setContentType(MediaType.TEXT_HTML);
-            fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-            fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
-                    .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
-                    .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
-                    .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
-            return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
+
+            final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
+
+            if (this.authenticationSupervisor.authenticate(credential)) {
+                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(authenticationContext);
+                final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
+                final HttpHeaders headers = new HttpHeaders();
+                headers.setLocation(ticketReference);
+                headers.setContentType(MediaType.TEXT_HTML);
+                fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
+                fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
+                        .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
+                        .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
+                        .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
+                return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
+            }
+            return new ResponseEntity<>("Credentials could not be authenticated", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         catch(final AuthenticationException e) {
             final List<String> authnExceptions = new LinkedList<>();
@@ -124,9 +142,12 @@ public class TicketsResource {
     public final ResponseEntity<String> createServiceTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
-            final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
-                    new WebApplicationServiceFactory().createService(requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE)));
-            return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
+            final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
+                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
+                        this.webApplicationServiceFactory.createService(serviceId), authenticationContext);
+                return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
+
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {

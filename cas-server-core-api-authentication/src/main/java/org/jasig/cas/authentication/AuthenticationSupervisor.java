@@ -10,5 +10,24 @@ package org.jasig.cas.authentication;
  * @since 4.2
  */
 public interface AuthenticationSupervisor {
+    /**
+     * Authenticate boolean.
+     *
+     * @param credentials the credentials
+     * @return the boolean
+     * @throws AuthenticationException the authentication exception
+     */
+    boolean authenticate(final Credential... credentials) throws AuthenticationException;
 
+    /**
+     * Build authentication context authentication context.
+     *
+     * @return the authentication context
+     */
+    AuthenticationContext build();
+
+    /**
+     * Clear.
+     */
+    void clear();
 }

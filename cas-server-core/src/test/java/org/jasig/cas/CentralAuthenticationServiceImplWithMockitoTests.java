@@ -2,9 +2,12 @@ package org.jasig.cas;
 
 import com.google.common.base.Predicates;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationHandler;
-import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.AuthenticationSupervisor;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
@@ -83,6 +86,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     private CentralAuthenticationServiceImpl cas;
     private Authentication authentication;
     private TicketRegistry ticketRegMock;
+    private AuthenticationSupervisor authenticationSupervisor;
 
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
         private final String id;
@@ -100,7 +104,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     }
     
     @Before
-    public void prepareNewCAS() {
+    public void prepareNewCAS() throws Exception {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(DateTime.now());
         final CredentialMetaData metadata = new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
@@ -134,6 +138,13 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         //Mock TicketRegistry
         mockTicketRegistry(stMock, tgtMock, stMock2, tgtMock2);
 
+        final AuthenticationContext ctx = mock(AuthenticationContext.class);
+        when(ctx.getAuthentication()).thenReturn(this.authentication);
+
+        this.authenticationSupervisor = mock(AuthenticationSupervisor.class);
+        when(this.authenticationSupervisor.authenticate(any(Credential.class))).thenReturn(true);
+        when(this.authenticationSupervisor.build()).thenReturn(ctx);
+
         //Mock ServicesManager
         final ServicesManager smMock = getServicesManager(service1, service2);
         final DefaultTicketFactory factory = new DefaultTicketFactory();
@@ -144,9 +155,11 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         factory.initialize();
 
-        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock, mock(AuthenticationManager.class),
+        this.cas = new CentralAuthenticationServiceImpl(ticketRegMock,
                 factory, smMock, mock(LogoutManager.class));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+
+
     }
 
     private static ServicesManager getServicesManager(final Service service1, final Service service2) {
@@ -173,20 +186,19 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test(expected=InvalidTicketException.class)
     public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.cas.createProxyGrantingTicket("bad-st",
-                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+        this.cas.createProxyGrantingTicket("bad-st", this.authenticationSupervisor.build());
     }
 
     @Test(expected=UnauthorizedServiceException.class)
     public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.cas.createProxyGrantingTicket(ST_ID,
-                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationContext ctx = getAuthenticationContext(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+        this.cas.createProxyGrantingTicket(ST_ID, ctx);
     }
 
     @Test(expected=UnauthorizedProxyingException.class)
-    public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws AbstractTicketException {
+    public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws Exception {
         this.cas.grantServiceTicket(TGT_ID,
-                org.jasig.cas.services.TestUtils.getService(SVC1_ID));
+                org.jasig.cas.services.TestUtils.getService(SVC1_ID), this.authenticationSupervisor.build());
     }
 
     @Test(expected=IllegalArgumentException.class)

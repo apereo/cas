@@ -34,4 +34,5 @@
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
 </beans>

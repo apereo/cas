@@ -87,6 +87,7 @@
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
     <alias name="defaultTicketRegistry" alias="ticketRegistry" />
     <util:map id="uniqueIdGeneratorsMap"/>
     <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
