@@ -134,27 +134,6 @@ public class MultifactorAuthenticationTests {
                 SuccessfulHandlerMetaDataPopulator.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 
-
-    @Test(expected = MixedPrincipalException.class)
-    public void verifyThrowsMixedPrincipalExceptionOnRenewWithDifferentPrincipal() throws Exception {
-        // Note the original credential used to start SSO session does not satisfy security policy
-        authenticationSupervisor.authenticate(newUserPassCredentials("alice", "alice"));
-        final AuthenticationContext ctx = authenticationSupervisor.build();
-        final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
-        assertNotNull(tgt);
-
-        authenticationSupervisor.authenticate(newUserPassCredentials("bob", "bob"),
-                new OneTimePasswordCredential("bob", "62831"));
-
-        final AuthenticationContext ctx2 = authenticationSupervisor.build();
-
-        final Service service = newService("https://example.com/high/");
-        cas.grantServiceTicket(
-                tgt.getId(),
-                service,
-                ctx2);
-    }
-
     private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
         final UsernamePasswordCredential userpass = new UsernamePasswordCredential();
         userpass.setUsername(user);
