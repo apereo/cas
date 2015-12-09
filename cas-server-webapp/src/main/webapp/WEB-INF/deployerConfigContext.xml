@@ -32,7 +32,7 @@
 
     <util:map id="authenticationHandlersResolvers">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
-        <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
+         <entry key-ref="ldapAuthenticationHandler" value-ref="primaryPrincipalResolver" />
     </util:map>
     <util:list id="authenticationMetadataPopulators" />
 
@@ -68,6 +68,107 @@
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
 
+       <!-- LDAP authentication -->
+        <!-- See http://jasig.github.io/cas/development/installation/LDAP-Authentication.html -->
+        <bean id="ldapAuthenticationHandler" class="org.jasig.cas.authentication.LdapAuthenticationHandler" p:principalIdAttribute="mail">
+                <constructor-arg ref="authenticator" />
+                <property name="principalAttributeMap">
+                        <map>
+                                <!--
+                                   | This map provides a simple attribute resolution mechanism.
+                                   | Keys are LDAP attribute names, values are CAS attribute names.
+                                   | This facility can be used instead or in addition to PrincipalResolver
+                                   | components.
+                                   -->
+                                <entry key="member" value="memberOf" />
+                                <entry key="eduPersonAffiliation" value="affiliation" />
+                                <entry key="mail" value="mail" />
+                                <entry key="displayName" value="displayName" />
+                        </map>
+                </property>
+        </bean>
+
+        <!--
+           | This configuration uses a connection pool for both search and bind operations.
+           | Pooling all operations is strongly recommended.
+           -->
+        <bean id="authenticator" class="org.ldaptive.auth.Authenticator"
+                c:resolver-ref="wavityDnResolver"
+                c:handler-ref="pooledBindHandler" />
+
+        <!--
+           | Contrast with org.ldaptive.auth.FormatDnResolver, which constructs bind DN
+           | based on a format string using the username as input.
+           | FormatDnResolver is preferable for directories that support it, such as Active Directory.
+           -->
+        <bean id="wavityDnResolver"
+                class="org.jasig.cas.authentication.support.WavityFormatDnResolver"
+                c:format="mail=%s,${ldap.authn.baseDn}" />           
+
+        <bean id="pooledLdapConnectionFactory" class="org.ldaptive.pool.PooledConnectionFactory"
+                p:connectionPool-ref="connectionPool" />
+                 <bean id="connectionPool" class="org.ldaptive.pool.BlockingConnectionPool"
+                init-method="initialize"
+                p:poolConfig-ref="ldapPoolConfig"
+                p:blockWaitTime="${ldap.pool.blockWaitTime}"
+                p:validator-ref="searchValidator"
+                p:pruneStrategy-ref="pruneStrategy"
+                p:connectionFactory-ref="connectionFactory" />
+
+        <bean id="connectionFactory" class="org.ldaptive.DefaultConnectionFactory"
+                p:connectionConfig-ref="connectionConfig" />
+
+        <!--
+           | NOTE:
+           | The sslConfig property provides a route to configure custom key/trust stores.
+           | The connectionInitializer property provides a means (possibly in addition to sslConfig)
+           | to support SASL EXTERNAL binds.
+           | See http://www.ldaptive.org/docs/guide/connections for more information.
+           -->
+        <bean id="connectionConfig" class="org.ldaptive.ConnectionConfig"
+                p:ldapUrl="${ldap.url}"
+                p:connectTimeout="${ldap.connectTimeout}"
+                p:useSSL="${ldap.useSSL}"
+                p:useStartTLS="${ldap.useStartTLS}"
+                p:connectionInitializer-ref="bindConnectionInitializer"
+                p:sslConfig-ref="sslConfig" />
+
+        <bean id="bindConnectionInitializer"
+                class="org.ldaptive.BindConnectionInitializer"
+                p:bindDn="${ldap.managerDn}">
+                <property name="bindCredential">
+                        <bean class="org.ldaptive.Credential"
+                                c:password="${ldap.managerPassword}" />
+                </property>
+        </bean>
+
+        <bean id="sslConfig" class="org.ldaptive.ssl.SslConfig">
+                <property name="credentialConfig">
+                        <bean class="org.ldaptive.ssl.X509CredentialConfig"
+                                p:trustCertificates="${ldap.trustedCert}" />
+                </property>
+        </bean>
+
+        <bean id="pooledBindHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
+                p:connectionFactory-ref="pooledLdapConnectionFactory" />
+    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
+                p:minPoolSize="${ldap.pool.minSize}"
+                p:maxPoolSize="${ldap.pool.maxSize}"
+                p:validateOnCheckIn="${ldap.pool.validateOnCheckIn}"
+                p:validateOnCheckOut="${ldap.pool.validateOnCheckOut}"
+                p:validatePeriodically="${ldap.pool.validatePeriodically}"
+                p:validatePeriod="${ldap.pool.validatePeriod}" />
+
+        <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
+                p:prunePeriod="${ldap.pool.prunePeriod}"
+                p:idleTime="${ldap.pool.idleTime}" />
+
+        <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
+
+        <bean id="searchRequest"
+                class="org.ldaptive.SearchRequest"
+                p:baseDn="${ldap.authn.baseDn}"
+                p:searchFilter="${ldap.authn.searchFilter}" />                
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"
