@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -89,6 +91,12 @@ public final class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
         private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
+
+        /**
+         * This is reserved for usage by any custom components that need to present their config to the management UI.
+         * This should only contain nested Maps and Arrays of simple values.
+         */
+        private Map<String, Object> customComponent = new HashMap<>();
 
         public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
             return attrRelease;
@@ -224,6 +232,14 @@ public final class RegisteredServiceEditBean implements Serializable {
 
         public void setLogoUrl(final String logoUrl) {
             this.logoUrl = logoUrl;
+        }
+
+        public Map<String, Object> getCustomComponent() {
+            return customComponent;
+        }
+
+        public void setCustomComponent(final Map<String, Object> customComponent) {
+            this.customComponent = customComponent;
         }
     }
 }
