@@ -2,7 +2,6 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationSupervisor;
-import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
 import org.jasig.cas.authentication.TestUtils;
