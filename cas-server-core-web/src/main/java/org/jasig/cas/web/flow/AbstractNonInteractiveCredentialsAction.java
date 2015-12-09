@@ -123,6 +123,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
+    public void setAuthenticationSupervisor(final AuthenticationSupervisor authenticationSupervisor) {
+        this.authenticationSupervisor = authenticationSupervisor;
+    }
+
     /**
      * Sets principal factory to create principal objects.
      *
