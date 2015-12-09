@@ -300,4 +300,16 @@ public class AuthenticationViaFormAction {
                 .args(warning.getParams());
         context.addMessage(builder.build());
     }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+        this.warnCookieGenerator = warnCookieGenerator;
+    }
+
+    public void setAuthenticationSupervisor(final AuthenticationSupervisor authenticationSupervisor) {
+        this.authenticationSupervisor = authenticationSupervisor;
+    }
 }
