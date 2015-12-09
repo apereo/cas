@@ -24,6 +24,7 @@ deployments. Components for the following caching technologies are provided:
 
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
 * [Ehcache](Ehcache-Ticket-Registry.html)
+* [Ignite](Ignite-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
 
 #### Secure Cache Replication
