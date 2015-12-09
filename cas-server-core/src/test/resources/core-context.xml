@@ -315,4 +315,5 @@
           c:salt="casrox"  />
 
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
 </beans>

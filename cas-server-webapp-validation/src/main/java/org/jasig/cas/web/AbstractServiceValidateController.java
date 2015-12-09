@@ -2,7 +2,9 @@ package org.jasig.cas.web;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationSupervisor;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -60,7 +62,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     /** JSON View if Service Ticket Validation Succeeds and if service requires JSON. */
     public static final String DEFAULT_SERVICE_VIEW_NAME_JSON = "cas3ServiceJsonView";
 
-
     @Autowired
     private ApplicationContext context;
 
@@ -97,6 +98,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
+
+    @NotNull
+    @Autowired
+    @Qualifier("authenticationSupervisor")
+    private AuthenticationSupervisor authenticationSupervisor;
 
     /**
      * Instantiates a new Service validate controller.
@@ -148,10 +154,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         TicketGrantingTicket proxyGrantingTicketId = null;
 
         try {
-            proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
-                    serviceCredential);
-            logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
-                    proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
+            if (this.authenticationSupervisor.authenticate(serviceCredential)) {
+                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
+                        authenticationContext);
+                logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
+                        proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
+            }
         } catch (final AuthenticationException e) {
             logger.info("Failed to authenticate service credential {}", serviceCredential);
         } catch (final AbstractTicketException e) {

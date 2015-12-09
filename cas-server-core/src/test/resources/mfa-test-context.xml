@@ -124,5 +124,6 @@
         </constructor-arg>
     </bean>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
 
 </beans>

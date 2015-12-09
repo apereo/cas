@@ -1,7 +1,10 @@
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationSupervisor;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
@@ -30,7 +33,14 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
     /** Instance of CentralAuthenticationService. */
     @NotNull
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
+
+    @NotNull
+    @Autowired
+    @Qualifier("authenticationSupervisor")
+    private AuthenticationSupervisor authenticationSupervisor;
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -40,10 +50,13 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         try {
             final Credential credential = WebUtils.getCredential(context);
 
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                .grantServiceTicket(ticketGrantingTicket, service, credential);
-            WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-            return success();
+            if (this.authenticationSupervisor.authenticate(credential)) {
+                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                final ServiceTicket serviceTicketId = this.centralAuthenticationService
+                        .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);
+                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
+                return success();
+            }
         } catch (final AuthenticationException e) {
             logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final AbstractTicketException e) {
@@ -58,13 +71,6 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         return error();
     }
 
-    @Autowired
-    public void setCentralAuthenticationService(
-        @Qualifier("centralAuthenticationService")
-        final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
     /**
      * Checks if {@code gateway} is present in the request params.
      *
@@ -73,6 +79,6 @@ public final class GenerateServiceTicketAction extends AbstractAction {
      */
     protected boolean isGatewayPresent(final RequestContext context) {
         return StringUtils.hasText(context.getExternalContext()
-            .getRequestParameterMap().get("gateway"));
+            .getRequestParameterMap().get(CasProtocolConstants.PARAMETER_GATEWAY));
     }
 }
