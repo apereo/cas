@@ -36,5 +36,6 @@
         <value>uugid</value>
     </util:list>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
 
 </beans>

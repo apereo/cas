@@ -87,16 +87,6 @@ public interface CentralAuthenticationService {
     Collection<Ticket> getTickets(@NotNull Predicate<Ticket> predicate);
 
     /**
-     * Grants a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service.
-     *
-     * @param ticketGrantingTicketId Proof of prior authentication.
-     * @param service                The target service of the ServiceTicket.
-     * @return Non -null service ticket identifier.
-     * @throws AbstractTicketException if the ticket could not be created.
-     */
-    ServiceTicket grantServiceTicket(@NotNull String ticketGrantingTicketId, @NotNull Service service) throws AbstractTicketException;
-
-    /**
      * Grant a {@link org.jasig.cas.ticket.ServiceTicket} that may be used to access the given service
      * by authenticating the given credentials.
      * The details of the security policy around credential authentication and the definition
@@ -109,13 +99,13 @@ public interface CentralAuthenticationService {
      *
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service                The target service of the ServiceTicket.
-     * @param credentials            One or more credentials to authenticate prior to granting the service ticket.
+     * @param context             The authentication context established if credentials provided
      * @return Non -null service ticket identifier.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
-        @NotNull String ticketGrantingTicketId, @NotNull Service service, Credential... credentials)
+        @NotNull String ticketGrantingTicketId, @NotNull Service service, @NotNull AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException;
 
     /**

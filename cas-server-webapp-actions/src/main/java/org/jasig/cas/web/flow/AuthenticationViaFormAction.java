@@ -3,6 +3,8 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationSupervisor;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
@@ -63,11 +65,20 @@ public class AuthenticationViaFormAction {
 
     /** Core we delegate to for handling all ticket related tasks. */
     @NotNull
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     @NotNull
+    @Autowired
+    @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
+
+    @NotNull
+    @Autowired
+    @Qualifier("authenticationSupervisor")
+    private AuthenticationSupervisor authenticationSupervisor;
 
     /**
      * Handle the submission of credentials from the post.
@@ -152,11 +163,14 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
-            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
-                    ticketGrantingTicketId, service, credential);
-            WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-            putWarnCookieIfRequestParameterPresent(context);
-            return newEvent(WARN);
+            if (this.authenticationSupervisor.authenticate(credential)) {
+                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
+                        ticketGrantingTicketId, service, authenticationContext);
+                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
+                putWarnCookieIfRequestParameterPresent(context);
+                return newEvent(WARN);
+            }
         } catch (final AuthenticationException e) {
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final TicketCreationException e) {
@@ -183,21 +197,26 @@ public class AuthenticationViaFormAction {
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
         try {
-            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
-            WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-            putWarnCookieIfRequestParameterPresent(context);
-            putPublicWorkstationToFlowIfRequestParameterPresent(context);
-            if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
-                return newEvent(SUCCESS_WITH_WARNINGS);
+            if (this.authenticationSupervisor.authenticate(credential)) {
+                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+                putWarnCookieIfRequestParameterPresent(context);
+                putPublicWorkstationToFlowIfRequestParameterPresent(context);
+                if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
+                    return newEvent(SUCCESS_WITH_WARNINGS);
+                }
+                return newEvent(SUCCESS);
+            } else {
+                logger.debug("Credentials could not be authenticated successfully");
             }
-            return newEvent(SUCCESS);
         } catch (final AuthenticationException e) {
             logger.debug(e.getMessage(), e);
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final Exception e) {
             logger.debug(e.getMessage(), e);
-            return newEvent(ERROR, e);
         }
+        return newEvent(ERROR);
     }
 
     /**
@@ -239,7 +258,7 @@ public class AuthenticationViaFormAction {
      *
      * @param context the context
      */
-    private void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
+    private static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
         if (StringUtils.isNotBlank(context.getExternalContext()
                 .getRequestParameterMap().get(PUBLIC_WORKSTATION_ATTRIBUTE))) {
             context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
@@ -267,24 +286,13 @@ public class AuthenticationViaFormAction {
         return new Event(this, id, new LocalAttributeMap("error", error));
     }
 
-    @Autowired
-    public final void setCentralAuthenticationService(@Qualifier("centralAuthenticationService")
-                                                          final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    @Autowired
-    public final void setWarnCookieGenerator(@Qualifier("warnCookieGenerator")final CookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
-
     /**
      * Adds a warning message to the message context.
      *
      * @param context Message context.
      * @param warning Warning message.
      */
-    private void addWarningToContext(final MessageContext context, final MessageDescriptor warning) {
+    private static void addWarningToContext(final MessageContext context, final MessageDescriptor warning) {
         final MessageBuilder builder = new MessageBuilder()
                 .warning()
                 .code(warning.getCode())

@@ -45,4 +45,5 @@
     <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
 </beans>
