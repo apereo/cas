@@ -1,6 +1,7 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
+import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -32,8 +33,11 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
         this.action.afterPropertiesSet();
 
-        this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(
+        getAuthenticationSupervisor().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+
+        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
     }
 
     @Test

@@ -71,6 +71,14 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         return error();
     }
 
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setAuthenticationSupervisor(final AuthenticationSupervisor authenticationSupervisor) {
+        this.authenticationSupervisor = authenticationSupervisor;
+    }
+
     /**
      * Checks if {@code gateway} is present in the request params.
      *

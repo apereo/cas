@@ -191,7 +191,8 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test(expected=UnauthorizedServiceException.class)
     public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        final AuthenticationContext ctx = getAuthenticationContext(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+        this.authenticationSupervisor.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationContext ctx = this.authenticationSupervisor.build();
         this.cas.createProxyGrantingTicket(ST_ID, ctx);
     }
 
@@ -218,9 +219,9 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     }
 
     @Test
-    public void verifyChainedAuthenticationsOnValidation() throws AbstractTicketException {
+    public void verifyChainedAuthenticationsOnValidation() throws Exception {
         final Service svc = org.jasig.cas.services.TestUtils.getService(SVC2_ID);
-        final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc);
+        final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc, this.authenticationSupervisor.build());
         assertNotNull(st);
         
         final Assertion assertion = this.cas.validateServiceTicket(st.getId(), svc);
@@ -242,7 +243,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         return tgtRootMock;
     }
     
-    private static TicketGrantingTicket createMockTicketGrantingTicket(final String id,
+    private TicketGrantingTicket createMockTicketGrantingTicket(final String id,
             final ServiceTicket svcTicket, final boolean isExpired, 
             final TicketGrantingTicket root, final List<Authentication> chainedAuthnList) {
         final TicketGrantingTicket tgtMock = mock(TicketGrantingTicket.class);
@@ -254,6 +255,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
                 any(ExpirationPolicy.class), anyBoolean(), anyBoolean())).thenReturn(svcTicket);
         when(tgtMock.getRoot()).thenReturn(root);
         when(tgtMock.getChainedAuthentications()).thenReturn(chainedAuthnList);
+        when(tgtMock.getAuthentication()).thenReturn(this.authentication);
         when(svcTicket.getGrantingTicket()).thenReturn(tgtMock);   
         
         return tgtMock;
