@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,6 +21,15 @@ public interface AuthenticationBuilder extends Serializable {
      * @return Principal. principal
      */
     Principal getPrincipal();
+
+    /**
+     * Add credentials authentication builder.
+     *
+     * @param credentials the credentials
+     * @return the authentication builder
+     * @since 4.2.0
+     */
+    AuthenticationBuilder addCredentials(List<CredentialMetaData> credentials);
 
     /**
      * Sets the principal returns this instance.
@@ -58,8 +68,18 @@ public interface AuthenticationBuilder extends Serializable {
      *
      * @param successes the successes
      * @return the authentication builder
+     * @since 4.2.0
      */
     AuthenticationBuilder setSuccesses(Map<String, HandlerResult> successes);
+
+    /**
+     * Adds successes authentication builder.
+     *
+     * @param successes the successes
+     * @return the authentication builder
+     * @since 4.2.0
+     */
+    AuthenticationBuilder addSuccesses(Map<String, HandlerResult> successes);
 
     /**
      * Sets failures.
@@ -68,6 +88,15 @@ public interface AuthenticationBuilder extends Serializable {
      * @return the failures
      */
     AuthenticationBuilder setFailures(Map<String, Class<? extends Exception>> failures);
+
+    /**
+     * Adds failures.
+     *
+     * @param failures the failures
+     * @return the failures
+     * @since 4.2.0
+     */
+    AuthenticationBuilder addFailures(Map<String, Class<? extends Exception>> failures);
 
     /**
      * Adds an authentication success to the map of handler names to successful authentication handler results.

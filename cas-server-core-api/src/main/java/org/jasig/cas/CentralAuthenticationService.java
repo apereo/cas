@@ -3,16 +3,15 @@ package org.jasig.cas;
 import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
-import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
-import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.validation.Assertion;
 
 import javax.validation.constraints.NotNull;
@@ -105,7 +104,7 @@ public interface CentralAuthenticationService {
      * @throws AbstractTicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
-        @NotNull String ticketGrantingTicketId, @NotNull Service service, @NotNull AuthenticationContext context)
+        @NotNull String ticketGrantingTicketId, @NotNull Service service, AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException;
 
     /**
