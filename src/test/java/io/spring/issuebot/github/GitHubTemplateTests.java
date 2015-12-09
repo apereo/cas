@@ -159,8 +159,8 @@ public class GitHubTemplateTests {
 	@Test
 	public void addLabelToIssue() {
 		this.server.expect(requestTo("labelsUrl")).andExpect(method(HttpMethod.POST))
-				.andExpect(basicAuth())
-				.andExpect(content().string("{\"labels\":[\"test\"]}")).andRespond(
+				.andExpect(basicAuth()).andExpect(content().string("[\"test\"]"))
+				.andRespond(
 						withSuccess("[{\"name\":\"test\"}]", MediaType.APPLICATION_JSON));
 		Issue issue = new Issue("issueUrl", null, null, "labelsUrl{/name}", null, null,
 				null, null);

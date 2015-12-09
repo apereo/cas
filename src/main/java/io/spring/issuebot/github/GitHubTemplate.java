@@ -127,10 +127,8 @@ public class GitHubTemplate implements GitHubOperations {
 
 	@Override
 	public Issue addLabel(Issue issue, String labelName) {
-		Map<String, Object> body = new HashMap<>();
-		body.put("labels", Arrays.asList(labelName));
 		ResponseEntity<Label[]> response = this.rest.exchange(
-				new RequestEntity<>(body, HttpMethod.POST,
+				new RequestEntity<>(Arrays.asList(labelName), HttpMethod.POST,
 						URI.create(issue.getLabelsUrl().replace("{/name}", ""))),
 				Label[].class);
 		if (response.getStatusCode() != HttpStatus.OK) {
