@@ -17,6 +17,7 @@
 package io.spring.issuebot.feedback;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.spring.issuebot.IssueListener;
@@ -43,10 +44,12 @@ final class FeedbackIssueListener implements IssueListener {
 	private final FeedbackListener feedbackListener;
 
 	FeedbackIssueListener(GitHubOperations gitHub, String labelName,
-			List<String> collaborators, FeedbackListener feedbackListener) {
+			List<String> collaborators, String username,
+			FeedbackListener feedbackListener) {
 		this.gitHub = gitHub;
 		this.labelName = labelName;
-		this.collaborators = collaborators;
+		this.collaborators = new ArrayList<>(collaborators);
+		this.collaborators.add(username);
 		this.feedbackListener = feedbackListener;
 	}
 

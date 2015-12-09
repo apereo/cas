@@ -48,7 +48,7 @@ public class FeedbackIssueListenerTests {
 	private final FeedbackListener feedbackListener = mock(FeedbackListener.class);
 
 	private final IssueListener listener = new FeedbackIssueListener(this.gitHub,
-			"required", Arrays.asList("Amy", "Brian"), this.feedbackListener);
+			"required", Arrays.asList("Amy", "Brian"), "IssueBot", this.feedbackListener);
 
 	@Test
 	public void pullRequestsAreIgnored() {
@@ -118,6 +118,21 @@ public class FeedbackIssueListenerTests {
 				() -> null));
 		given(this.gitHub.getComments(issue)).willReturn(new StandardPage<>(
 				Arrays.asList(new Comment(new User("Amy"), OffsetDateTime.now())),
+				() -> null));
+		this.listener.onOpenIssue(issue);
+		verify(this.feedbackListener).feedbackRequired(issue, requestTime);
+	}
+
+	@Test
+	public void feedbackRequiredAfterCommentFromIssueBot() {
+		Issue issue = new Issue(null, null, null, null, null,
+				Arrays.asList(new Label("required")), null, null);
+		OffsetDateTime requestTime = OffsetDateTime.now().minusDays(1);
+		given(this.gitHub.getEvents(issue)).willReturn(new StandardPage<>(
+				Arrays.asList(new Event("labeled", requestTime, new Label("required"))),
+				() -> null));
+		given(this.gitHub.getComments(issue)).willReturn(new StandardPage<>(
+				Arrays.asList(new Comment(new User("IssueBot"), OffsetDateTime.now())),
 				() -> null));
 		this.listener.onOpenIssue(issue);
 		verify(this.feedbackListener).feedbackRequired(issue, requestTime);
