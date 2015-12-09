@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication;
 
+import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.joda.time.DateTime;
@@ -30,9 +31,9 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
 
     private final Set<Authentication> authentications = new LinkedHashSet<>();
 
-    @Autowired
-    @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory;
+    @Autowired(required=false)
+    @Qualifier("principalElectionStrategy")
+    private PrincipalElectionStrategy principalElectionStrategy;
 
     @Override
     public int count() {
@@ -41,21 +42,19 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
 
     @Override
     public boolean isEmpty() {
-        return !this.authentications.isEmpty();
+        return this.authentications.isEmpty();
     }
 
     @Override
-    public boolean collect(final Authentication authentication) {
-        final Principal principalMismatched = validatePossibleMismatchedPrincipal(authentication);
-
-        if (principalMismatched != null) {
-            LOGGER.warn("The provided principal [{}] does not match the authentication chain. CAS has no record of "
-                            + "this principal ever having authenticated in the active authentication context.",
+    public boolean collect(final Authentication authentication) throws AuthenticationException {
+        if (this.authentications.add(authentication)) {
+            LOGGER.debug("Collected authentication event. Associated principal with this authentication is [{}]",
                     authentication.getPrincipal());
-            throw new IllegalArgumentException(new MixedPrincipalException(authentication,
-                    authentication.getPrincipal(), principalMismatched));
+            return true;
         }
-        return this.authentications.add(authentication);
+        LOGGER.warn("Failed to collect authentication event. Associated principal with this authentication is [{}]",
+                authentication.getPrincipal());
+        return false;
     }
 
     @Override
@@ -72,52 +71,71 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
         this.authentications.clear();
     }
 
+    private Authentication buildAuthentication() {
+        if (!isEmpty()) {
+            final Map<String, Object> authenticationAttributes = new HashMap<>();
+            final Map<String, Object> principalAttributes = new HashMap<>();
+            final AuthenticationBuilder authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
+
+            buildAuthenticationHistory(authenticationAttributes, principalAttributes, authenticationBuilder);
+
+            final Principal primaryPrincipal = getPrimaryPrincipal(principalAttributes);
+            authenticationBuilder.setPrincipal(primaryPrincipal);
+            LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
+
+            authenticationBuilder.setAttributes(authenticationAttributes);
+            LOGGER.debug("Collected authentication attributes for this context are [{}]", authenticationAttributes);
+
+            final DateTime dt = DateTime.now();
+            authenticationBuilder.setAuthenticationDate(dt);
+            LOGGER.debug("Authentication context commenced at [{}]", dt);
+
+            return authenticationBuilder.build();
+        }
+        return null;
+    }
+
+    private void buildAuthenticationHistory(final Map<String, Object> authenticationAttributes,
+                                            final Map<String, Object> principalAttributes,
+                                            final AuthenticationBuilder authenticationBuilder) {
+
+        LOGGER.debug("Collecting authentication history based on [{}] authentication events", this.authentications.size());
+        for (final Authentication authn : this.authentications) {
+            final Principal authenticatedPrincipal = authn.getPrincipal();
+            LOGGER.debug("Evaluating authentication principal [{}] for inclusion in context", authenticatedPrincipal);
+
+            principalAttributes.putAll(authenticatedPrincipal.getAttributes());
+            LOGGER.debug("Collected principal attributes [{}] for inclusion in context for principal [{}]",
+                    principalAttributes, authenticatedPrincipal.getId());
+
+            for (final String attrName : authn.getAttributes().keySet()) {
+                if (!authenticationAttributes.containsKey(attrName)) {
+                    authenticationAttributes.put(attrName, authn.getAttributes().get(attrName));
+                } else {
+                    final Object oldValue = authenticationAttributes.remove(attrName);
+                    final Collection<Object> listOfValues = convertValueToCollection(oldValue);
+
+                    listOfValues.add(authn.getAttributes().get(attrName));
+                    authenticationAttributes.put(attrName, listOfValues);
+                }
+            }
+            LOGGER.debug("Collected authentication attributes [{}] for inclusion in context",
+                    authenticationAttributes);
+
+            authenticationBuilder.addSuccesses(authn.getSuccesses())
+                                 .addFailures(authn.getFailures())
+                                 .addCredentials(authn.getCredentials());
+        }
+    }
 
     /**
      * Principal id is and must be enforced to be the same for all authentication contexts.
      * Based on that restriction, it's safe to simply grab the first principal id in the chain
      * when composing the authentication chain for the caller.
      */
-    private Authentication buildAuthentication() {
-        if (!isEmpty()) {
-
-            final Principal primaryPrincipal = this.authentications.iterator().next().getPrincipal();
-            final Map<String, Object> authenticationAttributes = new HashMap<>();
-            final Map<String, Object> principalAttributes = new HashMap<>();
-
-            final AuthenticationBuilder authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
-
-            for (final Authentication authn : this.authentications) {
-                final Principal authenticatedPrincipal = authn.getPrincipal();
-                principalAttributes.putAll(authenticatedPrincipal.getAttributes());
-
-                for (final String attrName : authn.getAttributes().keySet()) {
-                    if (!authenticationAttributes.containsKey(attrName)) {
-                        authenticationAttributes.put(attrName, authn.getAttributes().get(attrName));
-                    } else {
-                        final Object oldValue = authenticationAttributes.remove(attrName);
-                        final Collection<Object> listOfValues = convertValueToCollection(oldValue);
-
-                        listOfValues.add(authn.getAttributes().get(attrName));
-                        authenticationAttributes.put(attrName, listOfValues);
-                    }
-                }
-                authenticationBuilder.setSuccesses(authn.getSuccesses())
-                                     .setFailures(authn.getFailures());
-            }
-
-            final Principal compositePrincipal = this.principalFactory
-                    .createPrincipal(primaryPrincipal.getId(), principalAttributes);
-
-            authenticationBuilder.setPrincipal(compositePrincipal);
-            authenticationBuilder.setAttributes(authenticationAttributes);
-            authenticationBuilder.setAuthenticationDate(DateTime.now());
-            return authenticationBuilder.build();
-        }
-        return null;
+    private Principal getPrimaryPrincipal(final Map<String, Object> principalAttributes) {
+        return this.principalElectionStrategy.nominate(ImmutableSet.copyOf(this.authentications), principalAttributes);
     }
-
-
 
     /**
      * Convert the object given into a {@link Collection} instead.
@@ -130,35 +148,17 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
 
         if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
+            LOGGER.debug("Converting multi-valued attribute [{}] for the authentication context", obj);
         } else if (obj instanceof Map) {
             throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
         } else if (obj.getClass().isArray()) {
             c.addAll(Arrays.asList((Object[]) obj));
+            LOGGER.debug("Converting array attribute [{}] for the authentication context", obj);
         } else {
             c.add(obj);
+            LOGGER.debug("Converting attribute [{}] for the authentication context", obj);
         }
         return c;
-    }
-
-    /**
-     * Enumerates the list of available principals in the authentication chain
-     * and ensures that the newly given and provided principal is compliant
-     * and equals the rest of the principals in the chain.
-     * implementation.
-     *
-     * @param authentication the authentication object whose principal is compared against the chain
-     * @return true if no mismatch is found; false otherwise.
-     */
-    private Principal validatePossibleMismatchedPrincipal(final Authentication authentication) {
-        final Principal newPrincipal = authentication.getPrincipal();
-        for (final Authentication authn : this.authentications) {
-            final Principal currentPrincipal = authn.getPrincipal();
-
-            if (!currentPrincipal.equals(newPrincipal)) {
-                return currentPrincipal;
-            }
-        }
-        return null;
     }
 
 }

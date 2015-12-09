@@ -16,7 +16,7 @@ import java.security.GeneralSecurityException;
 import java.util.Map;
 
 /**
- * Test one-time password authentication handler that supports {@link MultifactorAuthenticationTests}.
+ * Test one-time password authentication handler.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
