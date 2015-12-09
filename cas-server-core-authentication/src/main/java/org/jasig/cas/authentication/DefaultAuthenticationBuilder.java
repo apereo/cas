@@ -85,6 +85,12 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         return this.principal;
     }
 
+    @Override
+    public AuthenticationBuilder addCredentials(final List<CredentialMetaData> credentials) {
+        this.credentials.addAll(credentials);
+        return this;
+    }
+
     /**
      * Sets the principal returns this instance.
      *
@@ -195,8 +201,13 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public AuthenticationBuilder setSuccesses(final Map<String, HandlerResult> successes) {
         Assert.notNull(successes, "Successes cannot be null");
         this.successes.clear();
+        return addSuccesses(successes);
+    }
+
+    @Override
+    public AuthenticationBuilder addSuccesses(final Map<String, HandlerResult> successes) {
         for (final Map.Entry<String, HandlerResult> entry : successes.entrySet()) {
-            this.successes.put(entry.getKey(), entry.getValue());
+            addSuccess(entry.getKey(), entry.getValue());
         }
         return this;
     }
@@ -236,8 +247,13 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public AuthenticationBuilder setFailures(final Map<String, Class<? extends Exception>> failures) {
         Assert.notNull(failures, "Failures cannot be null");
         this.failures.clear();
+        return addFailures(failures);
+    }
+
+    @Override
+    public AuthenticationBuilder addFailures(final Map<String, Class<? extends Exception>> failures) {
         for (final Map.Entry<String, Class<? extends Exception>> entry : failures.entrySet()) {
-            this.failures.put(entry.getKey(), entry.getValue());
+            addFailure(entry.getKey(), entry.getValue());
         }
         return this;
     }

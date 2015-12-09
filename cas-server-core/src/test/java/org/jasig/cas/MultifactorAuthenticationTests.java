@@ -148,7 +148,6 @@ public class MultifactorAuthenticationTests {
 
         final AuthenticationContext ctx2 = authenticationSupervisor.build();
 
-
         final Service service = newService("https://example.com/high/");
         cas.grantServiceTicket(
                 tgt.getId(),
