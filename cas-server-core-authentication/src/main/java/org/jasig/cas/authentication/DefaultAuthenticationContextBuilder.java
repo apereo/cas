@@ -31,7 +31,7 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
 
     private final Set<Authentication> authentications = new LinkedHashSet<>();
 
-    @Autowired(required=false)
+    @Autowired
     @Qualifier("principalElectionStrategy")
     private PrincipalElectionStrategy principalElectionStrategy;
 

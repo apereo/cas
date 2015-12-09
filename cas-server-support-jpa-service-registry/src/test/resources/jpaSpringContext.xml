@@ -43,6 +43,7 @@
   <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
   <alias name="defaultPrincipalFactory" alias="principalFactory" />
   <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
+  <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
   <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" />
 </beans>
 
