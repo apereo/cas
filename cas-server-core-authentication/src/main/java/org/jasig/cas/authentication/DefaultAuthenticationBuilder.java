@@ -191,6 +191,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      *
      * @return This builder instance.
      */
+    @Override
     public AuthenticationBuilder setSuccesses(final Map<String, HandlerResult> successes) {
         Assert.notNull(successes, "Successes cannot be null");
         this.successes.clear();
@@ -231,6 +232,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      *
      * @return This builder instance.
      */
+    @Override
     public AuthenticationBuilder setFailures(final Map<String, Class<? extends Exception>> failures) {
         Assert.notNull(failures, "Failures cannot be null");
         this.failures.clear();
@@ -285,5 +287,14 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         builder.setFailures(source.getFailures());
         builder.setAttributes(source.getAttributes());
         return builder;
+    }
+
+    /**
+     * Creates a new builder.
+     *
+     * @return New builder instance
+     */
+    public static AuthenticationBuilder newInstance() {
+        return new DefaultAuthenticationBuilder();
     }
 }

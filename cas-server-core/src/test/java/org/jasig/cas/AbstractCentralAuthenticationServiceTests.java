@@ -1,6 +1,7 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.AuthenticationSupervisor;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -43,6 +44,9 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     @Autowired
     private ArgumentExtractor argumentExtractor;
 
+    @Autowired
+    private AuthenticationSupervisor authenticationSupervisor;
+
     public ArgumentExtractor getArgumentExtractor() {
         return argumentExtractor;
     }
@@ -57,6 +61,10 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public AuthenticationSupervisor getAuthenticationSupervisor() {
+        return authenticationSupervisor;
     }
 
     public TicketRegistry getTicketRegistry() {

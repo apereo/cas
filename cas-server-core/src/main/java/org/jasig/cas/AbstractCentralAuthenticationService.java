@@ -155,25 +155,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.eventPublisher.publishEvent(e);
     }
 
-    /**
-     * Attempts to sanitize the array of credentials by removing
-     * all null elements from the collection.
-     * @param credentials credentials to sanitize
-     * @return a set of credentials with no null values
-     */
-    protected final Set<Credential> sanitizeCredentials(final Credential[] credentials) {
-        if (credentials != null && credentials.length > 0) {
-            final Set<Credential> set = new HashSet<>(Arrays.asList(credentials));
-            final Iterator<Credential> it = set.iterator();
-            while (it.hasNext()) {
-                if (it.next() == null) {
-                    it.remove();
-                }
-            }
-            return set;
-        }
-        return Collections.emptySet();
-    }
 
     /**
      * {@inheritDoc}

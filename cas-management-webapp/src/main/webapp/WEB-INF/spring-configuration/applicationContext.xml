@@ -45,4 +45,5 @@
     <util:list id="serviceFactoryList" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
 </beans>

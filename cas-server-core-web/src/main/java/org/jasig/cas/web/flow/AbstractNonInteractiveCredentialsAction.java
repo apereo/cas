@@ -1,12 +1,16 @@
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationSupervisor;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +51,12 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
+
+    @NotNull
+    @Autowired
+    @Qualifier("authenticationSupervisor")
+    private AuthenticationSupervisor authenticationSupervisor;
+
     /**
      * Checks if is renew present.
      *
@@ -54,7 +64,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @return true, if  renew present
      */
     protected final boolean isRenewPresent(final RequestContext context) {
-        return StringUtils.hasText(context.getRequestParameters().get("renew"));
+        return StringUtils.hasText(context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW));
     }
 
     @Override
@@ -68,17 +78,17 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
 
-        if (isRenewPresent(context)
-            && ticketGrantingTicketId != null
-            && service != null) {
+        if (isRenewPresent(context) && ticketGrantingTicketId != null && service != null) {
 
             try {
-                final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketId,
-                        service,
-                            credential);
-                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-                return result("warn");
+                if (this.authenticationSupervisor.authenticate(credential)) {
+                    final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+
+                    final ServiceTicket serviceTicketId = this.centralAuthenticationService
+                            .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
+                    WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
+                    return result("warn");
+                }
             } catch (final AuthenticationException e) {
                 onError(context, credential);
                 return error();
@@ -89,9 +99,14 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         }
 
         try {
-            WebUtils.putTicketGrantingTicketInScopes(context, this.centralAuthenticationService.createTicketGrantingTicket(credential));
-            onSuccess(context, credential);
-            return success();
+            if (this.authenticationSupervisor.authenticate(credential)) {
+                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+                onSuccess(context, credential);
+                return success();
+            }
+            return error();
         } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
             onError(context, credential);
