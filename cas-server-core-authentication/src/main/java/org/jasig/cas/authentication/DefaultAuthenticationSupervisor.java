@@ -69,4 +69,12 @@ public final class DefaultAuthenticationSupervisor implements AuthenticationSupe
         }
         return Collections.emptySet();
     }
+
+    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    public void setAuthenticationContextBuilder(final AuthenticationContextBuilder authenticationContextBuilder) {
+        this.authenticationContextBuilder = authenticationContextBuilder;
+    }
 }

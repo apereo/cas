@@ -6,6 +6,7 @@ import org.jasig.cas.adaptors.trusted.authentication.handler.support.PrincipalBe
 import org.jasig.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.DefaultAuthenticationSupervisor;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
@@ -43,8 +44,11 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
 
         final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
                 getCentralAuthenticationService();
-        centralAuthenticationService.setAuthenticationManager(authenticationManager);
         this.action.setCentralAuthenticationService(centralAuthenticationService);
+
+        final DefaultAuthenticationSupervisor supervisor = (DefaultAuthenticationSupervisor) getAuthenticationSupervisor();
+        supervisor.setAuthenticationManager(authenticationManager);
+        this.action.setAuthenticationSupervisor(supervisor);
     }
 
     @Test
