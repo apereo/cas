@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,7 @@ import java.util.Set;
  */
 @Component("defaultAuthenticationSupervisor")
 public final class DefaultAuthenticationSupervisor implements AuthenticationSupervisor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationSupervisor.class);
 
     @Autowired
     @Qualifier("authenticationManager")
@@ -37,6 +40,7 @@ public final class DefaultAuthenticationSupervisor implements AuthenticationSupe
                     this.authenticationManager.authenticate(sanitizedCredentials.toArray(new Credential[] {}));
             return this.authenticationContextBuilder.collect(authentication);
         }
+        LOGGER.warn("No credentials were provided for authentication");
         return false;
     }
 

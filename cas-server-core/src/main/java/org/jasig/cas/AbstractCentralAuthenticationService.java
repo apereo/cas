@@ -6,10 +6,8 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
@@ -39,12 +37,9 @@ import org.springframework.util.Assert;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to

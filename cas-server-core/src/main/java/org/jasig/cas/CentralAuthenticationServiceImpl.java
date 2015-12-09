@@ -7,7 +7,6 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.principal.Principal;
@@ -25,20 +24,19 @@ import org.jasig.cas.support.events.CasProxyGrantingTicketCreatedEvent;
 import org.jasig.cas.support.events.CasProxyTicketGrantedEvent;
 import org.jasig.cas.support.events.CasServiceTicketGrantedEvent;
 import org.jasig.cas.support.events.CasServiceTicketValidatedEvent;
-import org.jasig.cas.support.events.CasTicketGrantingTicketDestroyedEvent;
 import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
+import org.jasig.cas.support.events.CasTicketGrantingTicketDestroyedEvent;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
-import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
-import org.jasig.cas.ticket.proxy.ProxyGrantingTicketFactory;
-import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketFactory;
-import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketFactory;
 import org.jasig.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicketFactory;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicketFactory;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.validation.Assertion;
@@ -144,16 +142,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         verifyRegisteredServiceProperties(registeredService, service);
-
-        final Authentication currentAuthentication = context.getAuthentication();
-        if (currentAuthentication != null) {
-            final Authentication original = ticketGrantingTicket.getAuthentication();
-            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
-                throw new MixedPrincipalException(
-                        currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
-            }
-            ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
-        }
+        final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(context, ticketGrantingTicket);
 
         if (currentAuthentication == null && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             logger.warn("Service [{}] is not allowed to use SSO.", service.getId());
@@ -193,6 +182,24 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
 
         return serviceTicket;
+    }
+
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationContext context,
+                                                                final TicketGrantingTicket ticketGrantingTicket)
+            throws MixedPrincipalException {
+        Authentication currentAuthentication = null;
+        if (context != null) {
+            currentAuthentication = context.getAuthentication();
+            if (currentAuthentication != null) {
+                final Authentication original = ticketGrantingTicket.getAuthentication();
+                if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                    throw new MixedPrincipalException(
+                            currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
+                }
+                ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
+            }
+        }
+        return currentAuthentication;
     }
 
     @Audit(
