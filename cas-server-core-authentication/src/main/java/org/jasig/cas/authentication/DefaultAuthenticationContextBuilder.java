@@ -2,7 +2,6 @@ package org.jasig.cas.authentication;
 
 import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
