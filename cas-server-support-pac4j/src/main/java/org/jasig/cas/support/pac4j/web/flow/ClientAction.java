@@ -170,14 +170,13 @@ public final class ClientAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-
-                if (this.authenticationSupervisor.authenticate(new ClientCredential(credentials))) {
-                    final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
-                    final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
-                    WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-                    return success();
-                }
+                this.authenticationSupervisor.authenticate(new ClientCredential(credentials));
+                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+                return success();
             }
+
         }
 
         // no or aborted authentication : go to login page

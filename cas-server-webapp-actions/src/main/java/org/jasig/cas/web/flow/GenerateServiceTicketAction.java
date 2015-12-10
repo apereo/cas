@@ -50,13 +50,13 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         try {
             final Credential credential = WebUtils.getCredential(context);
 
-            if (this.authenticationSupervisor.authenticate(credential)) {
-                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
-                final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                        .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);
-                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-                return success();
-            }
+            this.authenticationSupervisor.authenticate(credential);
+            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService
+                    .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);
+            WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
+            return success();
+
         } catch (final AuthenticationException e) {
             logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final AbstractTicketException e) {
