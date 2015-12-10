@@ -20,16 +20,28 @@ import java.util.Set;
  */
 @Component("defaultAuthenticationSupervisor")
 public final class DefaultAuthenticationSupervisor implements AuthenticationSupervisor {
+    /**
+     * The constant LOGGER.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationSupervisor.class);
 
+    /**
+     * The Authentication manager.
+     */
     @Autowired
     @Qualifier("authenticationManager")
     private AuthenticationManager authenticationManager;
 
+    /**
+     * The Authentication context builder.
+     */
     @Autowired
     @Qualifier("defaultAuthenticationContextBuilder")
     private AuthenticationContextBuilder authenticationContextBuilder;
 
+    /**
+     * Instantiates a new Default authentication supervisor.
+     */
     public DefaultAuthenticationSupervisor() {}
 
     @Override
@@ -60,6 +72,7 @@ public final class DefaultAuthenticationSupervisor implements AuthenticationSupe
     /**
      * Attempts to sanitize the array of credentials by removing
      * all null elements from the collection.
+     *
      * @param credentials credentials to sanitize
      * @return a set of credentials with no null values
      */
@@ -77,10 +90,20 @@ public final class DefaultAuthenticationSupervisor implements AuthenticationSupe
         return Collections.emptySet();
     }
 
+    /**
+     * Sets authentication manager.
+     *
+     * @param authenticationManager the authentication manager
+     */
     public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
+    /**
+     * Sets authentication context builder.
+     *
+     * @param authenticationContextBuilder the authentication context builder
+     */
     public void setAuthenticationContextBuilder(final AuthenticationContextBuilder authenticationContextBuilder) {
         this.authenticationContextBuilder = authenticationContextBuilder;
     }
