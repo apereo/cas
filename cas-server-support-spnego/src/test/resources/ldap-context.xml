@@ -116,7 +116,7 @@
     <util:list id="authenticationMetadataPopulators" />
     <util:list id="monitorsList" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
-    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
     <alias name="defaultTicketRegistry" alias="ticketRegistry" />
     <util:map id="uniqueIdGeneratorsMap"/>

@@ -1,7 +1,7 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationSupervisor;
+import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
 import org.jasig.cas.authentication.TestUtils;
@@ -40,17 +40,17 @@ public class MultifactorAuthenticationTests {
     private CentralAuthenticationService cas;
 
     @Autowired
-    private AuthenticationSupervisor authenticationSupervisor;
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
     @Before
     public void setup() {
-        this.authenticationSupervisor.clear();
+        this.authenticationTransactionManager.clear();
     }
 
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
-        authenticationSupervisor.authenticate(newUserPassCredentials("alice", "alice"));
-        final AuthenticationContext ctx = authenticationSupervisor.build();
+        authenticationTransactionManager.authenticate(newUserPassCredentials("alice", "alice"));
+        final AuthenticationContext ctx = authenticationTransactionManager.build();
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -60,8 +60,8 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
-        authenticationSupervisor.authenticate(new OneTimePasswordCredential("alice", "31415"));
-        final AuthenticationContext ctx = authenticationSupervisor.build();
+        authenticationTransactionManager.authenticate(new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationContext ctx = authenticationTransactionManager.build();
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -71,8 +71,8 @@ public class MultifactorAuthenticationTests {
 
     @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
     public void verifyDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
-        authenticationSupervisor.authenticate(newUserPassCredentials("alice", "alice"));
-        final AuthenticationContext ctx = authenticationSupervisor.build();
+        authenticationTransactionManager.authenticate(newUserPassCredentials("alice", "alice"));
+        final AuthenticationContext ctx = authenticationTransactionManager.build();
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -81,8 +81,8 @@ public class MultifactorAuthenticationTests {
 
     @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
     public void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
-        authenticationSupervisor.authenticate(new OneTimePasswordCredential("alice", "31415"));
-        final AuthenticationContext ctx = authenticationSupervisor.build();
+        authenticationTransactionManager.authenticate(new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationContext ctx = authenticationTransactionManager.build();
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -92,10 +92,10 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Exception {
-        authenticationSupervisor.authenticate(newUserPassCredentials("alice", "alice"),
+        authenticationTransactionManager.authenticate(newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
 
-        final AuthenticationContext ctx = authenticationSupervisor.build();
+        final AuthenticationContext ctx = authenticationTransactionManager.build();
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -106,17 +106,17 @@ public class MultifactorAuthenticationTests {
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
         // Note the original credential used to start SSO session does not satisfy security policy
-        authenticationSupervisor.authenticate(newUserPassCredentials("alice", "alice"));
-        final AuthenticationContext ctx = authenticationSupervisor.build();
+        authenticationTransactionManager.authenticate(newUserPassCredentials("alice", "alice"));
+        final AuthenticationContext ctx = authenticationTransactionManager.build();
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
         final Service service = newService("https://example.com/high/");
 
-        authenticationSupervisor.authenticate(newUserPassCredentials("alice", "alice"),
+        authenticationTransactionManager.authenticate(newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
 
-        final AuthenticationContext ctx2 = authenticationSupervisor.build();
+        final AuthenticationContext ctx2 = authenticationTransactionManager.build();
 
         final ServiceTicket st = cas.grantServiceTicket(
                 tgt.getId(),

@@ -49,8 +49,8 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     public void verifyResolverServiceTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
 
-        getAuthenticationSupervisor().authenticate(c);
-        final AuthenticationContext ctx = this.getAuthenticationSupervisor().build();
+        getAuthenticationTransactionManager().authenticate(c);
+        final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -71,8 +71,8 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     @Test
     public void verifyResolverTicketGrantingTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        getAuthenticationSupervisor().authenticate(c);
-        final AuthenticationContext ctx = this.getAuthenticationSupervisor().build();
+        getAuthenticationTransactionManager().authenticate(c);
+        final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);

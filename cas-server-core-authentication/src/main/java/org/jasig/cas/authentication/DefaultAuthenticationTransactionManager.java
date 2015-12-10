@@ -13,17 +13,17 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * This is {@link DefaultAuthenticationSupervisor}.
+ * This is {@link DefaultAuthenticationTransactionManager}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
 @Component("defaultAuthenticationSupervisor")
-public final class DefaultAuthenticationSupervisor implements AuthenticationSupervisor {
+public final class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
     /**
      * The constant LOGGER.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationSupervisor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationTransactionManager.class);
 
     /**
      * The Authentication manager.
@@ -42,7 +42,7 @@ public final class DefaultAuthenticationSupervisor implements AuthenticationSupe
     /**
      * Instantiates a new Default authentication supervisor.
      */
-    public DefaultAuthenticationSupervisor() {}
+    public DefaultAuthenticationTransactionManager() {}
 
     @Override
     public void authenticate(final Credential... credentials) throws AuthenticationException {
