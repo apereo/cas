@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +15,9 @@ import org.slf4j.LoggerFactory;
  * @since 4.2
  */
 public final class DefaultAuthenticationContext implements AuthenticationContext {
-    /**
-     * The constant LOGGER.
-     */
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContext.class);
 
-
-    /**
-     * The Authentication.
-     */
     private final Authentication authentication;
 
     /**
@@ -37,5 +32,12 @@ public final class DefaultAuthenticationContext implements AuthenticationContext
     @Override
     public Authentication getAuthentication() {
         return authentication;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("authentication", authentication)
+                .toString();
     }
 }
