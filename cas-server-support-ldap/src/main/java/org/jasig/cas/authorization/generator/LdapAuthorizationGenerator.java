@@ -1,4 +1,22 @@
-package org.jasig.cas.userdetails;
+/*
+ * Licensed to Apereo under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work
+ * for additional information regarding copyright ownership.
+ * Apereo licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file
+ * except in compliance with the License.  You may obtain a
+ * copy of the License at the following location:
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.jasig.cas.authorization.generator;
 
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
@@ -8,25 +26,21 @@ import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
+import org.pac4j.core.authorization.AuthorizationGenerator;
+import org.pac4j.core.exception.AccountNotFoundException;
+import org.pac4j.core.profile.CommonProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
- * Provides a simple {@link UserDetailsService} implementation that obtains user details from an LDAP search.
+ * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
  * Two searches are performed by this component for every user details lookup:
  *
  * <ol>
@@ -36,18 +50,16 @@ import java.util.Collection;
  *     branch than that of the user search.</li>
  * </ol>
  *
+ * @author Jerome Leleu
  * @author Marvin S. Addison
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Component("ldapUserDetailsService")
-public class LdapUserDetailsService implements UserDetailsService {
+@Component("ldapAuthorizationGenerator")
+public class LdapAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
 
     /** Default role prefix. */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
-
-    /** Placeholder for unknown password given to user details. */
-    public static final String UNKNOWN_PASSWORD = "<UNKNOWN>";
 
     /** Logger instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -55,46 +67,46 @@ public class LdapUserDetailsService implements UserDetailsService {
     /** Source of LDAP connections. */
     @Nullable
     @Autowired(required=false)
-    @Qualifier("ldapUserDetailsServiceConnectionFactory")
+    @Qualifier("ldapAuthorizationGeneratorConnectionFactory")
     private ConnectionFactory connectionFactory;
 
     /** Executes the search query for user data. */
     @Nullable
     @Autowired(required=false)
-    @Qualifier("ldapUserDetailsServiceUserSearchExecutor")
+    @Qualifier("ldapAuthorizationGeneratorUserSearchExecutor")
     private SearchExecutor userSearchExecutor;
 
     /** Executes the search query for roles. */
     @Nullable
     @Autowired(required=false)
-    @Qualifier("ldapUserDetailsServiceRoleSearchExecutor")
+    @Qualifier("ldapAuthorizationGeneratorRoleSearchExecutor")
     private SearchExecutor roleSearchExecutor;
 
     /** Specify the name of LDAP attribute to use as principal identifier. */
     @NotNull
-    @Value("${ldap.userdetails.service.user.attr:}")
+    @Value("${ldap.authorizationgenerator.user.attr:}")
     private String userAttributeName;
 
-    /** Specify the name of LDAP attribute to be used as the basis for role granted authorities. */
+    /** Specify the name of LDAP attribute to be used as the basis for the roles. */
     @NotNull
-    @Value("${ldap.userdetails.service.role.attr:}")
+    @Value("${ldap.authorizationgenerator.role.attr:}")
     private String roleAttributeName;
 
     /** Prefix appended to the uppercased
-     * {@link #roleAttributeName} per the normal Spring Security convention.
+     * {@link #roleAttributeName} (Spring Security convention).
      **/
     @NotNull
-    @Value("${ldap.userdetails.service.role.prefix:" + DEFAULT_ROLE_PREFIX + '}')
+    @Value("${ldap.authorizationgenerator.role.prefix:" + DEFAULT_ROLE_PREFIX + "}")
     private String rolePrefix = DEFAULT_ROLE_PREFIX;
 
     /** Flag that indicates whether multiple search results are allowed for a given credential. */
-    @Value("${ldap.userdetails.service.allow.multiple:false}")
+    @Value("${ldap.authorizationgenerator.allow.multiple:false}")
     private boolean allowMultipleResults;
 
     /**
-     * Instantiates a new Ldap user details service.
+     * Instantiates a new Ldap authorization generator.
      */
-    public LdapUserDetailsService() {}
+    public LdapAuthorizationGenerator() {}
 
     /**
      * Creates a new instance with the given required parameters.
@@ -105,7 +117,7 @@ public class LdapUserDetailsService implements UserDetailsService {
      * @param userAttributeName  Name of LDAP attribute that contains username for user details.
      * @param roleAttributeName  Name of LDAP attribute that contains role membership data for the user.
      */
-    public LdapUserDetailsService(
+    public LdapAuthorizationGenerator(
             final ConnectionFactory factory,
             final SearchExecutor userSearchExecutor,
             final SearchExecutor roleSearchExecutor,
@@ -121,7 +133,7 @@ public class LdapUserDetailsService implements UserDetailsService {
 
 
     /**
-     * Sets the prefix appended to the uppercase {@link #roleAttributeName} per the normal Spring Security convention.
+     * Sets the prefix appended to the uppercase {@link #roleAttributeName} (Spring Security convention).
      * The default value {@value #DEFAULT_ROLE_PREFIX} is sufficient in most cases.
      *
      * @param  rolePrefix  Role prefix.
@@ -145,7 +157,8 @@ public class LdapUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(final String username) {
+    public void generate(final CommonProfile profile) {
+        final String username = profile.getId();
         final SearchResult userResult;
         try {
             logger.debug("Attempting to get details for user {}.", username);
@@ -158,7 +171,7 @@ public class LdapUserDetailsService implements UserDetailsService {
             throw new RuntimeException("LDAP error fetching details for user.", e);
         }
         if (userResult.size() == 0) {
-            throw new UsernameNotFoundException(username + " not found.");
+            throw new AccountNotFoundException(username + " not found.");
         }
         if (userResult.size() > 1 && !this.allowMultipleResults) {
             throw new IllegalStateException(
@@ -184,7 +197,6 @@ public class LdapUserDetailsService implements UserDetailsService {
             throw new RuntimeException("LDAP error fetching roles for user.", e);
         }
         LdapAttribute roleAttribute;
-        final Collection<SimpleGrantedAuthority> roles = new ArrayList<>(roleResult.size());
         for (final LdapEntry entry : roleResult.getEntries()) {
             roleAttribute = entry.getAttribute(this.roleAttributeName);
             if (roleAttribute == null) {
@@ -193,12 +205,10 @@ public class LdapUserDetailsService implements UserDetailsService {
             }
 
             for (final String role : roleAttribute.getStringValues()) {
-                roles.add(new SimpleGrantedAuthority(this.rolePrefix + role.toUpperCase()));
+                profile.addRole(this.rolePrefix + role.toUpperCase());
             }
 
         }
-
-        return new User(id, UNKNOWN_PASSWORD, roles);
     }
 
     /**
