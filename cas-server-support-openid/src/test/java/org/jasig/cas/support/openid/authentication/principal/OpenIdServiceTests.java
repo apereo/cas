@@ -39,10 +39,10 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            this.authenticationSupervisor.authenticate(
+            this.authenticationTransactionManager.authenticate(
                     org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-            final AuthenticationContext ctx = this.authenticationSupervisor.build();
+            final AuthenticationContext ctx = this.authenticationTransactionManager.build();
 
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
@@ -72,10 +72,10 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            this.authenticationSupervisor.authenticate(
+            this.authenticationTransactionManager.authenticate(
                     org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-            final AuthenticationContext ctx = this.authenticationSupervisor.build();
+            final AuthenticationContext ctx = this.authenticationTransactionManager.build();
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);

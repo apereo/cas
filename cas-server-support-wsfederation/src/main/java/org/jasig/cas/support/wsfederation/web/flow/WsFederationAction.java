@@ -1,7 +1,7 @@
 package org.jasig.cas.support.wsfederation.web.flow;
 
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationSupervisor;
+import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.support.wsfederation.WsFederationConfiguration;
 import org.jasig.cas.support.wsfederation.WsFederationHelper;
 import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationCredential;
@@ -63,8 +63,8 @@ public final class WsFederationAction extends AbstractAction {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationSupervisor")
-    private AuthenticationSupervisor authenticationSupervisor;
+    @Qualifier("authenticationTransactionManager")
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
     /**
      * Executes the webflow action.
@@ -119,8 +119,8 @@ public final class WsFederationAction extends AbstractAction {
                     }
 
                     try {
-                        this.authenticationSupervisor.authenticate(credential);
-                        final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                        this.authenticationTransactionManager.authenticate(credential);
+                        final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
                         WebUtils.putTicketGrantingTicketInScopes(context,
                                 this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));
 

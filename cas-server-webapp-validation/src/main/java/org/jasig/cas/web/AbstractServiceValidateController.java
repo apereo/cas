@@ -4,7 +4,7 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationSupervisor;
+import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -101,8 +101,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationSupervisor")
-    private AuthenticationSupervisor authenticationSupervisor;
+    @Qualifier("authenticationTransactionManager")
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
     /**
      * Instantiates a new Service validate controller.
@@ -154,8 +154,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         TicketGrantingTicket proxyGrantingTicketId = null;
 
         try {
-            this.authenticationSupervisor.authenticate(serviceCredential);
-            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            this.authenticationTransactionManager.authenticate(serviceCredential);
+            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
                     authenticationContext);
             logger.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",

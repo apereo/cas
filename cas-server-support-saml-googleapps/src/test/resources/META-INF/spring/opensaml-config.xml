@@ -77,7 +77,7 @@
     <util:map id="serviceThemeResolverSupportedBrowsers" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
-    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationTransactionManager" />
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
     <bean id="handlerMappingC" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping"/>

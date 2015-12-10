@@ -140,8 +140,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyRenewWithServiceAndSameCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
-        getAuthenticationSupervisor().authenticate(c);
-        final AuthenticationContext ctx = this.getAuthenticationSupervisor().build();
+        getAuthenticationTransactionManager().authenticate(c);
+        final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -168,8 +168,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     public void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
 
-        getAuthenticationSupervisor().authenticate(c);
-        final AuthenticationContext ctx = this.getAuthenticationSupervisor().build();
+        getAuthenticationTransactionManager().authenticate(c);
+        final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -194,8 +194,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyRenewWithServiceAndBadCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
-        getAuthenticationSupervisor().authenticate(c);
-        final AuthenticationContext ctx = this.getAuthenticationSupervisor().build();
+        getAuthenticationTransactionManager().authenticate(c);
+        final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final MockHttpServletRequest request = new MockHttpServletRequest();

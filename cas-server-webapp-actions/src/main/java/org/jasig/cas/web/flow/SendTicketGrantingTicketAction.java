@@ -2,7 +2,7 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationSupervisor;
+import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -54,8 +54,8 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationSupervisor")
-    private AuthenticationSupervisor authenticationSupervisor;
+    @Qualifier("authenticationTransactionManager")
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
     /**
      * Instantiates a new Send ticket granting ticket action.
@@ -85,7 +85,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
         }
 
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {
-            this.authenticationSupervisor.clear();
+            this.authenticationTransactionManager.clear();
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketValueFromCookie);
         }
 
@@ -151,7 +151,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
         this.servicesManager = servicesManager;
     }
 
-    public void setAuthenticationSupervisor(final AuthenticationSupervisor authenticationSupervisor) {
-        this.authenticationSupervisor = authenticationSupervisor;
+    public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
+        this.authenticationTransactionManager = authenticationTransactionManager;
     }
 }
