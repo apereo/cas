@@ -89,12 +89,13 @@ public class JsonServiceRegistryDaoTests {
                 new ShibbolethCompatiblePersistentIdGenerator("helloworld")
         ));
         final RegisteredService r2 = this.dao.save(r);
+        this.dao.load();
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         final AnonymousRegisteredServiceUsernameAttributeProvider anon =
-                (AnonymousRegisteredServiceUsernameAttributeProvider) r2.getUsernameAttributeProvider();
+                (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
         final ShibbolethCompatiblePersistentIdGenerator ss =
                 (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
         assertEquals(new String(ss.getSalt()), "helloworld");
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
