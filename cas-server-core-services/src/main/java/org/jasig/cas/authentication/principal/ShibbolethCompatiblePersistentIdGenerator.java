@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -35,6 +37,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
 
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
+    @JsonProperty
     private final String salt;
 
     /**
@@ -66,6 +69,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      *
      * @return the byte[] for the salt or null
      */
+    @JsonIgnore
     public byte[] getSalt() {
         try {
             return ByteSource.wrap(convertSaltToByteArray()).read();
