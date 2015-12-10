@@ -467,9 +467,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     }
 
     private AuthenticationContext getAuthenticationContext(final Credential... credentials) throws AuthenticationException {
-        if (!getAuthenticationSupervisor().authenticate(credentials)) {
-            throw new AuthenticationException();
-        }
+        getAuthenticationSupervisor().authenticate(credentials);
         return getAuthenticationSupervisor().build();
     }
 }
