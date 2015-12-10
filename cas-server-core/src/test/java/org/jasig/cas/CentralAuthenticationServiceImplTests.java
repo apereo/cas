@@ -44,7 +44,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Before
     public void setup() {
-        this.getAuthenticationSupervisor().clear();
+        this.getAuthenticationTransactionManager().clear();
     }
 
     @Test(expected = AuthenticationException.class)
@@ -467,7 +467,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     }
 
     private AuthenticationContext getAuthenticationContext(final Credential... credentials) throws AuthenticationException {
-        getAuthenticationSupervisor().authenticate(credentials);
-        return getAuthenticationSupervisor().build();
+        getAuthenticationTransactionManager().authenticate(credentials);
+        return getAuthenticationTransactionManager().build();
     }
 }

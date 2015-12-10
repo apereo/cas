@@ -23,7 +23,7 @@ public class DefaultAuthenticationSupervisorTests {
 
     private AuthenticationManager manager;
     private DefaultAuthenticationContextBuilder builder;
-    private DefaultAuthenticationSupervisor authenticationSupervisor;
+    private DefaultAuthenticationTransactionManager authenticationSupervisor;
 
     @Before
     public void setup() {
@@ -36,7 +36,7 @@ public class DefaultAuthenticationSupervisorTests {
         handler.setUsers(Collections.singletonMap("casuser", "Mellon"));
         this.manager = new PolicyBasedAuthenticationManager(handler, new SimpleTestUsernamePasswordAuthenticationHandler());
 
-        this.authenticationSupervisor = new DefaultAuthenticationSupervisor();
+        this.authenticationSupervisor = new DefaultAuthenticationTransactionManager();
         this.authenticationSupervisor.setAuthenticationContextBuilder(this.builder);
         this.authenticationSupervisor.setAuthenticationManager(this.manager);
     }

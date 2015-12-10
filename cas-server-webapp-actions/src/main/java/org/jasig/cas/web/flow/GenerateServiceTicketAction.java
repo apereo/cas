@@ -4,7 +4,7 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationSupervisor;
+import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
@@ -39,8 +39,8 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationSupervisor")
-    private AuthenticationSupervisor authenticationSupervisor;
+    @Qualifier("authenticationTransactionManager")
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -50,8 +50,8 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         try {
             final Credential credential = WebUtils.getCredential(context);
 
-            this.authenticationSupervisor.authenticate(credential);
-            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            this.authenticationTransactionManager.authenticate(credential);
+            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
@@ -61,7 +61,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
-                this.authenticationSupervisor.clear();
+                this.authenticationTransactionManager.clear();
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
@@ -76,8 +76,8 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    public void setAuthenticationSupervisor(final AuthenticationSupervisor authenticationSupervisor) {
-        this.authenticationSupervisor = authenticationSupervisor;
+    public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
+        this.authenticationTransactionManager = authenticationTransactionManager;
     }
 
     /**

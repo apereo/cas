@@ -47,10 +47,10 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
 
         final MockRequestContext ctx = new MockRequestContext();
 
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctxAuthN = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctxAuthN = getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket tgt = this.getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctxAuthN);

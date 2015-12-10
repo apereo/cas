@@ -1,7 +1,7 @@
 package org.jasig.cas.support.openid;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationSupervisor;
+import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.junit.runner.RunWith;
 import org.openid4java.server.ServerAssociationStore;
@@ -32,8 +32,8 @@ public class AbstractOpenIdTests {
     protected CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("authenticationSupervisor")
-    protected AuthenticationSupervisor authenticationSupervisor;
+    @Qualifier("authenticationTransactionManager")
+    protected AuthenticationTransactionManager authenticationTransactionManager;
 
     @Autowired
     @Qualifier("serverAssociations")
