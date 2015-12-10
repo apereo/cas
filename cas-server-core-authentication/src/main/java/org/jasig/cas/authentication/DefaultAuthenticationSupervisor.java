@@ -30,7 +30,7 @@ public final class DefaultAuthenticationSupervisor implements AuthenticationSupe
     @Qualifier("defaultAuthenticationContextBuilder")
     private AuthenticationContextBuilder authenticationContextBuilder;
 
-    private DefaultAuthenticationSupervisor() {}
+    public DefaultAuthenticationSupervisor() {}
 
     @Override
     public void authenticate(final Credential... credentials) throws AuthenticationException {
