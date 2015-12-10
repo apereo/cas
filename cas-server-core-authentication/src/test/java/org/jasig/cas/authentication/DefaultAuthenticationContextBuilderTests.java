@@ -34,7 +34,7 @@ public class DefaultAuthenticationContextBuilderTests {
     }
 
     @Test
-    public void testBuilderWithSingleAuthN() throws Exception {
+    public void checkBuilderWithSingleAuthN() throws Exception {
         final Authentication authN = manager.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
         builder.collect(authN);
         final AuthenticationContext ctx = builder.build();
@@ -44,7 +44,7 @@ public class DefaultAuthenticationContextBuilderTests {
     }
 
     @Test
-    public void testBuilderWithManyAuthN() throws Exception {
+    public void checkBuilderWithManyAuthN() throws Exception {
         final Authentication authN1 = manager.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
         builder.collect(authN1);
 
@@ -60,7 +60,7 @@ public class DefaultAuthenticationContextBuilderTests {
     }
 
     @Test
-    public void testBuilderWithDuplicateAuthN() throws Exception {
+    public void checkBuilderWithDuplicateAuthN() throws Exception {
         final Authentication authN1 = manager.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
         builder.collect(authN1);
         builder.collect(authN1);
@@ -68,7 +68,7 @@ public class DefaultAuthenticationContextBuilderTests {
     }
 
     @Test
-    public void testBuilderAttributesWithManyAuthN() throws Exception {
+    public void verifyBuilderAttributesWithManyAuthN() throws Exception {
         final Authentication authN1 = manager.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
         builder.collect(authN1);
 
