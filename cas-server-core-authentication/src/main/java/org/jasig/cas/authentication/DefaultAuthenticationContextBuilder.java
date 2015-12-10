@@ -45,14 +45,14 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
     }
 
     @Override
-    public boolean collect(final Authentication authentication) throws AuthenticationException {
+    public AuthenticationContextBuilder collect(final Authentication authentication) throws AuthenticationException {
         if (this.authentications.add(authentication)) {
             LOGGER.debug("Collected authentication event. Associated principal with this authentication is [{}]",
                     authentication.getPrincipal());
-            return true;
+        } else {
+            LOGGER.warn("Failed to collect duplicate authentication event as it already exists.");
         }
-        LOGGER.warn("Failed to collect duplicate authentication event as it already exists.");
-        return false;
+        return this;
     }
 
     @Override
