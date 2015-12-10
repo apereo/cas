@@ -21,8 +21,8 @@ import javax.annotation.PostConstruct;
  */
 @Component("stormpathAuthenticationHandler")
 public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler {
-    @Value("${cas.authn.stormpath.access.id:}")
-    private String accessId;
+    @Value("${cas.authn.stormpath.api.key:}")
+    private String apiKey;
 
     @Value("${cas.authn.stormpath.app.id:}")
     private String applicationId;
@@ -39,7 +39,7 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
      */
     @PostConstruct
     public void initialize() {
-        final StormpathAuthenticator authenticator = new StormpathAuthenticator(this.accessId, this.secretkey, this.applicationId);
+        final StormpathAuthenticator authenticator = new StormpathAuthenticator(this.apiKey, this.secretkey, this.applicationId);
         authenticator.setPasswordEncoder(this.stormpathPasswordEncoder);
         setAuthenticator(authenticator);
     }
