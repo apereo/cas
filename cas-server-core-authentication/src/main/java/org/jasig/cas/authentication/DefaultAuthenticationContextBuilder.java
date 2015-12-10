@@ -71,27 +71,30 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
     }
 
     private Authentication buildAuthentication() {
-        if (!isEmpty()) {
-            final Map<String, Object> authenticationAttributes = new HashMap<>();
-            final Map<String, Object> principalAttributes = new HashMap<>();
-            final AuthenticationBuilder authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
-
-            buildAuthenticationHistory(authenticationAttributes, principalAttributes, authenticationBuilder);
-
-            final Principal primaryPrincipal = getPrimaryPrincipal(principalAttributes);
-            authenticationBuilder.setPrincipal(primaryPrincipal);
-            LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
-
-            authenticationBuilder.setAttributes(authenticationAttributes);
-            LOGGER.debug("Collected authentication attributes for this context are [{}]", authenticationAttributes);
-
-            final DateTime dt = DateTime.now();
-            authenticationBuilder.setAuthenticationDate(dt);
-            LOGGER.debug("Authentication context commenced at [{}]", dt);
-
-            return authenticationBuilder.build();
+        if (isEmpty()) {
+            LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication context");
+            return null;
         }
-        return null;
+
+        final Map<String, Object> authenticationAttributes = new HashMap<>();
+        final Map<String, Object> principalAttributes = new HashMap<>();
+        final AuthenticationBuilder authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
+
+        buildAuthenticationHistory(authenticationAttributes, principalAttributes, authenticationBuilder);
+
+        final Principal primaryPrincipal = getPrimaryPrincipal(principalAttributes);
+        authenticationBuilder.setPrincipal(primaryPrincipal);
+        LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
+
+        authenticationBuilder.setAttributes(authenticationAttributes);
+        LOGGER.debug("Collected authentication attributes for this context are [{}]", authenticationAttributes);
+
+        final DateTime dt = DateTime.now();
+        authenticationBuilder.setAuthenticationDate(dt);
+        LOGGER.debug("Authentication context commenced at [{}]", dt);
+
+        return authenticationBuilder.build();
+
     }
 
     private void buildAuthenticationHistory(final Map<String, Object> authenticationAttributes,
@@ -109,16 +112,25 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
 
             for (final String attrName : authn.getAttributes().keySet()) {
                 if (!authenticationAttributes.containsKey(attrName)) {
-                    authenticationAttributes.put(attrName, authn.getAttributes().get(attrName));
+                    final Object value = authn.getAttributes().get(attrName);
+                    if (value != null) {
+                        authenticationAttributes.put(attrName, value);
+                        LOGGER.debug("Collected single authentication attribute [{}] -> [{}]", attrName, value);
+                    } else {
+                        LOGGER.warn("Authentication attribute [{}] has no value and is not collected");
+                    }
                 } else {
+                    LOGGER.debug("Collecting multi-valued authentication attribute [{}]", attrName);
                     final Object oldValue = authenticationAttributes.remove(attrName);
-                    final Collection<Object> listOfValues = convertValueToCollection(oldValue);
 
+                    LOGGER.debug("Converting authentication attribute [{}] to a collection of values", attrName);
+                    final Collection<Object> listOfValues = convertValueToCollection(oldValue);
                     listOfValues.add(authn.getAttributes().get(attrName));
                     authenticationAttributes.put(attrName, listOfValues);
+                    LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
                 }
             }
-            LOGGER.debug("Collected authentication attributes [{}] for inclusion in context",
+            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in authentication context",
                     authenticationAttributes);
 
             authenticationBuilder.addSuccesses(authn.getSuccesses())
