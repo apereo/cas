@@ -36,11 +36,15 @@ public final class DefaultAuthenticationSupervisor implements AuthenticationSupe
     public void authenticate(final Credential... credentials) throws AuthenticationException {
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
         if (!sanitizedCredentials.isEmpty()) {
+            final Credential[] sanitizedCredentialsArray = sanitizedCredentials.toArray(new Credential[] {});
+            LOGGER.debug("Sanitized credentials [{}] prior to authentication", sanitizedCredentialsArray);
             final Authentication authentication =
-                    this.authenticationManager.authenticate(sanitizedCredentials.toArray(new Credential[] {}));
+                    this.authenticationManager.authenticate(sanitizedCredentialsArray);
+            LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
             this.authenticationContextBuilder.collect(authentication);
+        } else {
+            LOGGER.debug("No credentials were provided for authentication");
         }
-        LOGGER.debug("No credentials were provided for authentication");
     }
 
     @Override

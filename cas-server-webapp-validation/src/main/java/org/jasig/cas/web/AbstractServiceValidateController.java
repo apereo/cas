@@ -158,10 +158,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
             proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
                     authenticationContext);
-            logger.debug("Generated PGT [{}] off of service ticket [{}] and credential [{}]",
+            logger.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
                     proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
         } catch (final AuthenticationException e) {
-            logger.info("Failed to authenticate service credential {}", serviceCredential);
+            logger.warn("Failed to authenticate service credential {}", serviceCredential);
         } catch (final AbstractTicketException e) {
             logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
         }

@@ -6,7 +6,6 @@ import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationSupervisor;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
