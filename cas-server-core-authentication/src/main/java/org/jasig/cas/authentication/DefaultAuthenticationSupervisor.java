@@ -33,15 +33,14 @@ public final class DefaultAuthenticationSupervisor implements AuthenticationSupe
     private DefaultAuthenticationSupervisor() {}
 
     @Override
-    public boolean authenticate(final Credential... credentials) throws AuthenticationException {
+    public void authenticate(final Credential... credentials) throws AuthenticationException {
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
         if (!sanitizedCredentials.isEmpty()) {
             final Authentication authentication =
                     this.authenticationManager.authenticate(sanitizedCredentials.toArray(new Credential[] {}));
-            return this.authenticationContextBuilder.collect(authentication);
+            this.authenticationContextBuilder.collect(authentication);
         }
-        LOGGER.warn("No credentials were provided for authentication");
-        return false;
+        LOGGER.debug("No credentials were provided for authentication");
     }
 
     @Override

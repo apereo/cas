@@ -119,14 +119,14 @@ public final class WsFederationAction extends AbstractAction {
                     }
 
                     try {
-                        if (this.authenticationSupervisor.authenticate(credential)) {
-                            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
-                            WebUtils.putTicketGrantingTicketInScopes(context,
-                                    this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));
+                        this.authenticationSupervisor.authenticate(credential);
+                        final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                        WebUtils.putTicketGrantingTicketInScopes(context,
+                                this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));
 
-                            logger.info("Token validated and new {} created: {}", credential.getClass().getName(), credential);
-                            return success();
-                        }
+                        logger.info("Token validated and new {} created: {}", credential.getClass().getName(), credential);
+                        return success();
+
                     } catch (final AbstractTicketException e) {
                         logger.error(e.getMessage(), e);
                         return error();

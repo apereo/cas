@@ -14,10 +14,9 @@ public interface AuthenticationSupervisor {
      * Authenticate boolean.
      *
      * @param credentials the credentials
-     * @return the boolean
      * @throws AuthenticationException the authentication exception
      */
-    boolean authenticate(final Credential... credentials) throws AuthenticationException;
+    void authenticate(final Credential... credentials) throws AuthenticationException;
 
     /**
      * Build authentication context authentication context.
