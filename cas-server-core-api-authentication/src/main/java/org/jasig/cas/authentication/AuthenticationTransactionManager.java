@@ -14,9 +14,10 @@ public interface AuthenticationTransactionManager {
      * Authenticate boolean.
      *
      * @param credentials the credentials
+     * @return the context builder
      * @throws AuthenticationException the authentication exception
      */
-    void processAuthenticationAttempt(final Credential... credentials) throws AuthenticationException;
+    AuthenticationContextBuilder processAuthenticationAttempt(final Credential... credentials) throws AuthenticationException;
 
     /**
      * Build authentication context authentication context.

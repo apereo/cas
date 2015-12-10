@@ -14,12 +14,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * This is {@link DefaultAuthenticationSupervisorTests}.
+ * This is {@link DefaultAuthenticationTransactionManagerTests}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public class DefaultAuthenticationSupervisorTests {
+public class DefaultAuthenticationTransactionManagerTests {
 
     private AuthenticationManager manager;
     private DefaultAuthenticationContextBuilder builder;
