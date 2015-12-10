@@ -14,7 +14,7 @@ public interface AuthenticationContextBuilder {
      *
      * @return total count of authentications
      */
-    int count();
+    int size();
 
     /**
      * Determines whether the context is empty.

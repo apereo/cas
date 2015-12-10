@@ -26,7 +26,7 @@ import java.util.Set;
  */
 @Component("defaultAuthenticationContextBuilder")
 public class DefaultAuthenticationContextBuilder implements AuthenticationContextBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContext.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContextBuilder.class);
 
     private final Set<Authentication> authentications = new LinkedHashSet<>();
 
@@ -35,7 +35,7 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
     private PrincipalElectionStrategy principalElectionStrategy;
 
     @Override
-    public int count() {
+    public int size() {
         return this.authentications.size();
     }
 
@@ -51,8 +51,7 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
                     authentication.getPrincipal());
             return true;
         }
-        LOGGER.warn("Failed to collect authentication event. Associated principal with this authentication is [{}]",
-                authentication.getPrincipal());
+        LOGGER.warn("Failed to collect duplicate authentication event as it already exists.");
         return false;
     }
 
@@ -117,7 +116,7 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
                         authenticationAttributes.put(attrName, value);
                         LOGGER.debug("Collected single authentication attribute [{}] -> [{}]", attrName, value);
                     } else {
-                        LOGGER.warn("Authentication attribute [{}] has no value and is not collected");
+                        LOGGER.warn("Authentication attribute [{}] has no value and is not collected", attrName);
                     }
                 } else {
                     LOGGER.debug("Collecting multi-valued authentication attribute [{}]", attrName);
@@ -172,4 +171,7 @@ public class DefaultAuthenticationContextBuilder implements AuthenticationContex
         return c;
     }
 
+    public void setPrincipalElectionStrategy(final PrincipalElectionStrategy principalElectionStrategy) {
+        this.principalElectionStrategy = principalElectionStrategy;
+    }
 }
