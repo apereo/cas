@@ -20,21 +20,13 @@ import java.util.Set;
  */
 @Component("defaultAuthenticationSupervisor")
 public final class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
-    /**
-     * The constant LOGGER.
-     */
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationTransactionManager.class);
 
-    /**
-     * The Authentication manager.
-     */
     @Autowired
     @Qualifier("authenticationManager")
     private AuthenticationManager authenticationManager;
 
-    /**
-     * The Authentication context builder.
-     */
     @Autowired
     @Qualifier("defaultAuthenticationContextBuilder")
     private AuthenticationContextBuilder authenticationContextBuilder;
@@ -45,7 +37,7 @@ public final class DefaultAuthenticationTransactionManager implements Authentica
     public DefaultAuthenticationTransactionManager() {}
 
     @Override
-    public void processAuthenticationAttempt(final Credential... credentials) throws AuthenticationException {
+    public AuthenticationContextBuilder processAuthenticationAttempt(final Credential... credentials) throws AuthenticationException {
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
         if (!sanitizedCredentials.isEmpty()) {
             final Credential[] sanitizedCredentialsArray = sanitizedCredentials.toArray(new Credential[] {});
@@ -57,6 +49,7 @@ public final class DefaultAuthenticationTransactionManager implements Authentica
         } else {
             LOGGER.debug("No credentials were provided for authentication");
         }
+        return authenticationContextBuilder;
     }
 
     @Override

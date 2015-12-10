@@ -48,7 +48,8 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
 
         this.action.setCentralAuthenticationService(centralAuthenticationService);
 
-        final DefaultAuthenticationTransactionManager supervisor = (DefaultAuthenticationTransactionManager) getAuthenticationTransactionManager();
+        final DefaultAuthenticationTransactionManager supervisor =
+                (DefaultAuthenticationTransactionManager) getAuthenticationTransactionManager();
         supervisor.setAuthenticationManager(authenticationManager);
         this.action.setAuthenticationTransactionManager(supervisor);
 
