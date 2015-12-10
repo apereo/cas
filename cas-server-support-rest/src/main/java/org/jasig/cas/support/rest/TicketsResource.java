@@ -6,7 +6,7 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationSupervisor;
+import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.ServiceFactory;
@@ -62,8 +62,8 @@ public class TicketsResource {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationSupervisor")
-    private AuthenticationSupervisor authenticationSupervisor;
+    @Qualifier("authenticationTransactionManager")
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
     @Autowired(required = false)
     private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
@@ -92,8 +92,8 @@ public class TicketsResource {
 
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
 
-            this.authenticationSupervisor.authenticate(credential);
-            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            this.authenticationTransactionManager.authenticate(credential);
+            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(authenticationContext);
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
@@ -141,7 +141,7 @@ public class TicketsResource {
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
-                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
                 final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
                         this.webApplicationServiceFactory.createService(serviceId), authenticationContext);
                 return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
@@ -163,7 +163,7 @@ public class TicketsResource {
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
     public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
-        this.authenticationSupervisor.clear();
+        this.authenticationTransactionManager.clear();
         this.cas.destroyTicketGrantingTicket(tgtId);
         return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }

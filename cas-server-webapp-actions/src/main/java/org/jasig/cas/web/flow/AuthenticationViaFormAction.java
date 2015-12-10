@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationSupervisor;
+import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
@@ -77,8 +77,8 @@ public class AuthenticationViaFormAction {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationSupervisor")
-    private AuthenticationSupervisor authenticationSupervisor;
+    @Qualifier("authenticationTransactionManager")
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
     /**
      * Handle the submission of credentials from the post.
@@ -163,8 +163,8 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
-            this.authenticationSupervisor.authenticate(credential);
-            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            this.authenticationTransactionManager.authenticate(credential);
+            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                     ticketGrantingTicketId, service, authenticationContext);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
@@ -175,7 +175,7 @@ public class AuthenticationViaFormAction {
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final TicketCreationException e) {
             logger.warn("Invalid attempt to access service using renew=true with different credential. Ending SSO session.");
-            this.authenticationSupervisor.clear();
+            this.authenticationTransactionManager.clear();
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
         } catch (final AbstractTicketException e) {
             return newEvent(ERROR, e);
@@ -196,8 +196,8 @@ public class AuthenticationViaFormAction {
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
         try {
-            this.authenticationSupervisor.authenticate(credential);
-            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            this.authenticationTransactionManager.authenticate(credential);
+            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
@@ -306,7 +306,7 @@ public class AuthenticationViaFormAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    public void setAuthenticationSupervisor(final AuthenticationSupervisor authenticationSupervisor) {
-        this.authenticationSupervisor = authenticationSupervisor;
+    public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
+        this.authenticationTransactionManager = authenticationTransactionManager;
     }
 }

@@ -167,7 +167,7 @@
     <alias name="multiTimeUseOrTimeoutExpirationPolicy" alias="serviceTicketExpirationPolicy" />
     <util:list id="serviceFactoryList" />
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
-    <alias name="defaultAuthenticationSupervisor" alias="authenticationSupervisor" />
+    <alias name="defaultAuthenticationSupervisor" alias="authenticationTransactionManager" />
     <alias name="acceptAnyAuthenticationPolicyFactory" alias="authenticationPolicyFactory" />
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"/>
     <bean id="auditTrailManager"

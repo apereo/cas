@@ -6,7 +6,7 @@ import org.jasig.cas.adaptors.x509.authentication.principal.AbstractX509Certific
 import org.jasig.cas.adaptors.x509.authentication.principal.X509SerialNumberPrincipalResolver;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.DefaultAuthenticationSupervisor;
+import org.jasig.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.jasig.cas.authentication.PolicyBasedAuthenticationManager;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.junit.Before;
@@ -45,9 +45,9 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
                 getCentralAuthenticationService();
 
         this.action.setCentralAuthenticationService(centralAuthenticationService);
-        final DefaultAuthenticationSupervisor supervisor = (DefaultAuthenticationSupervisor) getAuthenticationSupervisor();
+        final DefaultAuthenticationTransactionManager supervisor = (DefaultAuthenticationTransactionManager) getAuthenticationTransactionManager();
         supervisor.setAuthenticationManager(authenticationManager);
-        this.action.setAuthenticationSupervisor(supervisor);
+        this.action.setAuthenticationTransactionManager(supervisor);
 
     }
 

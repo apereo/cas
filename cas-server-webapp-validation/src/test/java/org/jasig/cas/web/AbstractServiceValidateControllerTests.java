@@ -50,10 +50,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     private HttpServletRequest getHttpServletRequest() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -83,10 +83,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicket() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -119,17 +119,17 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyInvalidServiceTicket() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(),
                 org.jasig.cas.authentication.TestUtils.getService(), ctx);
 
-        getAuthenticationSupervisor().clear();
+        getAuthenticationTransactionManager().clear();
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId.getId());
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -144,10 +144,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     @Test
     public void verifyValidServiceTicketWithValidPgtNoProxyHandling() throws Exception {
 
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -175,10 +175,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketWithInvalidPgt() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -198,10 +198,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     
     @Test
     public void verifyValidServiceTicketWithValidPgtAndProxyHandling() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -220,10 +220,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     
     @Test
     public void verifyValidServiceTicketWithValidPgtAndProxyHandlerFailing() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -254,10 +254,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     
     @Test
     public void verifyValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -280,10 +280,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     
     @Test
     public void verifyValidServiceTicketWithDifferentEncoding() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         final TicketGrantingTicket tId = getCentralAuthenticationService()
@@ -306,10 +306,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     
     @Test
     public void verifyValidServiceTicketAndPgtUrlMismatch() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -329,10 +329,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndFormatAsJson() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
         final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final Service svc = org.jasig.cas.authentication.TestUtils.getService("proxyService");
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), svc, ctx);
@@ -348,10 +348,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndBadFormat() throws Exception {
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -371,10 +371,10 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     protected final ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl() throws Exception {
         final Service service = org.jasig.cas.authentication.TestUtils.getService();
 
-        getAuthenticationSupervisor().authenticate(
+        getAuthenticationTransactionManager().authenticate(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final AuthenticationContext ctx = getAuthenticationSupervisor().build();
+        final AuthenticationContext ctx = getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket tId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);

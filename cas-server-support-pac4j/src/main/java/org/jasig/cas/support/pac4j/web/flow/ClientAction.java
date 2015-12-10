@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationSupervisor;
+import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.authentication.principal.ClientCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -104,8 +104,8 @@ public final class ClientAction extends AbstractAction {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationSupervisor")
-    private AuthenticationSupervisor authenticationSupervisor;
+    @Qualifier("authenticationTransactionManager")
+    private AuthenticationTransactionManager authenticationTransactionManager;
 
     /**
      * Build the ClientAction.
@@ -170,8 +170,8 @@ public final class ClientAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                this.authenticationSupervisor.authenticate(new ClientCredential(credentials));
-                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                this.authenticationTransactionManager.authenticate(new ClientCredential(credentials));
+                final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
