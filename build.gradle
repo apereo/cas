@@ -260,6 +260,10 @@ subprojects {
                             id 'mmoayyed'
                             name 'Misagh Moayyed'
                         }
+                        developer {
+                            id 'robertoschwald'
+                            name 'Robert Oschwald'
+                        }
                     }
 
                     contributors {
@@ -274,6 +278,10 @@ subprojects {
                         contributor {
                             name "Arnaud Lesueur"
                             email "arnaud.lesueur@gmail.com"
+                        }
+                        contributor {
+                            name "Daniel Frett"
+                            email "daniel.frett@ccci.org"
                         }
                         contributor {
                             name "Dmitriy Kopylenko"
@@ -320,24 +328,24 @@ subprojects {
                     mailingLists {
                         mailingList {
                             name "cas-user"
-                            subscribe "join-cas-user@lists.jasig.org"
-                            unsubscribe "leave-cas-user@lists.jasig.org"
-                            post "cas-user@lists.jasig.org"
-                            archive "https://lists.wisc.edu/read/?forum=cas-user"
+                            subscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+                            unsubscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-user"
+                            post "cas-user@apereo.org"
+                            archive "https://groups.google.com/forum/#!forum/jasig-cas-user"
                         }
                         mailingList {
                             name "cas-dev"
-                            subscribe "join-cas-dev@lists.jasig.org"
-                            unsubscribe "leave-cas-dev@lists.jasig.org"
-                            post "cas-dev@lists.jasig.org"
-                            archive "https://lists.wisc.edu/read/?forum=cas-dev"
+                            subscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+                            unsubscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev"
+                            post "cas-dev@apereo.org"
+                            archive "https://groups.google.com/forum/#!forum/jasig-cas-dev"
                         }
                         mailingList {
                             name "cas-announce"
-                            subscribe "join-cas-announce@lists.jasig.org"
-                            unsubscribe "leave-cas-announce@lists.jasig.org"
-                            post "cas-announce@lists.jasig.org"
-                            archive "https://lists.wisc.edu/read/?forum=cas-announce"
+                            subscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                            unsubscribe "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
+                            post "cas-announce@apereo.org"
+                            archive "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
                         }
                     }
 
