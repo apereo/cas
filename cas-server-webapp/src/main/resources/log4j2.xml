@@ -41,7 +41,7 @@
         <AsyncLogger  name="org.springframework" level="warn" />
         <AsyncLogger name="org.springframework.webflow" level="warn" />
         <AsyncLogger name="org.springframework.web" level="warn" />
-        <AsyncLogger name="org.springframework.security" level="warn" />
+        <Logger name="org.pac4j" level="warn" />
 
         <AsyncLogger name="perfStatsLogger" level="info" additivity="false" includeLocation="true">
             <AppenderRef ref="perfFileAppender"/>
