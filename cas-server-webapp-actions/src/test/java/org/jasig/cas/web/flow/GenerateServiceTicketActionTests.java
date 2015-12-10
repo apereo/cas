@@ -33,7 +33,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
         this.action.afterPropertiesSet();
 
-        getAuthenticationTransactionManager().authenticate(
+        getAuthenticationTransactionManager().processAuthenticationAttempt(
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
         final AuthenticationContext ctx = getAuthenticationTransactionManager().build();

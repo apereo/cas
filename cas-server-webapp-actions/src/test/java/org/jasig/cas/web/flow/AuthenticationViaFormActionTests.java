@@ -140,7 +140,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyRenewWithServiceAndSameCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
-        getAuthenticationTransactionManager().authenticate(c);
+        getAuthenticationTransactionManager().processAuthenticationAttempt(c);
         final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -168,7 +168,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     public void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
 
-        getAuthenticationTransactionManager().authenticate(c);
+        getAuthenticationTransactionManager().processAuthenticationAttempt(c);
         final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -194,7 +194,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyRenewWithServiceAndBadCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
-        getAuthenticationTransactionManager().authenticate(c);
+        getAuthenticationTransactionManager().processAuthenticationAttempt(c);
         final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);

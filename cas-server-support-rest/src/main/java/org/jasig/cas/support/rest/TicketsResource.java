@@ -92,7 +92,7 @@ public class TicketsResource {
 
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
 
-            this.authenticationTransactionManager.authenticate(credential);
+            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
             final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(authenticationContext);
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
