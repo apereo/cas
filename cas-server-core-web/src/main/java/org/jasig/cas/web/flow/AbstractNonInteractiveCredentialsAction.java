@@ -81,14 +81,14 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         if (isRenewPresent(context) && ticketGrantingTicketId != null && service != null) {
 
             try {
-                if (this.authenticationSupervisor.authenticate(credential)) {
-                    final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+                this.authenticationSupervisor.authenticate(credential);
+                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
 
-                    final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                            .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
-                    WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-                    return result("warn");
-                }
+                final ServiceTicket serviceTicketId = this.centralAuthenticationService
+                        .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
+                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
+                return result("warn");
+
             } catch (final AuthenticationException e) {
                 onError(context, credential);
                 return error();
@@ -99,14 +99,13 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         }
 
         try {
-            if (this.authenticationSupervisor.authenticate(credential)) {
-                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
-                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
-                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-                onSuccess(context, credential);
-                return success();
-            }
-            return error();
+            this.authenticationSupervisor.authenticate(credential);
+            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+            WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+            onSuccess(context, credential);
+            return success();
+
         } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
             onError(context, credential);

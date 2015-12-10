@@ -140,7 +140,6 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(ctx.getAuthentication()).thenReturn(this.authentication);
 
         this.authenticationSupervisor = mock(AuthenticationSupervisor.class);
-        when(this.authenticationSupervisor.authenticate(any(Credential.class))).thenReturn(true);
         when(this.authenticationSupervisor.build()).thenReturn(ctx);
 
         //Mock ServicesManager

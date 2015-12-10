@@ -163,14 +163,14 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
-            if (this.authenticationSupervisor.authenticate(credential)) {
-                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
-                final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
-                        ticketGrantingTicketId, service, authenticationContext);
-                WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-                putWarnCookieIfRequestParameterPresent(context);
-                return newEvent(WARN);
-            }
+            this.authenticationSupervisor.authenticate(credential);
+            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
+                    ticketGrantingTicketId, service, authenticationContext);
+            WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
+            putWarnCookieIfRequestParameterPresent(context);
+            return newEvent(WARN);
+
         } catch (final AuthenticationException e) {
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final TicketCreationException e) {
@@ -197,19 +197,17 @@ public class AuthenticationViaFormAction {
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
         try {
-            if (this.authenticationSupervisor.authenticate(credential)) {
-                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
-                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
-                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-                putWarnCookieIfRequestParameterPresent(context);
-                putPublicWorkstationToFlowIfRequestParameterPresent(context);
-                if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
-                    return newEvent(SUCCESS_WITH_WARNINGS);
-                }
-                return newEvent(SUCCESS);
-            } else {
-                logger.debug("Credentials could not be authenticated successfully");
+            this.authenticationSupervisor.authenticate(credential);
+            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+            WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+            putWarnCookieIfRequestParameterPresent(context);
+            putPublicWorkstationToFlowIfRequestParameterPresent(context);
+            if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
+                return newEvent(SUCCESS_WITH_WARNINGS);
             }
+            return newEvent(SUCCESS);
+
         } catch (final AuthenticationException e) {
             logger.debug(e.getMessage(), e);
             return newEvent(AUTHENTICATION_FAILURE, e);

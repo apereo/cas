@@ -92,21 +92,20 @@ public class TicketsResource {
 
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
 
-            if (this.authenticationSupervisor.authenticate(credential)) {
-                final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
-                final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(authenticationContext);
-                final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
-                final HttpHeaders headers = new HttpHeaders();
-                headers.setLocation(ticketReference);
-                headers.setContentType(MediaType.TEXT_HTML);
-                fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-                fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
-                        .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
-                        .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
-                        .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
-                return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
-            }
-            return new ResponseEntity<>("Credentials could not be authenticated", HttpStatus.INTERNAL_SERVER_ERROR);
+            this.authenticationSupervisor.authenticate(credential);
+            final AuthenticationContext authenticationContext = this.authenticationSupervisor.build();
+            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(authenticationContext);
+            final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
+            final HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(ticketReference);
+            headers.setContentType(MediaType.TEXT_HTML);
+            fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
+            fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
+                    .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
+                    .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
+                    .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
+            return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
+
         }
         catch(final AuthenticationException e) {
             final List<String> authnExceptions = new LinkedList<>();
