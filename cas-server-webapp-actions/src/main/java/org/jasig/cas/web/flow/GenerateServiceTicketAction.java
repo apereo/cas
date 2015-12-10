@@ -61,6 +61,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
+                this.authenticationSupervisor.clear();
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {

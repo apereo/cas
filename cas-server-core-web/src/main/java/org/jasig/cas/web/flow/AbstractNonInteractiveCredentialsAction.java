@@ -93,6 +93,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
                 onError(context, credential);
                 return error();
             } catch (final AbstractTicketException e) {
+                this.authenticationSupervisor.clear();
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
                 logger.debug("Attempted to generate a ServiceTicket using renew=true with different credential", e);
             }

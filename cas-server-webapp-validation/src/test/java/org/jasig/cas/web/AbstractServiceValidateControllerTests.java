@@ -129,6 +129,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final ServiceTicket sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(),
                 org.jasig.cas.authentication.TestUtils.getService(), ctx);
 
+        getAuthenticationSupervisor().clear();
         getCentralAuthenticationService().destroyTicketGrantingTicket(tId.getId());
 
         final MockHttpServletRequest request = new MockHttpServletRequest();

@@ -163,6 +163,7 @@ public class TicketsResource {
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
     public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
+        this.authenticationSupervisor.clear();
         this.cas.destroyTicketGrantingTicket(tgtId);
         return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }
