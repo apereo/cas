@@ -23,12 +23,14 @@ org.jasig.cas.authentication.handler.support
 org.jasig.cas.authentication.principal
 org.jasig.cas.authentication.principal.cache
 org.jasig.cas.authentication.support
+org.jasig.cas.authorization.generator
 org.jasig.cas.extension.clearpass
 org.jasig.cas.grouper.services
 org.jasig.cas.integration.pac4j.authentication.handler.support
 org.jasig.cas.logout
 org.jasig.cas.monitor
 org.jasig.cas.services
+org.jasig.cas.services.audit
 org.jasig.cas.services.convert
 org.jasig.cas.services.jmx
 org.jasig.cas.services.support
@@ -78,7 +80,6 @@ org.jasig.cas.ticket.registry.support
 org.jasig.cas.ticket.registry.support.kryo
 org.jasig.cas.ticket.registry.support.kryo.serial
 org.jasig.cas.ticket.support
-org.jasig.cas.userdetails
 org.jasig.cas.util
 org.jasig.cas.util.http
 org.jasig.cas.util.services
