@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -28,7 +29,7 @@ import java.util.Set;
 public class DefaultAuthenticationContextBuilder implements AuthenticationContextBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContextBuilder.class);
 
-    private final Set<Authentication> authentications = new LinkedHashSet<>();
+    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<Authentication>());
 
     @Autowired
     @Qualifier("principalElectionStrategy")
