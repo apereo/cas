@@ -12,7 +12,5 @@
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="serviceRegistryCouchbaseClientFactory" class="org.jasig.cas.couchbase.core.CouchbaseClientFactory"
-          p:nodes-ref="#{T(java.util.Arrays).asList('${svcreg.couchbase.nodes}')}"
-          p:bucket="${svcreg.couchbase.bucket}" />
+
 </beans>
