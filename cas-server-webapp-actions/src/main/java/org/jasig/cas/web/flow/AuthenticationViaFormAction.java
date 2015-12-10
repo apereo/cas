@@ -163,7 +163,7 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
-            this.authenticationTransactionManager.authenticate(credential);
+            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
             final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                     ticketGrantingTicketId, service, authenticationContext);
@@ -196,7 +196,7 @@ public class AuthenticationViaFormAction {
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
         try {
-            this.authenticationTransactionManager.authenticate(credential);
+            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
             final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);

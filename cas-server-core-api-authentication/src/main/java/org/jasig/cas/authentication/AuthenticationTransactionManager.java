@@ -16,7 +16,7 @@ public interface AuthenticationTransactionManager {
      * @param credentials the credentials
      * @throws AuthenticationException the authentication exception
      */
-    void authenticate(final Credential... credentials) throws AuthenticationException;
+    void processAuthenticationAttempt(final Credential... credentials) throws AuthenticationException;
 
     /**
      * Build authentication context authentication context.

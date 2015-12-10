@@ -81,7 +81,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         if (isRenewPresent(context) && ticketGrantingTicketId != null && service != null) {
 
             try {
-                this.authenticationTransactionManager.authenticate(credential);
+                this.authenticationTransactionManager.processAuthenticationAttempt(credential);
                 final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
 
                 final ServiceTicket serviceTicketId = this.centralAuthenticationService
@@ -100,7 +100,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         }
 
         try {
-            this.authenticationTransactionManager.authenticate(credential);
+            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
             final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);

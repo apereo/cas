@@ -170,7 +170,7 @@ public final class ClientAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                this.authenticationTransactionManager.authenticate(new ClientCredential(credentials));
+                this.authenticationTransactionManager.processAuthenticationAttempt(new ClientCredential(credentials));
                 final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);

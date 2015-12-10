@@ -45,7 +45,7 @@ public final class DefaultAuthenticationTransactionManager implements Authentica
     public DefaultAuthenticationTransactionManager() {}
 
     @Override
-    public void authenticate(final Credential... credentials) throws AuthenticationException {
+    public void processAuthenticationAttempt(final Credential... credentials) throws AuthenticationException {
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
         if (!sanitizedCredentials.isEmpty()) {
             final Credential[] sanitizedCredentialsArray = sanitizedCredentials.toArray(new Credential[] {});

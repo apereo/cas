@@ -119,7 +119,7 @@ public final class WsFederationAction extends AbstractAction {
                     }
 
                     try {
-                        this.authenticationTransactionManager.authenticate(credential);
+                        this.authenticationTransactionManager.processAuthenticationAttempt(credential);
                         final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
                         WebUtils.putTicketGrantingTicketInScopes(context,
                                 this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));

@@ -467,7 +467,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     }
 
     private AuthenticationContext getAuthenticationContext(final Credential... credentials) throws AuthenticationException {
-        getAuthenticationTransactionManager().authenticate(credentials);
+        getAuthenticationTransactionManager().processAuthenticationAttempt(credentials);
         return getAuthenticationTransactionManager().build();
     }
 }
