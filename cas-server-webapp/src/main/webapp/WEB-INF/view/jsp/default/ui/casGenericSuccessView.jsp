@@ -56,7 +56,6 @@
 								<p><spring:message code="screen.success.success" arguments="${principal.id}"/></p>
 								<p><spring:message code="screen.success.security" /></p>
 							</div>
-							<div><a href="/auth/logout">Log out</a></div>
 						</div>
 					</div>
 				</div>

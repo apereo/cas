@@ -56,7 +56,6 @@
 								<p><spring:message code="screen.logout.success" /></p>
 								<p><spring:message code="screen.logout.security" /></p>
 							</div>
-							<div><a href="/auth/login">Log in</a></div>
 						</div>
 					</div>
 				</div>
