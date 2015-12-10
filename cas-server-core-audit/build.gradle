@@ -6,14 +6,9 @@ dependencies {
         exclude(module: 'validation-api')
         exclude(module: 'aspectjrt')
     }
-    compile(group: 'org.springframework.security', name: 'spring-security-core', version: springSecVersion) {
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
+    compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
     }
+    compile project(':cas-server-core-web')
     compile project(':cas-server-core-util')
     testCompile(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
         exclude(module: 'slf4j-api')
@@ -26,5 +21,3 @@ dependencies {
     testCompile project(':cas-server-core')
     testCompile project(path: ":cas-server-core", configuration: "tests")
 }
-
-
