@@ -46,6 +46,3 @@ gretty {
     sslTrustStorePath = '/etc/cas/jetty/thekeystore'
     sslKeyStorePassword = 'changeit'
 }
-
-
-
