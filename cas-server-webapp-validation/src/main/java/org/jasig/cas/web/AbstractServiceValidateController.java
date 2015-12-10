@@ -154,7 +154,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         TicketGrantingTicket proxyGrantingTicketId = null;
 
         try {
-            this.authenticationTransactionManager.authenticate(serviceCredential);
+            this.authenticationTransactionManager.processAuthenticationAttempt(serviceCredential);
             final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
                     authenticationContext);

@@ -39,7 +39,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            this.authenticationTransactionManager.authenticate(
+            this.authenticationTransactionManager.processAuthenticationAttempt(
                     org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
             final AuthenticationContext ctx = this.authenticationTransactionManager.build();
@@ -72,7 +72,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            this.authenticationTransactionManager.authenticate(
+            this.authenticationTransactionManager.processAuthenticationAttempt(
                     org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
             final AuthenticationContext ctx = this.authenticationTransactionManager.build();
