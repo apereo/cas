@@ -43,7 +43,7 @@ public class DefaultAuthenticationSupervisorTests {
 
     @Test
     public void verifySupervisor() throws Exception {
-        authenticationSupervisor.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        authenticationSupervisor.processAuthenticationAttempt(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final AuthenticationContext ctx = authenticationSupervisor.build();
         assertNotNull(ctx);
         assertNotNull(ctx.getAuthentication());
@@ -61,7 +61,7 @@ public class DefaultAuthenticationSupervisorTests {
             }
         });
 
-        authenticationSupervisor.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        authenticationSupervisor.processAuthenticationAttempt(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final AuthenticationContext ctx = authenticationSupervisor.build();
         assertNotNull(ctx);
         assertNotNull(ctx.getAuthentication());

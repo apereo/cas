@@ -50,7 +50,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         try {
             final Credential credential = WebUtils.getCredential(context);
 
-            this.authenticationTransactionManager.authenticate(credential);
+            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
             final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);

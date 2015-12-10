@@ -187,7 +187,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test(expected=UnauthorizedServiceException.class)
     public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.authenticationTransactionManager.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        this.authenticationTransactionManager.processAuthenticationAttempt(TestUtils.getCredentialsWithSameUsernameAndPassword());
         final AuthenticationContext ctx = this.authenticationTransactionManager.build();
         this.cas.createProxyGrantingTicket(ST_ID, ctx);
     }
