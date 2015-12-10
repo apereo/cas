@@ -33,4 +33,8 @@ public final class DefaultPrincipalElectionStrategy implements PrincipalElection
         LOGGER.debug("Nominated [{}] as the primary principal", finalPrincipal);
         return finalPrincipal;
     }
+
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
+        this.principalFactory = principalFactory;
+    }
 }
