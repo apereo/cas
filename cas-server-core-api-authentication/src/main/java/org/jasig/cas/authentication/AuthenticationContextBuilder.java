@@ -28,10 +28,10 @@ public interface AuthenticationContextBuilder {
      * Collect a new authenication event and store it.
      *
      * @param authentication the new authentication event
-     * @return the boolean
+     * @return the builder instance in a fluid manner
      * @throws AuthenticationException the authentication exception
      */
-    boolean collect(Authentication authentication) throws AuthenticationException;
+    AuthenticationContextBuilder collect(Authentication authentication) throws AuthenticationException;
 
     /**
      * Build authentication context.
