@@ -14,6 +14,11 @@ dependencies {
         exclude(module: 'slf4j-api')
         exclude(module: 'jboss-logging')
     }
+    testCompile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
+        exclude(module: 'jboss-logging-annotations')
+        exclude(module: 'javassist')
+        exclude(module: 'xml-apis')
+    }
     testCompile project(':cas-server-core-authentication')
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(path: ":cas-server-core-util", configuration: "tests")
