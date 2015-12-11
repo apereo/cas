@@ -80,6 +80,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      *
      * @param salt the salt
      */
+    @JsonIgnore
     @Deprecated
     public void setSalt(final String salt) {
         LOGGER.warn("setSalt() is deprecated and will be removed. Use the constructor instead.");
