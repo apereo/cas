@@ -7,6 +7,8 @@ import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -24,6 +26,8 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name="SERVICETICKET")
+@DiscriminatorColumn(name="TYPE")
+@DiscriminatorValue("ST")
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     /** Unique Id for serialization. */
