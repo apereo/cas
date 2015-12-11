@@ -1,6 +1,6 @@
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "http://localhost:8080/cas-management/login/cas",
+  "serviceId" : "http://localhost:8080/cas-management/callback",
   "name" : "Services Management Web Application",
   "id" : 52497044623301,
   "description" : "Services Management Web Application",
