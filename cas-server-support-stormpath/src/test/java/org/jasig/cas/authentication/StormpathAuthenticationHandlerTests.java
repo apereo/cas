@@ -19,7 +19,6 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/stormpath-context.xml")
-@IfProfileValue(name="stormpath", value="true")
 public class StormpathAuthenticationHandlerTests {
     @Autowired
     @Qualifier("stormpathAuthenticationHandler")
