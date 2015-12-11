@@ -17,7 +17,6 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/mongo-context.xml")
-@IfProfileValue(name="mongo", value="true")
 public class MongoAuthenticationHandlerTests {
 
     @Autowired
