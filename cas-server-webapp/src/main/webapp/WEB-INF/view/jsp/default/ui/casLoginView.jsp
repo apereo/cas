@@ -69,7 +69,8 @@
 	    if (request.getHeader("referer") != null) {
 	        serviceUrl = request.getHeader("referer");
 	    }
-		%>
+	    %>
+
 		<c:set var="serviceUrl" value="<%=serviceUrl%>"/>
         <c:if test="${not empty serviceUrl}">
             <c:set var="string1" value="${serviceUrl}" />
@@ -92,6 +93,7 @@
 		<input type="hidden" name="tenantLogoUrl" value="${largeLogo}" />
 		<input type="hidden" name="loginTicket" value="${loginTicket}" />
 		<input type="hidden" name="flowExecutionKey" value="${flowExecutionKey}" />
+		<input type="hidden" name="serviceUrl" value="${serviceUrl}" />
 		
 		<header role="banner" id="ot-header" class="header">
 			<!-- header region -->

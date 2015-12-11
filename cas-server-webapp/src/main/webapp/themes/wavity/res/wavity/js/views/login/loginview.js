@@ -43,14 +43,14 @@ define(
 			}		
 		
 			$("#appIcon").attr("src", $('input[name=defaultAppLogo]').val());
-			var appName = $('input[name=appName]').val().toLowerCase();
+			/*var appName = $('input[name=appName]').val().toLowerCase();
 			var that = this;
 			$.ajax({
 				headers : {
 					'Accept' : 'application/json',
 					'Content-Type' : 'application/json'
 				},
-				url: 'https://localhost/scim/v2/CloudServices/',
+				url: 'http://accounts.wavity.com:8080/scim/v2/CloudServices/',
 				type: 'GET',
 				dataType: 'json',
 				async: false,
@@ -64,18 +64,18 @@ define(
 				error: function(response) {
 					console.log(response);
 				}
-			});
+			});*/
 			
 			
 			$("#domainIcon").attr("src", $('input[name=defaultTenantLogo]').val());
-			var tenantName = $('input[name=tenantName]').val();
+			/*var tenantName = $('input[name=tenantName]').val();
 			var that = this;
 			$.ajax({
 				headers : {
 					'Accept' : 'application/json',
 					'Content-Type' : 'application/json'
 				},
-				url: 'https://localhost/scim/v2/Tenants/',
+				url: 'http://accounts.wavity.com:8080/scim/v2/Tenants/',
 				type: 'GET',
 				dataType: 'json',
 				async: false,
@@ -89,12 +89,11 @@ define(
 				error: function(response) {
 					console.log(response);
 				}
-			});
+			});*/
 			
 			$('form input[name=lt]').val($('input[name=loginTicket]').val());
 			$('form input[name=execution]').val($('input[name=flowExecutionKey]').val());
-			$('input[name=loginTicket]').remove;
-			$('input[name=flowExecutionKey]').remove;
+			$('form input[name=service]').val($('input[name=serviceUrl]').val());
 		},
 		errormsgclose: function() {
     	   $('.notification_inner').hide(500);
