@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Component("couchbaseServiceRegistry")
+@Component("couchbaseServiceRegistryDao")
 public class CouchbaseServiceRegistryDao extends TimerTask implements ServiceRegistryDao {
     private static final Timer TIMER = new Timer();
     private static final long RETRY_INTERVAL = 10;
