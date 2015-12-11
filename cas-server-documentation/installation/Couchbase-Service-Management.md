@@ -1,15 +1,15 @@
 ---
 layout: default
-title: CAS - Couchbase Ticket Registry
+title: CAS - Couchbase Service Registry
 ---
 
-# Couchbase Ticket Registry
+# Couchbase Service Registry
 Couchbase integration is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
 <dependency>
      <groupId>org.jasig.cas</groupId>
-     <artifactId>cas-server-support-couchbase-ticket-registry</artifactId>
+     <artifactId>cas-server-support-couchbase-service-registry</artifactId>
      <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -17,7 +17,7 @@ Couchbase integration is enabled by including the following dependency in the Ma
 Enable the registry via:
 
 {% highlight xml %}
-<alias name="couchbaseTicketRegistryDao" alias="serviceRegistryDao" />
+<alias name="couchbaseServiceRegistryDao" alias="ticketRegistry" />
 {% endhighlight %}
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on 
@@ -28,12 +28,12 @@ server to provide high availability to CAS.
 The following settings are available:
 
 {% highlight properties %}
-ticketreg.couchbase.nodes=
-ticketreg.couchbase.bucket=
-ticketreg.couchbase.password=
+svcreg.couchbase.nodes=
+svcreg.couchbase.bucket=
+svcreg.couchbase.password=
 {% endhighlight %}
 
-The Couchbase integration currently assumes that the ticket registries are stored
+The Couchbase integration currently assumes that the service registries are stored
 in their own buckets. Optionally set passwords for the buckets, optionally setup
 redundancy and replication as per normal Couchbase configuration.
 
