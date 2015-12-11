@@ -3,6 +3,8 @@ package org.jasig.cas.ticket;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -11,6 +13,8 @@ import javax.validation.constraints.NotNull;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Entity
+@DiscriminatorValue("PT")
 public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
     private static final long serialVersionUID = -4469960563289285371L;
 
