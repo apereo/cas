@@ -25,6 +25,7 @@ import com.couchbase.client.java.view.View;
  * until successful connection is made.
  *
  * @author Fredrik Jönsson "fjo@kth.se"
+ * @author Misagh Moayyed
  * @since 4.2
  */
 public class CouchbaseClientFactory extends TimerTask {
@@ -34,24 +35,23 @@ public class CouchbaseClientFactory extends TimerTask {
     private final Timer timer = new Timer();
 
     private Cluster cluster;
+    private Bucket bucket;
+    private List<View> views;
 
     @NotNull
     private List<String> nodes;
 
     /* The name of the bucket, will use the default bucket unless otherwise specified. */
     private String bucketName = "default";
-    private Bucket bucket;
 
     /* Password for the bucket if any. */
     private String password = "";
 
     /* Design document and views to create in the bucket, if any. */
     private String designDocument;
-    private List<View> views;
-
 
     /**
-     * Default constructor.
+     * Instantiates a new Couchbase client factory.
      */
     public CouchbaseClientFactory() {}
 
@@ -86,7 +86,7 @@ public class CouchbaseClientFactory extends TimerTask {
         if (bucket != null) {
             return bucket;
         } else {
-            throw new RuntimeException("Conncetion to bucket " + bucketName + " not initialized yet.");
+            throw new RuntimeException("Connection to bucket " + bucketName + " not initialized yet.");
         }
     }
 
@@ -118,10 +118,10 @@ public class CouchbaseClientFactory extends TimerTask {
         }
     }
 
-
     /**
      * Task to initialize the Couchbase client.
      */
+    @Override
     public void run() {
         try {
             logger.debug("Trying to connect to couchbase bucket {}", bucketName);
