@@ -8,8 +8,6 @@ import com.couchbase.client.java.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +55,6 @@ public class CouchbaseClientFactory {
      * Start initializing the client. This will schedule a task that retries
      * connection until successful.
      */
-    @PostConstruct
     public void initialize() {
         try {
             logger.debug("Trying to connect to couchbase bucket {}", bucketName);
@@ -80,7 +77,6 @@ public class CouchbaseClientFactory {
      * Inverse of initialize, shuts down the client, cancelling connection
      * task if not completed.
      */
-    @PreDestroy
     public void shutdown() {
         try {
             if (cluster != null) {
