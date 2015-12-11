@@ -14,6 +14,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
@@ -34,6 +35,7 @@ import java.util.List;
  * tickage storage engine for multiple front end CAS servers.
  *
  * @author Fredrik Jönsson "fjo@kth.se"
+ * @author Misagh Moayyed
  * @since 4.2.0
  */
 @Component("couchbaseTicketRegistry")
@@ -56,9 +58,11 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
     private CouchbaseClientFactory couchbase;
 
     @Min(0)
+    @Value("${tgt.maxTimeToLiveInSeconds:28800}")
     private int tgtTimeout;
 
     @Min(0)
+    @Value("${st.timeToKillInSeconds:10}")
     private int stTimeout;
 
     /**
