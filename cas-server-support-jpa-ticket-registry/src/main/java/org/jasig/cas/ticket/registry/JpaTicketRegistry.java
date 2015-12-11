@@ -2,12 +2,14 @@ package org.jasig.cas.ticket.registry;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.quartz.Job;
@@ -76,7 +78,8 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     private EntityManager entityManager;
 
     @NotNull
-    private String ticketGrantingTicketPrefix = TicketGrantingTicket.PREFIX;
+    private List<String> ticketGrantingTicketPrefixes = ImmutableList.of(TicketGrantingTicket.PREFIX,
+            ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
 
     @Override
     public void updateTicket(final Ticket ticket) {
@@ -168,8 +171,10 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      */
     private Ticket getRawTicket(final String ticketId) {
         try {
-            if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
-                return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
+            for(final String prefix : this.ticketGrantingTicketPrefixes) {
+                if (ticketId.startsWith(prefix)) {
+                    return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
+                }
             }
 
             return entityManager.find(ServiceTicketImpl.class, ticketId);
@@ -195,8 +200,19 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         return tickets;
     }
 
+    /**
+     * Set the id prefix used by {@link TicketGrantingTicket} implementations.
+     *
+     * @param ticketGrantingTicketPrefix the prefix to use
+     * @deprecated As of 4.2. use {@link JpaTicketRegistry#setTicketGrantingTicketPrefixes} instead.
+     */
+    @Deprecated
     public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
-        this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
+        this.ticketGrantingTicketPrefixes = ImmutableList.of(ticketGrantingTicketPrefix);
+    }
+
+    public void setTicketGrantingTicketPrefixes(final List<String> ticketGrantingTicketPrefixes) {
+        this.ticketGrantingTicketPrefixes = ticketGrantingTicketPrefixes;
     }
 
     @Override

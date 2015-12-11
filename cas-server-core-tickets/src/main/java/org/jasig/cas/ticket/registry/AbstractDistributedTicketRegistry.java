@@ -3,6 +3,8 @@ package org.jasig.cas.ticket.registry;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 
 /**
  * Abstract Implementation that handles some of the commonalities between
@@ -38,11 +40,19 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return null;
         }
 
-        if (ticket instanceof TicketGrantingTicket) {
-            return new TicketGrantingTicketDelegator(this, (TicketGrantingTicket) ticket, needsCallback());
+        if (ticket instanceof ProxyGrantingTicket) {
+            return new ProxyGrantingTicketDelegator(this, (ProxyGrantingTicket) ticket, needsCallback());
         }
 
-        return new ServiceTicketDelegator(this, (ServiceTicket) ticket, needsCallback());
+        if (ticket instanceof TicketGrantingTicket) {
+            return new TicketGrantingTicketDelegator<>(this, (TicketGrantingTicket) ticket, needsCallback());
+        }
+
+        if (ticket instanceof ProxyTicket) {
+            return new ProxyTicketDelegator(this, (ProxyTicket) ticket, needsCallback());
+        }
+
+        return new ServiceTicketDelegator<>(this, (ServiceTicket) ticket, needsCallback());
     }
 
 }
