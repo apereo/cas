@@ -14,5 +14,6 @@
 
     <bean id="ticketRegistryCouchbaseClientFactory" class="org.jasig.cas.couchbase.core.CouchbaseClientFactory"
           p:nodes-ref="#{T(java.util.Arrays).asList('${ticketreg.couchbase.nodes}')}"
-          p:bucket="${ticketreg.couchbase.bucket}" />
+          p:password="${ticketreg.couchbase.password:}"
+          p:bucket="${ticketreg.couchbase.bucket:}" />
 </beans>
