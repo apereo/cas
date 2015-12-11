@@ -51,5 +51,5 @@
     <bean id="deleteServiceActionResolver" class="org.jasig.inspektr.audit.spi.support.ObjectCreationAuditActionResolver"
           c:successSuffix="_SUCCESS" c:failureSuffix="_FAILED" />
 
-    <bean id="auditablePrincipalResolver" class="org.jasig.inspektr.audit.spi.support.SpringSecurityAuditablePrincipalResolver" />
+    <bean id="auditablePrincipalResolver" class="org.jasig.cas.services.audit.Pac4jAuditablePrincipalResolver" />
 </beans>
