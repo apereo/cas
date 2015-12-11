@@ -30,7 +30,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
     private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
     /**
-     * PrincipalNameTransformer to be used by subclasses to tranform the principal name.
+     * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
     @NotNull
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
