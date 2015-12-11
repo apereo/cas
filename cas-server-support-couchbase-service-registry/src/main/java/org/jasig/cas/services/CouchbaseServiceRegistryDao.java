@@ -1,25 +1,5 @@
 package org.jasig.cas.services;
 
-import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
-import org.jasig.cas.util.JsonSerializer;
-import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.validation.constraints.NotNull;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.document.RawJsonDocument;
 import com.couchbase.client.java.view.DefaultView;
@@ -27,9 +7,23 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
+import org.jasig.cas.util.JsonSerializer;
+import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.validation.constraints.NotNull;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This is {@link CouchbaseServiceRegistryDao}.
@@ -44,10 +38,7 @@ import org.springframework.stereotype.Component;
  * @since 4.2.0
  */
 @Component("couchbaseServiceRegistryDao")
-public class CouchbaseServiceRegistryDao extends TimerTask implements ServiceRegistryDao {
-    private static final Timer TIMER = new Timer();
-    private static final long RETRY_INTERVAL = 10;
-
+public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     private static final View ALL_SERVICES_VIEW = DefaultView.create(
             "all_services",
             "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
@@ -64,12 +55,6 @@ public class CouchbaseServiceRegistryDao extends TimerTask implements ServiceReg
     @Autowired
     @Qualifier("serviceRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
-
-    /* List of statically configured services, to be used at bean instantiation. */
-    private final List<RegisteredService> registeredServices = new LinkedList<>();
-
-    /* Initial service id for added services. */
-    private int initialId;
 
     private final JsonSerializer<RegisteredService> registeredServiceJsonSerializer;
 
@@ -89,18 +74,13 @@ public class CouchbaseServiceRegistryDao extends TimerTask implements ServiceReg
         this(new RegisteredServiceJsonSerializer());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public RegisteredService save(final RegisteredService service) {
-        if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE
-                && service instanceof AbstractRegisteredService) {
-            logger.debug("Service id not set. Setting it from counter in couchbase.");
-            final long id = couchbase.bucket().counter("LAST_ID", 1, initialId).content().longValue();
-            ((AbstractRegisteredService) service).setId(id);
-        }
         logger.debug("Saving service {}", service);
+
+        if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
+            ((AbstractRegisteredService) service).setId(service.hashCode());
+        }
 
         final StringWriter stringWriter = new StringWriter();
         registeredServiceJsonSerializer.toJson(stringWriter, service);
@@ -129,7 +109,7 @@ public class CouchbaseServiceRegistryDao extends TimerTask implements ServiceReg
             final ViewResult allKeys = bucket.query(ViewQuery.from(UTIL_DOCUMENT, ALL_SERVICES_VIEW.name()));
             final List<RegisteredService> services = new LinkedList<>();
             for (final ViewRow row : allKeys) {
-                final String json = (String) row.document(RawJsonDocument.class).content();
+                final String json = row.document(RawJsonDocument.class).content();
                 logger.debug("Found service: {}", json);
 
                 final StringReader stringReader = new StringReader(json);
@@ -155,19 +135,6 @@ public class CouchbaseServiceRegistryDao extends TimerTask implements ServiceReg
         }
     }
 
-
-    /**
-     * Used to initialize static services from configuration.
-     *
-     * @param services List of RegisteredService objects to register.
-     */
-    public void setRegisteredServices(final List<RegisteredService> services) {
-        this.registeredServices.addAll(services);
-        this.initialId = services.size();
-        TIMER.scheduleAtFixedRate(this, new Date(), TimeUnit.SECONDS.toMillis(RETRY_INTERVAL));
-    }
-
-
     /**
      * Starts the couchbase client and initialization task.
      */
@@ -179,34 +146,15 @@ public class CouchbaseServiceRegistryDao extends TimerTask implements ServiceReg
 
     /**
      * Stops the couchbase client and cancels the initialization task if uncompleted.
-     *
-     * @throws Exception on errors.
      */
     @PreDestroy
     public void destroy() {
         try {
-            TIMER.cancel();
-            TIMER.purge();
             couchbase.shutdown();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
     }
-
-
-    @Override
-    public void run() {
-        try {
-            for (final RegisteredService service : registeredServices) {
-                save(service);
-            }
-            TIMER.cancel();
-            logger.debug("Stored pre configured services from XML in registry.");
-        } catch (final RuntimeException e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
-
 
     public void setCouchbaseClientFactory(final CouchbaseClientFactory couchbase) {
         this.couchbase = couchbase;

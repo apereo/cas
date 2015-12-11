@@ -1,21 +1,20 @@
 package org.jasig.cas.couchbase.core;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
-import javax.validation.constraints.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A factory class which produces a client for a particular Couchbase bucket.
@@ -28,18 +27,15 @@ import com.couchbase.client.java.view.View;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public class CouchbaseClientFactory extends TimerTask {
-    private static final int RETRY_INTERVAL = 10; // seconds.
-
+public class CouchbaseClientFactory {
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Timer timer = new Timer();
 
     private Cluster cluster;
     private Bucket bucket;
     private List<View> views;
 
     @NotNull
-    private List<String> nodes;
+    private Set<String> nodes;
 
     /* The name of the bucket, will use the default bucket unless otherwise specified. */
     private String bucketName = "default";
@@ -50,6 +46,8 @@ public class CouchbaseClientFactory extends TimerTask {
     /* Design document and views to create in the bucket, if any. */
     private String designDocument;
 
+    private long timeout = 5;
+
     /**
      * Instantiates a new Couchbase client factory.
      */
@@ -59,21 +57,37 @@ public class CouchbaseClientFactory extends TimerTask {
      * Start initializing the client. This will schedule a task that retries
      * connection until successful.
      */
+    @PostConstruct
     public void initialize() {
-        timer.scheduleAtFixedRate(this, new Date(), TimeUnit.SECONDS.toMillis(RETRY_INTERVAL));
+        try {
+            logger.debug("Trying to connect to couchbase bucket {}", bucketName);
+
+            cluster = CouchbaseCluster.create(new ArrayList<>(nodes));
+
+            bucket = cluster.openBucket(bucketName, password, timeout, TimeUnit.SECONDS);
+
+            logger.info("Connected to Couchbase bucket {}.", bucketName);
+
+            if (views != null) {
+                doEnsureIndexes(designDocument, views);
+            }
+        } catch (final Exception e) {
+            throw new RuntimeException("Failed to connect to Couchbase bucket", e);
+        }
     }
 
     /**
      * Inverse of initialize, shuts down the client, cancelling connection
      * task if not completed.
-     *
-     * @throws Exception on errors.
      */
-    public void shutdown() throws Exception {
-        timer.cancel();
-        timer.purge();
-        if (cluster != null) {
-            cluster.disconnect();
+    @PreDestroy
+    public void shutdown() {
+        try {
+            if (cluster != null) {
+                cluster.disconnect();
+            }
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -85,9 +99,8 @@ public class CouchbaseClientFactory extends TimerTask {
     public Bucket bucket() {
         if (bucket != null) {
             return bucket;
-        } else {
-            throw new RuntimeException("Connection to bucket " + bucketName + " not initialized yet.");
         }
+        throw new RuntimeException("Connection to bucket " + bucketName + " not initialized yet.");
     }
 
 
@@ -118,28 +131,11 @@ public class CouchbaseClientFactory extends TimerTask {
         }
     }
 
-    /**
-     * Task to initialize the Couchbase client.
-     */
-    @Override
-    public void run() {
-        try {
-            logger.debug("Trying to connect to couchbase bucket {}", bucketName);
-            cluster = CouchbaseCluster.create(nodes);
-            bucket = cluster.openBucket(bucketName, password);
-
-            logger.info("Connected to Couchbase bucket {}.", bucketName);
-
-            if (views != null) {
-                doEnsureIndexes(designDocument, views);
-            }
-            timer.cancel();
-        } catch (final Exception e) {
-            logger.error("Failed to connect to Couchbase bucket {}: {}, retrying...", bucketName, e);
-        }
+    public void setTimeout(final long timeout) {
+        this.timeout = timeout;
     }
 
-    public void setNodes(final List<String> nodes) {
+    public void setNodes(final Set<String> nodes) {
         this.nodes = nodes;
     }
 
