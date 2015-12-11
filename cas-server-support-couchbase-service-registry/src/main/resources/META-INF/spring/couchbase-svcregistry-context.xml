@@ -14,5 +14,6 @@
 
     <bean id="serviceRegistryCouchbaseClientFactory" class="org.jasig.cas.couchbase.core.CouchbaseClientFactory"
           p:nodes-ref="#{T(java.util.Arrays).asList('${svcreg.couchbase.nodes}')}"
-          p:bucket="${svcreg.couchbase.bucket}" />
+          p:password="${svcreg.couchbase.password:}"
+          p:bucket="${svcreg.couchbase.bucket:}" />
 </beans>
