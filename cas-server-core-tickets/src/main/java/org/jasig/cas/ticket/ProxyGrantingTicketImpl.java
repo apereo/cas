@@ -23,7 +23,7 @@ import javax.persistence.Entity;
  * @since 4.1
  */
 @Entity
-@DiscriminatorValue("PGT")
+@DiscriminatorValue(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)
 public final class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements ProxyGrantingTicket {
     private static final long serialVersionUID = -8126909926138945649L;
 
@@ -31,7 +31,6 @@ public final class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl impl
      * Instantiates a new proxy granting ticket impl.
      */
     public ProxyGrantingTicketImpl() {
-        // nothing to do
     }
 
     /**
