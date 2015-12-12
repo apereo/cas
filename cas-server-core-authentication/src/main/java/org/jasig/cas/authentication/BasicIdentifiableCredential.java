@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class BasicIdentifiableCredential implements Credential, Serializable {
+public class BasicIdentifiableCredential implements Credential, Serializable {
 
     private static final long serialVersionUID = -700605020472810939L;
 
