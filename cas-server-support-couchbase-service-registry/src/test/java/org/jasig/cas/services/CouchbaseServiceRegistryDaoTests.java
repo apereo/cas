@@ -29,8 +29,10 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:/couchbase-svcregistry-test-context.xml")
-@IfProfileValue(name="couchbase", value="running")
+@IfProfileValue(name="couchbaseEnabled", value="true")
 public class CouchbaseServiceRegistryDaoTests {
+
+    private static final int LOAD_SIZE = 1;
 
     @Autowired
     @Qualifier("couchbaseServiceRegistryDao")
@@ -48,16 +50,16 @@ public class CouchbaseServiceRegistryDaoTests {
     @Test
     public void verifySaveAndLoad() {
         final List<RegisteredService> list = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < LOAD_SIZE; i++) {
             list.add(buildService(i));
             this.serviceRegistryDao.save(list.get(i));
         }
         final List<RegisteredService> results = this.serviceRegistryDao.load();
         assertEquals(results.size(), list.size());
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < LOAD_SIZE; i++) {
             assertEquals(list.get(i), results.get(i));
         }
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < LOAD_SIZE; i++) {
             this.serviceRegistryDao.delete(results.get(i));
         }
         assertTrue(this.serviceRegistryDao.load().isEmpty());
