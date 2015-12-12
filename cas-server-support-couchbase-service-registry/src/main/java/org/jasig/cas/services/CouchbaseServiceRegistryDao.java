@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -55,6 +56,9 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     @Autowired
     @Qualifier("serviceRegistryCouchbaseClientFactory")
     private CouchbaseClientFactory couchbase;
+
+    @Value("${svcreg.couchbase.query.enabled:true}")
+    private boolean queryEnabled;
 
     private final JsonSerializer<RegisteredService> registeredServiceJsonSerializer;
 
@@ -109,15 +113,19 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
             final ViewResult allKeys = bucket.query(ViewQuery.from(UTIL_DOCUMENT, ALL_SERVICES_VIEW.name()));
             final List<RegisteredService> services = new LinkedList<>();
             for (final ViewRow row : allKeys) {
-                final String json = row.document(RawJsonDocument.class).content();
-                logger.debug("Found service: {}", json);
 
-                final StringReader stringReader = new StringReader(json);
-                services.add(registeredServiceJsonSerializer.fromJson(stringReader));
+                final RawJsonDocument document = row.document(RawJsonDocument.class);
+                if (document != null) {
+                    final String json = document.content();
+                    logger.debug("Found service: {}", json);
+
+                    final StringReader stringReader = new StringReader(json);
+                    services.add(registeredServiceJsonSerializer.fromJson(stringReader));
+                }
             }
             return services;
         } catch (final RuntimeException e) {
-            logger.warn(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return new LinkedList<>();
         }
     }
@@ -126,13 +134,16 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
     public RegisteredService findServiceById(final long id) {
         try {
             logger.debug("Lookup for service {}", id);
-            final String json = couchbase.bucket().get(String.valueOf(id), RawJsonDocument.class).content();
-            final StringReader stringReader = new StringReader(json);
-            return registeredServiceJsonSerializer.fromJson(stringReader);
+            final RawJsonDocument document = couchbase.bucket().get(String.valueOf(id), RawJsonDocument.class);
+            if (document != null) {
+                final String json = document.content();
+                final StringReader stringReader = new StringReader(json);
+                return registeredServiceJsonSerializer.fromJson(stringReader);
+            }
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
-            return null;
         }
+        return null;
     }
 
     /**
@@ -140,6 +151,7 @@ public class CouchbaseServiceRegistryDao implements ServiceRegistryDao {
      */
     @PostConstruct
     public void initialize() {
+        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(this.queryEnabled));
         couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         couchbase.initialize();
     }
