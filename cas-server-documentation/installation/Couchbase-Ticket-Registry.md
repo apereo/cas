@@ -17,7 +17,7 @@ Couchbase integration is enabled by including the following dependency in the Ma
 Enable the registry via:
 
 {% highlight xml %}
-<alias name="couchbaseTicketRegistryDao" alias="serviceRegistryDao" />
+<alias name="couchbaseTicketRegistry" alias="ticketRegistry" />
 {% endhighlight %}
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on 
