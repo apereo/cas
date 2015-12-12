@@ -1,9 +1,6 @@
 package org.jasig.cas.authentication.token;
 
-import edu.clayton.cas.support.token.keystore.Key;
-import edu.clayton.cas.support.token.util.Crypto;
 import org.apache.commons.codec.binary.Base64;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +26,10 @@ import java.util.Map;
  * <p/>
  * <p>Initially, the {@linkplain Token} is not decrypted. Decryption will be
  * attempted when either the
- * {@link edu.clayton.cas.support.token.Token#getGenerated()} or
- * {@link edu.clayton.cas.support.token.Token#getAttributes()} methods are
+ * {@link Token#getGenerated()} or
+ * {@link Token#getAttributes()} methods are
  * invoked. Thus, it is imperative that
- * {@link Token#setKey(edu.clayton.cas.support.token.keystore.Key)}
+ * {@link Token#setKey(TokenKey)}
  * method be invoked prior to accessing either of these properties.</p>
  *
  * @author Misagh Moayyed
@@ -41,9 +38,9 @@ import java.util.Map;
 public final class Token {
     private static final Logger LOGGER = LoggerFactory.getLogger(Token.class);
 
-    private Key key;
+    private TokenKey key;
     private final String tokenData;
-    private boolean isDecoded = false;
+    private boolean isDecoded;
 
     private long generated;
     private TokenAttributes attributes;
@@ -52,7 +49,7 @@ public final class Token {
 
     /**
      * Initializes a {@linkplain Token} object from a
-     * {@link org.apache.commons.codec.binary.Base64} encoded data string.
+     * Base64-encoded data string.
      *
      * @param data The data to decode into a {@linkplain Token}.
      */
@@ -105,9 +102,9 @@ public final class Token {
      * Define the crypto key that will be used to decode the {@linkplain Token}
      * data.
      *
-     * @param key A valid {@link Key} object.
+     * @param key A valid {@link TokenKey} object.
      */
-    public void setKey(final Key key) {
+    public void setKey(final TokenKey key) {
         this.key = key;
     }
 
@@ -121,8 +118,9 @@ public final class Token {
 
     private void decryptData() throws Exception {
         try {
-            LOGGER.debug("Decrypting token with key = `{}`", new String(this.key.data())
-            );
+            LOGGER.debug("Decrypting token [{}] with key [{}]",
+                    this.key.getName(),
+                    new String(this.key.getData().read()));
             final String decryptedString = Crypto.decryptEncodedStringWithKey(this.tokenData, this.key);
             final JSONObject jsonObject = new JSONObject(decryptedString);
             LOGGER.debug("Decrypted token: {}", jsonObject);
@@ -134,10 +132,9 @@ public final class Token {
                     this.tokenAttributesMap
             );
             this.isDecoded = true;
-
-            LOGGER.debug("Token successfully decrypted.");
+            LOGGER.debug("Token is successfully decrypted.");
         } catch (final Exception e) {
-            LOGGER.error("There was a problem decrypting the token data", e);
+            LOGGER.error(e.getMessage(), e);
             throw e;
         }
     }
