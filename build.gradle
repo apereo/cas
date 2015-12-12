@@ -323,6 +323,10 @@ subprojects {
                             name "Mihir Patel"
                             email "exploremihir@gmail.com"
                         }
+                        contributor {
+                            name "Fredrik Jönsson"
+                            email "fjo@kth.se"
+                        }
                     }
 
                     mailingLists {
