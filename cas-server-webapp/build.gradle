@@ -44,22 +44,11 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
 
-    compile(group: 'org.springframework.security', name: 'spring-security-config', version: springSecVersion) {
-        exclude(module: 'commons-logging')
+    compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
+        exclude(module: 'spring-webmvc')
         exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
     }
-    compile(group: 'org.springframework.security', name: 'spring-security-web', version: springSecVersion) {
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
+    compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
     }
     compile group: 'com.lmax', name: 'disruptor', version: disruptorVersion
     runtime group: 'org.springframework', name: 'spring-expression', version: springVersion
@@ -122,4 +111,3 @@ gretty {
         sslTrustStorePassword = project.ext.jettySslTrustStorePassword
     }
 }
-

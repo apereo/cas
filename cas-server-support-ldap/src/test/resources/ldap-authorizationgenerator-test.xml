@@ -14,9 +14,9 @@
         <constructor-arg type="java.lang.String" value="mail" />
     </bean>
 
-    <alias name="provisioningConnectionFactory" alias="ldapUserDetailsServiceConnectionFactory" />
-    <alias name="searchExecutorUser" alias="ldapUserDetailsServiceUserSearchExecutor" />
-    <alias name="searchExecutorRole" alias="ldapUserDetailsServiceRoleSearchExecutor" />
+    <alias name="provisioningConnectionFactory" alias="ldapAuthorizationGeneratorConnectionFactory" />
+    <alias name="searchExecutorUser" alias="ldapAuthorizationGeneratorUserSearchExecutor" />
+    <alias name="searchExecutorRole" alias="ldapAuthorizationGeneratorRoleSearchExecutor" />
 
     <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
           p:baseDn="${ldap.baseDn}"
