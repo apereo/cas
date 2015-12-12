@@ -36,7 +36,7 @@ import java.util.Map;
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
 @DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue("TGT")
+@DiscriminatorValue(TicketGrantingTicket.PREFIX)
 public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /** Unique Id for serialization. */
