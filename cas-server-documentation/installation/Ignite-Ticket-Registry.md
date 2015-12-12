@@ -14,7 +14,7 @@ Ignite integration is enabled by including the following dependency in the Maven
 </dependency>
 {% endhighlight %}
 
-`IgniteTicketRegistry` stores tickets in an [Ignite](http://ignite.apache.org/) instance.
+This registry stores tickets in an [Ignite](http://ignite.apache.org/) instance.
 
 
 ## Distributed Cache
