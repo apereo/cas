@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name="SERVICETICKET")
 @DiscriminatorColumn(name="TYPE")
-@DiscriminatorValue("ST")
+@DiscriminatorValue(ServiceTicket.PREFIX)
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     /** Unique Id for serialization. */

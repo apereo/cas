@@ -52,7 +52,11 @@ public abstract class AbstractDistributedTicketRegistry extends AbstractTicketRe
             return new ProxyTicketDelegator(this, (ProxyTicket) ticket, needsCallback());
         }
 
-        return new ServiceTicketDelegator<>(this, (ServiceTicket) ticket, needsCallback());
+        if (ticket instanceof ServiceTicket) {
+            return new ServiceTicketDelegator<>(this, (ServiceTicket) ticket, needsCallback());
+        }
+
+        throw new IllegalStateException("Cannot wrap ticket of type: " + ticket.getClass() + " with a proxy delegator");
     }
 
 }
