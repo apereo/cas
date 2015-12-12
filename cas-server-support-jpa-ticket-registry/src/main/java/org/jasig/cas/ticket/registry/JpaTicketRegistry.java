@@ -2,7 +2,6 @@ package org.jasig.cas.ticket.registry;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
@@ -76,10 +75,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @NotNull
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
-
-    @NotNull
-    private List<String> ticketGrantingTicketPrefixes = ImmutableList.of(TicketGrantingTicket.PREFIX,
-            ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
 
     @Override
     public void updateTicket(final Ticket ticket) {
@@ -171,10 +166,10 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      */
     private Ticket getRawTicket(final String ticketId) {
         try {
-            for(final String prefix : this.ticketGrantingTicketPrefixes) {
-                if (ticketId.startsWith(prefix)) {
-                    return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
-                }
+            if (ticketId.startsWith(TicketGrantingTicket.PREFIX) ||
+                    ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
+                // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
+                return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
             }
 
             return entityManager.find(ServiceTicketImpl.class, ticketId);
@@ -198,21 +193,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         tickets.addAll(sts);
 
         return tickets;
-    }
-
-    /**
-     * Set the id prefix used by {@link TicketGrantingTicket} implementations.
-     *
-     * @param ticketGrantingTicketPrefix the prefix to use
-     * @deprecated As of 4.2. use {@link JpaTicketRegistry#setTicketGrantingTicketPrefixes} instead.
-     */
-    @Deprecated
-    public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
-        this.ticketGrantingTicketPrefixes = ImmutableList.of(ticketGrantingTicketPrefix);
-    }
-
-    public void setTicketGrantingTicketPrefixes(final List<String> ticketGrantingTicketPrefixes) {
-        this.ticketGrantingTicketPrefixes = ticketGrantingTicketPrefixes;
     }
 
     @Override

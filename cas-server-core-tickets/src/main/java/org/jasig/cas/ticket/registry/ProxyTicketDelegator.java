@@ -3,7 +3,8 @@ package org.jasig.cas.ticket.registry;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
 
 /**
- * This is {@link ProxyTicketDelegator}.
+ * This provides a wrapper for {@link ProxyTicket} so they can transparently reference the
+ * {@link TicketRegistry} they were loaded from.
  *
  * @author Daniel Frett
  * @since 4.2.0

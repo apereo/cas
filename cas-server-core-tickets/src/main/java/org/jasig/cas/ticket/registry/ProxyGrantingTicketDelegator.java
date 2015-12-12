@@ -6,7 +6,8 @@ import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
 
 /**
- * This is {@link ProxyGrantingTicketDelegator}.
+ * This provides a wrapper for {@link ProxyGrantingTicket} so they can transparently reference the
+ * {@link TicketRegistry} they were loaded from.
  *
  * @author Daniel Frett
  * @since 4.2.0

@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * @since 4.2
  */
 @Entity
-@DiscriminatorValue("PT")
+@DiscriminatorValue(ProxyTicket.PROXY_TICKET_PREFIX)
 public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
     private static final long serialVersionUID = -4469960563289285371L;
 
