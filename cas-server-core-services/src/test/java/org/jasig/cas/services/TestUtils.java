@@ -1,6 +1,5 @@
 package org.jasig.cas.services;
 
-import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.AbstractWebApplicationService;
@@ -16,6 +15,7 @@ import java.net.URL;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -73,9 +73,22 @@ public final class TestUtils {
 
     public static Map<String, Set<String>> getTestAttributes() {
         final Map<String, Set<String>>  attributes = new HashMap<>();
-        attributes.put("uid", ImmutableSet.of("uid"));
-        attributes.put("givenName", ImmutableSet.of("CASUser"));
-        attributes.put("memberOf", ImmutableSet.of("system", "admin", "cas"));
+        Set<String> attributeValues = new HashSet<>();
+        attributeValues.add("uid");
+
+        attributes.put("uid", attributeValues);
+
+        attributeValues = new HashSet<>();
+        attributeValues.add("CASUser");
+
+        attributes.put("givenName", attributeValues);
+
+        attributeValues = new HashSet<>();
+        attributeValues.add("admin");
+        attributeValues.add("system");
+        attributeValues.add("cas");
+
+        attributes.put("memberOf", attributeValues);
         return attributes;
     }
 
