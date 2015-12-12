@@ -166,8 +166,8 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      */
     private Ticket getRawTicket(final String ticketId) {
         try {
-            if (ticketId.startsWith(TicketGrantingTicket.PREFIX) ||
-                    ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
+            if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
+                    || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
                 // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
                 return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
             }
