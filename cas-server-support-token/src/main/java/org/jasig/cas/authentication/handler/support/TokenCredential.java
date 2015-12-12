@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
- * This is {@link TokenCredential}.
+ * This is {@link TokenCredential} that represents the user credentials in form of an encrypted token.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
