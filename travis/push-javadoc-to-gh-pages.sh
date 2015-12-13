@@ -33,7 +33,7 @@ if [ "$invokeJavadoc" == true ]; then
 
   echo -e "Started to publish latest Javadoc to gh-pages...\n"
 
-  echo -e "Invoking Maven to generate the project site...\n"
+  echo -e "Invoking build to generate the project site...\n"
   ./gradlew javadoc -q
   
   echo -e "Copying the generated docs over...\n"
