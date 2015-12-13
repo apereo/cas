@@ -1,15 +1,13 @@
 package org.jasig.cas.authentication.handler.support;
 
-import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.principal.Principal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
