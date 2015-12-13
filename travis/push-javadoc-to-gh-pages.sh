@@ -18,7 +18,7 @@
 # under the License.
 #
 
-invokeJavadoc=false
+invokeDoc=false
 
 # Only invoke the javadoc deployment process
 # for the first job in the build matrix, so as
@@ -28,42 +28,56 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "4.1.x" ]; the
   case "${TRAVIS_JOB_NUMBER}" in
        *\.1) 
         echo -e "Invoking auto-doc deployment for Travis job ${TRAVIS_JOB_NUMBER}"
-        invokeJavadoc=true;
+        invokeDoc=true;
   esac
 fi
 
-echo -e "Staring with project Javadocs...\n"
+echo -e "Staring with project docs...\n"
 
-if [ "$invokeJavadoc" == true ]; then
+if [ "$invokeDoc" == true ]; then
 
-  echo -e "Started to publish latest Javadoc to gh-pages...\n"
-  echo -e "Invoking Maven to generate the project site...\n"
-  mvn -T 20 site site:stage -q -ff -B -P nocheck -Dversions.skip=false
-  echo -e "Copying the generated docs over...\n"
-  cp -R target/staging $HOME/javadoc-latest
+#  echo -e "Started to publish latest Javadoc to gh-pages...\n"
+#  echo -e "Invoking Maven to generate the project site...\n"
+#  mvn -T 20 site site:stage -q -ff -B -P nocheck -Dversions.skip=false
+#  echo -e "Copying the generated docs over...\n"
+#  cp -R target/staging $HOME/javadoc-latest
+
+  echo -e "Copying project documentation over to $HOME/docs-latest...\n"
+  cp -R cas-server-documentation $HOME/docs-latest
 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "travis-ci"
   echo -e "Cloning the gh-pages branch...\n"
-  git clone --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
-
+  git clone --depth 10 --quiet --branch=gh-pages https://${GH_TOKEN}@github.com/Jasig/cas gh-pages > /dev/null
   cd gh-pages
 
-  echo -e "Staring to move project Javadocs over...\n"
+  echo -e "Staring to move project documentation over...\n"
 
-  if [ "$invokeJavadoc" == true ]; then
-    echo -e "Removing previous Javadocs from /$TRAVIS_BRANCH/javadocs...\n"
-    git rm -rf ./"$TRAVIS_BRANCH"/javadocs > /dev/null
+  echo -e "Removing previous documentation from development...\n"
+  git rm -rf ./4.1.x > /dev/null
 
-    echo -e "Creating Javadocs directory at /$TRAVIS_BRANCH/javadocs...\n"
-    test -d "./$TRAVIS_BRANCH/javadocs" || mkdir -m777 -v ./"$TRAVIS_BRANCH"/javadocs
+  echo -e "Creating 4.1.x directory...\n"
+  test -d "./4.1.x" || mkdir -m777 -v ./4.1.x
 
-    echo -e "Copying new Javadocs...\n"
-    cp -Rf $HOME/javadoc-latest/* ./"$TRAVIS_BRANCH"/javadocs
-    echo -e "Copied project Javadocs...\n"
+  echo -e "Copying new docs from $HOME/docs-latest over to 4.1.x...\n"
+  cp -Rf $HOME/docs-latest/* ./4.1.x
+  echo -e "Copied project documentation...\n"
 
-  fi
+
+
+#  echo -e "Staring to move project Javadocs over...\n"
+
+#  echo -e "Removing previous Javadocs from /$TRAVIS_BRANCH/javadocs...\n"
+#  git rm -rf ./"$TRAVIS_BRANCH"/javadocs > /dev/null
+
+#  echo -e "Creating Javadocs directory at /$TRAVIS_BRANCH/javadocs...\n"
+#  test -d "./$TRAVIS_BRANCH/javadocs" || mkdir -m777 -v ./"$TRAVIS_BRANCH"/javadocs
+
+#  echo -e "Copying new Javadocs...\n"
+#  cp -Rf $HOME/javadoc-latest/* ./"$TRAVIS_BRANCH"/javadocs
+#  echo -e "Copied project Javadocs...\n"
+
 
   echo -e "Adding changes to the git index...\n"
   git add -f . > /dev/null
