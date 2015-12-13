@@ -72,8 +72,8 @@ public class TokenAuthenticationHandler extends TokenWrapperAuthenticationHandle
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
 
-        if (service.getProperties().containsKey(TokenConstants.PARAMETER_NAME_TOKEN)) {
-            final RegisteredServiceProperty prop = service.getProperties().get(TokenConstants.PARAMETER_NAME_TOKEN);
+        if (service.getProperties().containsKey(TokenConstants.PROPERTY_NAME_TOKEN_SECRET)) {
+            final RegisteredServiceProperty prop = service.getProperties().get(TokenConstants.PROPERTY_NAME_TOKEN_SECRET);
             final String tokenSecret = prop.getValue();
 
             if (StringUtils.isNotBlank(tokenSecret)) {
@@ -87,11 +87,4 @@ public class TokenAuthenticationHandler extends TokenWrapperAuthenticationHandle
         return null;
     }
 
-    public static void main(String[] args) {
-        JwtGenerator<HttpProfile> g = new JwtGenerator<>("qwertyuiopasdfghjklzxcvbnm123456", true);
-        HttpProfile profile = new HttpProfile();
-        profile.setId("casuser");
-        final String token = g.generate(profile);
-        System.out.println(token);
-    }
 }
