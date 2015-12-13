@@ -9,8 +9,8 @@ CAS provides support for token-based authentication on top of JWT, where an auth
 on a form of credentials that are JWTs. 
 
 ## Overview
-CAS expects a `token` parameter to be passed along to the `/login` endpoint. The parameter value must be a JWT that is generated
-via the following script using [Pac4j](https://github.com/pac4j/pac4j):
+CAS expects a `token` parameter to be passed along to the `/login` endpoint. The parameter value must be a JWT that is generated via the 
+following script using [Pac4j](https://github.com/pac4j/pac4j):
 
 {% highlight java %}
 import org.pac4j.http.profile.HttpProfile;
@@ -32,7 +32,7 @@ Once the token is generated, you may pass it to the `/login` endpoint of CAS as 
 /cas/login?service=https://...&token=<TOKEN_VALUE>
 {% endhighlight %}
 
-##`Configuration`
+## Configuration
 JWT authentication support is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
@@ -47,6 +47,7 @@ Then, configure the JWT handler in your overlay configuration:
 
 {% highlight xml %}
 <alias name="tokenAuthenticationHandler" alias="primaryAuthenticationHandler" />
+{% endhighlight %}
 
 Configure the appropriate service in your service registry to hold the secret:
 
