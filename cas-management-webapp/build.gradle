@@ -3,6 +3,10 @@ apply plugin: "org.akhikhl.gretty"
 
 description = 'Apereo CAS Management Web Application'
 
+javadoc {
+    enabled false
+}
+
 war {
     manifest {
         attributes("Implementation-Title": project.name,
@@ -42,6 +46,3 @@ gretty {
     sslTrustStorePath = '/etc/cas/jetty/thekeystore'
     sslKeyStorePassword = 'changeit'
 }
-
-
-

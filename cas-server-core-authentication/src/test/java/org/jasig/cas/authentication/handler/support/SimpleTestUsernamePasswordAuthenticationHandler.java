@@ -3,6 +3,7 @@ package org.jasig.cas.authentication.handler.support;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
@@ -52,10 +53,12 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
         DEFAULT_USERNAME_ERROR_MAP.put("passwordExpired", new CredentialExpiredException("Password expired"));
     }
 
-    public SimpleTestUsernamePasswordAuthenticationHandler() {
-        logger.warn(
-                "{} is only to be used in a testing environment.  NEVER enable this in a production environment.",
-                getName());
+    public SimpleTestUsernamePasswordAuthenticationHandler() {}
+
+    @PostConstruct
+    private void init() {
+        logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",
+                this.getClass().getName());
     }
 
     public void setUsernameErrorMap(final Map<String, Exception> map) {

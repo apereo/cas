@@ -46,12 +46,12 @@ public class UsernamePasswordWrapperAuthenticationHandler
     protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential)
             throws GeneralSecurityException, PreventedException {
         logger.debug("CAS credentials: {}", casCredential);
-        final UsernamePasswordCredential credential = (UsernamePasswordCredential) casCredential;
-        final String username = this.principalNameTransformer.transform(credential.getUsername());
+
+        final String username = this.principalNameTransformer.transform(casCredential.getUsername());
         if (username == null) {
             throw new AccountNotFoundException("Username is null.");
         }
-        final String password = this.passwordEncoder.encode(credential.getPassword());
+        final String password = this.passwordEncoder.encode(casCredential.getPassword());
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password, getClass().getSimpleName());
         logger.debug("pac4j credentials: {}", credentials);
         return credentials;
