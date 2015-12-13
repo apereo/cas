@@ -10,9 +10,7 @@ import org.jasig.cas.integration.pac4j.authentication.handler.support.TokenWrapp
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceProperty;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.pac4j.http.profile.HttpProfile;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
-import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
