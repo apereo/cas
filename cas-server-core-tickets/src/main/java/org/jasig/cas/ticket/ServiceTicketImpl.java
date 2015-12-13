@@ -3,9 +3,12 @@ package org.jasig.cas.ticket;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -23,7 +26,9 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name="SERVICETICKET")
-public final class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
+@DiscriminatorColumn(name="TYPE")
+@DiscriminatorValue(ServiceTicket.PREFIX)
+public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4223319704861765405L;

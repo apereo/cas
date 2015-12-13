@@ -1,17 +1,13 @@
 package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
-import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.junit.Test;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -21,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAuthenticationServiceTest {
+public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test
     public void verifyResolverByUnknownUser() {
@@ -78,25 +74,5 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
         final String result = res.resolveFrom(jp, null);
         assertNotNull(result);
         assertEquals(result, c.getId());
-    }
-
-    @Test
-    public void verifyResolverSecurityContext() throws Exception {
-        final UserDetails ud = mock(UserDetails.class);
-        when(ud.getUsername()).thenReturn("pid");
-        final Authentication authn = mock(Authentication.class);
-        when(authn.getPrincipal()).thenReturn(ud);
-        final SecurityContext securityContext = mock(SecurityContext.class);
-        when(securityContext.getAuthentication()).thenReturn(authn);
-        SecurityContextHolder.setContext(securityContext);
-
-        final TicketOrCredentialPrincipalResolver res =
-                new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
-        final JoinPoint jp = mock(JoinPoint.class);
-        when(jp.getArgs()).thenReturn(new Object[]{ud});
-
-        final String result = res.resolveFrom(jp, null);
-        assertNotNull(result);
-        assertEquals(result, ud.getUsername());
     }
 }

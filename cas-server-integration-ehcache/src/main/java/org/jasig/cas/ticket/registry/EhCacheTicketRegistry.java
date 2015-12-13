@@ -219,7 +219,6 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
      * @param supportRegistryState true, if the registry is to support registry state
      * @see #sessionCount()
      * @see #serviceTicketCount()
-     * @see org.jasig.cas.monitor.Monitor
      */
     public void setSupportRegistryState(final boolean supportRegistryState) {
         this.supportRegistryState = supportRegistryState;

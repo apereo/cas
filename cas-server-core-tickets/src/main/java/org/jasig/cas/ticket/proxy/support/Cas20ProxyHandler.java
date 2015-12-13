@@ -2,7 +2,7 @@ package org.jasig.cas.ticket.proxy.support;
 
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.proxy.ProxyHandler;

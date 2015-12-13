@@ -6,6 +6,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -70,20 +71,19 @@ public class ProxyController {
      */
     @RequestMapping(path="/proxy", method = RequestMethod.GET)
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        final String ticket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET);
+        final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTINOG_TICKET);
         final Service targetService = getTargetService(request);
 
-        if (!StringUtils.hasText(ticket) || targetService == null) {
+        if (!StringUtils.hasText(proxyGrantingTicket) || targetService == null) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST,
                 CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
         }
 
         try {
-            return new ModelAndView(CONST_PROXY_SUCCESS, MODEL_SERVICE_TICKET,
-                this.centralAuthenticationService.grantServiceTicket(ticket,
-                    targetService));
+            final ProxyTicket proxyTicket = this.centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
+            return new ModelAndView(CONST_PROXY_SUCCESS, MODEL_SERVICE_TICKET, proxyTicket);
         } catch (final AbstractTicketException e) {
-            return generateErrorView(e.getCode(), e.getCode(), new Object[] {ticket}, request);
+            return generateErrorView(e.getCode(), e.getCode(), new Object[] {proxyGrantingTicket}, request);
         } catch (final UnauthorizedServiceException e) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE,
                 CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY,
@@ -97,7 +97,7 @@ public class ProxyController {
      * @param request the request
      * @return the target service
      */
-    private Service getTargetService(final HttpServletRequest request) {
+    private static Service getTargetService(final HttpServletRequest request) {
         return new WebApplicationServiceFactory().createService(request);
     }
 
