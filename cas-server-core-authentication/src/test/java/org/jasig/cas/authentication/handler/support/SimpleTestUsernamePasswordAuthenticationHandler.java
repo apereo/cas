@@ -64,6 +64,7 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
     @PostConstruct
     private void init() {
         logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",
+                this.getClass().getName());
     }
 
     public void setUsernameErrorMap(final Map<String, Exception> map) {
