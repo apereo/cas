@@ -12,6 +12,7 @@ import org.pac4j.core.util.CommonHelper;
 import org.pac4j.http.credentials.authenticator.Authenticator;
 import org.pac4j.http.profile.creator.AuthenticatorProfileCreator;
 import org.pac4j.http.profile.creator.ProfileCreator;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -23,6 +24,7 @@ import java.security.GeneralSecurityException;
  * @since 4.2.0
  */
 @SuppressWarnings("unchecked")
+@Component("abstractWrapperAuthenticationHandler")
 public abstract class AbstractWrapperAuthenticationHandler<I extends Credential, C extends Credentials>
         extends AbstractPac4jAuthenticationHandler {
 

@@ -2,6 +2,7 @@ package org.jasig.cas.web.flow.token;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.TokenConstants;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.handler.support.TokenCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -41,7 +42,7 @@ public final class TokenAuthenticationAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
 
-        final String authTokenValue = request.getParameter(TokenCredential.TOKEN_PARAMETER);
+        final String authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
         final Service service =  WebUtils.getService(context);
 
         if (StringUtils.isNotBlank(authTokenValue) && service != null) {
