@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class TicketGrantingTicketDelegator extends AbstractTicketDelegator<TicketGrantingTicket>
+public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> extends AbstractTicketDelegator<T>
         implements TicketGrantingTicket {
 
     private static final long serialVersionUID = 5312560061970601497L;
@@ -28,7 +28,7 @@ public final class TicketGrantingTicketDelegator extends AbstractTicketDelegator
      * @param callback the callback
      */
     TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
-                                  final TicketGrantingTicket ticketGrantingTicket, final boolean callback) {
+                                  final T ticketGrantingTicket, final boolean callback) {
         super(ticketRegistry, ticketGrantingTicket, callback);
     }
 

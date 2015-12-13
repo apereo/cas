@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -33,6 +35,8 @@ import java.util.Map;
  */
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
+@DiscriminatorColumn(name = "TYPE")
+@DiscriminatorValue(TicketGrantingTicket.PREFIX)
 public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /** Unique Id for serialization. */

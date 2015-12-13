@@ -12,7 +12,7 @@ import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class ServiceTicketDelegator extends AbstractTicketDelegator<ServiceTicket>
+public class ServiceTicketDelegator<T extends ServiceTicket> extends AbstractTicketDelegator<T>
         implements ServiceTicket {
 
     private static final long serialVersionUID = 8160636219307822967L;
@@ -25,7 +25,7 @@ public final class ServiceTicketDelegator extends AbstractTicketDelegator<Servic
      * @param callback the callback
      */
     ServiceTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
-                           final ServiceTicket serviceTicket, final boolean callback) {
+                           final T serviceTicket, final boolean callback) {
         super(ticketRegistry, serviceTicket, callback);
     }
 
