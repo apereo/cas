@@ -65,6 +65,10 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
     @Value("${st.timeToKillInSeconds:10}")
     private int stTimeout;
 
+
+    @Value("${ticketreg.couchbase.query.enabled:true}")
+    private boolean queryEnabled;
+
     /**
      * Default constructor.
      */
@@ -129,6 +133,7 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
      */
     @PostConstruct
     public void initialize() {
+        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(this.queryEnabled));
         couchbase.ensureIndexes(UTIL_DOCUMENT, ALL_VIEWS);
         couchbase.initialize();
     }

@@ -1,15 +1,16 @@
 package org.jasig.cas.services;
 
 
+import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,51 +19,60 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
 
 /**
- * This is {@link CouchbaseServiceRegistryDaoTests}.
+ * This is {@link MongoServiceRegistryDaoCloudTests}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/couchbase-svcregistry-test-context.xml")
-@IfProfileValue(name="couchbaseEnabled", value="true")
-public class CouchbaseServiceRegistryDaoTests {
-
-    private static final int LOAD_SIZE = 1;
+@ContextConfiguration("classpath:/mongo-cloudtest-context.xml")
+public class MongoServiceRegistryDaoCloudTests {
 
     @Autowired
-    @Qualifier("couchbaseServiceRegistryDao")
+    @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
+
     @Before
-    public void setup() {
+    public void clean() {
         final List<RegisteredService> services = this.serviceRegistryDao.load();
         for (final RegisteredService service : services) {
             this.serviceRegistryDao.delete(service);
-
         }
     }
 
     @Test
     public void verifySaveAndLoad() {
         final List<RegisteredService> list = new ArrayList<>();
-        for (int i = 0; i < LOAD_SIZE; i++) {
+        for (int i = 0; i < 5; i++) {
             list.add(buildService(i));
             this.serviceRegistryDao.save(list.get(i));
         }
         final List<RegisteredService> results = this.serviceRegistryDao.load();
         assertEquals(results.size(), list.size());
-        for (int i = 0; i < LOAD_SIZE; i++) {
+        for (int i = 0; i < 5; i++) {
             assertEquals(list.get(i), results.get(i));
         }
-        for (int i = 0; i < LOAD_SIZE; i++) {
+        for (int i = 0; i < 5; i++) {
             this.serviceRegistryDao.delete(results.get(i));
         }
         assertTrue(this.serviceRegistryDao.load().isEmpty());
+    }
+
+    @Test
+    public void verifyOauthService() {
+        final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
+        service.setServiceId(OAuthConstants.ENDPOINT_OAUTH2_CALLBACK_AUTHORIZE);
+        this.serviceRegistryDao.save(service);
+    }
+
+    @After
+    public void after() {
+        clean();
     }
 
     private static RegisteredService buildService(final int i) {
@@ -79,5 +89,4 @@ public class CouchbaseServiceRegistryDaoTests {
 
         return rs;
     }
-
 }

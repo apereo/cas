@@ -128,19 +128,21 @@ desirable periods for node failover. A [reverse proxy](http://httpd.apache.org/d
 [software load balancer](http://www.linuxvirtualserver.org/software/ipvs.html) are recommended alternatives to hardware.
 
 
-### Cache-Based Ticket Registry
-The following cache-based ticket storage components provide the best tradeoff among ease of use, scalability, and
+### HA Ticket Registry
+The following ticket storage components provide the best tradeoff among ease of use, scalability, and
 fault tolerance and are suitable for both active/passive and active/active setups:
 
 * [Hazelcast](../installation/Hazelcast-Ticket-Registry.html)
 * [EhCache](../installation/Ehcache-Ticket-Registry.html)
 * [MemCached](../installation/Memcached-Ticket-Registry.html)
+* [Ignite](../installation/Ignite-Ticket-Registry.html)
+* [Couchbase](../installation/Couchbase-Ticket-Registry.html)
 
-The particular choice of caching technology should be driven by infrastructure and expertise as much as performance
-and availability considerations. It's hardly valuable to have a high-performance cache for which you lack the
+The particular choice of storage technology should be driven by infrastructure and expertise as much as performance
+and availability considerations. It's hardly valuable to have a high-performance storage for which you lack the
 expertise to troubleshoot when problems invariably arise.
 
-The technology considerations of the various cache components merit some discussion since there are notable
+The technology considerations of the various storage components merit some discussion since there are notable
 differences that impact availability and performance characteristics. Cache systems like Ehcache and Hazelcast
 offer a distributed cache that presents a single, consistent view of entries regardless
 of the node contacted. Distributed caches rely on replication to provide for consistency. Cache systems like memcached
