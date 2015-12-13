@@ -5,14 +5,6 @@ title: CAS - Contributor Guidelines
 
 # Contributor Guidelines
 
-## Licensing
-All developers that contribute source to CAS must complete and file a Apereo
-[Individual Contributor License Agreement](https://www.apereo.org/licensing/agreements) (ICLA). This agreement provides legal
-protection to both the CAS project and to individual developers while preserving copyright ownership of the author.
-Any patch or pull request submitted by a developer will only be accepted if there is an ICLA on file for the
-developer.
-
-
 ## Getting Started
 All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
 a fork of the Jasig CAS repository:
