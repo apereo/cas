@@ -18,7 +18,7 @@
         <Logger name="org.jasig" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="com.couchbase" level="info" additivity="false">
+        <Logger name="com.couchbase" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="warn">
