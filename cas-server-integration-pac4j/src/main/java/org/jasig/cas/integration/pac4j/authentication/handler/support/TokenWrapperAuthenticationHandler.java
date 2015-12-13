@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.http.credentials.TokenCredentials;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Component("tokenWrapperAuthenticationHandler")
 public class TokenWrapperAuthenticationHandler extends
         AbstractWrapperAuthenticationHandler<BasicIdentifiableCredential, TokenCredentials> {
 

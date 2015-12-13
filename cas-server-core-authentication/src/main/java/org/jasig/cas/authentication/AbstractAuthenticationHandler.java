@@ -2,8 +2,12 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
+import org.jasig.cas.services.ServicesManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 
@@ -13,14 +17,31 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Component("abstractAuthenticationHandler")
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
+
+    /** Instance of logging for subclasses. */
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** Factory to create the principal type. **/
     @NotNull
+    @Autowired
+    @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
+    /** The services manager instance, as the entry point to the registry. **/
+    @NotNull
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ServicesManager servicesManager;
 
     /** Configurable handler name. */
     private String name;
+
+    /**
+     * Instantiates a new Abstract authentication handler.
+     */
+    public AbstractAuthenticationHandler() {}
 
     @Override
     public String getName() {
@@ -44,8 +65,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
      *
      * @param principalFactory the principal factory
      */
-    @Autowired
-    public void setPrincipalFactory(@Qualifier("principalFactory") final PrincipalFactory principalFactory) {
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 }

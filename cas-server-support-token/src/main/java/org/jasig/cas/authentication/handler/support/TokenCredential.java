@@ -13,8 +13,6 @@ import javax.validation.constraints.NotNull;
  * @since 4.2.0
  */
 public final class TokenCredential extends BasicIdentifiableCredential {
-    /** Token parameter passed to the request. */
-    public static final String TOKEN_PARAMETER = "token";
 
     private static final long serialVersionUID = 2749515041385101770L;
 
