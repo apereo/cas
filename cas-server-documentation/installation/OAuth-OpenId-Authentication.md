@@ -24,20 +24,16 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 Every OAuth client must be defined as a CAS service (notice the new *clientId* and *clientSecret* properties, specific to OAuth):
 
-{% highlight xml %}
-<bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
-  <property name="registeredServices">
-    <list>
-      <!-- Supports regex patterns by default for service ids -->
-      <bean class="org.jasig.cas.support.oauth.services.OAuthRegisteredService"
-            p:id="1"
-            p:name="serviceName"
-            p:description="Service Description"
-            p:serviceId="oauth client service url"
-            p:bypassApprovalPrompt="false"
-            p:clientId="client id goes here"
-            p:clientSecret="client secret goes here" />
-...
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "bypassApprovalPrompt": false,
+  "serviceId" : "^(https|imaps)://hello.*",
+  "name" : "HTTPS and IMAPS",
+  "id" : 10000001
+}
 {% endhighlight %}
 
 # OpenID Authentication

@@ -120,9 +120,7 @@ Change the `viewLoginForm` action state as follows:
   <on-entry>
     <set name="viewScope.commandName" value="'credential'" />
   </on-entry>
-  <transition on="submit" bind="true" validate="true" to="realSubmit">
-    <evaluate expression="authenticationViaFormAction.doBind(flowRequestContext, flowScope.credential)" />
-  </transition>
+  <transition on="submit" bind="true" validate="true" to="realSubmit"/>
 </view-state>
 {% endhighlight %}
 
