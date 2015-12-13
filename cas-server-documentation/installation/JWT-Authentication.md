@@ -18,7 +18,7 @@ import org.pac4j.jwt.profile.JwtGenerator;
 ...
 JwtGenerator<HttpProfile> g = new JwtGenerator<>("<TOKEN_SECRET>", true);
 HttpProfile profile = new HttpProfile();
-profile.setId("casuser");
+profile.setId("<PRINCIPAL_ID>");
 final String token = g.generate(profile);
 System.out.println(token);
 ...
@@ -38,7 +38,7 @@ JWT authentication support is enabled by including the following dependency in t
 {% highlight xml %}
 <dependency>
      <groupId>org.jasig.cas</groupId>
-     <artifactId>cas-server-support-token</artifactId>
+     <artifactId>cas-server-support-token-webflow</artifactId>
      <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
