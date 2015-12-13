@@ -8,6 +8,7 @@ import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.quartz.Job;
@@ -74,9 +75,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @NotNull
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
-
-    @NotNull
-    private String ticketGrantingTicketPrefix = TicketGrantingTicket.PREFIX;
 
     @Override
     public void updateTicket(final Ticket ticket) {
@@ -168,7 +166,9 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      */
     private Ticket getRawTicket(final String ticketId) {
         try {
-            if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
+            if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
+                    || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
+                // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
                 return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
             }
 
@@ -193,10 +193,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         tickets.addAll(sts);
 
         return tickets;
-    }
-
-    public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
-        this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
     }
 
     @Override
