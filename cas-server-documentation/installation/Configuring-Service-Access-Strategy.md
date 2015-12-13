@@ -4,7 +4,12 @@ title: CAS - Configuring Service Access Strategy
 ---
 
 #Configure Service Access Strategy
-The access strategy of a registered service provides fine-grained control over the service authorization rules. it describes whether the service is allowed to use the CAS server, allowed to participate in single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal attributes that must exist before access can be granted to the service. This behavior allows one to configure various attributes in terms of access roles for the application and define rules that would be enacted and validated when an authentication request from the application arrives.
+The access strategy of a registered service provides fine-grained control over the service authorization rules. 
+it describes whether the service is allowed to use the CAS server, allowed to participate in 
+single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal 
+attributes that must exist before access can be granted to the service. This behavior allows one to configure 
+various attributes in terms of access roles for the application and define rules that would be enacted and 
+validated when an authentication request from the application arrives.
 
 ##Components
 
@@ -34,6 +39,35 @@ allows one to configure a service with the following properties:
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
+
+###`GrouperRegisteredServiceAccessStrategy`
+Support is enabled by including the following dependency in the Maven WAR overlay:
+
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-integration-grouper</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
+
+This access strategy attempts to locate Grouper groups for the CAS principal. The groups returned by Grouper
+are collected as CAS attribtues and examines against the list of required attributes for service access.
+
+The following properties are available:
+
+| Field                             | Description
+|-----------------------------------+--------------------------------------------------------------------------------+
+| `groupField`                | Decides which attribute of the Grouper group should be used when converting the group to a CAS attribute. Possible values are `NAME`, `EXTENSION`, `DISPLAY_NAME`, `DISPLAY_EXTENSION`. 
+
+You will also need to ensure `grouper.client.properties` is available on the classpath:
+
+{% highlight properties %}
+grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+grouperClient.webService.login = banderson
+grouperClient.webService.password = password
+
+{% endhighlight %}
 
 
 ##Configuration of Access Control
@@ -156,5 +190,27 @@ OR the principal must have a `member` attribute whose value is either of `admins
     "startingDateTime" : "2015-11-01T13:19:54.132-07:00",
     "endingDateTime" : "2015-11-10T13:19:54.248-07:00"
   }
+}
+{% endhighlight %}
+
+* Grouper access strategy based on group's display extension:
+
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "test",
+  "id" : 62,
+  "accessStrategy" : {
+    "@class" : "org.jasig.cas.grouper.services.GrouperRegisteredServiceAccessStrategy",
+    "enabled" : true,
+    "ssoEnabled" : true,
+    "requireAllAttributes" : true,
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "memberOf" : [ "java.util.HashSet", [ "admin" ] ]
+    },
+    "groupField" : "DISPLAY_EXTENSION"
+  },
 }
 {% endhighlight %}

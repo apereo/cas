@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
@@ -149,7 +148,7 @@ public final class InMemoryTestLdapDirectoryServer implements Closeable {
 
     @Override
     @PreDestroy
-    public void close() throws IOException {
+    public void close() {
         LOGGER.debug("Shutting down LDAP server...");
         this.directoryServer.shutDown(true);
         LOGGER.debug("Shut down LDAP server.");

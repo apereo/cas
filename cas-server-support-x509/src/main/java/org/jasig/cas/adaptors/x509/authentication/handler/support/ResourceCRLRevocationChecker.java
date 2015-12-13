@@ -121,8 +121,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  
 
     /**
      * Initializes the process that periodically fetches CRL data.
-     *
-     * @throws Exception the exception
      */
     @PostConstruct
     @Override

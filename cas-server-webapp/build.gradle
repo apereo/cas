@@ -3,6 +3,10 @@ apply plugin: "org.akhikhl.gretty"
 
 description = 'Apereo CAS Web Application'
 
+javadoc {
+    enabled false
+}
+
 war {
     manifest {
         attributes("Implementation-Title": project.name,
@@ -34,22 +38,11 @@ dependencies {
     compile project(':cas-server-webapp-validation')
     compile project(':cas-server-support-saml-idp')
 
-    compile(group: 'org.springframework.security', name: 'spring-security-config', version: springSecVersion) {
-        exclude(module: 'commons-logging')
+    compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
+        exclude(module: 'spring-webmvc')
         exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
     }
-    compile(group: 'org.springframework.security', name: 'spring-security-web', version: springSecVersion) {
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
+    compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
     }
     compile group: 'com.lmax', name: 'disruptor', version: disruptorVersion
     runtime group: 'org.springframework', name: 'spring-expression', version: springVersion
@@ -110,6 +103,3 @@ gretty {
     sslTrustStorePath = '/etc/cas/jetty/thekeystore'
     sslKeyStorePassword = 'changeit'
 }
-
-
-

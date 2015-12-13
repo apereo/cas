@@ -1,6 +1,6 @@
 package org.jasig.cas.support.pac4j;
 
-import org.pac4j.config.client.ConfigPropertiesFactory;
+import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -60,7 +60,7 @@ public class Pac4jConfiguration {
             }
         }
         // add the new clients found via properties first
-        final ConfigFactory configFactory = new ConfigPropertiesFactory(properties);
+        final ConfigFactory configFactory = new PropertiesConfigFactory(properties);
         final Config propertiesConfig = configFactory.build();
         allClients.addAll(propertiesConfig.getClients().getClients());
 

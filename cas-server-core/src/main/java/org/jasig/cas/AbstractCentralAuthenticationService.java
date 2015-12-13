@@ -20,19 +20,16 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
-import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -47,7 +44,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -85,19 +81,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Resource(name="authenticationManager")
     protected AuthenticationManager authenticationManager;
 
-    /**
-     * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s
-     * created.
-     */
-    @NotNull
-    @Resource(name="ticketGrantingTicketUniqueIdGenerator")
-    protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
-
-    /** Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s. */
-    @NotNull
-    @Resource(name="uniqueIdGeneratorsMap")
-    protected Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
-
     /** Implementation of Service Manager. */
     @NotNull
     @Resource(name="servicesManager")
@@ -108,15 +91,10 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Resource(name="logoutManager")
     protected LogoutManager logoutManager;
 
-    /** Expiration policy for ticket granting tickets. */
+    /** The ticket factory. **/
     @NotNull
-    @Resource(name="grantingTicketExpirationPolicy")
-    protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
-
-    /** ExpirationPolicy for Service Tickets. */
-    @NotNull
-    @Resource(name="serviceTicketExpirationPolicy")
-    protected ExpirationPolicy serviceTicketExpirationPolicy;
+    @Resource(name="defaultTicketFactory")
+    protected TicketFactory ticketFactory;
 
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
@@ -131,15 +109,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @NotNull
     protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
-    /** Default instance for the ticket id generator. */
-    @NotNull
-    protected final UniqueTicketIdGenerator defaultServiceTicketIdGenerator
-            = new DefaultUniqueTicketIdGenerator();
-
-    /** Whether we should track the most recent session by keeping the latest service ticket. */
-    @Value("${tgt.onlyTrackMostRecentSession:true}")
-    protected boolean onlyTrackMostRecentSession = true;
-
     /**
      * Instantiates a new Central authentication service impl.
      */
@@ -148,53 +117,33 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     /**
      * Build the central authentication service implementation.
      *
-     * @param ticketRegistry the tickets registry.
-     * @param authenticationManager the authentication manager.
-     * @param ticketGrantingTicketUniqueTicketIdGenerator the TGT id generator.
-     * @param uniqueTicketIdGeneratorsForService the map with service and ticket id generators.
-     * @param ticketGrantingTicketExpirationPolicy the TGT expiration policy.
-     * @param serviceTicketExpirationPolicy the service ticket expiration policy.
-     * @param servicesManager the services manager.
-     * @param logoutManager the logout manager.
+     * @param ticketRegistry                     the tickets registry.
+     * @param ticketFactory                      the ticket factory
+     * @param authenticationManager              the authentication manager.
+     * @param servicesManager                    the services manager.
+     * @param logoutManager                      the logout manager.
      */
     public AbstractCentralAuthenticationService(
             final TicketRegistry ticketRegistry,
+            final TicketFactory ticketFactory,
             final AuthenticationManager authenticationManager,
-            final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
-            final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
-            final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
-            final ExpirationPolicy serviceTicketExpirationPolicy,
             final ServicesManager servicesManager,
             final LogoutManager logoutManager) {
 
         this.ticketRegistry = ticketRegistry;
         this.authenticationManager = authenticationManager;
-        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
-        this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
+        this.ticketFactory = ticketFactory;
     }
 
     public final void setServiceContextAuthenticationPolicyFactory(final ContextualAuthenticationPolicyFactory<ServiceContext> policy) {
         this.serviceContextAuthenticationPolicyFactory = policy;
     }
 
-    /**
-     * @param ticketGrantingTicketExpirationPolicy a TGT expiration policy.
-     */
-    public final void setTicketGrantingTicketExpirationPolicy(final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
+    public void setTicketFactory(final TicketFactory ticketFactory) {
+        this.ticketFactory = ticketFactory;
     }
-
-    /**
-     * @param serviceTicketExpirationPolicy a ST expiration policy.
-     */
-    public final void setServiceTicketExpirationPolicy(final ExpirationPolicy serviceTicketExpirationPolicy) {
-        this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
-    }
-
 
     /**
      * Sets principal factory to create principal objects.
@@ -205,14 +154,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     public final void setPrincipalFactory(@Qualifier("principalFactory")
                                     final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
-    }
-
-    public final boolean isOnlyTrackMostRecentSession() {
-        return onlyTrackMostRecentSession;
-    }
-
-    public final void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
-        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
     }
 
     /**
@@ -377,5 +318,21 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Override
     public void setApplicationEventPublisher(final ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
+    }
+
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
+    }
+
+    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
+
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setLogoutManager(final LogoutManager logoutManager) {
+        this.logoutManager = logoutManager;
     }
 }

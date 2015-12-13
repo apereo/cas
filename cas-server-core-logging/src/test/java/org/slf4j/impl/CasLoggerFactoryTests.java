@@ -3,7 +3,7 @@ package org.slf4j.impl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.InvalidTicketException;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.After;
 import org.junit.Before;

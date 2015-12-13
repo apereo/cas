@@ -9,7 +9,6 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.ApplicationContextProvider;
-import org.jasig.cas.util.ISOStandardDateFormat;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -76,7 +75,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @return the SAML response
      */
     protected String constructSamlResponse(final GoogleAccountsService service) {
-        final DateTime currentDateTime = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
+        final DateTime currentDateTime = new DateTime();
         final DateTime notBeforeIssueInstant = DateTime.parse("2003-04-17T00:46:02Z");
 
         /*
@@ -104,11 +103,11 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             notBeforeIssueInstant, samlObjectBuilder.generateSecureRandomId());
 
         final Conditions conditions = samlObjectBuilder.newConditions(notBeforeIssueInstant,
-                currentDateTime.minusSeconds(this.skewAllowance), service.getId());
+                currentDateTime.plusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
 
         final Subject subject = samlObjectBuilder.newSubject(NameID.EMAIL, userId,
-            service.getId(), currentDateTime, service.getRequestId());
+            service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId());
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);

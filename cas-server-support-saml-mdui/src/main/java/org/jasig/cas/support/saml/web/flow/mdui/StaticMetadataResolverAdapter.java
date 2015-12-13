@@ -57,10 +57,9 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
 
     /**
      * Refresh metadata. Schedules the job to retrieve metadata.
-     * @throws SchedulerException the scheduler exception
      */
     @PostConstruct
-    public void refreshMetadata() throws SchedulerException {
+    public void refreshMetadata() {
         final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -77,10 +76,14 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
                         .withIntervalInMinutes(this.refreshIntervalInMinutes)
                         .repeatForever()).build();
 
-        final SchedulerFactory schFactory = new StdSchedulerFactory();
-        final Scheduler sch = schFactory.getScheduler();
-        sch.start();
-        sch.scheduleJob(job, trigger);
+        try {
+            final SchedulerFactory schFactory = new StdSchedulerFactory();
+            final Scheduler sch = schFactory.getScheduler();
+            sch.start();
+            sch.scheduleJob(job, trigger);
+        } catch (final SchedulerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
