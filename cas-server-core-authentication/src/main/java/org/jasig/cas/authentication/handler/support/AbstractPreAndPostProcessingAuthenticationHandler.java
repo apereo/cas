@@ -10,6 +10,7 @@ import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.principal.Principal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -25,10 +26,8 @@ import java.util.List;
  *
  * @since 3.1
  */
+@Component("abstractPreAndPostProcessingAuthenticationHandler")
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler {
-
-    /** Instance of logging for subclasses. */
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * Template method to perform arbitrary pre-authentication actions.
