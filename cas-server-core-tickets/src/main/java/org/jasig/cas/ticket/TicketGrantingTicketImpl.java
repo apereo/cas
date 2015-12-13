@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -33,6 +35,8 @@ import java.util.Map;
  */
 @Entity
 @Table(name="TICKETGRANTINGTICKET")
+@DiscriminatorColumn(name = "TYPE")
+@DiscriminatorValue(TicketGrantingTicket.PREFIX)
 public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /** Unique Id for serialization. */
@@ -125,10 +129,23 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public final synchronized ServiceTicket grantServiceTicket(final String id,
         final Service service, final ExpirationPolicy expirationPolicy,
         final boolean credentialsProvided, final boolean onlyTrackMostRecentSession) {
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
-            service, this.getCountOfUses() == 0 || credentialsProvided,
-            expirationPolicy);
 
+        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
+                service, this.getCountOfUses() == 0 || credentialsProvided,
+                expirationPolicy);
+
+        updateServiceAndTrackSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        return serviceTicket;
+    }
+
+    /**
+     * Update service and track session.
+     *
+     * @param id                         the id
+     * @param service                    the service
+     * @param onlyTrackMostRecentSession the only track most recent session
+     */
+    protected void updateServiceAndTrackSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
         updateState();
 
         final List<Authentication> authentications = getChainedAuthentications();
@@ -144,14 +161,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
                 // and its service ticket to keep the latest one
                 if (StringUtils.equals(path, existingPath)) {
                     existingServices.remove(existingService);
-                    LOGGER.trace("removed previous ST for service: {}", existingService);
+                    LOGGER.trace("Removed previous tickets for service: {}", existingService);
                     break;
                 }
             }
         }
         this.services.put(id, service);
-
-        return serviceTicket;
     }
 
     /**
