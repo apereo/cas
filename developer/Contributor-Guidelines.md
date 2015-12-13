@@ -7,7 +7,7 @@ title: CAS - Contributor Guidelines
 
 ## Getting Started
 All CAS contributions SHOULD be made via GitHub pull request, which requires that contributions are offered from
-a fork of the Jasig CAS repository:
+a fork of the Apereo CAS repository:
 
 [https://github.com/Jasig/CAS](https://github.com/Jasig/CAS)
 
