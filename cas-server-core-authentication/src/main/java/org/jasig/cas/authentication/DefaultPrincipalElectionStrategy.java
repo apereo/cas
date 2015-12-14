@@ -21,6 +21,7 @@ import java.util.Map;
 @Component("defaultPrincipalElectionStrategy")
 public final class DefaultPrincipalElectionStrategy implements PrincipalElectionStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalElectionStrategy.class);
+    private static final long serialVersionUID = 6704726217030836315L;
 
     @Autowired
     @Qualifier("principalFactory")
