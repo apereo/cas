@@ -22,7 +22,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<title>1-Team Login</title>
+		<title>Wavity Login</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
 		<spring:theme code="standard.login.css.bootstrap" var="loginCssBootstrap" />

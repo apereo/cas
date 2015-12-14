@@ -83,6 +83,25 @@
             <c:set var="tenantName" value="${string4[0]}" />
         </c:if>
 
+		<%
+		String formActionUrl = "";
+		// using getAttribute allows us to get the orginal url out of the page when a forward has taken place.
+		String queryString = "?"+request.getAttribute("javax.servlet.forward.query_string");
+		String requestURI = ""+request.getAttribute("javax.servlet.forward.request_uri");
+		if(requestURI == "null") {
+			// using getAttribute allows us to get the orginal url out of the page when a include has taken place.
+			queryString = "?"+request.getAttribute("javax.servlet.include.query_string");
+			requestURI = ""+request.getAttribute("javax.servlet.include.request_uri");
+		}
+		if(requestURI == "null") {
+			queryString = "?"+request.getQueryString();
+			requestURI = request.getRequestURI();
+		}
+		if(queryString.equals("?null")) queryString = "";
+		
+		formActionUrl = requestURI+queryString;
+		%>
+
 		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
 		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
 		<input type="hidden" name="defaultAppLogo" value="${defaultAppLogo}" />
@@ -93,7 +112,8 @@
 		<input type="hidden" name="tenantLogoUrl" value="${largeLogo}" />
 		<input type="hidden" name="loginTicket" value="${loginTicket}" />
 		<input type="hidden" name="flowExecutionKey" value="${flowExecutionKey}" />
-		<input type="hidden" name="serviceUrl" value="${serviceUrl}" />
+		<input type="hidden" name="formActionUrl" value="<%=formActionUrl %>" />
+		
 		
 		<header role="banner" id="ot-header" class="header">
 			<!-- header region -->

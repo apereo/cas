@@ -24,7 +24,7 @@ define(
 		LoginLayout
 	) {
 	return function(error) {
-		console.log("OneTeam login starting initialization ...");
+		console.log("Wavity login starting initialization ...");
 		if ( (typeof(error) !== "undefined") && (error !== null) && (error.length > 0) && (error !== "null") ) {
 			Login.Error = new Error({code: error, context: 'authentication'});
 		}
@@ -32,7 +32,7 @@ define(
 		Login.Router = new Router({ controller: Login.Controller });
 		Login.Layout = new LoginLayout();
 		Login.start();
-		console.log("... finished OneTeam login initialization.");
+		console.log("... finished Wavity login initialization.");
 	}
 });
 
