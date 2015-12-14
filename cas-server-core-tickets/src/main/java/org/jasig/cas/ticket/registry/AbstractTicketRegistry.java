@@ -8,10 +8,10 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.Pair;
 
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +22,9 @@ import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Scott Battaglia
@@ -86,14 +86,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     }
 
     @Override
-    public int sessionCount() {
+    public long sessionCount() {
       logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }
 
     @Override
-    public int serviceTicketCount() {
+    public long serviceTicketCount() {
       logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
@@ -111,16 +111,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         if (ticket instanceof TicketGrantingTicket) {
+            if (ticket instanceof ProxyGrantingTicket) {
+                logger.debug("Removing proxy-granting ticket [{}]", ticketId);
+            }
+
             logger.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
             deleteChildren(tgt);
 
             final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
-            for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
-                logger.debug("Removing proxy-granting ticket [{}]", proxyGrantingTicket.getId());
-                deleteTicket(proxyGrantingTicket.getId());
-            }
-
+            proxyGrantingTickets.stream().map(Ticket::getId).forEach(this::deleteTicket);
         }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
         return deleteSingleTicket(ticketId);
@@ -136,17 +136,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
-            for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                final String ticketId = entry.getKey();
+            services.keySet().stream().forEach(ticketId -> {
                 if (deleteSingleTicket(ticketId)) {
-                    logger.debug("Removed ticket [{}]", entry.getKey());
+                    logger.debug("Removed ticket [{}]", ticketId);
                 } else {
-                    logger.debug("Unable to remove ticket [{}]", entry.getKey());
+                    logger.debug("Unable to remove ticket [{}]", ticketId);
                 }
-            }
+            });
         }
     }
-
 
     /**
      * Delete a single ticket instance from the store.
@@ -291,16 +289,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             return items;
         }
 
-        if (items == null || items.isEmpty()) {
-            return items;
-        }
-
-        final Collection<Ticket> tickets = new HashSet<>(items.size());
-        for (final Ticket item : items) {
-            final Ticket ticket = decodeTicket(item);
-            tickets.add(ticket);
-        }
-        return tickets;
+        return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
     }
 
     @Nullable

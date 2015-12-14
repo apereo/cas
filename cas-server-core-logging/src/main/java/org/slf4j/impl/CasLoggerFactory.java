@@ -48,9 +48,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
 
         if (loggerFactories.size() > 1) {
             Util.report("Multiple ILoggerFactory bindings are found on the classpath:");
-            for (final Class<? extends ILoggerFactory> c : loggerFactories) {
-                Util.report("* " + c.getCanonicalName());
-            }
+            loggerFactories.stream().forEach(c -> Util.report("* " + c.getCanonicalName()));
             Util.report("This generally indicates a configuration problem which is a result of dependency conflicts.");
             Util.report("If you wish to use a different logging framework, specify the ILoggerFactory binding via -D"
                     + ENVIRONMENT_VAR_LOGGER_FACTORY + "=<binding-class> to the runtime environment");
@@ -64,22 +62,16 @@ public final class CasLoggerFactory implements ILoggerFactory {
             Util.report(e.getMessage(), e);
             throw e;
         }
-        this.realLoggerFactoryClass = null;
-        for (final Class<? extends ILoggerFactory> factory : loggerFactories) {
+        this.realLoggerFactoryClass = loggerFactories.stream().filter(factory -> {
             Util.report("Attempting to locate ILoggerFactory instance from: " + factory.getName());
             if (getLoggerFactoryBeInstantiated(factory) != null) {
-                this.realLoggerFactoryClass = factory;
-                Util.report("ILoggerFactory to be used for logging is: " + this.realLoggerFactoryClass.getName());
-                break;
-            } else {
-                Util.report("ILoggerFactory [" + factory.getName() + "] could not be used. Trying the next ILoggerFactory...");
+                Util.report("ILoggerFactory to be used for logging is: " + factory.getName());
+                return true;
             }
-        }
-
-        if (this.realLoggerFactoryClass == null) {
-            throw new RuntimeException("No ILoggerFactory is available to use. Log configuration is incorrect, "
-                            + "or multiple logging frameworks are at conflict with one another on the classpath.");
-        }
+            Util.report("ILoggerFactory [" + factory.getName() + "] could not be used. Trying the next ILoggerFactory...");
+            return false;
+        }).findFirst().orElseThrow(() -> new RuntimeException("No ILoggerFactory is available to use. Log configuration is incorrect, "
+                + "or multiple logging frameworks are at conflict with one another on the classpath."));
     }
 
     private Set<Class<? extends ILoggerFactory>> scanContextForLoggerFactories() {

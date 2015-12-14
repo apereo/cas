@@ -1,10 +1,12 @@
 package org.jasig.cas.web.support;
 
+import org.jasig.cas.util.DateTimeUtils;
 import org.jasig.inspektr.audit.AuditActionContext;
 import org.jasig.inspektr.audit.AuditPointRuntimeInfo;
 import org.jasig.inspektr.audit.AuditTrailManager;
 import org.jasig.inspektr.common.web.ClientInfo;
 import org.jasig.inspektr.common.web.ClientInfoHolder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.Calendar;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -105,8 +108,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     protected boolean exceedsThreshold(final HttpServletRequest request) {
         if (this.dataSource != null && this.jdbcTemplate != null) {
             final String userToUse = constructUsername(request, getUsernameParameter());
-            final Calendar cutoff = Calendar.getInstance();
-            cutoff.add(Calendar.SECOND, -1 * getFailureRangeInSeconds());
+            final ZonedDateTime cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
 
             final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
             final String remoteAddress = clientInfo.getClientIpAddress();
@@ -114,7 +116,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             final List<Timestamp> failures = this.jdbcTemplate.query(
                     sqlQueryAudit,
                     new Object[]{remoteAddress, userToUse, this.authenticationFailureCode,
-                            this.applicationCode, cutoff.getTime()},
+                    this.applicationCode, DateTimeUtils.timestampOf(cutoff)},
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
                     new RowMapper<Timestamp>() {
                         @Override
@@ -157,7 +159,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                     userToUse,
                     INSPEKTR_ACTION,
                     this.applicationCode,
-                    new java.util.Date(),
+                    DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
                     clientInfo.getClientIpAddress(),
                     clientInfo.getServerIpAddress(),
                     auditPointRuntimeInfo);

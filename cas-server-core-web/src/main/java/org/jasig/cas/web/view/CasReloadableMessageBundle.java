@@ -9,6 +9,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
+import java.util.stream.IntStream;
 
 /**
  * An extension of the {@link ReloadableResourceBundleMessageSource} whose sole concern
@@ -49,19 +50,18 @@ public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageS
         boolean foundCode = false;
         
         if (!locale.equals(Locale.ENGLISH)) {
-          for (int i = 0; !foundCode && i < this.basenames.length; i++) {
-              final String filename = this.basenames[i] + '_' + locale;
-              
-              logger.debug("Examining language bundle [{}] for the code [{}]", filename, code);
-              final PropertiesHolder holder = this.getProperties(filename);
-              foundCode =  holder != null && holder.getProperties() != null
-                                     && holder.getProperty(code) != null;  
-          }       
-          
-          if (!foundCode) {
-              logger.debug("The code [{}] cannot be found in the language bundle for the locale [{}]",
-                      code, locale);
-          }
+            foundCode = IntStream.range(0, this.basenames.length).filter(i -> {
+                final String filename = this.basenames[i] + '_' + locale;
+
+                logger.debug("Examining language bundle [{}] for the code [{}]", filename, code);
+                final PropertiesHolder holder = this.getProperties(filename);
+                return holder != null && holder.getProperties() != null
+                        && holder.getProperty(code) != null;
+            }).findFirst().isPresent();
+
+            if (!foundCode) {
+                logger.debug("The code [{}] cannot be found in the language bundle for the locale [{}]", code, locale);
+            }
         }
         return super.getMessageInternal(code, args, locale);
     }

@@ -5,7 +5,7 @@ import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.joda.time.DateTime;
+
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * This is {@link SamlProfileSamlConditionsBuilder}.
@@ -39,7 +41,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
                                        final SamlRegisteredService service,
                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
-        final DateTime currentDateTime = DateTime.now();
+        final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
         final Conditions conditions = newConditions(currentDateTime,
                 currentDateTime.plusSeconds(this.skewAllowance),
                 adaptor.getEntityId());

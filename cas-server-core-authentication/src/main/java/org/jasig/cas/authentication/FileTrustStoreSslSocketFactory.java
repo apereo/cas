@@ -167,69 +167,44 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public String chooseClientAlias(final String[] keyType, final Principal[] issuers, final Socket socket) {
-            for (final X509KeyManager keyManager : keyManagers) {
-                final String alias = keyManager.chooseClientAlias(keyType, issuers, socket);
-                if (alias != null) {
-                    return alias;
-                }
-            }
-            return null;
+            return keyManagers.stream().map(keyManager -> keyManager.chooseClientAlias(keyType, issuers, socket))
+                    .filter(alias -> alias != null).findFirst().orElse(null);
         }
 
 
         @Override
         public String chooseServerAlias(final String keyType, final Principal[] issuers, final Socket socket) {
-            for (final X509KeyManager keyManager : keyManagers) {
-                final String alias = keyManager.chooseServerAlias(keyType, issuers, socket);
-                if (alias != null) {
-                    return alias;
-                }
-            }
-            return null;
+            return keyManagers.stream().map(keyManager -> keyManager.chooseServerAlias(keyType, issuers, socket))
+                    .filter(alias -> alias != null).findFirst().orElse(null);
         }
 
 
         @Override
         public PrivateKey getPrivateKey(final String alias) {
-            for (final X509KeyManager keyManager : keyManagers) {
-                final PrivateKey privateKey = keyManager.getPrivateKey(alias);
-                if (privateKey != null) {
-                    return privateKey;
-                }
-            }
-            return null;
+            return keyManagers.stream().map(keyManager -> keyManager.getPrivateKey(alias))
+                    .filter(privateKey -> privateKey != null).findFirst().orElse(null);
         }
 
 
         @Override
         public X509Certificate[] getCertificateChain(final String alias) {
-            for (final X509KeyManager keyManager : keyManagers) {
-                final X509Certificate[] chain = keyManager.getCertificateChain(alias);
-                if (chain != null && chain.length > 0) {
-                    return chain;
-                }
-            }
-            return null;
+            return keyManagers.stream().map(keyManager -> keyManager.getCertificateChain(alias))
+                    .filter(chain -> chain != null && chain.length > 0)
+                    .findFirst().orElse(null);
         }
 
         @Override
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            for (final X509KeyManager keyManager : keyManagers) {
-                final List<String> list = Arrays.asList(keyManager.getClientAliases(keyType, issuers));
-                aliases.addAll(list);
-            }
-            return aliases.toArray(new String[] {});
+            keyManagers.stream().forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getClientAliases(keyType, issuers))));
+            return (String[]) aliases.toArray();
         }
 
         @Override
         public  String[] getServerAliases(final String keyType, final Principal[] issuers) {
             final List<String> aliases = new ArrayList<>();
-            for (final X509KeyManager keyManager : keyManagers) {
-                final List<String> list = Arrays.asList(keyManager.getServerAliases(keyType, issuers));
-                aliases.addAll(list);
-            }
-            return aliases.toArray(new String[] {});
+            keyManagers.stream().forEach(keyManager -> aliases.addAll(Arrays.asList(keyManager.getServerAliases(keyType, issuers))));
+            return (String[]) aliases.toArray();
         }
 
     }
@@ -255,38 +230,43 @@ public final class FileTrustStoreSslSocketFactory extends SSLConnectionSocketFac
 
         @Override
         public void checkClientTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-            for (final X509TrustManager trustManager : trustManagers) {
+            final boolean trusted = trustManagers.stream().anyMatch(trustManager -> {
                 try {
                     trustManager.checkClientTrusted(chain, authType);
-                    return;
+                    return true;
                 } catch (final CertificateException e) {
                     LOGGER.debug(e.getMessage(), e);
+                    return false;
                 }
+            });
+
+            if (!trusted) {
+                throw new CertificateException("None of the TrustManagers trust this certificate chain");
             }
-            throw new CertificateException("None of the TrustManagers trust this certificate chain");
         }
 
         @Override
         public void checkServerTrusted(final X509Certificate[] chain, final String authType) throws CertificateException {
-            for (final X509TrustManager trustManager : trustManagers) {
+
+            final boolean trusted = trustManagers.stream().anyMatch(trustManager -> {
                 try {
                     trustManager.checkServerTrusted(chain, authType);
-                    return;
+                    return true;
                 } catch (final CertificateException e) {
                     LOGGER.debug(e.getMessage(), e);
+                    return false;
                 }
+            });
+            if (!trusted) {
+                throw new CertificateException("None of the TrustManagers trust this certificate chain");
             }
-            throw new CertificateException("None of the TrustManagers trust this certificate chain");
         }
 
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             final List<X509Certificate> certificates = new ArrayList<>();
-            for (final X509TrustManager trustManager : trustManagers) {
-                final List<X509Certificate> list = Arrays.asList(trustManager.getAcceptedIssuers());
-                certificates.addAll(list);
-            }
-            return certificates.toArray(new X509Certificate[] {});
+            trustManagers.stream().forEach(trustManager -> certificates.addAll(Arrays.asList(trustManager.getAcceptedIssuers())));
+            return certificates.toArray(new X509Certificate[certificates.size()]);
         }
     }
 }

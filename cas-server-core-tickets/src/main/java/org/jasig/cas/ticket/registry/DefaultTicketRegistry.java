@@ -4,11 +4,11 @@ import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.util.DateTimeUtils;
 import org.jasig.cas.web.support.WebUtils;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -29,6 +29,8 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -132,25 +134,13 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
     }
 
     @Override
-    public int sessionCount() {
-        int count = 0;
-        for (final Ticket t : this.cache.values()) {
-            if (t instanceof TicketGrantingTicket) {
-                count++;
-            }
-        }
-        return count;
+    public long sessionCount() {
+        return this.cache.values().stream().filter(t -> t instanceof TicketGrantingTicket).count();
     }
 
     @Override
-    public int serviceTicketCount() {
-        int count = 0;
-        for (final Ticket t : this.cache.values()) {
-            if (t instanceof ServiceTicket) {
-                count++;
-            }
-        }
-        return count;
+    public long serviceTicketCount() {
+        return this.cache.values().stream().filter(t -> t instanceof ServiceTicket).count();
     }
 
     /**
@@ -168,7 +158,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
+                    .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.startDelay)))
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
                         .withIntervalInSeconds(this.refreshInterval)
                         .repeatForever()).build();

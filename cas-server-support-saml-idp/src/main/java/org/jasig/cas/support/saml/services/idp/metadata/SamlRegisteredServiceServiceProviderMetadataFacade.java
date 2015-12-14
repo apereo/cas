@@ -5,7 +5,7 @@ import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLException;
@@ -29,6 +29,7 @@ import org.opensaml.xmlsec.signature.Signature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -146,8 +147,8 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return this.ssoDescriptor;
     }
 
-    public DateTime getValidUntil() {
-        return this.ssoDescriptor.getValidUntil();
+    public ZonedDateTime getValidUntil() {
+        return DateTimeUtils.zonedDateTimeOf(this.ssoDescriptor.getValidUntil());
     }
 
     public EntityDescriptor getEntityDescriptor() {

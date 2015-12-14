@@ -12,7 +12,8 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import org.quartz.Job;
@@ -37,9 +38,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -103,7 +106,7 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
      */
     private boolean removeTicket(final Ticket ticket) {
         try {
-            final Date creationDate = new Date(ticket.getCreationTime());
+            final ZonedDateTime creationDate = ticket.getCreationTime();
             logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
             entityManager.remove(ticket);
             return true;
@@ -164,13 +167,13 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
     }
 
     @Override
-    public int sessionCount() {
+    public long sessionCount() {
         return countToInt(entityManager.createQuery(
                 "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
     @Override
-    public int serviceTicketCount() {
+    public long serviceTicketCount() {
         return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
     }
 
@@ -271,9 +274,9 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
+                    .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plus(this.startDelay, ChronoUnit.MILLIS)))
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInSeconds(this.refreshInterval)
+                        .withIntervalInMinutes(this.refreshInterval)
                         .repeatForever()).build();
 
                 logger.debug("Scheduling {} job", this.getClass().getName());
