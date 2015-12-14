@@ -32,6 +32,7 @@ import javax.validation.constraints.NotNull;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 
 /**
@@ -49,9 +50,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
     @NotNull
     @PersistenceContext(type = PersistenceContextType.EXTENDED)
     private EntityManager entityManager;
-
-    @NotNull
-    private String ticketGrantingTicketPrefix = "TGT";
 
     @Override
     public void updateTicket(final Ticket ticket) {
@@ -143,10 +141,11 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
      */
     private Ticket getRawTicket(final String ticketId) {
         try {
-            if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
+            if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
+                    || ticketId.startsWith(TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
                 return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
-            }
 
+            }
             return entityManager.find(ServiceTicketImpl.class, ticketId);
         } catch (final Exception e) {
             logger.error("Error getting ticket {} from registry.", ticketId, e);
@@ -168,10 +167,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
         tickets.addAll(sts);
 
         return tickets;
-    }
-
-    public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
-        this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
     }
 
     @Override
