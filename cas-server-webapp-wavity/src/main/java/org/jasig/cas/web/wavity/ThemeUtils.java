@@ -2,12 +2,14 @@ package org.jasig.cas.web.wavity;
 
 import java.io.IOException;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,63 +32,54 @@ public final class ThemeUtils {
     public ThemeUtils() {
     }
     
-    public static String fetchTenantLogo(String tenantName) {
+    public static final String fetchTenantLogo(String tenantName) {
         if ("".equals(tenantName)) {
             logger.error("Tenant name can't be empty");
             return null;
         }
-        HttpResponse response = request(API_TYPE_TENANTS);
+        String response = request(API_TYPE_TENANTS);
         if (response == null) {
             logger.error("Response is null");
             return null;
         }
-        try {
-            JSONArray jsonArray = new JSONObject(response).getJSONArray(JSON_ATTR_RESOURCE);
-            int count = jsonArray.length();
-            for (int i = 0; i < count; i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if (jsonObject.getString(JSON_ATTR_TENANT_NAME).equals(tenantName)) {
-                    String imageUrl = jsonObject.getJSONArray(JSON_ATTR_TENANT_THUMBNAILS)
-                        .getJSONObject(0)
-                        .getString(JSON_ATTR_VALUE);
-                    return imageUrl;
-                }
-            }
-        } catch (JSONException je) {
-            logger.warn("An error happened while fetching the tenant {} logo image URL", tenantName);
-        }
-        return null;
+        return parseJson(response, tenantName, JSON_ATTR_TENANT_NAME, JSON_ATTR_TENANT_THUMBNAILS);
     }
     
-    public static String fetchAppLogo(String appName) {
+    public static final String fetchAppLogo(String appName) {
         if ("".equals(appName)) {
             logger.error("App name can't be empty");
             return null;
         }
-        HttpResponse response = request(API_TYPE_SERVICE);
+        String response = request(API_TYPE_SERVICE);
         if (response == null) {
             logger.error("Response is null");
             return null;
         }
+        return parseJson(response, appName, JSON_ATTR_SERVICE_NAME, JSON_ATTR_SERVICE_THUMBNAILS);
+    }
+    
+    private static final String parseJson(String response, String name, String nameAttr, 
+            String thumbnailsAttr) {
         try {
-            JSONArray jsonArray = new JSONObject(response).getJSONArray(JSON_ATTR_RESOURCE);
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray(JSON_ATTR_RESOURCE);
             int count = jsonArray.length();
             for (int i = 0; i < count; i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                if (jsonObject.getString(JSON_ATTR_SERVICE_NAME).equals(appName)) {
-                    String imageUrl = jsonObject.getJSONArray(JSON_ATTR_SERVICE_THUMBNAILS)
+                jsonObject = jsonArray.getJSONObject(i);
+                if (jsonObject.getString(nameAttr).equals(name)) {
+                    String imageUrl = jsonObject.getJSONArray(thumbnailsAttr)
                         .getJSONObject(0)
                         .getString(JSON_ATTR_VALUE);
                     return imageUrl;
                 }
             }
         } catch (JSONException je) {
-            logger.warn("An error happened while fetching the app {} logo image URL", appName);
+            logger.warn("An error happened while fetching the {} logo image URL", name);
         }
         return null;
     }
     
-    private static final HttpResponse request(String apiType) {
+    private static final String request(String apiType) {
         final HttpClient httpClient = HttpClientBuilder.create().build();
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(1000)
@@ -103,10 +96,15 @@ public final class ThemeUtils {
         }
         HttpGet httpGet = new HttpGet(url);
         httpGet.setConfig(requestConfig);
+        httpGet.addHeader("content-type", "application/json");
         HttpResponse response;
         try {
             response = httpClient.execute(httpGet);
-            return response;
+            if (response.getStatusLine().getStatusCode() < 300) {
+                HttpEntity entity = response.getEntity();
+                String responseString = EntityUtils.toString(entity);
+                return responseString;
+            }
         } catch (ClientProtocolException e) {
             logger.warn("An exception happened!", e);
         } catch (IOException e) {
@@ -115,6 +113,17 @@ public final class ThemeUtils {
             logger.warn("An exception happened!", e);
         }
         return null;
+    }
+    
+    public static void main(String...args) {
+        String tenantName = "Acme";
+        String appName = "OneTeam";
+        
+        String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
+        String appLogo = ThemeUtils.fetchAppLogo(appName);
+        
+        System.out.println(tenantLogo);
+        System.out.println(appLogo);
     }
         
 }

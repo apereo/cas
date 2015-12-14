@@ -31,18 +31,7 @@
 <%@ page import="java.net.URL" %>
 <%@ page import="org.jasig.cas.web.wavity.ThemeUtils" %>
 <%! public URL fileURL;%>
-<%
 
-String tenantName = "acme";
-String appName = "oneteam";
-
-String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
-String appLogo = ThemeUtils.fetchAppLogo(appName);
-
-out.println(tenantLogo);
-out.println(appLogo);
-
-%>
 	
 <html lang="en">
 	<head>
@@ -83,8 +72,20 @@ out.println(appLogo);
 	        serviceUrl = request.getHeader("referer");
 	    }
 	    %>
+	    
+	    <%
+
+		String tenantName = "Acme";
+		String appName = "OneTeam";
+		
+		String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
+		String appLogo = ThemeUtils.fetchAppLogo(appName);
+		
+		%>
 
 		<c:set var="serviceUrl" value="<%=serviceUrl%>"/>
+		<c:set var="tenantLogo" value="<%=tenantLogo%>"/>
+		<c:set var="appLogo" value="<%=appLogo%>"/>
         <c:if test="${not empty serviceUrl}">
             <c:set var="string1" value="${serviceUrl}" />
             <c:set var="string2" value="${fn:split(string1, '//')}" />
@@ -100,6 +101,9 @@ out.println(appLogo);
 		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
 		<input type="hidden" name="defaultAppLogo" value="${defaultAppLogo}" />
 		<input type="hidden" name="defaultTenantLogo" value="${defaultTenantLogo}" />
+		
+		<input type="hidden" name="tenantLogo" value="${tenantLogo}" />
+		<input type="hidden" name="appLogo" value="${appLogo}" />
 		
 		<input type="hidden" name="appName" value="${appName}" />
 		<input type="hidden" name="tenantName" value="${tenantName}" />
