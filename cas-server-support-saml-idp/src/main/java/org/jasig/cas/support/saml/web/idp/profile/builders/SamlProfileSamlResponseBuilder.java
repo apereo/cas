@@ -8,7 +8,7 @@ import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSer
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
-import org.joda.time.DateTime;
+
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -29,6 +29,8 @@ import org.springframework.ui.velocity.VelocityEngineFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.SecureRandom;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * The {@link SamlProfileSamlResponseBuilder} is responsible for
@@ -99,7 +101,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
                                      final HttpServletRequest request, final HttpServletResponse response)
             throws SamlException {
         final String id = String.valueOf(Math.abs(new SecureRandom().nextLong()));
-        Response samlResponse = newResponse(id, new DateTime(), authnRequest.getID(), null);
+        Response samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
 

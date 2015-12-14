@@ -69,8 +69,8 @@ public class SessionMonitor implements Monitor<SessionStatus> {
     @Override
     public SessionStatus observe() {
         try {
-            final int sessionCount = this.registryState.sessionCount();
-            final int ticketCount = this.registryState.serviceTicketCount();
+            final long sessionCount = this.registryState.sessionCount();
+            final long ticketCount = this.registryState.serviceTicketCount();
 
             if (sessionCount == Integer.MIN_VALUE || ticketCount == Integer.MIN_VALUE) {
                 return new SessionStatus(StatusCode.UNKNOWN,

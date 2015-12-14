@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
@@ -30,8 +30,9 @@ import org.opensaml.saml.saml1.core.SubjectConfirmation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -53,12 +54,12 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @param service the service
      * @return the response
      */
-    public Response newResponse(final String id, final DateTime issueInstant,
+    public Response newResponse(final String id, final ZonedDateTime issueInstant,
                                          final String recipient, final WebApplicationService service) {
 
         final Response samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
-        samlResponse.setIssueInstant(issueInstant);
+        samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_11);
         samlResponse.setInResponseTo(recipient);
         if (service instanceof SamlService) {
@@ -82,11 +83,11 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the assertion
      */
     public Assertion newAssertion(final AuthenticationStatement authnStatement, final String issuer,
-                                        final DateTime issuedAt, final String id) {
+                                  final ZonedDateTime issuedAt, final String id) {
         final Assertion assertion = newSamlObject(Assertion.class);
 
         assertion.setID(id);
-        assertion.setIssueInstant(issuedAt);
+        assertion.setIssueInstant(DateTimeUtils.dateTimeOf(issuedAt));
         assertion.setIssuer(issuer);
         assertion.getAuthenticationStatements().add(authnStatement);
         return assertion;
@@ -100,10 +101,10 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @param issueLength the issue length
      * @return the conditions
      */
-    public Conditions newConditions(final DateTime issuedAt, final String audienceUri, final long issueLength) {
+    public Conditions newConditions(final ZonedDateTime issuedAt, final String audienceUri, final long issueLength) {
         final Conditions conditions = newSamlObject(Conditions.class);
-        conditions.setNotBefore(issuedAt);
-        conditions.setNotOnOrAfter(issuedAt.plus(issueLength));
+        conditions.setNotBefore(DateTimeUtils.dateTimeOf(issuedAt));
+        conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(issuedAt.plus(issueLength, ChronoUnit.MILLIS)));
         final AudienceRestrictionCondition audienceRestriction = newSamlObject(AudienceRestrictionCondition.class);
         final Audience audience = newSamlObject(Audience.class);
         audience.setUri(audienceUri);
@@ -140,12 +141,12 @@ public final class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @param subjectId the subject id
      * @return the authentication statement
      */
-    public AuthenticationStatement newAuthenticationStatement(final Date authenticationDate,
+    public AuthenticationStatement newAuthenticationStatement(final ZonedDateTime authenticationDate,
                                                               final String authenticationMethod,
                                                               final String subjectId) {
 
         final AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.class);
-        authnStatement.setAuthenticationInstant(new DateTime(authenticationDate));
+        authnStatement.setAuthenticationInstant(DateTimeUtils.dateTimeOf(authenticationDate));
         authnStatement.setAuthenticationMethod(
                 authenticationMethod != null
                         ? authenticationMethod
