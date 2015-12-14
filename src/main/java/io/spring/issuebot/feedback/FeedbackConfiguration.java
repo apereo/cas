@@ -42,6 +42,7 @@ class FeedbackConfiguration {
 				new StandardFeedbackListener(gitHub,
 						feedbackProperties.getProvidedLabel(),
 						feedbackProperties.getRequiredLabel(),
+						feedbackProperties.getReminderLabel(),
 						feedbackProperties.getReminderComment(),
 						feedbackProperties.getCloseComment()));
 	}

@@ -43,6 +43,11 @@ final class FeedbackProperties {
 	private String providedLabel;
 
 	/**
+	 * Name of the label that is applied when the feedback reminder comment has been made.
+	 */
+	private String reminderLabel;
+
+	/**
 	 * The text of the comment that is added as a reminder that feedback is required.
 	 */
 	private String reminderComment;

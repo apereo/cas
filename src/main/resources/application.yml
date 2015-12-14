@@ -13,6 +13,7 @@ issuebot:
   feedback:
     required_label: waiting-for-feedback
     provided_label: feedback-provided
+    reminder_label: feedback-reminder
     reminder_comment: >
       If you would like us to look at this issue, please provide the requested
       information. If the information is not provided within the next 7 days this issue

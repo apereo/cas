@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.Label;
 
 /**
  * Standard implementation of {@link FeedbackListener}.
@@ -34,15 +35,19 @@ final class StandardFeedbackListener implements FeedbackListener {
 
 	private final String requiredLabel;
 
+	private final String reminderLabel;
+
 	private final String reminderComment;
 
 	private final String closeComment;
 
 	StandardFeedbackListener(GitHubOperations gitHub, String providedLabel,
-			String requiredLabel, String reminderComment, String closeComment) {
+			String requiredLabel, String reminderLabel, String reminderComment,
+			String closeComment) {
 		this.gitHub = gitHub;
 		this.providedLabel = providedLabel;
 		this.requiredLabel = requiredLabel;
+		this.reminderLabel = reminderLabel;
 		this.reminderComment = reminderComment;
 		this.closeComment = closeComment;
 	}
@@ -59,7 +64,7 @@ final class StandardFeedbackListener implements FeedbackListener {
 		if (requestTime.plusDays(14).isBefore(now)) {
 			close(issue);
 		}
-		else if (requestTime.plusDays(7).isBefore(now)) {
+		else if (requestTime.plusDays(7).isBefore(now) && reminderRequired(issue)) {
 			remind(issue);
 		}
 	}
@@ -68,10 +73,23 @@ final class StandardFeedbackListener implements FeedbackListener {
 		this.gitHub.addComment(issue, this.closeComment);
 		this.gitHub.close(issue);
 		this.gitHub.removeLabel(issue, this.requiredLabel);
+		this.gitHub.removeLabel(issue, this.reminderLabel);
+	}
+
+	private boolean reminderRequired(Issue issue) {
+		if (issue.getLabels() != null) {
+			for (Label label : issue.getLabels()) {
+				if (this.reminderLabel.equals(label.getName())) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	private void remind(Issue issue) {
 		this.gitHub.addComment(issue, this.reminderComment);
+		this.gitHub.addLabel(issue, this.reminderLabel);
 	}
 
 }

@@ -17,11 +17,14 @@
 package io.spring.issuebot.feedback;
 
 import java.time.OffsetDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Test;
 
 import io.spring.issuebot.github.GitHubOperations;
 import io.spring.issuebot.github.Issue;
+import io.spring.issuebot.github.Label;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -37,15 +40,17 @@ public class StandardFeedbackListenerTests {
 	private final GitHubOperations gitHub = mock(GitHubOperations.class);
 
 	private final FeedbackListener listener = new StandardFeedbackListener(this.gitHub,
-			"provided", "required", "reminder", "closing");
+			"feedback-provided", "feedback-required", "feedback-reminder",
+			"Please provide requested feedback", "Closing due to lack of feedback");
 
-	private final Issue issue = new Issue(null, null, null, null, null, null, null, null);
+	private final Issue issue = new Issue(null, null, null, null, null,
+			Collections.<Label>emptyList(), null, null);
 
 	@Test
 	public void feedbackProvided() {
 		this.listener.feedbackProvided(this.issue);
-		verify(this.gitHub).addLabel(this.issue, "provided");
-		verify(this.gitHub).removeLabel(this.issue, "required");
+		verify(this.gitHub).addLabel(this.issue, "feedback-provided");
+		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
 	}
 
 	@Test
@@ -57,15 +62,24 @@ public class StandardFeedbackListenerTests {
 	@Test
 	public void feedbackRequiredAndReminderDue() {
 		this.listener.feedbackRequired(this.issue, OffsetDateTime.now().minusDays(8));
-		verify(this.gitHub).addComment(this.issue, "reminder");
+		verify(this.gitHub).addComment(this.issue, "Please provide requested feedback");
+		verify(this.gitHub).addLabel(this.issue, "feedback-reminder");
+	}
+
+	@Test
+	public void feedbackRequiredReminderDueAndAlreadyCommented() {
+		Issue issue = new Issue(null, null, null, null, null,
+				Arrays.asList(new Label("feedback-reminder")), null, null);
+		this.listener.feedbackRequired(issue, OffsetDateTime.now().minusDays(8));
+		verifyNoMoreInteractions(this.gitHub);
 	}
 
 	@Test
 	public void feedbackRequiredAndOverdue() {
 		this.listener.feedbackRequired(this.issue, OffsetDateTime.now().minusDays(15));
-		verify(this.gitHub).addComment(this.issue, "closing");
+		verify(this.gitHub).addComment(this.issue, "Closing due to lack of feedback");
 		verify(this.gitHub).close(this.issue);
-		verify(this.gitHub).removeLabel(this.issue, "required");
+		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
 	}
 
 }
