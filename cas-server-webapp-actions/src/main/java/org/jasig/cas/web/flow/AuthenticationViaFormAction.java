@@ -4,7 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
@@ -37,7 +40,7 @@ import java.util.Map;
  * the Service Ticket required.
  *
  * @author Scott Battaglia
- * @since 3.0.0.4
+ * @since 3.0.0
  */
 @Component("authenticationViaFormAction")
 public class AuthenticationViaFormAction {
@@ -74,11 +77,10 @@ public class AuthenticationViaFormAction {
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
-
     @NotNull
     @Autowired
-    @Qualifier("authenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager;
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository;
 
     /**
      * Handle the submission of credentials from the post.
@@ -163,8 +165,13 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
-            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
-            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
+            this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build();
+
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                     ticketGrantingTicketId, service, authenticationContext);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
@@ -175,7 +182,6 @@ public class AuthenticationViaFormAction {
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final TicketCreationException e) {
             logger.warn("Invalid attempt to access service using renew=true with different credential. Ending SSO session.");
-            this.authenticationTransactionManager.clear();
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
         } catch (final AbstractTicketException e) {
             return newEvent(ERROR, e);
@@ -196,8 +202,13 @@ public class AuthenticationViaFormAction {
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
         try {
-            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
-            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
+            this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build();
+
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             putWarnCookieIfRequestParameterPresent(context);
@@ -306,7 +317,4 @@ public class AuthenticationViaFormAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
-    public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
-        this.authenticationTransactionManager = authenticationTransactionManager;
-    }
 }

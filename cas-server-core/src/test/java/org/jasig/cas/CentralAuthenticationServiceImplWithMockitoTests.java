@@ -4,7 +4,6 @@ import com.google.common.base.Predicates;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationHandler;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.DefaultHandlerResult;
@@ -83,7 +82,6 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     private CentralAuthenticationServiceImpl cas;
     private Authentication authentication;
     private TicketRegistry ticketRegMock;
-    private AuthenticationTransactionManager authenticationTransactionManager;
 
     private static class VerifyServiceByIdMatcher extends ArgumentMatcher<Service> {
         private final String id;
@@ -135,12 +133,6 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         //Mock TicketRegistry
         mockTicketRegistry(stMock, tgtMock, stMock2, tgtMock2);
 
-        final AuthenticationContext ctx = mock(AuthenticationContext.class);
-        when(ctx.getAuthentication()).thenReturn(this.authentication);
-
-        this.authenticationTransactionManager = mock(AuthenticationTransactionManager.class);
-        when(this.authenticationTransactionManager.build()).thenReturn(ctx);
-
         //Mock ServicesManager
         final ServicesManager smMock = getServicesManager(service1, service2);
         final DefaultTicketFactory factory = new DefaultTicketFactory();
@@ -155,7 +147,12 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
                 factory, smMock, mock(LogoutManager.class));
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
 
+    }
 
+    private AuthenticationContext getAuthenticationContext() {
+        final AuthenticationContext ctx = mock(AuthenticationContext.class);
+        when(ctx.getAuthentication()).thenReturn(this.authentication);
+        return ctx;
     }
 
     private static ServicesManager getServicesManager(final Service service1, final Service service2) {
@@ -182,20 +179,17 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test(expected=InvalidTicketException.class)
     public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.cas.createProxyGrantingTicket("bad-st", this.authenticationTransactionManager.build());
+        this.cas.createProxyGrantingTicket("bad-st", getAuthenticationContext());
     }
 
     @Test(expected=UnauthorizedServiceException.class)
     public void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Exception {
-        this.authenticationTransactionManager.processAuthenticationAttempt(TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final AuthenticationContext ctx = this.authenticationTransactionManager.build();
-        this.cas.createProxyGrantingTicket(ST_ID, ctx);
+        this.cas.createProxyGrantingTicket(ST_ID, getAuthenticationContext());
     }
 
     @Test(expected=UnauthorizedProxyingException.class)
     public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws Exception {
-        this.cas.grantServiceTicket(TGT_ID,
-                org.jasig.cas.services.TestUtils.getService(SVC1_ID), this.authenticationTransactionManager.build());
+        this.cas.grantServiceTicket(TGT_ID, org.jasig.cas.services.TestUtils.getService(SVC1_ID), getAuthenticationContext());
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -217,7 +211,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     @Test
     public void verifyChainedAuthenticationsOnValidation() throws Exception {
         final Service svc = org.jasig.cas.services.TestUtils.getService(SVC2_ID);
-        final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc, this.authenticationTransactionManager.build());
+        final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
         assertNotNull(st);
         
         final Assertion assertion = this.cas.validateServiceTicket(st.getId(), svc);
@@ -291,4 +285,6 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         request.addParameter("service", name);
         return new WebApplicationServiceFactory().createService(request);
     }
+
+
 }

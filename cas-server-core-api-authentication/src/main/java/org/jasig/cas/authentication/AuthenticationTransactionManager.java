@@ -11,23 +11,11 @@ package org.jasig.cas.authentication;
  */
 public interface AuthenticationTransactionManager {
     /**
-     * Authenticate boolean.
-     *
-     * @param credentials the credentials
-     * @return the context builder
+     * @param authenticationTransaction the authn attempt
+     * @param authenticationContextBuilder     the authentication context
+     * @return the transaction manager
      * @throws AuthenticationException the authentication exception
      */
-    AuthenticationContextBuilder processAuthenticationAttempt(final Credential... credentials) throws AuthenticationException;
-
-    /**
-     * Build authentication context authentication context.
-     *
-     * @return the authentication context
-     */
-    AuthenticationContext build();
-
-    /**
-     * Clear.
-     */
-    void clear();
+    AuthenticationTransactionManager handle(AuthenticationTransaction authenticationTransaction,
+                                            AuthenticationContextBuilder authenticationContextBuilder) throws AuthenticationException;
 }

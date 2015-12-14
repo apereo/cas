@@ -1,37 +1,20 @@
 package org.jasig.cas.authentication;
 
 /**
- * This is {@link AuthenticationContextBuilder}. Builds an authentication context,
- * and collects authentication events to form a line of history from which the primary
- * composed context can be gleaned.
+ * This is {@link AuthenticationContextBuilder}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
 public interface AuthenticationContextBuilder {
-    /**
-     * Total number of active authentications in this context.
-     *
-     * @return total count of authentications
-     */
-    int size();
 
     /**
-     * Determines whether the context is empty.
-     * A non-empty context must contain a primary authentication and principal.
+     * Collect authentication context builder.
      *
-     * @return true if context is empty.
+     * @param authentication the authentication
+     * @return the authentication context builder
      */
-    boolean isEmpty();
-
-    /**
-     * Collect a new authenication event and store it.
-     *
-     * @param authentication the new authentication event
-     * @return the builder instance in a fluid manner
-     * @throws AuthenticationException the authentication exception
-     */
-    AuthenticationContextBuilder collect(Authentication authentication) throws AuthenticationException;
+    AuthenticationContextBuilder collect(final Authentication authentication);
 
     /**
      * Build authentication context.
@@ -39,9 +22,4 @@ public interface AuthenticationContextBuilder {
      * @return the authentication context
      */
     AuthenticationContext build();
-
-    /**
-     * Clear.
-     */
-    void clear();
 }

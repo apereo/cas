@@ -3,9 +3,12 @@ package org.jasig.cas.web;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -65,6 +68,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Autowired
     private ApplicationContext context;
 
+    @NotNull
+    @Autowired
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository;
+
     /** Implementation of Service Manager. */
     @NotNull
     @Autowired
@@ -98,11 +106,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Autowired
     @Qualifier("defaultArgumentExtractor")
     private ArgumentExtractor argumentExtractor;
-
-    @NotNull
-    @Autowired
-    @Qualifier("authenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager;
 
     /**
      * Instantiates a new Service validate controller.
@@ -147,23 +150,29 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * Handle proxy granting ticket delivery.
      *
      * @param serviceTicketId the service ticket id
-     * @param serviceCredential the service credential
+     * @param credential the service credential
      * @return the ticket granting ticket
      */
-    private TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential serviceCredential) {
+    private TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential) {
         TicketGrantingTicket proxyGrantingTicketId = null;
 
         try {
-            this.authenticationTransactionManager.processAuthenticationAttempt(serviceCredential);
-            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
+            this.authenticationObjectsRepository.getAuthenticationTransactionManager()
+                    .handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build();
+
             proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
                     authenticationContext);
             logger.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
-                    proxyGrantingTicketId.getId(), serviceTicketId, serviceCredential);
+                    proxyGrantingTicketId.getId(), serviceTicketId, credential);
         } catch (final AuthenticationException e) {
-            logger.warn("Failed to authenticate service credential {}", serviceCredential);
+            logger.warn("Failed to authenticate service credential {}", credential);
         } catch (final AbstractTicketException e) {
-            logger.error("Failed to create proxy granting ticket for {}", serviceCredential, e);
+            logger.error("Failed to create proxy granting ticket for {}", credential, e);
         }
 
         return proxyGrantingTicketId;

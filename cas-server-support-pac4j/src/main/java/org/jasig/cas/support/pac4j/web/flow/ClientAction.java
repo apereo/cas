@@ -7,7 +7,11 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
 import org.jasig.cas.authentication.principal.ClientCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -95,17 +99,18 @@ public final class ClientAction extends AbstractAction {
     @Qualifier("builtClients")
     private Clients clients;
 
+    @NotNull
+    @Autowired
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository =
+            new DefaultAuthenticationObjectsRepository();
+
     /**
      * The service for CAS authentication.
      */
     @NotNull
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
-
-    @NotNull
-    @Autowired
-    @Qualifier("authenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager;
 
     /**
      * Build the ClientAction.
@@ -170,8 +175,14 @@ public final class ClientAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                this.authenticationTransactionManager.processAuthenticationAttempt(new ClientCredential(credentials));
-                final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
+                final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                        this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+                final AuthenticationTransaction transaction =
+                        this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(new ClientCredential(credentials));
+                this.authenticationObjectsRepository.getAuthenticationTransactionManager()
+                        .handle(transaction,  builder);
+                final AuthenticationContext authenticationContext = builder.build();
+
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
@@ -260,9 +271,5 @@ public final class ClientAction extends AbstractAction {
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
-        this.authenticationTransactionManager = authenticationTransactionManager;
     }
 }

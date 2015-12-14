@@ -3,7 +3,11 @@ package org.jasig.cas.audit.spi;
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -44,9 +48,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     @Test
     public void verifyResolverServiceTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-
-        getAuthenticationTransactionManager().processAuthenticationAttempt(c);
-        final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
+        final AuthenticationContext ctx = getAuthenticationContext(c);
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -67,8 +69,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     @Test
     public void verifyResolverTicketGrantingTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        getAuthenticationTransactionManager().processAuthenticationAttempt(c);
-        final AuthenticationContext ctx = this.getAuthenticationTransactionManager().build();
+        final AuthenticationContext ctx = getAuthenticationContext(c);
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -84,5 +85,18 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
         final String result = res.resolveFrom(jp, null);
         assertNotNull(result);
         assertEquals(result, c.getId());
+    }
+
+    private AuthenticationContext getAuthenticationContext(final Credential... credentials)
+            throws AuthenticationException {
+        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                getAuthenticationObjectsRepository().getPrincipalElectionStrategy());
+        final AuthenticationTransaction transaction =
+                getAuthenticationObjectsRepository().getAuthenticationTransactionFactory()
+                        .get(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+        getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
+                .handle(transaction,  builder);
+        final AuthenticationContext ctx = builder.build();
+        return ctx;
     }
 }
