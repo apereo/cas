@@ -24,6 +24,7 @@ import java.util.Set;
  */
 public final class DefaultAuthenticationContextBuilder implements AuthenticationContextBuilder {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContextBuilder.class);
+    private static final long serialVersionUID = 6180465589526463843L;
 
     private final ThreadLocal<Set<Authentication>> authentications = new ThreadLocal<>();
 

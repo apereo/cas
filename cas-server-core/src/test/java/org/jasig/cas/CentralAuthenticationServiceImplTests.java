@@ -7,6 +7,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -203,15 +204,14 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             ticketGrantingTicket.getId(), getService(), ctx);
     }
 
-    @Test
+    @Test(expected = MixedPrincipalException.class)
     public void verifyGrantServiceTicketWithDifferentCredentials() throws Exception {
         final AuthenticationContext ctx = getAuthenticationContext(TestUtils.getCredentialsWithSameUsernameAndPassword("testA"));
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(ctx);
 
         final AuthenticationContext ctx2 = getAuthenticationContext(TestUtils.getCredentialsWithSameUsernameAndPassword("testB"));
-        getCentralAuthenticationService().grantServiceTicket(
-            ticketGrantingTicket.getId(), getService(), ctx2);
+        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx2);
     }
 
     @Test
