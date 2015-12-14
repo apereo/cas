@@ -93,7 +93,7 @@ define(
 			
 			$('form input[name=lt]').val($('input[name=loginTicket]').val());
 			$('form input[name=execution]').val($('input[name=flowExecutionKey]').val());
-			$('form input[name=service]').val($('input[name=serviceUrl]').val());
+			$('form').attr('action', $('input[name=formActionUrl]').val());
 		},
 		errormsgclose: function() {
     	   $('.notification_inner').hide(500);
