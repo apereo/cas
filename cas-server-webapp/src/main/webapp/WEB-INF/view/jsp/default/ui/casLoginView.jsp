@@ -29,7 +29,20 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%@ page import="java.net.URL" %>
+<%@ page import="org.jasig.cas.web.wavity.ThemeUtils" %>
 <%! public URL fileURL;%>
+<%
+
+String tenantName = "acme";
+String appName = "oneteam";
+
+String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
+String appLogo = ThemeUtils.fetchAppLogo(appName);
+
+out.println(tenantLogo);
+out.println(appLogo);
+
+%>
 	
 <html lang="en">
 	<head>
