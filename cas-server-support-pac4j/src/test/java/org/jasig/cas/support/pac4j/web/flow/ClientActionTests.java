@@ -3,10 +3,6 @@ package org.jasig.cas.support.pac4j.web.flow;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.DefaultAuthenticationContext;
-import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.pac4j.test.MockFacebookClient;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -127,10 +123,6 @@ public final class ClientActionTests {
         final ClientAction action = new ClientAction();
         action.setCentralAuthenticationService(casImpl);
 
-        final AuthenticationTransactionManager transMgmr = mock(AuthenticationTransactionManager.class);
-        when(transMgmr.processAuthenticationAttempt(any(Credential.class))).thenReturn(new DefaultAuthenticationContextBuilder());
-        when(transMgmr.build()).thenReturn(new DefaultAuthenticationContext(mock(Authentication.class)));
-        action.setAuthenticationTransactionManager(transMgmr);
         action.setClients(clients);
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());

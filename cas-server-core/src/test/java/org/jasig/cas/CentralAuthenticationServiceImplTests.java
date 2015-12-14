@@ -2,8 +2,11 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -21,7 +24,6 @@ import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -41,11 +43,6 @@ import static org.mockito.Mockito.when;
  * @since 3.0.0
  */
 public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTests {
-
-    @Before
-    public void setup() {
-        this.getAuthenticationTransactionManager().clear();
-    }
 
     @Test(expected = AuthenticationException.class)
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() throws Exception {
@@ -467,7 +464,12 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     }
 
     private AuthenticationContext getAuthenticationContext(final Credential... credentials) throws AuthenticationException {
-        getAuthenticationTransactionManager().processAuthenticationAttempt(credentials);
-        return getAuthenticationTransactionManager().build();
+        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                getAuthenticationObjectsRepository().getPrincipalElectionStrategy());
+        final AuthenticationTransaction transaction =
+                getAuthenticationObjectsRepository().getAuthenticationTransactionFactory().get(credentials);
+        getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
+                .handle(transaction,  builder);
+        return builder.build();
     }
 }
