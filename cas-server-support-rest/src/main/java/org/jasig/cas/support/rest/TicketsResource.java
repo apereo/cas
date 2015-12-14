@@ -5,14 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.TicketRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +66,8 @@ public class TicketsResource {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager;
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository;
 
     @Autowired(required = false)
     private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
@@ -71,9 +75,11 @@ public class TicketsResource {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
-    /**
-     * JSON ObjectMapper.
-     */
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSupport")
+    private TicketRegistrySupport ticketRegistrySupport;
+
     private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
 
 
@@ -92,8 +98,13 @@ public class TicketsResource {
 
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
 
-            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
-            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
+            this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build();
+
             final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(authenticationContext);
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
@@ -141,10 +152,15 @@ public class TicketsResource {
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
-                final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
-                final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
-                        this.webApplicationServiceFactory.createService(serviceId), authenticationContext);
-                return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+
+            final AuthenticationContext authenticationContext =
+                    builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build();
+
+            final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
+                    this.webApplicationServiceFactory.createService(serviceId), authenticationContext);
+            return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
 
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
@@ -163,7 +179,7 @@ public class TicketsResource {
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
     public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
-        this.authenticationTransactionManager.clear();
+
         this.cas.destroyTicketGrantingTicket(tgtId);
         return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }

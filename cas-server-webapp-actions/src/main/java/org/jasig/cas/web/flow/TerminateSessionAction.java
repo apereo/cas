@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
@@ -50,8 +50,8 @@ public final class TerminateSessionAction {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager;
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository;
 
     /**
      * Creates a new instance with the given parameters.
@@ -74,7 +74,6 @@ public final class TerminateSessionAction {
             tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
         if (tgtId != null) {
-            this.authenticationTransactionManager.clear();
             final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
             WebUtils.putLogoutRequests(context, logoutRequests);
         }

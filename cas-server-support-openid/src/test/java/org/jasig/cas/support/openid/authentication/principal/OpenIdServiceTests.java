@@ -1,6 +1,11 @@
 package org.jasig.cas.support.openid.authentication.principal;
 
 import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
@@ -39,10 +44,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            this.authenticationTransactionManager.processAuthenticationAttempt(
-                    org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
-
-            final AuthenticationContext ctx = this.authenticationTransactionManager.build();
+            final AuthenticationContext ctx = getAuthenticationContext(org.jasig.cas.authentication.TestUtils
+                    .getCredentialsWithSameUsernameAndPassword());
 
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
@@ -72,10 +75,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            this.authenticationTransactionManager.processAuthenticationAttempt(
-                    org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
-
-            final AuthenticationContext ctx = this.authenticationTransactionManager.build();
+            final AuthenticationContext ctx = getAuthenticationContext(org.jasig.cas.authentication.TestUtils
+                    .getCredentialsWithSameUsernameAndPassword());
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
@@ -114,5 +115,18 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
         assertTrue(o1.equals(o2));
         assertFalse(o1.equals(new Object()));
+    }
+
+    private AuthenticationContext getAuthenticationContext(final Credential... credentials)
+            throws AuthenticationException {
+        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+        final AuthenticationTransaction transaction =
+                this.authenticationObjectsRepository.getAuthenticationTransactionFactory()
+                        .get(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+        this.authenticationObjectsRepository.getAuthenticationTransactionManager()
+                .handle(transaction,  builder);
+        final AuthenticationContext ctx = builder.build();
+        return ctx;
     }
 }

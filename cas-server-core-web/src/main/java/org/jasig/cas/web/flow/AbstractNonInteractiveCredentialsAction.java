@@ -3,9 +3,12 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
@@ -38,24 +41,20 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     /** The logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * The Principal factory.
-     */
+    /** Principal factory instance. */
     @Autowired
     @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory;
 
-    /** Instance of CentralAuthenticationService. */
+    @NotNull
+    @Autowired
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository;
+
     @NotNull
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-
-    @NotNull
-    @Autowired
-    @Qualifier("authenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager;
 
     /**
      * Checks if is renew present.
@@ -81,8 +80,12 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         if (isRenewPresent(context) && ticketGrantingTicketId != null && service != null) {
 
             try {
-                this.authenticationTransactionManager.processAuthenticationAttempt(credential);
-                final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
+                final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                        this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+                final AuthenticationTransaction transaction =
+                        this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
+                this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
+                final AuthenticationContext authenticationContext = builder.build();
 
                 final ServiceTicket serviceTicketId = this.centralAuthenticationService
                         .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
@@ -93,15 +96,19 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
                 onError(context, credential);
                 return error();
             } catch (final AbstractTicketException e) {
-                this.authenticationTransactionManager.clear();
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
                 logger.debug("Attempted to generate a ServiceTicket using renew=true with different credential", e);
             }
         }
 
         try {
-            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
-            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
+            this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build();
+
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             onSuccess(context, credential);
@@ -121,10 +128,6 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     public final void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
-        this.authenticationTransactionManager = authenticationTransactionManager;
     }
 
     /**
