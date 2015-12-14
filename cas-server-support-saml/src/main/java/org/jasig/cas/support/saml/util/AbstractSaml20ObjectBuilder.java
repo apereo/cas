@@ -5,7 +5,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.util.CompressionUtils;
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -29,6 +29,7 @@ import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 
 import java.security.SecureRandom;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -66,12 +67,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param service the service
      * @return the response
      */
-    public Response newResponse(final String id, final DateTime issueInstant,
+    public Response newResponse(final String id, final ZonedDateTime issueInstant,
                                 final String recipient, final WebApplicationService service) {
 
         final Response samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
-        samlResponse.setIssueInstant(issueInstant);
+        samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setInResponseTo(recipient);
 
@@ -116,7 +117,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the assertion
      */
     public Assertion newAssertion(final AuthnStatement authnStatement, final String issuer,
-                                  final DateTime issuedAt, final String id) {
+                                  final ZonedDateTime issuedAt, final String id) {
         final List<Statement> list = new ArrayList<>();
         list.add(authnStatement);
         return newAssertion(list, issuer, issuedAt, id);
@@ -132,10 +133,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the assertion
      */
     public Assertion newAssertion(final List<Statement> authnStatement, final String issuer,
-                                  final DateTime issuedAt, final String id) {
+                                  final ZonedDateTime issuedAt, final String id) {
         final Assertion assertion = newSamlObject(Assertion.class);
         assertion.setID(id);
-        assertion.setIssueInstant(issuedAt);
+        assertion.setIssueInstant(DateTimeUtils.dateTimeOf(issuedAt));
         assertion.setIssuer(newIssuer(issuer));
         assertion.getStatements().addAll(authnStatement);
         return assertion;
@@ -191,7 +192,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param authnInstant the authn instant
      * @return the authn statement
      */
-    public AuthnStatement newAuthnStatement(final String contextClassRef, final DateTime authnInstant) {
+    public AuthnStatement newAuthnStatement(final String contextClassRef, final ZonedDateTime authnInstant) {
         final AuthnStatement stmt = newSamlObject(AuthnStatement.class);
         final AuthnContext ctx = newSamlObject(AuthnContext.class);
 
@@ -200,7 +201,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         ctx.setAuthnContextClassRef(classRef);
         stmt.setAuthnContext(ctx);
-        stmt.setAuthnInstant(authnInstant);
+        stmt.setAuthnInstant(DateTimeUtils.dateTimeOf(authnInstant));
 
         return stmt;
     }
@@ -213,10 +214,10 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param audienceUri the service id
      * @return the conditions
      */
-    public Conditions newConditions(final DateTime notBefore, final DateTime notOnOrAfter, final String audienceUri) {
+    public Conditions newConditions(final ZonedDateTime notBefore, final ZonedDateTime notOnOrAfter, final String audienceUri) {
         final Conditions conditions = newSamlObject(Conditions.class);
-        conditions.setNotBefore(notBefore);
-        conditions.setNotOnOrAfter(notOnOrAfter);
+        conditions.setNotBefore(DateTimeUtils.dateTimeOf(notBefore));
+        conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
 
         final AudienceRestriction audienceRestriction = newSamlObject(AudienceRestriction.class);
         final Audience audience = newSamlObject(Audience.class);
@@ -237,7 +238,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @return the subject
      */
     public Subject newSubject(final String nameIdFormat, final String nameIdValue,
-                              final String recipient, final DateTime notOnOrAfter,
+                              final String recipient, final ZonedDateTime notOnOrAfter,
                               final String inResponseTo) {
 
         final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
@@ -245,7 +246,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         final SubjectConfirmationData data = newSamlObject(SubjectConfirmationData.class);
         data.setRecipient(recipient);
-        data.setNotOnOrAfter(notOnOrAfter);
+        data.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
         data.setInResponseTo(inResponseTo);
 
         confirmation.setSubjectConfirmationData(data);

@@ -77,10 +77,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
 
         final Map<SocketAddress, Map<String, String>> allStats = memcachedClient.getStats();
         final List<CacheStatistics> statsList = new ArrayList<>();
-        for (final Map.Entry<SocketAddress, Map<String, String>> entry : allStats.entrySet()) {
-            final SocketAddress key = entry.getKey();
-            final Map<String, String> statsMap = entry.getValue();
-
+        memcachedClient.getStats().forEach((key, statsMap) -> {
             if (!statsMap.isEmpty()) {
                 final long size = Long.parseLong(statsMap.get("bytes"));
                 final long capacity = Long.parseLong(statsMap.get("limit_maxbytes"));
@@ -94,7 +91,7 @@ public class MemcachedMonitor extends AbstractCacheMonitor {
                 }
                 statsList.add(new SimpleCacheStatistics(size, capacity, evictions, name));
             }
-        }
+        });
         return statsList.toArray(new CacheStatistics[statsList.size()]);
     }
 }

@@ -1,11 +1,10 @@
 package org.jasig.cas.authentication.principal;
 
-import java.util.List;
+import org.jasig.cas.authentication.Credential;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.jasig.cas.authentication.Credential;
+import java.util.List;
 
 /**
  * Delegates to one or more principal resolves in series to resolve a principal. The input to first configured resolver
@@ -47,15 +46,15 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     @Override
     public Principal resolve(final Credential credential) {
-        Principal result = null;
-        Credential input = credential;
-        for (final PrincipalResolver resolver : this.chain) {
-            if (result != null) {
-                input = new IdentifiableCredential(result.getId());
+        final Principal[] result = {null};
+        final Credential[] input = {credential};
+        this.chain.stream().forEach(resolver -> {
+            if (result[0] != null) {
+                input[0] = new IdentifiableCredential(result[0].getId());
             }
-            result = resolver.resolve(input);
-        }
-        return result;
+            result[0] = resolver.resolve(input[0]);
+        });
+        return result[0];
     }
 
     /**

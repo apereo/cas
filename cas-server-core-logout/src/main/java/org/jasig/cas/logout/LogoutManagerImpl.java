@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.util.CompressionUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This logout manager handles the Single Log Out process.
@@ -77,27 +77,22 @@ public final class LogoutManagerImpl implements LogoutManager {
     }
 
     private void performLogoutForTicket(final TicketGrantingTicket ticket, final List<LogoutRequest> logoutRequests) {
-        final Map<String, Service> services = ticket.getServices();
-        for (final Map.Entry<String, Service> entry : services.entrySet()) {
+        ticket.getServices().entrySet().stream().filter(entry -> entry.getValue() instanceof SingleLogoutService).forEach(entry -> {
             final Service service = entry.getValue();
-            if (service instanceof SingleLogoutService) {
-                LOGGER.debug("Handling single logout callback for {}", service);
-                final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((SingleLogoutService) service,
-                        entry.getKey());
-                if (logoutRequest != null) {
-                    LOGGER.debug("Captured logout request [{}]", logoutRequest);
-                    logoutRequests.add(logoutRequest);
-                }
+            LOGGER.debug("Handling single logout callback for {}", service);
+            final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((SingleLogoutService) service,
+                    entry.getKey());
+            if (logoutRequest != null) {
+                LOGGER.debug("Captured logout request [{}]", logoutRequest);
+                logoutRequests.add(logoutRequest);
             }
-        }
+        });
 
         final Collection<ProxyGrantingTicket> proxyGrantingTickets = ticket.getProxyGrantingTickets();
         if (proxyGrantingTickets.isEmpty()) {
             LOGGER.info("There are no proxy-granting tickets associated with [{}] to process for single logout", ticket.getId());
         } else {
-            for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
-                performLogoutForTicket(proxyGrantingTicket, logoutRequests);
-            }
+            proxyGrantingTickets.stream().forEach(proxyGrantingTicket -> performLogoutForTicket(proxyGrantingTicket, logoutRequests));
         }
 
 

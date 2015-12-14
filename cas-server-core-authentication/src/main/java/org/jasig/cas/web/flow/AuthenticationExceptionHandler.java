@@ -6,6 +6,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.InvalidLoginLocationException;
 import org.jasig.cas.authentication.InvalidLoginTimeException;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
@@ -20,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Performs two important error handling functions on an {@link AuthenticationException} raised from the authentication
@@ -106,18 +108,23 @@ public class AuthenticationExceptionHandler {
     public String handle(final AuthenticationException e, final MessageContext messageContext) {
         if (e != null) {
             final MessageBuilder builder = new MessageBuilder();
-            for (final Class<? extends Exception> kind : this.errors) {
-                for (final Class<? extends Exception> handlerError : e.getHandlerErrors().values()) {
-                    if (handlerError != null && handlerError.equals(kind)) {
-                        final String handlerErrorName = handlerError.getSimpleName();
+            return this.errors.stream()
+                    .map(kind -> e.getHandlerErrors().values().stream().filter(error -> error != null && error.equals(kind)).findFirst())
+                    .filter(Optional::isPresent).map(Optional::get).map(err -> {
+                        final String handlerErrorName = err.getSimpleName();
                         final String messageCode = this.messageBundlePrefix + handlerErrorName;
                         messageContext.addMessage(builder.error().code(messageCode).build());
                         return handlerErrorName;
-                    }
-                }
-
-            }
+                    })
+                    .findFirst().orElseGet(() -> {
+                        final String messageCode = this.messageBundlePrefix + UNKNOWN;
+                        logger.error("Unable to translate handler errors of the authentication exception {}."
+                                + "Returning {} by default...", e, messageCode);
+                        messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
+                        return UNKNOWN;
+                    });
         }
+
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         logger.trace("Unable to translate handler errors of the authentication exception {}. Returning {} by default...", e, messageCode);
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());
