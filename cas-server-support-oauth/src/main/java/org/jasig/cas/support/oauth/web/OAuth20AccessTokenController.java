@@ -1,8 +1,5 @@
 package org.jasig.cas.support.oauth.web;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
-import org.apache.http.HttpStatus;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.support.oauth.OAuthConstants;
@@ -10,6 +7,9 @@ import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.pac4j.core.util.CommonHelper;
 import org.pac4j.http.profile.HttpProfile;
 import org.pac4j.jwt.JwtConstants;
@@ -22,10 +22,11 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This controller returns an access token according to the service and code (service ticket) given.
@@ -98,16 +99,18 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
             attributes.put(JwtConstants.ISSUER, loginUrl.replace("/login$", OAuthConstants.ENDPOINT_OAUTH2));
             attributes.put(JwtConstants.AUDIENCE, service.getServiceId());
-            final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
-                    .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
-            attributes.put(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), expires));
+            final ZonedDateTime expirationTime = ticketGrantingTicket.getCreationTime().plusSeconds(timeout);
+            final long expiresIn = ZonedDateTime.now(ZoneOffset.UTC).until(expirationTime, ChronoUnit.SECONDS);
+            attributes.put(JwtConstants.EXPIRATION_TIME, expirationTime);
 
             final HttpProfile profile = new HttpProfile();
             profile.setId(principal.getId());
             profile.addAttributes(attributes);
             final String accessToken = this.accessTokenJwtGenerator.generate(profile);
 
-            final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken, OAuthConstants.EXPIRES, expires);
+
+            final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, ticketGrantingTicket.getId(),
+                                                        OAuthConstants.EXPIRES, expiresIn);
             logger.debug("OAuth access token response: {}", text);
             response.setContentType("text/plain");
             return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);

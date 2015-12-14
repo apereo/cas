@@ -60,14 +60,11 @@ public final class ReturnAllowedAttributeReleasePolicy extends AbstractRegistere
     protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
-        for (final String attribute : this.allowedAttributes) {
-            final Object value = resolvedAttributes.get(attribute);
-
-            if (value != null) {
-                logger.debug("Found attribute [{}] in the list of allowed attributes", attribute);
-                attributesToRelease.put(attribute, value);
-            }
-        }
+        this.allowedAttributes.stream().map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null)
+                .forEach(attribute -> {
+            logger.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
+            attributesToRelease.put((String) attribute[0], attribute[1]);
+        });
         return attributesToRelease;
     }
 

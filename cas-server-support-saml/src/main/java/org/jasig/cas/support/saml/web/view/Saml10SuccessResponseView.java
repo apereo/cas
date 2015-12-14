@@ -6,7 +6,7 @@ import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
 import org.opensaml.saml.saml1.core.Conditions;
@@ -16,6 +16,7 @@ import org.opensaml.saml.saml1.core.Subject;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
     @Override
     protected void prepareResponse(final Response response, final Map<String, Object> model) {
 
-        final DateTime issuedAt = response.getIssueInstant();
+        final ZonedDateTime issuedAt = DateTimeUtils.zonedDateTimeOf(response.getIssueInstant());
         final Service service = getAssertionFrom(model).getService();
 
         final Authentication authentication = getPrimaryAuthenticationFrom(model);
@@ -65,7 +66,7 @@ public final class Saml10SuccessResponseView extends AbstractSaml10ResponseView 
                 SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD);
 
         final AuthenticationStatement authnStatement = this.samlObjectBuilder.newAuthenticationStatement(
-                authentication.getAuthenticationDate().toDate(), authenticationMethod, getPrincipal(model).getId());
+                authentication.getAuthenticationDate(), authenticationMethod, getPrincipal(model).getId());
 
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, this.issuer, issuedAt,
                 this.samlObjectBuilder.generateSecureRandomId());

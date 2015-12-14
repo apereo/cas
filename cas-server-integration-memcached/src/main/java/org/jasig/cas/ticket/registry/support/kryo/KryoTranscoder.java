@@ -1,37 +1,5 @@
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.net.URI;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
-import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
-import de.javakaffee.kryoserializers.EnumMapSerializer;
-import de.javakaffee.kryoserializers.EnumSetSerializer;
-import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
-import de.javakaffee.kryoserializers.RegexSerializer;
-import de.javakaffee.kryoserializers.URISerializer;
-import de.javakaffee.kryoserializers.UUIDSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableMapSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
-import net.spy.memcached.CachedData;
-import net.spy.memcached.transcoders.Transcoder;
-
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
@@ -45,6 +13,7 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.registry.support.kryo.serial.RegisteredServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.SimpleWebApplicationServiceSerializer;
 import org.jasig.cas.ticket.registry.support.kryo.serial.URLSerializer;
+import org.jasig.cas.ticket.registry.support.kryo.serial.ZonedDateTimeTranscoder;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -52,17 +21,45 @@ import org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy;
 import org.jasig.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
-import org.joda.time.DateTime;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
-
+import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
+import de.javakaffee.kryoserializers.EnumMapSerializer;
+import de.javakaffee.kryoserializers.EnumSetSerializer;
+import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
+import de.javakaffee.kryoserializers.RegexSerializer;
+import de.javakaffee.kryoserializers.URISerializer;
+import de.javakaffee.kryoserializers.UUIDSerializer;
 import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
-import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableMapSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
+import net.spy.memcached.CachedData;
+import net.spy.memcached.transcoders.Transcoder;
 import org.slf4j.impl.CasDelegatingLogger;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.net.URI;
+import java.net.URL;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * {@link net.spy.memcached.MemcachedClient} transcoder implementation based on Kryo fast serialization framework
@@ -104,7 +101,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(ArrayList.class);
         kryo.register(BasicCredentialMetaData.class);
         kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
-        kryo.register(Date.class, new DefaultSerializers.DateSerializer());
+        kryo.register(ZonedDateTime.class, new ZonedDateTimeTranscoder());
         kryo.register(HardTimeoutExpirationPolicy.class);
         kryo.register(HashMap.class);
         kryo.register(LinkedHashMap.class);
@@ -133,8 +130,6 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer());
         kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
 
-        // new serializers to manage Joda dates and immutable collections
-        kryo.register(DateTime.class, new JodaDateTimeSerializer());
         kryo.register(CasDelegatingLogger.class, new DefaultSerializers.VoidSerializer());
 
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
@@ -150,9 +145,7 @@ public class KryoTranscoder implements Transcoder<Object> {
 
         // Register other types
         if (serializerMap != null) {
-            for (final Map.Entry<Class<?>, Serializer> clazz : serializerMap.entrySet()) {
-                kryo.register(clazz.getKey(), clazz.getValue());
-            }
+            serializerMap.forEach(kryo::register);
         }
 
         // don't reinit the registered classes after every write or read

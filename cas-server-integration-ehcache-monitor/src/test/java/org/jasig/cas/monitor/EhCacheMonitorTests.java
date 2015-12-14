@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.stream.IntStream;
+
 import static org.junit.Assert.*;
 
 /**
@@ -35,9 +37,8 @@ public class EhCacheMonitorTests {
         assertEquals(StatusCode.OK, status.getCode());
 
         // Fill cache 95% full, which is above 10% free WARN threshold
-        for (int i = 0; i < 95; i++) {
-            cache.put(new Element("key" + i, "value" + i));
-        }
+        IntStream.range(0, 95).forEach(i -> cache.put(new Element("key" + i, "value" + i)));
+
         status = monitor.observe();
         stats = status.getStatistics()[0];
         assertEquals(100, stats.getCapacity());
@@ -45,9 +46,8 @@ public class EhCacheMonitorTests {
         assertEquals(StatusCode.WARN, status.getCode());
 
         // Exceed the capacity and force evictions which should report WARN status
-        for (int i = 95; i < 110; i++) {
-            cache.put(new Element("key" + i, "value" + i));
-        }
+        IntStream.range(95, 110).forEach(i -> cache.put(new Element("key" + i, "value" + i)));
+
         status = monitor.observe();
         stats = status.getStatistics()[0];
         assertEquals(100, stats.getCapacity());

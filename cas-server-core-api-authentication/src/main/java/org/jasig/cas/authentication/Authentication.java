@@ -1,9 +1,9 @@
 package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.Principal;
-import org.joda.time.DateTime;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public interface Authentication extends Serializable {
      *
      * @return the date/time the authentication occurred.
      */
-    DateTime getAuthenticationDate();
+    ZonedDateTime getAuthenticationDate();
 
     /**
      * Attributes of the authentication (not the Principal).

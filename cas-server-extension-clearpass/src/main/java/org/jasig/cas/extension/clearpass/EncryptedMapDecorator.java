@@ -214,9 +214,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     @Override
     public void putAll(final Map<? extends String, ? extends String> m) {
-        for (final Entry<? extends String, ? extends String> entry : m.entrySet()) {
-            this.put(entry.getKey(), entry.getValue());
-        }
+        m.forEach(this::put);
     }
 
     @Override
