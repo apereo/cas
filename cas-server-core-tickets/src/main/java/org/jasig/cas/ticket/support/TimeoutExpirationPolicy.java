@@ -1,9 +1,13 @@
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -53,7 +57,9 @@ public final class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
+        final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+        final ZonedDateTime expirationTime = now.plus(this.timeToKillInMilliSeconds, ChronoUnit.MILLIS);
         return (ticketState == null)
-            || (System.currentTimeMillis() - ticketState.getLastTimeUsed() >= this.timeToKillInMilliSeconds);
+            || (now.isAfter(expirationTime));
     }
 }

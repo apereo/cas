@@ -8,10 +8,10 @@ package org.jasig.cas.monitor;
  */
 public class SessionStatus extends Status {
     /** Total number of SSO sessions maintained by CAS. */
-    private final int sessionCount;
+    private final long sessionCount;
 
     /** Total number of service tickets in CAS ticket registry. */
-    private final int serviceTicketCount;
+    private final long serviceTicketCount;
 
     /**
      * Creates a new status object with the given code.
@@ -36,7 +36,7 @@ public class SessionStatus extends Status {
      *
      * @see #getCode()
      */
-    public SessionStatus(final StatusCode code, final String desc, final int sessions, final int serviceTickets) {
+    public SessionStatus(final StatusCode code, final String desc, final long sessions, final long serviceTickets) {
         super(code, desc);
         this.sessionCount = sessions;
         this.serviceTicketCount = serviceTickets;
@@ -48,7 +48,7 @@ public class SessionStatus extends Status {
      *
      * @return Total number of SSO sessions.
      */
-    public int getSessionCount() {
+    public long getSessionCount() {
         return this.sessionCount;
     }
 
@@ -58,7 +58,7 @@ public class SessionStatus extends Status {
      *
      * @return Total number of service tickets.
      */
-    public int getServiceTicketCount() {
+    public long getServiceTicketCount() {
         return this.serviceTicketCount;
     }
 }

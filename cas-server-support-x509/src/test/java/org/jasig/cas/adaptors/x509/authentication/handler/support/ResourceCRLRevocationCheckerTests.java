@@ -1,16 +1,17 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.math.BigInteger;
-import java.security.GeneralSecurityException;
-import java.security.cert.X509CRL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.core.io.ClassPathResource;
+
+import java.math.BigInteger;
+import java.security.GeneralSecurityException;
+import java.security.cert.X509CRL;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
@@ -83,7 +84,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
                 }),
                 zeroThresholdPolicy,
                 new String[] {"user-revoked.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt" },
-                new RevokedCertificateException(new Date(), new BigInteger("1")),
+                new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
         });
 
         // Test case #3
@@ -96,7 +97,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
                 }),
                 zeroThresholdPolicy,
                 new String[] {"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt" },
-                new ExpiredCRLException("test", new Date()),
+                new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #4
@@ -109,7 +110,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
                 }),
                 zeroThresholdPolicy,
                 new String[] {"user-valid.crt", "userCA.crt", "intermediateCA.crt", "rootCA.crt" },
-                new ExpiredCRLException("test", new Date()),
+                new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #5

@@ -1,12 +1,13 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import org.cryptacular.util.CertUtil;
 import org.jasig.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+
+import org.cryptacular.util.CertUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -16,6 +17,8 @@ import org.springframework.core.io.ClassPathResource;
 import javax.security.auth.login.FailedLoginException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -199,7 +202,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 new X509CertificateCredential(createCertificates("user-revoked.crt")),
                 true,
-                new RevokedCertificateException(null, null),
+                new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), null),
         });
 
         // Test case #12: Valid certificate on expired CRL data
@@ -215,7 +218,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 new X509CertificateCredential(createCertificates("user-valid.crt")),
                 true,
-                new ExpiredCRLException(null, null),
+                new ExpiredCRLException(null, ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         return params;

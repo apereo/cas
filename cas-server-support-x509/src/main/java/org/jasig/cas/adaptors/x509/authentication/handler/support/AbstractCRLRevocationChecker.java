@@ -1,21 +1,20 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.jasig.cas.adaptors.x509.util.CertUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.annotation.PostConstruct;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import org.jasig.cas.adaptors.x509.util.CertUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Base class for all CRL-based revocation checkers.
@@ -72,14 +71,10 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
         final List<X509CRL> expiredCrls = new ArrayList<>();
         final List<X509CRLEntry> revokedCrls = new ArrayList<>();
 
-        final Iterator<X509CRL> it = crls.iterator();
-        while (it.hasNext())  {
-            final X509CRL crl = it.next();
-            if (CertUtils.isExpired(crl)) {
-                logger.warn("CRL data expired on {}", crl.getNextUpdate());
-                expiredCrls.add(crl);
-            }
-        }
+        crls.stream().filter(CertUtils::isExpired).forEach(crl -> {
+            logger.warn("CRL data expired on {}", crl.getNextUpdate());
+            expiredCrls.add(crl);
+        });
 
         if (crls.size() == expiredCrls.size()) {
             logger.warn("All CRLs retrieved have expired. Applying CRL expiration policy...");

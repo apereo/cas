@@ -3,6 +3,8 @@ package org.jasig.cas.monitor;
 import com.google.common.collect.ImmutableList;
 
 import javax.validation.constraints.NotNull;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Describes meaningful health metrics on the status of a cache.
@@ -69,13 +71,7 @@ public class CacheStatus extends Status {
             sb.append(' ');
         }
         sb.append("Cache statistics: [");
-        int i = 0;
-        for (final CacheStatistics stats : statistics) {
-            if (i++ > 0) {
-                sb.append('|');
-            }
-            stats.toString(sb);
-        }
+        sb.append(String.join("|", Arrays.stream(statistics).map(Object::toString).collect(Collectors.toList())));
         sb.append(']');
         return sb.toString();
     }

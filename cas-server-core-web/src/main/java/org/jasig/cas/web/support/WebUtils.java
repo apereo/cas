@@ -1,6 +1,5 @@
 package org.jasig.cas.web.support;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -8,6 +7,8 @@ import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
@@ -168,16 +169,8 @@ public final class WebUtils {
     public static WebApplicationService getService(
         final List<ArgumentExtractor> argumentExtractors,
         final HttpServletRequest request) {
-        for (final ArgumentExtractor argumentExtractor : argumentExtractors) {
-            final WebApplicationService service = argumentExtractor
-                .extractService(request);
-
-            if (service != null) {
-                return service;
-            }
-        }
-
-        return null;
+        return argumentExtractors.stream().map(argumentExtractor -> argumentExtractor.extractService(request))
+                .filter(service -> service != null).findFirst().orElse(null);
     }
 
     /**

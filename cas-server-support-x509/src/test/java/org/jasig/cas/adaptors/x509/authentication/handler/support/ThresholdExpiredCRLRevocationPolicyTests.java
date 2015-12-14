@@ -1,20 +1,21 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import java.security.GeneralSecurityException;
-import java.security.cert.X509CRL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-
-import javax.security.auth.x500.X500Principal;
-
 import org.jasig.cas.adaptors.x509.util.MockX509CRL;
+import org.jasig.cas.util.DateTimeUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import javax.security.auth.x500.X500Principal;
+import java.security.GeneralSecurityException;
+import java.security.cert.X509CRL;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
@@ -63,10 +64,10 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
     public static Collection<Object[]> getTestParameters() throws Exception {
         final Collection<Object[]> params = new ArrayList<>();
 
-        final Date now = new Date();
-        final Date twoHoursAgo = new Date(now.getTime() - 7200000);
-        final Date oneHourAgo = new Date(now.getTime() - 3600000);
-        final Date halfHourAgo = new Date(now.getTime() - 1800000);
+        final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+        final ZonedDateTime twoHoursAgo = now.minusHours(2);
+        final ZonedDateTime oneHourAgo = now.minusHours(1);
+        final ZonedDateTime halfHourAgo = now.minusMinutes(30);
         final X500Principal issuer = new X500Principal("CN=CAS");
 
         // Test case #1
@@ -75,8 +76,8 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
         zeroThreshold.setThreshold(0);
         params.add(new Object[] {
                 zeroThreshold,
-                new MockX509CRL(issuer, oneHourAgo, new Date(now.getTime() - 1)),
-                new ExpiredCRLException("CN=CAS", new Date()),
+                new MockX509CRL(issuer, DateTimeUtils.dateOf(oneHourAgo), DateTimeUtils.dateOf(now.minusSeconds(1))),
+                new ExpiredCRLException("CN=CAS", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #2
@@ -85,15 +86,15 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
         oneHourThreshold.setThreshold(3600);
         params.add(new Object[] {
                 oneHourThreshold,
-                new MockX509CRL(issuer, twoHoursAgo, new Date(oneHourAgo.getTime() - 1)),
-                new ExpiredCRLException("CN=CAS", new Date()),
+                new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(oneHourAgo.minusSeconds(1))),
+                new ExpiredCRLException("CN=CAS", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #3
         // Expect valid for 1h leniency on CRL expired 30m ago
         params.add(new Object[] {
                 oneHourThreshold,
-                new MockX509CRL(issuer, twoHoursAgo, halfHourAgo),
+                new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(halfHourAgo)),
                 null,
         });
 

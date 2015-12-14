@@ -1,9 +1,10 @@
 package org.jasig.cas.util;
 
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.joda.time.DateTime;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -35,7 +36,7 @@ public final class ISOStandardDateFormat extends FastDateFormat {
      * @return the current date and time
      */
     public String getCurrentDateAndTime() {
-        return format(new Date());
+        return format(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     /**
@@ -44,7 +45,17 @@ public final class ISOStandardDateFormat extends FastDateFormat {
      * @param dt the datetime
      * @return the date and time
      */
-    public String format(final DateTime dt) {
-        return format(dt.toDate());
+    public String format(final ZonedDateTime dt) {
+        return format(DateTimeUtils.dateOf(dt));
+    }
+
+    /**
+     * Format the datetime given.
+     *
+     * @param dt the datetime
+     * @return the date and time
+     */
+    public String format(final Instant dt) {
+        return format(DateTimeUtils.dateOf(dt));
     }
 }
