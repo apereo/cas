@@ -2,6 +2,7 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.Principal;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public interface PrincipalElectionStrategy {
+public interface PrincipalElectionStrategy extends Serializable {
 
     /**
      * Elect the principal.
