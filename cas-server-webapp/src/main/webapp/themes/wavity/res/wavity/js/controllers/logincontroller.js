@@ -13,11 +13,11 @@ define(
 	) {
 	return Backbone.Marionette.Controller.extend({
 		initialize: function(options) {
-			console.log("OneTeam login controller initialize called");
+			console.log("Wavity login controller initialize called");
 		},
 		// routes, events
 		login: function() {
-			console.log("OneTeam login controller login route called");
+			console.log("Wavity login controller login route called");
 		}
 	});
 });
