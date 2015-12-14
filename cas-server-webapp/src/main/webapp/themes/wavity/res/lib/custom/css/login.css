@@ -185,3 +185,25 @@
   background-color: #fff !important;
   border-color: #122b40;
 }
+
+/****************
+	ERRORS.jsp
+*****************/
+.cas_errors {
+	color: #333; 
+	font-size: 12px; 
+	border: 1px dotted #BB0000;
+	color: #BB0000;
+	padding: 20px; 
+	height:400px;
+}
+
+.cas_errors img {
+	float: left;
+}
+
+.cas_errors h2 {
+	margin: 9px 0px 20px 40px; 
+	font-size:14px; 
+	font-weight: bold;
+}
