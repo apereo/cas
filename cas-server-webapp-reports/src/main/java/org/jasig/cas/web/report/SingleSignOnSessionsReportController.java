@@ -3,7 +3,7 @@ package org.jasig.cas.web.report;
 import com.google.common.base.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -106,8 +106,8 @@ public final class SingleSignOnSessionsReportController {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager;
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository;
 
     /**
      * Instantiates a new Single sign on sessions report resource.
@@ -237,7 +237,6 @@ public final class SingleSignOnSessionsReportController {
     public  Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket) {
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         try {
-            this.authenticationTransactionManager.clear();
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             sessionsMap.put("status", HttpServletResponse.SC_OK);
             sessionsMap.put("ticketGrantingTicket", ticketGrantingTicket);
@@ -268,7 +267,6 @@ public final class SingleSignOnSessionsReportController {
             final String ticketGrantingTicket =
                     sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString();
             try {
-                this.authenticationTransactionManager.clear();
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);

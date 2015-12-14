@@ -3,9 +3,12 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
@@ -39,8 +42,8 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager;
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository;
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -50,8 +53,14 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         try {
             final Credential credential = WebUtils.getCredential(context);
 
-            this.authenticationTransactionManager.processAuthenticationAttempt(credential);
-            final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
+            this.authenticationObjectsRepository.getAuthenticationTransactionManager()
+                    .handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build();
+
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
@@ -61,7 +70,6 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             logger.error("Could not verify credentials to grant service ticket", e);
         } catch (final AbstractTicketException e) {
             if (e instanceof InvalidTicketException) {
-                this.authenticationTransactionManager.clear();
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             }
             if (isGatewayPresent(context)) {
@@ -74,10 +82,6 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
-        this.authenticationTransactionManager = authenticationTransactionManager;
     }
 
     /**

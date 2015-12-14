@@ -1,7 +1,10 @@
 package org.jasig.cas.support.wsfederation.web.flow;
 
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.support.wsfederation.WsFederationConfiguration;
 import org.jasig.cas.support.wsfederation.WsFederationHelper;
 import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationCredential;
@@ -63,8 +66,8 @@ public final class WsFederationAction extends AbstractAction {
 
     @NotNull
     @Autowired
-    @Qualifier("authenticationTransactionManager")
-    private AuthenticationTransactionManager authenticationTransactionManager;
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository;
 
     /**
      * Executes the webflow action.
@@ -115,12 +118,18 @@ public final class WsFederationAction extends AbstractAction {
                         restoreRequestAttribute(request, session, METHOD);
 
                     } catch (final Exception ex) {
-                        logger.warn("Session is most-likely empty: {}", ex.getMessage());
+                        logger.warn("Session is most likely empty: {}", ex.getMessage(), ex);
                     }
 
                     try {
-                        this.authenticationTransactionManager.processAuthenticationAttempt(credential);
-                        final AuthenticationContext authenticationContext = this.authenticationTransactionManager.build();
+                        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                                this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+                        final AuthenticationTransaction transaction =
+                                this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
+                        this.authenticationObjectsRepository.getAuthenticationTransactionManager()
+                                .handle(transaction,  builder);
+                        final AuthenticationContext authenticationContext = builder.build();
+
                         WebUtils.putTicketGrantingTicketInScopes(context,
                                 this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));
 

@@ -1,7 +1,7 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.AuthenticationTransactionManager;
+import org.jasig.cas.authentication.AuthenticationObjectsRepository;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -45,7 +46,8 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     private ArgumentExtractor argumentExtractor;
 
     @Autowired
-    private AuthenticationTransactionManager authenticationTransactionManager;
+    @Qualifier("defaultAuthenticationObjectsRepository")
+    private AuthenticationObjectsRepository authenticationObjectsRepository;
 
     public ArgumentExtractor getArgumentExtractor() {
         return argumentExtractor;
@@ -63,15 +65,15 @@ public abstract class AbstractCentralAuthenticationServiceTests {
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
-    public AuthenticationTransactionManager getAuthenticationTransactionManager() {
-        return authenticationTransactionManager;
-    }
-
     public TicketRegistry getTicketRegistry() {
         return this.ticketRegistry;
     }
 
     public ServicesManager getServicesManager() {
         return this.servicesManager;
+    }
+
+    public AuthenticationObjectsRepository getAuthenticationObjectsRepository() {
+        return authenticationObjectsRepository;
     }
 }
