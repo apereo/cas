@@ -12,6 +12,7 @@ import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -155,11 +156,12 @@ public class TicketsResource {
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                     this.authenticationObjectsRepository.getPrincipalElectionStrategy());
 
+            final Service service = this.webApplicationServiceFactory.createService(serviceId);
             final AuthenticationContext authenticationContext =
-                    builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build();
+                    builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build(service);
 
             final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
-                    this.webApplicationServiceFactory.createService(serviceId), authenticationContext);
+                    service, authenticationContext);
             return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
 
         } catch (final InvalidTicketException e) {

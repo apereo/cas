@@ -59,7 +59,7 @@ public final class GenerateServiceTicketAction extends AbstractAction {
                     this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
             this.authenticationObjectsRepository.getAuthenticationTransactionManager()
                     .handle(transaction,  builder);
-            final AuthenticationContext authenticationContext = builder.build();
+            final AuthenticationContext authenticationContext = builder.build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);

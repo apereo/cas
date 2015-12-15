@@ -19,6 +19,7 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.AbstractTicketValidationException;
+import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyHandler;
 import org.jasig.cas.validation.Assertion;
@@ -157,13 +158,14 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         TicketGrantingTicket proxyGrantingTicketId = null;
 
         try {
+            final ServiceTicket serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                     this.authenticationObjectsRepository.getPrincipalElectionStrategy());
             final AuthenticationTransaction transaction =
                     this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
             this.authenticationObjectsRepository.getAuthenticationTransactionManager()
                     .handle(transaction,  builder);
-            final AuthenticationContext authenticationContext = builder.build();
+            final AuthenticationContext authenticationContext = builder.build(serviceTicket.getService());
 
             proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
                     authenticationContext);
