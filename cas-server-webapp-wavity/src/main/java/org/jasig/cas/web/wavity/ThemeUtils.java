@@ -150,7 +150,7 @@ public final class ThemeUtils {
         }
         try {
             JSONObject jsonObject = new JSONObject(response);
-            JSONArray jsonArray = jsonObject.getJSONArray(JSON_ATTR_RESOURCE);
+            final JSONArray jsonArray = jsonObject.getJSONArray(JSON_ATTR_RESOURCE);
             int count = jsonArray.length();
             for (int i = 0; i < count; i++) {
                 jsonObject = jsonArray.getJSONObject(i);
@@ -175,7 +175,7 @@ public final class ThemeUtils {
      */
     private static final String request(String apiType) {
         final HttpClient httpClient = HttpClientBuilder.create().build();
-        RequestConfig requestConfig = RequestConfig.custom()
+        final RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(1000)
                 .build();
         String url = null;
@@ -188,10 +188,10 @@ public final class ThemeUtils {
             logger.error("There happened an error while building the request URL");
             return null;
         }
-        HttpGet httpGet = new HttpGet(url);
+        final HttpGet httpGet = new HttpGet(url);
         httpGet.setConfig(requestConfig);
         httpGet.addHeader("content-type", "application/json");
-        HttpResponse response;
+        final HttpResponse response;
         try {
             response = httpClient.execute(httpGet);
             if (response.getStatusLine().getStatusCode() < 300) {
