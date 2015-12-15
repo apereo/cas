@@ -31,7 +31,6 @@
 <%@ page import="java.net.URL" %>
 <%@ page import="org.jasig.cas.web.wavity.ThemeUtils" %>
 <%! public URL fileURL;%>
-
 	
 <html lang="en">
 	<head>
@@ -86,7 +85,7 @@
 			String str3 = str2[1].split("/")[1];
 			appName = str3.split("\\?")[0];
 	    }
-		
+
 		String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
 		String appLogo = ThemeUtils.fetchAppLogo(appName);
 	    %>
@@ -121,6 +120,14 @@
 			}
 		%>" />
 
+		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
+		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
+		<input type="hidden" name="defaultAppLogo" value="${defaultAppLogo}" />
+		<input type="hidden" name="defaultTenantLogo" value="${defaultTenantLogo}" />
+		
+		<input type="hidden" name="appName" value="${appName}" />
+		<input type="hidden" name="tenantName" value="${tenantName}" />
+		<input type="hidden" name="tenantLogoUrl" value="${largeLogo}" />
 		<input type="hidden" name="loginTicket" value="${loginTicket}" />
 		<input type="hidden" name="flowExecutionKey" value="${flowExecutionKey}" />
 		<input type="hidden" name="prevAddressContainer" value=
