@@ -21,9 +21,8 @@ import java.util.Map;
  * Abstract class to define common attribute encoding operations.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
-@Component("abstractCasAttributeEncoder")
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
     /** The Services manager. */
     @NotNull

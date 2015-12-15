@@ -23,8 +23,6 @@ import java.security.GeneralSecurityException;
  * @author Jerome Leleu
  * @since 4.2.0
  */
-@SuppressWarnings("unchecked")
-@Component("abstractWrapperAuthenticationHandler")
 public abstract class AbstractWrapperAuthenticationHandler<I extends Credential, C extends Credentials>
         extends AbstractPac4jAuthenticationHandler {
 

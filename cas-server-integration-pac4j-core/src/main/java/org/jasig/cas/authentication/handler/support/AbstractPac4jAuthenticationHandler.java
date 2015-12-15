@@ -19,7 +19,6 @@ import java.security.GeneralSecurityException;
  * @author Jerome Leleu
  * @since 4.1.0
  */
-@Component("abstractPac4jAuthenticationHandler")
 public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /**
