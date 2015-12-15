@@ -68,49 +68,55 @@
 	<body role="application" class="bodyLayout">
 		<%
 	    String serviceUrl = null;
+		String tenantName = "";
+		String appName = "";
 	    if (request.getHeader("referer") != null) {
 	        serviceUrl = request.getHeader("referer");
-	    }
-	    %>
-	    
-	    <%
+	        
+			String[] str2 = serviceUrl.split("//");
+			tenantName = str2[1].split("\\.")[0];
 
-		String tenantName = "Acme";
-		String appName = "OneTeam";
-		
+			String str3 = str2[1].split("/")[1];
+			appName = str3.split("\\?")[0];
+	    }
+
 		String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
 		String appLogo = ThemeUtils.fetchAppLogo(appName);
-		
-		%>
+	    %>
 
-		<c:set var="serviceUrl" value="<%=serviceUrl%>"/>
-		<c:set var="tenantLogo" value="<%=tenantLogo%>"/>
-		<c:set var="appLogo" value="<%=appLogo%>"/>
-        <c:if test="${not empty serviceUrl}">
-            <c:set var="string1" value="${serviceUrl}" />
-            <c:set var="string2" value="${fn:split(string1, '//')}" />
-            <c:set var="string3" value="${fn:split(string2[1], '/')}" />
-            <c:set var="string4" value="${fn:split(string3[0], '.')}" />
-            <c:set var="string5" value="${fn:split(string2[2], '?')}" />
-            
-            <c:set var="appName" value="${string5[0]}" />
-            <c:set var="tenantName" value="${string4[0]}" />
-        </c:if>
-
-		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
+	    <spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
 		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
-		<input type="hidden" name="defaultAppLogo" value="${defaultAppLogo}" />
-		<input type="hidden" name="defaultTenantLogo" value="${defaultTenantLogo}" />
-		
-		<input type="hidden" name="tenantLogo" value="${tenantLogo}" />
-		<input type="hidden" name="appLogo" value="${appLogo}" />
-		
-		<input type="hidden" name="appName" value="${appName}" />
-		<input type="hidden" name="tenantName" value="${tenantName}" />
-		<input type="hidden" name="tenantLogoUrl" value="${largeLogo}" />
+		<input type="hidden" name="appLogo" value="
+		<%
+			if(appLogo == null) {
+		%>
+				${defaultAppLogo}
+		<%
+			}
+			else {
+		%>
+				<%=appLogo%>
+		<%
+			}
+		%>
+		" />
+		<input type="hidden" name="tenantLogo" value="
+		<%
+			if(tenantLogo == null) {
+		%>
+				${defaultTenantLogo}
+		<%
+			}
+			else {
+		%>
+				<%=tenantLogo%>
+		<%
+			}
+		%>" />
+
 		<input type="hidden" name="loginTicket" value="${loginTicket}" />
 		<input type="hidden" name="flowExecutionKey" value="${flowExecutionKey}" />
-		<input type="hidden" name="serviceUrl" value="${serviceUrl}" />
+		<input type="hidden" name="serviceUrl" value="<%=serviceUrl%>" />
 		
 		<header role="banner" id="ot-header" class="header">
 			<!-- header region -->

@@ -42,54 +42,8 @@ define(
 	            $('.ot_username, .ot_password').find('.help-inline').addClass('oneteam-error-msg');			            
 			}		
 		
-			$("#appIcon").attr("src", $('input[name=defaultAppLogo]').val());
-			/*var appName = $('input[name=appName]').val().toLowerCase();
-			var that = this;
-			$.ajax({
-				headers : {
-					'Accept' : 'application/json',
-					'Content-Type' : 'application/json'
-				},
-				url: 'http://accounts.wavity.com:8080/scim/v2/CloudServices/',
-				type: 'GET',
-				dataType: 'json',
-				async: false,
-				success: function(response) {
-					$(response.Resources).each(function() {
-						if(this.serviceName.split(" ").join("").toLowerCase() === appName && this.serviceThumbnails !== undefined) {
-							$("#appIcon").attr("src", this.serviceThumbnails[0].value);
-						}
-					});
-				},
-				error: function(response) {
-					console.log(response);
-				}
-			});*/
-			
-			
-			$("#domainIcon").attr("src", $('input[name=defaultTenantLogo]').val());
-			/*var tenantName = $('input[name=tenantName]').val();
-			var that = this;
-			$.ajax({
-				headers : {
-					'Accept' : 'application/json',
-					'Content-Type' : 'application/json'
-				},
-				url: 'http://accounts.wavity.com:8080/scim/v2/Tenants/',
-				type: 'GET',
-				dataType: 'json',
-				async: false,
-				success: function(response) {
-					$(response.Resources).each(function() {
-						if(this.tenantName.toLowerCase() === tenantName && this.tenantThumbnails !== undefined) {
-							$("#domainIcon").attr("src", this.tenantThumbnails[0].value);
-						}
-					});
-				},
-				error: function(response) {
-					console.log(response);
-				}
-			});*/
+			$("#appIcon").attr("src", $('input[name=appLogo]').val());
+			$("#domainIcon").attr("src", $('input[name=tenantLogo]').val());
 			
 			$('form input[name=lt]').val($('input[name=loginTicket]').val());
 			$('form input[name=execution]').val($('input[name=flowExecutionKey]').val());
