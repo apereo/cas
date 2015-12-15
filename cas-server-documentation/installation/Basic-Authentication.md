@@ -15,3 +15,11 @@ Support is enabled by including the following dependency in the Maven WAR overla
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
+
+To access a CAS-protected application using a command-line client such as `curl`, the following command may be used:
+
+{% highlight xml %}
+curl <APPLICATION-URL> -L -u <USER>:<PASSWORD>
+{% endhighlight %}
+
+Use `--insecure -v` flags to bypass certificate validation and receive additional logs from `curl`. 
