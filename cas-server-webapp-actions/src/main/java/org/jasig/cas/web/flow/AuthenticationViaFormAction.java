@@ -202,12 +202,13 @@ public class AuthenticationViaFormAction {
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
         try {
+            final Service service = WebUtils.getService(context);
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                     this.authenticationObjectsRepository.getPrincipalElectionStrategy());
             final AuthenticationTransaction transaction =
                     this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
             this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
-            final AuthenticationContext authenticationContext = builder.build();
+            final AuthenticationContext authenticationContext = builder.build(service);
 
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);

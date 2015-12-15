@@ -149,7 +149,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService(), ctx);
 
-        final AuthenticationContext ctx2 = getAuthenticationContext(getService(), org.jasig.cas.services.TestUtils.getHttpBasedServiceCredentials());
+        final AuthenticationContext ctx2 = getAuthenticationContext(getService(), org.jasig.cas.services.
+                TestUtils.getHttpBasedServiceCredentials());
         final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), ctx2);
 
@@ -177,8 +178,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService(), ctx);
         final AuthenticationContext ctx2 = getAuthenticationContext(getService(), org.jasig.cas.services.TestUtils
-                .getHttpBasedServiceCredentials
-                ());
+                .getHttpBasedServiceCredentials());
         final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), ctx2);
         assertTrue(pgt.getId().startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
@@ -194,7 +194,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             .grantServiceTicket(ticketId.getId(), getService(), ctx);
         getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId.getId());
 
-        final AuthenticationContext ctx2 = getAuthenticationContext(getService(), org.jasig.cas.services.TestUtils.getHttpBasedServiceCredentials());
+        final AuthenticationContext ctx2 = getAuthenticationContext(getService(), org.jasig.cas.services
+                .TestUtils.getHttpBasedServiceCredentials());
         getCentralAuthenticationService().createProxyGrantingTicket(serviceTicketId.getId(), ctx2);
     }
 
@@ -210,11 +211,13 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test(expected = MixedPrincipalException.class)
     public void verifyGrantServiceTicketWithDifferentCredentials() throws Exception {
-        final AuthenticationContext ctx = getAuthenticationContext(getService(), TestUtils.getCredentialsWithSameUsernameAndPassword("testA"));
+        final AuthenticationContext ctx = getAuthenticationContext(getService(),
+                TestUtils.getCredentialsWithSameUsernameAndPassword("testA"));
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(ctx);
 
-        final AuthenticationContext ctx2 = getAuthenticationContext(getService(), TestUtils.getCredentialsWithSameUsernameAndPassword("testB"));
+        final AuthenticationContext ctx2 = getAuthenticationContext(getService(),
+                TestUtils.getCredentialsWithSameUsernameAndPassword("testB"));
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx2);
     }
 

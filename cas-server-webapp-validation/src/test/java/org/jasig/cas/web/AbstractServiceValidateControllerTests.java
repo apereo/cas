@@ -271,7 +271,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     
     @Test
     public void verifyValidServiceTicketWithDifferentEncoding() throws Exception {
-        final Service svc = org.jasig.cas.authentication.TestUtils.getService("http://www.jasig.org?param=hello+world"),
+        final Service svc = org.jasig.cas.authentication.TestUtils.getService("http://www.jasig.org?param=hello+world");
         final AuthenticationContext ctx = getAuthenticationContext(svc,
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 

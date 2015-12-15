@@ -95,40 +95,34 @@ public final class WsFederationAction extends AbstractAction {
 
                 //Validate the signature
                 if (wsFederationHelper.validateSignature(assertion, configuration)) {
-                    final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion);
-
-                    if (credential != null && credential.isValid(configuration.getRelyingPartyIdentifier(),
-                            configuration.getIdentityProviderIdentifier(),
-                            configuration.getTolerance())) {
-
-                        if (configuration.getAttributeMutator() != null) {
-                            configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
-                        }
-                    } else {
-                        logger.warn("SAML assertions are blank or no longer valid.");
-                        return error();
-                    }
-
-                    // retrieve parameters from web session
                     try {
+
+                        final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion);
+                        if (credential != null && credential.isValid(configuration.getRelyingPartyIdentifier(),
+                                configuration.getIdentityProviderIdentifier(),
+                                configuration.getTolerance())) {
+
+                            if (configuration.getAttributeMutator() != null) {
+                                configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
+                            }
+                        } else {
+                            logger.warn("SAML assertions are blank or no longer valid.");
+                            return error();
+                        }
+
                         final Service service = (Service) session.getAttribute(SERVICE);
                         context.getFlowScope().put(SERVICE, service);
                         restoreRequestAttribute(request, session, THEME);
                         restoreRequestAttribute(request, session, LOCALE);
                         restoreRequestAttribute(request, session, METHOD);
 
-                    } catch (final Exception ex) {
-                        logger.warn("Session is most likely empty: {}", ex.getMessage(), ex);
-                    }
-
-                    try {
                         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                                 this.authenticationObjectsRepository.getPrincipalElectionStrategy());
                         final AuthenticationTransaction transaction =
                                 this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
                         this.authenticationObjectsRepository.getAuthenticationTransactionManager()
                                 .handle(transaction,  builder);
-                        final AuthenticationContext authenticationContext = builder.build();
+                        final AuthenticationContext authenticationContext = builder.build(service);
 
                         WebUtils.putTicketGrantingTicketInScopes(context,
                                 this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));
