@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public final class DefaultPrincipalElectionStrategy implements PrincipalElection
 
     @Autowired
     @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory;
+    private PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Override
     public Principal nominate(final Collection<Authentication> authentications, final Map<String, Object> principalAttributes) {
