@@ -181,7 +181,7 @@ public final class ClientAction extends AbstractAction {
                         this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(new ClientCredential(credentials));
                 this.authenticationObjectsRepository.getAuthenticationTransactionManager()
                         .handle(transaction,  builder);
-                final AuthenticationContext authenticationContext = builder.build();
+                final AuthenticationContext authenticationContext = builder.build(service);
 
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);

@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Service;
+
 import java.io.Serializable;
 
 /**
@@ -24,7 +26,8 @@ public interface AuthenticationContextBuilder extends Serializable {
     /**
      * Build authentication context.
      *
+     * @param service the service
      * @return the authentication context
      */
-    AuthenticationContext build();
+    AuthenticationContext build(final Service service);
 }

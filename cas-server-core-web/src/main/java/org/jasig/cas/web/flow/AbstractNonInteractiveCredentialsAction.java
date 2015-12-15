@@ -85,7 +85,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
                 final AuthenticationTransaction transaction =
                         this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
                 this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
-                final AuthenticationContext authenticationContext = builder.build();
+                final AuthenticationContext authenticationContext = builder.build(service);
 
                 final ServiceTicket serviceTicketId = this.centralAuthenticationService
                         .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
@@ -107,7 +107,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
             final AuthenticationTransaction transaction =
                     this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
             this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
-            final AuthenticationContext authenticationContext = builder.build();
+            final AuthenticationContext authenticationContext = builder.build(service);
 
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);

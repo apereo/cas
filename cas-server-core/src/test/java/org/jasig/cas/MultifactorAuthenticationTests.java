@@ -38,6 +38,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/mfa-test-context.xml"})
 public class MultifactorAuthenticationTests {
+    private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
+    private static final Service HIGH_SERVICE = newService("https://example.com/high/");
 
     @Autowired
     @Qualifier("defaultAuthenticationObjectsRepository")
@@ -50,51 +52,52 @@ public class MultifactorAuthenticationTests {
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
 
-        final AuthenticationContext ctx = processAuthenticationAttempt(newUserPassCredentials("alice", "alice"));
+        final AuthenticationContext ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials("alice", "alice"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/normal/"), ctx);
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
         assertNotNull(st);
     }
 
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
-        final AuthenticationContext ctx = processAuthenticationAttempt(new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationContext ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential("alice", "31415"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/normal/"), ctx);
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), NORMAL_SERVICE, ctx);
         assertNotNull(st);
     }
 
     @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
     public void verifyDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
-        final AuthenticationContext ctx = processAuthenticationAttempt(newUserPassCredentials("alice", "alice"));
+        final AuthenticationContext ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        cas.grantServiceTicket(tgt.getId(), newService("https://example.com/high/"), ctx);
+        cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
     }
 
     @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
     public void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
-        final AuthenticationContext ctx =  processAuthenticationAttempt(new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationContext ctx =  processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential("alice", "31415"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/high/"), ctx);
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
         assertNotNull(st);
     }
 
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Exception {
-        final AuthenticationContext ctx = processAuthenticationAttempt(newUserPassCredentials("alice", "alice"),
+        final AuthenticationContext ctx = processAuthenticationAttempt(HIGH_SERVICE,
+                newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), newService("https://example.com/high/"), ctx);
+        final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
         assertNotNull(st);
     }
 
@@ -102,22 +105,20 @@ public class MultifactorAuthenticationTests {
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
         // Note the original credential used to start SSO session does not satisfy security policy
 
-        final AuthenticationContext ctx = processAuthenticationAttempt(newUserPassCredentials("alice", "alice"));
-
+        final AuthenticationContext ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"));
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        final Service service = newService("https://example.com/high/");
-        final AuthenticationContext ctx2 = processAuthenticationAttempt(newUserPassCredentials("alice", "alice"),
+        final AuthenticationContext ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
 
         final ServiceTicket st = cas.grantServiceTicket(
                 tgt.getId(),
-                service,
+                HIGH_SERVICE,
                 ctx2);
 
         assertNotNull(st);
         // Confirm the authentication in the assertion is the one that satisfies security policy
-        final Assertion assertion = cas.validateServiceTicket(st.getId(), service);
+        final Assertion assertion = cas.validateServiceTicket(st.getId(), HIGH_SERVICE);
         assertEquals(2, assertion.getPrimaryAuthentication().getSuccesses().size());
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("passwordHandler"));
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("oneTimePasswordHandler"));
@@ -136,13 +137,14 @@ public class MultifactorAuthenticationTests {
         return TestUtils.getService(id);
     }
 
-    private AuthenticationContext processAuthenticationAttempt(final Credential... credential) throws AuthenticationException {
+    private AuthenticationContext processAuthenticationAttempt(final Service service, final Credential... credential) throws
+            AuthenticationException {
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                 this.authenticationObjectsRepository.getPrincipalElectionStrategy());
         final AuthenticationTransaction transaction =
                 this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
         this.authenticationObjectsRepository.getAuthenticationTransactionManager()
                 .handle(transaction, builder);
-        return builder.build();
+        return builder.build(service);
     }
 }
