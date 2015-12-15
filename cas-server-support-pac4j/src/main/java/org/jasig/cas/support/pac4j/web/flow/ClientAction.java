@@ -272,4 +272,8 @@ public final class ClientAction extends AbstractAction {
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
+
+    public AuthenticationObjectsRepository getAuthenticationObjectsRepository() {
+        return authenticationObjectsRepository;
+    }
 }
