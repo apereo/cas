@@ -21,7 +21,14 @@ public interface AuthenticationContextBuilder extends Serializable {
      * @param authentication the authentication
      * @return the authentication context builder
      */
-    AuthenticationContextBuilder collect(final Authentication authentication);
+    AuthenticationContextBuilder collect(Authentication authentication);
+
+    /**
+     * Build authentication context.
+     *
+     * @return the authentication context
+     */
+    AuthenticationContext build();
 
     /**
      * Build authentication context.
@@ -29,5 +36,5 @@ public interface AuthenticationContextBuilder extends Serializable {
      * @param service the service
      * @return the authentication context
      */
-    AuthenticationContext build(final Service service);
+    AuthenticationContext build(Service service);
 }

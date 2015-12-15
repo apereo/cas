@@ -7,6 +7,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
@@ -97,8 +98,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     }
 
     @Test
-    public void verifySuccessfulAuthenticationWithServiceAndWarn()
-        throws Exception {
+    public void verifySuccessfulAuthenticationWithServiceAndWarn() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
         final MockRequestContext context = new MockRequestContext();
@@ -145,7 +145,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyRenewWithServiceAndSameCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final AuthenticationContext ctx = getAuthenticationContext(c);
+        final Service service = TestUtils.getService(TestUtils.CONST_TEST_URL);
+        final AuthenticationContext ctx = getAuthenticationContext(service, c);
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -172,7 +173,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     public void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
 
-        final AuthenticationContext ctx = getAuthenticationContext(c);
+        final AuthenticationContext ctx = getAuthenticationContext(TestUtils.getService("test"), c);
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -183,7 +184,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         request.addParameter("renew", "true");
-        request.addParameter("service", "test");
+        request.addParameter("service", TestUtils.getService("test").getId());
         request.addParameter("username", "test2");
         request.addParameter("password", "test2");
 
@@ -197,7 +198,8 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     @Test
     public void verifyRenewWithServiceAndBadCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final AuthenticationContext ctx = getAuthenticationContext(c);
+        final Service service = TestUtils.getService("test");
+        final AuthenticationContext ctx = getAuthenticationContext(service, c);
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -205,7 +207,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
 
         WebUtils.putTicketGrantingTicketInScopes(context, ticketGrantingTicket);
         request.addParameter("renew", "true");
-        request.addParameter("service", "test");
+        request.addParameter("service", service.getId());
 
         final Credential c2 = org.jasig.cas.authentication.TestUtils.getCredentialsWithDifferentUsernameAndPassword();
         context.setExternalContext(new ServletExternalContext(
@@ -231,7 +233,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         context.getRequestScope().put("credentials", c);
     }
 
-    private AuthenticationContext getAuthenticationContext(final Credential... credentials)
+    private AuthenticationContext getAuthenticationContext(final Service service, final Credential... credentials)
             throws AuthenticationException {
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                 getAuthenticationObjectsRepository().getPrincipalElectionStrategy());
@@ -240,7 +242,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
                         .get(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
         getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
                 .handle(transaction,  builder);
-        final AuthenticationContext ctx = builder.build();
+        final AuthenticationContext ctx = builder.build(service);
         return ctx;
     }
 }

@@ -1,6 +1,5 @@
 package org.jasig.cas.authentication.principal;
 
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
