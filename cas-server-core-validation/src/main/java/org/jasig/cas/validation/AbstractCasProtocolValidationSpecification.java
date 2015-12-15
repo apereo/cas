@@ -1,7 +1,6 @@
 package org.jasig.cas.validation;
 
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 /**
  * Base validation specification for the CAS protocol. This specification checks

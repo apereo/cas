@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
@@ -52,8 +51,8 @@ import java.util.Set;
  * The intention here is to allow extensions to easily benefit these already-configured components
  * without having to to duplicate them again.
  * @author Misagh Moayyed
- * @since 4.2.0
  * @see CentralAuthenticationServiceImpl
+ * @since 4.2.0
  */
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable,
         ApplicationEventPublisherAware {

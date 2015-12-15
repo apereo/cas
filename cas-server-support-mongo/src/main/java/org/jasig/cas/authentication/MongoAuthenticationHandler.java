@@ -5,6 +5,7 @@ import com.mongodb.MongoClientURI;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.jasig.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
+import org.pac4j.http.credentials.authenticator.Authenticator;
 import org.pac4j.http.credentials.password.NopPasswordEncoder;
 import org.pac4j.mongo.credentials.authenticator.MongoAuthenticator;
 import org.slf4j.Logger;
@@ -13,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
-
-import javax.annotation.PostConstruct;
 
 /**
  * An authentication handler to verify credentials against a MongoDb instance.
@@ -48,11 +47,8 @@ public final class MongoAuthenticationHandler extends UsernamePasswordWrapperAut
     @Qualifier("mongoPac4jPasswordEncoder")
     private org.pac4j.http.credentials.password.PasswordEncoder mongoPasswordEncoder = new NopPasswordEncoder();
 
-    /**
-     * Initialize post construction.
-     */
-    @PostConstruct
-    public void initialize() {
+    @Override
+    protected Authenticator getAuthenticator(final Credential credential) {
         final MongoClientURI uri = new MongoClientURI(this.mongoHostUri);
         final MongoClient client = new MongoClient(uri);
         LOGGER.info("Connected to MongoDb instance @ {} using database [{}]",
@@ -64,7 +60,7 @@ public final class MongoAuthenticationHandler extends UsernamePasswordWrapperAut
         mongoAuthenticator.setUsernameAttribute(this.usernameAttribute);
         mongoAuthenticator.setPasswordAttribute(this.passwordAttribute);
         mongoAuthenticator.setPasswordEncoder(this.mongoPasswordEncoder);
-        setAuthenticator(mongoAuthenticator);
+        return mongoAuthenticator;
     }
 
     @Autowired(required = false)
@@ -83,15 +79,6 @@ public final class MongoAuthenticationHandler extends UsernamePasswordWrapperAut
         if (principalNameTransformer != null) {
             super.setPrincipalNameTransformer(principalNameTransformer);
         }
-    }
-
-    /**
-     * Sets mongo client.
-     *
-     * @param mongoClient the mongo client
-     */
-    public void setMongoClient(final MongoClient mongoClient) {
-        ((MongoAuthenticator) getAuthenticator()).setMongoClient(mongoClient);
     }
 
     public void setMongoHostUri(final String mongoHostUri) {
