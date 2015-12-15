@@ -84,9 +84,11 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         final String userToUse = constructUsername(request, getUsernameParameter());
         final Calendar cutoff = Calendar.getInstance();
         cutoff.add(Calendar.SECOND, -1 * getFailureRangeInSeconds());
+        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        final String remoteAddress = clientInfo.getClientIpAddress();
         final List<Timestamp> failures = this.jdbcTemplate.query(
                 query,
-                new Object[] {request.getRemoteAddr(), userToUse, this.authenticationFailureCode, this.applicationCode, cutoff.getTime()},
+                new Object[] {remoteAddress, userToUse, this.authenticationFailureCode, this.applicationCode, cutoff.getTime()},
                 new int[] {Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
                 new RowMapper<Timestamp>() {
                     @Override
