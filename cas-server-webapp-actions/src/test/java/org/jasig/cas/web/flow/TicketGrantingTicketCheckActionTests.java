@@ -7,6 +7,7 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
@@ -73,7 +74,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
                         .get(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
         getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
                 .handle(transaction,  builder);
-        final AuthenticationContext ctx = builder.build();
+        final AuthenticationContext ctx = builder.build(TestUtils.getService());
         return ctx;
     }
 
