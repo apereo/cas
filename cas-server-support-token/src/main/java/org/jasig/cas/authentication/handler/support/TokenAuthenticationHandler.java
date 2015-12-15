@@ -4,18 +4,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.TokenConstants;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
-import org.jasig.cas.integration.pac4j.authentication.handler.support.TokenWrapperAuthenticationHandler;
+import org.jasig.cas.integration.pac4j.authentication.handler.support.AbstractTokenWrapperAuthenticationHandler;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceProperty;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.pac4j.http.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import java.security.GeneralSecurityException;
 
 /**
  * This is {@link TokenAuthenticationHandler} that authenticates instances of {@link TokenCredential}.
@@ -26,28 +24,29 @@ import java.security.GeneralSecurityException;
  * @since 4.2.0
  */
 @Component("tokenAuthenticationHandler")
-public class TokenAuthenticationHandler extends TokenWrapperAuthenticationHandler {
+public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
 
     @Override
-    protected final HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
+        final TokenCredential tokenCredential = (TokenCredential) credential;
+        tokenCredential.setId(result.getPrincipal().getId());
+        return super.postAuthenticate(credential, result);
+    }
+
+    @Override
+    protected Authenticator getAuthenticator(final Credential credential) {
         final TokenCredential tokenCredential = (TokenCredential) credential;
         logger.debug("Locating token secret for service [{}]", tokenCredential.getService());
 
         final RegisteredService service = this.servicesManager.findServiceBy(tokenCredential.getService());
         final String tokenSecret = getRegisteredServiceJwtSecret(service);
-
         if (StringUtils.isNotBlank(tokenSecret)) {
             final JwtAuthenticator tokenAuthenticator = new JwtAuthenticator(tokenSecret);
-            setAuthenticator(tokenAuthenticator);
-            final HandlerResult result = super.doAuthentication(credential);
-            tokenCredential.setId(result.getPrincipal().getId());
-            logger.info("Authenticated token credential successfully as [{}]", tokenCredential.getId());
-            return result;
-        } else {
-            logger.warn("No token secret is defined for service [{}]. Ensure [{}] property is defined for service",
-                    service.getServiceId(), TokenConstants.PARAMETER_NAME_TOKEN);
+            return tokenAuthenticator;
         }
-        throw new PreventedException(new IllegalArgumentException("Token secret is undefined"));
+        logger.warn("No token secret is defined for service [{}]. Ensure [{}] property is defined for service",
+                    service.getServiceId(), TokenConstants.PARAMETER_NAME_TOKEN);
+        return null;
     }
 
     @Autowired(required=false)
