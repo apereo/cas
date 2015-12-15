@@ -18,7 +18,6 @@ import java.util.concurrent.TimeoutException;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@Component("abstractPoolMonitor")
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
 
     /** Default maximum wait time for asynchronous pool validation. */

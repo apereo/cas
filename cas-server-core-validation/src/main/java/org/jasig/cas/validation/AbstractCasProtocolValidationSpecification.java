@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Component("abstractCasProtocolValidationSpecification")
 @Scope(value = "prototype")
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
 
