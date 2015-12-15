@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
  * @since 4.2.0
  */
 @Component("defaultAuthenticationObjectsRepository")
-@Scope("prototype")
 public final class DefaultAuthenticationObjectsRepository implements AuthenticationObjectsRepository {
 
     @Autowired

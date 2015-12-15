@@ -16,7 +16,6 @@ import java.util.Set;
  * @since 4.2.0
  */
 @Component("defaultAuthenticationTransactionFactory")
-@Scope("prototype")
 public class DefaultAuthenticationTransactionFactory implements AuthenticationTransactionFactory {
     @Override
     public AuthenticationTransaction get(final Credential... credentials) {
