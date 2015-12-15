@@ -47,6 +47,11 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
     }
 
     @Override
+    public AuthenticationContext build() {
+        return build(null);
+    }
+
+    @Override
     public AuthenticationContext build(final Service service) {
         final Authentication authentication = buildAuthentication();
         if (authentication == null) {
