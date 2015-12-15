@@ -154,7 +154,7 @@ public final class ThemeUtils {
             int count = jsonArray.length();
             for (int i = 0; i < count; i++) {
                 jsonObject = jsonArray.getJSONObject(i);
-                if (jsonObject.getString(nameAttr).equals(name)) {
+                if (jsonObject.getString(nameAttr).toLowerCase().equals(name.toLowerCase())) {
                     String imageUrl = jsonObject.getJSONArray(thumbnailsAttr)
                         .getJSONObject(0)
                         .getString(JSON_ATTR_VALUE);
@@ -216,7 +216,7 @@ public final class ThemeUtils {
      */
     public static void main(String...args) {
         String tenantName = "Acme";
-        String appName = "OneTeam";
+        String appName = "Oneteam";
         
         String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
         String appLogo = ThemeUtils.fetchAppLogo(appName);
