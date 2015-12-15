@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
  * @since 3.4.6
  *
  */
-@Component("abstractCRLRevocationChecker")
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());

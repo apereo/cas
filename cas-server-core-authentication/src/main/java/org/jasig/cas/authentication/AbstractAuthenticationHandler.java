@@ -17,7 +17,6 @@ import javax.validation.constraints.NotNull;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Component("abstractAuthenticationHandler")
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
     /** Instance of logging for subclasses. */

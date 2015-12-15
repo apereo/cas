@@ -24,7 +24,6 @@ import java.util.List;
  *
  * @since 3.1
  */
-@Component("abstractPreAndPostProcessingAuthenticationHandler")
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler {
 
     /**
