@@ -18,7 +18,6 @@ import java.util.List;
  * @since 3.1.2
  *
  */
-@Component("abstractArgumentExtractor")
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     /** Logger instance. */

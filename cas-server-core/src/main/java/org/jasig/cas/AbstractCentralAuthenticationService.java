@@ -52,10 +52,9 @@ import java.util.Set;
  * The intention here is to allow extensions to easily benefit these already-configured components
  * without having to to duplicate them again.
  * @author Misagh Moayyed
- * @since 4.02
+ * @since 4.2.0
  * @see CentralAuthenticationServiceImpl
  */
-@Component("abstractCentralAuthenticationService")
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable,
         ApplicationEventPublisherAware {
 

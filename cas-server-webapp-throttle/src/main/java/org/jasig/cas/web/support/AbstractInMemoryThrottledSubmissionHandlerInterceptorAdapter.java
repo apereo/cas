@@ -41,7 +41,6 @@ import java.util.concurrent.TimeUnit;
  * @author Scott Battaglia
  * @since 3.0.0.5
  */
-@Component("abstractInMemoryThrottledSubmissionHandlerInterceptorAdapter")
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
                 extends AbstractThrottledSubmissionHandlerInterceptorAdapter implements Job {
 

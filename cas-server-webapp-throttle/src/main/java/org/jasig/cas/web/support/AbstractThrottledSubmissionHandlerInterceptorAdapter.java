@@ -23,7 +23,6 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-@Component("abstractThrottledSubmissionHandlerInterceptorAdapter")
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements InitializingBean {
 
     private static final int DEFAULT_FAILURE_THRESHOLD = 100;
