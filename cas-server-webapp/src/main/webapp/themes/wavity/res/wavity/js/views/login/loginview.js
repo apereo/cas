@@ -45,9 +45,18 @@ define(
 			$("#appIcon").attr("src", $('input[name=appLogo]').val());
 			$("#domainIcon").attr("src", $('input[name=tenantLogo]').val());
 			
-			$('form input[name=lt]').val($('input[name=loginTicket]').val());
-			$('form input[name=execution]').val($('input[name=flowExecutionKey]').val());
-			$('form input[name=service]').val($('input[name=serviceUrl]').val());
+			$('#loginForm input[name=lt]').val($('input[name=loginTicket]').val());
+			$('#loginForm input[name=execution]').val($('input[name=flowExecutionKey]').val());
+			$('#loginForm').attr('action', $('#tempForm').attr('action'));
+			
+			$('#loginForm input[name=prevAddress]').val($('input[name=prevAddressContainer]').val());
+			
+			$('input[name=appLogo]').remove();
+			$('input[name=tenantLogo]').remove();
+			$('input[name=loginTicket]').remove();
+			$('input[name=flowExecutionKey]').remove();
+			$('#tempForm').remove();
+			$('input[name=prevAddressContainer]').remove()
 		},
 		errormsgclose: function() {
     	   $('.notification_inner').hide(500);

@@ -26,13 +26,13 @@ define(
 				loginFooter: "#ot-footer"
 			},
 			onRender: function() {
-				console.log("OneTeam Login application layout onRender called");
+				console.log("Wavity Login application layout onRender called");
 				this.loginHeader.show(new LoginHeaderView());
 				this.main.show(new LoginLayout());
 				this.loginFooter.show(new LoginFooterView());
 			},			
 			onShow: function() {
-				console.log("OneTeam application layout onShow called");
+				console.log("Wavity application layout onShow called");
 			}
 		});
 });

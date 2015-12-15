@@ -66,25 +66,32 @@
 		</script>
 	</head>
 	<body role="application" class="bodyLayout">
-		<%
-	    String serviceUrl = null;
+		<form:form method="post" id="tempForm" commandName="${commandName}" htmlEscape="true"></form:form>
+        <%
+        String serviceUrl = request.getHeader("referer");
+		String prevAddress = request.getParameter("prevAddress");
+		if(prevAddress == null || "".equals(prevAddress)) {
+			prevAddress = serviceUrl;
+		}
+		else {
+			serviceUrl = prevAddress;
+		}
+		
 		String tenantName = "";
 		String appName = "";
-	    if (request.getHeader("referer") != null) {
-	        serviceUrl = request.getHeader("referer");
-	        
+	    if (serviceUrl != null) {
 			String[] str2 = serviceUrl.split("//");
 			tenantName = str2[1].split("\\.")[0];
 
 			String str3 = str2[1].split("/")[1];
 			appName = str3.split("\\?")[0];
 	    }
-
+		
 		String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
 		String appLogo = ThemeUtils.fetchAppLogo(appName);
 	    %>
 
-	    <spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
+		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
 		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
 		<input type="hidden" name="appLogo" value="
 		<%
@@ -116,8 +123,21 @@
 
 		<input type="hidden" name="loginTicket" value="${loginTicket}" />
 		<input type="hidden" name="flowExecutionKey" value="${flowExecutionKey}" />
-		<input type="hidden" name="serviceUrl" value="<%=serviceUrl%>" />
-		
+		<input type="hidden" name="prevAddressContainer" value=
+		<%
+			if(prevAddress == null) {
+		%>		
+				""
+		<%
+			}
+			else {
+		%>		
+				"<%=prevAddress%>"
+		<%
+			}
+		%>
+		/>
+
 		<header role="banner" id="ot-header" class="header">
 			<!-- header region -->
 		</header>
