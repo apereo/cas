@@ -96,7 +96,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
                         .get(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
         getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
                 .handle(transaction,  builder);
-        final AuthenticationContext ctx = builder.build();
+        final AuthenticationContext ctx = builder.build(TestUtils.getService());
         return ctx;
     }
 }

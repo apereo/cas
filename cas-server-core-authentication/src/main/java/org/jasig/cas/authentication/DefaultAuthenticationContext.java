@@ -1,6 +1,7 @@
 package org.jasig.cas.authentication;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,18 +21,36 @@ public final class DefaultAuthenticationContext implements AuthenticationContext
 
     private final Authentication authentication;
 
+    private final Service service;
+
+    /**
+     * Instantiates a new Default authentication context.
+     *
+     * @param authentication the authentication
+     * @param service        the service
+     */
+    public DefaultAuthenticationContext(final Authentication authentication, final Service service) {
+        this.authentication = authentication;
+        this.service = service;
+    }
+
     /**
      * Instantiates a new Default authentication context.
      *
      * @param authentication the authentication
      */
     public DefaultAuthenticationContext(final Authentication authentication) {
-        this.authentication = authentication;
+        this(authentication, null);
     }
 
     @Override
     public Authentication getAuthentication() {
         return authentication;
+    }
+
+    @Override
+    public Service getService() {
+        return this.service;
     }
 
     @Override

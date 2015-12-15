@@ -2,6 +2,7 @@ package org.jasig.cas.authentication;
 
 import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContextBuilder.class);
     private static final long serialVersionUID = 6180465589526463843L;
 
-    private final ThreadLocal<Set<Authentication>> authentications = new ThreadLocal<>();
+    private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<Authentication>());
 
     private PrincipalElectionStrategy principalElectionStrategy;
 
@@ -41,31 +42,21 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
 
     @Override
     public AuthenticationContextBuilder collect(final Authentication authentication) {
-        final Set<Authentication> set = getAuthentications();
-        set.add(authentication);
-        this.authentications.set(set);
+        this.authentications.add(authentication);
         return this;
     }
 
     @Override
-    public AuthenticationContext build() {
+    public AuthenticationContext build(final Service service) {
         final Authentication authentication = buildAuthentication();
         if (authentication == null) {
             throw new RuntimeException(new GeneralSecurityException("Authentication context cannot be produced"));
         }
-        return new DefaultAuthenticationContext(authentication);
-    }
-
-    private Set<Authentication> getAuthentications() {
-        Set<Authentication> set = this.authentications.get();
-        if (set == null) {
-            set = Collections.synchronizedSet(new LinkedHashSet<Authentication>());
-        }
-        return set;
+        return new DefaultAuthenticationContext(authentication, service);
     }
 
     private boolean isEmpty() {
-        return getAuthentications().isEmpty();
+        return this.authentications.isEmpty();
     }
 
     private Authentication buildAuthentication() {
@@ -73,14 +64,12 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
             LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication context");
             return null;
         }
-        final Set<Authentication> authentications = getAuthentications();
-
         final Map<String, Object> authenticationAttributes = new HashMap<>();
         final Map<String, Object> principalAttributes = new HashMap<>();
         final AuthenticationBuilder authenticationBuilder = DefaultAuthenticationBuilder.newInstance();
 
-        buildAuthenticationHistory(authentications, authenticationAttributes, principalAttributes, authenticationBuilder);
-        final Principal primaryPrincipal = getPrimaryPrincipal(authentications, principalAttributes);
+        buildAuthenticationHistory(this.authentications, authenticationAttributes, principalAttributes, authenticationBuilder);
+        final Principal primaryPrincipal = getPrimaryPrincipal(this.authentications, principalAttributes);
         authenticationBuilder.setPrincipal(primaryPrincipal);
         LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
 
