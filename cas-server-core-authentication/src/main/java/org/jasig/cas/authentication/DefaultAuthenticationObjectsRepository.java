@@ -13,15 +13,15 @@ import org.springframework.stereotype.Component;
 @Component("defaultAuthenticationObjectsRepository")
 public final class DefaultAuthenticationObjectsRepository implements AuthenticationObjectsRepository {
 
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("defaultAuthenticationTransactionFactory")
     private AuthenticationTransactionFactory authenticationTransactionFactory = new DefaultAuthenticationTransactionFactory();
 
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("defaultAuthenticationTransactionManager")
     private AuthenticationTransactionManager authenticationTransactionManager = new DefaultAuthenticationTransactionManager();
 
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("principalElectionStrategy")
     private PrincipalElectionStrategy principalElectionStrategy = new DefaultPrincipalElectionStrategy();
 
