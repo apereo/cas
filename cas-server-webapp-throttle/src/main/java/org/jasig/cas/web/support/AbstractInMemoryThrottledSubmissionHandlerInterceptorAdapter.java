@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit;
  * (i.e. a Quartz Job) and runs independent of the threshold of the parent.
  *
  * @author Scott Battaglia
- * @since 3.0.0.5
+ * @since 3.0.0
  */
 @Component("abstractInMemoryThrottledSubmissionHandlerInterceptorAdapter")
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter

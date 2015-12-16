@@ -44,6 +44,8 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
         final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
                 getCentralAuthenticationService();
         this.action.setCentralAuthenticationService(centralAuthenticationService);
+        this.action.getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
+                .setAuthenticationManager(authenticationManager);
     }
 
     @Test
