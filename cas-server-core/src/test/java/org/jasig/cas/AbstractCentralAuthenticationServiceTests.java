@@ -2,6 +2,7 @@ package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Scott Battaglia
@@ -45,9 +48,10 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     @Autowired
     private ArgumentExtractor argumentExtractor;
 
-    @Autowired
+    @NotNull
+    @Autowired(required=false)
     @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository;
+    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
 
     public ArgumentExtractor getArgumentExtractor() {
         return argumentExtractor;
