@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  * clients from consuming resources by doing constant redirects.
  *
  * @author Scott Battaglia
- * @since 3.0.0.5
+ * @since 3.0.0
  */
 @Component("throttledUseAndTimeoutExpirationPolicy")
 public final class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {

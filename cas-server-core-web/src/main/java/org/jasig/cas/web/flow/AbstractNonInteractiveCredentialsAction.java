@@ -164,6 +164,14 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         // default implementation does nothing
     }
 
+    public PrincipalFactory getPrincipalFactory() {
+        return principalFactory;
+    }
+
+    public AuthenticationObjectsRepository getAuthenticationObjectsRepository() {
+        return authenticationObjectsRepository;
+    }
+
     /**
      * Abstract method to implement to construct the credential from the
      * request object.

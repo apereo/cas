@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.0.5
+ * @since 3.0.0
  *
  */
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests extends AbstractCentralAuthenticationServiceTests {
@@ -46,6 +46,8 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
                 getCentralAuthenticationService();
 
         this.action.setCentralAuthenticationService(centralAuthenticationService);
+        this.action.getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
+                .setAuthenticationManager(authenticationManager);
     }
 
     @Test
