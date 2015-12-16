@@ -17,8 +17,7 @@
 package io.spring.issuebot.feedback;
 
 import java.time.OffsetDateTime;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
 
 import org.junit.Test;
 
@@ -43,14 +42,24 @@ public class StandardFeedbackListenerTests {
 			"feedback-provided", "feedback-required", "feedback-reminder",
 			"Please provide requested feedback", "Closing due to lack of feedback");
 
-	private final Issue issue = new Issue(null, null, null, null, null,
-			Collections.<Label>emptyList(), null, null);
+	private final Issue issue = new Issue(null, null, null, null, null, new ArrayList<>(),
+			null, null);
 
 	@Test
 	public void feedbackProvided() {
 		this.listener.feedbackProvided(this.issue);
 		verify(this.gitHub).addLabel(this.issue, "feedback-provided");
 		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
+		verifyNoMoreInteractions(this.gitHub);
+	}
+
+	@Test
+	public void feedbackProvidedAfterReminder() {
+		this.issue.getLabels().add(new Label("feedback-reminder"));
+		this.listener.feedbackProvided(this.issue);
+		verify(this.gitHub).addLabel(this.issue, "feedback-provided");
+		verify(this.gitHub).removeLabel(this.issue, "feedback-required");
+		verify(this.gitHub).removeLabel(this.issue, "feedback-reminder");
 	}
 
 	@Test
@@ -68,9 +77,8 @@ public class StandardFeedbackListenerTests {
 
 	@Test
 	public void feedbackRequiredReminderDueAndAlreadyCommented() {
-		Issue issue = new Issue(null, null, null, null, null,
-				Arrays.asList(new Label("feedback-reminder")), null, null);
-		this.listener.feedbackRequired(issue, OffsetDateTime.now().minusDays(8));
+		this.issue.getLabels().add(new Label("feedback-reminder"));
+		this.listener.feedbackRequired(this.issue, OffsetDateTime.now().minusDays(8));
 		verifyNoMoreInteractions(this.gitHub);
 	}
 

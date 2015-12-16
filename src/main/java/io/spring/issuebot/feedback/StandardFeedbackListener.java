@@ -56,6 +56,9 @@ final class StandardFeedbackListener implements FeedbackListener {
 	public void feedbackProvided(Issue issue) {
 		this.gitHub.addLabel(issue, this.providedLabel);
 		this.gitHub.removeLabel(issue, this.requiredLabel);
+		if (hasReminderLabel(issue)) {
+			this.gitHub.removeLabel(issue, this.reminderLabel);
+		}
 	}
 
 	@Override
@@ -64,7 +67,7 @@ final class StandardFeedbackListener implements FeedbackListener {
 		if (requestTime.plusDays(14).isBefore(now)) {
 			close(issue);
 		}
-		else if (requestTime.plusDays(7).isBefore(now) && reminderRequired(issue)) {
+		else if (requestTime.plusDays(7).isBefore(now) && !hasReminderLabel(issue)) {
 			remind(issue);
 		}
 	}
@@ -76,15 +79,15 @@ final class StandardFeedbackListener implements FeedbackListener {
 		this.gitHub.removeLabel(issue, this.reminderLabel);
 	}
 
-	private boolean reminderRequired(Issue issue) {
+	private boolean hasReminderLabel(Issue issue) {
 		if (issue.getLabels() != null) {
 			for (Label label : issue.getLabels()) {
 				if (this.reminderLabel.equals(label.getName())) {
-					return false;
+					return true;
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 	private void remind(Issue issue) {
