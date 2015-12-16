@@ -18,6 +18,7 @@ war {
 }
 
 dependencies {
+	compile project(':cas-server-webapp-wavity')
     compile project(':cas-server-webapp-support')
     compile project(':cas-server-core')
     compile project(':cas-server-core-monitor')
@@ -37,6 +38,7 @@ dependencies {
     compile project(':cas-server-webapp-reports')
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
+    
 
     compile(group: 'org.springframework.security', name: 'spring-security-config', version: springSecVersion) {
         exclude(module: 'commons-logging')

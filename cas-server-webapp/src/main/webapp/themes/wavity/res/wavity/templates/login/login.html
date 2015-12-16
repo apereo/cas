@@ -22,10 +22,11 @@
 			</div>
 			<img id="appIcon" src="themes/wavity/res/lib/custom/img/LogInScreen/LogInScreen_OneTeam_logo.png" width="200px" height="200px" />
 			<div class="clearfix">&nbsp;</div>
-			<form id="fm1" class="box tile animated active login-container p-b-0" action="/auth/login" method="post">
+			<form id="loginForm" class="box tile animated active login-container p-b-0" method="post">
 				<input type="hidden" name="lt" value="" />
 				<input type="hidden" name="execution" value="" />
 				<input type="hidden" name="_eventId" value="submit" />
+				<input type="hidden" name="prevAddress" value="" />
 				<div class="form-group">
 					<div class="col-sm-12">
       					<!--<input type="text" class="form-control usertext" name="ot_username" id="inputEmail" maxlength="30"  placeholder="<%= nls.ENTEREMAIL %>" onfocus="this.placeholder=''" onblur="this.placeholder='<%= nls.ENTEREMAIL %>'">-->

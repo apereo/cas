@@ -29,6 +29,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <%@ page import="java.net.URL" %>
+<%@ page import="org.jasig.cas.web.wavity.ThemeUtils" %>
 <%! public URL fileURL;%>
 	
 <html lang="en">
@@ -64,43 +65,53 @@
 		</script>
 	</head>
 	<body role="application" class="bodyLayout">
-		<%
-	    String serviceUrl = null;
-	    if (request.getHeader("referer") != null) {
-	        serviceUrl = request.getHeader("referer");
+		<form:form method="post" id="tempForm" commandName="${commandName}" htmlEscape="true"></form:form>
+        <%
+		String serviceUrl = request.getParameter("service");
+
+		String tenantName = "";
+		String appName = "";
+	    if (serviceUrl != null) {
+			String[] str2 = serviceUrl.split("//");
+			tenantName = str2[1].split("\\.")[0];
+
+			String str3 = str2[1].split("/")[1];
+			appName = str3.split("\\?")[0];
 	    }
+
+		String tenantLogo = ThemeUtils.fetchTenantLogo(tenantName);
+		String appLogo = ThemeUtils.fetchAppLogo(appName);
 	    %>
 
-		<c:set var="serviceUrl" value="<%=serviceUrl%>"/>
-        <c:if test="${not empty serviceUrl}">
-            <c:set var="string1" value="${serviceUrl}" />
-            <c:set var="string2" value="${fn:split(string1, '//')}" />
-            <c:set var="string3" value="${fn:split(string2[1], '/')}" />
-            <c:set var="string4" value="${fn:split(string3[0], '.')}" />
-            <c:set var="string5" value="${fn:split(string2[2], '?')}" />
-            
-            <c:set var="appName" value="${string5[0]}" />
-            <c:set var="tenantName" value="${string4[0]}" />
-        </c:if>
-
+		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
+		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
+		<input type="hidden" name="appLogo" value="
 		<%
-		String formActionUrl = "";
-		// using getAttribute allows us to get the orginal url out of the page when a forward has taken place.
-		String queryString = "?"+request.getAttribute("javax.servlet.forward.query_string");
-		String requestURI = ""+request.getAttribute("javax.servlet.forward.request_uri");
-		if(requestURI == "null") {
-			// using getAttribute allows us to get the orginal url out of the page when a include has taken place.
-			queryString = "?"+request.getAttribute("javax.servlet.include.query_string");
-			requestURI = ""+request.getAttribute("javax.servlet.include.request_uri");
-		}
-		if(requestURI == "null") {
-			queryString = "?"+request.getQueryString();
-			requestURI = request.getRequestURI();
-		}
-		if(queryString.equals("?null")) queryString = "";
-		
-		formActionUrl = requestURI+queryString;
+			if(appLogo == null) {
 		%>
+				${defaultAppLogo}
+		<%
+			}
+			else {
+		%>
+				<%=appLogo%>
+		<%
+			}
+		%>
+		" />
+		<input type="hidden" name="tenantLogo" value="
+		<%
+			if(tenantLogo == null) {
+		%>
+				${defaultTenantLogo}
+		<%
+			}
+			else {
+		%>
+				<%=tenantLogo%>
+		<%
+			}
+		%>" />
 
 		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
 		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
@@ -112,9 +123,7 @@
 		<input type="hidden" name="tenantLogoUrl" value="${largeLogo}" />
 		<input type="hidden" name="loginTicket" value="${loginTicket}" />
 		<input type="hidden" name="flowExecutionKey" value="${flowExecutionKey}" />
-		<input type="hidden" name="formActionUrl" value="<%=formActionUrl %>" />
-		
-		
+
 		<header role="banner" id="ot-header" class="header">
 			<!-- header region -->
 		</header>
