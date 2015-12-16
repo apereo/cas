@@ -3,6 +3,7 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -53,9 +54,9 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
     private ServicesManager servicesManager;
 
     @NotNull
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository;
+    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
 
     /**
      * Instantiates a new Send ticket granting ticket action.
