@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
@@ -49,9 +50,9 @@ public final class TerminateSessionAction {
     private CookieRetrievingCookieGenerator warnCookieGenerator;
 
     @NotNull
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository;
+    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
 
     /**
      * Creates a new instance with the given parameters.

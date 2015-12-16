@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.AuthenticationContextBuilder;
 import org.jasig.cas.authentication.AuthenticationObjectsRepository;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
 import org.jasig.cas.support.wsfederation.WsFederationConfiguration;
 import org.jasig.cas.support.wsfederation.WsFederationHelper;
 import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationCredential;
@@ -65,9 +66,9 @@ public final class WsFederationAction extends AbstractAction {
     private CentralAuthenticationService centralAuthenticationService;
 
     @NotNull
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository;
+    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
 
     /**
      * Executes the webflow action.

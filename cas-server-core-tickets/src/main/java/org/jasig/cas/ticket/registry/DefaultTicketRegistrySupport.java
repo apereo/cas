@@ -19,18 +19,14 @@ import java.util.Map;
 @Component("defaultAuthenticationSupport")
 public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
 
-    private TicketRegistry ticketRegistry;
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry = new DefaultTicketRegistry();
 
     /**
      * Instantiates a new Default ticket registry support.
-     *
-     * @param ticketRegistry the ticket registry
      */
-    @Autowired
-    public DefaultTicketRegistrySupport(@Qualifier("ticketRegistry")
-                                            final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
+    public DefaultTicketRegistrySupport() {}
 
     @Override
     public Authentication getAuthenticationFrom(final String ticketGrantingTicketId) throws RuntimeException {
@@ -48,5 +44,9 @@ public class DefaultTicketRegistrySupport implements TicketRegistrySupport {
     public Map<String, Object> getPrincipalAttributesFrom(final String ticketGrantingTicketId) throws RuntimeException {
         final Principal principal = getAuthenticatedPrincipalFrom(ticketGrantingTicketId);
         return principal == null ? null : principal.getAttributes();
+    }
+
+    public void setTicketRegistry(final TicketRegistry ticketRegistry) {
+        this.ticketRegistry = ticketRegistry;
     }
 }

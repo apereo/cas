@@ -100,10 +100,9 @@ public final class ClientAction extends AbstractAction {
     private Clients clients;
 
     @NotNull
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository =
-            new DefaultAuthenticationObjectsRepository();
+    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
 
     /**
      * The service for CAS authentication.
