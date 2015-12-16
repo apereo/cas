@@ -11,12 +11,14 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.jasig.cas.ticket.registry.TicketRegistrySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,12 +65,12 @@ public class TicketsResource {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService cas;
+    private CentralAuthenticationService centralAuthenticationService;
 
     @NotNull
-    @Autowired
+    @Autowired(required=false)
     @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository;
+    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
 
     @Autowired(required = false)
     private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
@@ -79,7 +81,7 @@ public class TicketsResource {
 
     @Autowired
     @Qualifier("defaultAuthenticationSupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private TicketRegistrySupport ticketRegistrySupport = new DefaultTicketRegistrySupport();
 
     private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
 
@@ -106,7 +108,7 @@ public class TicketsResource {
             this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
             final AuthenticationContext authenticationContext = builder.build();
 
-            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(authenticationContext);
+            final TicketGrantingTicket tgtId = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
@@ -160,7 +162,7 @@ public class TicketsResource {
             final AuthenticationContext authenticationContext =
                     builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build(service);
 
-            final ServiceTicket serviceTicketId = this.cas.grantServiceTicket(tgtId,
+            final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(tgtId,
                     service, authenticationContext);
             return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
 
@@ -181,17 +183,50 @@ public class TicketsResource {
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
     public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
-
-        this.cas.destroyTicketGrantingTicket(tgtId);
+        this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
         return new ResponseEntity<>(tgtId, HttpStatus.OK);
+    }
+
+    public void setAuthenticationObjectsRepository(final AuthenticationObjectsRepository authenticationObjectsRepository) {
+        this.authenticationObjectsRepository = authenticationObjectsRepository;
+    }
+
+    public void setWebApplicationServiceFactory(final ServiceFactory webApplicationServiceFactory) {
+        this.webApplicationServiceFactory = webApplicationServiceFactory;
+    }
+
+    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
+    }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public CentralAuthenticationService getCentralAuthenticationService() {
+        return centralAuthenticationService;
+    }
+
+    public AuthenticationObjectsRepository getAuthenticationObjectsRepository() {
+        return authenticationObjectsRepository;
+    }
+
+    public CredentialFactory getCredentialFactory() {
+        return credentialFactory;
+    }
+
+    public ServiceFactory getWebApplicationServiceFactory() {
+        return webApplicationServiceFactory;
+    }
+
+    public TicketRegistrySupport getTicketRegistrySupport() {
+        return ticketRegistrySupport;
     }
 
     /**
      * Default implementation of CredentialFactory.
      */
-
-    public static class DefaultCredentialFactory implements CredentialFactory {
-
+    private static class DefaultCredentialFactory implements CredentialFactory {
         @Override
         public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
             final String username = requestBody.getFirst("username");
@@ -206,12 +241,14 @@ public class TicketsResource {
     /**
      * Exception to indicate bad payload.
      */
-    public static class BadRequestException extends IllegalArgumentException {
+    private static class BadRequestException extends IllegalArgumentException {
+        private static final long serialVersionUID = 6852720596988243487L;
+
         /**
          * Ctor.
          * @param msg error message
          */
-        public BadRequestException(final String msg) {
+        BadRequestException(final String msg) {
             super(msg);
         }
     }
