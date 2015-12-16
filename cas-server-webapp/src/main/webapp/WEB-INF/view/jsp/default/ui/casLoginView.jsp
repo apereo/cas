@@ -67,15 +67,8 @@
 	<body role="application" class="bodyLayout">
 		<form:form method="post" id="tempForm" commandName="${commandName}" htmlEscape="true"></form:form>
         <%
-        String serviceUrl = request.getHeader("referer");
-		String prevAddress = request.getParameter("prevAddress");
-		if(prevAddress == null || "".equals(prevAddress)) {
-			prevAddress = serviceUrl;
-		}
-		else {
-			serviceUrl = prevAddress;
-		}
-		
+		String serviceUrl = request.getParameter("service");
+
 		String tenantName = "";
 		String appName = "";
 	    if (serviceUrl != null) {
@@ -130,20 +123,6 @@
 		<input type="hidden" name="tenantLogoUrl" value="${largeLogo}" />
 		<input type="hidden" name="loginTicket" value="${loginTicket}" />
 		<input type="hidden" name="flowExecutionKey" value="${flowExecutionKey}" />
-		<input type="hidden" name="prevAddressContainer" value=
-		<%
-			if(prevAddress == null) {
-		%>		
-				""
-		<%
-			}
-			else {
-		%>		
-				"<%=prevAddress%>"
-		<%
-			}
-		%>
-		/>
 
 		<header role="banner" id="ot-header" class="header">
 			<!-- header region -->
