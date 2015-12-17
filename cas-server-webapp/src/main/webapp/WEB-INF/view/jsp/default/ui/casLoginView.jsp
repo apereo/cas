@@ -85,33 +85,19 @@
 
 		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
 		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
-		<input type="hidden" name="appLogo" value="
-		<%
-			if(appLogo == null) {
-		%>
-				${defaultAppLogo}
-		<%
-			}
-			else {
-		%>
-				<%=appLogo%>
-		<%
-			}
-		%>
-		" />
-		<input type="hidden" name="tenantLogo" value="
-		<%
-			if(tenantLogo == null) {
-		%>
-				${defaultTenantLogo}
-		<%
-			}
-			else {
-		%>
-				<%=tenantLogo%>
-		<%
-			}
-		%>" />
+        <c:set var="appLogo" value="<%=appLogo%>"/>
+        
+        <c:if test="${empty appLogo}">
+            <c:set var="appLogo" value="${defaultAppLogo}" />
+        </c:if>
+		
+		<c:set var="tenantLogo" value="<%=tenantLogo%>"/>
+		<c:if test="${empty tenantLogo}">
+            <c:set var="tenantLogo" value="${defaultTenantLogo}" />
+        </c:if>
+
+		<input type="hidden" name="appLogo" value="${appLogo}" />
+		<input type="hidden" name="tenantLogo" value="${tenantLogo}" />
 
 		<spring:theme code="standard.login.app.logo" var="defaultAppLogo" />
 		<spring:theme code="standard.login.tenant.logo" var="defaultTenantLogo" />
