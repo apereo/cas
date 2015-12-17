@@ -41,7 +41,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
                 getAuthenticationObjectsRepository().getPrincipalElectionStrategy());
         final AuthenticationTransaction transaction =
                 getAuthenticationObjectsRepository().getAuthenticationTransactionFactory()
-                        .get(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+                        .get(TestUtils.getCredentialsWithSameUsernameAndPassword());
         getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
                 .handle(transaction,  builder);
         final AuthenticationContext ctx = builder.build(TestUtils.getService());
