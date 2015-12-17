@@ -50,6 +50,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         this.warnCookieGenerator.setCookiePath("/");
 
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.action.setAuthenticationObjectsRepository(getAuthenticationObjectsRepository());
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
     }
 
@@ -157,13 +158,13 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         request.addParameter("lt", "LOGIN");
 
         request.addParameter("renew", "true");
-        request.addParameter("service", TestUtils.CONST_TEST_URL);
+        request.addParameter("service", TestUtils.getService(TestUtils.CONST_TEST_URL).getId());
         request.addParameter("username", "test");
         request.addParameter("password", "test");
 
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), request, new MockHttpServletResponse()));
-        context.getFlowScope().put("service", org.jasig.cas.services.TestUtils.getService());
+        context.getFlowScope().put("service", TestUtils.getService());
 
         final MessageContext messageContext = mock(MessageContext.class);
         assertEquals("warn", this.action.submit(context, c, messageContext).getId());
