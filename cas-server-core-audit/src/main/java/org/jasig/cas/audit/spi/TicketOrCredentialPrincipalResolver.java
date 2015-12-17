@@ -12,6 +12,7 @@ import org.jasig.cas.web.support.WebUtils;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -33,6 +34,9 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     @NotNull
     @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired(required = false)
+    private PrincipalIdProvider principalIdProvider = new DefaultPrincipalIdProvider();
 
     private TicketOrCredentialPrincipalResolver() {}
 
@@ -98,13 +102,13 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
         } else if (arg1 instanceof String) {
             try {
                 final Ticket ticket = this.centralAuthenticationService.getTicket((String) arg1, Ticket.class);
+                org.jasig.cas.authentication.Authentication casAuthentication = null;
                 if (ticket instanceof ServiceTicket) {
-                    final ServiceTicket serviceTicket = (ServiceTicket) ticket;
-                    return serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId();
+                    casAuthentication = ServiceTicket.class.cast(ticket).getGrantingTicket().getAuthentication();
                 } else if (ticket instanceof TicketGrantingTicket) {
-                    final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
-                    return tgt.getAuthentication().getPrincipal().getId();
+                    casAuthentication = TicketGrantingTicket.class.cast(ticket).getAuthentication();
                 }
+                return this.principalIdProvider.getPrincipalIdFrom(casAuthentication);
             } catch (final InvalidTicketException e) {
                 LOGGER.trace(e.getMessage(), e);
             }
@@ -114,5 +118,16 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
         }
         LOGGER.debug("Unable to determine the audit argument. Returning [{}]", UNKNOWN_USER);
         return UNKNOWN_USER;
+    }
+
+    /**
+     * Default implementation that simply returns principal#id.
+     */
+    public static class DefaultPrincipalIdProvider implements PrincipalIdProvider {
+
+        @Override
+        public String getPrincipalIdFrom(final org.jasig.cas.authentication.Authentication authentication) {
+            return authentication.getPrincipal().getId();
+        }
     }
 }
