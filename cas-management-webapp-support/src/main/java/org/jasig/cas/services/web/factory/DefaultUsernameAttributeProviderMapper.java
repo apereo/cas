@@ -9,6 +9,7 @@ import org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvide
 import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.services.web.beans.RegisteredServiceUsernameAttributeProviderEditBean;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 
 import java.nio.charset.Charset;
 
@@ -48,6 +49,11 @@ public final class DefaultUsernameAttributeProviderMapper implements UsernameAtt
             uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString());
             uBean.setValue(p.getUsernameAttribute());
         }
+    }
+
+    @Override
+    public void mapUsernameAttributeProvider(final RegisteredServiceUsernameAttributeProvider provider,
+                                             final RegisteredServiceViewBean bean) {
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.jasig.cas.services.web.beans.RegisteredServiceLogoutTypeEditBean;
 import org.jasig.cas.services.web.beans.RegisteredServiceOAuthTypeEditBean;
 import org.jasig.cas.services.web.beans.RegisteredServicePublicKeyEditBean;
 import org.jasig.cas.services.web.beans.RegisteredServiceTypeEditBean;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
@@ -81,6 +82,19 @@ public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
         if (key != null) {
             pBean.setAlgorithm(key.getAlgorithm());
             pBean.setLocation(key.getLocation());
+        }
+    }
+
+    @Override
+    public void mapRegisteredService(final RegisteredService svc, final RegisteredServiceViewBean bean) {
+        bean.setAssignedId(svc.getId());
+        bean.setServiceId(svc.getServiceId());
+        bean.setName(svc.getName());
+        bean.setDescription(svc.getDescription());
+        bean.setEvalOrder(svc.getEvaluationOrder());
+
+        if (svc.getLogo() != null) {
+            bean.setLogoUrl(svc.getLogo().toExternalForm());
         }
     }
 
