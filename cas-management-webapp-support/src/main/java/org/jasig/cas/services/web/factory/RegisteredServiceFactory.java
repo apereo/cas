@@ -1,6 +1,7 @@
 package org.jasig.cas.services.web.factory;
 
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.FormData;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 
 /**
@@ -10,6 +11,13 @@ import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
  * @since 4.2
  */
 public interface RegisteredServiceFactory {
+    /**
+     * Create a {@link FormData} bean with configuration for the edit service form.
+     *
+     * @return the form data bean
+     */
+    FormData createFormData();
+
     /**
      * Create a {@link ServiceData} bean from the provided {@link RegisteredService}.
      *
