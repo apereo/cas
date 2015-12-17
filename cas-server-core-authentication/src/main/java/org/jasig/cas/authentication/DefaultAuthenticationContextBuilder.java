@@ -7,7 +7,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,8 +54,8 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
     public AuthenticationContext build(final Service service) {
         final Authentication authentication = buildAuthentication();
         if (authentication == null) {
-            LOGGER.info("Authentication context cannot be produced because no authentication is recorded into in the chain. Returning " +
-                    "null");
+            LOGGER.info("Authentication context cannot be produced because no authentication is recorded into in the chain. Returning "
+                    + "null");
             return null;
         }
         LOGGER.debug("Building an authentication context for authentication {} and service {}", authentication, service);
