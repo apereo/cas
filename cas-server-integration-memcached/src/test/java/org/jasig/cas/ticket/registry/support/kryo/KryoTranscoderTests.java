@@ -41,7 +41,6 @@ import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -156,9 +155,7 @@ public class KryoTranscoderTests {
     }
 
     private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
-        final RegisteredServiceImpl svc = new RegisteredServiceImpl();
-        svc.setServiceId("https://some.app.edu");
-        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl), svc);
+        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl), TestUtils.getRegisteredService("https://.+"));
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(TGT_ID, proxyCredential, this.principalAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));        
