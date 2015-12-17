@@ -8,6 +8,7 @@ import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.FormData;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -117,6 +118,19 @@ public final class DefaultRegisteredServiceFactory implements RegisteredServiceF
     @Override
     public ServiceData createServiceData(final RegisteredService svc) {
         final ServiceData bean = new ServiceData();
+
+        registeredServiceMapper.mapRegisteredService(svc, bean);
+        accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
+        usernameAttributeProviderMapper.mapUsernameAttributeProvider(svc.getUsernameAttributeProvider(), bean);
+        proxyPolicyMapper.mapProxyPolicy(svc.getProxyPolicy(), bean);
+        attributeReleasePolicyMapper.mapAttributeReleasePolicy(svc.getAttributeReleasePolicy(), bean);
+
+        return bean;
+    }
+
+    @Override
+    public RegisteredServiceViewBean createServiceViewBean(final RegisteredService svc) {
+        final RegisteredServiceViewBean bean = new RegisteredServiceViewBean();
 
         registeredServiceMapper.mapRegisteredService(svc, bean);
         accessStrategyMapper.mapAccessStrategy(svc.getAccessStrategy(), bean);
