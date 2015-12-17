@@ -6,12 +6,14 @@ import org.jasig.cas.services.RegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
+import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.FormData;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Default implmentation of {@link RegisteredServiceFactory}.
@@ -51,6 +53,9 @@ public final class DefaultRegisteredServiceFactory implements RegisteredServiceF
     private UsernameAttributeProviderMapper usernameAttributeProviderMapper = new
             DefaultUsernameAttributeProviderMapper();
 
+    @NotNull
+    @Autowired
+    private List<? extends FormDataPopulator> formDataPopulators;
 
     public void setAccessStrategyMapper(final AccessStrategyMapper accessStrategyMapper) {
         this.accessStrategyMapper = accessStrategyMapper;
@@ -73,9 +78,17 @@ public final class DefaultRegisteredServiceFactory implements RegisteredServiceF
         this.proxyPolicyMapper = proxyPolicyMapper;
     }
 
+    public void setRegisteredServiceMapper(final RegisteredServiceMapper registeredServiceMapper) {
+        this.registeredServiceMapper = registeredServiceMapper;
+    }
+
     public void setUsernameAttributeProviderMapper(
             final UsernameAttributeProviderMapper usernameAttributeProviderMapper) {
         this.usernameAttributeProviderMapper = usernameAttributeProviderMapper;
+    }
+
+    public void setFormDataPopulators(final List<? extends FormDataPopulator> formDataPopulators) {
+        this.formDataPopulators = formDataPopulators;
     }
 
     /**
@@ -88,6 +101,17 @@ public final class DefaultRegisteredServiceFactory implements RegisteredServiceF
             attributeReleasePolicyMapper = new DefaultAttributeReleasePolicyMapper(attributeFilterMapper,
                     principalAttributesRepositoryMapper);
         }
+    }
+
+    @Override
+    public FormData createFormData() {
+        final FormData data = new FormData();
+        if (formDataPopulators != null) {
+            for (final FormDataPopulator populator : formDataPopulators) {
+                populator.populateFormData(data);
+            }
+        }
+        return data;
     }
 
     @Override

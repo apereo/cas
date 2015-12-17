@@ -1,5 +1,6 @@
 package org.jasig.cas.services.web;
 
+import com.google.common.collect.ImmutableList;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -7,6 +8,7 @@ import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
+import org.jasig.cas.services.web.factory.AttributeFormDataPopulator;
 import org.jasig.cas.services.web.factory.DefaultRegisteredServiceFactory;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Before;
@@ -54,13 +56,14 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.repository.setBackingMap(attributes);
 
         this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
+        this.registeredServiceFactory.setFormDataPopulators(ImmutableList.of(new AttributeFormDataPopulator(this
+                .repository)));
         this.registeredServiceFactory.initializeDefaults();
 
         this.manager = new DefaultServicesManagerImpl(
                 new InMemoryServiceRegistryDaoImpl());
         this.manager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
-        this.controller = new RegisteredServiceSimpleFormController(
-                this.manager, this.repository, this.registeredServiceFactory);
+        this.controller = new RegisteredServiceSimpleFormController(this.manager, this.registeredServiceFactory);
     }
 
     @Test

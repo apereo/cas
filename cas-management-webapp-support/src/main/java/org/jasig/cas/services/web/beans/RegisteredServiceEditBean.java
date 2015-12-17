@@ -58,6 +58,13 @@ public final class RegisteredServiceEditBean implements Serializable {
      */
     public static class FormData {
         private List<String> availableAttributes = new ArrayList<>();
+
+        /**
+         * This is reserved for usage by any custom components that need to present their config to the management UI.
+         * This should only contain nested Maps and Arrays of simple values.
+         */
+        private Map<String, Object> customComponent = new HashMap<>();
+
         public List<String> getAvailableAttributes() {
             return availableAttributes;
         }
@@ -66,6 +73,13 @@ public final class RegisteredServiceEditBean implements Serializable {
             this.availableAttributes = availableAttributes;
         }
 
+        public Map<String, Object> getCustomComponent() {
+            return customComponent;
+        }
+
+        public void setCustomComponent(final Map<String, Object> customComponent) {
+            this.customComponent = customComponent;
+        }
     }
 
     /**
