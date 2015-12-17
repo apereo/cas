@@ -52,7 +52,7 @@ public final class RegisteredServicePublicKeyImpl implements Serializable, Regis
      * Instantiates a new Registered service public key impl.
      * Required for proper serialization.
      */
-    private RegisteredServicePublicKeyImpl() {}
+    public RegisteredServicePublicKeyImpl() {}
 
     /**
      * Instantiates a new Registered service public key impl.
