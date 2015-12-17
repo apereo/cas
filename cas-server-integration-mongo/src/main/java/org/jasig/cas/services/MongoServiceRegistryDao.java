@@ -45,7 +45,7 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
      * @throws Exception thrown if collection cant be dropped/created.
      */
     @PostConstruct
-    public void afterPropertiesSet() {
+    public void init() {
         if (this.mongoTemplate == null) {
             throw new RuntimeException("Mongo template is not correctly configured");
         } else {
@@ -113,5 +113,9 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
      */
     public void setDropCollection(final boolean dropCollection) {
         this.dropCollection = dropCollection;
+    }
+
+    public void setMongoTemplate(final MongoOperations mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
     }
 }
