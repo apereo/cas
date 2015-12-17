@@ -319,4 +319,7 @@ public class AuthenticationViaFormAction {
         this.warnCookieGenerator = warnCookieGenerator;
     }
 
+    public void setAuthenticationObjectsRepository(final AuthenticationObjectsRepository authenticationObjectsRepository) {
+        this.authenticationObjectsRepository = authenticationObjectsRepository;
+    }
 }

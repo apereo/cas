@@ -55,8 +55,11 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
     public AuthenticationContext build(final Service service) {
         final Authentication authentication = buildAuthentication();
         if (authentication == null) {
-            throw new RuntimeException(new GeneralSecurityException("Authentication context cannot be produced"));
+            LOGGER.info("Authentication context cannot be produced because no authentication is recorded into in the chain. Returning " +
+                    "null");
+            return null;
         }
+        LOGGER.debug("Building an authentication context for authentication {} and service {}", authentication, service);
         return new DefaultAuthenticationContext(authentication, service);
     }
 

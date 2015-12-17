@@ -6,12 +6,13 @@ import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.execution.Event;
@@ -29,14 +30,15 @@ import static org.junit.Assert.fail;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-        "classpath:/core-context.xml", "classpath:/applicationContext.xml", "classpath:/jpaTestApplicationContext.xml",
+        "classpath:/core-context.xml",
+        "classpath:/jpaTestApplicationContext.xml",
         "classpath:/inspektrThrottledSubmissionContext.xml"
 })
-@Ignore("Disable temporarily until we have time to investigate cause of test failure")
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
-AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+                AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
+    @Qualifier("inspektrIpAddressUsernameThrottle")
     private InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
 
     @Autowired
