@@ -5,7 +5,6 @@ import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
 import org.jasig.cas.services.web.factory.RegisteredServiceFactory;
 import org.jasig.cas.services.web.view.JsonViewUtils;
-import org.jasig.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -18,10 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,12 +30,6 @@ import java.util.Map;
 public final class RegisteredServiceSimpleFormController extends AbstractManagementController {
 
     /**
-     * Instance of AttributeRegistry.
-     */
-    @NotNull
-    private final IPersonAttributeDao personAttributeDao;
-
-    /**
      * Instance of the RegisteredServiceFactory.
      */
     @NotNull
@@ -49,18 +39,14 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
      * Instantiates a new registered service simple form controller.
      *
      * @param servicesManager          the services manager
-     * @param personAttributeDao       the attribute repository
      * @param registeredServiceFactory the registered service factory
      */
     @Autowired
     public RegisteredServiceSimpleFormController(
         @Qualifier("servicesManager")
         final ReloadableServicesManager servicesManager,
-        @Qualifier("attributeRepository")
-        final IPersonAttributeDao personAttributeDao,
         final RegisteredServiceFactory registeredServiceFactory) {
         super(servicesManager);
-        this.personAttributeDao = personAttributeDao;
         this.registeredServiceFactory = registeredServiceFactory;
     }
 
@@ -116,10 +102,7 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
                 }
                 bean.setServiceData(registeredServiceFactory.createServiceData(service));
             }
-            final RegisteredServiceEditBean.FormData formData = bean.getFormData();
-            final List<String> possibleAttributeNames = new ArrayList<>(this.personAttributeDao.getPossibleUserAttributeNames());
-            Collections.sort(possibleAttributeNames);
-            formData.setAvailableAttributes(possibleAttributeNames);
+            bean.setFormData(registeredServiceFactory.createFormData());
 
             bean.setStatus(HttpServletResponse.SC_OK);
             JsonViewUtils.render(bean, response);
