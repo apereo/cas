@@ -6,6 +6,7 @@ import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.services.web.beans.RegisteredServiceProxyPolicyBean;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,19 @@ public final class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
             final RegexMatchingRegisteredServiceProxyPolicy regex = (RegexMatchingRegisteredServiceProxyPolicy) policy;
             cBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
             cBean.setValue(regex.getPattern().toString());
+        }
+    }
+
+    @Override
+    public void mapProxyPolicy(final RegisteredServiceProxyPolicy policy, final RegisteredServiceViewBean bean) {
+        final RegisteredServiceProxyPolicyBean proxyPolicyBean = bean.getProxyPolicy();
+
+        if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
+            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
+        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
+            final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
+            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
+            proxyPolicyBean.setValue(option.getPattern().toString());
         }
     }
 

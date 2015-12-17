@@ -3,6 +3,7 @@ package org.jasig.cas.services.web;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredServiceImpl;
+import org.jasig.cas.services.web.factory.DefaultRegisteredServiceFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,13 +24,20 @@ public class ManageRegisteredServicesMultiActionControllerTests {
 
     private ManageRegisteredServicesMultiActionController controller;
 
+    private DefaultRegisteredServiceFactory registeredServiceFactory;
+
     private DefaultServicesManagerImpl servicesManager;
 
     @Before
     public void setUp() throws Exception {
         this.servicesManager = new DefaultServicesManagerImpl(new InMemoryServiceRegistryDaoImpl());
         this.servicesManager.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
-        this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, "foo");
+
+        this.registeredServiceFactory = new DefaultRegisteredServiceFactory();
+        this.registeredServiceFactory.initializeDefaults();
+
+        this.controller = new ManageRegisteredServicesMultiActionController(this.servicesManager, this
+                .registeredServiceFactory, "foo");
     }
 
     @Test

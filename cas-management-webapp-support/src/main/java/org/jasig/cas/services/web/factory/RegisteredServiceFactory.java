@@ -3,6 +3,7 @@ package org.jasig.cas.services.web.factory;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.FormData;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 
 /**
  * Factory used to convert {@link RegisteredService} from/to {@link ServiceData}.
@@ -25,6 +26,14 @@ public interface RegisteredServiceFactory {
      * @return the data bean representing the provided service
      */
     ServiceData createServiceData(RegisteredService svc);
+
+    /**
+     * Create a {@link RegisteredServiceViewBean} bean from the provided {@link RegisteredService}.
+     *
+     * @param svc service being converted
+     * @return the data bean representing the provided service
+     */
+    RegisteredServiceViewBean createServiceViewBean(RegisteredService svc);
 
     /**
      * Create a {@link RegisteredService} object from the provided {@link ServiceData} data bean.
