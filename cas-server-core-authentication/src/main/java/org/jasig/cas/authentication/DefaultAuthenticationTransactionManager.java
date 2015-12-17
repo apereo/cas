@@ -36,8 +36,8 @@ public final class DefaultAuthenticationTransactionManager implements Authentica
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
             authenticationContext.collect(authentication);
         } else {
-            LOGGER.info("No credentials were provided for authentication. Authentication event is ignored and nothing is collected into " +
-                    "the authentication context");
+            LOGGER.info("No credentials were provided for authentication. Authentication event is ignored and nothing is collected into "
+                    + "the authentication context");
         }
         return this;
     }

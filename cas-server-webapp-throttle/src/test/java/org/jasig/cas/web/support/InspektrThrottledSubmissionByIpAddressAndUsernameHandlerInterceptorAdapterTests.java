@@ -1,10 +1,10 @@
 package org.jasig.cas.web.support;
 
-import org.jasig.inspektr.common.web.ClientInfo;
-import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.inspektr.common.web.ClientInfo;
+import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.webflow.execution.Event;
