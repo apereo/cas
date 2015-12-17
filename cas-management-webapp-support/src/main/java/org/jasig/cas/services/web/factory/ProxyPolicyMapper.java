@@ -2,6 +2,7 @@ package org.jasig.cas.services.web.factory;
 
 import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 
 /**
  * Interface for converting {@link RegisteredServiceProxyPolicy} to/from {@link ServiceData}.
@@ -17,6 +18,14 @@ public interface ProxyPolicyMapper {
      * @param bean   the destination data bean
      */
     void mapProxyPolicy(RegisteredServiceProxyPolicy policy, ServiceData bean);
+
+    /**
+     * Map {@link RegisteredServiceProxyPolicy} onto the target {@link RegisteredServiceViewBean} data bean.
+     *
+     * @param policy the source proxy policy
+     * @param bean   the destination data bean
+     */
+    void mapProxyPolicy(RegisteredServiceProxyPolicy policy, RegisteredServiceViewBean bean);
 
     /**
      * Create a {@link RegisteredServiceProxyPolicy} represented by the specified {@link ServiceData} bean. Return null

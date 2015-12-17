@@ -1,15 +1,8 @@
 package org.jasig.cas.services.web.beans;
 
-import org.jasig.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
-import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
-import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceProxyPolicy;
-import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
-import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
-import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
-
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Defines the service bean that is produced by the webapp
@@ -30,6 +23,12 @@ public class RegisteredServiceViewBean implements Serializable {
     private String logoUrl;
     private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
     private RegisteredServiceAttributeReleasePolicyViewBean attrRelease = new RegisteredServiceAttributeReleasePolicyViewBean();
+
+    /**
+     * This is reserved for usage by any custom components that need to present their config to the management UI. This
+     * should only contain nested Maps and Arrays of simple values.
+     */
+    private Map<String, Object> customComponent = new HashMap<>();
 
     public int getEvalOrder() {
         return evalOrder;
@@ -103,64 +102,11 @@ public class RegisteredServiceViewBean implements Serializable {
         this.attrRelease = attrRelease;
     }
 
-    /**
-     * From registered service to a service bean.
-     *
-     * @param svc the svc
-     * @return the registered service bean
-     */
-    public static RegisteredServiceViewBean fromRegisteredService(final RegisteredService svc) {
-        final RegisteredServiceViewBean bean = new RegisteredServiceViewBean();
-        bean.setAssignedId(svc.getId());
-        bean.setServiceId(svc.getServiceId());
-        bean.setName(svc.getName());
-        bean.setDescription(svc.getDescription());
-        bean.setEvalOrder(svc.getEvaluationOrder());
+    public Map<String, Object> getCustomComponent() {
+        return customComponent;
+    }
 
-        if (svc.getLogo() != null) {
-            bean.setLogoUrl(svc.getLogo().toExternalForm());
-        }
-
-        final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
-        final RegisteredServiceProxyPolicyBean proxyPolicyBean = bean.getProxyPolicy();
-
-        if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
-            final RefuseRegisteredServiceProxyPolicy refuse = (RefuseRegisteredServiceProxyPolicy) policy;
-            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
-        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
-            final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
-            proxyPolicyBean.setValue(option.getPattern().toString());
-        }
-
-        final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy =
-                (AbstractRegisteredServiceAttributeReleasePolicy) svc.getAttributeReleasePolicy();
-        final RegisteredServiceAttributeReleasePolicyViewBean attrPolicyBean = bean.getAttrRelease();
-
-        if (attrPolicy != null) {
-            attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
-            attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
-
-            if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
-                attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALL.toString());
-            } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
-                final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
-                if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
-                } else {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALLOWED.toString());
-                }
-            } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
-                final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
-                if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                    attrPolicyBean.setAttrPolicy(
-                            RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
-                } else {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.MAPPED.toString());
-                }
-            }
-        }
-        bean.setSasCASEnabled(svc.getAccessStrategy().isServiceAccessAllowed());
-        return bean;
+    public void setCustomComponent(final Map<String, Object> customComponent) {
+        this.customComponent = customComponent;
     }
 }

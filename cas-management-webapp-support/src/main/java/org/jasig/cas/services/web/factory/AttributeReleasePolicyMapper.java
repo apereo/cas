@@ -2,6 +2,7 @@ package org.jasig.cas.services.web.factory;
 
 import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 
 /**
  * Interface for converting {@link RegisteredServiceAttributeReleasePolicy} to/from {@link ServiceData}.
@@ -17,6 +18,14 @@ public interface AttributeReleasePolicyMapper {
      * @param bean   the destination data bean
      */
     void mapAttributeReleasePolicy(RegisteredServiceAttributeReleasePolicy policy, ServiceData bean);
+
+    /**
+     * Map {@link RegisteredServiceAttributeReleasePolicy} onto the target {@link RegisteredServiceViewBean} data bean.
+     *
+     * @param policy the source attribute release policy
+     * @param bean   the destination data bean
+     */
+    void mapAttributeReleasePolicy(RegisteredServiceAttributeReleasePolicy policy, RegisteredServiceViewBean bean);
 
     /**
      * Create a {@link RegisteredServiceAttributeReleasePolicy} represented by the specified {@link ServiceData} bean.
