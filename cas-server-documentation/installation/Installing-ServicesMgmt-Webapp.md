@@ -43,7 +43,7 @@ By default, the `cas-management-webapp` is configured to authenticate against a 
 
 
 ##Securing Access and Authorization
-Access to the management webapp is controlled via Spring Security. Rules are defined in the `/cas-management-webapp/src/main/webapp/WEB-INF/managementConfigContext.xml` file.
+Access to the management webapp is controlled via pac4j. Rules are defined in the `/cas-management-webapp/src/main/webapp/WEB-INF/managementConfigContext.xml` file.
 
 
 ###Static List of Users
