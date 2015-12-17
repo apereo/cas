@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
@@ -26,13 +8,10 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.AopUtils;
+import org.jasig.cas.web.support.WebUtils;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -131,14 +110,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
             }
             LOGGER.debug("Could not locate ticket [{}] in the registry", arg1);
         } else {
-            final SecurityContext securityContext = SecurityContextHolder.getContext();
-            if (securityContext != null) {
-                final Authentication authentication = securityContext.getAuthentication();
-
-                if (authentication != null) {
-                    return ((UserDetails) authentication.getPrincipal()).getUsername();
-                }
-            }
+            return WebUtils.getAuthenticatedUsername();
         }
         LOGGER.debug("Unable to determine the audit argument. Returning [{}]", UNKNOWN_USER);
         return UNKNOWN_USER;

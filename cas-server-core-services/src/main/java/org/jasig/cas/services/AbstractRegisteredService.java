@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -27,21 +9,27 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.OneToMany;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -64,7 +52,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     /** The logger instance. */
     @Transient
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The unique identifier for this service. */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
@@ -88,7 +76,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * By default, the policy is {@link RefuseRegisteredServiceProxyPolicy}.
      */
     @Lob
-    @Column(name = "proxy_policy", nullable = true)
+    @Column(name = "proxy_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
     @Column(name = "evaluation_order", nullable = false)
@@ -99,7 +87,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * By default the resolver is {@link DefaultRegisteredServiceUsernameProvider}.
      */
     @Lob
-    @Column(name = "username_attr", nullable = true)
+    @Column(name = "username_attr", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
         new DefaultRegisteredServiceUsernameProvider();
 
@@ -111,12 +99,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
-    @Column(name = "required_handlers")
+    @Column(name = "required_handlers", length = Integer.MAX_VALUE)
     private HashSet<String> requiredHandlers = new HashSet<>();
 
     /** The attribute filtering policy. */
     @Lob
-    @Column(name = "attribute_release", nullable = true)
+    @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy;
 
     @Column(name = "logo")
@@ -126,13 +114,17 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private URL logoutUrl;
 
     @Lob
-    @Column(name = "access_strategy", nullable = true)
+    @Column(name = "access_strategy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceAccessStrategy accessStrategy =
             new DefaultRegisteredServiceAccessStrategy();
 
     @Lob
-    @Column(name = "public_key", nullable = true)
+    @Column(name = "public_key", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServicePublicKey publicKey;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name="RegisteredServiceImpl_Properties")
+    private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
     @Override
     public long getId() {
@@ -196,6 +188,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         if (this.accessStrategy == null) {
             this.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         }
+        if (this.properties == null) {
+            this.properties = new HashMap<>();
+        }
     }
 
     @Override
@@ -230,6 +225,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey, that.publicKey)
                 .append(this.logoutUrl, that.logoutUrl)
                 .append(this.requiredHandlers, that.requiredHandlers)
+                .append(this.proxyPolicy, that.proxyPolicy)
+                .append(this.properties, that.properties)
                 .isEquals();
     }
 
@@ -250,6 +247,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.publicKey)
                 .append(this.logoutUrl)
                 .append(this.requiredHandlers)
+                .append(this.proxyPolicy)
+                .append(this.properties)
                 .toHashCode();
     }
 
@@ -352,15 +351,15 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setAttributeReleasePolicy(source.getAttributeReleasePolicy());
         this.setAccessStrategy(source.getAccessStrategy());
         this.setLogo(source.getLogo());
-        this.setPublicKey(source.getPublicKey());
         this.setLogoutUrl(source.getLogoutUrl());
         this.setPublicKey(source.getPublicKey());
         this.setRequiredHandlers(source.getRequiredHandlers());
+        this.setProperties(source.getProperties());
     }
 
     /**
      * {@inheritDoc}
-     * Compares this instance with the <code>other</code> registered service based on
+     * Compares this instance with the {@code other} registered service based on
      * evaluation order, name. The name comparison is case insensitive.
      *
      * @see #getEvaluationOrder()
@@ -392,6 +391,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logo", this.logo);
         toStringBuilder.append("logoutUrl", this.logoutUrl);
         toStringBuilder.append("requiredHandlers", this.requiredHandlers);
+        toStringBuilder.append("properties", this.properties);
 
         return toStringBuilder.toString();
     }
@@ -456,5 +456,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setPublicKey(@NotNull final RegisteredServicePublicKey publicKey) {
         this.publicKey = publicKey;
+    }
+
+    @Override
+    public Map<String, RegisteredServiceProperty> getProperties() {
+        return (Map) this.properties;
+    }
+
+    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
+        this.properties = (Map) properties;
     }
 }

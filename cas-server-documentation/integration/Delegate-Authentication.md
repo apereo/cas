@@ -23,7 +23,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% highlight xml %}
 <dependency>
     <groupId>org.jasig.cas</groupId>
-    <artifactId>cas-server-support-pac4j</artifactId>
+    <artifactId>cas-server-support-pac4j-webflow</artifactId>
     <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
@@ -31,162 +31,80 @@ Support is enabled by including the following dependency in the Maven WAR overla
 
 ##Configuration
 
-###Add the required pac4j-* libraries
-
-To add CAS client support, add the following dependency:
-
-{% highlight xml %}
-<dependency>
-    <groupId>org.pac4j</groupId>
-    <artifactId>pac4j-cas</artifactId>
-    <version>${pac4j.version}</version>
-</dependency>
-{% endhighlight %}
-
-To add OAuth client support, add the following dependency:
-
-{% highlight xml %}
-<dependency>
-    <groupId>org.pac4j</groupId>
-    <artifactId>pac4j-oauth</artifactId>
-    <version>${pac4j.version}</version>
-</dependency>
-{% endhighlight %}
-
-To add OpenID client support, add the following dependency:
-
-{% highlight xml %}
-<dependency>
-    <groupId>org.pac4j</groupId>
-    <artifactId>pac4j-openid</artifactId>
-    <version>${pac4j.version}</version>
-</dependency>
-{% endhighlight %}
-
-To add OpenID Connect client support, add the following dependency:
-
-{% highlight xml %}
-<dependency>
-    <groupId>org.pac4j</groupId>
-    <artifactId>pac4j-oidc</artifactId>
-    <version>${pac4j.version}</version>
-</dependency>
-{% endhighlight %}
-
-To add SAML support, add the following dependency:
-
-{% highlight xml %}
-<dependency>
-    <groupId>org.pac4j</groupId>
-    <artifactId>pac4j-saml</artifactId>
-    <version>${pac4j.version}</version>
-</dependency>
-{% endhighlight %}
-
 ###Add the needed clients
 
-An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server. If you want to delegate the CAS authentication to Twitter for example, you have to add an OAuth client for the provider: Twitter. Clients classes are defined in the pac4j library.
+An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server. If you want to delegate the CAS authentication to Twitter for example, you have to add an OAuth client for the provider: Twitter. For each delegated authentication mechanism, you must define the appropriate client.
 
-All the needed clients to authenticate via providers must be declared in a specific `WEB-INF/spring-configuration/pac4jContext.xml` file:
+Clients can be defined via properties for the most common ones (in the `cas.properties` file):
+
+{% highlight properties %}
+# cas.pac4j.facebook.id=
+# cas.pac4j.facebook.secret=
+# cas.pac4j.facebook.scope=
+# cas.pac4j.facebook.fields=
+# cas.pac4j.twitter.id=
+# cas.pac4j.twitter.secret=
+# cas.pac4j.saml.keystorePassword=
+# cas.pac4j.saml.privateKeyPassword=
+# cas.pac4j.saml.keystorePath=
+# cas.pac4j.saml.identityProviderMetadataPath=
+# cas.pac4j.saml.maximumAuthenticationLifetime=
+# cas.pac4j.saml.serviceProviderEntityId=
+# cas.pac4j.saml.serviceProviderMetadataPath=
+# cas.pac4j.cas.loginUrl=
+# cas.pac4j.cas.protocol=
+# cas.pac4j.oidc.id=
+# cas.pac4j.oidc.secret=
+# cas.pac4j.oidc.discoveryUri=
+# cas.pac4j.oidc.useNonce=
+# cas.pac4j.oidc.preferredJwsAlgorithm=
+# cas.pac4j.oidc.maxClockSkew=
+# cas.pac4j.oidc.customParamKey1=
+# cas.pac4j.oidc.customParamValue1=
+# cas.pac4j.oidc.customParamKey2=
+# cas.pac4j.oidc.customParamValue2=
+{% endhighlight %}
+
+Or like any bean, in a dedicated `WEB-INF/spring-configuration/pac4jContext.xml` file:
 
 {% highlight xml %}
 <bean id="facebook1" class="org.pac4j.oauth.client.FacebookClient">
   <property name="key" value="fbkey" />
   <property name="secret" value="fbsecret" />
-  <property name="scope" 
+  <property name="scope"
     value="email,user_likes,user_about_me,user_birthday,user_education_history,user_hometown" />
-  <property name="fields" 
+  <property name="fields"
     value="id,name,first_name,middle_name,last_name,gender,locale,languages,link,username,third_party_id,timezone,updated_time" />
 </bean>
- 
+
 <bean id="twitter1" class="org.pac4j.oauth.client.TwitterClient">
   <property name="key" value="twkey" />
   <property name="secret" value="twsecret" />
 </bean>
- 
+
 <bean id="caswrapper1" class="org.pac4j.oauth.client.CasOAuthWrapperClient">
   <property name="key" value="this_is_the_key" />
   <property name="secret" value="this_is_the_secret" />
   <property name="casOAuthUrl" value="http://mycasserver2/oauth2.0" />
 </bean>
-  
+
 <bean id="cas1" class="org.pac4j.cas.client.CasClient">
   <property name="casLoginUrl" value="http://mycasserver2/login" />
 </bean>
- 
+
 <bean id="myopenid1" class="org.pac4j.openid.client.MyOpenIdClient" />
 {% endhighlight %}
 
-For each OAuth provider, the CAS server is considered as an OAuth client and therefore should be declared as an OAuth client at the OAuth provider. After the declaration, a key and a secret is given by the OAuth provider which has to be defined in the beans (*the_key_for_xxx* and *the_secret_for_xxx* values for the *key* and *secret* properties).
+Notice that for each OAuth provider, the CAS server is considered as an OAuth client and therefore should be declared as an OAuth client at the OAuth provider. After the declaration, a key and a secret is given by the OAuth provider which has to be defined in the beans (*the_key_for_xxx* and *the_secret_for_xxx* values for the *key* and *secret* properties).
 
 For the CAS OAuth wrapping, the *casOAuthUrl* property must be set to the OAuth wrapping url of the other CAS server which is using OAuth wrapping (for example: *http://mycasserver2/oauth2.0*).
 
-Finally, all the clients must be gathered in the `Clients` configuration bean:
-
-{% highlight xml %}
-<bean id="clients" class="org.pac4j.core.client.Clients">
-  <property name="clients">
-    <list>
-      <ref bean="facebook1" />
-      <ref bean="twitter1" />
-      <ref bean="caswrapper1" />
-      <ref bean="cas1" />
-      <ref bean="myopenid1" />
-    </list>
-  </property>
-</bean>
-{% endhighlight %}
-
-The Facebook, Twitter and SAML 2 clients can be defined via properties only, which makes the configuration easier (the Spring context and the `Clients` object are optional in that case).
-
-In the `cas.properties` file:
-
-{% highlight properties %}
-cas.pac4j.facebook.id=1234
-cas.pac4j.facebook.secret=fbSecret
-cas.pac4j.facebook.scope=email,user_likes,user_about_me,user_birthday
-cas.pac4j.facebook.fields=id,name,first_name,middle_name,last_name,gender
-cas.pac4j.twitter.id=5678
-cas.pac4j.twitter.secret=twSecret
-cas.pac4j.saml.keystorePassword=pac4j-demo-passwd
-cas.pac4j.saml.privateKeyPassword=pac4j-demo-passwd
-cas.pac4j.saml.keystorePath=resource:samlKeystore.jks
-cas.pac4j.saml.identityProviderMetadataPath=resource:testshib-providers.xml
-# cas.pac4j.saml.maximumAuthenticationLifetime=
-# cas.pac4j.saml.serviceProviderEntityId=
-# cas.pac4j.saml.serviceProviderMetadataPath=
-{% endhighlight %}
-
-
-###Uncomment the client action in webflow
-
-In the `login-webflow.xml` file, the `ClientAction` must be uncommented at the beginning of the webflow. Its role is to intercept callback calls from providers (like Facebook, Twitter...) after a delegated authentication:
-
-{% highlight xml %}
-<action-state id="clientAction">
-  <evaluate expression="clientAction" />
-  <transition on="success" to="sendTicketGrantingTicket" />
-  <transition on="error" to="ticketGrantingTicketCheck" />
-  <transition on="stop" to="stopWebflow" />
-</action-state>
-<view-state id="stopWebflow" />
-{% endhighlight %}
-
-
 ###Add links on the login page to authenticate on remote providers
 
-To start authentication on a remote provider, these links must be added on the login page `casLoginView.jsp` (*ClientNameUrl* attributes are automatically created by the `ClientAction`):
+All available clients are automatically displayed on the login page as clickable buttons under the "Or login with:" label.
 
-{% highlight html %}
-<a href="${FacebookClientUrl}">Authenticate with Facebook</a> <br />
-<br />
-<a href="${TwitterClientUrl}">Authenticate with Twitter</a><br />
-<br />
-<a href="${CasOAuthWrapperClientUrl}">Authenticate with another CAS server using OAuth v2.0 protocol</a><br />
-<br />
-<a href="${CasClientUrl}">Authenticate with another CAS server using CAS protocol</a><br />
-<br />
-{% endhighlight %}
+If you customize the login page, you can access the text to display (which is mostly the name of the client) and the url for the redirection to the identity provider in the `pac4jUrls` object (which is a map of names to urls).
+
 
 ###Identifier of the authenticated user
 

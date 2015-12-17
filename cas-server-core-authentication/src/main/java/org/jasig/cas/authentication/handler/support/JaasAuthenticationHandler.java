@@ -1,27 +1,12 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Principal;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 import javax.security.auth.callback.Callback;
@@ -74,6 +59,7 @@ import java.util.Set;
  * @see javax.security.auth.callback.NameCallback
  * @since 3.0.0.5
  */
+@Component("jaasAuthenticationHandler")
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /** If no realm is specified, we default to CAS. */
@@ -108,9 +94,6 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected final HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential)
             throws GeneralSecurityException, PreventedException {
@@ -138,53 +121,59 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
         Principal principal = null;
         final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
-        if (principals != null && principals.size() > 0) {
-            principal = this.principalFactory.createPrincipal(principals.iterator().next().getName());
+        if (principals != null && !principals.isEmpty()) {
+            final java.security.Principal secPrincipal = principals.iterator().next();
+            principal = this.principalFactory.createPrincipal(secPrincipal.getName());
         }
         return createHandlerResult(credential, principal, null);
     }
 
-    public void setRealm(final String realm) {
+    @Autowired
+    public void setRealm(@Value("${cas.authn.jaas.realm:" + DEFAULT_REALM + '}') final String realm) {
         this.realm = realm;
     }
 
     /**
-     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos <code>krb5.conf</code> configuration file.
+     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
      * However, if you like, you can instead specify the realm value by setting this following system property value.
      * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosKdcSystemProperty(String)}.
      * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
-     * a <code>krb5.conf</code> file is also provided from which the additional information required for cross-realm authentication
+     * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
      * may be obtained.
      * <p>If you set values for these properties, then they override the default realm and KDC values specified
-     * in <code>krb5.conf</code> (if such a file is found). The <code>krb5.conf</code> file is still consulted if values for items
-     * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
+     * in {@code krb5.conf} (if such a file is found). The {@code krb5.conf} file is still consulted if values for items
+     * other than the default realm and KDC are needed. If no {@code krb5.conf} file is found,
      * then the default values used for these items are implementation-specific.
      * @param kerberosRealmSystemProperty system property to indicate realm.
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
      * @since 4.1.0
      */
-    public final void setKerberosRealmSystemProperty(final String kerberosRealmSystemProperty) {
+    @Autowired
+    public final void setKerberosRealmSystemProperty(@Value("${cas.authn.jaas.kerb.realm:}")
+                                                         final String kerberosRealmSystemProperty) {
         this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
     }
 
     /**
-     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos <code>krb5.conf</code> configuration file.
+     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
      * However, if you like, you can instead specify the kdc value by setting this system property value.
      * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosRealmSystemProperty(String)}.
      * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
-     * a <code>krb5.conf</code> file is also provided from which the additional information required for cross-realm authentication
+     * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
      * may be obtained.
      * <p>If you set values for these properties, then they override the default realm and KDC values specified
-     * in <code>krb5.conf</code> (if such a file is found). The <code>krb5.conf</code> file is still consulted if values for items
-     * other than the default realm and KDC are needed. If no <code>krb5.conf</code> file is found,
+     * in {@code krb5.conf} (if such a file is found). The {@code krb5.conf} file is still consulted if values for items
+     * other than the default realm and KDC are needed. If no {@code krb5.conf} file is found,
      * then the default values used for these items are implementation-specific.
      * @param kerberosKdcSystemProperty system property to indicate kdc
      * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
      *      Oracle documentation</a>
      * @since 4.1.0
      */
-    public final void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
+    @Autowired
+    public final void setKerberosKdcSystemProperty(@Value("${cas.authn.jaas.kerb.kdc:}")
+                                                       final String kerberosKdcSystemProperty) {
         this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
     }
     

@@ -1,22 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.services;
 
 import com.google.common.collect.Sets;
@@ -76,7 +57,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkAuthzPrincipalNoAttrRequirements() {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(new HashMap<String, Object>()));
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<String, Object>()));
     }
 
     @Test
@@ -84,7 +65,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
-        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(new HashMap<String, Object>()));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<String, Object>()));
     }
 
     @Test
@@ -92,7 +73,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test",
                 this.getPrincipalAttributes()));
     }
 
@@ -105,7 +86,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
 
-        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
 
     @Test
@@ -117,7 +98,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
 
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
 
     @Test
@@ -129,7 +110,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
         pAttrs.put("givenName", "theName");
-        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
 
     @Test
@@ -140,17 +121,17 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.put("cn", "CAS");
         pAttrs.put("givenName", "kaz");
-        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
 
-    private Map<String, Set<String>> getRequiredAttributes() {
+    private static Map<String, Set<String>> getRequiredAttributes() {
         final Map<String, Set<String>> map = new HashMap<>();
         map.put("cn", Sets.newHashSet("cas", "SSO"));
         map.put("givenName", Sets.newHashSet("CAS", "KAZ"));
         return map;
     }
 
-    private Map<String, Object> getPrincipalAttributes() {
+    private static Map<String, Object> getPrincipalAttributes() {
         final Map<String, Object> map = new HashMap<>();
         map.put("cn", "cas");
         map.put("givenName", Arrays.asList("cas", "KAZ"));

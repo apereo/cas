@@ -5,20 +5,24 @@ title: CAS - Monitoring & Statistics
 
 # Monitoring
 The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software. 
-Access to the endpoint is secured by Spring Security at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
+Access to the endpoint is secured by pac4j at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
 
 {% highlight xml %}
-<sec:http pattern="/status/**" entry-point-ref="notAuthorizedEntryPoint" use-expressions="true" auto-config="true">
-    <sec:intercept-url pattern="/status" access="${cas.securityContext.status.access}" />
-</sec:http>
+<mvc:interceptor>
+    <mvc:mapping path="/status/**" />
+    <mvc:mapping path="/statistics/**" />
+    <bean class="org.pac4j.springframework.web.RequiresAuthenticationInterceptor">
+        <constructor-arg name="config" ref="config" />
+        <constructor-arg name="clientName" value="IpClient" />
+    </bean>
+</mvc:interceptor>
 {% endhighlight %}
 
 Access is granted the following settings in `cas.properties` file:
 
 {% highlight bash %}
-# Spring Security's EL-based access rules for the /status URI of CAS that exposes health check information
-cas.securityContext.status.access=hasIpAddress('127.0.0.1')
-
+# security configuration based on IP address to access the /status and /statistics pages
+# cas.securityContext.adminpages.ip=127\.0\.0\.1
 {% endhighlight %}
 
 
@@ -166,21 +170,8 @@ runtime that is rendered into a modest visualization.
 #Statistics
 Furthermore, the CAS web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance.
 
-The CAS server exposes a `/statistics` endpoint that may be used to inquire about the runtime state of the software. Access to the endpoint is secured by Spring Security at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
+The CAS server exposes a `/statistics` endpoint that may be used to inquire about the runtime state of the software. Access to the endpoint is secured by pac4j at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml` like for the /status page.
 
-{% highlight xml %}
-<sec:http pattern="/statistics/**" entry-point-ref="notAuthorizedEntryPoint" use-expressions="true" auto-config="true">
- <sec:intercept-url pattern="/statistics" access="${cas.securityContext.statistics.access}" />
-</sec:http>
-{% endhighlight %}
-
-Access is granted the following settings in `cas.properties` file:
-
-{% highlight bash %}
-# Spring Security's EL-based access rules for the /statistics URI of CAS that exposes stats about the CAS server
-cas.securityContext.statistics.access=hasIpAddress('127.0.0.1')
-
-{% endhighlight %}
 
 ##Performance Statistics
 CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics.
@@ -249,11 +240,11 @@ type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.GRANT_SERVICE_TI
 {% endhighlight %}
 
 ###Viewing Metrics on the Web
-The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser. The endpoint is protected by Spring Security, and the access rules are placed inside the `cas.properties` file:
+The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser. The endpoint is protected by pac4j, and the access rules are placed inside the `cas.properties` file:
 
 {% highlight bash %}
-# Spring Security's EL-based access rules for the /statistics URI of CAS that exposes stats about the CAS server
-cas.securityContext.statistics.access=hasIpAddress('127.0.0.1')
+# security configuration based on IP address to access the /status and /statistics pages
+# cas.securityContext.adminpages.ip=127\.0\.0\.1
 {% endhighlight %}
 
 Once access is granted, the following sub-endpoints can be used to query the CAS server's status and metrics:

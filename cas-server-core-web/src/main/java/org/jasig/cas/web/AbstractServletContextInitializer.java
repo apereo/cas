@@ -1,22 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.web;
 
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -25,8 +6,9 @@ import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -198,8 +180,8 @@ public abstract class AbstractServletContextInitializer
         manager.save(svc);
     }
 
-    protected final ServicesManager getServicesManager() {
-        return this.applicationContext.getBean("servicesManager", ServicesManager.class);
+    protected final ReloadableServicesManager getServicesManager() {
+        return this.applicationContext.getBean("servicesManager", ReloadableServicesManager.class);
     }
 
     /**

@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.services;
 
 import com.google.common.collect.Sets;
@@ -107,12 +89,13 @@ public class JsonServiceRegistryDaoTests {
                 new ShibbolethCompatiblePersistentIdGenerator("helloworld")
         ));
         final RegisteredService r2 = this.dao.save(r);
+        this.dao.load();
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         final AnonymousRegisteredServiceUsernameAttributeProvider anon =
-                (AnonymousRegisteredServiceUsernameAttributeProvider) r2.getUsernameAttributeProvider();
+                (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
         final ShibbolethCompatiblePersistentIdGenerator ss =
                 (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
         assertEquals(new String(ss.getSalt()), "helloworld");
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -327,6 +310,41 @@ public class JsonServiceRegistryDaoTests {
         this.dao.save(r);
         final List<RegisteredService> list = this.dao.load();
         assertNotNull(this.dao.findServiceById(r.getId()));
+    }
+
+    @Test
+    public void persistCustomServiceProperties() throws Exception {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("persistCustomServiceProperties");
+        r.setId(4245);
+
+        final Map<String, RegisteredServiceProperty> properties = new HashMap<>();
+        final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
+        final Set<String> values = new HashSet<>();
+        values.add("value1");
+        values.add("value2");
+        property.setValues(values);
+        properties.put("field1", property);
+
+
+        final DefaultRegisteredServiceProperty property2 = new DefaultRegisteredServiceProperty();
+        final Set<String> values2 = new HashSet<>();
+        values2.add("value12");
+        values2.add("value22");
+        property2.setValues(values2);
+        properties.put("field2", property2);
+
+        r.setProperties(properties);
+
+        this.dao.save(r);
+        final List<RegisteredService> list = this.dao.load();
+        assertNotNull(this.dao.findServiceById(r.getId()));
+        assertEquals(r.getProperties().size(), 2);
+        assertNotNull(r.getProperties().get("field1"));
+
+        final RegisteredServiceProperty prop = r.getProperties().get("field1");
+        assertEquals(prop.getValues().size(), 2);
     }
 
 }

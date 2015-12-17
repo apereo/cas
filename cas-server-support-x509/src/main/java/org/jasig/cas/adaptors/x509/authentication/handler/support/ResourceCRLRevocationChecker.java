@@ -1,29 +1,16 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
 import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.security.auth.x500.X500Principal;
 import javax.validation.constraints.Min;
@@ -49,8 +36,8 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.7
  *
  */
-public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
-            implements InitializingBean {
+@Component("resourceCrlRevocationChecker")
+public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker  {
 
     /** Default refresh interval is 1 hour. */
     public static final int DEFAULT_REFRESH_INTERVAL = 3600;
@@ -61,15 +48,23 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     /** CRL refresh interval in seconds. */
     private int refreshInterval = DEFAULT_REFRESH_INTERVAL;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     /** Handles fetching CRL data. */
-    private final CRLFetcher fetcher;
+    @Autowired(required = false)
+    @Qualifier("x509CrlFetcher")
+    private CRLFetcher fetcher;
 
     /** Map of CRL issuer to CRL. */
     private final Map<X500Principal, X509CRL> crlIssuerMap =
             Collections.synchronizedMap(new HashMap<X500Principal, X509CRL>());
 
     /** Resource CRLs. **/
-    private final Set<Resource> resources;
+    private Set<Resource> resources;
+
+    /** Used for serialization and auto wiring. */
+    private ResourceCRLRevocationChecker() {}
 
     /**
      * Creates a new instance using the specified resource for CRL data.
@@ -97,27 +92,46 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
      * @param crls the crls
      * @since 4.1
      */
-    public ResourceCRLRevocationChecker(final CRLFetcher fetcher, final Resource[] crls) {
+    public ResourceCRLRevocationChecker(final CRLFetcher fetcher,
+                                        final Resource[] crls) {
         this.fetcher = fetcher;
         this.resources = ImmutableSet.copyOf(crls);
     }
-
 
     /**
      * Sets the interval at which CRL data should be reloaded from CRL resources.
      *
      * @param seconds Refresh interval in seconds; MUST be positive integer.
      */
-    public void setRefreshInterval(@Min(1) final int seconds) {
+    @Autowired
+    public void setRefreshInterval(@Min(1) @Value("${cas.x509.authn.crl.refresh.interval:" + DEFAULT_REFRESH_INTERVAL + '}')
+                                   final int seconds) {
         this.refreshInterval = seconds;
     }
 
 
+    private void initializeResourcesFromContext() {
+        try {
+            this.resources = applicationContext.getBean("x509CrlResources", Set.class);
+            logger.debug("Located {} CRL resources from configuration", resources.size());
+        } catch (final Exception e) {
+            logger.debug("[x509CrlResources] is not defined in the application context");
+        }
+    }
+
     /**
-     * {@inheritDoc}
-     * Initializes the process that periodically fetches CRL data. */
+     * Initializes the process that periodically fetches CRL data.
+     */
+    @PostConstruct
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void init()  {
+        super.init();
+
+        initializeResourcesFromContext();
+        if (!validateConfiguration()) {
+            return;
+        }
+
         try {
             // Fetch CRL data synchronously and throw exception to abort if any fail
             final Set<X509CRL> results = this.fetcher.fetch(getResources());
@@ -143,6 +157,31 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
         };
         this.scheduler.scheduleAtFixedRate(
                 scheduledFetcher, this.refreshInterval, this.refreshInterval, TimeUnit.SECONDS);
+
+    }
+
+    private boolean validateConfiguration() {
+        if (resources == null || resources.isEmpty()) {
+            logger.debug("{} is not configured with resources. Skipping configuration...",
+                    this.getClass().getSimpleName());
+            return false;
+        }
+        if (this.fetcher == null) {
+            logger.debug("{} is not configured with a CRL fetcher. Skipping configuration...",
+                    this.getClass().getSimpleName());
+            return false;
+        }
+        if (getExpiredCRLPolicy() == null) {
+            logger.debug("{} is not configured with a CRL expiration policy. Skipping configuration...",
+                    this.getClass().getSimpleName());
+            return false;
+        }
+        if (getUnavailableCRLPolicy()== null) {
+            logger.debug("{} is not configured with a CRL unavailable policy. Skipping configuration...",
+                    this.getClass().getSimpleName());
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -187,6 +226,18 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker
     @PreDestroy
     public void shutdown() {
         this.scheduler.shutdown();
+    }
+
+    @Autowired(required=false)
+    @Override
+    public void setUnavailableCRLPolicy(@Qualifier("x509ResourceUnavailableRevocationPolicy") final RevocationPolicy policy) {
+        super.setUnavailableCRLPolicy(policy);
+    }
+
+    @Autowired(required=false)
+    @Override
+    public void setExpiredCRLPolicy(@Qualifier("x509ResourceExpiredRevocationPolicy") final RevocationPolicy policy) {
+        super.setExpiredCRLPolicy(policy);
     }
 
 }

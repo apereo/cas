@@ -1,22 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.jasig.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
@@ -28,7 +9,6 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.ApplicationContextProvider;
-import org.jasig.cas.util.ISOStandardDateFormat;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -57,6 +37,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     private final PrivateKey privateKey;
     private final PublicKey publicKey;
     private final GoogleSaml20ObjectBuilder samlObjectBuilder;
+    private int skewAllowance;
 
     /**
      * Instantiates a new Google accounts service response builder.
@@ -94,7 +75,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @return the SAML response
      */
     protected String constructSamlResponse(final GoogleAccountsService service) {
-        final DateTime currentDateTime = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
+        final DateTime currentDateTime = new DateTime();
         final DateTime notBeforeIssueInstant = DateTime.parse("2003-04-17T00:46:02Z");
 
         /*
@@ -122,11 +103,11 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             notBeforeIssueInstant, samlObjectBuilder.generateSecureRandomId());
 
         final Conditions conditions = samlObjectBuilder.newConditions(notBeforeIssueInstant,
-            currentDateTime, service.getId());
+                currentDateTime.plusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
 
         final Subject subject = samlObjectBuilder.newSubject(NameID.EMAIL, userId,
-            service.getId(), currentDateTime, service.getRequestId());
+            service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId());
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
@@ -137,5 +118,19 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final String result = writer.toString();
         logger.debug("Generated Google SAML response: {}", result);
         return result;
+    }
+
+    /**
+     * Sets the allowance for time skew in seconds
+     * between CAS and the client server.  Default 0s.
+     * This value will be subtracted from the current time when setting the SAML
+     * {@code NotBeforeDate} attribute, thereby allowing for the
+     * CAS server to be ahead of the client by as much as the value defined here.
+     *
+     * @param skewAllowance Number of seconds to allow for variance.
+     */
+    public void setSkewAllowance(final int skewAllowance) {
+        logger.debug("Using {} seconds as skew allowance.", skewAllowance);
+        this.skewAllowance = skewAllowance;
     }
 }

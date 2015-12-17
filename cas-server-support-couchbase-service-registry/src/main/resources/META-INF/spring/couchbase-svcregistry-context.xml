@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <bean id="nodesSet" class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+        <constructor-arg type="java.lang.String" value="${svcreg.couchbase.nodes:localhost:8091}"/>
+    </bean>
+
+    <bean id="serviceRegistryCouchbaseClientFactory" class="org.jasig.cas.couchbase.core.CouchbaseClientFactory"
+          p:nodes-ref="nodesSet"
+          p:timeout="${svcreg.couchbase.timeout:10}"
+          p:password="${svcreg.couchbase.password:}"
+          p:bucket="${svcreg.couchbase.bucket:default}" />
+</beans>

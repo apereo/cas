@@ -1,23 +1,7 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -53,7 +37,8 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
 
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
-    private final byte[] salt;
+    @JsonProperty
+    private final String salt;
 
     /**
      * Instantiates a new shibboleth compatible persistent id generator.
@@ -62,7 +47,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      * identified by for a particular service.
      */
     public ShibbolethCompatiblePersistentIdGenerator() {
-        this.salt = RandomStringUtils.randomAlphanumeric(CONST_DEFAULT_SALT_COUNT).getBytes(Charset.defaultCharset());
+        this.salt = RandomStringUtils.randomAlphanumeric(CONST_DEFAULT_SALT_COUNT);
     }
     
     /**
@@ -72,7 +57,11 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      */
     @Autowired
     public ShibbolethCompatiblePersistentIdGenerator(@NotNull @Value("${shib.id.gen.salt:casrox}") final String salt) {
-        this.salt = salt.getBytes(Charset.defaultCharset());
+        this.salt = salt;
+    }
+
+    private byte[] convertSaltToByteArray() {
+        return this.salt.getBytes(Charset.defaultCharset());
     }
 
     /**
@@ -80,9 +69,10 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
      *
      * @return the byte[] for the salt or null
      */
+    @JsonIgnore
     public byte[] getSalt() {
         try {
-            return ByteSource.wrap(this.salt).read();
+            return ByteSource.wrap(convertSaltToByteArray()).read();
         } catch (final IOException e) {
             LOGGER.warn("Salt cannot be read because the byte array from source could not be consumed");
         }
@@ -99,7 +89,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
             md.update(principal.getId().getBytes(charset));
             md.update(CONST_SEPARATOR);
 
-            final String result = CompressionUtils.encodeBase64(md.digest(this.salt));
+            final String result = CompressionUtils.encodeBase64(md.digest(convertSaltToByteArray()));
             return result.replaceAll(System.getProperty("line.separator"), "");
         } catch (final NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

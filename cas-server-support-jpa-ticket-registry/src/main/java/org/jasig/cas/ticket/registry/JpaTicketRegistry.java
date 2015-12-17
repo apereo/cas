@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.ticket.registry;
 
 import com.google.common.base.Predicate;
@@ -26,6 +8,7 @@ import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.quartz.Job;
@@ -66,9 +49,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.2.1
- *
  */
 @Component("jpaTicketRegistry")
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
@@ -95,11 +76,8 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
-    @NotNull
-    private String ticketGrantingTicketPrefix = TicketGrantingTicket.PREFIX;
-
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
         logger.debug("Updated ticket [{}].", ticket);
     }
@@ -188,7 +166,9 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      */
     private Ticket getRawTicket(final String ticketId) {
         try {
-            if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
+            if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
+                    || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
+                // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
                 return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
             }
 
@@ -213,10 +193,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         tickets.addAll(sts);
 
         return tickets;
-    }
-
-    public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
-        this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
     }
 
     @Override

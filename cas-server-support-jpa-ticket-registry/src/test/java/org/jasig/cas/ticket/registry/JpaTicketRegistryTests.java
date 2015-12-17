@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.authentication.TestUtils;
@@ -27,10 +9,12 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.jasig.cas.util.UniqueTicketIdGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -68,6 +52,10 @@ public class JpaTicketRegistryTests {
 
     private static final ExpirationPolicy EXP_POLICY_ST = new MultiTimeUseOrTimeoutExpirationPolicy(1, 1000);
 
+    private static final ExpirationPolicy EXP_POLICY_PGT = new HardTimeoutExpirationPolicy(2000);
+
+    private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
+
     /** Logger instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -85,18 +73,37 @@ public class JpaTicketRegistryTests {
 
     @Test
     public void verifyTicketCreationAndDeletion() throws Exception {
+        // TGT
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
         final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
         assertNotNull(tgtFromDb);
         assertEquals(newTgt.getId(), tgtFromDb.getId());
+
+        // ST
         final ServiceTicket newSt = grantServiceTicketInTransaction(tgtFromDb);
         final ServiceTicket stFromDb = (ServiceTicket) getTicketInTransaction(newSt.getId());
         assertNotNull(stFromDb);
         assertEquals(newSt.getId(), stFromDb.getId());
+
+        // PGT
+        final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
+        final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
+        assertNotNull(pgtFromDb);
+        assertEquals(newPgt.getId(), pgtFromDb.getId());
+
+        // PT
+        final ProxyTicket newPt = grantProxyTicketInTransaction(pgtFromDb);
+        final ProxyTicket ptFromDb = (ProxyTicket) getTicketInTransaction(newPt.getId());
+        assertNotNull(ptFromDb);
+        assertEquals(newPt.getId(), ptFromDb.getId());
+
+        // delete ticket hierarchy
         deleteTicketInTransaction(newTgt.getId());
         assertNull(getTicketInTransaction(newTgt.getId()));
         assertNull(getTicketInTransaction(newSt.getId()));
+        assertNull(getTicketInTransaction(newPgt.getId()));
+        assertNull(getTicketInTransaction(newPt.getId()));
     }
 
     @Test
@@ -114,7 +121,7 @@ public class JpaTicketRegistryTests {
                 assertNotNull(result.get());
             }
         } catch (final Exception e) {
-            logger.debug("testConcurrentServiceTicketGeneration produced an error", e);
+            logger.error("testConcurrentServiceTicketGeneration produced an error", e);
             fail("testConcurrentServiceTicketGeneration failed.");
         } finally {
             executor.shutdownNow();
@@ -126,18 +133,33 @@ public class JpaTicketRegistryTests {
         final Principal principal = new DefaultPrincipalFactory().createPrincipal(
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
-                ID_GENERATOR.getNewTicketId("TGT"),
+                ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
                 TestUtils.getAuthentication(principal),
                 EXP_POLICY_TGT);
     }
 
     static ServiceTicket newST(final TicketGrantingTicket parent) {
        return parent.grantServiceTicket(
-               ID_GENERATOR.getNewTicketId("ST"),
+               ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
                new MockService("https://service.example.com"),
                EXP_POLICY_ST,
                false,
                true);
+    }
+
+    static ProxyGrantingTicket newPGT(final ServiceTicket parent) {
+        return parent.grantProxyGrantingTicket(
+                ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
+                TestUtils.getAuthentication(),
+                EXP_POLICY_PGT);
+    }
+
+    static ProxyTicket newPT(final ProxyGrantingTicket parent) {
+        return parent.grantProxyTicket(
+                ID_GENERATOR.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX),
+                new MockService("https://proxy-service.example.com"),
+                EXP_POLICY_PT,
+                false);
     }
 
     void addTicketInTransaction(final Ticket ticket) {
@@ -174,6 +196,28 @@ public class JpaTicketRegistryTests {
             @Override
             public ServiceTicket doInTransaction(final TransactionStatus status) {
                 final ServiceTicket st = newST(parent);
+                jpaTicketRegistry.addTicket(st);
+                return st;
+            }
+        });
+    }
+
+    ProxyGrantingTicket grantProxyGrantingTicketInTransaction(final ServiceTicket parent) {
+        return new TransactionTemplate(txManager).execute(new TransactionCallback<ProxyGrantingTicket>() {
+            @Override
+            public ProxyGrantingTicket doInTransaction(final TransactionStatus status) {
+                final ProxyGrantingTicket pgt = newPGT(parent);
+                jpaTicketRegistry.addTicket(pgt);
+                return pgt;
+            }
+        });
+    }
+
+    ProxyTicket grantProxyTicketInTransaction(final ProxyGrantingTicket parent) {
+        return new TransactionTemplate(txManager).execute(new TransactionCallback<ProxyTicket>() {
+            @Override
+            public ProxyTicket doInTransaction(final TransactionStatus status) {
+                final ProxyTicket st = newPT(parent);
                 jpaTicketRegistry.addTicket(st);
                 return st;
             }

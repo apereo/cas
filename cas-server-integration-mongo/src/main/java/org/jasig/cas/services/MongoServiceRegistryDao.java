@@ -1,27 +1,9 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 package org.jasig.cas.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -31,7 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * <p>Implementation of <code>ServiceRegistryDao</code> that uses a MongoDb repository as the backend
+ * <p>Implementation of {@code ServiceRegistryDao} that uses a MongoDb repository as the backend
  * persistence mechanism. The repository is configured by the Spring application context. </p>
  * <p>The class will automatically create a default collection to use with services. The name
  * of the collection may be specified through {@link #setCollectionName(String)}.
@@ -52,8 +34,9 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
     private boolean dropCollection;
 
     @Autowired
+    @Qualifier("mongoTemplate")
     @NotNull
-    private final MongoOperations mongoTemplate = null;
+    private MongoOperations mongoTemplate;
 
     /**
      * Initialized registry post construction.
@@ -62,17 +45,20 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
      * @throws Exception thrown if collection cant be dropped/created.
      */
     @PostConstruct
-    public void afterPropertiesSet() throws Exception {
-        if (this.dropCollection) {
-            LOGGER.debug("Dropping database collection: {}", this.collectionName);
-            this.mongoTemplate.dropCollection(this.collectionName);
-        }
+    public void init() {
+        if (this.mongoTemplate == null) {
+            throw new RuntimeException("Mongo template is not correctly configured");
+        } else {
+            if (this.dropCollection) {
+                LOGGER.debug("Dropping database collection: {}", this.collectionName);
+                this.mongoTemplate.dropCollection(this.collectionName);
+            }
 
-        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: {}", this.collectionName);
-            this.mongoTemplate.createCollection(this.collectionName);
+            if (!this.mongoTemplate.collectionExists(this.collectionName)) {
+                LOGGER.debug("Creating database collection: {}", this.collectionName);
+                this.mongoTemplate.createCollection(this.collectionName);
+            }
         }
-
 
     }
 
@@ -127,5 +113,9 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
      */
     public void setDropCollection(final boolean dropCollection) {
         this.dropCollection = dropCollection;
+    }
+
+    public void setMongoTemplate(final MongoOperations mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
     }
 }

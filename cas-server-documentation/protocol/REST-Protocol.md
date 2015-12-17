@@ -83,6 +83,18 @@ DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 {% endhighlight %}
 
 ##Add Service
+
+Support is enabled by including the following in your maven overlay:
+
+{% highlight xml %}
+<dependency>
+    <groupId>org.jasig.cas</groupId>
+    <artifactId>cas-server-support-rest-services</artifactId>
+    <version>${cas.version}</version>
+    <scope>runtime</scope>
+</dependency>
+{% endhighlight %}
+
 Invoke CAS to register applications into its own service registry. The REST
 call must be authenticated as it requires a TGT from the CAS server, and furthermore,
 the authenticated principal that submits the request must be authorized with a
@@ -106,4 +118,22 @@ the generated identifier of the new service.
 {% highlight bash %}
 200 OK
 5463544213
+{% endhighlight %}
+
+## CAS REST Clients
+In order to interact with the CAS REST API, a REST client must be used to submit credentials,
+receive tickets and validate them. The following Java REST client is available
+by [pac4j](https://github.com/pac4j/pac4j):
+
+{% highlight java %}
+String casUrlPrefix = "http://localhost:8080/cas";
+CasRestAuthenticator authenticator = new CasRestAuthenticator(casUrlPrefix);
+CasRestFormClient client = new CasRestFormClient(authenticator);
+
+// The request object must contain the CAS credentials
+final WebContext webContext = new J2EContext(request, response);
+final HttpTGTProfile profile = client.requestTicketGrantingTicket(context);
+final CasCredentials casCreds = client.requestServiceTicket("<SERVICE_URL>", profile);
+final CasProfile casProfile = client.validateServiceTicket("<SERVICE_URL>", casCreds);
+client.destroyTicketGrantingTicket(context, profile);
 {% endhighlight %}

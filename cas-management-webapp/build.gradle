@@ -1,0 +1,48 @@
+apply plugin: 'war'
+apply plugin: "org.akhikhl.gretty"
+
+description = 'Apereo CAS Management Web Application'
+
+javadoc {
+    enabled false
+}
+
+war {
+    manifest {
+        attributes("Implementation-Title": project.name,
+                "Implementation-Vendor": project.group,
+                "Created-By": project.group,
+                "Implementation-Date": new Date(),
+                "Implementation-Version": project.version)
+    }
+}
+
+dependencies {
+    runtime project(':cas-management-webapp-support')
+}
+
+configurations {
+    grettyRunnerJetty9 {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.ow2.asm') {
+                details.useVersion('5.0.3')
+            }
+            if (details.requested.group == 'org.glassfish'
+                    && details.requested.name == 'javax.el') {
+                details.useVersion(javaxElVersion)
+            }
+        }
+    }
+}
+
+gretty {
+    jvmArgs = ["-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug","-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
+    scanInterval = 5
+    contextPath = '/cas-management'
+    httpsEnabled = true
+    httpsPort = 8443
+    sslKeyStorePath = '/etc/cas/jetty/thekeystore'
+    sslKeyStorePassword = 'changeit'
+    sslTrustStorePath = '/etc/cas/jetty/thekeystore'
+    sslKeyStorePassword = 'changeit'
+}

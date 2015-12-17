@@ -1,26 +1,9 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.slf4j.impl;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.InvalidTicketException;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.After;
 import org.junit.Before;
@@ -47,9 +30,9 @@ public class CasLoggerFactoryTests {
 
     private static final String ID1 = TicketGrantingTicket.PREFIX
             + "-1-B0tjWgMIhUU4kgCZdXbxnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
-    private static final String ID2 = TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
+    private static final String ID2 = ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
             + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
-    private static final String ID3 = TicketGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX
+    private static final String ID3 = ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX
             + "-1-B0tjWgMIhUU4kgCZd32xnWccTFYpTbRbArjaoutXnlNMbIShEu-cas";
 
     private Logger logger;

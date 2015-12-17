@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.Authentication;
@@ -35,9 +17,8 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
-import org.jasig.cas.ticket.TicketState;
-import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.validation.Assertion;
 import org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.jasig.cas.validation.ValidationSpecification;
@@ -47,14 +28,19 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTest {
+public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test(expected = AuthenticationException.class)
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() throws Exception {
@@ -89,7 +75,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test(expected = TicketCreationException.class)
     public void disallowNullCredentionalsWhenCreatingTicketGrantingTicket() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(null);
+            .createTicketGrantingTicket(new Credential[] {null});
 
     }
 
@@ -158,12 +144,12 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService());
-        final TicketGrantingTicket pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
+        final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), org.jasig.cas.services.TestUtils.getHttpBasedServiceCredentials());
 
-        final ServiceTicket pt = getCentralAuthenticationService().grantServiceTicket(pgt.getId(),
-                getService(), new Credential[]{});
-        assertTrue(pt.getId().startsWith(ServiceTicket.PROXY_TICKET_PREFIX));
+        final ProxyTicket pt = getCentralAuthenticationService().grantProxyTicket(pgt.getId(),
+                getService());
+        assertTrue(pt.getId().startsWith(ProxyTicket.PROXY_TICKET_PREFIX));
     }
 
     @Test(expected = AbstractTicketException.class)
@@ -176,30 +162,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             getService());
     }
 
-    @Test(expected = AbstractTicketException.class)
-    public void verifyGrantServiceTicketWithExpiredTicketGrantingTicket() throws Exception {
-        ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(
-            new ExpirationPolicy() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public boolean isExpired(final TicketState ticket) {
-                    return true;
-                }
-            });
-
-        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        try {
-            getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
-                getService());
-        } finally {
-            ((CentralAuthenticationServiceImpl) getCentralAuthenticationService()).setTicketGrantingTicketExpirationPolicy(
-                new NeverExpiresExpirationPolicy());
-        }
-    }
-
     @Test
     public void verifyDelegateTicketGrantingTicketWithProperParams() throws Exception {
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
@@ -207,9 +169,9 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
                 TestUtils.getCredentialsWithSameUsernameAndPassword());
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService());
-        final TicketGrantingTicket pgt = getCentralAuthenticationService().delegateTicketGrantingTicket(
+        final TicketGrantingTicket pgt = getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), org.jasig.cas.services.TestUtils.getHttpBasedServiceCredentials());
-        assertTrue(pgt.getId().startsWith(TicketGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
+        assertTrue(pgt.getId().startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX));
     }
 
     @Test(expected = AbstractTicketException.class)
@@ -220,7 +182,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final ServiceTicket serviceTicketId = getCentralAuthenticationService()
             .grantServiceTicket(ticketId.getId(), getService());
         getCentralAuthenticationService().destroyTicketGrantingTicket(ticketId.getId());
-        getCentralAuthenticationService().delegateTicketGrantingTicket(
+        getCentralAuthenticationService().createProxyGrantingTicket(
             serviceTicketId.getId(), org.jasig.cas.services.TestUtils.getHttpBasedServiceCredentials());
     }
 
@@ -242,25 +204,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         getCentralAuthenticationService().grantServiceTicket(
             ticketGrantingTicket.getId(), getService(),
             TestUtils.getCredentialsWithSameUsernameAndPassword("testB"));
-    }
-
-    @Test
-    public void verifyValidateServiceTicketWithExpires() throws Exception {
-        ((CentralAuthenticationServiceImpl) getCentralAuthenticationService())
-            .setServiceTicketExpirationPolicy(new MultiTimeUseOrTimeoutExpirationPolicy(
-                1, 1100));
-        final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
-            .createTicketGrantingTicket(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        final ServiceTicket serviceTicket = getCentralAuthenticationService()
-            .grantServiceTicket(ticketGrantingTicket.getId(), getService());
-
-        getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(),
-            getService());
-
-        assertFalse(getTicketRegistry().deleteTicket(serviceTicket.getId()));
-        ((CentralAuthenticationServiceImpl) getCentralAuthenticationService())
-            .setServiceTicketExpirationPolicy(new NeverExpiresExpirationPolicy());
     }
 
     @Test
@@ -303,7 +246,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test(expected = AbstractTicketException.class)
     public void verifyValidateServiceTicketNonExistantTicket() throws Exception {
-        getCentralAuthenticationService().validateServiceTicket("test",
+        getCentralAuthenticationService().validateServiceTicket("google",
             getService());
     }
 
@@ -361,7 +304,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(cred);
 
         final Service svc = getService("TestSsoFalse");
-        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, null);
+        getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc,
+                new Credential[] {null});
     }
 
     @Test
@@ -445,7 +389,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
      * - a first authentication for a default service
      * - a second authentication with the renew parameter and the same service (and same credentials)
      * - a validation of the second ticket.
-     * <p/>
      * When supplemental authentications were returned with the chained authentications, the validation specification
      * failed as it only expects one authentication. Thus supplemental authentications should not be returned in the
      * chained authentications. Both concepts are orthogonal.
@@ -483,14 +426,14 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         // consider authentication has happened and the TGT is in the registry
         registry.addTicket(tgt);
         // create a new CASimpl
-        final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry,  null, null, null, null, null,
-            null, logoutManager);
+        final CentralAuthenticationServiceImpl cas = new CentralAuthenticationServiceImpl(registry, null, null,
+                null, logoutManager);
         cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
         // destroy to mark expired and then delete : the opposite would fail with a "No ticket to update" error from the registry
         cas.destroyTicketGrantingTicket(tgt.getId());
     }
 
-    private Service getService(final String name) {
+    private static Service getService(final String name) {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", name);
         return new WebApplicationServiceFactory().createService(request);

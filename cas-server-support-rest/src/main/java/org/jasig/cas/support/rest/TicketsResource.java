@@ -1,25 +1,10 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
@@ -42,11 +27,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Formatter;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
- * {@link org.springframework.web.bind.annotation.RestController} implementation of CAS' REST API.
+ * {@link RestController} implementation of CAS' REST API.
  *
  * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
  *
@@ -59,7 +49,7 @@ import java.util.Formatter;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
-@RestController
+@RestController("ticketResourceRestController")
 public class TicketsResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketsResource.class);
@@ -68,32 +58,58 @@ public class TicketsResource {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
+    @Autowired(required = false)
+    private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
+
+    /**
+     * JSON ObjectMapper.
+     */
+    private final ObjectMapper jacksonObjectMapper = new ObjectMapper();
+
+
     /**
      * Create new ticket granting ticket.
      *
      * @param requestBody username and password application/x-www-form-urlencoded values
      * @param request raw HttpServletRequest used to call this method
      * @return ResponseEntity representing RESTful response
+     * @throws JsonProcessingException in case of JSON parsing failure
      */
     @RequestMapping(value = "/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
-                                                                   final HttpServletRequest request) {
+                                                                   final HttpServletRequest request) throws JsonProcessingException {
         try (Formatter fmt = new Formatter()) {
-            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
+            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(this.credentialFactory.fromRequestBody(requestBody));
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
             headers.setContentType(MediaType.TEXT_HTML);
             fmt.format("<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
-            //IETF//DTD HTML 2.0//EN\\\"><html><head><title>");
             fmt.format("%s %s", HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase())
                     .format("</title></head><body><h1>TGT Created</h1><form action=\"%s", ticketReference.toString())
                     .format("\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">")
                     .format("<br><input type=\"submit\" value=\"Submit\"></form></body></html>");
             return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
-        } catch (final Throwable e) {
+        }
+        catch(final AuthenticationException e) {
+            final List<String> authnExceptions = new LinkedList<>();
+            for (final Map.Entry<String, Class<? extends Exception>> handlerErrorEntry: e.getHandlerErrors().entrySet()) {
+                authnExceptions.add(handlerErrorEntry.getValue().getSimpleName());
+            }
+            final Map<String, List<String>> errorsMap = new HashMap<>();
+            errorsMap.put("authentication_exceptions", authnExceptions);
+            LOGGER.error(e.getMessage(), e);
+            LOGGER.error(String.format("Caused by: %s", authnExceptions));
+            return new ResponseEntity<>(this.jacksonObjectMapper
+                    .writer()
+                    .withDefaultPrettyPrinter()
+                    .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
+        } catch(final BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (final Throwable e) {
+            LOGGER.error(e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -115,7 +131,7 @@ public class TicketsResource {
             return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -129,20 +145,36 @@ public class TicketsResource {
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
     public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.cas.destroyTicketGrantingTicket(tgtId);
-        return new ResponseEntity<String>(tgtId, HttpStatus.OK);
+        return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }
 
     /**
-     * Obtain credential from the request. Could be overridden by subclasses.
-     *
-     * @param requestBody raw entity request body
-     * @return the credential instance
+     * Default implementation of CredentialFactory.
      */
-    protected Credential obtainCredential(final MultiValueMap<String, String> requestBody) {
-        return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
+
+    public static class DefaultCredentialFactory implements CredentialFactory {
+
+        @Override
+        public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
+            final String username = requestBody.getFirst("username");
+            final String password = requestBody.getFirst("password");
+            if(username == null || password == null) {
+                throw new BadRequestException("Invalid payload. 'username' and 'password' form fields are required.");
+            }
+            return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
+        }
     }
 
-    public CentralAuthenticationService getCas() {
-        return cas;
+    /**
+     * Exception to indicate bad payload.
+     */
+    public static class BadRequestException extends IllegalArgumentException {
+        /**
+         * Ctor.
+         * @param msg error message
+         */
+        public BadRequestException(final String msg) {
+            super(msg);
+        }
     }
 }

@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -116,21 +98,21 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     @Autowired
     public final void setFailureThreshold(@Value("${cas.throttle.failure.threshold:"
-                                            + DEFAULT_FAILURE_THRESHOLD + "}")
+                                            + DEFAULT_FAILURE_THRESHOLD + '}')
                                           final int failureThreshold) {
         this.failureThreshold = failureThreshold;
     }
 
     @Autowired
     public final void setFailureRangeInSeconds(@Value("${cas.throttle.failure.range.seconds:"
-                                                        + DEFAULT_FAILURE_RANGE_IN_SECONDS + "}")
+                                                        + DEFAULT_FAILURE_RANGE_IN_SECONDS + '}')
                                                final int failureRangeInSeconds) {
         this.failureRangeInSeconds = failureRangeInSeconds;
     }
 
     @Autowired
     public final void setUsernameParameter(@Value("${cas.throttle.username.parameter:"
-                                                + DEFAULT_USERNAME_PARAMETER + "}")
+                                                + DEFAULT_USERNAME_PARAMETER + '}')
                                                final String usernameParameter) {
         this.usernameParameter = usernameParameter;
     }

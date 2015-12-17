@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-
-    Licensed to Apereo under one or more contributor license
-    agreements. See the NOTICE file distributed with this work
-    for additional information regarding copyright ownership.
-    Apereo licenses this file to you under the Apache License,
-    Version 2.0 (the "License"); you may not use this file
-    except in compliance with the License.  You may obtain a
-    copy of the License at the following location:
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
-
--->
-<!--
     | managementConfigContext.xml centralizes into one file some of the declarative configuration that
     | all CAS deployers will need to modify for the (services) management webapp.
     |
@@ -30,22 +10,22 @@
 
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:c="http://www.springframework.org/schema/c"
-       xmlns:sec="http://www.springframework.org/schema/security"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--
     This bean defines the security roles for the Services Management application.  Simple deployments can use the in-memory version.
     More robust deployments will want to use another option, such as the Jdbc version.
 
-    The name of this should remain "userDetailsService" in order for Spring Security to find it.
+    The name of this should remain "authorizationGenerator" in order for the pac4j security context to find it.
      -->
-    <sec:user-service id="userDetailsService"
-                      properties="${user.details.file.location:classpath:user-details.properties}"/>
+    <util:properties id="userProperties" location="${user.details.file.location:classpath:user-details.properties}" />
+
+    <bean id="authorizationGenerator" class="org.pac4j.core.authorization.generator.SpringSecurityPropertiesAuthorizationGenerator">
+        <constructor-arg name="properties" ref="userProperties" />
+    </bean>
 
     <!-- 
     Bean that defines the attributes that a service may return.  This example uses the Stub/Mock version.  A real implementation

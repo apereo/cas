@@ -1,21 +1,3 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.support.rest;
 
 import org.jasig.cas.CentralAuthenticationService;
@@ -96,8 +78,30 @@ public class TicketsResourceTests {
         this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().json("{\"authentication_exceptions\" : [ \"LoginException\" ]}"));
+    }
+
+    @Test
+    public void creationOfTGTWithUnexpectedRuntimeException() throws Throwable {
+        configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
+
+        this.mockMvc.perform(post("/cas/v1/tickets")
+                .param("username", "test")
+                .param("password", "test"))
+                .andExpect(status().is5xxServerError())
+                .andExpect(content().string("Other exception"));
+    }
+
+    @Test
+    public void creationOfTGTWithBadPayload() throws Throwable {
+        configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
+
+        this.mockMvc.perform(post("/cas/v1/tickets")
+                .param("no_username_param", "test")
+                .param("no_password_param", "test"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(content().string("1 errors, 0 successes"));
+                .andExpect(content().string("Invalid payload. 'username' and 'password' form fields are required."));
     }
 
     @Test
@@ -127,7 +131,7 @@ public class TicketsResourceTests {
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
                 .param("service", "https://www.google.com"))
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().is5xxServerError())
                 .andExpect(content().string("Other exception"));
     }
 
@@ -147,6 +151,10 @@ public class TicketsResourceTests {
         final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>(1);
         handlerErrors.put("TestCaseAuthenticationHander", LoginException.class);
         when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenThrow(new AuthenticationException(handlerErrors));
+    }
+
+    private void configureCasMockTGTCreationToThrow(final Throwable e) throws Throwable {
+        when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenThrow(e);
     }
 
     private void configureCasMockSTCreationToThrow(final Throwable e) throws Throwable {

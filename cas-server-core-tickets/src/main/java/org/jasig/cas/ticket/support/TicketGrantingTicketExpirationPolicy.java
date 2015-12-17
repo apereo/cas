@@ -1,24 +1,8 @@
-/*
- * Licensed to Apereo under one or more contributor license
- * agreements. See the NOTICE file distributed with this work
- * for additional information regarding copyright ownership.
- * Apereo licenses this file to you under the Apache License,
- * Version 2.0 (the "License"); you may not use this file
- * except in compliance with the License.  You may obtain a
- * copy of the License at the following location:
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package org.jasig.cas.ticket.support;
 
 import org.jasig.cas.ticket.TicketState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -38,6 +22,12 @@ public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpir
 
     /** Serialization support. */
     private static final long serialVersionUID = 7670537200691354820L;
+
+    /**
+     * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
+     * deserialization the field is null.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketExpirationPolicy.class);
 
     /** Maximum time this ticket is valid.  */
     @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
@@ -74,13 +64,13 @@ public final class TicketGrantingTicketExpirationPolicy extends AbstractCasExpir
 
         // Ticket has been used, check maxTimeToLive (hard window)
         if ((currentSystemTimeInMillis - ticketState.getCreationTime() >= maxTimeToLiveInMilliSeconds)) {
-            logger.debug("Ticket is expired because the time since creation is greater than maxTimeToLiveInMilliSeconds");
+            LOGGER.debug("Ticket is expired because the time since creation is greater than maxTimeToLiveInMilliSeconds");
             return true;
         }
 
         // Ticket is within hard window, check timeToKill (sliding window)
         if ((currentSystemTimeInMillis - ticketState.getLastTimeUsed() >= timeToKillInMilliSeconds)) {
-            logger.debug("Ticket is expired because the time since last use is greater than timeToKillInMilliseconds");
+            LOGGER.debug("Ticket is expired because the time since last use is greater than timeToKillInMilliseconds");
             return true;
         }
 
