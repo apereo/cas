@@ -47,6 +47,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         context.refresh();
         this.serviceValidateController = new ServiceValidateController();
         this.serviceValidateController.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.serviceValidateController.setAuthenticationObjectsRepository(getAuthenticationObjectsRepository());
         final Cas20ProxyHandler proxyHandler = new Cas20ProxyHandler();
         proxyHandler.setHttpClient(new SimpleHttpClientFactoryBean().getObject());
         this.serviceValidateController.setProxyHandler(proxyHandler);
@@ -59,11 +60,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final AuthenticationContext ctx = getAuthenticationContext(SERVICE,
                 org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
 
-        final TicketGrantingTicket tId = getCentralAuthenticationService()
-                .createTicketGrantingTicket(ctx);
+        final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
-        final ServiceTicket sId2 = getCentralAuthenticationService().grantServiceTicket(tId.getId(),
-                SERVICE, ctx);
+        final ServiceTicket sId2 = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, null);
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("service", SERVICE.getId());

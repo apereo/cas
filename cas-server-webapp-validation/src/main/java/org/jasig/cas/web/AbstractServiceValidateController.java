@@ -434,6 +434,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
     }
 
+    public void setAuthenticationObjectsRepository(final AuthenticationObjectsRepository authenticationObjectsRepository) {
+        this.authenticationObjectsRepository = authenticationObjectsRepository;
+    }
+
     public void setApplicationContext(final ApplicationContext context) {
         this.context = context;
     }
