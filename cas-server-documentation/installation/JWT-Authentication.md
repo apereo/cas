@@ -9,14 +9,14 @@ CAS provides support for token-based authentication on top of JWT, where an auth
 on a form of credentials that are JWTs. 
 
 ## Overview
-CAS expects a `token` parameter to be passed along to the `/login` endpoint. The parameter value must be a JWT that is generated via the 
-following script using [Pac4j](https://github.com/pac4j/pac4j):
+CAS expects a `token` parameter to be passed along to the `/login` endpoint. The parameter value must be a 
+JWT. Here is an example of how to generate a JWT via [Pac4j](https://github.com/pac4j/pac4j):
 
 {% highlight java %}
 import org.pac4j.http.profile.HttpProfile;
 import org.pac4j.jwt.profile.JwtGenerator;
 ...
-JwtGenerator<HttpProfile> g = new JwtGenerator<>("<TOKEN_SECRET>", true);
+JwtGenerator<HttpProfile> g = new JwtGenerator<>("<SIGNING_SECRET>", "<ENCRYPTION_SECRET>");
 HttpProfile profile = new HttpProfile();
 profile.setId("<PRINCIPAL_ID>");
 final String token = g.generate(profile);
@@ -24,7 +24,7 @@ System.out.println(token);
 ...
 {% endhighlight %}
 
-...where `<TOKEN_SECRET>` is the secret key used for signing and encryption.
+...where `<SIGNING_SECRET>` and `<ENCRYPTION_SECRET>` are the secret keys used for signing and encryption.
 
 Once the token is generated, you may pass it to the `/login` endpoint of CAS as such:
 
@@ -59,9 +59,15 @@ Configure the appropriate service in your service registry to hold the secret:
   "id" : 1,
   "properties" : {
     "@class" : "java.util.HashMap",
-    "jwtSecret" : {
+    "jwtSigningSecret" : {
       "@class" : "org.jasig.cas.services.DefaultRegisteredServiceProperty",
-      "values" : [ "java.util.HashSet", [ "<TOKEN_SECRET>" ] ]
+      "values" : [ "java.util.HashSet", [ "<SIGNING_SECRET>" ] ]
+    },
+    "jwtEncryptionSecret" : {
+      "@class" : "org.jasig.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "<ENCRYPTION_SECRET>" ] ]
     }
 }
 {% endhighlight %}
+
+Note that the configuration of `jwtEncryptionSecret` is optional. 
