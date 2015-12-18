@@ -58,12 +58,7 @@ public final class RegisteredServiceEditBean implements Serializable {
      */
     public static class FormData {
         private List<String> availableAttributes = new ArrayList<>();
-
-        /**
-         * This is reserved for usage by any custom components that need to present their config to the management UI.
-         * This should only contain nested Maps and Arrays of simple values.
-         */
-        private Map<String, Object> customComponent = new HashMap<>();
+        private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
         public List<String> getAvailableAttributes() {
             return availableAttributes;
@@ -73,12 +68,37 @@ public final class RegisteredServiceEditBean implements Serializable {
             this.availableAttributes = availableAttributes;
         }
 
-        public Map<String, Object> getCustomComponent() {
+        /**
+         * Visible for serialization only. Use {@link FormData#getCustomComponent(String)} instead.
+         *
+         * @return all the custom components
+         */
+        public Map<String, Map<String, ?>> getCustomComponent() {
             return customComponent;
         }
 
-        public void setCustomComponent(final Map<String, Object> customComponent) {
-            this.customComponent = customComponent;
+        /**
+         * Get the current properties for the specified custom component. The returned {@link Map} should only contain
+         * nested Maps, Arrays, and simple objects.
+         *
+         * @param componentName name of the component to get the properties for (this should be unique for each
+         *                      component)
+         * @return current custom component properties
+         */
+        public Map<String, ?> getCustomComponent(final String componentName) {
+            return customComponent.get(componentName);
+        }
+
+        /**
+         * This is reserved for usage by any custom components that need to present their config to the management UI.
+         * The provided {@link Map} should only contain nested Maps, Arrays, and simple objects.
+         *
+         * @param componentName name of the component to store the properties for (this should be unique for each
+         *                      component)
+         * @param properties    custom component properties
+         */
+        public void setCustomComponent(final String componentName, final Map<String, ?> properties) {
+            this.customComponent.put(componentName, properties);
         }
     }
 
@@ -105,12 +125,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
         private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
-
-        /**
-         * This is reserved for usage by any custom components that need to present their config to the management UI.
-         * This should only contain nested Maps and Arrays of simple values.
-         */
-        private Map<String, Object> customComponent = new HashMap<>();
+        private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
         public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
             return attrRelease;
@@ -248,12 +263,46 @@ public final class RegisteredServiceEditBean implements Serializable {
             this.logoUrl = logoUrl;
         }
 
-        public Map<String, Object> getCustomComponent() {
+        /**
+         * Visible for serialization only. Use {@link ServiceData#getCustomComponent(String)} instead.
+         *
+         * @return all the custom components
+         */
+        public Map<String, ? extends Map<String, ?>> getCustomComponent() {
             return customComponent;
         }
 
-        public void setCustomComponent(final Map<String, Object> customComponent) {
+        /**
+         * Visible for deserialization only. Use {@link ServiceData#setCustomComponent(String, Map)} instead.
+         *
+         * @param customComponent all the custom component properties
+         */
+        public void setCustomComponent(final Map<String, Map<String, ?>> customComponent) {
             this.customComponent = customComponent;
+        }
+
+        /**
+         * Get the current properties for the specified custom component. The returned {@link Map} should only contain
+         * nested Maps, Arrays, and simple objects.
+         *
+         * @param componentName name of the component to get the properties for (this should be unique for each
+         *                      component)
+         * @return current custom component properties
+         */
+        public Map<String, ?> getCustomComponent(final String componentName) {
+            return customComponent.get(componentName);
+        }
+
+        /**
+         * This is reserved for usage by any custom components that need to present their config to the management UI.
+         * The provided {@link Map} should only contain nested Maps, Arrays, and simple objects.
+         *
+         * @param componentName name of the component to store the properties for (this should be unique for each
+         *                      component)
+         * @param properties    custom component properties
+         */
+        public void setCustomComponent(final String componentName, final Map<String, ?> properties) {
+            this.customComponent.put(componentName, properties);
         }
     }
 }
