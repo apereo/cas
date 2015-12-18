@@ -50,7 +50,8 @@ function generateSidebarLinksForActiveVersion() {
 
 function generateToolbarIcons() {
   var CAS_REPO_URL_GITHUB = $('#forkme_banner').attr('href');
-
+  var activeVersion = getActiveDocumentationVersionInView(true);
+  
   var uri = new URI(document.location);
   var segments = uri.segment();
   var page = "";
@@ -60,6 +61,7 @@ function generateToolbarIcons() {
   }
   editablePage = page.replace(".html", ".md");
   editablePage = editablePage.replace(CONST_CURRENT_VER, "")
+  editablePage = editablePage.replace(activeVersion, "")
   if (editablePage == "") {
   	editablePage = "index.md";
   }
@@ -72,7 +74,7 @@ function generateToolbarIcons() {
   	imagesPath = uri2 + "images/"
   }
 
-  var activeVersion = getActiveDocumentationVersionInView(true);
+  
   if (activeVersion != CONST_CURRENT_VER && activeVersion != "") {
     var linkToDev = "/cas/" + page.replace(activeVersion, CONST_CURRENT_VER);
     linkToDev = linkToDev.replace("html/", "html");
