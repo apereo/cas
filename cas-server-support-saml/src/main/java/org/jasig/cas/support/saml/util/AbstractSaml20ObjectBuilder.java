@@ -294,7 +294,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return null;
         }
 
-        final byte[] decodedBytes = CompressionUtils.decodeBase64ToByteArray(encodedRequestXmlString);
+        final byte[] decodedBytes = CompressionUtils.decodeBase64(encodedRequestXmlString);
         if (decodedBytes == null) {
             return null;
         }
