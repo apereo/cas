@@ -11,6 +11,7 @@ import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,7 +21,10 @@ import java.util.concurrent.TimeUnit;
  * @author Daniel Frett
  * @since 4.2
  */
+@Component(DefaultPrincipalAttributesRepositoryMapper.BEAN_NAME)
 public class DefaultPrincipalAttributesRepositoryMapper implements PrincipalAttributesRepositoryMapper {
+    public static final String BEAN_NAME = "defaultPrincipalAttributesRepositoryMapper";
+
     @Override
     public void mapPrincipalRepository(final PrincipalAttributesRepository pr, final ServiceData bean) {
         final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();

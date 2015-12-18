@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredServiceAttributeFilter;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
+import org.springframework.stereotype.Component;
 
 /**
  * Default mapper for converting {@link RegisteredServiceAttributeFilter} to/from {@link ServiceData}.
@@ -11,7 +12,10 @@ import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
  * @author Daniel Frett
  * @since 4.2
  */
+@Component(DefaultAttributeFilterMapper.BEAN_NAME)
 public class DefaultAttributeFilterMapper implements AttributeFilterMapper {
+    public static final String BEAN_NAME = "defaultAttributeFilterMapper";
+
     @Override
     public void mapAttributeFilter(final RegisteredServiceAttributeFilter filter, final ServiceData bean) {
         if (filter instanceof RegisteredServiceRegexAttributeFilter) {
