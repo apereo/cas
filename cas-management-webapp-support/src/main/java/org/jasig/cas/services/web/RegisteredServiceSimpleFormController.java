@@ -45,6 +45,7 @@ public final class RegisteredServiceSimpleFormController extends AbstractManagem
     public RegisteredServiceSimpleFormController(
         @Qualifier("servicesManager")
         final ReloadableServicesManager servicesManager,
+        @Qualifier("registeredServiceFactory")
         final RegisteredServiceFactory registeredServiceFactory) {
         super(servicesManager);
         this.registeredServiceFactory = registeredServiceFactory;
