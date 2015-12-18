@@ -149,7 +149,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             if (val == null || val.length == 0) {
                 throw new CertificateException("Empty attribute. Can not download CRL from ldap");
             }
-            final byte[] decoded64 = CompressionUtils.decodeBase64ToByteArray(val);
+            final byte[] decoded64 = CompressionUtils.decodeBase64(val);
             if (decoded64 == null) {
                 throw new CertificateException("Could not decode the attribute value to base64");
             }

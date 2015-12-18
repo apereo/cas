@@ -271,7 +271,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-            final byte[] ivCiphertext = CompressionUtils.decodeBase64ToByteArray(value);
+            final byte[] ivCiphertext = CompressionUtils.decodeBase64(value);
             final int ivSize = byte2int(Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN));
             final byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + ivSize));
             final byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + ivSize, ivCiphertext.length);

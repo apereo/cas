@@ -136,7 +136,7 @@ public class FrontChannelLogoutActionTests {
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get(FrontChannelLogoutAction.DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL);
         assertTrue(url.startsWith(TEST_URL + '?' + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + '='));
-        final byte[] samlMessage = CompressionUtils.decodeBase64ToByteArray(
+        final byte[] samlMessage = CompressionUtils.decodeBase64(
                 URLDecoder.decode(StringUtils.substringAfter(url, '?' + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + '='), "UTF-8"));
         final Inflater decompresser = new Inflater();
         decompresser.setInput(samlMessage);
