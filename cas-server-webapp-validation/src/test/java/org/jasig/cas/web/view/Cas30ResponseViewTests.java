@@ -105,7 +105,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
 
             logger.debug("Decoding value [{}]", cred);
-            final byte[] cred64 = CompressionUtils.decodeBase64ToByteArray(cred);
+            final byte[] cred64 = CompressionUtils.decodeBase64(cred);
 
             logger.debug("Initializing decrypt-mode via private key [{}]", privateKey.getAlgorithm());
             cipher.init(Cipher.DECRYPT_MODE, privateKey);

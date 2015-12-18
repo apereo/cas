@@ -1,9 +1,9 @@
 package org.jasig.cas.util;
 
-import org.apache.commons.codec.binary.Base64;
+import org.jasig.cas.CipherExecutor;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.SerializationUtils;
-import org.jasig.cas.CipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -114,7 +115,7 @@ public final class CompressionUtils {
      * @return the encoded string
      */
     public static String encodeBase64(final byte[] data) {
-        return Base64.encodeBase64String(data);
+        return Base64.getEncoder().encodeToString(data);
     }
 
     /**
@@ -124,7 +125,17 @@ public final class CompressionUtils {
      * @return the encoded array
      */
     public static byte[] decodeBase64(final String data) {
-        return Base64.decodeBase64(data);
+        return Base64.getDecoder().decode(data);
+    }
+
+    /**
+     * Base64-decode the given string as byte[].
+     *
+     * @param data the base64 string
+     * @return the encoded array
+     */
+    public static byte[] decodeBase64(final byte[] data) {
+        return Base64.getDecoder().decode(data);
     }
 
     /**
@@ -134,40 +145,7 @@ public final class CompressionUtils {
      * @return the byte[] in base64
      */
     public static byte[] encodeBase64ToByteArray(final byte[] data) {
-        return Base64.encodeBase64(data);
-    }
-
-    /**
-     * Base64 decode operation, which retrieves the equivalent
-     * byte[] of the data in {@code UTF-8} encoding
-     * and decodes the result.
-     *
-     * @param data the data to encode
-     * @return the base64 decoded byte[] or null
-     */
-    public static byte[] decodeBase64ToByteArray(final String data) {
-        try {
-            final byte[] bytes = data.getBytes(UTF8_ENCODING);
-            return decodeBase64ToByteArray(bytes);
-        } catch (final Exception e) {
-            LOGGER.error("Base64 decoding failed", e);
-            return null;
-        }
-    }
-
-    /**
-     * Decode the byte[] in base64.
-     *
-     * @param data the data to encode
-     * @return the base64 decoded byte[] or null
-     */
-    public static byte[] decodeBase64ToByteArray(final byte[] data) {
-        try {
-            return Base64.decodeBase64(data);
-        } catch (final Exception e) {
-            LOGGER.error("Base64 decoding failed", e);
-            return null;
-        }
+        return Base64.getEncoder().encode(data);
     }
 
     /**
