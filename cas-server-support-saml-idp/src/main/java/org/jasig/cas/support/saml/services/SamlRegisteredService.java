@@ -62,7 +62,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     private String metadataLocation;
 
     @JsonIgnore
-    private transient ChainingMetadataResolver metadataResolver;;
+    private transient ChainingMetadataResolver metadataResolver;
 
     @JsonIgnore
     private final transient Object lock = new Object();
