@@ -23,12 +23,7 @@ public class RegisteredServiceViewBean implements Serializable {
     private String logoUrl;
     private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
     private RegisteredServiceAttributeReleasePolicyViewBean attrRelease = new RegisteredServiceAttributeReleasePolicyViewBean();
-
-    /**
-     * This is reserved for usage by any custom components that need to present their config to the management UI. This
-     * should only contain nested Maps and Arrays of simple values.
-     */
-    private Map<String, Object> customComponent = new HashMap<>();
+    private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
     public int getEvalOrder() {
         return evalOrder;
@@ -102,11 +97,34 @@ public class RegisteredServiceViewBean implements Serializable {
         this.attrRelease = attrRelease;
     }
 
-    public Map<String, Object> getCustomComponent() {
+    /**
+     * Visible for serialization only. Use {@link RegisteredServiceViewBean#getCustomComponent(String)} instead.
+     *
+     * @return all the custom components
+     */
+    public Map<String, Map<String, ?>> getCustomComponent() {
         return customComponent;
     }
 
-    public void setCustomComponent(final Map<String, Object> customComponent) {
-        this.customComponent = customComponent;
+    /**
+     * Get the current properties for the specified custom component. The returned {@link Map} should only contain
+     * nested Maps, Arrays, and simple objects.
+     *
+     * @param componentName name of the component to get the properties for (this should be unique for each component)
+     * @return current custom component properties
+     */
+    public Map<String, ?> getCustomComponent(final String componentName) {
+        return customComponent.get(componentName);
+    }
+
+    /**
+     * This is reserved for usage by any custom components that need to present their config to the management UI. The
+     * provided {@link Map} should only contain nested Maps, Arrays, and simple objects.
+     *
+     * @param componentName name of the component to store the properties for (this should be unique for each component)
+     * @param properties    custom component properties
+     */
+    public void setCustomComponent(final String componentName, final Map<String, ?> properties) {
+        this.customComponent.put(componentName, properties);
     }
 }
