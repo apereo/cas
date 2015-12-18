@@ -1,6 +1,7 @@
 package org.jasig.cas.services.web;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -8,8 +9,11 @@ import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
+import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.jasig.cas.services.web.factory.AttributeFormDataPopulator;
 import org.jasig.cas.services.web.factory.DefaultRegisteredServiceFactory;
+import org.jasig.cas.services.web.factory.DefaultRegisteredServiceMapper;
+import org.jasig.cas.services.web.factory.RegisteredServiceMapper;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Before;
 import org.junit.Test;
@@ -180,7 +184,9 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     @Test
     public void verifyAddMockRegisteredService() throws Exception {
-        final RegexRegisteredService svc = new RegexRegisteredService();
+        registeredServiceFactory.setRegisteredServiceMapper(new MockRegisteredServiceMapper());
+
+        final MockRegisteredService svc = new MockRegisteredService();
         svc.setDescription("description");
         svc.setServiceId("^serviceId");
         svc.setName("name");
@@ -195,14 +201,16 @@ public class RegisteredServiceSimpleFormControllerTests {
         final Collection<RegisteredService> services = this.manager.getAllServices();
         assertEquals(1, services.size());
         for (final  RegisteredService rs : this.manager.getAllServices()) {
-            assertTrue(rs instanceof RegisteredService);
+            assertTrue(rs instanceof MockRegisteredService);
         }
     }
 
     
     @Test
     public void verifyEditMockRegisteredService() throws Exception {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        registeredServiceFactory.setRegisteredServiceMapper(new MockRegisteredServiceMapper());
+
+        final MockRegisteredService r = new MockRegisteredService();
         r.setId(1000);
         r.setName("Test Service");
         r.setServiceId("test");
@@ -211,12 +219,58 @@ public class RegisteredServiceSimpleFormControllerTests {
         this.manager.save(r);
         
         r.setServiceId("serviceId1");
-        //this.controller.onSubmit(r, mock(BindingResult.class), new ModelMap(), new MockHttpServletRequest());
+        final RegisteredServiceEditBean.ServiceData data = registeredServiceFactory.createServiceData(r);
+        this.controller.saveService(new MockHttpServletRequest(),
+                new MockHttpServletResponse(),
+                data, mock(BindingResult.class));
 
         assertFalse(this.manager.getAllServices().isEmpty());
         final RegisteredService r2 = this.manager.findServiceBy(1000);
 
         assertEquals("serviceId1", r2.getServiceId());
-        assertTrue(r2 instanceof RegexRegisteredService);
+        assertTrue(r2 instanceof MockRegisteredService);
+    }
+
+    private static class MockRegisteredService extends RegexRegisteredService {
+        private static final long serialVersionUID = -7746061989010390744L;
+
+        @Override
+        protected AbstractRegisteredService newInstance() {
+            return new MockRegisteredService();
+        }
+    }
+
+    private static class MockRegisteredServiceMapper implements RegisteredServiceMapper {
+        private final RegisteredServiceMapper base = new DefaultRegisteredServiceMapper();
+
+        @Override
+        public void mapRegisteredService(final RegisteredService svc,
+                                         final RegisteredServiceEditBean.ServiceData bean) {
+            base.mapRegisteredService(svc, bean);
+            if (svc instanceof MockRegisteredService) {
+                bean.setCustomComponent("mock", ImmutableMap.of("service_type", "MockRegisteredService"));
+            }
+        }
+
+        @Override
+        public void mapRegisteredService(final RegisteredService svc, final RegisteredServiceViewBean bean) {
+            base.mapRegisteredService(svc, bean);
+        }
+
+        @Override
+        public RegisteredService toRegisteredService(final RegisteredServiceEditBean.ServiceData data) {
+            final RegisteredService baseSvc = base.toRegisteredService(data);
+
+            // return base svc if this isn't a MockRegisteredService
+            final Map<String, ?> mockComponent = data.getCustomComponent("mock");
+            if (mockComponent == null || !"MockRegisteredService".equals(mockComponent.get("service_type"))) {
+                return baseSvc;
+            }
+
+            // copy data from baseSvc to MockRegisteredService
+            final MockRegisteredService svc = new MockRegisteredService();
+            svc.copyFrom(baseSvc);
+            return svc;
+        }
     }
 }
