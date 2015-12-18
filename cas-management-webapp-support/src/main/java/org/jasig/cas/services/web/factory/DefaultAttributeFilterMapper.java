@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
  */
 @Component(DefaultAttributeFilterMapper.BEAN_NAME)
 public class DefaultAttributeFilterMapper implements AttributeFilterMapper {
+    /**
+     * Name of this bean within the Spring context.
+     */
     public static final String BEAN_NAME = "defaultAttributeFilterMapper";
 
     @Override
