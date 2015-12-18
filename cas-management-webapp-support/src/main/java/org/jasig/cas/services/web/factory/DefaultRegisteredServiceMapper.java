@@ -19,6 +19,7 @@ import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.slf4j.Logger;
+import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
 import java.net.URL;
@@ -31,8 +32,11 @@ import java.util.regex.PatternSyntaxException;
  * @author Daniel Frett
  * @since 4.2
  */
+@Component(DefaultRegisteredServiceMapper.BEAN_NAME)
 public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
     private static final Logger LOGGER = getLogger(DefaultRegisteredServiceMapper.class);
+
+    public static final String BEAN_NAME = "defaultRegisteredServiceMapper";
 
     @Override
     public void mapRegisteredService(final RegisteredService svc, final ServiceData bean) {
