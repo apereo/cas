@@ -125,7 +125,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     /**
      * Default implementation that simply returns principal#id.
      */
-    public static class DefaultPrincipalIdProvider implements PrincipalIdProvider {
+    static class DefaultPrincipalIdProvider implements PrincipalIdProvider {
 
         @Override
         public String getPrincipalIdFrom(final org.jasig.cas.authentication.Authentication authentication) {
