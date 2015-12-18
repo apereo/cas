@@ -23,6 +23,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Component(DefaultPrincipalAttributesRepositoryMapper.BEAN_NAME)
 public class DefaultPrincipalAttributesRepositoryMapper implements PrincipalAttributesRepositoryMapper {
+    /**
+     * Name of this bean within the Spring context.
+     */
     public static final String BEAN_NAME = "defaultPrincipalAttributesRepositoryMapper";
 
     @Override

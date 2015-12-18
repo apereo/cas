@@ -32,6 +32,9 @@ import java.util.Map;
  */
 @Component(DefaultAttributeReleasePolicyMapper.BEAN_NAME)
 public final class DefaultAttributeReleasePolicyMapper implements AttributeReleasePolicyMapper {
+    /**
+     * Name of this bean within the Spring context.
+     */
     public static final String BEAN_NAME = "defaultAttributeReleasePolicyMapper";
 
     @Autowired(required = false)

@@ -22,9 +22,12 @@ import java.util.regex.PatternSyntaxException;
  */
 @Component(DefaultProxyPolicyMapper.BEAN_NAME)
 public final class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultProxyPolicyMapper.class);
-
+    /**
+     * Name of this bean within the Spring context.
+     */
     public static final String BEAN_NAME = "defaultProxyPolicyMapper";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultProxyPolicyMapper.class);
 
     @Override
     public void mapProxyPolicy(final RegisteredServiceProxyPolicy policy, final ServiceData bean) {

@@ -34,9 +34,12 @@ import java.util.regex.PatternSyntaxException;
  */
 @Component(DefaultRegisteredServiceMapper.BEAN_NAME)
 public class DefaultRegisteredServiceMapper implements RegisteredServiceMapper {
-    private static final Logger LOGGER = getLogger(DefaultRegisteredServiceMapper.class);
-
+    /**
+     * Name of this bean within the Spring context.
+     */
     public static final String BEAN_NAME = "defaultRegisteredServiceMapper";
+
+    private static final Logger LOGGER = getLogger(DefaultRegisteredServiceMapper.class);
 
     @Override
     public void mapRegisteredService(final RegisteredService svc, final ServiceData bean) {
