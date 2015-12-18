@@ -9,6 +9,7 @@ import org.jasig.cas.services.web.beans.RegisteredServiceProxyPolicyBean;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -19,8 +20,11 @@ import java.util.regex.PatternSyntaxException;
  * @author Daniel Frett
  * @since 4.2
  */
+@Component(DefaultProxyPolicyMapper.BEAN_NAME)
 public final class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultProxyPolicyMapper.class);
+
+    public static final String BEAN_NAME = "defaultProxyPolicyMapper";
 
     @Override
     public void mapProxyPolicy(final RegisteredServiceProxyPolicy policy, final ServiceData bean) {
