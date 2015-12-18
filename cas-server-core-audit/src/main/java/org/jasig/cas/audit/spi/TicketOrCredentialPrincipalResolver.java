@@ -13,6 +13,7 @@ import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -36,6 +37,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired(required = false)
+    @Qualifier("principalIdProvider")
     private PrincipalIdProvider principalIdProvider = new DefaultPrincipalIdProvider();
 
     private TicketOrCredentialPrincipalResolver() {}
