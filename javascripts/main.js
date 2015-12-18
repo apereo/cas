@@ -86,7 +86,11 @@ function generateToolbarIcons() {
   var historyLink = "";
   var deleteLink = "";
 
-  if (activeVersion == "" || activeVersion != CONST_CURRENT_VER) {
+  if (activeVersion == "") {
+  	editLink = baseLink + "/edit/gh-pages/";
+  	historyLink = baseLink + "/commits/gh-pages/";
+  	deleteLink = baseLink + "/delete/gh-pages/";
+  } else if (activeVersion != CONST_CURRENT_VER) {
   	editLink = baseLink + "/edit/" + CONST_CURRENT_VER + "/cas-server-documentation/";
   	historyLink = baseLink + "/commits/" + CONST_CURRENT_VER + "/cas-server-documentation/";
   	deleteLink = baseLink + "/delete/" + CONST_CURRENT_VER + "/cas-server-documentation/";
