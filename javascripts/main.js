@@ -87,12 +87,12 @@ function generateToolbarIcons() {
   var deleteLink = "";
 
   if (activeVersion == "" || activeVersion != CONST_CURRENT_VER) {
-  	editLink = baseLink + "/edit/gh-pages/";
-  	historyLink = baseLink + "/commits/gh-pages/";
-  	deleteLink = baseLink + "/delete/gh-pages/";
+  	editLink = baseLink + "/edit/" + CONST_CURRENT_VER + "/cas-server-documentation/";
+  	historyLink = baseLink + "/commits/" + CONST_CURRENT_VER + "/cas-server-documentation/";
+  	deleteLink = baseLink + "/delete/" + CONST_CURRENT_VER + "/cas-server-documentation/";
   } else if (activeVersion == CONST_CURRENT_VER) {
   	editLink = baseLink + "/edit/master/cas-server-documentation/";
-  	historyLink = baseLink + "/edit/master/cas-server-documentation/";
+  	historyLink = baseLink + "/commits/master/cas-server-documentation/";
   	deleteLink = baseLink + "/delete/master/cas-server-documentation/";
   }
 
