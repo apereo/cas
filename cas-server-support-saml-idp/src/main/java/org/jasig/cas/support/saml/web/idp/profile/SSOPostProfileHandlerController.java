@@ -175,7 +175,9 @@ public class SSOPostProfileHandlerController {
         }
 
         if (registeredService instanceof SamlRegisteredService) {
-            return (SamlRegisteredService) registeredService;
+            final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) registeredService;
+            samlRegisteredService.init();
+            return samlRegisteredService;
         }
         logger.error("Service {} is found in registry but it is not a SAML service", serviceId);
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
