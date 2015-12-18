@@ -61,7 +61,7 @@ public final class SpnegoCredentialsAction extends AbstractNonInteractiveCredent
             logger.debug("SPNEGO Authorization header found with {} bytes",
                     authorizationHeader.length() - this.messageBeginPrefix.length());
 
-            final byte[] token = CompressionUtils.decodeBase64ToByteArray(authorizationHeader.substring(this.messageBeginPrefix.length()));
+            final byte[] token = CompressionUtils.decodeBase64(authorizationHeader.substring(this.messageBeginPrefix.length()));
             if (token == null) {
                 logger.warn("Could not compress authorization header in base64");
                 return null;

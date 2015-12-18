@@ -83,7 +83,7 @@ final String encodedPsw = (String) attributes.get("credential");
 /* Use the private.key file generated above. */
 final PrivateKey privateKey = ...
 final Cipher cipher = Cipher.getInstance(privateKey.getAlgorithm());
-final byte[] cred64 = decodeBase64ToByteArray(encodedPsw);
+final byte[] cred64 = decodeBase64(encodedPsw);
 cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
