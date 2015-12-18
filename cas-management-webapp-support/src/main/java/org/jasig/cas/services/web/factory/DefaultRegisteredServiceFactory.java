@@ -10,6 +10,8 @@ import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.FormData;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -24,55 +26,48 @@ import java.util.List;
  */
 @Component("registeredServiceFactory")
 public final class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
-    @NotNull
     @Autowired(required = false)
-    private AccessStrategyMapper accessStrategyMapper = new DefaultAccessStrategyMapper();
+    private ApplicationContext applicationContext;
 
     @NotNull
     @Autowired(required = false)
-    private AttributeFilterMapper attributeFilterMapper = new DefaultAttributeFilterMapper();
+    @Qualifier("accessStrategyMapper")
+    private AccessStrategyMapper accessStrategyMapper;
 
     @NotNull
     @Autowired(required = false)
+    @Qualifier("attributeReleasePolicyMapper")
     private AttributeReleasePolicyMapper attributeReleasePolicyMapper;
 
     @NotNull
     @Autowired(required = false)
-    private PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper = new
-            DefaultPrincipalAttributesRepositoryMapper();
+    @Qualifier("proxyPolicyMapper")
+    private ProxyPolicyMapper proxyPolicyMapper;
 
     @NotNull
     @Autowired(required = false)
-    private ProxyPolicyMapper proxyPolicyMapper = new DefaultProxyPolicyMapper();
+    @Qualifier("registeredServiceMapper")
+    private RegisteredServiceMapper registeredServiceMapper;
 
     @NotNull
     @Autowired(required = false)
-    private RegisteredServiceMapper registeredServiceMapper = new DefaultRegisteredServiceMapper();
-
-    @NotNull
-    @Autowired(required = false)
-    private UsernameAttributeProviderMapper usernameAttributeProviderMapper = new
-            DefaultUsernameAttributeProviderMapper();
+    @Qualifier("usernameAttributeProviderMapper")
+    private UsernameAttributeProviderMapper usernameAttributeProviderMapper;
 
     @NotNull
     @Autowired
     private List<? extends FormDataPopulator> formDataPopulators;
 
+    public void setApplicationContext(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
     public void setAccessStrategyMapper(final AccessStrategyMapper accessStrategyMapper) {
         this.accessStrategyMapper = accessStrategyMapper;
     }
 
-    public void setAttributeFilterMapper(final AttributeFilterMapper attributeFilterMapper) {
-        this.attributeFilterMapper = attributeFilterMapper;
-    }
-
     public void setAttributeReleasePolicyMapper(final AttributeReleasePolicyMapper attributeReleasePolicyMapper) {
         this.attributeReleasePolicyMapper = attributeReleasePolicyMapper;
-    }
-
-    public void setPrincipalAttributesRepositoryMapper(
-            final PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper) {
-        this.principalAttributesRepositoryMapper = principalAttributesRepositoryMapper;
     }
 
     public void setProxyPolicyMapper(final ProxyPolicyMapper proxyPolicyMapper) {
@@ -97,10 +92,53 @@ public final class DefaultRegisteredServiceFactory implements RegisteredServiceF
      */
     @PostConstruct
     public void initializeDefaults() {
-        // initialize default attributeReleasePolicyMapper here to allow switching it's dependencies
+        // use default mappers from spring context
+        if (applicationContext != null) {
+            if (accessStrategyMapper == null) {
+                accessStrategyMapper = applicationContext.getBean(
+                        DefaultAccessStrategyMapper.BEAN_NAME,
+                        AccessStrategyMapper.class);
+            }
+            if (attributeReleasePolicyMapper == null) {
+                attributeReleasePolicyMapper = applicationContext.getBean(
+                        DefaultAttributeReleasePolicyMapper.BEAN_NAME,
+                        AttributeReleasePolicyMapper.class);
+            }
+            if (proxyPolicyMapper == null) {
+                proxyPolicyMapper = applicationContext.getBean(
+                        DefaultProxyPolicyMapper.BEAN_NAME,
+                        ProxyPolicyMapper.class);
+            }
+            if (registeredServiceMapper == null) {
+                registeredServiceMapper = applicationContext.getBean(
+                        DefaultRegisteredServiceMapper.BEAN_NAME,
+                        RegisteredServiceMapper.class);
+            }
+            if (usernameAttributeProviderMapper == null) {
+                usernameAttributeProviderMapper = applicationContext.getBean(
+                        DefaultUsernameAttributeProviderMapper.BEAN_NAME,
+                        UsernameAttributeProviderMapper.class);
+            }
+        }
+
+        // initialize default mappers if any are still missing
+        if (accessStrategyMapper == null) {
+            accessStrategyMapper = new DefaultAccessStrategyMapper();
+        }
         if (attributeReleasePolicyMapper == null) {
-            attributeReleasePolicyMapper = new DefaultAttributeReleasePolicyMapper(attributeFilterMapper,
-                    principalAttributesRepositoryMapper);
+            final DefaultAttributeReleasePolicyMapper policyMapper = new DefaultAttributeReleasePolicyMapper();
+            policyMapper.setApplicationContext(applicationContext);
+            policyMapper.initializeDefaults();
+            attributeReleasePolicyMapper = policyMapper;
+        }
+        if (proxyPolicyMapper == null) {
+            proxyPolicyMapper = new DefaultProxyPolicyMapper();
+        }
+        if (registeredServiceMapper == null) {
+            registeredServiceMapper = new DefaultRegisteredServiceMapper();
+        }
+        if (usernameAttributeProviderMapper == null) {
+            usernameAttributeProviderMapper = new DefaultUsernameAttributeProviderMapper();
         }
     }
 

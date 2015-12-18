@@ -10,6 +10,7 @@ import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.services.web.beans.RegisteredServiceUsernameAttributeProviderEditBean;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
+import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
 
@@ -19,7 +20,10 @@ import java.nio.charset.Charset;
  * @author Daniel Frett
  * @since 4.2
  */
+@Component(DefaultUsernameAttributeProviderMapper.BEAN_NAME)
 public final class DefaultUsernameAttributeProviderMapper implements UsernameAttributeProviderMapper {
+    public static final String BEAN_NAME = "defaultUsernameAttributeProviderMapper";
+
     @Override
     public void mapUsernameAttributeProvider(final RegisteredServiceUsernameAttributeProvider provider,
                                              final ServiceData bean) {

@@ -15,7 +15,12 @@ import org.jasig.cas.services.web.beans.RegisteredServiceAttributeReleasePolicyS
 import org.jasig.cas.services.web.beans.RegisteredServiceAttributeReleasePolicyViewBean;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 
@@ -25,28 +30,60 @@ import java.util.Map;
  * @author Daniel Frett
  * @since 4.2
  */
+@Component(DefaultAttributeReleasePolicyMapper.BEAN_NAME)
 public final class DefaultAttributeReleasePolicyMapper implements AttributeReleasePolicyMapper {
-    private final AttributeFilterMapper attributeFilterMapper;
+    public static final String BEAN_NAME = "defaultAttributeReleasePolicyMapper";
 
-    private final PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper;
+    @Autowired(required = false)
+    private ApplicationContext applicationContext;
 
-    /**
-     * Default constructor.
-     */
-    public DefaultAttributeReleasePolicyMapper() {
-        this(new DefaultAttributeFilterMapper(), new DefaultPrincipalAttributesRepositoryMapper());
+    @Autowired(required = false)
+    @Qualifier("attributeFilterMapper")
+    private AttributeFilterMapper attributeFilterMapper;
+
+    @Autowired(required = false)
+    @Qualifier("principalAttributesRepositoryMapper")
+    private PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper;
+
+    public void setApplicationContext(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public void setAttributeFilterMapper(final AttributeFilterMapper attributeFilterMapper) {
+        this.attributeFilterMapper = attributeFilterMapper;
+    }
+
+    public void setPrincipalAttributesRepositoryMapper(
+            final PrincipalAttributesRepositoryMapper principalAttributesRepositoryMapper) {
+        this.principalAttributesRepositoryMapper = principalAttributesRepositoryMapper;
     }
 
     /**
-     * Build this mapper with a custom {@link AttributeFilterMapper} and {@link PrincipalAttributesRepositoryMapper}.
-     *
-     * @param attributeFilterMapper     The mapper to use for mapping {@link RegisteredServiceAttributeFilter}
-     * @param principalAttributesMapper The mapper to use for mapping {@link PrincipalAttributesRepository}
+     * Initializes some default mappers after any custom mappers have been wired.
      */
-    public DefaultAttributeReleasePolicyMapper(final AttributeFilterMapper attributeFilterMapper,
-                                               final PrincipalAttributesRepositoryMapper principalAttributesMapper) {
-        this.attributeFilterMapper = attributeFilterMapper;
-        this.principalAttributesRepositoryMapper = principalAttributesMapper;
+    @PostConstruct
+    public void initializeDefaults() {
+        // use default mappers from spring context
+        if (applicationContext != null) {
+            if (attributeFilterMapper == null) {
+                attributeFilterMapper = applicationContext.getBean(
+                        DefaultAttributeFilterMapper.BEAN_NAME,
+                        AttributeFilterMapper.class);
+            }
+            if (principalAttributesRepositoryMapper == null) {
+                principalAttributesRepositoryMapper = applicationContext.getBean(
+                        DefaultPrincipalAttributesRepositoryMapper.BEAN_NAME,
+                        PrincipalAttributesRepositoryMapper.class);
+            }
+        }
+
+        // initialize default mappers if any are still missing
+        if (attributeFilterMapper == null) {
+            attributeFilterMapper = new DefaultAttributeFilterMapper();
+        }
+        if (principalAttributesRepositoryMapper == null) {
+            principalAttributesRepositoryMapper = new DefaultPrincipalAttributesRepositoryMapper();
+        }
     }
 
     @Override
