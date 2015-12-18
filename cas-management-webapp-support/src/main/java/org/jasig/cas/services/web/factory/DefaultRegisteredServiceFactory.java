@@ -22,7 +22,7 @@ import java.util.List;
  * @author Daniel Frett
  * @since 4.2
  */
-@Component
+@Component("registeredServiceFactory")
 public final class DefaultRegisteredServiceFactory implements RegisteredServiceFactory {
     @NotNull
     @Autowired(required = false)
