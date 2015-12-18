@@ -56,7 +56,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
     @Autowired
     public ManageRegisteredServicesMultiActionController(
         @Qualifier("servicesManager") final ReloadableServicesManager servicesManager,
-        final RegisteredServiceFactory registeredServiceFactory,
+        @Qualifier("registeredServiceFactory") final RegisteredServiceFactory registeredServiceFactory,
         @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
         super(servicesManager);
         this.registeredServiceFactory = registeredServiceFactory;
