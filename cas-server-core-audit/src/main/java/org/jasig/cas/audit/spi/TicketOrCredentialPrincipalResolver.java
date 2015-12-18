@@ -2,6 +2,7 @@ package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -104,13 +105,13 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
         } else if (arg1 instanceof String) {
             try {
                 final Ticket ticket = this.centralAuthenticationService.getTicket((String) arg1, Ticket.class);
-                org.jasig.cas.authentication.Authentication casAuthentication = null;
+                Authentication authentication = null;
                 if (ticket instanceof ServiceTicket) {
-                    casAuthentication = ServiceTicket.class.cast(ticket).getGrantingTicket().getAuthentication();
+                    authentication = ServiceTicket.class.cast(ticket).getGrantingTicket().getAuthentication();
                 } else if (ticket instanceof TicketGrantingTicket) {
-                    casAuthentication = TicketGrantingTicket.class.cast(ticket).getAuthentication();
+                    authentication = TicketGrantingTicket.class.cast(ticket).getAuthentication();
                 }
-                return this.principalIdProvider.getPrincipalIdFrom(casAuthentication);
+                return this.principalIdProvider.getPrincipalIdFrom(authentication);
             } catch (final InvalidTicketException e) {
                 LOGGER.trace(e.getMessage(), e);
             }
@@ -128,7 +129,7 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     static class DefaultPrincipalIdProvider implements PrincipalIdProvider {
 
         @Override
-        public String getPrincipalIdFrom(final org.jasig.cas.authentication.Authentication authentication) {
+        public String getPrincipalIdFrom(final Authentication authentication) {
             return authentication.getPrincipal().getId();
         }
     }
