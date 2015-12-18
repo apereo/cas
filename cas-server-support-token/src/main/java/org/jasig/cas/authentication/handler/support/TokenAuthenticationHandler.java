@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
  */
 @Component("tokenAuthenticationHandler")
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
-
     @Override
     protected HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
         final TokenCredential tokenCredential = (TokenCredential) credential;
@@ -39,13 +38,18 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         logger.debug("Locating token secret for service [{}]", tokenCredential.getService());
 
         final RegisteredService service = this.servicesManager.findServiceBy(tokenCredential.getService());
-        final String tokenSecret = getRegisteredServiceJwtSecret(service);
-        if (StringUtils.isNotBlank(tokenSecret)) {
-            final JwtAuthenticator tokenAuthenticator = new JwtAuthenticator(tokenSecret);
-            return tokenAuthenticator;
+        final String signingSecret = getRegisteredServiceJwtSigningSecret(service);
+        final String encryptionSecret = getRegisteredServiceJwtSigningSecret(service);
+
+        if (StringUtils.isNotBlank(signingSecret)) {
+            if (StringUtils.isBlank(encryptionSecret)) {
+                logger.warn("JWT authentication is configured to share a single key for both signing/encryption");
+                return new JwtAuthenticator(signingSecret);
+            }
+            return new JwtAuthenticator(signingSecret, encryptionSecret);
         }
-        logger.warn("No token secret is defined for service [{}]. Ensure [{}] property is defined for service",
-                    service.getServiceId(), TokenConstants.PARAMETER_NAME_TOKEN);
+        logger.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
+                    service.getServiceId(), TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING);
         return null;
     }
 
@@ -58,29 +62,48 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         }
     }
 
-    /** Gets registered service jwt secret.
+    /**
+     * Gets registered service jwt encryption secret.
+     *
+     * @param service the service
+     * @return the registered service jwt secret
+     */
+    private String getRegisteredServiceJwtEncryptionSecret(final RegisteredService service) {
+        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
+    }
+
+    /**
+    * Gets registered service jwt signing secret.
     *
     * @param service the service
     * @return the registered service jwt secret
     */
-    protected String getRegisteredServiceJwtSecret(final RegisteredService service) {
+    private String getRegisteredServiceJwtSigningSecret(final RegisteredService service) {
+        return getRegisteredServiceJwtSecret(service, TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION);
+    }
+
+    /**
+     * Gets registered service jwt secret.
+     *
+     * @param service  the service
+     * @param propName the prop name
+     * @return the registered service jwt secret
+     */
+    protected String getRegisteredServiceJwtSecret(final RegisteredService service, final String propName) {
         if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
-            logger.debug("Service is not defined or its access is disabled in the registry");
+            logger.debug("Service is not defined/found or its access is disabled in the registry");
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-
-        if (service.getProperties().containsKey(TokenConstants.PROPERTY_NAME_TOKEN_SECRET)) {
-            final RegisteredServiceProperty prop = service.getProperties().get(TokenConstants.PROPERTY_NAME_TOKEN_SECRET);
-            final String tokenSecret = prop.getValue();
-
-            if (StringUtils.isNotBlank(tokenSecret)) {
-                logger.debug("Found {} for service [{}]",
-                        TokenConstants.PROPERTY_NAME_TOKEN_SECRET, service.getServiceId());
-                return tokenSecret;
+        if (service.getProperties().containsKey(propName)) {
+            final RegisteredServiceProperty propSigning = service.getProperties().get(propName);
+            final String tokenSigningSecret = propSigning.getValue();
+            if (StringUtils.isNotBlank(tokenSigningSecret)) {
+                logger.debug("Found the secret value {} for service [{}]", propName, service.getServiceId());
+                return tokenSigningSecret;
             }
         }
-        logger.debug("Service [{}] does not define a property [{}] in the registry", service.getServiceId(),
-                TokenConstants.PROPERTY_NAME_TOKEN_SECRET);
+        logger.warn("Service [{}] does not define a property [{}] in the registry",
+                service.getServiceId(), propName);
         return null;
     }
 

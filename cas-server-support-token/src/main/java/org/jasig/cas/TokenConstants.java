@@ -10,7 +10,10 @@ public interface TokenConstants {
     /** Token parameter passed to the request. */
     String PARAMETER_NAME_TOKEN = "token";
 
-    /** Jwt secret defined for a given service. **/
-    String PROPERTY_NAME_TOKEN_SECRET = "jwtSecret";
+    /** Jwt signing secret defined for a given service. **/
+    String PROPERTY_NAME_TOKEN_SECRET_SIGNING = "jwtSigningSecret";
+
+    /** Jwt signing secret defined for a given service. **/
+    String PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION = "jwtEncryptionSecret";
 }
 
