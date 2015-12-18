@@ -20,6 +20,9 @@ import java.util.Set;
  */
 @Component(DefaultAccessStrategyMapper.BEAN_NAME)
 public final class DefaultAccessStrategyMapper implements AccessStrategyMapper {
+    /**
+     * Name of this bean within the Spring context.
+     */
     public static final String BEAN_NAME = "defaultAccessStrategyMapper";
 
     @Override
