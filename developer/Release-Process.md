@@ -3,7 +3,6 @@ layout: default
 title: CAS - Release Process
 ---
 
-
 # Release Process
 This page documents the steps that a release engineer should take for cutting a CAS server release.
 
@@ -68,15 +67,11 @@ John Smith
 
 {% endhighlight %}
 
-##Post Release
+##Update Maven Overlay
+Update the [Maven Overlay](https://github.com/Jasig/cas-overlay-template) project to point to the newly released CAS version. 
 
-###Documentation
-- Documentation site is available under the `gh-changes` branch. Check it out.
-- Copy the contents of the `development` directory to a new directory to match the new CAS release version (i.e `4.1.x`)
-- Navigate to `Older-Version.md` page and include a link to the new directory that points to the new release.
-- Modify the root `index.html` file of the `current` folder to point to the latest stable release such that `location.href = "../4.1.x/index.html";`
-- Push the changes to the repository.
-
+##Docker Image
+Release a new CAS [Docker image](https://github.com/Jasig/cas/tree/dockerized-caswebapp).
 
 
 
