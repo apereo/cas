@@ -37,6 +37,7 @@ org.jasig.cas.services.jmx
 org.jasig.cas.services.support
 org.jasig.cas.services.web
 org.jasig.cas.services.web.beans
+org.jasig.cas.services.web.factory
 org.jasig.cas.services.web.view
 org.jasig.cas.support.events
 org.jasig.cas.support.oauth
