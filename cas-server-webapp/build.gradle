@@ -76,6 +76,7 @@ dependencies {
     }
     runtime group: 'com.mchange', name: 'c3p0', version: c3p0Version
     runtime group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:bouncyCastleVersion
+    runtime group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version:bouncyCastleVersion
 }
 
 configurations {
@@ -98,8 +99,8 @@ gretty {
     contextPath = '/cas'
     httpsEnabled = true
     httpsPort = 8443
-    sslKeyStorePath = '/etc/cas/jetty/thekeystore'
+    sslKeyStorePath = 'c:\\etc\\cas\\jetty\\thekeystore'
     sslKeyStorePassword = 'changeit'
-    sslTrustStorePath = '/etc/cas/jetty/thekeystore'
+    sslTrustStorePath = 'c:\\etc\\cas\\jetty\\thekeystore'
     sslKeyStorePassword = 'changeit'
 }

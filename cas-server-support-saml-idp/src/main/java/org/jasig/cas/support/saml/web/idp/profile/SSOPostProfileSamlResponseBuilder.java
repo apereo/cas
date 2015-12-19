@@ -10,19 +10,15 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
-import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.joda.time.DateTime;
-import org.opensaml.core.config.Configuration;
-import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObjectBuilder;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml.common.messaging.SAMLMessageSecuritySupport;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -36,20 +32,14 @@ import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
-import org.opensaml.saml.saml2.metadata.SSODescriptor;
 import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver;
 import org.opensaml.security.credential.Credential;
-import org.opensaml.security.credential.CredentialResolver;
-import org.opensaml.security.credential.impl.FilesystemCredentialResolver;
-import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.x509.BasicX509Credential;
-import org.opensaml.security.x509.X509Credential;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureSigningParameters;
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
-import org.opensaml.xmlsec.signature.SignableXMLObject;
 import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,15 +48,11 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.InputStream;
-import java.net.InetAddress;
-import java.net.URL;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -76,7 +62,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The {@link SSOPostProfileSamlResponseBuilder} is responsible for...
+ * The {@link SSOPostProfileSamlResponseBuilder} is responsible for
+ * building the final SAML assertion for the relying party.
  *
  * @author Misagh Moayyed
  * @since 4.2

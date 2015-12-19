@@ -15,11 +15,14 @@ import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
+import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -30,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.velocity.VelocityEngineFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -51,8 +55,7 @@ import java.security.SecureRandom;
 public class SSOPostProfileHandlerController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final AuthenticationRedirectStrategy authenticationRedirectStrategy
-            = new DefaultAuthenticationRedirectStrategy();
+    private final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
 
     @Autowired
     private ParserPool parserPool;
@@ -82,6 +85,13 @@ public class SSOPostProfileHandlerController {
     @Autowired
     @Qualifier("ssoPostProfileSamlResponseBuilder")
     private SamlResponseBuilder responseBuilder;
+
+
+    @Autowired
+    private OpenSamlConfigBean openSamlConfigBean;
+
+    @Autowired
+    private VelocityEngineFactory velocityEngineFactory;
 
     /**
      * Instantiates a new redirect profile handler controller.
@@ -131,39 +141,55 @@ public class SSOPostProfileHandlerController {
      * @param request  the request
      * @throws Exception the exception
      */
-    @RequestMapping(path= SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
+    @RequestMapping(path = SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
     protected void handleCallbackProfileRequest(final HttpServletResponse response,
                                         final HttpServletRequest request) throws Exception {
-        logger.info("Received SAML callback profile request {}", request.getRequestURI());
-        final AuthnRequest authnRequest = retrieveAuthnRequest(request);
-        if (authnRequest == null) {
-            logger.error("Can not validate the request because the original Authn request can not be found.");
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
+        try {
+            logger.info("Received SAML callback profile request {}", request.getRequestURI());
+            final AuthnRequest authnRequest = retrieveAuthnRequest(request);
+            if (authnRequest == null) {
+                logger.error("Can not validate the request because the original Authn request can not be found.");
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
 
-        final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
-        if (StringUtils.isBlank(ticket)) {
-            logger.error("Can not validate the request because no {} is provided via the request",
-                    CasProtocolConstants.PARAMETER_TICKET);
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
+            final String ticket = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+            if (StringUtils.isBlank(ticket)) {
+                logger.error("Can not validate the request because no {} is provided via the request",
+                        CasProtocolConstants.PARAMETER_TICKET);
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                return;
+            }
 
-        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(this.casServerPrefix);
-        validator.setRenew(authnRequest.isForceAuthn());
-        final String serviceUrl = constructServiceUrl(request, response,
-                this.callbackService.getId(), this.casServerName);
-        logger.debug("Created service url for validation: {}", serviceUrl);
-        final Assertion assertion = validator.validate(ticket, serviceUrl);
-        logValidationAssertion(assertion);
-        if (assertion.isValid()) {
-            final SamlRegisteredService registeredService = getRegisteredServiceAndVerify(authnRequest);
-            logger.debug("Preparing SAML response to {}", registeredService);
-            final Response samlResponse = responseBuilder.build(authnRequest, request,
-                    response, assertion, registeredService);
+            final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(this.casServerPrefix);
+            validator.setRenew(authnRequest.isForceAuthn());
+            final String serviceUrl = constructServiceUrl(request, response,
+                    this.callbackService.getId(), this.casServerName);
+            logger.debug("Created service url for validation: {}", serviceUrl);
+            final Assertion assertion = validator.validate(ticket, serviceUrl);
+            logValidationAssertion(assertion);
+            if (assertion.isValid()) {
+                final SamlRegisteredService registeredService = getRegisteredServiceAndVerify(authnRequest);
+                logger.debug("Preparing SAML response to {}", registeredService);
+                final Response samlResponse = responseBuilder.build(authnRequest, request,
+                        response, assertion, registeredService);
+                logger.info("Built the SAML response {}", samlResponse);
+                encodeSamlResponse(samlResponse, response);
+            }
+        } finally {
+            storeAuthnRequest(request, null);
         }
-        storeAuthnRequest(request, null);
+    }
+
+    private void encodeSamlResponse(final Response samlResponse, final HttpServletResponse httpResponse) throws Exception {
+        final HTTPPostEncoder encoder = new HTTPPostEncoder();
+        encoder.setHttpServletResponse(httpResponse);
+        encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
+        final MessageContext outboundMessageContext = new MessageContext<>();
+        outboundMessageContext.setMessage(samlResponse);
+        encoder.setMessageContext(outboundMessageContext);
+        encoder.initialize();
+        encoder.encode();
     }
 
     private SamlRegisteredService getRegisteredServiceAndVerify(final AuthnRequest authnRequest) {
@@ -206,13 +232,13 @@ public class SSOPostProfileHandlerController {
     }
 
     private void logValidationAssertion(final Assertion assertion) {
-        logger.debug("Assertion Valid: {}", assertion.isValid());
-        logger.debug("Assertion Principal: {}", assertion.getPrincipal().getName());
-        logger.debug("Assertion AuthN Date: {}", assertion.getAuthenticationDate());
-        logger.debug("Assertion ValidFrom Date: {}", assertion.getValidFromDate());
-        logger.debug("Assertion ValidUntil Date: {}", assertion.getValidUntilDate());
-        logger.debug("Assertion Attributes: {}", assertion.getAttributes());
-        logger.debug("Assertion Principal Attributes: {}", assertion.getPrincipal().getAttributes());
+        logger.debug("CAS Assertion Valid: {}", assertion.isValid());
+        logger.debug("CAS Assertion Principal: {}", assertion.getPrincipal().getName());
+        logger.debug("CAS Assertion AuthN Date: {}", assertion.getAuthenticationDate());
+        logger.debug("CAS Assertion ValidFrom Date: {}", assertion.getValidFromDate());
+        logger.debug("CAS Assertion ValidUntil Date: {}", assertion.getValidUntilDate());
+        logger.debug("CAS Assertion Attributes: {}", assertion.getAttributes());
+        logger.debug("CAS Assertion Principal Attributes: {}", assertion.getPrincipal().getAttributes());
     }
 
     private void performAuthentication(final AuthnRequest authnRequest,
@@ -285,5 +311,4 @@ public class SSOPostProfileHandlerController {
                 CasProtocolConstants.PARAMETER_SERVICE,
                 CasProtocolConstants.PARAMETER_TICKET, false);
     }
-
 }
