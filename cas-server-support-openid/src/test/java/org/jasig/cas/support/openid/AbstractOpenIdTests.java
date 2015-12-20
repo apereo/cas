@@ -1,7 +1,7 @@
 package org.jasig.cas.support.openid;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.junit.runner.RunWith;
 import org.openid4java.server.ServerAssociationStore;
@@ -32,12 +32,28 @@ public class AbstractOpenIdTests {
     protected CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
-    @Qualifier("defaultAuthenticationObjectsRepository")
-    protected AuthenticationObjectsRepository authenticationObjectsRepository;
+    @Qualifier("defaultAuthenticationSystemSupport")
+    protected AuthenticationSystemSupport authenticationSystemSupport;
 
     @Autowired
     @Qualifier("serverAssociations")
     protected ServerAssociationStore sharedAssociations;
+
+    public OpenIdServiceFactory getOpenIdServiceFactory() {
+        return openIdServiceFactory;
+    }
+
+    public CentralAuthenticationService getCentralAuthenticationService() {
+        return centralAuthenticationService;
+    }
+
+    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        return authenticationSystemSupport;
+    }
+
+    public ServerAssociationStore getSharedAssociations() {
+        return sharedAssociations;
+    }
 }
 
 

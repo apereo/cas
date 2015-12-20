@@ -3,11 +3,11 @@ package org.jasig.cas;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
-import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
 import org.jasig.cas.authentication.TestUtils;
@@ -46,8 +46,8 @@ public class MultifactorAuthenticationTests {
 
     @NotNull
     @Autowired(required=false)
-    @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -144,10 +144,10 @@ public class MultifactorAuthenticationTests {
     private AuthenticationContext processAuthenticationAttempt(final Service service, final Credential... credential) throws
             AuthenticationException {
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+                this.authenticationSystemSupport.getPrincipalElectionStrategy());
         final AuthenticationTransaction transaction =
-                this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
-        this.authenticationObjectsRepository.getAuthenticationTransactionManager()
+                AuthenticationTransaction.wrap(credential);
+        this.authenticationSystemSupport.getAuthenticationTransactionManager()
                 .handle(transaction, builder);
         return builder.build(service);
     }
