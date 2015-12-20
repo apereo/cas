@@ -472,11 +472,9 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     private AuthenticationContext getAuthenticationContext(final Service service, final Credential... credentials) throws
             AuthenticationException {
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                getAuthenticationObjectsRepository().getPrincipalElectionStrategy());
-        final AuthenticationTransaction transaction =
-                getAuthenticationObjectsRepository().getAuthenticationTransactionFactory().get(credentials);
-        getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
-                .handle(transaction,  builder);
+                getAuthenticationSystemSupport().getPrincipalElectionStrategy());
+        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credentials);
+        getAuthenticationSystemSupport().getAuthenticationTransactionManager().handle(transaction,  builder);
         return builder.build(service);
     }
 }

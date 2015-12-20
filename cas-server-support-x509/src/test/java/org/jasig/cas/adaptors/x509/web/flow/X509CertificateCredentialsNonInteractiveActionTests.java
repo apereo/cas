@@ -44,7 +44,7 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
                 getCentralAuthenticationService();
 
         this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
+        this.action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .setAuthenticationManager(authenticationManager);
 
     }

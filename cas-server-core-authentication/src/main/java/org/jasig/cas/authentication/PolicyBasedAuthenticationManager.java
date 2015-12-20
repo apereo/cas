@@ -17,9 +17,14 @@ import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Provides an authenticaiton manager that is inherently aware of multiple credentials and supports pluggable
@@ -135,9 +140,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     @Timed(name="AUTHENTICATE")
     @Metered(name="AUTHENTICATE")
     @Counted(name="AUTHENTICATE", monotonic=true)
-    public final Authentication authenticate(final Credential... credentials) throws AuthenticationException {
+    public final Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
 
-        final AuthenticationBuilder builder = authenticateInternal(credentials);
+        final AuthenticationBuilder builder = authenticateInternal(transaction.getCredentials());
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
         if (principal instanceof NullPrincipal) {
@@ -146,10 +151,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         addAuthenticationMethodAttribute(builder, authentication);
 
-        logger.info("Authenticated {} with credentials {}.", principal, Arrays.asList(credentials));
+        logger.info("Authenticated {} with credentials {}.", principal, transaction.getCredentials());
         logger.debug("Attribute map for {}: {}", principal.getId(), principal.getAttributes());
 
-        populateAuthenticationMetadataAttributes(builder, credentials);
+        populateAuthenticationMetadataAttributes(builder, transaction.getCredentials());
 
         return builder.build();
     }
@@ -160,7 +165,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @param builder the builder
      * @param credentials the credentials
      */
-    private void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder, final Credential[] credentials) {
+    private void populateAuthenticationMetadataAttributes(final AuthenticationBuilder builder, final Collection<Credential> credentials) {
         for (final AuthenticationMetaDataPopulator populator : this.authenticationMetaDataPopulators) {
             for (final Credential credential : credentials) {
                 if (populator.supports(credential)) {
@@ -203,7 +208,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     }
 
     /**
-     * Follows the same contract as {@link AuthenticationManager#authenticate(Credential...)}.
+     * Follows the same contract as {@link AuthenticationManager#authenticate(AuthenticationTransaction)}.
      *
      * @param credentials One or more credentials to authenticate.
      *
@@ -213,7 +218,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @throws AuthenticationException When one or more credentials failed authentication such that security policy
      * was not satisfied.
      */
-    protected AuthenticationBuilder authenticateInternal(final Credential... credentials)
+    protected AuthenticationBuilder authenticateInternal(final Collection<Credential> credentials)
             throws AuthenticationException {
 
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());

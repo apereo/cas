@@ -48,15 +48,14 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     @Test
     public void verifyResolverServiceTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final AuthenticationContext ctx = getAuthenticationContext(c);
+        final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), c);
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
         final ServiceTicket st = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
                 TestUtils.getService(), ctx);
 
-        final TicketOrCredentialPrincipalResolver res =
-                new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
+        final TicketOrCredentialPrincipalResolver res = new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
         final JoinPoint jp = mock(JoinPoint.class);
 
         when(jp.getArgs()).thenReturn(new Object[] {st.getId()});
@@ -69,15 +68,12 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     @Test
     public void verifyResolverTicketGrantingTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final AuthenticationContext ctx = getAuthenticationContext(c);
+        final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), c);
 
-        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
-                .createTicketGrantingTicket(ctx);
-        final ServiceTicket st = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
-                TestUtils.getService(), ctx);
+        final TicketGrantingTicket ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        final ServiceTicket st = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), TestUtils.getService(), ctx);
 
-        final TicketOrCredentialPrincipalResolver res =
-                new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
+        final TicketOrCredentialPrincipalResolver res = new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
         final JoinPoint jp = mock(JoinPoint.class);
 
         when(jp.getArgs()).thenReturn(new Object[] {ticketId.getId()});
@@ -87,16 +83,5 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
         assertEquals(result, c.getId());
     }
 
-    private AuthenticationContext getAuthenticationContext(final Credential... credentials)
-            throws AuthenticationException {
-        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                getAuthenticationObjectsRepository().getPrincipalElectionStrategy());
-        final AuthenticationTransaction transaction =
-                getAuthenticationObjectsRepository().getAuthenticationTransactionFactory()
-                        .get(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
-        getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
-                .handle(transaction,  builder);
-        final AuthenticationContext ctx = builder.build(TestUtils.getService());
-        return ctx;
-    }
+
 }

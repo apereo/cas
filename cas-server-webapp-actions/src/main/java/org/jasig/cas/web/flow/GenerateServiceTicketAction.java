@@ -4,12 +4,12 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
-import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
-import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
@@ -43,8 +43,8 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
     @NotNull
     @Autowired(required=false)
-    @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -55,10 +55,10 @@ public final class GenerateServiceTicketAction extends AbstractAction {
             final Credential credential = WebUtils.getCredential(context);
 
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
             final AuthenticationTransaction transaction =
-                    this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
-            this.authenticationObjectsRepository.getAuthenticationTransactionManager()
+                    AuthenticationTransaction.wrap(credential);
+            this.authenticationSystemSupport.getAuthenticationTransactionManager()
                     .handle(transaction,  builder);
             final AuthenticationContext authenticationContext = builder.build(service);
 

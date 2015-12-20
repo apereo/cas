@@ -6,8 +6,11 @@ import org.junit.Test;
 
 import javax.security.auth.login.FailedLoginException;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test for {@link PolicyBasedAuthenticationManager}.
@@ -17,12 +20,14 @@ import static org.mockito.Mockito.*;
  */
 public class PolicyBasedAuthenticationManagerTests {
 
+    private final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(mock(Credential.class), mock(Credential.class));
+
     @Test
     public void verifyAuthenticateAnySuccess() throws Exception {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(true),
                 newMockHandler(false));
-        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
+        final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(0, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
@@ -36,7 +41,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final AnyAuthenticationPolicy any = new AnyAuthenticationPolicy();
         any.setTryAll(true);
         manager.setAuthenticationPolicy(any);
-        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
+        final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
@@ -47,7 +52,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
                 newMockHandler(false),
                 newMockHandler(false));
-        manager.authenticate(mock(Credential.class), mock(Credential.class));
+        manager.authenticate(transaction);
         fail("Should have thrown authentication exception");
     }
 
@@ -57,7 +62,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler(true),
                 newMockHandler(true));
         manager.setAuthenticationPolicy(new AllAuthenticationPolicy());
-        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
+        final Authentication auth = manager.authenticate(transaction);
         assertEquals(2, auth.getSuccesses().size());
         assertEquals(0, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
@@ -69,7 +74,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler(false),
                 newMockHandler(false));
         manager.setAuthenticationPolicy(new AllAuthenticationPolicy());
-        manager.authenticate(mock(Credential.class), mock(Credential.class));
+        manager.authenticate(transaction);
         fail("Should have thrown authentication exception");
     }
 
@@ -79,7 +84,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
         manager.setAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy("HandlerA"));
-        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
+        final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(0, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
@@ -91,7 +96,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 newMockHandler("HandlerA", true),
                 newMockHandler("HandlerB", false));
         manager.setAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy("HandlerB"));
-        manager.authenticate(mock(Credential.class), mock(Credential.class));
+        manager.authenticate(transaction);
         fail("Should have thrown AbstractAuthenticationException");
     }
 
@@ -103,7 +108,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final RequiredHandlerAuthenticationPolicy policy = new RequiredHandlerAuthenticationPolicy("HandlerA");
         policy.setTryAll(true);
         manager.setAuthenticationPolicy(policy);
-        final Authentication auth = manager.authenticate(mock(Credential.class), mock(Credential.class));
+        final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
