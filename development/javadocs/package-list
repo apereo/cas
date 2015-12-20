@@ -88,6 +88,7 @@ org.jasig.cas.util.services
 org.jasig.cas.validation
 org.jasig.cas.web
 org.jasig.cas.web.flow
+org.jasig.cas.web.flow.token
 org.jasig.cas.web.report
 org.jasig.cas.web.support
 org.jasig.cas.web.support.entity
