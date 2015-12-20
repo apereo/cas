@@ -19,7 +19,8 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
 
 /**
  * @author Marvin S. Addison
