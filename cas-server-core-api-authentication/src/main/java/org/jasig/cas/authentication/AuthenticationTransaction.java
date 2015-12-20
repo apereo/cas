@@ -53,6 +53,9 @@ public final class AuthenticationTransaction implements Serializable {
                     it.remove();
                 }
             }
+            if (set.isEmpty()) {
+                throw new RuntimeException("Credential specified for authentication were all null and removed from the collection");
+            }
             return set;
         }
         return Collections.emptySet();
