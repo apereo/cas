@@ -21,7 +21,9 @@ dependencies {
     exclude(module: 'slf4j-api')
     exclude(module: 'c3p0')
   }
-  compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
+  compile(group: 'org.reflections', name: 'reflections', version: reflectionsVersion) {
+    exclude(module: 'guava')
+  }
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-events')
   compile project(':cas-server-core-web')

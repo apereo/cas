@@ -44,11 +44,11 @@ import javax.validation.constraints.NotNull;
  *
  * <p>
  * Use distinct caches for ticket granting tickets (TGT) and service tickets (ST) for:
+ * </p>
  * <ul>
  *   <li>Tuning : use cache level time to live with different values for TGT an ST.</li>
  *   <li>Monitoring : follow separately the number of TGT and ST.</li>
  * </ul>
- * </p>
  *
  * @author tduehr
  * @since 4.3.0`
@@ -264,7 +264,6 @@ public final class IgniteTicketRegistry extends AbstractCrypticTicketRegistry {
      * @param supportRegistryState true, if the registry is to support registry state
      * @see #sessionCount()
      * @see #serviceTicketCount()
-     * @see org.jasig.cas.monitor.Monitor
      */
     public void setSupportRegistryState(final boolean supportRegistryState) {
         this.supportRegistryState = supportRegistryState;
