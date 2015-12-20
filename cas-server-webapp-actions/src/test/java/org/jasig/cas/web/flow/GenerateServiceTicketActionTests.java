@@ -35,6 +35,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     public void onSetUp() throws Exception {
         this.action = new GenerateServiceTicketAction();
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.action.setAuthenticationSystemSupport(getAuthenticationSystemSupport());
         this.action.afterPropertiesSet();
 
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
