@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.0.4
+ * @since 3.0.0
  */
 public final class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
