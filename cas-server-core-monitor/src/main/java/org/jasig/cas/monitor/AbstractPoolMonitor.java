@@ -3,7 +3,6 @@ package org.jasig.cas.monitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.Callable;
@@ -18,7 +17,6 @@ import java.util.concurrent.TimeoutException;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@Component("abstractPoolMonitor")
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
 
     /** Default maximum wait time for asynchronous pool validation. */
