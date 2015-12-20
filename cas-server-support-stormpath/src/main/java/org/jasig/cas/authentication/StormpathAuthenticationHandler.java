@@ -3,14 +3,13 @@ package org.jasig.cas.authentication;
 import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.jasig.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler;
+import org.pac4j.http.credentials.authenticator.Authenticator;
 import org.pac4j.http.credentials.password.NopPasswordEncoder;
 import org.pac4j.stormpath.credentials.authenticator.StormpathAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 /**
  * This is {@link StormpathAuthenticationHandler} that verifies accounts
@@ -34,16 +33,6 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
     @Qualifier("stormpathPac4jPasswordEncoder")
     private org.pac4j.http.credentials.password.PasswordEncoder stormpathPasswordEncoder = new NopPasswordEncoder();
 
-    /**
-     * Initialize post construction.
-     */
-    @PostConstruct
-    public void initialize() {
-        final StormpathAuthenticator authenticator = new StormpathAuthenticator(this.apiKey, this.secretkey, this.applicationId);
-        authenticator.setPasswordEncoder(this.stormpathPasswordEncoder);
-        setAuthenticator(authenticator);
-    }
-
     @Autowired(required = false)
     @Override
     public void setPasswordEncoder(@Qualifier("stormpathPasswordEncoder")
@@ -60,5 +49,12 @@ public class StormpathAuthenticationHandler extends UsernamePasswordWrapperAuthe
         if (principalNameTransformer != null) {
             super.setPrincipalNameTransformer(principalNameTransformer);
         }
+    }
+
+    @Override
+    protected Authenticator getAuthenticator(final Credential credential) {
+        final StormpathAuthenticator authenticator = new StormpathAuthenticator(this.apiKey, this.secretkey, this.applicationId);
+        authenticator.setPasswordEncoder(this.stormpathPasswordEncoder);
+        return authenticator;
     }
 }
