@@ -56,10 +56,8 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                     this.authenticationSystemSupport.getPrincipalElectionStrategy());
-            final AuthenticationTransaction transaction =
-                    AuthenticationTransaction.wrap(credential);
-            this.authenticationSystemSupport.getAuthenticationTransactionManager()
-                    .handle(transaction,  builder);
+            final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credential);
+            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
             final AuthenticationContext authenticationContext = builder.build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
@@ -83,6 +81,10 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
     public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     /**
