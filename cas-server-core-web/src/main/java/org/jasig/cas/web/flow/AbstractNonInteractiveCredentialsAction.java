@@ -4,12 +4,12 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
-import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
-import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
@@ -49,8 +49,8 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
 
     @NotNull
     @Autowired(required=false)
-    @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @NotNull
     @Autowired
@@ -82,10 +82,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
 
             try {
                 final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                        this.authenticationObjectsRepository.getPrincipalElectionStrategy());
-                final AuthenticationTransaction transaction =
-                        this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
-                this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
+                        this.authenticationSystemSupport.getPrincipalElectionStrategy());
+                final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credential);
+
+                this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
                 final AuthenticationContext authenticationContext = builder.build(service);
 
                 final ServiceTicket serviceTicketId = this.centralAuthenticationService
@@ -104,10 +104,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
 
         try {
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
             final AuthenticationTransaction transaction =
-                    this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
-            this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
+                    AuthenticationTransaction.wrap(credential);
+            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
             final AuthenticationContext authenticationContext = builder.build(service);
 
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
@@ -168,8 +168,8 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         return principalFactory;
     }
 
-    public AuthenticationObjectsRepository getAuthenticationObjectsRepository() {
-        return authenticationObjectsRepository;
+    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        return authenticationSystemSupport;
     }
 
     /**

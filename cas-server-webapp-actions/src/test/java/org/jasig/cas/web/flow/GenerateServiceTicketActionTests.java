@@ -38,11 +38,9 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         this.action.afterPropertiesSet();
 
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                getAuthenticationObjectsRepository().getPrincipalElectionStrategy());
-        final AuthenticationTransaction transaction =
-                getAuthenticationObjectsRepository().getAuthenticationTransactionFactory()
-                        .get(TestUtils.getCredentialsWithSameUsernameAndPassword());
-        getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
+                getAuthenticationSystemSupport().getPrincipalElectionStrategy());
+        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .handle(transaction,  builder);
         final AuthenticationContext ctx = builder.build(TestUtils.getService());
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);

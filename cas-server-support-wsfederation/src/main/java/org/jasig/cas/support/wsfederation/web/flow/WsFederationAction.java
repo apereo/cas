@@ -2,10 +2,10 @@ package org.jasig.cas.support.wsfederation.web.flow;
 
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
-import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
-import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.support.wsfederation.WsFederationConfiguration;
 import org.jasig.cas.support.wsfederation.WsFederationHelper;
 import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationCredential;
@@ -67,8 +67,8 @@ public final class WsFederationAction extends AbstractAction {
 
     @NotNull
     @Autowired(required=false)
-    @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     /**
      * Executes the webflow action.
@@ -118,10 +118,10 @@ public final class WsFederationAction extends AbstractAction {
                         restoreRequestAttribute(request, session, METHOD);
 
                         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                                this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+                                this.authenticationSystemSupport.getPrincipalElectionStrategy());
                         final AuthenticationTransaction transaction =
-                                this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
-                        this.authenticationObjectsRepository.getAuthenticationTransactionManager()
+                                AuthenticationTransaction.wrap(credential);
+                        this.authenticationSystemSupport.getAuthenticationTransactionManager()
                                 .handle(transaction,  builder);
                         final AuthenticationContext authenticationContext = builder.build(service);
 

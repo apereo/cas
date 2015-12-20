@@ -5,17 +5,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
- * This is {@link DefaultAuthenticationObjectsRepository}.
+ * This is {@link DefaultAuthenticationSystemSupport}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Component("defaultAuthenticationObjectsRepository")
-public final class DefaultAuthenticationObjectsRepository implements AuthenticationObjectsRepository {
-
-    @Autowired(required=false)
-    @Qualifier("defaultAuthenticationTransactionFactory")
-    private AuthenticationTransactionFactory authenticationTransactionFactory = new DefaultAuthenticationTransactionFactory();
+@Component("defaultAuthenticationSystemSupport")
+public final class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationTransactionManager")
@@ -31,17 +27,8 @@ public final class DefaultAuthenticationObjectsRepository implements Authenticat
     }
 
     @Override
-    public AuthenticationTransactionFactory getAuthenticationTransactionFactory() {
-        return this.authenticationTransactionFactory;
-    }
-
-    @Override
     public PrincipalElectionStrategy getPrincipalElectionStrategy() {
         return this.principalElectionStrategy;
-    }
-
-    public void setAuthenticationTransactionFactory(final AuthenticationTransactionFactory authenticationTransactionFactory) {
-        this.authenticationTransactionFactory = authenticationTransactionFactory;
     }
 
     public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
