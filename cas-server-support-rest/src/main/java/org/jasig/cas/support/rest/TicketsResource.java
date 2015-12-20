@@ -6,12 +6,12 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
-import org.jasig.cas.authentication.AuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
-import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ServiceFactory;
@@ -69,8 +69,8 @@ public class TicketsResource {
 
     @NotNull
     @Autowired(required=false)
-    @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @Autowired(required = false)
     private final CredentialFactory credentialFactory = new DefaultCredentialFactory();
@@ -102,10 +102,10 @@ public class TicketsResource {
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
 
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
             final AuthenticationTransaction transaction =
-                    this.authenticationObjectsRepository.getAuthenticationTransactionFactory().get(credential);
-            this.authenticationObjectsRepository.getAuthenticationTransactionManager().handle(transaction,  builder);
+                    AuthenticationTransaction.wrap(credential);
+            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
             final AuthenticationContext authenticationContext = builder.build();
 
             final TicketGrantingTicket tgtId = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
@@ -156,7 +156,7 @@ public class TicketsResource {
         try {
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                    this.authenticationObjectsRepository.getPrincipalElectionStrategy());
+                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
 
             final Service service = this.webApplicationServiceFactory.createService(serviceId);
             final AuthenticationContext authenticationContext =
@@ -187,8 +187,8 @@ public class TicketsResource {
         return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }
 
-    public void setAuthenticationObjectsRepository(final AuthenticationObjectsRepository authenticationObjectsRepository) {
-        this.authenticationObjectsRepository = authenticationObjectsRepository;
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     public void setWebApplicationServiceFactory(final ServiceFactory webApplicationServiceFactory) {
@@ -207,8 +207,8 @@ public class TicketsResource {
         return centralAuthenticationService;
     }
 
-    public AuthenticationObjectsRepository getAuthenticationObjectsRepository() {
-        return authenticationObjectsRepository;
+    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        return authenticationSystemSupport;
     }
 
     public CredentialFactory getCredentialFactory() {

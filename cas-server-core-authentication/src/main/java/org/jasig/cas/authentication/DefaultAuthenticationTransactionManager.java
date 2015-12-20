@@ -29,16 +29,9 @@ public final class DefaultAuthenticationTransactionManager implements Authentica
     public AuthenticationTransactionManager handle(final AuthenticationTransaction authenticationTransaction,
                                                    final AuthenticationContextBuilder authenticationContext)
                                                     throws AuthenticationException {
-        final Collection<Credential> sanitizedCredentials = authenticationTransaction.getCredentials();
-        if (!sanitizedCredentials.isEmpty()) {
-            final Credential[] sanitizedCredentialsArray = sanitizedCredentials.toArray(new Credential[] {});
-            final Authentication authentication = this.authenticationManager.authenticate(sanitizedCredentialsArray);
-            LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
-            authenticationContext.collect(authentication);
-        } else {
-            LOGGER.info("No credentials were provided for authentication. Authentication event is ignored and nothing is collected into "
-                    + "the authentication context");
-        }
+        final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
+        LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
+        authenticationContext.collect(authentication);
         return this;
     }
 

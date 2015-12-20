@@ -1,8 +1,8 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.AuthenticationObjectsRepository;
-import org.jasig.cas.authentication.DefaultAuthenticationObjectsRepository;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -50,8 +50,8 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     @NotNull
     @Autowired(required=false)
-    @Qualifier("defaultAuthenticationObjectsRepository")
-    private AuthenticationObjectsRepository authenticationObjectsRepository = new DefaultAuthenticationObjectsRepository();
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     public ArgumentExtractor getArgumentExtractor() {
         return argumentExtractor;
@@ -77,7 +77,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
         return this.servicesManager;
     }
 
-    public AuthenticationObjectsRepository getAuthenticationObjectsRepository() {
-        return authenticationObjectsRepository;
+    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        return authenticationSystemSupport;
     }
 }

@@ -4,6 +4,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
@@ -126,8 +127,8 @@ public final class ClientActionTests {
         final ClientAction action = new ClientAction();
 
         final AuthenticationManager authNManager = mock(AuthenticationManager.class);
-        when(authNManager.authenticate(any(Credential.class))).thenReturn(TestUtils.getAuthentication());
-        action.getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
+        when(authNManager.authenticate(any(AuthenticationTransaction.class))).thenReturn(TestUtils.getAuthentication());
+        action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .setAuthenticationManager(authNManager);
         action.setCentralAuthenticationService(casImpl);
 

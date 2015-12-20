@@ -4,6 +4,7 @@ import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
@@ -60,9 +61,9 @@ public class TicketsResourceTests {
     @Before
     public void setup() throws Exception {
         final AuthenticationManager mgmr = mock(AuthenticationManager.class);
-        when(mgmr.authenticate(any(Credential.class))).thenReturn(TestUtils.getAuthentication());
+        when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(TestUtils.getAuthentication());
 
-        this.ticketsResourceUnderTest.getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
+        this.ticketsResourceUnderTest.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .setAuthenticationManager(mgmr);
         this.ticketsResourceUnderTest.setWebApplicationServiceFactory(new WebApplicationServiceFactory());
 

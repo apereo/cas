@@ -52,8 +52,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
     public void verifyValidTicket() throws Exception {
 
         final MockRequestContext ctx = new MockRequestContext();
-        final AuthenticationContext ctxAuthN = getAuthenticationContext(org.jasig.cas.authentication
-                .TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationContext ctxAuthN = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport());
 
         final TicketGrantingTicket tgt = this.getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctxAuthN);
@@ -65,17 +64,5 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
         assertEquals(event.getId(), TicketGrantingTicketCheckAction.VALID);
     }
 
-    private AuthenticationContext getAuthenticationContext(final Credential... credentials)
-            throws AuthenticationException {
-        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                getAuthenticationObjectsRepository().getPrincipalElectionStrategy());
-        final AuthenticationTransaction transaction =
-                getAuthenticationObjectsRepository().getAuthenticationTransactionFactory()
-                        .get(org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
-        getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
-                .handle(transaction,  builder);
-        final AuthenticationContext ctx = builder.build(TestUtils.getService());
-        return ctx;
-    }
 
 }

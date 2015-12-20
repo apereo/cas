@@ -46,7 +46,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
                 getCentralAuthenticationService();
 
         this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.getAuthenticationObjectsRepository().getAuthenticationTransactionManager()
+        this.action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .setAuthenticationManager(authenticationManager);
     }
 
