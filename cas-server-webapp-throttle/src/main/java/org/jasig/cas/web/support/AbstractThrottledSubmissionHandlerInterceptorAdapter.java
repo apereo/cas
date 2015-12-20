@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,7 +22,6 @@ import javax.validation.constraints.NotNull;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-@Component("abstractThrottledSubmissionHandlerInterceptorAdapter")
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements InitializingBean {
 
     private static final int DEFAULT_FAILURE_THRESHOLD = 100;
