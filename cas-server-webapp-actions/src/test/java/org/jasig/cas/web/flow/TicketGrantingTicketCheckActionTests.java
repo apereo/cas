@@ -2,11 +2,6 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
-import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationTransaction;
-import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -15,7 +10,7 @@ import org.junit.Test;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Handles tests for {@link TicketGrantingTicketCheckAction}.
