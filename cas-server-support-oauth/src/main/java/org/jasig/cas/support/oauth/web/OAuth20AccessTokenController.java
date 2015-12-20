@@ -7,6 +7,8 @@ import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -23,6 +25,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Component("accessTokenController")
 public final class OAuth20AccessTokenController extends BaseOAuthWrapperController {
+
+    @Autowired
+    @Qualifier("defaultAccessTokenGenerator")
+    private AccessTokenGenerator accessTokenGenerator;
 
     /**
      * Instantiates a new o auth20 access token controller.
@@ -59,13 +65,12 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         // remove service ticket
         ticketRegistry.deleteTicket(serviceTicket.getId());
 
-        response.setContentType("text/plain");
-        final int expires = (int) (timeout - TimeUnit.MILLISECONDS
+        final String accessTokenEncoded = this.accessTokenGenerator.generate(serviceTicket.getService(), ticketGrantingTicket);
+        final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
                 .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
-
-        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, ticketGrantingTicket.getId(),
-                                                    OAuthConstants.EXPIRES, expires);
-        logger.debug("text : {}", text);
+        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenEncoded, OAuthConstants.EXPIRES, expires);
+        logger.debug("OAuth access token response: {}", text);
+        response.setContentType("text/plain");
         return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
     }
 
@@ -122,4 +127,6 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         }
         return true;
     }
+
+
 }
