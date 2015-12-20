@@ -21,6 +21,7 @@ dependencies {
         exclude(module: 'spring-core')
         exclude(module: 'spring-tx')
         exclude(module: 'ldaptive')
+        exclude(module: 'guava')
     }
     compile(group: 'org.springframework.webflow', name: 'spring-binding', version: springWebflowVersion) {
         exclude(module: 'commons-logging')

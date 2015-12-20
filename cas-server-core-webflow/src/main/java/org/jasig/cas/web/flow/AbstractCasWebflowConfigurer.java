@@ -136,8 +136,6 @@ public abstract class AbstractCasWebflowConfigurer {
 
     /**
      * Initialize.
-     *
-     * @throws Exception the exception
      */
     @PostConstruct
     public final void initialize() {
