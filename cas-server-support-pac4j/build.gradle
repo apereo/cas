@@ -7,6 +7,7 @@ dependencies {
     compile project(':cas-server-integration-pac4j-core')
     compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
         exclude(module: 'commons-lang3')
+        exclude(module: 'slf4j-api')
     }
     compile(group: 'org.pac4j', name: 'pac4j-oauth', version: pac4jVersion) {
         exclude(module: 'commons-lang3')
@@ -14,6 +15,7 @@ dependencies {
     }
     compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
         exclude(module: 'commons-lang3')
+        exclude(module: 'slf4j-api')
     }
     compile(group: 'org.pac4j', name: 'pac4j-saml', version: pac4jVersion) {
         exclude(module: 'commons-lang3')
