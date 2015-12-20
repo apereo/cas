@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Handles tests for {@link TicketGrantingTicketCheckAction}.

@@ -20,7 +20,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.sql.DataSource;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
