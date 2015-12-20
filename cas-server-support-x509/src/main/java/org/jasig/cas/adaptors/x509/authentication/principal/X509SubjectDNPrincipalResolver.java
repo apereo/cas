@@ -8,7 +8,7 @@ import java.security.cert.X509Certificate;
  * Returns a principal based on the Subject DNs name.
  *
  * @author Scott Battaglia
- * @since 3.0.0.4
+ * @since 3.0.0
  */
 @Component("x509SubjectDNPrincipalResolver")
 public final class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolver {

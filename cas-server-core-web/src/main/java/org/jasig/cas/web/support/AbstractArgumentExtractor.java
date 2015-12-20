@@ -4,7 +4,6 @@ import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +17,6 @@ import java.util.List;
  * @since 3.1.2
  *
  */
-@Component("abstractArgumentExtractor")
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     /** Logger instance. */

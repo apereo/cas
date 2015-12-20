@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 /**
  * Base class for all CRL-based revocation checkers.
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Component;
  * @since 3.4.6
  *
  */
-@Component("abstractCRLRevocationChecker")
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(getClass());
