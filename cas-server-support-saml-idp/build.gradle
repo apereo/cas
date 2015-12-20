@@ -3,6 +3,7 @@ dependencies {
     compile project(':cas-server-core-services')
     compile(project(':cas-server-support-saml')) {
         exclude(module: 'xml-apis')
+        exclude(module: 'guava')
     }
     compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
     compile(group: 'org.jasig.cas.client', name: 'cas-client-core', version: casClientVersion) {
@@ -11,7 +12,7 @@ dependencies {
         exclude(module: 'bcprov-jdk15')
         exclude(module: 'slf4j-api')
     }
-    compile(group: 'net.shibboleth.idp', name: 'idp-installer', version: opensamlVersion) {
+    compile(group: 'net.shibboleth.idp', name: 'idp-installer', version: idpVersion) {
         exclude(module: 'spring-beans')
         exclude(module: 'spring-context')
         exclude(module: 'spring-core')
@@ -22,7 +23,21 @@ dependencies {
         exclude(module: 'spring-webflow')
         exclude(module: 'httpclient')
         exclude(module: 'bcprov-jdk15on')
+        exclude(module: 'guava')
     }
+    compile(group: 'net.shibboleth.idp', name: 'idp-saml-impl', version: idpVersion) {
+        exclude(module: 'slf4j-api')
+        exclude(module: 'joda-time')
+        exclude(module: 'guava')
+        exclude(module: 'httpclient')
+        exclude(module: 'spring-beans')
+        exclude(module: 'spring-context')
+        exclude(module: 'spring-core')
+        exclude(module: 'spring-context-support')
+        exclude(module: 'bcprov-jdk15on')
+        exclude(module: 'idwsfconsumer')
+    }
+
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
         exclude(module: 'slf4j-api')
         exclude(module: 'jboss-logging')

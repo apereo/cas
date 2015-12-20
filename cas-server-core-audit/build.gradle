@@ -7,6 +7,7 @@ dependencies {
         exclude(module: 'aspectjrt')
     }
     compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
+        exclude(module: 'slf4j-api')
     }
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-util')

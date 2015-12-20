@@ -7,7 +7,9 @@ dependencies {
     exclude(module: 'javassist')
     exclude(module: 'xml-apis')  
   }
-  compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
+  compile(group: 'org.reflections', name: 'reflections', version: reflectionsVersion) {
+    exclude(module: 'guava')
+  }
   compile project(':cas-server-core-authentication')
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-web')
