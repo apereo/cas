@@ -1,7 +1,6 @@
 package org.jasig.cas.validation;
 
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 /**
  * Base validation specification for the CAS protocol. This specification checks
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Component("abstractCasProtocolValidationSpecification")
 @Scope(value = "prototype")
 public abstract class AbstractCasProtocolValidationSpecification implements ValidationSpecification {
 

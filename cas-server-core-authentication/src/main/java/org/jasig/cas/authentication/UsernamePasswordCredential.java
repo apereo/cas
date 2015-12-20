@@ -18,15 +18,13 @@ public class UsernamePasswordCredential implements Credential, Serializable {
     /** Authentication attribute name for password. **/
     public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
 
-    /** Unique ID for serialization. */
     private static final long serialVersionUID = -700605081472810939L;
 
-    /** The username. */
+
     @NotNull
     @Size(min=1, message = "required.username")
     private String username;
 
-    /** The password. */
     @NotNull
     @Size(min=1, message = "required.password")
     private String password;
@@ -45,37 +43,25 @@ public class UsernamePasswordCredential implements Credential, Serializable {
         this.password = password;
     }
 
-    /**
-     * @return Returns the password.
-     */
     public final String getPassword() {
         return this.password;
     }
 
-    /**
-     * @param password The password to set.
-     */
+
     public final void setPassword(final String password) {
         this.password = password;
     }
 
-    /**
-     * @return Returns the userName.
-     */
+
     public final String getUsername() {
         return this.username;
     }
 
-    /**
-     * @param userName The userName to set.
-     */
     public final void setUsername(final String userName) {
         this.username = userName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public String getId() {
         return this.username;
