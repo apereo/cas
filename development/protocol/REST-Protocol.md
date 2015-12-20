@@ -15,6 +15,11 @@ by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that
  only soberly and with due consideration of security aspects.</p></div>
 
 # Components
+By default the CAS REST API is configured to add routing for the tickets. It
+
+also defines the resources that will resolve the URLs. The `TicketResource` defined by
+default (which can be extended) accepts username/password.
+
 Support is enabled by including the following in your `pom.xml` file:
 
 {% highlight xml %}
@@ -26,7 +31,7 @@ Support is enabled by including the following in your `pom.xml` file:
 </dependency>
 {% endhighlight %}
 
-REST support is currently provided internally by the [Spring framework](http://spring.io/guides/gs/rest-service/).
+REST support is currently provided internally by the [Spring framework](http://spring.io/guides/gs/rest-service/‎).
 
 #Protocol
 
