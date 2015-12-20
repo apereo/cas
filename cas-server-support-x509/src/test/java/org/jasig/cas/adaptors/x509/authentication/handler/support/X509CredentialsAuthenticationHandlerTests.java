@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- * @since 3.0.0.4
+ * @since 3.0.0
  *
  */
 @RunWith(Parameterized.class)
