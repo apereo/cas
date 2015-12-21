@@ -10,7 +10,7 @@ LDAP integration is enabled by including the following dependency in the Maven W
 <dependency>
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-support-ldap</artifactId>
-     <version>${project.version}</version>
+     <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
 
