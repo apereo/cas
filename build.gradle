@@ -100,7 +100,6 @@ subprojects {
 
     javadoc {
         classpath += configurations.provided
-        enabled = !Boolean.getBoolean("skipJavadocs")
     }
 
     jar {
