@@ -177,7 +177,7 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
 {% endhighlight %}
 
 
-#### LDAP Requiring Authenticated Search
+## LDAP Requiring Authenticated Search
 The following configuration snippet provides a template for LDAP authentication performed with manager credentials
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 {% highlight xml %}
