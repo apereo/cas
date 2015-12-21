@@ -195,8 +195,8 @@ By default ClearPass is setup to use a non-distrbuted EhCache to store its passw
     p:bootstrapCacheLoader-ref="ticketCacheBootstrapCacheLoader" 
     p:cacheEventListeners-ref="ticketRMISynchronousCacheReplicator"
     p:cacheName="org.jasig.cas.extension.clearpass.CACHE"
-    p:timeToIdle="720"
-    p:timeToLive="720" />
+    p:timeToIdle="7201"
+    p:timeToLive="7201" />
 
 <bean id="ticketRMISynchronousCacheReplicator" class="net.sf.ehcache.distribution.RMISynchronousCacheReplicator">
     <constructor-arg name="replicatePuts" value="true"/> 
