@@ -16,7 +16,6 @@ import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.PostConstruct;
@@ -41,7 +40,6 @@ import java.util.concurrent.TimeUnit;
  * @author Scott Battaglia
  * @since 3.0.0.5
  */
-@Component("abstractInMemoryThrottledSubmissionHandlerInterceptorAdapter")
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
                 extends AbstractThrottledSubmissionHandlerInterceptorAdapter implements Job {
 

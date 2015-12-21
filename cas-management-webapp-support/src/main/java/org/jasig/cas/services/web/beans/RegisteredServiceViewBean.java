@@ -1,15 +1,8 @@
 package org.jasig.cas.services.web.beans;
 
-import org.jasig.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
-import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
-import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceProxyPolicy;
-import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
-import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
-import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
-
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Defines the service bean that is produced by the webapp
@@ -30,6 +23,7 @@ public class RegisteredServiceViewBean implements Serializable {
     private String logoUrl;
     private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
     private RegisteredServiceAttributeReleasePolicyViewBean attrRelease = new RegisteredServiceAttributeReleasePolicyViewBean();
+    private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
     public int getEvalOrder() {
         return evalOrder;
@@ -104,63 +98,33 @@ public class RegisteredServiceViewBean implements Serializable {
     }
 
     /**
-     * From registered service to a service bean.
+     * Visible for serialization only. Use {@link RegisteredServiceViewBean#getCustomComponent(String)} instead.
      *
-     * @param svc the svc
-     * @return the registered service bean
+     * @return all the custom components
      */
-    public static RegisteredServiceViewBean fromRegisteredService(final RegisteredService svc) {
-        final RegisteredServiceViewBean bean = new RegisteredServiceViewBean();
-        bean.setAssignedId(svc.getId());
-        bean.setServiceId(svc.getServiceId());
-        bean.setName(svc.getName());
-        bean.setDescription(svc.getDescription());
-        bean.setEvalOrder(svc.getEvaluationOrder());
+    public Map<String, Map<String, ?>> getCustomComponent() {
+        return customComponent;
+    }
 
-        if (svc.getLogo() != null) {
-            bean.setLogoUrl(svc.getLogo().toExternalForm());
-        }
+    /**
+     * Get the current properties for the specified custom component. The returned {@link Map} should only contain
+     * nested Maps, Arrays, and simple objects.
+     *
+     * @param componentName name of the component to get the properties for (this should be unique for each component)
+     * @return current custom component properties
+     */
+    public Map<String, ?> getCustomComponent(final String componentName) {
+        return customComponent.get(componentName);
+    }
 
-        final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
-        final RegisteredServiceProxyPolicyBean proxyPolicyBean = bean.getProxyPolicy();
-
-        if (policy instanceof RefuseRegisteredServiceProxyPolicy) {
-            final RefuseRegisteredServiceProxyPolicy refuse = (RefuseRegisteredServiceProxyPolicy) policy;
-            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
-        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
-            final RegexMatchingRegisteredServiceProxyPolicy option = (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            proxyPolicyBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
-            proxyPolicyBean.setValue(option.getPattern().toString());
-        }
-
-        final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy =
-                (AbstractRegisteredServiceAttributeReleasePolicy) svc.getAttributeReleasePolicy();
-        final RegisteredServiceAttributeReleasePolicyViewBean attrPolicyBean = bean.getAttrRelease();
-
-        if (attrPolicy != null) {
-            attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
-            attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
-
-            if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
-                attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALL.toString());
-            } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
-                final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
-                if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
-                } else {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.ALLOWED.toString());
-                }
-            } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
-                final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
-                if (attrPolicyAllowed.getAllowedAttributes().isEmpty()) {
-                    attrPolicyBean.setAttrPolicy(
-                            RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.NONE.toString());
-                } else {
-                    attrPolicyBean.setAttrPolicy(RegisteredServiceAttributeReleasePolicyStrategyViewBean.Types.MAPPED.toString());
-                }
-            }
-        }
-        bean.setSasCASEnabled(svc.getAccessStrategy().isServiceAccessAllowed());
-        return bean;
+    /**
+     * This is reserved for usage by any custom components that need to present their config to the management UI. The
+     * provided {@link Map} should only contain nested Maps, Arrays, and simple objects.
+     *
+     * @param componentName name of the component to store the properties for (this should be unique for each component)
+     * @param properties    custom component properties
+     */
+    public void setCustomComponent(final String componentName, final Map<String, ?> properties) {
+        this.customComponent.put(componentName, properties);
     }
 }
