@@ -8,7 +8,6 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
-import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.Pair;
