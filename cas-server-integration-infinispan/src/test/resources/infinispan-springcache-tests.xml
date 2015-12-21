@@ -13,9 +13,6 @@
     <bean id="infinispanTicketRegistry" class="org.jasig.cas.ticket.registry.InfinispanTicketRegistry" />
     <bean id="infinispanTicketsCache" factory-bean="cacheManager" factory-method="getCache" />
     <bean id="cacheManager" class="org.infinispan.manager.DefaultCacheManager"
-          c:configurationFile-ref="configFilePath"/>
+          c:configurationFile="infinispan.xml"/>
 
-    <bean id="configFilePath" factory-bean="configFile" factory-method="getFilename" />
-    <bean id="configFile" class="org.springframework.core.io.ClassPathResource"
-          c:path="infinispan.xml" />
 </beans>
