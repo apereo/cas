@@ -26,13 +26,12 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthenticationAction.class);
 
-    private static final String AUTHZ_HEADER = "Authorization";
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
         final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
-        final BasicAuthExtractor extractor = new BasicAuthExtractor(AUTHZ_HEADER, "Basic", this.getClass().getSimpleName());
+        final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
         final WebContext webContext = new J2EContext(request, response);
         try {
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
