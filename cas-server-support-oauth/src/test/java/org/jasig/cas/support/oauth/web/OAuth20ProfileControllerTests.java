@@ -137,8 +137,8 @@ public final class OAuth20ProfileControllerTests {
                 + OAuthConstants.PROFILE_URL);
         final TicketGrantingTicket impl = new TicketGrantingTicketImpl(TGT_ID,
                 org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
-        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' ' +
-                accessTokenGenerator.generate(TestUtils.getService(), impl));
+        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
+                + accessTokenGenerator.generate(TestUtils.getService(), impl));
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
