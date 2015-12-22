@@ -81,7 +81,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     @Override
     public boolean supports(final Credential credential) {
-        return true;
+        return credential != null && credential.getId() != null;
     }
 
     @Override
