@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -57,6 +58,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
+    /** Instance of warn cookie generator. */
+    @Autowired(required=false)
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
+
     /**
      * Checks if is renew present.
      *
@@ -89,8 +95,9 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
                 final AuthenticationContext authenticationContext = builder.build(service);
 
                 final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                        .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
+                    .grantServiceTicket(ticketGrantingTicketId, service, credential);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
+                onWarn(context, credential);
                 return result("warn");
 
             } catch (final AuthenticationException e) {
@@ -126,10 +133,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         return centralAuthenticationService;
     }
 
-    public final void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
+    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
+
 
     /**
      * Sets principal factory to create principal objects.
@@ -147,8 +154,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @param context the context for this specific request.
      * @param credential the credential for this request.
      */
-    protected void onError(final RequestContext context,
-        final Credential credential) {
+    protected void onError(final RequestContext context, final Credential credential) {
         // default implementation does nothing
     }
 
@@ -159,8 +165,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @param context the context for this specific request.
      * @param credential the credential for this request.
      */
-    protected void onSuccess(final RequestContext context,
-        final Credential credential) {
+    protected void onSuccess(final RequestContext context, final Credential credential) {
         // default implementation does nothing
     }
 
@@ -173,6 +178,18 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     }
 
     /**
+     * Hook method to note to the flow thar a warning
+     * must be issued prior to resuming the normal
+     * authentication flow.
+     *
+     * @param context the context for this specific request.
+     * @param credential the credential for this request.
+     */
+    protected void onWarn(final RequestContext context, final Credential credential) {
+        WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
+    }
+
+    /**
      * Abstract method to implement to construct the credential from the
      * request object.
      *
@@ -180,6 +197,5 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @return the constructed credential or null if none could be constructed
      * from the request.
      */
-    protected abstract Credential constructCredentialsFromRequest(
-        RequestContext context);
+    protected abstract Credential constructCredentialsFromRequest(RequestContext context);
 }
