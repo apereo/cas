@@ -2,6 +2,7 @@ package org.jasig.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -10,6 +11,7 @@ import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
@@ -52,6 +54,11 @@ public final class OAuth20ProfileControllerTests {
     @Autowired
     private Controller oauth20WrapperController;
 
+
+    @Autowired
+    @Qualifier("defaultAccessTokenGenerator")
+    private AccessTokenGenerator accessTokenGenerator;
+
     @Test
     public void verifyNoAccessToken() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -73,7 +80,7 @@ public final class OAuth20ProfileControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
+        assertTrue(mockResponse.getContentAsString().contains(OAuthConstants.INVALID_REQUEST));
     }
 
     @Test
@@ -85,7 +92,7 @@ public final class OAuth20ProfileControllerTests {
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
-        assertEquals("{\"error\":\"" + OAuthConstants.EXPIRED_ACCESS_TOKEN + "\"}", mockResponse.getContentAsString());
+        assertTrue(mockResponse.getContentAsString().contains(OAuthConstants.INVALID_REQUEST));
     }
     
     @Test
@@ -103,7 +110,7 @@ public final class OAuth20ProfileControllerTests {
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
-        mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, TGT_ID);
+        mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessTokenGenerator.generate(TestUtils.getService(), impl));
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
@@ -128,7 +135,10 @@ public final class OAuth20ProfileControllerTests {
     public void verifyOKWithAuthorizationHeader() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
-        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' ' + TGT_ID);
+        final TicketGrantingTicket impl = new TicketGrantingTicketImpl(TGT_ID,
+                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
+                + accessTokenGenerator.generate(TestUtils.getService(), impl));
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
