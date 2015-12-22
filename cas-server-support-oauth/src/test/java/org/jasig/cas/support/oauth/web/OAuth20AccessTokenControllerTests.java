@@ -279,7 +279,9 @@ public final class OAuth20AccessTokenControllerTests {
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();
 
-        assertTrue(body.startsWith(OAuthConstants.ACCESS_TOKEN + '=' + TGT_ID + '&' + OAuthConstants.EXPIRES + '='));
+        assertTrue(body.contains(OAuthConstants.ACCESS_TOKEN + '='));
+        assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
+
         // delta = 2 seconds
         final int delta = 2;
         final int timeLeft = Integer.parseInt(StringUtils.substringAfter(body, '&' + OAuthConstants.EXPIRES + '='));
