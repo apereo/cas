@@ -102,10 +102,6 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         this.loginUrl = loginUrl;
     }
 
-    public void setTimeout(final long timeout) {
-        this.timeout = timeout;
-    }
-
     public String getLoginUrl() {
         return loginUrl;
     }
@@ -120,5 +116,9 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
 
     public long getTimeout() {
         return timeout;
+    }
+
+    public void setTimeout(final long timeout) {
+        this.timeout = timeout;
     }
 }
