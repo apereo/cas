@@ -433,7 +433,8 @@ public final class WebUtils {
             } else {
                 warnCookieGenerator.removeCookie(response);
             }
+        } else {
+            LOGGER.debug("No warning cookie generator is defined");
         }
-        LOGGER.debug("No warning cookie generator is defined");
     }
 }
