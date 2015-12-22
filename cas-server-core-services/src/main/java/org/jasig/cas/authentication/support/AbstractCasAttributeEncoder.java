@@ -1,16 +1,15 @@
 package org.jasig.cas.authentication.support;
 
+import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceCipherExecutor;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.util.services.DefaultRegisteredServiceCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -21,9 +20,8 @@ import java.util.Map;
  * Abstract class to define common attribute encoding operations.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.1.0
  */
-@Component("abstractCasAttributeEncoder")
 public abstract class AbstractCasAttributeEncoder implements CasAttributeEncoder {
     /** The Services manager. */
     @NotNull

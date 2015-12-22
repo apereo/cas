@@ -1,57 +1,14 @@
 package org.jasig.cas.services.web.beans;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
-import org.jasig.cas.authentication.principal.PersistentIdGenerator;
-import org.jasig.cas.authentication.principal.PrincipalAttributesRepository;
-import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
-import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-import org.jasig.cas.services.AbstractRegisteredService;
-import org.jasig.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
-import org.jasig.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
-import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
-import org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider;
-import org.jasig.cas.services.LogoutType;
-import org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
-import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
-import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
-import org.jasig.cas.services.RegexRegisteredService;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAccessStrategy;
-import org.jasig.cas.services.RegisteredServiceAttributeFilter;
-import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.RegisteredServiceProxyPolicy;
-import org.jasig.cas.services.RegisteredServicePublicKey;
-import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
-import org.jasig.cas.services.RegisteredServiceUsernameAttributeProvider;
-import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
-import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
-import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
-import org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy;
-import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
-import org.jasig.services.persondir.IPersonAttributeDao;
-import org.jasig.services.persondir.support.merger.IAttributeMerger;
-import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.jasig.services.persondir.support.merger.NoncollidingAttributeAdder;
-import org.jasig.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.slf4j.Logger;
-import org.springframework.util.AntPathMatcher;
 
 import java.io.Serializable;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -97,239 +54,12 @@ public final class RegisteredServiceEditBean implements Serializable {
     }
 
     /**
-     * From registered service to a service bean.
-     *
-     * @param svc the svc
-     * @return the registered service bean
-     */
-    public static RegisteredServiceEditBean fromRegisteredService(final RegisteredService svc) {
-        final RegisteredServiceEditBean serviceBean = new RegisteredServiceEditBean();
-        final ServiceData bean = serviceBean.getServiceData();
-
-        bean.setAssignedId(svc.getId());
-        bean.setServiceId(svc.getServiceId());
-        bean.setName(svc.getName());
-        bean.setDescription(svc.getDescription());
-        if (svc.getLogo() != null) {
-            bean.setLogoUrl(svc.getLogo().toExternalForm());
-        }
-        bean.setRequiredHandlers(svc.getRequiredHandlers());
-
-        configureAccessStrategy(svc, bean);
-
-        if (svc instanceof OAuthRegisteredCallbackAuthorizeService) {
-            bean.setType(RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString());
-        }
-
-        if (svc instanceof OAuthRegisteredService) {
-            bean.setType(RegisteredServiceTypeEditBean.OAUTH.toString());
-            final OAuthRegisteredService oauth = (OAuthRegisteredService) svc;
-            final RegisteredServiceOAuthTypeEditBean oauthBean = bean.getOauth();
-            oauthBean.setBypass(oauth.isBypassApprovalPrompt());
-            oauthBean.setClientId(oauth.getClientId());
-            oauthBean.setClientSecret(oauth.getClientSecret());
-        }
-
-        bean.setTheme(svc.getTheme());
-        bean.setEvalOrder(svc.getEvaluationOrder());
-        final LogoutType logoutType = svc.getLogoutType();
-        switch (logoutType) {
-            case BACK_CHANNEL:
-                bean.setLogoutType(RegisteredServiceLogoutTypeEditBean.BACK.toString());
-                break;
-            case FRONT_CHANNEL:
-                bean.setLogoutType(RegisteredServiceLogoutTypeEditBean.FRONT.toString());
-                break;
-            default:
-                bean.setLogoutType(RegisteredServiceLogoutTypeEditBean.NONE.toString());
-                break;
-        }
-        final URL url = svc.getLogoutUrl();
-        if (url != null) {
-            bean.setLogoutUrl(url.toExternalForm());
-        }
-        final RegisteredServiceUsernameAttributeProvider provider = svc.getUsernameAttributeProvider();
-        final RegisteredServiceUsernameAttributeProviderEditBean uBean = bean.getUserAttrProvider();
-
-        configureUsernameAttributeProvider(provider, uBean);
-
-        final RegisteredServicePublicKey key = svc.getPublicKey();
-        final RegisteredServicePublicKeyEditBean pBean = bean.getPublicKey();
-        if (key != null) {
-            pBean.setAlgorithm(key.getAlgorithm());
-            pBean.setLocation(key.getLocation());
-        }
-        configureProxyPolicy(svc, bean);
-        configureAttributeReleasePolicy(svc, bean);
-        return serviceBean;
-    }
-
-    /**
-     * Configure access strategy.
-     *
-     * @param svc the svc
-     * @param bean the bean
-     */
-    private static void configureAccessStrategy(final RegisteredService svc, final ServiceData bean) {
-        final RegisteredServiceAccessStrategy accessStrategy = svc.getAccessStrategy();
-        final RegisteredServiceSupportAccessEditBean accessBean = bean.getSupportAccess();
-        accessBean.setCasEnabled(accessStrategy.isServiceAccessAllowed());
-        accessBean.setSsoEnabled(accessStrategy.isServiceAccessAllowedForSso());
-
-        if (accessStrategy instanceof DefaultRegisteredServiceAccessStrategy) {
-            final DefaultRegisteredServiceAccessStrategy def = (DefaultRegisteredServiceAccessStrategy) accessStrategy;
-            accessBean.setRequireAll(def.isRequireAllAttributes());
-            accessBean.setRequiredAttr(def.getRequiredAttributes());
-        }
-
-        if (accessStrategy instanceof TimeBasedRegisteredServiceAccessStrategy) {
-            final TimeBasedRegisteredServiceAccessStrategy def = (TimeBasedRegisteredServiceAccessStrategy) accessStrategy;
-            accessBean.setStartingTime(def.getStartingDateTime());
-            accessBean.setEndingTime(def.getEndingDateTime());
-        }
-    }
-
-    /**
-     * Configure attribute release policy.
-     *
-     * @param svc the svc
-     * @param bean the bean
-     */
-    private static void configureAttributeReleasePolicy(final RegisteredService svc, final ServiceData bean) {
-        final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy =
-                (AbstractRegisteredServiceAttributeReleasePolicy) svc.getAttributeReleasePolicy();
-        if (attrPolicy != null) {
-            final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean = bean.getAttrRelease();
-
-            attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
-            attrPolicyBean.setReleaseTicket(attrPolicy.isAuthorizedToReleaseProxyGrantingTicket());
-
-            final RegisteredServiceAttributeFilter filter = attrPolicy.getAttributeFilter();
-            if (filter != null) {
-                if (filter instanceof RegisteredServiceRegexAttributeFilter) {
-                    final RegisteredServiceRegexAttributeFilter regex =
-                            (RegisteredServiceRegexAttributeFilter) filter;
-                    attrPolicyBean.setAttrFilter(regex.getPattern().pattern());
-                }
-            }
-
-            configurePrincipalRepository(attrPolicy, attrPolicyBean);
-
-            final RegisteredServiceAttributeReleasePolicyStrategyEditBean sBean = attrPolicyBean.getAttrPolicy();
-            if (attrPolicy instanceof ReturnAllAttributeReleasePolicy) {
-                sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString());
-            } else if (attrPolicy instanceof ReturnAllowedAttributeReleasePolicy) {
-                final ReturnAllowedAttributeReleasePolicy attrPolicyAllowed = (ReturnAllowedAttributeReleasePolicy) attrPolicy;
-                sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString());
-                sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
-            } else if (attrPolicy instanceof ReturnMappedAttributeReleasePolicy) {
-                final ReturnMappedAttributeReleasePolicy attrPolicyAllowed = (ReturnMappedAttributeReleasePolicy) attrPolicy;
-                sBean.setType(AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString());
-                sBean.setAttributes(attrPolicyAllowed.getAllowedAttributes());
-            }
-        }
-    }
-
-    /**
-     * Configure principal repository.
-     *
-     * @param attrPolicy the attr policy
-     * @param attrPolicyBean the attr policy bean
-     */
-    private static void configurePrincipalRepository(final AbstractRegisteredServiceAttributeReleasePolicy attrPolicy,
-                                                     final RegisteredServiceAttributeReleasePolicyEditBean attrPolicyBean) {
-        final PrincipalAttributesRepository pr = attrPolicy.getPrincipalAttributesRepository();
-        if (pr instanceof DefaultPrincipalAttributesRepository) {
-            attrPolicyBean.setAttrOption(
-                    RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString());
-        } else {
-
-            if (pr instanceof AbstractPrincipalAttributesRepository) {
-                attrPolicyBean.setAttrOption(
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString());
-
-                final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
-
-                attrPolicyBean.setCachedExpiration(cc.getExpiration());
-                attrPolicyBean.setCachedTimeUnit(cc.getTimeUnit().name());
-            }
-
-            final AbstractPrincipalAttributesRepository cc = (AbstractPrincipalAttributesRepository) pr;
-            final IAttributeMerger merger = cc.getMergingStrategy().getAttributeMerger();
-
-            if (merger != null) {
-                if (merger instanceof NoncollidingAttributeAdder) {
-                    attrPolicyBean.setMergingStrategy(
-                            RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.ADD.toString());
-                } else if (merger instanceof MultivaluedAttributeMerger) {
-                    attrPolicyBean.setMergingStrategy(
-                            RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.MULTIVALUED.toString());
-                } else if (merger instanceof ReplacingAttributeAdder) {
-                    attrPolicyBean.setMergingStrategy(
-                            RegisteredServiceAttributeReleasePolicyEditBean.AttributeMergerTypes.REPLACE.toString());
-                }
-            }
-        }
-    }
-
-    /**
-     * Configure proxy policy.
-     *
-     * @param svc the svc
-     * @param bean the bean
-     */
-    private static void configureProxyPolicy(final RegisteredService svc, final ServiceData bean) {
-        final RegisteredServiceProxyPolicy policy = svc.getProxyPolicy();
-        final RegisteredServiceProxyPolicyBean cBean = bean.getProxyPolicy();
-        if (policy == null || policy instanceof RefuseRegisteredServiceProxyPolicy) {
-            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REFUSE.toString());
-        } else if (policy instanceof RegexMatchingRegisteredServiceProxyPolicy) {
-            final RegexMatchingRegisteredServiceProxyPolicy regex =
-                    (RegexMatchingRegisteredServiceProxyPolicy) policy;
-            cBean.setType(RegisteredServiceProxyPolicyBean.Types.REGEX.toString());
-            cBean.setValue(regex.getPattern().toString());
-        }
-    }
-
-    /**
-     * Configure username attribute provider.
-     *
-     * @param provider the provider
-     * @param uBean the u bean
-     */
-    private static void configureUsernameAttributeProvider(final RegisteredServiceUsernameAttributeProvider provider,
-                                                           final RegisteredServiceUsernameAttributeProviderEditBean uBean) {
-        if (provider instanceof DefaultRegisteredServiceUsernameProvider) {
-            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString());
-        } else if (provider instanceof AnonymousRegisteredServiceUsernameAttributeProvider) {
-            final AnonymousRegisteredServiceUsernameAttributeProvider anonymous =
-                    (AnonymousRegisteredServiceUsernameAttributeProvider) provider;
-            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString());
-            final PersistentIdGenerator generator = anonymous.getPersistentIdGenerator();
-            if (generator instanceof ShibbolethCompatiblePersistentIdGenerator) {
-                final ShibbolethCompatiblePersistentIdGenerator sh =
-                        (ShibbolethCompatiblePersistentIdGenerator) generator;
-
-                if (sh.getSalt() != null) {
-                    final String salt = new String(sh.getSalt(), Charset.defaultCharset());
-                    uBean.setValue(salt);
-                } else {
-                    throw new IllegalArgumentException("Salt cannot be null");
-                }
-            }
-        } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
-            final PrincipalAttributeRegisteredServiceUsernameProvider p =
-                    (PrincipalAttributeRegisteredServiceUsernameProvider) provider;
-            uBean.setType(RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString());
-            uBean.setValue(p.getUsernameAttribute());
-        }
-    }
-
-    /**
      * The type Form data.
      */
     public static class FormData {
         private List<String> availableAttributes = new ArrayList<>();
+        private Map<String, Map<String, ?>> customComponent = new HashMap<>();
+
         public List<String> getAvailableAttributes() {
             return availableAttributes;
         }
@@ -338,6 +68,38 @@ public final class RegisteredServiceEditBean implements Serializable {
             this.availableAttributes = availableAttributes;
         }
 
+        /**
+         * Visible for serialization only. Use {@link FormData#getCustomComponent(String)} instead.
+         *
+         * @return all the custom components
+         */
+        public Map<String, Map<String, ?>> getCustomComponent() {
+            return customComponent;
+        }
+
+        /**
+         * Get the current properties for the specified custom component. The returned {@link Map} should only contain
+         * nested Maps, Arrays, and simple objects.
+         *
+         * @param componentName name of the component to get the properties for (this should be unique for each
+         *                      component)
+         * @return current custom component properties
+         */
+        public Map<String, ?> getCustomComponent(final String componentName) {
+            return customComponent.get(componentName);
+        }
+
+        /**
+         * This is reserved for usage by any custom components that need to present their config to the management UI.
+         * The provided {@link Map} should only contain nested Maps, Arrays, and simple objects.
+         *
+         * @param componentName name of the component to store the properties for (this should be unique for each
+         *                      component)
+         * @param properties    custom component properties
+         */
+        public void setCustomComponent(final String componentName, final Map<String, ?> properties) {
+            this.customComponent.put(componentName, properties);
+        }
     }
 
     /**
@@ -363,6 +125,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         private RegisteredServiceProxyPolicyBean proxyPolicy = new RegisteredServiceProxyPolicyBean();
         private RegisteredServiceAttributeReleasePolicyEditBean attrRelease
                 = new RegisteredServiceAttributeReleasePolicyEditBean();
+        private Map<String, Map<String, ?>> customComponent = new HashMap<>();
 
         public RegisteredServiceAttributeReleasePolicyEditBean getAttrRelease() {
             return attrRelease;
@@ -501,250 +264,45 @@ public final class RegisteredServiceEditBean implements Serializable {
         }
 
         /**
-         * To registered service.
+         * Visible for serialization only. Use {@link ServiceData#getCustomComponent(String)} instead.
          *
-         * @param dao the dao
-         * @return the registered service
+         * @return all the custom components
          */
-        public RegisteredService toRegisteredService(final IPersonAttributeDao dao) {
-            try {
-                final AbstractRegisteredService regSvc;
-
-                if (StringUtils.equalsIgnoreCase(this.type,
-                        RegisteredServiceTypeEditBean.OAUTH_CALLBACK_AUTHZ.toString())) {
-                    regSvc = new OAuthRegisteredCallbackAuthorizeService();
-                } else if  (StringUtils.equalsIgnoreCase(this.type,
-                        RegisteredServiceTypeEditBean.OAUTH.toString())) {
-                    regSvc = new OAuthRegisteredService();
-
-                    final RegisteredServiceOAuthTypeEditBean oauthBean = this.oauth;
-                    ((OAuthRegisteredService) regSvc).setClientId(oauthBean.getClientId());
-                    ((OAuthRegisteredService) regSvc).setClientSecret(oauthBean.getClientSecret());
-                    ((OAuthRegisteredService) regSvc).setBypassApprovalPrompt(oauthBean.isBypass());
-                } else {
-                    regSvc = determineServiceTypeByPattern(this.serviceId);
-                }
-
-                if (this.assignedId <=0) {
-                    regSvc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
-                } else {
-                    regSvc.setId(this.assignedId);
-                }
-
-                regSvc.setServiceId(this.serviceId);
-                regSvc.setName(this.name);
-                regSvc.setDescription(this.description);
-
-                if (StringUtils.isNotBlank(this.logoUrl)) {
-                    regSvc.setLogo(new URL(this.logoUrl));
-                }
-                regSvc.setTheme(this.theme);
-                regSvc.setEvaluationOrder(this.evalOrder);
-                regSvc.setRequiredHandlers(this.requiredHandlers);
-
-                convertLogoutTypesToService(regSvc);
-
-                if (StringUtils.isNotBlank(this.logoutUrl)) {
-                    regSvc.setLogoutUrl(new URL(this.logoutUrl));
-                }
-
-                convertAccessStrategyToService(regSvc);
-
-                convertProxyPolicyToService(regSvc);
-
-                convertUsernameAttributeToService(regSvc);
-
-                if (this.publicKey != null && this.publicKey.isValid()) {
-                    final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
-                            this.publicKey.getLocation(), this.publicKey.getAlgorithm());
-                    regSvc.setPublicKey(publicKey);
-                }
-
-                final RegisteredServiceAttributeReleasePolicyStrategyEditBean policyBean =
-                        this.attrRelease.getAttrPolicy();
-                final String policyType = policyBean.getType();
-
-                AbstractRegisteredServiceAttributeReleasePolicy policy = null;
-                if (StringUtils.equalsIgnoreCase(policyType,
-                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALL.toString())) {
-                    policy = new ReturnAllAttributeReleasePolicy();
-                } else if (StringUtils.equalsIgnoreCase(policyType,
-                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.ALLOWED.toString())) {
-                    policy = new ReturnAllowedAttributeReleasePolicy((List) policyBean.getAttributes());
-                } else if (StringUtils.equalsIgnoreCase(policyType,
-                        AbstractRegisteredServiceAttributeReleasePolicyStrategyBean.Types.MAPPED.toString())) {
-                    policy = new ReturnMappedAttributeReleasePolicy((Map) policyBean.getAttributes());
-                } else {
-                    policy = new ReturnAllowedAttributeReleasePolicy();
-                }
-
-                final String filter = this.attrRelease.getAttrFilter();
-                if (StringUtils.isNotBlank(filter)) {
-                    policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter(filter));
-                }
-
-                policy.setAuthorizedToReleaseCredentialPassword(this.attrRelease.isReleasePassword());
-                policy.setAuthorizedToReleaseProxyGrantingTicket(this.attrRelease.isReleaseTicket());
-
-                final String attrType = this.attrRelease.getAttrOption();
-                if (StringUtils.equalsIgnoreCase(attrType,
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
-                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(
-                            TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
-                            this.attrRelease.getCachedExpiration()));
-                } else if (StringUtils.equalsIgnoreCase(attrType,
-                        RegisteredServiceAttributeReleasePolicyEditBean.Types.DEFAULT.toString())) {
-                    policy.setPrincipalAttributesRepository(new DefaultPrincipalAttributesRepository());
-                }
-                regSvc.setAttributeReleasePolicy(policy);
-
-                return regSvc;
-            } catch (final Exception e) {
-                throw new RuntimeException(e);
-            }
+        public Map<String, ? extends Map<String, ?>> getCustomComponent() {
+            return customComponent;
         }
 
         /**
-         * Convert proxy policy to service.
+         * Visible for deserialization only. Use {@link ServiceData#setCustomComponent(String, Map)} instead.
          *
-         * @param regSvc the reg svc
+         * @param customComponent all the custom component properties
          */
-        private void convertProxyPolicyToService(final AbstractRegisteredService regSvc) {
-            final String proxyType = this.proxyPolicy.getType();
-            if (StringUtils.equalsIgnoreCase(proxyType,
-                    RegisteredServiceProxyPolicyBean.Types.REFUSE.toString())) {
-                regSvc.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
-            } else if (StringUtils.equalsIgnoreCase(proxyType,
-                    RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
-                final String value = this.proxyPolicy.getValue();
-                if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
-                    regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(value));
-                } else {
-                    throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
-                }
-            }
+        public void setCustomComponent(final Map<String, Map<String, ?>> customComponent) {
+            this.customComponent = customComponent;
         }
 
         /**
-         * Convert username attribute to service.
+         * Get the current properties for the specified custom component. The returned {@link Map} should only contain
+         * nested Maps, Arrays, and simple objects.
          *
-         * @param regSvc the reg svc
+         * @param componentName name of the component to get the properties for (this should be unique for each
+         *                      component)
+         * @return current custom component properties
          */
-        private void convertUsernameAttributeToService(final AbstractRegisteredService regSvc) {
-            final String uidType = this.userAttrProvider.getType();
-            if (StringUtils.equalsIgnoreCase(uidType,
-                    RegisteredServiceUsernameAttributeProviderEditBean.Types.DEFAULT.toString())) {
-                regSvc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
-            } else if (StringUtils.equalsIgnoreCase(uidType,
-                    RegisteredServiceUsernameAttributeProviderEditBean.Types.ANONYMOUS.toString())) {
-                final String salt = this.userAttrProvider.getValue();
-                if (StringUtils.isNotBlank(salt)) {
-
-                    final ShibbolethCompatiblePersistentIdGenerator generator =
-                            new ShibbolethCompatiblePersistentIdGenerator(salt);
-                    regSvc.setUsernameAttributeProvider(
-                            new AnonymousRegisteredServiceUsernameAttributeProvider(generator));
-                } else {
-                    throw new IllegalArgumentException("Invalid sale value for anonymous ids " + salt);
-                }
-            } else if (StringUtils.equalsIgnoreCase(uidType,
-                    RegisteredServiceUsernameAttributeProviderEditBean.Types.ATTRIBUTE.toString())) {
-                final String attr = this.userAttrProvider.getValue();
-
-                if (StringUtils.isNotBlank(attr)) {
-                    regSvc.setUsernameAttributeProvider(
-                            new PrincipalAttributeRegisteredServiceUsernameProvider(attr));
-                } else {
-                    throw new IllegalArgumentException("Invalid attribute specified for username");
-                }
-            }
+        public Map<String, ?> getCustomComponent(final String componentName) {
+            return customComponent.get(componentName);
         }
 
         /**
-         * Convert access strategy to service.
+         * This is reserved for usage by any custom components that need to present their config to the management UI.
+         * The provided {@link Map} should only contain nested Maps, Arrays, and simple objects.
          *
-         * @param regSvc the service
+         * @param componentName name of the component to store the properties for (this should be unique for each
+         *                      component)
+         * @param properties    custom component properties
          */
-        private void convertAccessStrategyToService(final AbstractRegisteredService regSvc) {
-
-
-            final TimeBasedRegisteredServiceAccessStrategy accessStrategy =
-                    new TimeBasedRegisteredServiceAccessStrategy();
-
-            accessStrategy.setEnabled(this.supportAccess.isCasEnabled());
-            accessStrategy.setSsoEnabled(this.supportAccess.isSsoEnabled());
-            accessStrategy.setRequireAllAttributes(this.supportAccess.isRequireAll());
-
-            final Map<String, Set<String>> requiredAttrs = this.supportAccess.getRequiredAttr();
-            final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();
-            final Iterator<Map.Entry<String, Set<String>>> it = entries.iterator();
-            while (it.hasNext()) {
-                final Map.Entry<String, Set<String>> entry = it.next();
-                if (entry.getValue().isEmpty()) {
-                    it.remove();
-                }
-            }
-            accessStrategy.setRequiredAttributes(requiredAttrs);
-
-            accessStrategy.setEndingDateTime(this.supportAccess.getEndingTime());
-            accessStrategy.setStartingDateTime(this.supportAccess.getStartingTime());
-
-            regSvc.setAccessStrategy(accessStrategy);
-
-        }
-
-        /**
-         * Convert logout types to service.
-         *
-         * @param regSvc the reg svc
-         */
-        private void convertLogoutTypesToService(final AbstractRegisteredService regSvc) {
-            if (StringUtils.equalsIgnoreCase(this.logoutType,
-                    RegisteredServiceLogoutTypeEditBean.BACK.toString())) {
-                regSvc.setLogoutType(LogoutType.BACK_CHANNEL);
-            } else if (StringUtils.equalsIgnoreCase(this.logoutType,
-                    RegisteredServiceLogoutTypeEditBean.FRONT.toString())) {
-                regSvc.setLogoutType(LogoutType.FRONT_CHANNEL);
-            } else {
-                regSvc.setLogoutType(LogoutType.NONE);
-            }
-        }
-
-        /**
-         * Determine service type by pattern.
-         *
-         * @param serviceId the service id
-         * @return the abstract registered service
-         */
-        private AbstractRegisteredService determineServiceTypeByPattern(final String serviceId) {
-            try {
-                Pattern.compile(serviceId);
-                LOGGER.debug("Service id {} is a valid regex.", serviceId);
-                return new RegexRegisteredService();
-            } catch (final PatternSyntaxException exception) {
-                LOGGER.debug("Service id {} is not a valid regex. Checking ant patterns...", serviceId);
-                if (new AntPathMatcher().isPattern(serviceId)) {
-                    LOGGER.debug("Service id {} is a valid ant pattern.", serviceId);
-                    return new RegisteredServiceImpl();
-                }
-            }
-            throw new RuntimeException("Service id " + serviceId + " cannot be resolve to a service type");
-        }
-
-        /**
-         * Determine service type by pattern.
-         *
-         * @param pattern the pattern
-         * @return the abstract registered service
-         */
-        private boolean isValidRegex(final String pattern) {
-            try {
-                Pattern.compile(serviceId);
-                LOGGER.debug("Pattern {} is a valid regex.", pattern);
-                return true;
-            } catch (final PatternSyntaxException exception) {
-                return false;
-            }
+        public void setCustomComponent(final String componentName, final Map<String, ?> properties) {
+            this.customComponent.put(componentName, properties);
         }
     }
 }
