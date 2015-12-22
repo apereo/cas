@@ -19,7 +19,7 @@
 
 package org.jasig.cas.services.web.beans;
 
-import org.jasig.cas.services.AbstractAttributeReleasePolicy;
+import org.jasig.cas.services.AttributeReleasePolicy;
 import org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.jasig.cas.services.RegisteredService;
@@ -152,7 +152,7 @@ public class RegisteredServiceViewBean implements Serializable {
             proxyPolicyBean.setValue(option.getPattern().toString());
         }
 
-        final AbstractAttributeReleasePolicy attrPolicy = (AbstractAttributeReleasePolicy) svc.getAttributeReleasePolicy();
+        final AttributeReleasePolicy attrPolicy = svc.getAttributeReleasePolicy();
         final RegisteredServiceAttributeReleasePolicyViewBean attrPolicyBean = bean.getAttrRelease();
 
         attrPolicyBean.setReleasePassword(attrPolicy.isAuthorizedToReleaseCredentialPassword());
