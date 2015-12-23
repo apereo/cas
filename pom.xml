@@ -18,8 +18,7 @@
   ~ under the License.
   -->
 
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.jasig.parent</groupId>
         <artifactId>jasig-parent</artifactId>
@@ -31,7 +30,7 @@
     <packaging>pom</packaging>
     <name>Apereo Central Authentication Service</name>
     <description>Apereo CAS SSO server libraries and Web application.</description>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.1.3-SNAPSHOT</version>
     <url>http://www.jasig.org/cas/</url>
     <inceptionYear>2004</inceptionYear>
 
@@ -222,6 +221,7 @@
                     <artifactId>jetty-maven-plugin</artifactId>
                     <version>${maven-jetty-plugin.version}</version>
                     <configuration>
+                        <jettyXml>${cs.dir}/etc/jetty/jetty.xml,${cs.dir}/etc/jetty/jetty-ssl.xml,${cs.dir}/etc/jetty/jetty-https.xml</jettyXml>
                         <systemProperties>
                             <systemProperty>
                                 <name>org.eclipse.jetty.annotations.maxWait</name>
@@ -248,22 +248,6 @@
                             <additionalClasspathElement>${project.build.directory}/test-lib/jdbc-driver.jar
                             </additionalClasspathElement>
                         </additionalClasspathElements>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>${coveralls-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <version>${cobertura-maven-plugin.version}</version>
-                    <configuration>
-                        <format>xml</format>
-                        <maxmem>256m</maxmem>
-                        <!-- aggregated reports for multi-module projects -->
-                        <aggregate>true</aggregate>
                     </configuration>
                 </plugin>
             </plugins>
@@ -434,7 +418,7 @@
                 <configuration>
                     <doCheck>false</doCheck>
                     <doUpdate>false</doUpdate>
-                    <timestampFormat>EEE, d MMM yyyy HH:mm:ss Z</timestampFormat>
+                    <timestampFormat>yyyy-MM-dd HH:mm:ssa</timestampFormat>
                     <timestampPropertyName>timestamp</timestampPropertyName>
                 </configuration>
             </plugin>
@@ -488,7 +472,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sources/>
+                    <sources />
                     <complianceLevel>${project.build.sourceVersion}</complianceLevel>
                     <forceAjcCompile>true</forceAjcCompile>
                     <aspectLibraries>
@@ -500,7 +484,7 @@
                     <weaveDirectories>
                         <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
                     </weaveDirectories>
-                    <skip>false</skip>
+                    <skip>${maven.compiler.aspectj.skip}</skip>
                     <showWeaveInfo />
                 </configuration>
                 <dependencies>
@@ -527,7 +511,7 @@
                 <version>${maven-antrun-plugin.version}</version>
                 <configuration>
                     <target>
-                        <ant antfile="tasks.xml" target="genhash"/>
+                        <ant antfile="tasks.xml" target="genhash" />
                     </target>
                 </configuration>
             </plugin>
@@ -547,11 +531,14 @@
                         <schema>SCRIPT_STYLE</schema>]
                         <ldif>SCRIPT_STYLE</ldif>
                         <yml>SCRIPT_STYLE</yml>
+                        <ini>SCRIPT_STYLE</ini>
                         <conf>JAVADOC_STYLE</conf>
                         <less>JAVADOC_STYLE</less>
                     </mapping>
                     <excludes>
                         <exclude>**/bin/**</exclude>
+                        <exclude>**/build/**</exclude>
+                        <exclude>**/.gradle/**</exclude>
                         <exclude>LICENSE</exclude>
                         <exclude>**/INSTALL*</exclude>
                         <exclude>**/NOTICE*</exclude>
@@ -559,6 +546,8 @@
                         <exclude>**/readme*</exclude>
                         <exclude>**/*.log</exclude>
                         <exclude>**/*.license</exclude>
+                        <exclude>**/*.donotdelete</exclude>
+                        <exclude>**/*.orig</exclude>
                         <exclude>**/*.txt</exclude>
                         <exclude>**/*.crt</exclude>
                         <exclude>**/*.cer</exclude>
@@ -585,6 +574,8 @@
             <exclude>**/tmp/*.sh</exclude>
                         <exclude>**/*.pem</exclude>
                         <exclude>**/*.p8</exclude>
+                        <exclude>**/*.bin</exclude>
+                        <exclude>**/*.idx</exclude>
                     </excludes>
                 </configuration>
                 <executions>
@@ -731,15 +722,8 @@
                 </exclusion>
             </exclusions>
         </dependency>
-    </dependencies>
 
-    <repositories>
-        <repository>
-            <id>jasig-repository</id>
-            <name>Jasig Maven2 Repository</name>
-            <url>http://developer.jasig.org/repo/content/groups/m2-legacy/</url>
-        </repository>
-    </repositories>
+    </dependencies>
 
     <pluginRepositories>
         <pluginRepository>
@@ -758,6 +742,12 @@
                 <groupId>org.bitbucket.b_c</groupId>
                 <artifactId>jose4j</artifactId>
                 <version>${jose.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -1402,6 +1392,18 @@
                 <artifactId>hazelcast</artifactId>
                 <version>${hazelcast.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.cryptacular</groupId>
+                <artifactId>cryptacular</artifactId>
+                <version>${cryptacular.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -1532,6 +1534,7 @@
                 <notice.skip>true</notice.skip>
                 <versions.skip>true</versions.skip>
                 <findbugs.skip>true</findbugs.skip>
+                <cobertura.skip>true</cobertura.skip>
             </properties>
 
             <build>
@@ -1591,11 +1594,10 @@
     <properties>
         <!-- Dependency Versions -->
         <spring.webflow.version>2.4.1.RELEASE</spring.webflow.version>
-        <spring.version>4.1.6.RELEASE</spring.version>
+        <spring.version>4.1.8.RELEASE</spring.version>
         <spring.webflow.client.repo.version>1.0.0</spring.webflow.client.repo.version>
-        <ldaptive.version>1.0.6</ldaptive.version>
+        <ldaptive.version>1.0.7</ldaptive.version>
         <spring.security.version>4.0.1.RELEASE</spring.security.version>
-        <clover.version>2.6.3</clover.version>
         <aspectj.version>1.8.6</aspectj.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
         <commons.jexl.version>1.1</commons.jexl.version>
@@ -1613,14 +1615,14 @@
         <checkstyle.version>6.7</checkstyle.version>
         <commons.lang.version>3.4</commons.lang.version>
         <commons.collections.version>4.0</commons.collections.version>
-        <inspektr.version>1.2.GA</inspektr.version>
+        <inspektr.version>1.3.GA</inspektr.version>
         <commons.io.version>2.4</commons.io.version>
         <mockito.version>1.10.19</mockito.version>
         <ehcache.version>2.10.0</ehcache.version>
         <hsqldb.version>2.3.2</hsqldb.version>
         <apache.httpclient.version>4.4.1</apache.httpclient.version>
         <joda-time.version>2.8.1</joda-time.version>
-        <cas.client.version>3.3.3</cas.client.version>
+        <cas.client.version>3.4.1</cas.client.version>
         <quartz.version>2.2.1</quartz.version>
         <reflections.version>0.9.10</reflections.version>
         <apache.shiro.version>1.2.3</apache.shiro.version>
@@ -1630,7 +1632,7 @@
         <xml.apis.version>1.4.01</xml.apis.version>
         <jstl.version>1.2</jstl.version>
         <openid4java.version>0.9.8</openid4java.version>
-        <cas-server-security-filter.version>2.0.3</cas-server-security-filter.version>
+        <cas-server-security-filter.version>2.0.4</cas-server-security-filter.version>
         <google.guava.version>18.0</google.guava.version>
         <jcache.version>1.0.0</jcache.version>
         <jcache.ri.version>1.0.0</jcache.ri.version>
@@ -1638,15 +1640,15 @@
         <javax.el-impl.version>2.2.6</javax.el-impl.version>
         <jersey.version>1.19</jersey.version>
         <jose.version>0.4.1</jose.version>
+        <c3p0.version>0.9.5.1</c3p0.version>
         <woodstox.version>4.4.1</woodstox.version>
         <pac4j.version>1.7.1</pac4j.version>
         <bouncycastle.version>1.51</bouncycastle.version>
         <dbcp.version>2.1</dbcp.version>
         <hazelcast.version>3.5</hazelcast.version>
+        <cryptacular.version>1.0</cryptacular.version>
 
         <!-- Plugin Versions -->
-        <coveralls-maven-plugin.version>3.1.0</coveralls-maven-plugin.version>
-        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
         <maven-versions-plugin.version>2.2</maven-versions-plugin.version>
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
@@ -1670,6 +1672,7 @@
         <!-- Project configuration -->
         <project.build.sourceVersion>1.7</project.build.sourceVersion>
         <project.build.targetVersion>1.7</project.build.targetVersion>
+        <maven.compiler.aspectj.skip>false</maven.compiler.aspectj.skip>
         <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ssa</maven.build.timestamp.format>
         <cs.dir>${project.basedir}</cs.dir>
         <issues.projectKey>CAS</issues.projectKey>

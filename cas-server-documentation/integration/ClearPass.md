@@ -21,31 +21,34 @@ application issues a request to the `/p3/serviceValidate` endpoint  (or `/p3/pro
 
 ##Configuration
 
-###Register Service Public Key
-Once you have received the public key from the client application owner, it must be first registered inside the CAS server's service registry:
+###Register Service
+Once you have received the public key from the client application owner, it must be first
+registered inside the CAS server's service registry. The service that holds the public key above must also
+be authorized to receive the password
+as an attribute for the given attribute release policy of choice.
 
-{% highlight xml %}
-...
-<property name="publicKey">
-    <bean class="org.jasig.cas.services.RegisteredServicePublicKeyImpl"
-          c:location="classpath:RSA1024Public.key"
-          c:algorithm="RSA" />
-</property>
-...
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "name" : "test",
+  "id" : 1,
+  "evaluationOrder" : 0,
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
+    },
+    "authorizedToReleaseCredentialPassword" : true,
+    "authorizedToReleaseProxyGrantingTicket" : false
+  },
+  "publicKey" : {
+    "@class" : "org.jasig.cas.services.RegisteredServicePublicKeyImpl",
+    "location" : "classpath:RSA1024Public.key",
+    "algorithm" : "RSA"
+  }
+}
 {% endhighlight %}
-
-###Authorize Credential for Service
-The service that holds the public key above must also be authorized to receive the password
-as an attribute for the given attribute release policy of choice:
-
-{% highlight xml %}
-...
-<property name="attributeReleasePolicy">
-    <bean class="org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy"
-            p:authorizedToReleaseCredentialPassword="true" />
-</property>
-...
-{% endhighlight %} 
 
 ###Decrypt the Password
 Once the client application has received the `credential` attribute in the CAS validation response, it can decrypt it via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
@@ -62,7 +65,7 @@ cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
 
-{% endhighlight %} 
+{% endhighlight %}
 
 
 ##Components
@@ -72,31 +75,31 @@ Defines how to encrypt data based on registered service's public key, etc.
 
 - `DefaultRegisteredServiceCipherExecutor`
 A default implementation of the `RegisteredServiceCipherExecutor`
-that will use the service's public key to initialize the cipher to 
+that will use the service's public key to initialize the cipher to
 encrypt and encode the value. All results are converted to base-64.
 
 - `CasAttributeEncoder`
 Parent component that defines how a CAS attribute
-is to be encoded and signed in the CAS validation response. 
+is to be encoded and signed in the CAS validation response.
 
 - `DefaultCasAttributeEncoder`
 The default implementation of the attribute encoder that will use a per-service key-pair
 to encrypt. It will attempt to query the collection of attributes that resolved to determine
-which attributes can be encoded. Attributes will be encoded via a `RegisteredServiceCipherExecutor`. 
+which attributes can be encoded. Attributes will be encoded via a `RegisteredServiceCipherExecutor`.
 
 {% highlight xml %}
-<bean id="cas3ServiceSuccessView" 
+<bean id="cas3ServiceSuccessView"
     class="org.jasig.cas.web.view.Cas30ResponseView"
     c:view-ref="cas3JstlSuccessView"
     p:successResponse="true"
     p:servicesManager-ref="servicesManager"
     p:casAttributeEncoder-ref="casAttributeEncoder"  />
 
-<bean id="casRegisteredServiceCipherExecutor" 
+<bean id="casRegisteredServiceCipherExecutor"
     class="org.jasig.cas.services.DefaultRegisteredServiceCipherExecutor" />
 
-<bean id="casAttributeEncoder" 
+<bean id="casAttributeEncoder"
     class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
     c:servicesManager-ref="servicesManager"
     c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
-{% endhighlight %} 
+{% endhighlight %}

@@ -243,7 +243,7 @@ public class KryoTranscoderTests {
 
         MockServiceTicket() { /* for serialization */ }
 
-        public MockServiceTicket(final String id) {
+        MockServiceTicket(final String id) {
             this.id = id;
         }
 
@@ -321,7 +321,7 @@ public class KryoTranscoderTests {
             this.authentication = null;
         }
 
-        public MockTicketGrantingTicket(final String id, final Credential credential, final Map<String, Object> principalAttributes) {
+        MockTicketGrantingTicket(final String id, final Credential credential, final Map<String, Object> principalAttributes) {
             this.id = id;
             final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credential);
             final DefaultAuthenticationBuilder builder = new DefaultAuthenticationBuilder();

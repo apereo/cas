@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.Formatter;
 
@@ -64,6 +65,9 @@ public class TicketsResource {
     @Autowired
     private CentralAuthenticationService cas;
 
+    @Autowired(required = false)
+    private CredentialFactory credentialFactory = new DefaultCredentialFactory();
+
     /**
      * Create new ticket granting ticket.
      *
@@ -75,7 +79,7 @@ public class TicketsResource {
     public final ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                                    final HttpServletRequest request) {
         try (Formatter fmt = new Formatter()) {
-            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(obtainCredential(requestBody));
+            final TicketGrantingTicket tgtId = this.cas.createTicketGrantingTicket(this.credentialFactory.fromRequestBody(requestBody));
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
@@ -125,16 +129,17 @@ public class TicketsResource {
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.DELETE)
     public final ResponseEntity<String> deleteTicketGrantingTicket(@PathVariable("tgtId") final String tgtId) {
         this.cas.destroyTicketGrantingTicket(tgtId);
-        return new ResponseEntity<String>(tgtId, HttpStatus.OK);
+        return new ResponseEntity<>(tgtId, HttpStatus.OK);
     }
 
     /**
-     * Obtain credential from the request. Could be overridden by subclasses.
-     *
-     * @param requestBody raw entity request body
-     * @return the credential instance
+     * Default implementation of CredentialFactory.
      */
-    protected Credential obtainCredential(final MultiValueMap<String, String> requestBody) {
-        return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
+    public static class DefaultCredentialFactory implements CredentialFactory {
+
+        @Override
+        public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
+            return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
+        }
     }
 }

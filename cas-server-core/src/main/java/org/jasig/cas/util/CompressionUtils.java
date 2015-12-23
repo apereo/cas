@@ -19,7 +19,6 @@
 package org.jasig.cas.util;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +26,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-import java.util.zip.InflaterOutputStream;
 
 /**
  * This is {@link CompressionUtils}
@@ -60,13 +60,29 @@ public final class CompressionUtils {
      * @return the array as a string with <code>UTF-8</code> encoding
      */
     public static String inflate(final byte[] bytes) {
-        try (final ByteArrayInputStream inb = new ByteArrayInputStream(bytes);
-             final ByteArrayOutputStream out = new ByteArrayOutputStream();
-             final InflaterOutputStream ios = new InflaterOutputStream(out);) {
-            IOUtils.copy(inb, ios);
-            return new String(out.toByteArray(), UTF8_ENCODING);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final Inflater inflater = new Inflater(true);
+        final byte[] xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
+
+        final byte[] extendedBytes = new byte[bytes.length + 1];
+        System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
+        extendedBytes[bytes.length] = 0;
+
+        inflater.setInput(extendedBytes);
+
+        try {
+            final int resultLength = inflater.inflate(xmlMessageBytes);
+            inflater.end();
+
+            if (!inflater.finished()) {
+                throw new RuntimeException("buffer not large enough.");
+            }
+
+            inflater.end();
+            return new String(xmlMessageBytes, 0, resultLength, "UTF-8");
+        } catch (final DataFormatException e) {
+            return null;
+        } catch (final UnsupportedEncodingException e) {
+            throw new RuntimeException("Cannot find encoding: UTF-8", e);
         }
     }
 

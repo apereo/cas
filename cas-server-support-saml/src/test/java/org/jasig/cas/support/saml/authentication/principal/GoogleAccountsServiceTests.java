@@ -41,8 +41,8 @@ import java.io.IOException;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.DSAPublicKey;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
@@ -87,13 +87,14 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         final ServicesManager servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(regSvc);
         
-        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey, servicesManager);
+        return GoogleAccountsService.createServiceFrom(request, privateKey, publicKey);
     }
 
     @Before
     public void setUp() throws Exception {
         this.googleAccountsService = getGoogleAccountsService();
         this.googleAccountsService.setPrincipal(TestUtils.getPrincipal());
+        this.googleAccountsService.setSkewAllowance(500);
     }
 
     @Test
@@ -104,6 +105,20 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
     }
 
+
+    @Test
+    public void verifyAuthnRequestEncoded() {
+
+        final byte[] decodedBytes = CompressionUtils.decodeBase64ToByteArray("fVJNT+MwEL0j8R8s35M0BbTIaoK6IEQldolo2MPej"
+                + "DOtpzh28Njt8u9xUxBwWK7PM+/LM7v41xu2BU/obMXLfMIZWOU6tOuKP7TX2Tm/qI+PZiR7M4h5DNrew3MECixtWhLjQ8Wjt8JJQ"
+                + "hJW9kAiKLGc/7oV03wiBu+CU85wtriquDHuSTulTfe4edLQOTQGN0avtV6h3AwaEaUcJGd/3m1N97YWRBEWloK0IUGT8iwrJ1l50p"
+                + "ZnYvpDnJ785ax5U/qJ9pDgO1uPhyESN23bZM3dsh0JttiB/52mK752bm0gV67fyzeSCLcJXklDwNmcCHxIBi+dpdiDX4LfooKH+9uK"
+                + "6xAGEkWx2+3yD5pCFtGYHLqYAxVSEa/HZsUYzn+q9Hvr8l2a1x/ks+ITVf32Y/sgi6vGGVQvbJ663116kCGlCD6mENfO9zL8X63My"
+                + "xHBLluNoyJaGkDhCqHjrKgPql9PIx3MKw==");
+        final String inflated = CompressionUtils.inflate(decodedBytes);
+        assertNotNull(inflated);
+
+    }
     private static String encodeMessage(final String xmlString) throws IOException {
         return CompressionUtils.deflate(xmlString);
     }

@@ -25,6 +25,22 @@ or OpenLDAP. There are numerous directory architectures and we provide configura
 
 See the [ldaptive documentation](http://www.ldaptive.org/) for more information or to accommodate other situations.
 
+You also need to make sure component scanning is turned on when you configure LDAP authentication. Be sure to include the following in the same configuration file that houses the LDAP configuration for CAS:
+
+{% highlight xml %}
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+     ...
+     <context:component-scan base-package="org.jasig.cas" />
+     <context:annotation-config/>
+     ...
+{% endhighlight %}
+
 ## Ldap Authentication Principal Attributes
 The `LdapAuthenticationHandler` is capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html). 
 
@@ -155,7 +171,7 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
 <!-- If you wish to search by user, rather than by dn, change {dn} to {user} -->
 <bean id="entryResolver"
       class="org.ldaptive.auth.SearchEntryResolver"
-      p:baseDn="${ldap.baseDn}"
+      p:baseDn="${ldap.authn.baseDn}"
       p:userFilter="userPrincipalName={dn}"
       p:subtreeSearch="true" />
 {% endhighlight %}
@@ -189,7 +205,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       c:handler-ref="authHandler" />
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-      p:baseDn="${ldap.baseDn}"
+      p:baseDn="${ldap.authn.baseDn}"
       p:subtreeSearch="true"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
@@ -300,7 +316,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
       c:handler-ref="authHandler" />
 
 <bean id="dnResolver" class="org.ldaptive.auth.PooledSearchDnResolver"
-      p:baseDn="${ldap.baseDn}"
+      p:baseDn="${ldap.authn.baseDn}"
       p:subtreeSearch="true"
       p:allowMultipleDns="false"
       p:connectionFactory-ref="searchPooledLdapConnectionFactory"
@@ -400,7 +416,7 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
    -->
 <bean id="dnResolver"
       class="org.ldaptive.auth.FormatDnResolver"
-      c:format="uid=%s,${ldap.baseDn}" />
+      c:format="uid=%s,${ldap.authn.baseDn}" />
 
 <bean id="authHandler" class="org.ldaptive.auth.PooledBindAuthenticationHandler"
       p:connectionFactory-ref="pooledLdapConnectionFactory" />

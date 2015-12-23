@@ -96,6 +96,13 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         }
     }
 
+    @Override
+    public void removeCookie(final HttpServletResponse response) {
+        final Cookie cookie = this.createCookie("");
+        cookie.setMaxAge(0);
+        super.addCookie(response, "");
+    }
+
     /**
      * Retrieve cookie value.
      *

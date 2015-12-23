@@ -126,6 +126,7 @@ In `cas-servlet.xml`:
   p:validationSpecificationClass="org.jasig.cas.validation.Cas20WithoutProxyingValidationSpecification"
   p:centralAuthenticationService-ref="centralAuthenticationService"
   p:proxyHandler-ref="proxy20Handler"
+  p:servicesManager-ref="servicesManager"
   p:argumentExtractor-ref="samlArgumentExtractor"
   p:successView="casSamlServiceSuccessView"
   p:failureView="casSamlServiceFailureView"/>

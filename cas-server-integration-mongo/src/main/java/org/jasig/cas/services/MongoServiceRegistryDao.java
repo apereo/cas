@@ -26,15 +26,14 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * Implementation of <code>ServiceRegistryDao</code> that uses a MongoDb repository as the backend
- * persistence mechanism. The repository is configured by the Spring application context. <p/>
+ * <p>Implementation of <code>ServiceRegistryDao</code> that uses a MongoDb repository as the backend
+ * persistence mechanism. The repository is configured by the Spring application context. </p>
  * <p>The class will automatically create a default collection to use with services. The name
  * of the collection may be specified through {@link #setCollectionName(String)}.
  * It also presents the ability to drop an existing collection and start afresh
@@ -77,7 +76,6 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
     }
 
     @Override
-    @Transactional(readOnly = false)
     public boolean delete(final RegisteredService svc) {
         if (this.findServiceById(svc.getId()) != null) {
             this.mongoTemplate.remove(svc, this.collectionName);
@@ -88,20 +86,17 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public RegisteredService findServiceById(final long svcId) {
         return this.mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)),
                 RegisteredService.class, this.collectionName);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<RegisteredService> load() {
         return this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
     }
 
     @Override
-    @Transactional(readOnly = false)
     public RegisteredService save(final RegisteredService svc) {
         if (svc.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) svc).setId(svc.hashCode());

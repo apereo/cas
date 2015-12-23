@@ -21,6 +21,8 @@ package org.jasig.cas.ticket.support;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 
@@ -37,11 +39,22 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
     /** Serialization support. */
     private static final long serialVersionUID = -2735975347698196127L;
 
+    /**
+     * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
+     * deserialization the field is null.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeDelegatingExpirationPolicy.class);
+
+
     @NotNull
     private ExpirationPolicy rememberMeExpirationPolicy;
 
     @NotNull
     private ExpirationPolicy sessionExpirationPolicy;
+
+
+    /** No-arg constructor used for serialization purposes. */
+    public RememberMeDelegatingExpirationPolicy() {}
 
     @Override
     public boolean isExpired(final TicketState ticketState) {

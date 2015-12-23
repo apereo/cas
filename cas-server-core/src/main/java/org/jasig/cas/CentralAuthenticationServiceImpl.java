@@ -87,8 +87,6 @@ import java.util.Set;
  * <ul>
  * <li> <code>ticketRegistry</code> - The Ticket Registry to maintain the list
  * of available tickets.</li>
- * <li> <code>serviceTicketRegistry</code> - Provides an alternative to configure separate registries for
- * TGTs and ST in order to store them in different locations (i.e. long term memory or short-term)</li>
  * <li> <code>authenticationManager</code> - The service that will handle
  * authentication.</li>
  * <li> <code>ticketGrantingTicketUniqueTicketIdGenerator</code> - Plug in to
@@ -114,10 +112,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     /** TicketRegistry for storing and retrieving tickets as needed. */
     @NotNull
     private final TicketRegistry ticketRegistry;
-
-    /** New Ticket Registry for storing and retrieving services tickets. Can point to the same one as the ticketRegistry variable. */
-    @NotNull
-    private final TicketRegistry serviceTicketRegistry;
 
     /**
      * AuthenticationManager for authenticating credentials for purposes of
@@ -173,7 +167,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * Build the central authentication service implementation.
      *
      * @param ticketRegistry the tickets registry.
-     * @param serviceTicketRegistry the service tickets registry.
      * @param authenticationManager the authentication manager.
      * @param ticketGrantingTicketUniqueTicketIdGenerator the TGT id generator.
      * @param uniqueTicketIdGeneratorsForService the map with service and ticket id generators.
@@ -183,7 +176,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @param logoutManager the logout manager.
      */
     public CentralAuthenticationServiceImpl(final TicketRegistry ticketRegistry,
-                                            final TicketRegistry serviceTicketRegistry,
                                             final AuthenticationManager authenticationManager,
                                             final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
                                             final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService,
@@ -192,11 +184,6 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                                             final ServicesManager servicesManager,
                                             final LogoutManager logoutManager) {
         this.ticketRegistry = ticketRegistry;
-        if (serviceTicketRegistry == null) {
-            this.serviceTicketRegistry = ticketRegistry;
-        } else {
-            this.serviceTicketRegistry = serviceTicketRegistry;
-        }
         this.authenticationManager = authenticationManager;
         this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
         this.uniqueTicketIdGeneratorsForService = uniqueTicketIdGeneratorsForService;
@@ -230,6 +217,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             logger.debug("Ticket found. Processing logout requests and then deleting the ticket...");
             final List<LogoutRequest> logoutRequests = logoutManager.performLogout(ticket);
             this.ticketRegistry.deleteTicket(ticketGrantingTicketId);
+
             return logoutRequests;
         } catch (final InvalidTicketException e) {
             logger.debug("TicketGrantingTicket [{}] cannot be found in the ticket registry.", ticketGrantingTicketId);
@@ -328,7 +316,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                 this.serviceTicketExpirationPolicy,
                 currentAuthentication != null);
 
-        this.serviceTicketRegistry.addTicket(serviceTicket);
+        this.ticketRegistry.addTicket(serviceTicket);
 
         logger.info("Granted ticket [{}] for service [{}] for user [{}]",
                 serviceTicket.getId(), service.getId(), principal.getId());
@@ -384,7 +372,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
     public TicketGrantingTicket delegateTicketGrantingTicket(final String serviceTicketId, final Credential... credentials)
             throws AuthenticationException, TicketException {
 
-        final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null || serviceTicket.isExpired()) {
             logger.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
@@ -414,6 +402,12 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         return proxyGrantingTicket;
     }
 
+    /**
+     * Note:
+     * Synchronization on ticket object in case of cache based registry doesn't serialize
+     * access to critical section. The reason is that cache pulls serialized data and
+     * builds new object, most likely for each pull. Is this synchronization needed here?
+     */
     @Audit(
         action="SERVICE_TICKET_VALIDATE",
         actionResolverName="VALIDATE_SERVICE_TICKET_RESOLVER",
@@ -426,7 +420,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         verifyRegisteredServiceProperties(registeredService, service);
 
-        final ServiceTicket serviceTicket =  this.serviceTicketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
+        final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null) {
             logger.info("Service ticket [{}] does not exist.", serviceTicketId);
@@ -471,7 +465,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
                     serviceTicket.isFromNewLogin());
         } finally {
             if (serviceTicket.isExpired()) {
-                this.serviceTicketRegistry.deleteTicket(serviceTicketId);
+                this.ticketRegistry.deleteTicket(serviceTicketId);
             }
         }
     }
@@ -488,7 +482,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
             throws AuthenticationException, TicketException {
 
         final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
-        if (sanitizedCredentials.size() > 0) {
+        if (!sanitizedCredentials.isEmpty()) {
             final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
@@ -506,6 +500,11 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
 
     /**
      * {@inheritDoc}
+     *
+     * Note:
+     * Synchronization on ticket object in case of cache based registry doesn't serialize
+     * access to critical section. The reason is that cache pulls serialized data and
+     * builds new object, most likely for each pull. Is this synchronization needed here?
      */
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
@@ -596,7 +595,7 @@ public final class CentralAuthenticationServiceImpl implements CentralAuthentica
      * @param ticket the ticket
      * @param context the context
      * @return the authentication satisfied by policy
-     * @throws org.jasig.cas.ticket.TicketException the ticket exception
+     * @throws TicketException the ticket exception
      */
     private Authentication getAuthenticationSatisfiedByPolicy(
             final TicketGrantingTicket ticket, final ServiceContext context) throws TicketException {

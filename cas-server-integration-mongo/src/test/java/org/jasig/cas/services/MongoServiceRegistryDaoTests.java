@@ -20,6 +20,11 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.TestUtils;
+import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +34,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for {@link MongoServiceRegistryDao}.
@@ -42,6 +48,14 @@ public class MongoServiceRegistryDaoTests {
 
     @Autowired
     private ServiceRegistryDao serviceRegistryDao;
+
+    @Before
+    public void setup() {
+        final List<RegisteredService> services = this.serviceRegistryDao.load();
+        for (final RegisteredService service : services) {
+            this.serviceRegistryDao.delete(service);
+        }
+    }
 
     @Test
     public void verifySaveAndLoad() {
@@ -61,7 +75,75 @@ public class MongoServiceRegistryDaoTests {
         assertTrue(this.serviceRegistryDao.load().isEmpty());
     }
 
-    private RegisteredService buildService(final int i) {
+    @Test
+    public void verifyEdit()  {
+          final RegisteredServiceImpl r = new RegisteredServiceImpl();
+          r.setName("test");
+          r.setServiceId("testId");
+          r.setTheme("theme");
+          r.setDescription("description");
+
+          this.serviceRegistryDao.save(r);
+
+          final List<RegisteredService> services = this.serviceRegistryDao.load();
+
+          final RegisteredService r2 = services.get(0);
+
+          r.setId(r2.getId());
+          r.setTheme("mytheme");
+
+          this.serviceRegistryDao.save(r);
+
+          final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r.getId());
+
+          assertEquals(r, r3);
+          assertEquals(r.getTheme(), r3.getTheme());
+          this.serviceRegistryDao.delete(r);
+    }
+
+    @Test
+    public void verifyOAuthServices() {
+        final OAuthRegisteredService r = new OAuthRegisteredService();
+        r.setName("test456");
+        r.setServiceId("testId");
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        r.setClientId("testoauthservice");
+        r.setClientSecret("anothertest");
+        r.setBypassApprovalPrompt(true);
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        assertEquals(r, r2);
+    }
+
+    @Test
+    public void verifyOAuthServicesCallback() {
+        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
+        r.setName("test345");
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        assertEquals(r, r2);
+    }
+
+    @Test
+    public void verifyOAuthRegisteredServicesCallback() {
+        final OAuthRegisteredCallbackAuthorizeService r = new OAuthRegisteredCallbackAuthorizeService();
+        r.setName("testoauth");
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setTheme("theme");
+        r.setDescription("description");
+        r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        assertEquals(r, r2);
+    }
+
+
+    private static RegisteredService buildService(final int i) {
         return TestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
     }
+
+
 }

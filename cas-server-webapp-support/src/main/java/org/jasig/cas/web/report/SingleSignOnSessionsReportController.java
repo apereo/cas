@@ -70,7 +70,7 @@ public final class SingleSignOnSessionsReportController {
          *
          * @param attributeKey the attribute key
          */
-        private SsoSessionAttributeKeys(final String attributeKey) {
+        SsoSessionAttributeKeys(final String attributeKey) {
             this.attributeKey = attributeKey;
         }
 

@@ -17,9 +17,7 @@
     specific language governing permissions and limitations
     under the License.
 
---%>
-<%@ page import="java.util.Set, java.util.Map, java.util.Iterator" %>
-<%
+--%><%@ page import="java.util.Set, java.util.Map, java.util.Iterator" %><%
     Map parameters = (Map)request.getAttribute("parameters");
     Iterator iterator = parameters.keySet().iterator();
     while (iterator.hasNext()) {

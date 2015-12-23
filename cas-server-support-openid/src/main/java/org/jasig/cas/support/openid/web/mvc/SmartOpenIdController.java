@@ -19,6 +19,7 @@
 package org.jasig.cas.support.openid.web.mvc;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.support.openid.OpenIdConstants;
 import org.jasig.cas.web.DelegateController;
 import org.openid4java.message.Message;
 import org.openid4java.message.ParameterList;
@@ -49,8 +50,6 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     /** View if association Succeeds. */
     private static final String DEFAULT_ASSOCIATION_SUCCESS_VIEW_NAME = "casOpenIdAssociationSuccessView";
 
-    private static final String ASSOCIATE = "associate";
-
     private final Logger logger = LoggerFactory.getLogger(SmartOpenIdController.class);
 
     private ServerManager serverManager;
@@ -75,13 +74,13 @@ public class SmartOpenIdController extends DelegateController implements Seriali
     public Map<String, String> getAssociationResponse(final HttpServletRequest request) {
         final ParameterList parameters = new ParameterList(request.getParameterMap());
 
-        final String mode = parameters.hasParameter("openid.mode")
-                ? parameters.getParameterValue("openid.mode")
+        final String mode = parameters.hasParameter(OpenIdConstants.OPENID_MODE)
+                ? parameters.getParameterValue(OpenIdConstants.OPENID_MODE)
                 : null;
 
         Message response = null;
 
-        if (StringUtils.equals(mode, ASSOCIATE)) {
+        if (StringUtils.equals(mode, OpenIdConstants.ASSOCIATE)) {
             response = serverManager.associationResponse(parameters);
         }
         final Map<String, String> responseParams = new HashMap<>();
@@ -103,8 +102,8 @@ public class SmartOpenIdController extends DelegateController implements Seriali
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        final String openIdMode = request.getParameter("openid.mode");
-        if (StringUtils.equals(openIdMode, ASSOCIATE)) {
+        final String openIdMode = request.getParameter(OpenIdConstants.OPENID_MODE);
+        if (StringUtils.equals(openIdMode, OpenIdConstants.ASSOCIATE)) {
             logger.info("Handling request. openid.mode : {}", openIdMode);
             return true;
         }

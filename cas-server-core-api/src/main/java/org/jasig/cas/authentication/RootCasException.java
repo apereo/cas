@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
  * mapped inside an external resource bundle for internationalization of error messages.
  *
  * @author Misagh Moayyed
- * @see org.jasig.cas.authentication.handler.AuthenticationException
+ * see org.jasig.cas.authentication.handler.AuthenticationException
  * @see org.jasig.cas.ticket.TicketException
  * @since 4.0.0
  */

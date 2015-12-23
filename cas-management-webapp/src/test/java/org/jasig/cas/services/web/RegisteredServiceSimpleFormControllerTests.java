@@ -24,7 +24,7 @@ import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Before;
@@ -56,7 +56,7 @@ public class RegisteredServiceSimpleFormControllerTests {
 
     private RegisteredServiceSimpleFormController controller;
 
-    private ServicesManager manager;
+    private ReloadableServicesManager manager;
 
     private StubPersonAttributeDao repository;
 

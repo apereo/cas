@@ -19,7 +19,6 @@
 
 package org.jasig.cas.services.web.beans;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository;
@@ -237,7 +236,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                 attrPolicyBean.setCachedExpiration(duration.getDurationAmount());
                 attrPolicyBean.setCachedTimeUnit(duration.getTimeUnit().name());
 
-                final IAttributeMerger merger = cc.getMergingStrategy();
+                final IAttributeMerger merger = cc.getMergingStrategy().getAttributeMerger();
 
                 if (merger != null) {
                     if (merger instanceof NoncollidingAttributeAdder) {
@@ -305,12 +304,13 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final ShibbolethCompatiblePersistentIdGenerator sh =
                         (ShibbolethCompatiblePersistentIdGenerator) generator;
 
-                String salt = new String(sh.getSalt(), Charset.defaultCharset());
-                if (Base64.isBase64(salt)) {
-                    salt = new String(Base64.decodeBase64(salt));
+                final byte[] saltByte = sh.getSalt();
+                if (saltByte != null) {
+                    final String salt = new String(saltByte, Charset.defaultCharset());
+                    uBean.setValue(salt);
+                } else {
+                    throw new IllegalArgumentException("Salt cannot be null");
                 }
-
-                uBean.setValue(salt);
             }
         } else if (provider instanceof PrincipalAttributeRegisteredServiceUsernameProvider) {
             final PrincipalAttributeRegisteredServiceUsernameProvider p =
@@ -649,7 +649,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                 final String attrType = this.attrRelease.getAttrOption();
                 if (StringUtils.equalsIgnoreCase(attrType,
                         RegisteredServiceAttributeReleasePolicyEditBean.Types.CACHED.toString())) {
-                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(dao,
+                    policy.setPrincipalAttributesRepository(new CachingPrincipalAttributesRepository(
                             TimeUnit.valueOf(this.attrRelease.getCachedTimeUnit().toUpperCase()),
                             this.attrRelease.getCachedExpiration()));
                 } else if (StringUtils.equalsIgnoreCase(attrType,
@@ -694,7 +694,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         private boolean isValidRegex(final String pattern) {
             try {
                 Pattern.compile(serviceId);
-                LOGGER.debug("Pattern is a valid regex.", pattern);
+                LOGGER.debug("Pattern {} is a valid regex.", pattern);
                 return true;
             } catch (final PatternSyntaxException exception) {
                 return false;

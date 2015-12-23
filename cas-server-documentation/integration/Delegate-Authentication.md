@@ -49,25 +49,20 @@ In CAS applications, through service ticket validation, user information are pus
 
 The identifier of the user is always pushed to the CAS client. For user attributes, it involves both the configuration at the server and the way of validating service tickets.
 
-On CAS server side, to push attributes to the CAS client, it should be configured in the `deployerConfigContext.xml` file for the expected service:
+On CAS server side, to push attributes to the CAS client, the service needs to be configured to allow attribute release:
 
-{% highlight xml %}
-<bean id="serviceRegistryDao" class="org.jasig.cas.services.InMemoryServiceRegistryDaoImpl">
- <property name="registeredServices">
-   <list>
-     <bean class="org.jasig.cas.services.RegisteredServiceImpl">
-       <property name="id" value="0" />
-       <property name="name" value="HTTP" />
-       <property name="description" value="Only Allows HTTP Urls" />
-       <property name="serviceId" value="http://**" />
-       <property name="evaluationOrder" value="10000001" />
-       <property name="allowedAttributes">
-        <list>
-          <!-- facebook -->
-          <value>name</value>
-          <value>first_name</value>
-          <value>middle_name</value>
-...
+{% highlight json %}
+{
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "name", "first_name", "middle_name" ] ]
+  }
+}
 {% endhighlight %}
 
 On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is the `/p3/serviceValidate` url.
@@ -159,27 +154,27 @@ All the needed clients to authenticate against providers must be declared in the
 <bean id="facebook1" class="org.pac4j.oauth.client.FacebookClient">
   <property name="key" value="fbkey" />
   <property name="secret" value="fbsecret" />
-  <property name="scope" 
+  <property name="scope"
     value="email,user_likes,user_about_me,user_birthday,user_education_history,user_hometown" />
-  <property name="fields" 
+  <property name="fields"
     value="id,name,first_name,middle_name,last_name,gender,locale,languages,link,username,third_party_id,timezone,updated_time" />
 </bean>
- 
+
 <bean id="twitter1" class="org.pac4j.oauth.client.TwitterClient">
   <property name="key" value="twkey" />
   <property name="secret" value="twsecret" />
 </bean>
- 
+
 <bean id="caswrapper1" class="org.pac4j.oauth.client.CasOAuthWrapperClient">
   <property name="key" value="this_is_the_key" />
   <property name="secret" value="this_is_the_secret" />
   <property name="casOAuthUrl" value="http://mycasserver2/oauth2.0" />
 </bean>
-  
+
 <bean id="cas1" class="org.pac4j.cas.client.CasClient">
   <property name="casLoginUrl" value="http://mycasserver2/login" />
 </bean>
- 
+
 <bean id="myopenid1" class="org.pac4j.openid.client.MyOpenIdClient" />
 {% endhighlight %}
 
@@ -290,4 +285,3 @@ To start authentication on a remote provider, these links must be added on the l
 ##Demo
 
 Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) to see this authentication delegation mechanism in action.
-

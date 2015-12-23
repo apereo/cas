@@ -64,7 +64,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     /** The logger instance. */
     @Transient
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /** The unique identifier for this service. */
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
@@ -88,7 +88,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * By default, the policy is {@link RefuseRegisteredServiceProxyPolicy}.
      */
     @Lob
-    @Column(name = "proxy_policy", nullable = true)
+    @Column(name = "proxy_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
     @Column(name = "evaluation_order", nullable = false)
@@ -99,7 +99,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
      * By default the resolver is {@link DefaultRegisteredServiceUsernameProvider}.
      */
     @Lob
-    @Column(name = "username_attr", nullable = true)
+    @Column(name = "username_attr", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider =
         new DefaultRegisteredServiceUsernameProvider();
 
@@ -111,12 +111,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
-    @Column(name = "required_handlers")
+    @Column(name = "required_handlers", length = Integer.MAX_VALUE)
     private HashSet<String> requiredHandlers = new HashSet<>();
 
     /** The attribute filtering policy. */
     @Lob
-    @Column(name = "attribute_release", nullable = true)
+    @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
     private AttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 
     @Column(name = "logo")
@@ -126,12 +126,12 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     private URL logoutUrl;
 
     @Lob
-    @Column(name = "access_strategy", nullable = true)
+    @Column(name = "access_strategy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceAccessStrategy accessStrategy =
             new DefaultRegisteredServiceAccessStrategy();
 
     @Lob
-    @Column(name = "public_key", nullable = true)
+    @Column(name = "public_key", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServicePublicKey publicKey;
 
     @Override

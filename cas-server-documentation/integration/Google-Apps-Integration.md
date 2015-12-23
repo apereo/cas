@@ -34,9 +34,11 @@ The `public.key` and `private.p8` go into classpath. The `x509.pem` file should 
 Google Accounts integration within CAS is enabled by simply adding an additional `ArgumentExtractor`. `WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml` should be modified to add the following:
 
 {% highlight xml %}
-<bean id="googleAccountsArgumentExtractor" class="org.jasig.cas.web.support.GoogleAccountsArgumentExtractor"
-      p:privateKey-ref="privateKeyFactoryBean"
-      p:publicKey-ref="publicKeyFactoryBean" />
+<bean id="googleAccountsArgumentExtractor" 
+    class="org.jasig.cas.support.saml.web.support.GoogleAccountsArgumentExtractor"
+      p:skewAllowance="${cas.saml.response.skewAllowance:0}"
+      c:privateKey-ref="privateKeyFactoryBean"
+      c:publicKey-ref="publicKeyFactoryBean" />
 
 <bean id="privateKeyFactoryBean" class="org.jasig.cas.util.PrivateKeyFactoryBean"
       p:location="classpath:private.p8"
@@ -45,22 +47,33 @@ Google Accounts integration within CAS is enabled by simply adding an additional
 <bean id="publicKeyFactoryBean"	class="org.jasig.cas.util.PublicKeyFactoryBean"
       p:location="classpath:public.key"
       p:algorithm="RSA" />
+      
+<util:list id="argumentExtractors">
+...
+    <ref bean="googleAccountsArgumentExtractor" />
+</util:list>
 {% endhighlight %}
 
-Replace the public.key and private.key with the names of your key files. If they are not available on the classpath, change the location to point to the location of the keys. If you are using DSA instead of RSA, change the algorithm as appropriate.
+Replace the `public.key` and `private.key` with the names of your key files. If they are not available on the classpath, change the location to point to the location of the keys. If you are using DSA instead of RSA, change the algorithm as appropriate.
+
+Ensure the 
+You’ll also need to add a new generator in the `WEB-INF/spring-configuration/uniqueIdGenerators.xml` file:
+
+{% highlight xml %}
+<util:map id="uniqueIdGeneratorsMap">
+...
+  <entry
+    key="org.jasig.cas.support.saml.authentication.principal.GoogleAccountsService"
+    value-ref="serviceTicketUniqueIdGenerator" />
+</util:map>
+{% endhighlight %}
 
 Also, ensure that Google Apps is registered in your Service Registry, by the `serviceId`: `https://www.google.com/a/YourGoogleDomain/acs`
 
 ##Configure Username Attribute 
-As an optional step, you can configure an `alternateUsername` to be send to Google in the SAML reply. This `alternameUsername` can be mapped in XML to any CAS principal attribute.
-
-{% highlight xml %}
-<bean name="googleAccountsArgumentExtractor"
-      class="org.jasig.cas.web.support.GoogleAccountsArgumentExtractor"
-        p:privateKey-ref="privateKeyFactoryBean"
-        p:publicKey-ref="publicKeyFactoryBean"
-        p:alternateUsername="emailAddress" />
-{% endhighlight %}
+As an optional step, you can configure an alternate username to be send to Google in the SAML reply. This alternate user name
+can be specified in the CAS service registry via [username attribute providers](../installation/Service-Management.html)
+for the registered Google Apps service.
 
 ##Configure Google
 You'll need to provide Google with the URL for your SAML-based SSO service, as well as the URL your users will be redirected to when they log out of a hosted Google application.

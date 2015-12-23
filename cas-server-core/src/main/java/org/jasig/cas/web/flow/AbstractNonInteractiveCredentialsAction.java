@@ -112,6 +112,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         }
     }
 
+    public CentralAuthenticationService getCentralAuthenticationService() {
+        return centralAuthenticationService;
+    }
+
     public final void setCentralAuthenticationService(
         final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
