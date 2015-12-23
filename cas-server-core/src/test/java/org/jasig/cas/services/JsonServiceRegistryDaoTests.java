@@ -23,10 +23,14 @@ import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
+
+import org.joda.time.DateTime;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -107,12 +111,13 @@ public class JsonServiceRegistryDaoTests {
                 new ShibbolethCompatiblePersistentIdGenerator("helloworld")
         ));
         final RegisteredService r2 = this.dao.save(r);
+        this.dao.load();
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         final AnonymousRegisteredServiceUsernameAttributeProvider anon =
-                (AnonymousRegisteredServiceUsernameAttributeProvider) r2.getUsernameAttributeProvider();
+                (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
         final ShibbolethCompatiblePersistentIdGenerator ss =
                 (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
         assertEquals(new String(ss.getSalt()), "helloworld");
-        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
         assertEquals(r2, r3);
     }
 
@@ -317,6 +322,27 @@ public class JsonServiceRegistryDaoTests {
         attrs.put("cn", Sets.newHashSet("v1, v2, v3"));
         attrs.put("memberOf", Sets.newHashSet(Arrays.asList("v4, v5, v6")));
         authz.setRequiredAttributes(attrs);
+        r.setAccessStrategy(authz);
+
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        assertEquals(r2, r3);
+    }
+
+    @Test
+    public void verifyAAccessStrategyWithStarEndDate() throws Exception {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setServiceId("^https://.+");
+        r.setName("verifyAAccessStrategyWithStarEndDate");
+        r.setId(62);
+
+        final DefaultRegisteredServiceAccessStrategy authz =
+                new DefaultRegisteredServiceAccessStrategy(true, false);
+
+        authz.setStartingDateTime(DateTime.now().plusDays(1).toString());
+        authz.setEndingDateTime(DateTime.now().plusDays(10).toString());
+
+        authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         r.setAccessStrategy(authz);
 
         final RegisteredService r2 = this.dao.save(r);

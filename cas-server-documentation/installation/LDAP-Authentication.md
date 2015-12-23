@@ -15,7 +15,7 @@ LDAP integration is enabled by including the following dependency in the Maven W
 {% endhighlight %}
 
 `LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
-or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
+or OpenLDAP. There are numerous directory architectures and we provide configuration for these common cases:
 
 1. [Active Directory](#active-directory-authentication) - Users authenticate with _sAMAAccountName_.
 2. [Authenticated Search](#ldap-requiring-authenticated-search) - Manager bind/search followed by user simple bind.
@@ -177,7 +177,7 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
 {% endhighlight %}
 
 
-#### LDAP Requiring Authenticated Search
+## LDAP Requiring Authenticated Search
 The following configuration snippet provides a template for LDAP authentication performed with manager credentials
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 {% highlight xml %}
@@ -227,10 +227,10 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
 
 <bean id="bindConnectionInitializer"
       class="org.ldaptive.BindConnectionInitializer"
-      p:bindDn="${ldap.managerDn}">
+      p:bindDn="${ldap.authn.managerDN}">
     <property name="bindCredential">
         <bean class="org.ldaptive.Credential"
-              c:password="${ldap.managerPassword}" />
+              c:password="${ldap.authn.managerPassword}" />
     </property>
 </bean>
 
@@ -500,7 +500,7 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
     ldap.connectTimeout=3000
 
     # Whether to use StartTLS (probably needed if not SSL connection)
-    ldap.useStartTLS=true
+    ldap.useStartTLS=false
 
     #========================================
     # LDAP connection pool configuration
@@ -546,7 +546,10 @@ into the Spring application context by modifying the `propertyFileConfigurer.xml
     #ldap.authn.format=uid=%s,ou=Users,dc=example,dc=org
     ldap.authn.format=%s@example.com
 
+	# A path to trusted X.509 certificate for StartTLS 
+	ldap.trustedCert=/path/to/cert.cer
 
+	
 ## LDAP Password Policy Enforcement
 The purpose of the LPPE is twofold:
  
