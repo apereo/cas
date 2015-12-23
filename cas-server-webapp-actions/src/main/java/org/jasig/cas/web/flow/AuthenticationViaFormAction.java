@@ -3,10 +3,10 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
+import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -25,8 +25,6 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
@@ -36,25 +34,17 @@ import java.util.Map;
  * the Service Ticket required.
  *
  * @author Scott Battaglia
- * @since 3.0.0.4
+ * @since 3.0.0
  */
 @Component("authenticationViaFormAction")
 public class AuthenticationViaFormAction {
 
-    /** Authentication success result. */
-    public static final String SUCCESS = "success";
-
     /** Authentication succeeded with warnings from authn subsystem that should be displayed to user. */
     public static final String SUCCESS_WITH_WARNINGS = "successWithWarnings";
-
-    /** Authentication success with "warn" enabled. */
-    public static final String WARN = "warn";
 
     /** Authentication failure result. */
     public static final String AUTHENTICATION_FAILURE = "authenticationFailure";
 
-    /** Error result. */
-    public static final String ERROR = "error";
 
     /** Flow scope attribute that determines if authn is happening at a public workstation. */
     public static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
@@ -84,24 +74,6 @@ public class AuthenticationViaFormAction {
         if (!checkLoginTicketIfExists(context)) {
             return returnInvalidLoginTicketEvent(context, messageContext);
         }
-
-        /**
-         * TODO: It is not possible to pass around the servlet context through a hierarcy
-         * of changes without making much change in the class interfaces. Therefore, using
-         * threadlocal to maintain the tenant information. May be it is possible to use
-         * spring flow to do that but this should be a place holder till we figure out the best
-         * way to achieve that.
-         */
-        String tenantId = AuthUtils.SELF;
-        HttpServletRequest req =
-                (HttpServletRequest)context.getExternalContext().getNativeRequest();
-
-        if(req!=null) {
-          //The URL is //https://localhost:8443/cas/login.
-          tenantId = AuthUtils.extractTenantID(req);
-        }
-
-        AuthUtils.setTenantId(tenantId);
 
         if (isRequestAskingForServiceTicket(context)) {
             return grantServiceTicket(context, credential);
@@ -140,7 +112,7 @@ public class AuthenticationViaFormAction {
         final String loginTicketFromRequest = WebUtils.getLoginTicketFromRequest(context);
         logger.warn("Invalid login ticket [{}]", loginTicketFromRequest);
         messageContext.addMessage(new MessageBuilder().error().code("error.invalid.loginticket").build());
-        return newEvent(ERROR);
+        return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR);
     }
 
     /**
@@ -174,8 +146,8 @@ public class AuthenticationViaFormAction {
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
                     ticketGrantingTicketId, service, credential);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
-            putWarnCookieIfRequestParameterPresent(context);
-            return newEvent(WARN);
+            WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
+            return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_WARN);
         } catch (final AuthenticationException e) {
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final TicketCreationException e) {
@@ -184,9 +156,9 @@ public class AuthenticationViaFormAction {
                             + "Ending SSO session.");
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
         } catch (final AbstractTicketException e) {
-            return newEvent(ERROR, e);
+            return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);
         }
-        return newEvent(ERROR);
+        return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR);
 
     }
     /**
@@ -204,18 +176,18 @@ public class AuthenticationViaFormAction {
         try {
             final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-            putWarnCookieIfRequestParameterPresent(context);
+            WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
             putPublicWorkstationToFlowIfRequestParameterPresent(context);
             if (addWarningMessagesToMessageContextIfNeeded(tgt, messageContext)) {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
-            return newEvent(SUCCESS);
+            return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_SUCCESS);
         } catch (final AuthenticationException e) {
             logger.debug(e.getMessage(), e);
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final Exception e) {
             logger.debug(e.getMessage(), e);
-            return newEvent(ERROR, e);
+            return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);
         }
     }
 
@@ -238,20 +210,7 @@ public class AuthenticationViaFormAction {
         return foundAndAddedWarnings;
 
     }
-    /**
-     * Put warn cookie if request parameter present.
-     *
-     * @param context the context
-     */
-    private void putWarnCookieIfRequestParameterPresent(final RequestContext context) {
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
 
-        if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
-            this.warnCookieGenerator.addCookie(response, "true");
-        } else {
-            this.warnCookieGenerator.removeCookie(response);
-        }
-    }
 
     /**
      * Put public workstation into the flow if request parameter present.

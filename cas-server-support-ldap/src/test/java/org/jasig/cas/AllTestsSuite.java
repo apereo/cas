@@ -1,7 +1,7 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.LdapAuthenticationHandlerTests;
-import org.jasig.cas.userdetails.LdapUserDetailsServiceTests;
+import org.jasig.cas.authorization.generator.LdapAuthorizationGeneratorTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -13,7 +13,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     LdapAuthenticationHandlerTests.class,
-    LdapUserDetailsServiceTests.class
+    LdapAuthorizationGeneratorTests.class
 })
 public class AllTestsSuite {
 }

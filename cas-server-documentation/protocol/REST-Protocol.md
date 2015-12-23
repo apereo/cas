@@ -15,11 +15,6 @@ by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that
  only soberly and with due consideration of security aspects.</p></div>
 
 # Components
-By default the CAS REST API is configured to add routing for the tickets. It
-
-also defines the resources that will resolve the URLs. The `TicketResource` defined by
-default (which can be extended) accepts username/password.
-
 Support is enabled by including the following in your `pom.xml` file:
 
 {% highlight xml %}
@@ -31,7 +26,7 @@ Support is enabled by including the following in your `pom.xml` file:
 </dependency>
 {% endhighlight %}
 
-REST support is currently provided internally by the [Spring framework](http://spring.io/guides/gs/rest-service/‎).
+REST support is currently provided internally by the [Spring framework](http://spring.io/guides/gs/rest-service/).
 
 #Protocol
 
@@ -118,4 +113,22 @@ the generated identifier of the new service.
 {% highlight bash %}
 200 OK
 5463544213
+{% endhighlight %}
+
+## CAS REST Clients
+In order to interact with the CAS REST API, a REST client must be used to submit credentials,
+receive tickets and validate them. The following Java REST client is available
+by [pac4j](https://github.com/pac4j/pac4j):
+
+{% highlight java %}
+String casUrlPrefix = "http://localhost:8080/cas";
+CasRestAuthenticator authenticator = new CasRestAuthenticator(casUrlPrefix);
+CasRestFormClient client = new CasRestFormClient(authenticator);
+
+// The request object must contain the CAS credentials
+final WebContext webContext = new J2EContext(request, response);
+final HttpTGTProfile profile = client.requestTicketGrantingTicket(context);
+final CasCredentials casCreds = client.requestServiceTicket("<SERVICE_URL>", profile);
+final CasProfile casProfile = client.validateServiceTicket("<SERVICE_URL>", casCreds);
+client.destroyTicketGrantingTicket(context, profile);
 {% endhighlight %}

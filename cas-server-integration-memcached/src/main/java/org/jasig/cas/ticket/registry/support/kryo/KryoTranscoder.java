@@ -2,12 +2,27 @@ package org.jasig.cas.ticket.registry.support.kryo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
+import de.javakaffee.kryoserializers.EnumMapSerializer;
+import de.javakaffee.kryoserializers.EnumSetSerializer;
+import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
+import de.javakaffee.kryoserializers.RegexSerializer;
+import de.javakaffee.kryoserializers.URISerializer;
+import de.javakaffee.kryoserializers.UUIDSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableMapSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 
@@ -54,7 +69,7 @@ import org.slf4j.impl.CasDelegatingLogger;
 public class KryoTranscoder implements Transcoder<Object> {
 
     /** Kryo serializer. */
-    private final Kryo kryo = new Kryo();
+    private final Kryo kryo = new KryoReflectionFactorySupport();
 
     /** Logging instance. */
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -101,6 +116,11 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(TimeoutExpirationPolicy.class);
         kryo.register(URL.class, new URLSerializer());
+        kryo.register(URI.class, new URISerializer());
+        kryo.register(Pattern.class, new RegexSerializer());
+        kryo.register(UUID.class, new UUIDSerializer());
+        kryo.register(EnumMap.class, new EnumMapSerializer());
+        kryo.register(EnumSet.class, new EnumSetSerializer());
 
         // we add these ones for tests only
         kryo.register(RegisteredServiceImpl.class, new RegisteredServiceSerializer());
@@ -112,6 +132,10 @@ public class KryoTranscoder implements Transcoder<Object> {
 
         // from the kryo-serializers library (https://github.com/magro/kryo-serializers)
         UnmodifiableCollectionsSerializer.registerSerializers(kryo);
+        ImmutableListSerializer.registerSerializers(kryo);
+        ImmutableSetSerializer.registerSerializers(kryo);
+        ImmutableMapSerializer.registerSerializers(kryo);
+        ImmutableMultimapSerializer.registerSerializers(kryo);
 
         // Register other types
         if (serializerMap != null) {

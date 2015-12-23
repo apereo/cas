@@ -1,26 +1,20 @@
 description = 'Apereo CAS Management Web Application Support'
 
 dependencies {
-    compile(group: 'org.springframework.security', name: 'spring-security-core', version: springSecVersion) {
+    compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
+        exclude(module: 'spring-webmvc')
         exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
+        exclude(module: 'pac4j-core')
+    }
+    compile group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion
+    compile(group: 'org.pac4j', name: 'pac4j-cas', version: pac4jVersion) {
+        exclude(module: 'slf4j-api')
+        exclude(module: 'joda-time')
     }
     compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version: inspektrVersion) {
         exclude(module: 'slf4j-api')
         exclude(module: 'validation-api')
         exclude(module: 'aspectjrt')
-    }
-    compile(group: 'org.springframework.security', name: 'spring-security-web', version: springSecVersion) {
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
     }
     compile group: 'org.springframework', name: 'spring-aop', version: springVersion
     compile(group: 'org.springframework.webflow', name: 'spring-binding', version: springWebflowVersion) {
@@ -64,33 +58,6 @@ dependencies {
         exclude(module: 'aspectjrt')
         exclude(module: 'validation-api')
     }
-    runtime(group: 'org.springframework.security', name: 'spring-security-cas', version: springSecVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
-        exclude(module: 'cas-client-core')
-    }
-    runtime(group: 'org.springframework.security', name: 'spring-security-config', version: springSecVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
-    }
-    runtime(group: 'org.springframework.security', name: 'spring-security-ldap', version: springSecVersion) {
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-tx')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-    }
     runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
     runtime group: 'taglibs', name: 'standard', version: taglibsVersion
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
@@ -98,5 +65,3 @@ dependencies {
         exclude(module: 'jboss-logging')
     }
 }
-
-
