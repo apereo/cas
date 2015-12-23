@@ -437,7 +437,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      * The type No redirect http client.
      */
     @Component("noRedirectHttpClient")
-    public static class NoRedirectHttpClient extends DefaultHttpClient {
+    public static class NoRedirectHttpClient extends SslTrustStoreAwareHttpClient {
         /**
          * Instantiates a new No redirect http client.
          */
