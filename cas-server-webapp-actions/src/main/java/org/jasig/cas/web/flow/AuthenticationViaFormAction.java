@@ -218,7 +218,6 @@ public class AuthenticationViaFormAction {
             logger.debug(e.getMessage(), e);
             return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);
         }
-        return newEvent(ERROR);
     }
 
     /**

@@ -95,7 +95,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
                 final AuthenticationContext authenticationContext = builder.build(service);
 
                 final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketId, service, credential);
+                    .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 onWarn(context, credential);
                 return result("warn");
