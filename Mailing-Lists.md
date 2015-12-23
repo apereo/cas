@@ -29,11 +29,10 @@ The developer list is used by CAS committers to discuss CAS development. It's a 
 requests, software design, and offering contributions. _Please do not post support questions to the developer list._
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-dev)
-
 [Old archives](https://groups.google.com/forum/#!forum/jasig-cas-dev)
 
 ## CAS Announcements List (cas-announce)
-_Focus_: release accouncements.
+_Focus_: Release accouncements.
 
 This is a low-traffic list to receive notifications about CAS releases including security patches.
 
@@ -46,7 +45,7 @@ This is a low-traffic list to receive notifications about CAS security issues. N
 
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-appsec-public)
 
-## CAS private Security List (cas-appsec-private)
+## CAS Private Security List (cas-appsec-private)
 _Focus_: Security issues, mitigation strategies and private internal discussions
 
 This is a private closed-list low-traffic list to  discuss CAS security issues amongst trusted members. Note that posts on this list are *private*. To report what you consider to be a security vulnerability, please use the address `security@apereo.org`. 
@@ -55,7 +54,7 @@ This is a private closed-list low-traffic list to  discuss CAS security issues a
 [View and/or subscribe](https://groups.google.com/a/apereo.org/forum/#!forum/cas-appsec-private)
 
 ## CAS PMC (cas-pmc)
-_Focus_: project management committee matters, policy decisions
+_Focus_: Project management committee matters, policy decisions
 
 This is a private closed-list open to the CAS PMC members. PMC bylaws are [published here](https://wiki.jasig.org/display/CAS/CAS+Project+Management+Committee).
 
