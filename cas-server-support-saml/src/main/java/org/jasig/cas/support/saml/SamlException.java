@@ -29,6 +29,9 @@ import javax.validation.constraints.NotNull;
  * @since 4.2
  */
 public class SamlException extends RootCasException {
+    /** Code description. */
+    public static final String CODE = "UNSATISFIED_SAML_REQUEST";
+
     private static final long serialVersionUID = 801270467754480446L;
 
     /**

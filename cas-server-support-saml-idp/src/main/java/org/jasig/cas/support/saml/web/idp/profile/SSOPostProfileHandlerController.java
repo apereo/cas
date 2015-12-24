@@ -16,17 +16,23 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
+import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
+import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +49,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 import java.security.SecureRandom;
+import java.util.List;
 
 /**
  * The {@link SSOPostProfileHandlerController} is responsible for
@@ -96,9 +103,7 @@ public class SSOPostProfileHandlerController {
     /**
      * Instantiates a new redirect profile handler controller.
      */
-    public SSOPostProfileHandlerController() {
-
-    }
+    public SSOPostProfileHandlerController() {}
 
     /**
      * Post constructor placeholder for additional
@@ -106,7 +111,7 @@ public class SSOPostProfileHandlerController {
      * the object has completely initialized itself.
      */
     @PostConstruct
-    public void initialize() {
+    protected void initialize() {
         this.callbackService = webApplicationServiceFactory.createService(
                 this.casServerPrefix.concat(SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK));
         logger.debug("Initialized callback service url {}", this.callbackService);
@@ -171,25 +176,53 @@ public class SSOPostProfileHandlerController {
             if (assertion.isValid()) {
                 final SamlRegisteredService registeredService = getRegisteredServiceAndVerify(authnRequest);
                 logger.debug("Preparing SAML response to {}", registeredService);
+
+                final SamlMetadataAdaptor adaptor = SamlMetadataAdaptor.adapt(registeredService.getChainingMetadataResolver(),
+                        getAssertionConsumerServiceFor(authnRequest));
+
                 final Response samlResponse = responseBuilder.build(authnRequest, request,
-                        response, assertion, registeredService);
+                        response, assertion, registeredService, adaptor);
                 logger.info("Built the SAML response {}", samlResponse);
-                encodeSamlResponse(samlResponse, response);
+                encodeSamlResponse(registeredService, samlResponse, response, adaptor);
             }
         } finally {
             storeAuthnRequest(request, null);
         }
     }
 
-    private void encodeSamlResponse(final Response samlResponse, final HttpServletResponse httpResponse) throws Exception {
+    private void encodeSamlResponse(final SamlRegisteredService service, final Response samlResponse,
+                                    final HttpServletResponse httpResponse, final SamlMetadataAdaptor adaptor) throws Exception {
+        final List<AssertionConsumerService> assertionConsumerServices = adaptor.getAssertionConsumerServices();
+
+        if (assertionConsumerServices.isEmpty()) {
+            throw new SamlException(SamlException.CODE, "No assertion consumer services could be found in the metadata for service "
+                + service.getServiceId() + " and metadata location " + service.getMetadataLocation());
+        }
+
         final HTTPPostEncoder encoder = new HTTPPostEncoder();
         encoder.setHttpServletResponse(httpResponse);
         encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
         final MessageContext outboundMessageContext = new MessageContext<>();
+        final SAMLPeerEntityContext peerEntityContext = outboundMessageContext.getSubcontext(SAMLPeerEntityContext.class, true);
+        if (peerEntityContext != null) {
+            final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
+            if (endpointContext != null) {
+                endpointContext.setEndpoint(assertionConsumerServices.get(0));
+            }
+        }
+
         outboundMessageContext.setMessage(samlResponse);
         encoder.setMessageContext(outboundMessageContext);
         encoder.initialize();
         encoder.encode();
+    }
+
+    private AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest) {
+        final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
+        acs.setBinding(authnRequest.getProtocolBinding());
+        acs.setLocation(authnRequest.getAssertionConsumerServiceURL());
+        acs.setResponseLocation(authnRequest.getAssertionConsumerServiceURL());
+        return acs;
     }
 
     private SamlRegisteredService getRegisteredServiceAndVerify(final AuthnRequest authnRequest) {
@@ -202,7 +235,8 @@ public class SSOPostProfileHandlerController {
 
         if (registeredService instanceof SamlRegisteredService) {
             final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) registeredService;
-            samlRegisteredService.init();
+            logger.debug("Located SAML service in the registry as {} with the metadata location of {}"
+                    , samlRegisteredService.getServiceId(), samlRegisteredService.getMetadataLocation());
             return samlRegisteredService;
         }
         logger.error("Service {} is found in registry but it is not a SAML service", serviceId);

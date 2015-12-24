@@ -186,6 +186,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
             if (file.length() > 0) {
                 final RegisteredService service = loadRegisteredServiceFromFile(file);
                 if (service == null) {
+                    LOGGER.warn("Could not load service definition from file {}", file);
                     errorCount++;
                 } else {
                     if (temp.containsKey(service.getId())) {
@@ -200,6 +201,9 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
         }
         if (errorCount == 0) {
             this.serviceMap = temp;
+        } else {
+            LOGGER.warn("{} errors encoutered when loading service definitions. New definitions are not loaded until errors are "
+                   +  "corrected", errorCount);
         }
         return new ArrayList<>(this.serviceMap.values());
     }
