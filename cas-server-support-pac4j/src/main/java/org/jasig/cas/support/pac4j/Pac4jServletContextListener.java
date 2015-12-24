@@ -16,7 +16,7 @@ import javax.servlet.annotation.WebListener;
  * @since 4.2.0
  */
 @WebListener
-@Component
+@Component("pac4jServletContextListener")
 public class Pac4jServletContextListener extends AbstractServletContextInitializer {
 
     @Autowired
