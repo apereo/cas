@@ -13,8 +13,6 @@ import org.jasig.cas.util.ISOStandardDateFormat;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -32,8 +30,6 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private GoogleAccountsServiceFactory factory;
