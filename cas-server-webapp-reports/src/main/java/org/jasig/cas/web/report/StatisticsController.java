@@ -135,7 +135,7 @@ public final class StatisticsController implements ServletContextAware {
      * @param bytes the total number of bytes
      * @return value converted to MB
      */
-    private double convertToMegaBytes(final double bytes) {
+    private static double convertToMegaBytes(final double bytes) {
         return bytes / NUMBER_OF_BYTES_IN_A_KILOBYTE / NUMBER_OF_BYTES_IN_A_KILOBYTE;
     }
     /**

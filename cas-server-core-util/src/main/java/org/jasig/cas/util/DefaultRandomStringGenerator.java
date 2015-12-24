@@ -74,7 +74,7 @@ public final class DefaultRandomStringGenerator implements RandomStringGenerator
      * @param random the random
      * @return the string
      */
-    private String convertBytesToString(final byte[] random) {
+    private static String convertBytesToString(final byte[] random) {
         final char[] output = new char[random.length];
         for (int i = 0; i < random.length; i++) {
             final int index = Math.abs(random[i] % PRINTABLE_CHARACTERS.length);
