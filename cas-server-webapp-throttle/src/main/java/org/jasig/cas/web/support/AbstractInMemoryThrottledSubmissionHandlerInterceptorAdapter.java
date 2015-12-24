@@ -105,7 +105,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      *
      * @return  Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
      */
-    private double submissionRate(final Date a, final Date b) {
+    private static double submissionRate(final Date a, final Date b) {
         return SUBMISSION_RATE_DIVIDEND / (a.getTime() - b.getTime());
     }
 

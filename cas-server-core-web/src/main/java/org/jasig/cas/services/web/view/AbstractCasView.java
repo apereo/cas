@@ -167,7 +167,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param attributes the attributes
      * @return the map of attributes to return
      */
-    private Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
+    private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
         final Map<String, Object> attributesToReturn = new HashMap<>();
         final Set<Map.Entry<String, Object>> entries = attributes.entrySet();
         for (final Map.Entry<String, Object> entry : entries) {
