@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
@@ -415,5 +416,25 @@ public final class WebUtils {
             }
         }
         return UNKNOWN_USER;
+    }
+
+    /**
+     * Put warn cookie if request parameter present.
+     *
+     * @param warnCookieGenerator the warn cookie generator
+     * @param context             the context
+     */
+    public static void putWarnCookieIfRequestParameterPresent(final CookieGenerator warnCookieGenerator, final RequestContext context) {
+        if (warnCookieGenerator != null) {
+            LOGGER.debug("Evaluating request to determine if warning cookie should be generated");
+            final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+            if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
+                warnCookieGenerator.addCookie(response, "true");
+            } else {
+                warnCookieGenerator.removeCookie(response);
+            }
+        } else {
+            LOGGER.debug("No warning cookie generator is defined");
+        }
     }
 }
