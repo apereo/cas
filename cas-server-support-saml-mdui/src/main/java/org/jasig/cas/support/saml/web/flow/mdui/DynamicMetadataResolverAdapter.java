@@ -1,6 +1,6 @@
 package org.jasig.cas.support.saml.web.flow.mdui;
 
-import org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain;
+import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 
