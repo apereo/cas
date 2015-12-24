@@ -11,6 +11,7 @@ import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
@@ -124,7 +125,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
     @Override
     public Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
                           final HttpServletResponse response, final Assertion assertion,
-                          final SamlRegisteredService service) throws Exception {
+                          final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws Exception {
 
         final List<Statement> statements = new ArrayList<>();
         statements.add(buildAuthnStatement(assertion, authnRequest));
@@ -132,7 +133,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         if (attributeStatement != null) {
             statements.add(attributeStatement);
         }
-        return buildResponse(authnRequest, statements, assertion, service);
+        return buildResponse(authnRequest, statements, assertion, service, adaptor);
     }
 
     private Issuer buildEntityIssuer() {
@@ -142,7 +143,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
     }
 
     private NameID buildNameId(final AuthnRequest authnRequest, final Assertion assertion,
-                               final SamlRegisteredService service)
+                               final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
             throws SAMLException {
 
         String requiredNameFormat = null;
@@ -154,7 +155,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
             }
         }
 
-        final List<String> supportedNameFormats = service.getSupportedNameFormats();
+        final List<String> supportedNameFormats = adaptor.getSupportedNameFormats();
         if (requiredNameFormat != null) {
             supportedNameFormats.clear();
             supportedNameFormats.add(requiredNameFormat);
@@ -195,8 +196,8 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
     }
 
     private Subject buildSubject(final AuthnRequest authnRequest, final Assertion assertion,
-                                   final SamlRegisteredService service) throws SAMLException {
-        final NameID nameID = buildNameId(authnRequest, assertion, service);
+                                   final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SAMLException {
+        final NameID nameID = buildNameId(authnRequest, assertion, service, adaptor);
         if (nameID == null) {
             throw new SAMLException("NameID cannot be determined for authN request");
         }
@@ -212,7 +213,8 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
     private Response buildResponse(final AuthnRequest authnRequest,
                                    final List<Statement> statements,
                                    final Assertion casAssertion,
-                                   final SamlRegisteredService service) throws Exception {
+                                   final SamlRegisteredService service,
+                                   final SamlMetadataAdaptor adaptor) throws Exception {
 
         final String id = String.valueOf(new SecureRandom().nextLong());
         final Response samlResponse = newResponse(id, new DateTime(), authnRequest.getID(), null);
@@ -222,8 +224,8 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         org.opensaml.saml.saml2.core.Assertion assertion = null;
         if (statements != null && !statements.isEmpty()) {
             assertion = newAssertion(statements, this.entityId, new DateTime(), id);
-            assertion.setSubject(buildSubject(authnRequest, casAssertion, service));
-            signAssertion(authnRequest, statements, assertion, service);
+            assertion.setSubject(buildSubject(authnRequest, casAssertion, service, adaptor));
+            signAssertion(authnRequest, statements, assertion, service, adaptor);
             samlResponse.getAssertions().add(assertion);
         }
 
@@ -236,7 +238,8 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
     private void signAssertion(final AuthnRequest authnRequest,
                                final List<Statement> statements,
                                final org.opensaml.saml.saml2.core.Assertion assertion,
-                               final SamlRegisteredService service)
+                               final SamlRegisteredService service,
+                               final SamlMetadataAdaptor adaptor)
             throws SAMLException {
         logger.debug("Determining if SAML assertion to {} should be signed", service.getServiceId());
         if (!service.isSignAssertions()) {
@@ -244,7 +247,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         }
 
         logger.debug("Determining signing credential for assertion to relying party {}", service.getServiceId());
-        final Credential signatureCredential = service.getSigningCredential();
+        final Credential signatureCredential = null;
 
         if (signatureCredential == null) {
             throw new SAMLException("No signing credential is specified for relying party configuration");
@@ -267,7 +270,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
 
             assertionMarshaller.marshall(assertion);
 
-            final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(service.getSsoDescriptor());
+            final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(adaptor.getSsoDescriptor());
             SignatureSupport.signObject(assertion, signingParameters);
         } catch (final Exception e) {
             logger.error("Unable to marshall assertion for signing", e);
