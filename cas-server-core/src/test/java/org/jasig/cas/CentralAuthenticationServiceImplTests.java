@@ -74,14 +74,14 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test(expected = TicketCreationException.class)
     public void disallowNullCredentionalsWhenCreatingTicketGrantingTicket() throws Exception {
-        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+        getCentralAuthenticationService()
             .createTicketGrantingTicket(new Credential[] {null});
 
     }
 
     @Test(expected = TicketCreationException.class)
     public void disallowNullCredentionalsArrayWhenCreatingTicketGrantingTicket() throws Exception {
-        final TicketGrantingTicket ticketId = getCentralAuthenticationService()
+        getCentralAuthenticationService()
             .createTicketGrantingTicket(new Credential[]{null, null});
     }
 
