@@ -1,7 +1,5 @@
 package org.jasig.cas.services.web.beans;
 
-import org.slf4j.Logger;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Defines the service bean that is produced by the webapp
@@ -21,9 +18,6 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public final class RegisteredServiceEditBean implements Serializable {
     private static final long serialVersionUID = 4882440567964605644L;
-
-    private static final Logger LOGGER = getLogger(RegisteredServiceEditBean.class);
-
 
     private FormData formData = new FormData();
     private ServiceData serviceData = new ServiceData();

@@ -4,8 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
 
@@ -20,8 +18,6 @@ public final class LdapUtils {
 
     /** The Constant OBJECTCLASS_ATTRIBUTE. */
     public static final String OBJECTCLASS_ATTRIBUTE = "objectClass";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
 
     /**
      * Instantiates a new ldap utils.
