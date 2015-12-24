@@ -43,7 +43,9 @@ dependencies {
         exclude(module: 'slf4j-api')
         exclude(module: 'pac4j-core')
     }
-    compile group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion
+    compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
+        exclude(module: 'slf4j-api')
+    }
     compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
         exclude(module: 'slf4j-api')
     }
