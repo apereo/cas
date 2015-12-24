@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +36,6 @@ public final class LogoutManagerImpl implements LogoutManager {
 
     /** The parameter name that contains the logout request. */
     private static final String LOGOUT_PARAMETER_NAME = "logoutRequest";
-
-    /** ASCII character set. */
-    private static final Charset ASCII = Charset.forName("ASCII");
 
     /** The services manager. */
     @NotNull
