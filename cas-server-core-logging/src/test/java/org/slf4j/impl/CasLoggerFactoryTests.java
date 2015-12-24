@@ -322,11 +322,11 @@ public class CasLoggerFactoryTests {
         validateLogData();
     }
 
-    private String getMessageToLog() {
+    private static String getMessageToLog() {
         return String.format("Here is one %s and here is another %s", ID1, ID2);
     }
 
-    private String getMessageToLogWithParams() {
+    private static String getMessageToLogWithParams() {
         return "Here is one {} and here is another {}";
     }
 

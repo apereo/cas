@@ -217,7 +217,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      * @param result the result
      * @return the int
      */
-    private int countToInt(final Object result) {
+    private static int countToInt(final Object result) {
         final int intval;
         if (result instanceof Long) {
             intval = ((Long) result).intValue();

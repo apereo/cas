@@ -145,11 +145,11 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         assertEquals(r.getPrincipal().getId(), "user1");
     }
 
-    private String buildSql(final String where) {
+    private static String buildSql(final String where) {
         return String.format(SQL, where);
     }
 
-    private String buildSql() {
+    private static String buildSql() {
         return String.format(SQL, "username=?;");
     }
 
