@@ -18,15 +18,20 @@
  */
 package org.jasig.cas.web.view;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.support.CasAttributeEncoder;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.validation.Assertion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,6 +59,14 @@ public abstract class AbstractCasView extends AbstractView {
 
     /** Logger instance. **/
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /** The attribute encoder instance. */
+    @NotNull
+    protected CasAttributeEncoder casAttributeEncoder;
+
+    /** The Services manager. */
+    @NotNull
+    protected ServicesManager servicesManager;
 
     /**
      * Gets the assertion from the model.
@@ -164,7 +177,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param attributes the attributes
      * @return the map of attributes to return
      */
-    private Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
+    private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
         final Map<String, Object> attributesToReturn = new HashMap<>();
         final Set<Map.Entry<String, Object>> entries = attributes.entrySet();
         for (final Map.Entry<String, Object> entry : entries) {
@@ -228,6 +241,74 @@ public abstract class AbstractCasView extends AbstractView {
     }
 
     /**
+     * Decide if credential password should be released as attribute.
+     * The credential must have been cached as an authentication attribute
+     * and the attribute release policy must be allowed to release the
+     * attribute.
+     *
+     * @param attributes the attributes
+     * @param model the model
+     * @param service the service
+     */
+    protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
+                                                                         final Map<String, Object> model,
+                                                                         final RegisteredService service) {
+        decideAttributeReleaseBasedOnServiceAttributePolicy(attributes,
+                getAuthenticationAttribute(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL),
+                CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+                service, service.getAttributeReleasePolicy().isAuthorizedToReleaseCredentialPassword());
+    }
+
+    /**
+     * Decide if PGT should be released as attribute.
+     * The PGT must have been cached as an authentication attribute
+     * and the attribute release policy must be allowed to release the
+     * attribute.
+     *
+     * @param attributes the attributes
+     * @param model the model
+     * @param service the service
+     */
+    protected void decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
+                                                                          final Map<String, Object> model,
+                                                                          final RegisteredService service) {
+        decideAttributeReleaseBasedOnServiceAttributePolicy(attributes,
+                getProxyGrantingTicketId(model),
+                CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
+                service, service.getAttributeReleasePolicy().isAuthorizedToReleaseProxyGrantingTicket());
+    }
+
+    /**
+     * Decide attribute release based on service attribute policy.
+     *
+     * @param attributes the attributes
+     * @param attributeValue the attribute value
+     * @param attributeName the attribute name
+     * @param service the service
+     * @param doesAttributePolicyAllow does attribute policy allow release of this attribute?
+     */
+    protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, Object> attributes,
+                                                                       final String attributeValue,
+                                                                       final String attributeName,
+                                                                       final RegisteredService service,
+                                                                       final boolean doesAttributePolicyAllow) {
+        if (StringUtils.isNotBlank(attributeValue)) {
+            logger.debug("Obtained [{}] as an authentication attribute", attributeName);
+
+            if (doesAttributePolicyAllow) {
+                logger.debug("Obtained [{}] is passed to the CAS validation payload", attributeName);
+                attributes.put(attributeName, Collections.singleton(attributeValue));
+            } else {
+                logger.debug("Attribute release policy for [{}] does not authorize the release of [{}]",
+                        service.getServiceId(), attributeName);
+                attributes.remove(attributeName);
+            }
+        } else {
+            logger.trace("[{}] is not available and will not be released to the validation response.", attributeName);
+        }
+    }
+
+    /**
      * Put into model.
      *
      * @param model the model
@@ -246,6 +327,27 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final void putAllIntoModel(final Map<String, Object> model, final Map<String, Object> values){
         model.putAll(values);
+    }
+
+
+    /**
+     * Sets cas attribute encoder.
+     *
+     * @param casAttributeEncoder the cas attribute encoder
+     * @since 4.1
+     */
+    public void setCasAttributeEncoder(@NotNull final CasAttributeEncoder casAttributeEncoder) {
+        this.casAttributeEncoder = casAttributeEncoder;
+    }
+
+    /**
+     * Sets services manager.
+     *
+     * @param servicesManager the services manager
+     * @since 4.1
+     */
+    public void setServicesManager(@NotNull final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
     }
 
     /**

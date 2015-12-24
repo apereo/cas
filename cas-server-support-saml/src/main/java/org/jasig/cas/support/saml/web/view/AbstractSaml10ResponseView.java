@@ -19,6 +19,7 @@
 package org.jasig.cas.support.saml.web.view;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.authentication.support.CasAttributeEncoder;
 import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.support.saml.web.support.SamlArgumentExtractor;
 import org.jasig.cas.web.view.AbstractCasView;
@@ -108,6 +109,16 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             logger.error("Error generating SAML response for service {}.", serviceId);
             throw e;
         }
+    }
+
+    /**
+     * Sets cas attribute encoder.
+     *
+     * @param casAttributeEncoder the cas attribute encoder
+     * @since 4.1
+     */
+    public void setCasAttributeEncoder(@NotNull final CasAttributeEncoder casAttributeEncoder) {
+        this.casAttributeEncoder = casAttributeEncoder;
     }
 
     /**
