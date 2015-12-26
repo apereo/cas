@@ -164,7 +164,7 @@ public class MockWebServer {
             socket.shutdownOutput();
         }
 
-        private byte[] header(final String name, final Object value) {
+        private static byte[] header(final String name, final Object value) {
             return String.format("%s: %s\r\n", name, value).getBytes();
         }
     }

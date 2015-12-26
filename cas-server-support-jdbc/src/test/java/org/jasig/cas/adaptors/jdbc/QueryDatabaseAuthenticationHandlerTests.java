@@ -65,7 +65,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    private String getSqlInsertStatementToCreateUserAccount(final int i) {
+    private static String getSqlInsertStatementToCreateUserAccount(final int i) {
         return String.format("insert into casusers (username, password) values('%s', '%s');", "user" + i, "psw" + i);
     }
 
