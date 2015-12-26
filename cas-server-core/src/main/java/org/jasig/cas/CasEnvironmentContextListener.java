@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Component
+@Component("casEnvironmentContextListener")
 public final class CasEnvironmentContextListener implements ServletContextListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasEnvironmentContextListener.class);
 

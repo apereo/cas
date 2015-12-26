@@ -1,6 +1,8 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -8,9 +10,12 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Scott Battaglia
@@ -43,6 +48,11 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     @Autowired
     private ArgumentExtractor argumentExtractor;
 
+    @NotNull
+    @Autowired(required=false)
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+
     public ArgumentExtractor getArgumentExtractor() {
         return argumentExtractor;
     }
@@ -65,5 +75,9 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     public ServicesManager getServicesManager() {
         return this.servicesManager;
+    }
+
+    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        return authenticationSystemSupport;
     }
 }

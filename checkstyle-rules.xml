@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
         "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
-
-<!--
-    This configuration file was written by the eclipse-cs plugin configuration editor
--->
-<!--
-    Checkstyle-Configuration: CAS
-    Description: 
-Checkstyle configuration based on Sun's conventions, compliant with CAS coding conventions. The conventions are documented at https://wiki.jasig.org/display/CAS/Code+Conventions
--->
 <module name="Checker">
     <property name="severity" value="warning"/>
     <property name="charset" value="UTF-8"/>
@@ -94,6 +85,7 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         </module>
         <module name="ParameterName">
             <property name="severity" value="error"/>
+            <property name="ignoreOverridden" value="true" />
         </module>
         <module name="StaticVariableName">
             <property name="severity" value="error"/>
@@ -105,7 +97,12 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         </module>
         <module name="AvoidStarImport">
             <property name="severity" value="error"/>
-            <property name="allowStaticMemberImports" value="true"/>
+            <property name="excludes"
+                      value="java.io,java.net,java.lang.Math,org.junit.Assert,org.mockito.Mockito,
+                      org.mockito.Matchers,org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
+                      org.springframework.test.web.servlet.result.MockMvcResultMatchers,
+                      java.nio.file.StandardWatchEventKinds"/>
+            <property name="allowStaticMemberImports" value="false"/>
         </module>
         <module name="SingleLineJavadoc">
             <property name="severity" value="warning"/>
@@ -384,6 +381,18 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
                   value="Consider marking the clone() method as final to reduce chances of data corruption"/>
     </module>
     <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="JUnit Assert static import"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="import\s+static\s+org\.junit\.Assert\.\w+"/>
+        <property name="message" value="JUnit Assert methods MUST be imported statically with a *"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="import\s+static\s+org\.mockito\.Mockito\.\w+"/>
+        <property name="message" value="Mockito methods MUST be imported statically with a *"/>
+    </module>
+    <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Missing @since tag"/>
         <property name="severity" value="error"/>
         <property name="format" value="\s+\*+\s+@since\s+\d+\.\d+.*"/>
@@ -392,7 +401,6 @@ Checkstyle configuration based on Sun's conventions, compliant with CAS coding c
         <property name="fileExtensions" value="java,groovy"/>
         <property name="message" value="There are no @since tags defined for this component's Javadocs."/>
     </module>
-
     <module name="SuppressionFilter">
         <property name="file" value="${checkstyle.suppressions.file}"/>
     </module>
