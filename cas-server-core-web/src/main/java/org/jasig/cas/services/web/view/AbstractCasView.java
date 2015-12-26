@@ -364,6 +364,14 @@ public abstract class AbstractCasView extends AbstractView {
         this.casAttributeEncoder = casAttributeEncoder;
     }
 
+    public CasAttributeEncoder getCasAttributeEncoder() {
+        return casAttributeEncoder;
+    }
+
+    public ServicesManager getServicesManager() {
+        return servicesManager;
+    }
+
     /**
      * Sets whether this view functions as a success response.
      *

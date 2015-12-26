@@ -5,8 +5,10 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
+import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
@@ -44,17 +46,12 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     public void setUp() throws Exception {
 
         final List<RegisteredService> list = new ArrayList<>();
-
-        final RegisteredServiceImpl regSvc = new RegisteredServiceImpl();
-        regSvc.setServiceId(org.jasig.cas.authentication.TestUtils.getService().getId());
-        regSvc.setName("Test Service");
-        regSvc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-
-        list.add(regSvc);
+        list.add(org.jasig.cas.services.TestUtils.getRegisteredService("https://.+"));
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(list);
-        new DefaultServicesManagerImpl(dao);
         this.response = new Saml10SuccessResponseView();
+        this.response.setServicesManager(new DefaultServicesManagerImpl(dao));
+        this.response.setCasAttributeEncoder(new DefaultCasAttributeEncoder(this.response.getServicesManager()));
         this.response.setIssuer("testIssuer");
         this.response.setIssueLength(1000);
     }
