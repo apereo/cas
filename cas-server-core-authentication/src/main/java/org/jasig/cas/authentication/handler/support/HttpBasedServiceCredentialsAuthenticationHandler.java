@@ -48,8 +48,8 @@ public final class HttpBasedServiceCredentialsAuthenticationHandler extends Abst
     public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
         if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(httpCredential.getCallbackUrl())) {
-            logger.warn("Proxy policy for service [{}] cannot authorize the requested callbackurl [{}]",
-                    httpCredential.getService(), httpCredential.getCallbackUrl());
+            logger.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
+                    httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
 
