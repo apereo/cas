@@ -1,7 +1,6 @@
 package org.jasig.cas.support.saml.web.idp;
 
 import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.opensaml.saml.saml2.core.AuthnRequest;
