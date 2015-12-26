@@ -43,7 +43,7 @@ public class DefaultCasAttributeEncoderTests {
         this.attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, newSingleAttribute("PrincipalPassword"));
     }
 
-    private Collection<String> newSingleAttribute(final String attr) {
+    private static Collection<String> newSingleAttribute(final String attr) {
         return Collections.singleton(attr);
     }
 
