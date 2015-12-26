@@ -165,10 +165,10 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         final RegisteredService rs2 = getRegisteredService();
         this.dao.save(rs2);
         this.dao.save(rs);
-        List<RegisteredService> services = this.dao.load();
+        this.dao.load();
         this.dao.delete(rs2);
 
-        services = this.dao.load();
+        final List<RegisteredService> services = this.dao.load();
         assertEquals(1, services.size());
         assertEquals(services.get(0).getId(), rs.getId());
         assertEquals(services.get(0).getName(), rs.getName());
