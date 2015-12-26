@@ -1,7 +1,5 @@
 package org.jasig.cas.web.report;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -25,8 +23,6 @@ import java.util.Set;
  */
 @Controller("internalConfigController")
 public final class InternalConfigStateController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(InternalConfigStateController.class);
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 

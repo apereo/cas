@@ -10,7 +10,6 @@ import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
-import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.validation.Assertion;
@@ -54,7 +53,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         list.add(regSvc);
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(list);
-        final ServicesManager servicesManager = new DefaultServicesManagerImpl(dao);
+        new DefaultServicesManagerImpl(dao);
         this.response = new Saml10SuccessResponseView();
         this.response.setIssuer("testIssuer");
         this.response.setIssueLength(1000);

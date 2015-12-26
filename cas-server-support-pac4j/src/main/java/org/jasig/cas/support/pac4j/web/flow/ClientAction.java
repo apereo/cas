@@ -144,7 +144,7 @@ public final class ClientAction extends AbstractAction {
             }
             restoreRequestAttribute(request, session, ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
             restoreRequestAttribute(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
-            restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_SERVICE);
+            restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
             // credentials not null -> try to authenticate
             if (credentials != null) {

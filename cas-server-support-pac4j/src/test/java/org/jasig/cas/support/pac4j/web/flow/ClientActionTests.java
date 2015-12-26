@@ -10,7 +10,6 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Test;
-import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.http.client.indirect.IndirectBasicAuthClient;
