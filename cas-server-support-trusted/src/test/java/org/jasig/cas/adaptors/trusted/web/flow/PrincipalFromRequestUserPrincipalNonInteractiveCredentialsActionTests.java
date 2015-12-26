@@ -20,7 +20,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.security.Principal;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -43,8 +43,9 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTes
 
         final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
                 getCentralAuthenticationService();
-        centralAuthenticationService.setAuthenticationManager(authenticationManager);
         this.action.setCentralAuthenticationService(centralAuthenticationService);
+        this.action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
+                .setAuthenticationManager(authenticationManager);
     }
 
     @Test

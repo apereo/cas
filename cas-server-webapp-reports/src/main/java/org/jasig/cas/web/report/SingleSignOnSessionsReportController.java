@@ -3,6 +3,8 @@ package org.jasig.cas.web.report;
 import com.google.common.base.Predicate;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -10,6 +12,7 @@ import org.jasig.cas.util.ISOStandardDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Nullable;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -97,9 +101,14 @@ public final class SingleSignOnSessionsReportController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
-
     @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
+
+    @NotNull
+    @Autowired(required=false)
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     /**
      * Instantiates a new Single sign on sessions report resource.

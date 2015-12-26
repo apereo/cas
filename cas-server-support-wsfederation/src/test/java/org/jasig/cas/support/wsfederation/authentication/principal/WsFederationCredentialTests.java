@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
 
 /**
  * Test cases for {@link WsFederationCredential}.
