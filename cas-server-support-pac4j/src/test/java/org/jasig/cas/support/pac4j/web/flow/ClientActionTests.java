@@ -1,5 +1,6 @@
 package org.jasig.cas.support.pac4j.web.flow;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationContext;
@@ -19,6 +20,8 @@ import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -58,9 +61,9 @@ public final class ClientActionTests {
     @Test
     public void verifyStartAuthentication() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setParameter(ClientAction.THEME, MY_THEME);
-        mockRequest.setParameter(ClientAction.LOCALE, MY_LOCALE);
-        mockRequest.setParameter(ClientAction.METHOD, MY_METHOD);
+        mockRequest.setParameter(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
+        mockRequest.setParameter(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, MY_LOCALE);
+        mockRequest.setParameter(CasProtocolConstants.PARAMETER_METHOD, MY_METHOD);
 
         final MockHttpSession mockSession = new MockHttpSession();
         mockRequest.setSession(mockSession);
@@ -70,7 +73,7 @@ public final class ClientActionTests {
 
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
-        mockRequestContext.getFlowScope().put(ClientAction.SERVICE,
+        mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE,
                 org.jasig.cas.services.TestUtils.getService(MY_SERVICE));
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
@@ -82,9 +85,9 @@ public final class ClientActionTests {
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
-        assertEquals(MY_THEME, mockSession.getAttribute(ClientAction.THEME));
-        assertEquals(MY_LOCALE, mockSession.getAttribute(ClientAction.LOCALE));
-        assertEquals(MY_METHOD, mockSession.getAttribute(ClientAction.METHOD));
+        assertEquals(MY_THEME, mockSession.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
+        assertEquals(MY_LOCALE, mockSession.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
+        assertEquals(MY_METHOD, mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         final Map<String, String> urls = (Map<String, String>) flowScope.get(ClientAction.PAC4J_URLS);
         assertTrue((urls.get("Facebook"))
@@ -100,11 +103,11 @@ public final class ClientActionTests {
         mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
         final MockHttpSession mockSession = new MockHttpSession();
-        mockSession.setAttribute(ClientAction.THEME, MY_THEME);
-        mockSession.setAttribute(ClientAction.LOCALE, MY_LOCALE);
-        mockSession.setAttribute(ClientAction.METHOD, MY_METHOD);
+        mockSession.setAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
+        mockSession.setAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, MY_LOCALE);
+        mockSession.setAttribute(CasProtocolConstants.PARAMETER_METHOD, MY_METHOD);
         final Service service = org.jasig.cas.authentication.TestUtils.getService(MY_SERVICE);
-        mockSession.setAttribute(ClientAction.SERVICE, service);
+        mockSession.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         mockRequest.setSession(mockSession);
 
         final ServletExternalContext servletExternalContext = mock(ServletExternalContext.class);
@@ -131,13 +134,13 @@ public final class ClientActionTests {
         action.setClients(clients);
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
-        assertEquals(MY_THEME, mockRequest.getAttribute(ClientAction.THEME));
-        assertEquals(MY_LOCALE, mockRequest.getAttribute(ClientAction.LOCALE));
-        assertEquals(MY_METHOD, mockRequest.getAttribute(ClientAction.METHOD));
-        assertEquals(MY_SERVICE, mockRequest.getAttribute(ClientAction.SERVICE));
+        assertEquals(MY_THEME, mockRequest.getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
+        assertEquals(MY_LOCALE, mockRequest.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
+        assertEquals(MY_METHOD, mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
+        assertEquals(MY_SERVICE, mockRequest.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         final MutableAttributeMap requestScope = mockRequestContext.getRequestScope();
-        assertEquals(service, flowScope.get(ClientAction.SERVICE));
+        assertEquals(service, flowScope.get(CasProtocolConstants.PARAMETER_SERVICE));
         assertEquals(TGT_ID, flowScope.get(TGT_NAME));
         assertEquals(TGT_ID, requestScope.get(TGT_NAME));
     }
