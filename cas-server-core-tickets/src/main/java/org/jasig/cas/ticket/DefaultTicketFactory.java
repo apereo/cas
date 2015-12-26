@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -59,18 +60,10 @@ public class DefaultTicketFactory implements TicketFactory {
     }
 
     private void validateFactoryInstances() {
-        if (this.ticketGrantingTicketFactory == null) {
-            throw new RuntimeException("ticketGrantingTicketFactory cannot be null");
-        }
-        if (this.proxyGrantingTicketFactory == null) {
-            throw new RuntimeException("proxyGrantingTicketFactory cannot be null");
-        }
-        if (this.serviceTicketFactory == null) {
-            throw new RuntimeException("serviceTicketFactory cannot be null");
-        }
-        if (this.proxyTicketFactory == null) {
-            throw new RuntimeException("proxyTicketFactory cannot be null");
-        }
+        Assert.notNull(this.ticketGrantingTicketFactory, "ticketGrantingTicketFactory cannot be null");
+        Assert.notNull(this.proxyGrantingTicketFactory, "proxyGrantingTicketFactory cannot be null");
+        Assert.notNull(this.serviceTicketFactory, "serviceTicketFactory cannot be null");
+        Assert.notNull(this.proxyTicketFactory, "proxyTicketFactory cannot be null");
     }
 
     @Override

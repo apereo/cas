@@ -19,7 +19,8 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
+
 
 /**
  * @author Marvin S. Addison
@@ -42,8 +43,11 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
 
         final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
                 getCentralAuthenticationService();
-        centralAuthenticationService.setAuthenticationManager(authenticationManager);
+
         this.action.setCentralAuthenticationService(centralAuthenticationService);
+        this.action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
+                .setAuthenticationManager(authenticationManager);
+
     }
 
     @Test

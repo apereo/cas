@@ -1,5 +1,11 @@
 package org.jasig.cas.support.wsfederation.web.flow;
 
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
+import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.support.wsfederation.WsFederationConfiguration;
 import org.jasig.cas.support.wsfederation.WsFederationHelper;
 import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationCredential;
@@ -59,6 +65,11 @@ public final class WsFederationAction extends AbstractAction {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
+    @NotNull
+    @Autowired(required=false)
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+
     /**
      * Executes the webflow action.
      *
@@ -85,35 +96,37 @@ public final class WsFederationAction extends AbstractAction {
 
                 //Validate the signature
                 if (wsFederationHelper.validateSignature(assertion, configuration)) {
-                    final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion);
-
-                    if (credential != null && credential.isValid(configuration.getRelyingPartyIdentifier(),
-                            configuration.getIdentityProviderIdentifier(),
-                            configuration.getTolerance())) {
-
-                        if (configuration.getAttributeMutator() != null) {
-                            configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
-                        }
-                    } else {
-                        logger.warn("SAML assertions are blank or no longer valid.");
-                        return error();
-                    }
-
-                    // retrieve parameters from web session
                     try {
+
+                        final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion);
+                        if (credential != null && credential.isValid(configuration.getRelyingPartyIdentifier(),
+                                configuration.getIdentityProviderIdentifier(),
+                                configuration.getTolerance())) {
+
+                            if (configuration.getAttributeMutator() != null) {
+                                configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
+                            }
+                        } else {
+                            logger.warn("SAML assertions are blank or no longer valid.");
+                            return error();
+                        }
+
                         final Service service = (Service) session.getAttribute(SERVICE);
                         context.getFlowScope().put(SERVICE, service);
                         restoreRequestAttribute(request, session, THEME);
                         restoreRequestAttribute(request, session, LOCALE);
                         restoreRequestAttribute(request, session, METHOD);
 
-                    } catch (final Exception ex) {
-                        logger.warn("Session is most-likely empty: {}", ex.getMessage());
-                    }
+                        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                                this.authenticationSystemSupport.getPrincipalElectionStrategy());
+                        final AuthenticationTransaction transaction =
+                                AuthenticationTransaction.wrap(credential);
+                        this.authenticationSystemSupport.getAuthenticationTransactionManager()
+                                .handle(transaction,  builder);
+                        final AuthenticationContext authenticationContext = builder.build(service);
 
-                    try {
                         WebUtils.putTicketGrantingTicketInScopes(context,
-                                this.centralAuthenticationService.createTicketGrantingTicket(credential));
+                                this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));
 
                         logger.info("Token validated and new {} created: {}", credential.getClass().getName(), credential);
                         return success();

@@ -3,6 +3,12 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
+import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HandlerResult;
@@ -54,11 +60,19 @@ public class AuthenticationViaFormAction {
 
     /** Core we delegate to for handling all ticket related tasks. */
     @NotNull
+    @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     @NotNull
+    @Autowired
+    @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
+    @NotNull
+    @Autowired(required=false)
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     /**
      * Handle the submission of credentials from the post.
@@ -143,17 +157,23 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    AuthenticationTransaction.wrap(credential);
+            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build(service);
+
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
-                    ticketGrantingTicketId, service, credential);
+                    ticketGrantingTicketId, service, authenticationContext);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
             return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_WARN);
+
         } catch (final AuthenticationException e) {
             return newEvent(AUTHENTICATION_FAILURE, e);
         } catch (final TicketCreationException e) {
-            logger.warn(
-                    "Invalid attempt to access service using renew=true with different credential. "
-                            + "Ending SSO session.");
+            logger.warn("Invalid attempt to access service using renew=true with different credential. Ending SSO session.");
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicketId);
         } catch (final AbstractTicketException e) {
             return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_ERROR, e);
@@ -174,7 +194,15 @@ public class AuthenticationViaFormAction {
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
         try {
-            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(credential);
+            final Service service = WebUtils.getService(context);
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    AuthenticationTransaction.wrap(credential);
+            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build(service);
+
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
             putPublicWorkstationToFlowIfRequestParameterPresent(context);
@@ -182,6 +210,7 @@ public class AuthenticationViaFormAction {
                 return newEvent(SUCCESS_WITH_WARNINGS);
             }
             return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_SUCCESS);
+
         } catch (final AuthenticationException e) {
             logger.debug(e.getMessage(), e);
             return newEvent(AUTHENTICATION_FAILURE, e);
@@ -217,7 +246,7 @@ public class AuthenticationViaFormAction {
      *
      * @param context the context
      */
-    private void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
+    private static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
         if (StringUtils.isNotBlank(context.getExternalContext()
                 .getRequestParameterMap().get(PUBLIC_WORKSTATION_ATTRIBUTE))) {
             context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
@@ -245,29 +274,30 @@ public class AuthenticationViaFormAction {
         return new Event(this, id, new LocalAttributeMap("error", error));
     }
 
-    @Autowired
-    public final void setCentralAuthenticationService(@Qualifier("centralAuthenticationService")
-                                                          final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
-    @Autowired
-    public final void setWarnCookieGenerator(@Qualifier("warnCookieGenerator")final CookieGenerator warnCookieGenerator) {
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
-
     /**
      * Adds a warning message to the message context.
      *
      * @param context Message context.
      * @param warning Warning message.
      */
-    private void addWarningToContext(final MessageContext context, final MessageDescriptor warning) {
+    private static void addWarningToContext(final MessageContext context, final MessageDescriptor warning) {
         final MessageBuilder builder = new MessageBuilder()
                 .warning()
                 .code(warning.getCode())
                 .defaultText(warning.getDefaultMessage())
                 .args(warning.getParams());
         context.addMessage(builder.build());
+    }
+
+    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
+        this.centralAuthenticationService = centralAuthenticationService;
+    }
+
+    public void setWarnCookieGenerator(final CookieGenerator warnCookieGenerator) {
+        this.warnCookieGenerator = warnCookieGenerator;
+    }
+
+    public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 }
