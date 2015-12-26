@@ -121,6 +121,7 @@ dependencies {
     testCompile project(':cas-server-core-logout')
     testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
     testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version: dropwizardMetricsVersion) {
         exclude(module: 'slf4j-api')
         exclude(module: 'spring-core')
