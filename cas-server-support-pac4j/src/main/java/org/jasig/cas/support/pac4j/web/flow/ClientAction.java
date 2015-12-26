@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
@@ -34,6 +35,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -62,23 +65,6 @@ public final class ClientAction extends AbstractAction {
      * All the urls and names of the pac4j clients.
      */
     public static final String PAC4J_URLS = "pac4jUrls";
-
-    /**
-     * Constant for the service parameter.
-     */
-    public static final String SERVICE = "service";
-    /**
-     * Constant for the theme parameter.
-     */
-    public static final String THEME = "theme";
-    /**
-     * Constant for the locale parameter.
-     */
-    public static final String LOCALE = "locale";
-    /**
-     * Constant for the method parameter.
-     */
-    public static final String METHOD = "method";
 
     /**
      * Supported protocols.
@@ -111,16 +97,15 @@ public final class ClientAction extends AbstractAction {
     @Autowired
     private CentralAuthenticationService centralAuthenticationService;
 
-    /**
-     * Build the ClientAction.
-     */
-    public ClientAction() {
+    static {
         ProfileHelper.setKeepRawData(true);
     }
 
     /**
-     * {@inheritDoc}
+     * Build the ClientAction.
      */
+    public ClientAction() {}
+
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
@@ -162,15 +147,15 @@ public final class ClientAction extends AbstractAction {
             }
 
             // retrieve parameters from web session
-            final Service service = (Service) session.getAttribute(SERVICE);
-            context.getFlowScope().put(SERVICE, service);
+            final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+            context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
             logger.debug("retrieve service: {}", service);
             if (service != null) {
-                request.setAttribute(SERVICE, service.getId());
+                request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             }
-            restoreRequestAttribute(request, session, THEME);
-            restoreRequestAttribute(request, session, LOCALE);
-            restoreRequestAttribute(request, session, METHOD);
+            restoreRequestAttribute(request, session, ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
+            restoreRequestAttribute(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
+            restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
@@ -207,10 +192,10 @@ public final class ClientAction extends AbstractAction {
         // save parameters in web session
         final WebApplicationService service = WebUtils.getService(context);
         logger.debug("save service: {}", service);
-        session.setAttribute(SERVICE, service);
-        saveRequestParameter(request, session, THEME);
-        saveRequestParameter(request, session, LOCALE);
-        saveRequestParameter(request, session, METHOD);
+        session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
+        saveRequestParameter(request, session, ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
+        saveRequestParameter(request, session, LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
+        saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
 
         final LinkedHashMap<String, String> urls = new LinkedHashMap<>();
         // for all clients, generate redirection urls

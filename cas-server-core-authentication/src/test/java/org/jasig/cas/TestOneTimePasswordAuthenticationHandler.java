@@ -44,7 +44,7 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
             throws GeneralSecurityException, PreventedException {
         final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
         final String valueOnRecord = credentialMap.get(otp.getId());
-        if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
+        if (otp.getPassword().equals(valueOnRecord)) {
             return new DefaultHandlerResult(this, new BasicCredentialMetaData(otp),
                     new DefaultPrincipalFactory().createPrincipal(otp.getId()));
         }
