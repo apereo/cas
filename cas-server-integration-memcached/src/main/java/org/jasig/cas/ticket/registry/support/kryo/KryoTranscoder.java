@@ -45,8 +45,6 @@ import org.jasig.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.jasig.cas.ticket.support.TimeoutExpirationPolicy;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
@@ -70,9 +68,6 @@ public class KryoTranscoder implements Transcoder<Object> {
 
     /** Kryo serializer. */
     private final Kryo kryo = new KryoReflectionFactorySupport();
-
-    /** Logging instance. */
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Map of class to serializer that handles it. */
     private Map<Class<?>, Serializer> serializerMap;
