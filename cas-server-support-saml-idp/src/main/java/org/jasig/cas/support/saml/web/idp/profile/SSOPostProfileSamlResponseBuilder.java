@@ -291,10 +291,10 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
                 throw new SAMLException("No signature signing parameter is available");
             }
 
-            logger.info("Created signature signing parameters." +
-                            "\nSignature algorithm: {}" +
-                            "\nSignature canonicalization algorithm: {}" +
-                            "\nSignature reference digest methods: {}",
+            logger.info("Created signature signing parameters."
+                            + "\nSignature algorithm: {}"
+                            + "\nSignature canonicalization algorithm: {}"
+                            + "\nSignature reference digest methods: {}",
                     params.getSignatureAlgorithm(), params.getSignatureCanonicalizationAlgorithm(),
                     params.getSignatureReferenceDigestMethod());
 

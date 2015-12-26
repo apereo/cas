@@ -1,7 +1,6 @@
 package org.jasig.cas.support.saml;
 
 import org.apache.commons.io.FileUtils;
-import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
@@ -53,8 +52,8 @@ public class SamlRegisteredServiceTests {
         dao.setRegisteredServices(Arrays.asList(service));
         final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl(dao);
 
-        final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory().createService("http://mmoayyed.unicon" +
-                ".net:8081/sp/saml/SSO"));
+        final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()
+                .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
 
         System.out.println(s);
 
