@@ -118,7 +118,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
         }
     }
 
-    private ILoggerFactory getLoggerFactoryBeInstantiated(final Class<? extends ILoggerFactory> loggerFactory) {
+    private static ILoggerFactory getLoggerFactoryBeInstantiated(final Class<? extends ILoggerFactory> loggerFactory) {
         try {
             return loggerFactory.newInstance();
         } catch (final Exception e) {
