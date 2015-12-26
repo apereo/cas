@@ -8,8 +8,6 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
@@ -24,8 +22,6 @@ import java.io.Writer;
  */
 public abstract class AbstractJacksonBackedJsonSerializer<T> implements JsonSerializer<T> {
     private static final long serialVersionUID = -8415599777321259365L;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJacksonBackedJsonSerializer.class);
 
     /**
      * The Pretty printer.

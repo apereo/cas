@@ -3,6 +3,8 @@ package org.jasig.cas.web.view;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -84,13 +86,26 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         final Authentication authentication = getPrimaryAuthenticationFrom(model);
         final Principal principal = getPrincipal(model);
 
-        if (!principal.getAttributes().isEmpty()) {
-            success.setAttributes(principal.getAttributes());
+        final Service service = getServiceFrom(model);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+
+        Map<String, Object> attributes = new HashMap<>(principal.getAttributes());
+        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
+        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
+
+        attributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
+        if (!attributes.isEmpty()) {
+            success.setAttributes(attributes);
         }
         success.setUser(principal.getId());
 
-        if (!authentication.getAttributes().isEmpty()) {
-            success.setAuthenticationAttributes(authentication.getAttributes());
+        attributes = new HashMap<>(authentication.getAttributes());
+        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
+        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
+        attributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
+
+        if (!attributes.isEmpty()) {
+            success.setAuthenticationAttributes(attributes);
         }
 
         final Collection<Authentication> chainedAuthentications = getChainedAuthentications(model);

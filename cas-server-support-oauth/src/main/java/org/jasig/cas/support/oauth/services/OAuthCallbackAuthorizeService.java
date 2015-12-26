@@ -49,7 +49,7 @@ public final class OAuthCallbackAuthorizeService extends RegexRegisteredService 
         }
         final OAuthCallbackAuthorizeService rhs = (OAuthCallbackAuthorizeService) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
+                .appendSuper(super.equals(rhs))
                 .isEquals();
     }
 
