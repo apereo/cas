@@ -65,6 +65,19 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
           p:entityManagerFactory-ref="entityManagerFactory" />
 
+    <tx:advice id="txCentralAuthenticationServiceAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="destroyTicketGrantingTicket" read-only="false" />
+            <tx:method name="grantServiceTicket" read-only="false" />
+            <tx:method name="delegateTicketGrantingTicket" read-only="false" />
+            <tx:method name="validateServiceTicket" read-only="false" />
+            <tx:method name="createTicketGrantingTicket" read-only="false" />
+
+            <tx:method name="getTicket" read-only="true" />
+            <tx:method name="getTickets" read-only="true" />
+        </tx:attributes>
+    </tx:advice>
+
     <tx:advice id="txRegistryAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method name="deleteTicket" read-only="false" />
@@ -74,6 +87,19 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
             <tx:method name="getTickets" read-only="true" />
             <tx:method name="sessionCount" read-only="true" />
             <tx:method name="serviceTicketCount" read-only="true" />
+        </tx:attributes>
+    </tx:advice>
+
+    <tx:advice id="txRegistryServiceTicketDelegatorAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="grantTicketGrantingTicket" read-only="false" />
+        </tx:attributes>
+    </tx:advice>
+
+    <tx:advice id="txRegistryTicketGrantingTicketDelegatorAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="markTicketExpired" read-only="false" />
+            <tx:method name="grantServiceTicket" read-only="false" />
         </tx:attributes>
     </tx:advice>
 
@@ -88,8 +114,15 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
     <aop:config>
         <aop:pointcut id="ticketRegistryOperations" expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
         <aop:pointcut id="ticketRegistryLockingOperations" expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
+        <aop:pointcut id="ticketRegistryServiceTicketDelegatorOperations" expression="execution(* org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry$ServiceTicketDelegator.*(..))"/>
+        <aop:pointcut id="ticketRegistryTicketGrantingTicketDelegatorOperations" expression="execution(* org.jasig.cas.ticket.registry.AbstractDistributedTicketRegistry$TicketGrantingTicketDelegator.*(..))"/>
+        <aop:pointcut id="casOperations" expression="execution(* org.jasig.cas.CentralAuthenticationServiceImpl.*(..))"/>
+
         <aop:advisor advice-ref="txRegistryAdvice" pointcut-ref="ticketRegistryOperations"/>
         <aop:advisor advice-ref="txRegistryLockingAdvice" pointcut-ref="ticketRegistryLockingOperations"/>
+        <aop:advisor advice-ref="txRegistryTicketGrantingTicketDelegatorAdvice" pointcut-ref="ticketRegistryTicketGrantingTicketDelegatorOperations"/>
+        <aop:advisor advice-ref="txRegistryServiceTicketDelegatorAdvice" pointcut-ref="ticketRegistryServiceTicketDelegatorOperations"/>
+        <aop:advisor advice-ref="txCentralAuthenticationServiceAdvice" pointcut-ref="casOperations"/>
     </aop:config>
 
 
