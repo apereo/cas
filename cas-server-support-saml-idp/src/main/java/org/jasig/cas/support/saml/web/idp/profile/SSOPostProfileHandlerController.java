@@ -235,8 +235,8 @@ public class SSOPostProfileHandlerController {
 
         if (registeredService instanceof SamlRegisteredService) {
             final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) registeredService;
-            logger.debug("Located SAML service in the registry as {} with the metadata location of {}"
-                    , samlRegisteredService.getServiceId(), samlRegisteredService.getMetadataLocation());
+            logger.debug("Located SAML service in the registry as {} with the metadata location of {}",
+                    samlRegisteredService.getServiceId(), samlRegisteredService.getMetadataLocation());
             return samlRegisteredService;
         }
         logger.error("Service {} is found in registry but it is not a SAML service", serviceId);
