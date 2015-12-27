@@ -6,10 +6,8 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicyFactory;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
@@ -38,12 +36,9 @@ import org.springframework.util.Assert;
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -70,14 +65,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @NotNull
     @Resource(name="ticketRegistry")
     protected TicketRegistry ticketRegistry;
-
-    /**
-     * {@link AuthenticationManager} for authenticating credentials for purposes of
-     * obtaining tickets.
-     */
-    @NotNull
-    @Resource(name="authenticationManager")
-    protected AuthenticationManager authenticationManager;
 
     /** Implementation of Service Manager. */
     @NotNull
@@ -117,19 +104,16 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      *
      * @param ticketRegistry                     the tickets registry.
      * @param ticketFactory                      the ticket factory
-     * @param authenticationManager              the authentication manager.
      * @param servicesManager                    the services manager.
      * @param logoutManager                      the logout manager.
      */
     public AbstractCentralAuthenticationService(
             final TicketRegistry ticketRegistry,
             final TicketFactory ticketFactory,
-            final AuthenticationManager authenticationManager,
             final ServicesManager servicesManager,
             final LogoutManager logoutManager) {
 
         this.ticketRegistry = ticketRegistry;
-        this.authenticationManager = authenticationManager;
         this.servicesManager = servicesManager;
         this.logoutManager = logoutManager;
         this.ticketFactory = ticketFactory;
@@ -164,25 +148,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         this.eventPublisher.publishEvent(e);
     }
 
-    /**
-     * Attempts to sanitize the array of credentials by removing
-     * all null elements from the collection.
-     * @param credentials credentials to sanitize
-     * @return a set of credentials with no null values
-     */
-    protected final Set<Credential> sanitizeCredentials(final Credential[] credentials) {
-        if (credentials != null && credentials.length > 0) {
-            final Set<Credential> set = new HashSet<>(Arrays.asList(credentials));
-            final Iterator<Credential> it = set.iterator();
-            while (it.hasNext()) {
-                if (it.next() == null) {
-                    it.remove();
-                }
-            }
-            return set;
-        }
-        return Collections.emptySet();
-    }
 
     /**
      * {@inheritDoc}
@@ -320,10 +285,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     public void setTicketRegistry(final TicketRegistry ticketRegistry) {
         this.ticketRegistry = ticketRegistry;
-    }
-
-    public void setAuthenticationManager(final AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {

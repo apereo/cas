@@ -42,6 +42,9 @@ public interface CasProtocolConstants {
     /** Constant representing the renew parameter in the request. */
     String PARAMETER_RENEW = "renew";
 
+    /** Constant representing the gateway parameter in the request. */
+    String PARAMETER_GATEWAY = "gateway";
+
     /** Constant representing the service parameter in the request. */
     String PARAMETER_SERVICE = "service";
 
@@ -79,4 +82,5 @@ public interface CasProtocolConstants {
 
     /** Constant representing an invalid service proxy request. */
     String ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY = "UNAUTHORIZED_SERVICE_PROXY";
+
 }

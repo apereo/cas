@@ -1,6 +1,6 @@
 package org.jasig.cas;
 
-import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
@@ -49,10 +49,10 @@ public class WiringTests {
 
     @Test
     public void checkPrincipalFactory() throws Exception {
-        final DefaultPrincipalFactory factory1 =
-                applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
-        final DefaultPrincipalFactory factory2 =
-                applicationContext.getBean("principalFactory", DefaultPrincipalFactory.class);
-        assertNotEquals("principal factories should be unique instances", factory1, factory2);
+        final PrincipalFactory factory1 =
+                applicationContext.getBean("principalFactory", PrincipalFactory.class);
+        final PrincipalFactory factory2 =
+                applicationContext.getBean("principalFactory", PrincipalFactory.class);
+        assertEquals("principal factories should be equal instances", factory1, factory2);
     }
 }
