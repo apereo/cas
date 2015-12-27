@@ -1,10 +1,25 @@
 {
-  "@class" : "org.jasig.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "^https://mmoayyed.unicon.net:9443/.*",
-  "name" : "HTTPS",
+  "@class" : "org.jasig.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "name" : "HTTPS and IMAPS",
   "id" : 10000001,
   "description" : "This service definition authorized all application urls that support HTTPS and IMAPS protocols.",
-  "metadataLocation" : "C:\\Misagh\\GitWorkspace\\shibboleth-sample-java-sp\\src\\main\\resources\\metadata\\sp-metadata.xml",
+  "proxyPolicy" : {
+    "@class" : "org.jasig.cas.services.RefuseRegisteredServiceProxyPolicy"
+  },
+  "evaluationOrder" : 10000,
+  "usernameAttributeProvider" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceUsernameProvider"
+  },
+  "logoutType" : "BACK_CHANNEL",
+  "attributeReleasePolicy" : {
+    "@class" : "org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "principalAttributesRepository" : {
+      "@class" : "org.jasig.cas.authentication.principal.DefaultPrincipalAttributesRepository"
+    },
+    "authorizedToReleaseCredentialPassword" : false,
+    "authorizedToReleaseProxyGrantingTicket" : true
+  },
   "accessStrategy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
