@@ -15,12 +15,11 @@ import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
-import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
+import org.jasig.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
@@ -56,7 +55,7 @@ import java.util.List;
  * handling profile requests for SAML2 Web SSO.
  *
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 @Controller("ssoPostProfileHandlerController")
 public class SSOPostProfileHandlerController {
@@ -90,12 +89,8 @@ public class SSOPostProfileHandlerController {
     private Service callbackService;
 
     @Autowired
-    @Qualifier("ssoPostProfileSamlResponseBuilder")
-    private SamlResponseBuilder responseBuilder;
-
-
-    @Autowired
-    private OpenSamlConfigBean openSamlConfigBean;
+    @Qualifier("samlProfileSamlResponseBuilder")
+    private SamlProfileSamlResponseBuilder responseBuilder;
 
     @Autowired
     private VelocityEngineFactory velocityEngineFactory;

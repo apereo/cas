@@ -1,26 +1,30 @@
-package org.jasig.cas.support.saml.web.idp;
+package org.jasig.cas.support.saml.web.idp.profile.builders;
 
 import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.opensaml.saml.common.SAMLException;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.Response;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@link SamlResponseBuilder} defines the operations
+ * The {@link SamlProfileObjectBuilder} defines the operations
  * required for building the saml response for an RP.
  *
  * @author Misagh Moayyed
- * @since 4.2
+ * @param <T> the type parameter
+ * @since 4.3
  */
-public interface SamlResponseBuilder {
+public interface SamlProfileObjectBuilder<T extends SAMLObject> {
 
     /**
      * Build response.
      *
+     * @param <T>          the type parameter
      * @param authnRequest the authn request
      * @param request      the request
      * @param response     the response
@@ -28,10 +32,9 @@ public interface SamlResponseBuilder {
      * @param service      the service
      * @param adaptor      the adaptor
      * @return the response
-     * @throws Exception the exception
+     * @throws SamlException the exception
      */
-    Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
-                   final HttpServletResponse response, final Assertion assertion,
-                   final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
-                    throws Exception;
+    <T> T build(final AuthnRequest authnRequest, final HttpServletRequest request,
+                final HttpServletResponse response, final Assertion assertion,
+                final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SamlException;
 }
