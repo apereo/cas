@@ -177,12 +177,12 @@ public class SSOPostProfileHandlerController {
                 final SamlRegisteredService registeredService = getRegisteredServiceAndVerify(authnRequest);
                 logger.debug("Preparing SAML response to {}", registeredService);
 
-                final SamlMetadataAdaptor adaptor = SamlMetadataAdaptor.adapt(registeredService.getChainingMetadataResolver(),
+                final SamlMetadataAdaptor adaptor = SamlMetadataAdaptor.adapt(registeredService,
                         getAssertionConsumerServiceFor(authnRequest));
 
                 final Response samlResponse = responseBuilder.build(authnRequest, request,
                         response, assertion, registeredService, adaptor);
-                logger.info("Built the SAML response {}", samlResponse);
+                logger.info("Built the SAML response for {}. Encoding...", registeredService.getEntityId());
                 encodeSamlResponse(registeredService, samlResponse, response, adaptor);
             }
         } finally {
@@ -207,7 +207,11 @@ public class SSOPostProfileHandlerController {
         if (peerEntityContext != null) {
             final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
             if (endpointContext != null) {
+                final AssertionConsumerService assertionConsumerService = assertionConsumerServices.get(0);
+                logger.info("Encoding SAML response for endpoint {} and binding {}", assertionConsumerService.getLocation(),
+                        assertionConsumerService.getBinding());
                 endpointContext.setEndpoint(assertionConsumerServices.get(0));
+
             }
         }
 

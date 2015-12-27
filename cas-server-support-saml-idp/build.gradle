@@ -103,10 +103,12 @@ dependencies {
         exclude(module: 'spring-webmvc')
         exclude(module: 'spring-web')
     }
-
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
         exclude(module: 'slf4j-api')
         exclude(module: 'jboss-logging')
+    }
+    runtime(group:'org.codehaus.groovy', name:'groovy-jsr223', version: groovyVersion) {
+
     }
     testCompile project(':cas-server-core-util')
     testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion

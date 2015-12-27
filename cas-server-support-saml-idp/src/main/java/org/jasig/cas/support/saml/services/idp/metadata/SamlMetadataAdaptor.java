@@ -1,13 +1,14 @@
 package org.jasig.cas.support.saml.services.idp.metadata;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.joda.time.DateTime;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EndpointCriterion;
-import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -15,11 +16,11 @@ import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
 import org.opensaml.saml.saml2.metadata.NameIDFormat;
 import org.opensaml.saml.saml2.metadata.Organization;
-import org.opensaml.saml.saml2.metadata.SSODescriptor;
+import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.xmlsec.signature.Signature;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,10 +31,10 @@ import java.util.List;
  */
 public final class SamlMetadataAdaptor {
     private final AssertionConsumerService assertionConsumerService;
-    private final SSODescriptor ssoDescriptor;
+    private final SPSSODescriptor ssoDescriptor;
 
     private SamlMetadataAdaptor(final AssertionConsumerService assertionConsumerService,
-                                final SSODescriptor ssoDescriptor) {
+                                final SPSSODescriptor ssoDescriptor) {
         this.assertionConsumerService = assertionConsumerService;
         this.ssoDescriptor = ssoDescriptor;
     }
@@ -41,22 +42,23 @@ public final class SamlMetadataAdaptor {
     /**
      * Adapt saml metadata and parse. Acts as a facade.
      *
-     * @param metadataResolver         the metadata resolver
+     * @param registeredService         the service
      * @param assertionConsumerService the assertion consumer service
      * @return the saml metadata adaptor
      */
-    public static SamlMetadataAdaptor adapt(final ChainingMetadataResolver metadataResolver,
+    public static SamlMetadataAdaptor adapt(final SamlRegisteredService registeredService,
                                             final AssertionConsumerService assertionConsumerService) {
         try {
             final CriteriaSet criterions = new CriteriaSet();
-            criterions.add(new BindingCriterion(Arrays.asList(SAMLConstants.SAML2_POST_BINDING_URI)));
+            criterions.add(new BindingCriterion(Collections.singletonList(SAMLConstants.SAML2_POST_BINDING_URI)));
+            criterions.add(new EntityIdCriterion(registeredService.getEntityId()));
             criterions.add(new EndpointCriterion<>(assertionConsumerService, true));
 
-            final EntityDescriptor entityDescriptor = metadataResolver.resolveSingle(criterions);
+            final EntityDescriptor entityDescriptor = registeredService.getChainingMetadataResolver().resolveSingle(criterions);
             if (entityDescriptor == null) {
                 throw new SAMLException("Cannot find entity " + assertionConsumerService.getLocation() + " in metadata provider");
             }
-            final SSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
+            final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
             return new SamlMetadataAdaptor(assertionConsumerService, ssoDescriptor);
 
         } catch (final Exception e) {
@@ -64,11 +66,11 @@ public final class SamlMetadataAdaptor {
         }
     }
 
-    public AssertionConsumerService getAssertionConsumerService() {
+    public AssertionConsumerService getAssertionConsumerServiceProvided() {
         return assertionConsumerService;
     }
 
-    public SSODescriptor getSsoDescriptor() {
+    public SPSSODescriptor getSsoDescriptor() {
         return this.ssoDescriptor;
     }
 
@@ -104,6 +106,9 @@ public final class SamlMetadataAdaptor {
         return this.ssoDescriptor.getSupportedProtocols();
     }
 
+    public boolean isWantAssertionsSigned() {
+        return this.ssoDescriptor.getWantAssertionsSigned();
+    }
     /**
      * Is supported protocol?
      *
@@ -136,4 +141,7 @@ public final class SamlMetadataAdaptor {
         return (List) this.ssoDescriptor.getEndpoints(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
     }
 
+    public AssertionConsumerService getAssertionConsumerService() {
+        return getAssertionConsumerServices().get(0);
+    }
 }

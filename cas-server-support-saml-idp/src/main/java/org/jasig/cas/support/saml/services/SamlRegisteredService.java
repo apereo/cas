@@ -3,6 +3,7 @@ package org.jasig.cas.support.saml.services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -10,16 +11,15 @@ import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.ChainingMetadataResolverCacheLoader;
+import org.jasig.cas.util.ResourceUtils;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
 
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The {@link SamlRegisteredService} is responsible for managing the SAML metadata for a given SP.
@@ -31,18 +31,17 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
     private static final long DEFAULT_METADATA_CACHE_EXPIRATION_MINUTES = 30;
 
-    private boolean signAssertions;
-
     private long metadataCacheExpirationMinutes;
+    private String metadataLocation;
+
+    @JsonIgnore
+    private String entityId;
 
     @JsonIgnore
     private SSODescriptor ssoDescriptor;
 
     @JsonIgnore
-    private transient Resource metadataLocationResource;
-
-    @JsonIgnore
-    private transient LoadingCache<Resource, ChainingMetadataResolver> cache;
+    private transient LoadingCache<String, ChainingMetadataResolver> cache;
 
     /**
      * Instantiates a new Saml registered service.
@@ -59,19 +58,16 @@ public final class SamlRegisteredService extends RegexRegisteredService {
      */
     public void setMetadataLocation(final String metadataLocation) {
         try {
-            if (metadataLocation.startsWith("http")) {
-                this.metadataLocationResource = new UrlResource(metadataLocation);
-            } else if (metadataLocation.startsWith("classpath")) {
-                this.metadataLocationResource = new ClassPathResource(metadataLocation);
-            } else {
-                this.metadataLocationResource = new FileSystemResource(metadataLocation);
-            }
-            if (!this.metadataLocationResource.exists() || !this.metadataLocationResource.isReadable()) {
-                throw new FileNotFoundException("Resource does not exist or is unreadable");
-            }
+            this.metadataLocation = metadataLocation;
+            this.entityId = parseEntityId();
         } catch (final Exception e) {
             throw new IllegalArgumentException("Metadata location " + metadataLocation + " cannot be determined");
         }
+    }
+
+    @JsonIgnore
+    public String getEntityId() {
+        return this.entityId;
     }
 
     /**
@@ -81,10 +77,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
      */
     public String getMetadataLocation() {
         try {
-            if (this.metadataLocationResource instanceof UrlResource) {
-                return this.metadataLocationResource.getURL().toExternalForm();
-            }
-            return this.metadataLocationResource.getFile().getCanonicalPath();
+            return this.metadataLocation;
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -93,14 +86,6 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     @JsonIgnore
     public ChainingMetadataResolver getChainingMetadataResolver() {
         return resolveMetadata();
-    }
-
-    public boolean isSignAssertions() {
-        return signAssertions;
-    }
-
-    public void setSignAssertions(final boolean signAssertions) {
-        this.signAssertions = signAssertions;
     }
 
     public long getMetadataCacheExpirationMinutes() {
@@ -124,7 +109,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
      */
     private ChainingMetadataResolver resolveMetadata() {
         try {
-            return this.cache.get(this.metadataLocationResource);
+            return this.cache.get(this.getMetadataLocation());
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -135,8 +120,13 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     @Override
     public void copyFrom(final RegisteredService source) {
         super.copyFrom(source);
-        final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) source;
-        setSignAssertions(samlRegisteredService.isSignAssertions());
+        try {
+            final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) source;
+            samlRegisteredService.setMetadataCacheExpirationMinutes(this.metadataCacheExpirationMinutes);
+            samlRegisteredService.setMetadataLocation(this.getMetadataLocation());
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -158,8 +148,8 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         final SamlRegisteredService rhs = (SamlRegisteredService) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(this.signAssertions, rhs.isSignAssertions())
                 .append(this.metadataCacheExpirationMinutes, rhs.getMetadataCacheExpirationMinutes())
+                .append(this.metadataLocation, rhs.getMetadataLocation())
                 .isEquals();
     }
 
@@ -174,13 +164,26 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("signAssertions", signAssertions)
-                .append("metadataLocation", metadataLocationResource)
+                .append("metadataLocation", this.metadataLocation)
+                .append("metadataCacheExpirationMinutes", this.metadataCacheExpirationMinutes)
                 .toString();
     }
 
     private void initializeCache() {
         this.cache = CacheBuilder.newBuilder().maximumSize(1)
                 .expireAfterWrite(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES).build(new ChainingMetadataResolverCacheLoader());
+    }
+
+    private String parseEntityId() throws IOException {
+        final File file = ResourceUtils.getResourceFrom(this.metadataLocation).getFile();
+        final String metadata = FileUtils.readFileToString(file);
+        final Pattern pattern = Pattern.compile("EntityDescriptor.+entityID=\\\"(.+?)\\\"\\>", Pattern.CASE_INSENSITIVE);
+        final Matcher matcher = pattern.matcher(metadata);
+        if (matcher.find()) {
+            final String entityID = matcher.group(1);
+            return entityID;
+        }
+        throw new IllegalArgumentException("Metadata resource "
+                + file + " does not define an [entityID] for its EntityDescriptor element.");
     }
 }
