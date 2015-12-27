@@ -1,12 +1,20 @@
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +43,16 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     /** The logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /** The Principal factory. */
+    /** Principal factory instance. */
     @Autowired
     @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory;
 
-    /** Instance of CentralAuthenticationService. */
+    @NotNull
+    @Autowired(required=false)
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+
     @NotNull
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -58,7 +70,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @return true, if  renew present
      */
     protected final boolean isRenewPresent(final RequestContext context) {
-        return StringUtils.hasText(context.getRequestParameters().get("renew"));
+        return StringUtils.hasText(context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW));
     }
 
     @Override
@@ -75,11 +87,19 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         if (isRenewPresent(context) && ticketGrantingTicketId != null && service != null) {
 
             try {
+                final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                        this.authenticationSystemSupport.getPrincipalElectionStrategy());
+                final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credential);
+
+                this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
+                final AuthenticationContext authenticationContext = builder.build(service);
+
                 final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketId, service, credential);
+                    .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 onWarn(context, credential);
                 return result("warn");
+
             } catch (final AuthenticationException e) {
                 onError(context, credential);
                 return error();
@@ -90,9 +110,18 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         }
 
         try {
-            WebUtils.putTicketGrantingTicketInScopes(context, this.centralAuthenticationService.createTicketGrantingTicket(credential));
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    AuthenticationTransaction.wrap(credential);
+            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build(service);
+
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+            WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             onSuccess(context, credential);
             return success();
+
         } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
             onError(context, credential);
@@ -138,6 +167,14 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      */
     protected void onSuccess(final RequestContext context, final Credential credential) {
         // default implementation does nothing
+    }
+
+    public PrincipalFactory getPrincipalFactory() {
+        return principalFactory;
+    }
+
+    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        return authenticationSystemSupport;
     }
 
     /**

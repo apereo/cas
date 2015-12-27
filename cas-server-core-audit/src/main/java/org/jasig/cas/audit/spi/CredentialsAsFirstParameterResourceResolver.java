@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import org.aspectj.lang.JoinPoint;
 
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.inspektr.audit.spi.AuditResourceResolver;
 
 import org.jasig.cas.util.AopUtils;
@@ -35,6 +36,11 @@ public final class CredentialsAsFirstParameterResourceResolver implements AuditR
      * @return the string[]
      */
     private static String[] toResources(final Object[] args) {
-        return new String[] {"supplied credentials: " + Arrays.asList((Object[]) args[0])};
+        final Object object = args[0];
+        if (object instanceof AuthenticationTransaction) {
+            final AuthenticationTransaction transaction = AuthenticationTransaction.class.cast(object);
+            return new String[] {"Supplied credentials: " + transaction.getCredentials()};
+        }
+        return new String[] {"Supplied credentials: " + Arrays.asList((Object[]) object)};
     }
 }

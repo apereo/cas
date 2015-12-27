@@ -72,7 +72,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    private String getSqlInsertStatementToCreateUserAccount(final int i) {
+    private static String getSqlInsertStatementToCreateUserAccount(final int i) {
         return String.format("insert into cassearchusers (username, password) values('%s', '%s');", "user" + i, "psw" + i);
     }
 

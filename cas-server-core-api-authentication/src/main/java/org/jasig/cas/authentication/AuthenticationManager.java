@@ -20,12 +20,12 @@ public interface AuthenticationManager {
      * successfully authenticated. Failure to authenticate is considered an exceptional case, and
      * an AuthenticationException is thrown.
      *
-     * @param credentials One or more credentials to authenticate.
+     * @param authenticationTransaction Process a single authentication transaction
      *
      * @return Authentication object on success that contains metadata about credentials that were authenticated.
      *
      * @throws AuthenticationException On authentication failure. The exception contains details
      * on each of the credentials that failed to authenticate.
      */
-    Authentication authenticate(Credential... credentials) throws AuthenticationException;
+    Authentication authenticate(AuthenticationTransaction authenticationTransaction) throws AuthenticationException;
 }

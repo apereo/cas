@@ -3,7 +3,10 @@ package org.jasig.cas.support.pac4j.web.flow;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.pac4j.test.MockFacebookClient;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -87,7 +90,7 @@ public final class ClientActionTests {
         assertEquals(MY_METHOD, mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
         final Map<String, String> urls = (Map<String, String>) flowScope.get(ClientAction.PAC4J_URLS);
-        assertTrue(((String) urls.get("Facebook"))
+        assertTrue((urls.get("Facebook"))
                 .startsWith("https://www.facebook.com/v2.2/dialog/oauth?client_id=my_key&redirect_uri=http%3A%2F%2Fcasserver%2Flogin%3F"
                         + Clients.DEFAULT_CLIENT_NAME_PARAMETER + "%3DFacebookClient&state="));
         assertEquals(MY_LOGIN_URL + '?' + Clients.DEFAULT_CLIENT_NAME_PARAMETER
@@ -118,9 +121,16 @@ public final class ClientActionTests {
 
         final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
-        when(casImpl.createTicketGrantingTicket(any(Credential.class))).thenReturn(tgt);
+        when(casImpl.createTicketGrantingTicket(any(AuthenticationContext.class))).thenReturn(tgt);
         final ClientAction action = new ClientAction();
+
+        final AuthenticationManager authNManager = mock(AuthenticationManager.class);
+        when(authNManager.authenticate(any(AuthenticationTransaction.class))).thenReturn(TestUtils.getAuthentication());
+        action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
+                .setAuthenticationManager(authNManager);
         action.setCentralAuthenticationService(casImpl);
+
+
         action.setClients(clients);
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
