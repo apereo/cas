@@ -14,7 +14,7 @@ import javax.servlet.annotation.WebListener;
  * @since 4.2
  */
 @WebListener
-@Component
+@Component("samlIdPServletContextListener")
 public class SamlIdPServletContextListener extends AbstractServletContextInitializer {
 
     @Override
