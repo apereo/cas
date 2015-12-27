@@ -26,7 +26,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceContextType;
 import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.ticket.ServiceTicket;
@@ -48,7 +47,7 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @NotNull
-    @PersistenceContext(type = PersistenceContextType.EXTENDED)
+    @PersistenceContext
     private EntityManager entityManager;
 
     @Override
