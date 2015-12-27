@@ -19,7 +19,7 @@ import java.util.List;
  * and encryption.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.3
  */
 public class GenerateSamlMetadata {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "idp/metadata";

@@ -29,7 +29,7 @@ public class SamlRegisteredServiceTests {
     }
 
     @Test
-    public void testSavingSamlService() throws Exception {
+    public void verifySavingSamlService() throws Exception {
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("SAMLService");
         service.setServiceId("http://mmoayyed.unicon.net");
