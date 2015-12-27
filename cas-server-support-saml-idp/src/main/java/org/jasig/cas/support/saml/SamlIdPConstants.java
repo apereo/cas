@@ -5,7 +5,7 @@ package org.jasig.cas.support.saml;
  * the SAML IdP.
  *
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 public interface SamlIdPConstants {
 

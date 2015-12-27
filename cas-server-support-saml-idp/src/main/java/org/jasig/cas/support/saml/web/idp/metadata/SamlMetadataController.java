@@ -20,7 +20,7 @@ import java.io.PrintWriter;
  * to produce saml metadata for CAS as an identity provider.
  *
  * @author Misagh Moayyed
- * @since 4.1
+ * @since 4.3
  */
 @Controller
 @RequestMapping("/idp/metadata")
