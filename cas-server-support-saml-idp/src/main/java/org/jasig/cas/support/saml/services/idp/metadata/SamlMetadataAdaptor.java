@@ -9,6 +9,7 @@ import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EndpointCriterion;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -17,6 +18,7 @@ import org.opensaml.saml.saml2.metadata.KeyDescriptor;
 import org.opensaml.saml.saml2.metadata.NameIDFormat;
 import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.opensaml.xmlsec.signature.Signature;
 
 import java.util.ArrayList;
@@ -42,13 +44,14 @@ public final class SamlMetadataAdaptor {
     /**
      * Adapt saml metadata and parse. Acts as a facade.
      *
-     * @param registeredService         the service
-     * @param assertionConsumerService the assertion consumer service
+     * @param registeredService the service
+     * @param authnRequest      the authn request
      * @return the saml metadata adaptor
      */
     public static SamlMetadataAdaptor adapt(final SamlRegisteredService registeredService,
-                                            final AssertionConsumerService assertionConsumerService) {
+                                            final AuthnRequest authnRequest) {
         try {
+            final AssertionConsumerService assertionConsumerService = getAssertionConsumerServiceFor(authnRequest);
             final CriteriaSet criterions = new CriteriaSet();
             criterions.add(new BindingCriterion(Collections.singletonList(SAMLConstants.SAML2_POST_BINDING_URI)));
             criterions.add(new EntityIdCriterion(registeredService.getEntityId()));
@@ -143,5 +146,19 @@ public final class SamlMetadataAdaptor {
 
     public AssertionConsumerService getAssertionConsumerService() {
         return getAssertionConsumerServices().get(0);
+    }
+
+    /**
+     * Gets assertion consumer service for.
+     *
+     * @param authnRequest the authn request
+     * @return the assertion consumer service for
+     */
+    private static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest) {
+        final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
+        acs.setBinding(authnRequest.getProtocolBinding());
+        acs.setLocation(authnRequest.getAssertionConsumerServiceURL());
+        acs.setResponseLocation(authnRequest.getAssertionConsumerServiceURL());
+        return acs;
     }
 }
