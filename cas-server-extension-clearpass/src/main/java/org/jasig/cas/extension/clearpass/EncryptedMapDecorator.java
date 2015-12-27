@@ -475,7 +475,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
      * @throws NoSuchPaddingException - if transformation contains a padding scheme that is not available.
      * @see Cipher#getInstance(String)
      */
-    private Cipher getCipherObject() throws NoSuchAlgorithmException, NoSuchPaddingException {
+    private static Cipher getCipherObject() throws NoSuchAlgorithmException, NoSuchPaddingException {
         return Cipher.getInstance(CIPHER_ALGORITHM);
     }
 

@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  * could not find any credentials.
  *
  * @author Scott Battaglia
- * @since 3.0.0.5
+ * @since 3.0.0
  */
 @Component("principalFromRemoteUserAction")
 public final class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction

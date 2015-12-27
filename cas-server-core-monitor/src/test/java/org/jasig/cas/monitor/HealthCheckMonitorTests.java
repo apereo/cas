@@ -8,7 +8,7 @@ import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link HealthCheckMonitor} class.
