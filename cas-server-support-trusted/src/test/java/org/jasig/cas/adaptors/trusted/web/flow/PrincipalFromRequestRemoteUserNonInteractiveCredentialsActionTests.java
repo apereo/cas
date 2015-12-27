@@ -19,11 +19,11 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.0.5
+ * @since 3.0.0
  *
  */
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests extends AbstractCentralAuthenticationServiceTests {
@@ -37,7 +37,6 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
         this.action = new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction();
         this.action.setPrincipalFactory(new DefaultPrincipalFactory());
 
-
         final AuthenticationManager authenticationManager = new PolicyBasedAuthenticationManager(
                 Collections.<AuthenticationHandler, PrincipalResolver>singletonMap(
                         new PrincipalBearingCredentialsAuthenticationHandler(),
@@ -45,9 +44,10 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
 
         final AbstractCentralAuthenticationService centralAuthenticationService = (AbstractCentralAuthenticationService)
                 getCentralAuthenticationService();
-        centralAuthenticationService.setAuthenticationManager(authenticationManager);
+
         this.action.setCentralAuthenticationService(centralAuthenticationService);
-        this.action.setCentralAuthenticationService(centralAuthenticationService);
+        this.action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
+                .setAuthenticationManager(authenticationManager);
     }
 
     @Test

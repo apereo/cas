@@ -36,7 +36,7 @@ public class RegisteredServiceSerializer  extends Serializer<RegisteredService> 
      * we need to be able to return a default/mock url.
      * @return mock url
      */
-    private URL getEmptyUrl() {
+    private static URL getEmptyUrl() {
         try {
             return new URL("https://");
         } catch (final Exception e) {
