@@ -5,6 +5,7 @@ import net.shibboleth.idp.attribute.IdPAttributeValue;
 import net.shibboleth.idp.attribute.StringAttributeValue;
 import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.CertUtil;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.client.authentication.AttributePrincipal;
@@ -16,14 +17,19 @@ import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.SamlResponseBuilder;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.joda.time.DateTime;
-import org.opensaml.core.xml.XMLObjectBuilder;
-import org.opensaml.core.xml.io.Marshaller;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler;
+import org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler;
+import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
+import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
+import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
@@ -32,6 +38,7 @@ import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.core.SubjectLocality;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver;
 import org.opensaml.security.credential.Credential;
@@ -39,11 +46,11 @@ import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureSigningParameters;
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
+import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
-import org.opensaml.xmlsec.signature.Signature;
-import org.opensaml.xmlsec.signature.support.SignatureSupport;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -57,7 +64,7 @@ import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +91,24 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
 
     @Autowired
     private OpenSamlConfigBean openSamlConfigBean;
+
+    @Value("${cas.samlidp.response.skewAllowance:0}")
+    private int skewAllowance;
+
+    @Value("${cas.samlidp.response.override.sig.can.alg:}")
+    private String overrideSignatureCanonicalizationAlgorithm;
+
+    @Autowired(required=false)
+    @Qualifier("overrideSignatureReferenceDigestMethods")
+    private List overrideSignatureReferenceDigestMethods;
+
+    @Autowired(required=false)
+    @Qualifier("overrideSignatureAlgorithms")
+    private List overrideSignatureAlgorithms;
+
+    @Autowired(required=false)
+    @Qualifier("overrideBlackListedSignatureSigningAlgorithms")
+    private List overrideBlackListedSignatureSigningAlgorithms;
 
     private SubjectLocality buildSubjectLocality(final AuthnRequest authnRequest) throws Exception {
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
@@ -133,7 +158,8 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         if (attributeStatement != null) {
             statements.add(attributeStatement);
         }
-        return buildResponse(authnRequest, statements, assertion, service, adaptor);
+        final Response finalResponse = buildResponse(authnRequest, statements, assertion, service, adaptor);
+        return finalResponse;
     }
 
     private Issuer buildEntityIssuer() {
@@ -149,7 +175,7 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {
             requiredNameFormat = authnRequest.getNameIDPolicy().getFormat();
-            if (requiredNameFormat != null  && (requiredNameFormat.equals(NameID.ENCRYPTED)
+            if (requiredNameFormat != null && (requiredNameFormat.equals(NameID.ENCRYPTED)
                     || requiredNameFormat.equals(NameID.UNSPECIFIED))) {
                 requiredNameFormat = null;
             }
@@ -176,27 +202,26 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         } else {
             logger.debug("SP indicated no preferred name formats.");
         }
-
-        for (final String nameFormat : supportedNameFormats) {
-            final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
-            encoder.setNameFormat(nameFormat);
-            if (authnRequest.getNameIDPolicy() != null) {
-                encoder.setNameQualifier(authnRequest.getNameIDPolicy().getSPNameQualifier());
-            }
-            final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
-            final IdPAttributeValue<String> value = new StringAttributeValue(assertion.getPrincipal().getName());
-            attribute.setValues(Arrays.asList(value));
-            try {
+        try {
+            for (final String nameFormat : supportedNameFormats) {
+                final SAML2StringNameIDEncoder encoder = new SAML2StringNameIDEncoder();
+                encoder.setNameFormat(nameFormat);
+                if (authnRequest.getNameIDPolicy() != null) {
+                    encoder.setNameQualifier(authnRequest.getNameIDPolicy().getSPNameQualifier());
+                }
+                final IdPAttribute attribute = new IdPAttribute(AttributePrincipal.class.getName());
+                final IdPAttributeValue<String> value = new StringAttributeValue(assertion.getPrincipal().getName());
+                attribute.setValues(Collections.singletonList(value));
                 return encoder.encode(attribute);
-            } catch (final Exception e) {
-                logger.error(e.getMessage(), e);
             }
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
         }
         return null;
     }
 
     private Subject buildSubject(final AuthnRequest authnRequest, final Assertion assertion,
-                                   final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SAMLException {
+                                 final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SAMLException {
         final NameID nameID = buildNameId(authnRequest, assertion, service, adaptor);
         if (nameID == null) {
             throw new SAMLException("NameID cannot be determined for authN request");
@@ -221,10 +246,11 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
 
-        org.opensaml.saml.saml2.core.Assertion assertion = null;
+        final org.opensaml.saml.saml2.core.Assertion assertion;
         if (statements != null && !statements.isEmpty()) {
             assertion = newAssertion(statements, this.entityId, new DateTime(), id);
             assertion.setSubject(buildSubject(authnRequest, casAssertion, service, adaptor));
+            assertion.setConditions(buildConditions(authnRequest, casAssertion, service, adaptor));
             signAssertion(authnRequest, statements, assertion, service, adaptor);
             samlResponse.getAssertions().add(assertion);
         }
@@ -235,43 +261,58 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         return samlResponse;
     }
 
+    private Conditions buildConditions(final AuthnRequest authnRequest, final Assertion assertion,
+                                       final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SAMLException {
+
+        final DateTime currentDateTime = new DateTime();
+        final Conditions conditions = newConditions(currentDateTime,
+                currentDateTime.plusSeconds(this.skewAllowance),
+                service.getEntityId());
+        return conditions;
+    }
+
     private void signAssertion(final AuthnRequest authnRequest,
                                final List<Statement> statements,
                                final org.opensaml.saml.saml2.core.Assertion assertion,
                                final SamlRegisteredService service,
-                               final SamlMetadataAdaptor adaptor)
-            throws SAMLException {
-        logger.debug("Determining if SAML assertion to {} should be signed", service.getServiceId());
-        if (!service.isSignAssertions()) {
-            return;
-        }
-
-        logger.debug("Determining signing credential for assertion to relying party {}", service.getServiceId());
-        final Credential signatureCredential = null;
-
-        if (signatureCredential == null) {
-            throw new SAMLException("No signing credential is specified for relying party configuration");
-        }
-
-        logger.debug("Signing assertion to relying party {}", service.getServiceId());
-        final XMLObjectBuilder signatureBuilder = openSamlConfigBean.getBuilderFactory().getBuilder(Signature.DEFAULT_ELEMENT_NAME);
-        if (signatureBuilder == null) {
-            throw new SAMLException("No signature builder can be determined");
-        }
-        final Signature signature = (Signature) signatureBuilder.buildObject(Signature.DEFAULT_ELEMENT_NAME);
-        signature.setSigningCredential(signatureCredential);
-        assertion.setSignature(signature);
+                               final SamlMetadataAdaptor adaptor) throws SAMLException {
 
         try {
-            final Marshaller assertionMarshaller = this.openSamlConfigBean.getMarshallerFactory().getMarshaller(assertion);
-            if (assertionMarshaller == null) {
-                throw new SAMLException("No signature marshaller is available");
+            logger.debug("Determining if SAML assertionfor {} should be signed", service.getEntityId());
+            if (!adaptor.isWantAssertionsSigned()) {
+                logger.debug("Relying party does not want assertions signed, so assertions will not be signed");
+                return;
             }
 
-            assertionMarshaller.marshall(assertion);
+            final MessageContext<org.opensaml.saml.saml2.core.Assertion> outboundContext = new MessageContext<>();
+            outboundContext.setMessage(assertion);
 
+            final List<AssertionConsumerService> assertionConsumerServices = adaptor.getAssertionConsumerServices();
+            final SAMLPeerEntityContext peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
+            if (peerEntityContext != null) {
+                final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
+                if (endpointContext != null) {
+                    endpointContext.setEndpoint(assertionConsumerServices.get(0));
+                }
+            }
+            final SecurityParametersContext secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
+            if (secParametersContext == null) {
+                throw new RuntimeException("No signature signing parameters could be determined");
+            }
             final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(adaptor.getSsoDescriptor());
-            SignatureSupport.signObject(assertion, signingParameters);
+            secParametersContext.setSignatureSigningParameters(signingParameters);
+
+            final EndpointURLSchemeSecurityHandler handlerEnd = new EndpointURLSchemeSecurityHandler();
+            handlerEnd.initialize();
+            handlerEnd.invoke(outboundContext);
+
+            final SAMLOutboundDestinationHandler handlerDest = new SAMLOutboundDestinationHandler();
+            handlerDest.initialize();
+            handlerDest.invoke(outboundContext);
+
+            final SAMLOutboundProtocolMessageSigningHandler handler = new SAMLOutboundProtocolMessageSigningHandler();
+            handler.setSignErrorResponses(false);
+            handler.invoke(outboundContext);
         } catch (final Exception e) {
             logger.error("Unable to marshall assertion for signing", e);
             throw new SAMLException("Unable to marshall assertion for signing", e);
@@ -308,12 +349,22 @@ public class SSOPostProfileSamlResponseBuilder extends AbstractSaml20ObjectBuild
         final BasicSignatureSigningConfiguration config =
                 DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
 
-        /*
-        config.setBlacklistedAlgorithms(this.configuration.getBlackListedSignatureSigningAlgorithms());
-        config.setSignatureAlgorithms(this.configuration.getSignatureAlgorithms());
-        config.setSignatureCanonicalizationAlgorithm(this.configuration.getSignatureCanonicalizationAlgorithm());
-        config.setSignatureReferenceDigestMethods(this.configuration.getSignatureReferenceDigestMethods());
-        */
+
+        if (this.overrideBlackListedSignatureSigningAlgorithms != null && !this.overrideSignatureCanonicalizationAlgorithm.isEmpty()) {
+            config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureSigningAlgorithms);
+        }
+
+        if (this.overrideSignatureAlgorithms != null && !this.overrideSignatureAlgorithms.isEmpty()) {
+            config.setSignatureAlgorithms(this.overrideSignatureAlgorithms);
+        }
+
+        if (this.overrideSignatureReferenceDigestMethods != null && !this.overrideSignatureReferenceDigestMethods.isEmpty()) {
+            config.setSignatureReferenceDigestMethods(this.overrideSignatureReferenceDigestMethods);
+        }
+
+        if (StringUtils.isNotBlank(overrideSignatureCanonicalizationAlgorithm)) {
+            config.setSignatureCanonicalizationAlgorithm(this.overrideSignatureCanonicalizationAlgorithm);
+        }
 
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(new FileSystemResource(this.signingKeyFile));

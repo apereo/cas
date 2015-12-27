@@ -34,7 +34,6 @@ public class SamlRegisteredServiceTests {
         service.setName("SAMLService");
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation("/Users/Misagh/Workspace/GitWorkspace/shibboleth-sample-java-sp/src/main/resources/metadata/sp-metadata.xml");
-        service.setSignAssertions(true);
 
         final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE.getFile());
         dao.save(service);
@@ -46,7 +45,6 @@ public class SamlRegisteredServiceTests {
         service.setName("SAMLService");
         service.setServiceId("^http://.+");
         service.setMetadataLocation("/Users/Misagh/Workspace/GitWorkspace/shibboleth-sample-java-sp/src/main/resources/metadata/sp-metadata.xml");
-        service.setSignAssertions(true);
 
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         dao.setRegisteredServices(Arrays.asList(service));
