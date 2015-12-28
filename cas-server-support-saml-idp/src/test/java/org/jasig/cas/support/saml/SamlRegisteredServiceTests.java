@@ -11,13 +11,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
-import java.util.Arrays;
+import java.util.Collections;
+
+import static org.junit.Assert.*;
 
 /**
  * The {@link SamlRegisteredServiceTests} handles test cases for {@link org.jasig.cas.support.saml.services.SamlRegisteredService}.
  *
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 public class SamlRegisteredServiceTests {
 
@@ -33,7 +35,7 @@ public class SamlRegisteredServiceTests {
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("SAMLService");
         service.setServiceId("http://mmoayyed.unicon.net");
-        service.setMetadataLocation("/Users/Misagh/Workspace/GitWorkspace/shibboleth-sample-java-sp/src/main/resources/metadata/sp-metadata.xml");
+        service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
 
         final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE.getFile());
         dao.save(service);
@@ -44,17 +46,15 @@ public class SamlRegisteredServiceTests {
         final SamlRegisteredService service = new SamlRegisteredService();
         service.setName("SAMLService");
         service.setServiceId("^http://.+");
-        service.setMetadataLocation("/Users/Misagh/Workspace/GitWorkspace/shibboleth-sample-java-sp/src/main/resources/metadata/sp-metadata.xml");
+        service.setMetadataLocation("classpath:/sample-idp-metadata.xml");
 
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
-        dao.setRegisteredServices(Arrays.asList(service));
+        dao.setRegisteredServices(Collections.singletonList(service));
         final DefaultServicesManagerImpl impl = new DefaultServicesManagerImpl(dao);
 
         final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()
                 .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
-
-        System.out.println(s);
-
+        assertNotNull(s);
     }
 
 }
