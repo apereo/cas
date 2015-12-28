@@ -49,8 +49,8 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     private SamlProfileSamlConditionsBuilder samlProfileSamlConditionsBuilder;
 
     @Autowired
-    @Qualifier("samlObjectEncoder")
-    private SamlObjectEncoder samlObjectEncoder;
+    @Qualifier("samlObjectSigner")
+    private SamlObjectSigner samlObjectSigner;
 
     @Override
     public final Assertion build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
@@ -86,7 +86,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
                                  final SamlMetadataAdaptor adaptor) throws SamlException {
         try {
             if (service.isSignAssertions()) {
-                this.samlObjectEncoder.encode(assertion, service, adaptor, response, request);
+                this.samlObjectSigner.encode(assertion, service, adaptor, response, request);
             }
         } catch (final Exception e) {
             logger.error("Unable to marshall assertion for signing", e);

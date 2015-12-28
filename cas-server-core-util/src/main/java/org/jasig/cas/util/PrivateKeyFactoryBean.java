@@ -1,17 +1,5 @@
 package org.jasig.cas.util;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.Security;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -22,6 +10,14 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
 import javax.validation.constraints.NotNull;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.Security;
+import java.security.spec.PKCS8EncodedKeySpec;
 
 /**
  * Factory Bean for creating a private key from a file.
@@ -48,7 +44,7 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey>
         PrivateKey key = readPemPrivateKey();
         if (key == null) {
             LOGGER.debug("{} is not in PEM format. Trying next...", this.location.getFile());
-            key = readPKCSPrivateKey();
+            key = readDERPrivateKey();
         }
         return key;
     }
@@ -66,7 +62,7 @@ public final class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey>
         }
     }
 
-    private PrivateKey readPKCSPrivateKey() throws Exception {
+    private PrivateKey readDERPrivateKey() throws Exception {
         LOGGER.debug("Attempting to read {} as DER", this.location.getFile());
         try (final InputStream privKey = this.location.getInputStream()) {
             final byte[] bytes = new byte[privKey.available()];
