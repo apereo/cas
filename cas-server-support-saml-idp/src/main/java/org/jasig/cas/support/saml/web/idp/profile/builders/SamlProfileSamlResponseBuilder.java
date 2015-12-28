@@ -6,20 +6,27 @@ import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.joda.time.DateTime;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLVersion;
+import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
+import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.SecureRandom;
+import java.util.List;
 
 /**
  * The {@link SamlProfileSamlResponseBuilder} is responsible for
@@ -32,6 +39,19 @@ import java.security.SecureRandom;
 public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Response> {
     private static final long serialVersionUID = -1891703354216174875L;
 
+    /**
+     * The Saml object encoder.
+     */
+    @Autowired
+    @Qualifier("samlObjectEncoder")
+    protected SamlObjectEncoder samlObjectEncoder;
+
+    /**
+     * The Velocity engine factory.
+     */
+    @Autowired
+    protected VelocityEngineFactory velocityEngineFactory;
+
     @Value("${cas.samlidp.entityid:}")
     private String entityId;
 
@@ -40,13 +60,13 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     private SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder;
 
     @Override
-    public Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
+    public final Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
                           final HttpServletResponse response, final Assertion casAssertion,
                           final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SamlException {
         final org.opensaml.saml.saml2.core.Assertion assertion =
                 this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
-        final Response finalResponse = buildResponse(assertion, authnRequest);
-        return finalResponse;
+        final Response finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);
+        return encode(service, finalResponse, response, adaptor);
     }
 
     /**
@@ -54,19 +74,31 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      *
      * @param assertion    the assertion
      * @param authnRequest the authn request
+     * @param service      the service
+     * @param adaptor      the adaptor
+     * @param request      the request
+     * @param response     the response
      * @return the response
      * @throws SamlException the saml exception
      */
-    protected Response buildResponse(final org.opensaml.saml.saml2.core.Assertion assertion, final AuthnRequest authnRequest)
-                throws SamlException {
+    protected Response buildResponse(final org.opensaml.saml.saml2.core.Assertion assertion,
+                                     final AuthnRequest authnRequest, final SamlRegisteredService service,
+                                     final SamlMetadataAdaptor adaptor,
+                                     final HttpServletRequest request, final HttpServletResponse response)
+            throws SamlException {
         final String id = String.valueOf(Math.abs(new SecureRandom().nextLong()));
-        final Response samlResponse = newResponse(id, new DateTime(), authnRequest.getID(), null);
+        Response samlResponse = newResponse(id, new DateTime(), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
 
         samlResponse.getAssertions().add(assertion);
         final Status status = newStatus(StatusCode.SUCCESS, StatusCode.SUCCESS);
         samlResponse.setStatus(status);
+
+        if (service.isSignResponses()) {
+            samlResponse = samlObjectEncoder.encode(samlResponse, service, adaptor, response, request);
+        }
+
         return samlResponse;
     }
 
@@ -81,4 +113,48 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         return issuer;
     }
 
+    /**
+     * Encode response.
+     *
+     * @param service      the service
+     * @param samlResponse the saml response
+     * @param httpResponse the http response
+     * @param adaptor      the adaptor
+     * @return the response
+     * @throws SamlException the saml exception
+     */
+    protected Response encode(final SamlRegisteredService service, final Response samlResponse,
+                              final HttpServletResponse httpResponse, final SamlMetadataAdaptor adaptor) throws SamlException {
+        try {
+            final List<AssertionConsumerService> assertionConsumerServices = adaptor.getAssertionConsumerServices();
+            if (assertionConsumerServices.isEmpty()) {
+                throw new SamlException(SamlException.CODE, "No assertion consumer services could be found in the metadata for service "
+                        + service.getServiceId() + " and metadata location " + service.getMetadataLocation());
+            }
+
+            final HTTPPostEncoder encoder = new HTTPPostEncoder();
+            encoder.setHttpServletResponse(httpResponse);
+            encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
+            final MessageContext outboundMessageContext = new MessageContext<>();
+            final SAMLPeerEntityContext peerEntityContext = outboundMessageContext.getSubcontext(SAMLPeerEntityContext.class, true);
+            if (peerEntityContext != null) {
+                final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
+                if (endpointContext != null) {
+                    final AssertionConsumerService assertionConsumerService = assertionConsumerServices.get(0);
+                    logger.info("Encoding SAML response for endpoint {} and binding {}", assertionConsumerService.getLocation(),
+                            assertionConsumerService.getBinding());
+                    endpointContext.setEndpoint(assertionConsumerServices.get(0));
+                }
+            }
+
+            outboundMessageContext.setMessage(samlResponse);
+            encoder.setMessageContext(outboundMessageContext);
+            encoder.initialize();
+            encoder.encode();
+            return samlResponse;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
