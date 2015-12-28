@@ -13,6 +13,8 @@ import org.jasig.cas.support.saml.services.idp.metadata.ChainingMetadataResolver
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,6 +23,8 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.3
  */
+@Entity
+@DiscriminatorValue("saml")
 public final class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
     private static final long DEFAULT_METADATA_CACHE_EXPIRATION_MINUTES = 30;
@@ -121,11 +125,11 @@ public final class SamlRegisteredService extends RegexRegisteredService {
      */
     private ChainingMetadataResolver resolveMetadata() {
         try {
-            return this.cache.get(this.getMetadataLocation());
+            return this.cache.get(this.metadataLocation);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
-        throw new IllegalArgumentException("Metadata resolver could not be located from metadata for service "+ getServiceId());
+        throw new IllegalArgumentException("Metadata resolver could not be located from metadata for service " + getServiceId());
     }
 
 
@@ -135,7 +139,9 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         try {
             final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) source;
             samlRegisteredService.setMetadataCacheExpirationMinutes(this.metadataCacheExpirationMinutes);
-            samlRegisteredService.setMetadataLocation(this.getMetadataLocation());
+            samlRegisteredService.setMetadataLocation(this.metadataLocation);
+            samlRegisteredService.setSignAssertions(this.signAssertions);
+            samlRegisteredService.setSignResponses(this.signResponses);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -162,6 +168,8 @@ public final class SamlRegisteredService extends RegexRegisteredService {
                 .appendSuper(super.equals(obj))
                 .append(this.metadataCacheExpirationMinutes, rhs.getMetadataCacheExpirationMinutes())
                 .append(this.metadataLocation, rhs.getMetadataLocation())
+                .append(this.signResponses, rhs.isSignResponses())
+                .append(this.signAssertions, rhs.isSignAssertions())
                 .isEquals();
     }
 
@@ -178,6 +186,8 @@ public final class SamlRegisteredService extends RegexRegisteredService {
                 .appendSuper(super.toString())
                 .append("metadataLocation", this.metadataLocation)
                 .append("metadataCacheExpirationMinutes", this.metadataCacheExpirationMinutes)
+                .append("signResponses", this.signResponses)
+                .append("signAssertions", this.signAssertions)
                 .toString();
     }
 
