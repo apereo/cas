@@ -14,6 +14,7 @@ import org.jasig.cas.support.saml.services.idp.metadata.ChainingMetadataResolver
 import org.jasig.cas.util.ResourceUtils;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
+import org.springframework.core.io.AbstractResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,9 +34,9 @@ public final class SamlRegisteredService extends RegexRegisteredService {
 
     private long metadataCacheExpirationMinutes;
     private String metadataLocation;
-
-    @JsonIgnore
-    private String entityId;
+    private String requiredAuthenticationContextClass;
+    private boolean signAssertions = false;
+    private boolean signResponses = true;
 
     @JsonIgnore
     private SSODescriptor ssoDescriptor;
@@ -59,15 +60,9 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     public void setMetadataLocation(final String metadataLocation) {
         try {
             this.metadataLocation = metadataLocation;
-            this.entityId = parseEntityId();
         } catch (final Exception e) {
             throw new IllegalArgumentException("Metadata location " + metadataLocation + " cannot be determined");
         }
-    }
-
-    @JsonIgnore
-    public String getEntityId() {
-        return this.entityId;
     }
 
     /**
@@ -83,13 +78,32 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         }
     }
 
-    @JsonIgnore
-    public ChainingMetadataResolver getChainingMetadataResolver() {
-        return resolveMetadata();
-    }
-
     public long getMetadataCacheExpirationMinutes() {
         return metadataCacheExpirationMinutes;
+    }
+
+    public boolean isSignAssertions() {
+        return signAssertions;
+    }
+
+    public void setSignAssertions(final boolean signAssertions) {
+        this.signAssertions = signAssertions;
+    }
+
+    public boolean isSignResponses() {
+        return signResponses;
+    }
+
+    public void setSignResponses(final boolean signResponses) {
+        this.signResponses = signResponses;
+    }
+
+    public String getRequiredAuthenticationContextClass() {
+        return requiredAuthenticationContextClass;
+    }
+
+    public void setRequiredAuthenticationContextClass(final String requiredAuthenticationContextClass) {
+        this.requiredAuthenticationContextClass = requiredAuthenticationContextClass;
     }
 
     /**
@@ -100,6 +114,11 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
         this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
         initializeCache();
+    }
+
+    @JsonIgnore
+    public ChainingMetadataResolver getChainingMetadataResolver() {
+        return resolveMetadata();
     }
 
     /**
@@ -172,18 +191,5 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     private void initializeCache() {
         this.cache = CacheBuilder.newBuilder().maximumSize(1)
                 .expireAfterWrite(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES).build(new ChainingMetadataResolverCacheLoader());
-    }
-
-    private String parseEntityId() throws IOException {
-        final File file = ResourceUtils.getResourceFrom(this.metadataLocation).getFile();
-        final String metadata = FileUtils.readFileToString(file);
-        final Pattern pattern = Pattern.compile("EntityDescriptor.+entityID=\\\"(.+?)\\\"\\>", Pattern.CASE_INSENSITIVE);
-        final Matcher matcher = pattern.matcher(metadata);
-        if (matcher.find()) {
-            final String entityID = matcher.group(1);
-            return entityID;
-        }
-        throw new IllegalArgumentException("Metadata resource "
-                + file + " does not define an [entityID] for its EntityDescriptor element.");
     }
 }

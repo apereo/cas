@@ -1,6 +1,7 @@
 package org.jasig.cas.support.saml.services.idp.metadata;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.joda.time.DateTime;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -20,6 +21,8 @@ import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.opensaml.xmlsec.signature.Signature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,13 +35,18 @@ import java.util.List;
  * @since 4.3.0
  */
 public final class SamlMetadataAdaptor {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataAdaptor.class);
+
     private final AssertionConsumerService assertionConsumerService;
     private final SPSSODescriptor ssoDescriptor;
+    private final EntityDescriptor entityDescriptor;
 
     private SamlMetadataAdaptor(final AssertionConsumerService assertionConsumerService,
-                                final SPSSODescriptor ssoDescriptor) {
+                                final SPSSODescriptor ssoDescriptor,
+                                final EntityDescriptor entityDescriptor) {
         this.assertionConsumerService = assertionConsumerService;
         this.ssoDescriptor = ssoDescriptor;
+        this.entityDescriptor = entityDescriptor;
     }
 
     /**
@@ -51,19 +59,28 @@ public final class SamlMetadataAdaptor {
     public static SamlMetadataAdaptor adapt(final SamlRegisteredService registeredService,
                                             final AuthnRequest authnRequest) {
         try {
+            final String issuer = authnRequest.getIssuer().getValue();
+            LOGGER.info("Adapting SAML metadata for CAS service {} issued by {}",
+                    registeredService.getName(), issuer);
+
             final AssertionConsumerService assertionConsumerService = getAssertionConsumerServiceFor(authnRequest);
             final CriteriaSet criterions = new CriteriaSet();
             criterions.add(new BindingCriterion(Collections.singletonList(SAMLConstants.SAML2_POST_BINDING_URI)));
-            criterions.add(new EntityIdCriterion(registeredService.getEntityId()));
+            criterions.add(new EntityIdCriterion(issuer));
             criterions.add(new EndpointCriterion<>(assertionConsumerService, true));
 
             final EntityDescriptor entityDescriptor = registeredService.getChainingMetadataResolver().resolveSingle(criterions);
             if (entityDescriptor == null) {
                 throw new SAMLException("Cannot find entity " + assertionConsumerService.getLocation() + " in metadata provider");
             }
+            LOGGER.debug("Located EntityDescriptor in metadata for {}", issuer);
             final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
-            return new SamlMetadataAdaptor(assertionConsumerService, ssoDescriptor);
-
+            if (ssoDescriptor != null) {
+                LOGGER.debug("Located SPSSODescriptor in metadata for {}. Metadata is valid until {}",
+                        issuer, ssoDescriptor.getValidUntil());
+                return new SamlMetadataAdaptor(assertionConsumerService, ssoDescriptor, entityDescriptor);
+            }
+            throw new SamlException("Could not locate SPSSODescriptor in the metadata for " + issuer);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -79,6 +96,10 @@ public final class SamlMetadataAdaptor {
 
     public DateTime getValidUntil() {
         return this.ssoDescriptor.getValidUntil();
+    }
+
+    public EntityDescriptor getEntityDescriptor() {
+        return entityDescriptor;
     }
 
     public Organization getOrganization() {
@@ -120,6 +141,15 @@ public final class SamlMetadataAdaptor {
      */
     public boolean isSupportedProtocol(final String protocol) {
         return this.ssoDescriptor.isSupportedProtocol(protocol);
+    }
+
+    /**
+     * Gets entity id.
+     *
+     * @return the entity id
+     */
+    public String getEntityId() {
+        return this.entityDescriptor.getEntityID();
     }
 
     /**

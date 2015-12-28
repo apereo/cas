@@ -28,5 +28,6 @@ dependencies {
     }
     compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
     compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
+    compile group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version:bouncyCastleVersion
 }
 
