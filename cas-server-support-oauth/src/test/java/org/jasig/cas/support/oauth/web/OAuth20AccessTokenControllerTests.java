@@ -3,6 +3,7 @@ package org.jasig.cas.support.oauth.web;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ReturnAllAttributeReleasePolicy;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -67,6 +68,7 @@ public final class OAuth20AccessTokenControllerTests {
 
     @Autowired
     private Controller oauth20WrapperController;
+
     @Test
     public void verifyNoClientId() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -294,6 +296,7 @@ public final class OAuth20AccessTokenControllerTests {
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
         registeredServiceImpl.setClientSecret(secret);
+        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         return registeredServiceImpl;
     }
 
