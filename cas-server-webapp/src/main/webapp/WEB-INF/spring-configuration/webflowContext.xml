@@ -59,11 +59,11 @@
         </property>
     </bean>
 
-    <bean id="internalViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-          p:viewClass="org.springframework.web.servlet.view.JstlView"
-          p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/default/ui/"
-          p:suffix=".jsp"
-          p:order="10000"/>
+    <bean id="internalViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
+            c:servicesManager-ref="servicesManager"
+            p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}"
+            p:suffix=".jsp"
+            p:order="10000"/>
 
 
 </beans>
