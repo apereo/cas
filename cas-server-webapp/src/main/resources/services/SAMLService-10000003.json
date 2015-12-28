@@ -4,6 +4,7 @@
   "name" : "SAMLService",
   "id" : 10000003,
   "evaluationOrder" : 10,
-  "metadataCacheExpirationMinutes" : 30,
-  "metadataLocation" : "http://www.testshib.org/metadata/testshib-providers.xml"
+  "metadataLocation" : "http://www.testshib.org/metadata/testshib-providers.xml",
+  "signAssertions" : false,
+  "signResponses" : true
 }
