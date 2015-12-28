@@ -15,13 +15,13 @@
 
     <import resource="spring-configuration/propertyFileConfigurer.xml"/>
 
-    <bean id="themeChangeInterceptor"
+    <!-- <bean id="themeChangeInterceptor"
           class="org.springframework.web.servlet.theme.ThemeChangeInterceptor"
           p:paramName="${cas.themeResolver.param.name:theme}"/>
 
 
     <bean id="beanNameViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"
-          p:order="1"/>
+          p:order="1"/> -->
 
     <!--
     <bean id="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver"
@@ -29,11 +29,11 @@
             p:location="${cas.viewResolver.xmlFile:classpath:/META-INF/spring/views.xml}" />
     -->
 
-    <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+    <!-- <bean id="urlBasedViewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver"
           p:viewClass="org.springframework.web.servlet.view.InternalResourceView"
           p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp}/"
           p:suffix=".jsp"
-          p:order="2000"/>
+          p:order="2000"/> -->
 
     <!--
     <bean id="internalViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
