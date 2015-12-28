@@ -1,21 +1,14 @@
 package org.jasig.cas.support.saml.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.ChainingMetadataResolverCacheLoader;
-import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
-import org.opensaml.saml.saml2.metadata.SSODescriptor;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.util.concurrent.TimeUnit;
 
 /**
  * The {@link SamlRegisteredService} is responsible for managing the SAML metadata for a given SP.
@@ -27,26 +20,17 @@ import java.util.concurrent.TimeUnit;
 @DiscriminatorValue("saml")
 public final class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
-    private static final long DEFAULT_METADATA_CACHE_EXPIRATION_MINUTES = 30;
 
-    private long metadataCacheExpirationMinutes;
     private String metadataLocation;
     private String requiredAuthenticationContextClass;
     private boolean signAssertions;
     private boolean signResponses = true;
-
-    @JsonIgnore
-    private SSODescriptor ssoDescriptor;
-
-    @JsonIgnore
-    private transient LoadingCache<String, ChainingMetadataResolver> cache;
 
     /**
      * Instantiates a new Saml registered service.
      */
     public SamlRegisteredService() {
         super();
-        setMetadataCacheExpirationMinutes(DEFAULT_METADATA_CACHE_EXPIRATION_MINUTES);
     }
 
     /**
@@ -75,10 +59,6 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         }
     }
 
-    public long getMetadataCacheExpirationMinutes() {
-        return metadataCacheExpirationMinutes;
-    }
-
     public boolean isSignAssertions() {
         return signAssertions;
     }
@@ -103,42 +83,11 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         this.requiredAuthenticationContextClass = requiredAuthenticationContextClass;
     }
 
-    /**
-     * Sets metadata cache expiration minutes.
-     *
-     * @param metadataCacheExpirationMinutes the metadata cache expiration minutes
-     */
-    public void setMetadataCacheExpirationMinutes(final long metadataCacheExpirationMinutes) {
-        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
-        initializeCache();
-    }
-
-    @JsonIgnore
-    public ChainingMetadataResolver getChainingMetadataResolver() {
-        return resolveMetadata();
-    }
-
-    /**
-     * Resolve metadata chaining metadata resolver.
-     *
-     * @return the chaining metadata resolver
-     */
-    private ChainingMetadataResolver resolveMetadata() {
-        try {
-            return this.cache.get(this.metadataLocation);
-        } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        throw new IllegalArgumentException("Metadata resolver could not be located from metadata for service " + getServiceId());
-    }
-
-
     @Override
     public void copyFrom(final RegisteredService source) {
         super.copyFrom(source);
         try {
             final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) source;
-            samlRegisteredService.setMetadataCacheExpirationMinutes(this.metadataCacheExpirationMinutes);
             samlRegisteredService.setMetadataLocation(this.metadataLocation);
             samlRegisteredService.setSignAssertions(this.signAssertions);
             samlRegisteredService.setSignResponses(this.signResponses);
@@ -166,7 +115,6 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         final SamlRegisteredService rhs = (SamlRegisteredService) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(this.metadataCacheExpirationMinutes, rhs.getMetadataCacheExpirationMinutes())
                 .append(this.metadataLocation, rhs.getMetadataLocation())
                 .append(this.signResponses, rhs.isSignResponses())
                 .append(this.signAssertions, rhs.isSignAssertions())
@@ -185,14 +133,10 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
                 .append("metadataLocation", this.metadataLocation)
-                .append("metadataCacheExpirationMinutes", this.metadataCacheExpirationMinutes)
                 .append("signResponses", this.signResponses)
                 .append("signAssertions", this.signAssertions)
                 .toString();
     }
 
-    private void initializeCache() {
-        this.cache = CacheBuilder.newBuilder().maximumSize(1)
-                .expireAfterWrite(this.metadataCacheExpirationMinutes, TimeUnit.MINUTES).build(new ChainingMetadataResolverCacheLoader());
-    }
+
 }
