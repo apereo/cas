@@ -2,21 +2,19 @@ package org.jasig.cas.support.saml.web.idp.profile.builders;
 
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.SamlException;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
-import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +24,6 @@ import org.springframework.ui.velocity.VelocityEngineFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.SecureRandom;
-import java.util.List;
 
 /**
  * The {@link SamlProfileSamlResponseBuilder} is responsible for
@@ -43,8 +40,8 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      * The Saml object encoder.
      */
     @Autowired
-    @Qualifier("samlObjectEncoder")
-    protected SamlObjectEncoder samlObjectEncoder;
+    @Qualifier("samlObjectSigner")
+    protected SamlObjectSigner samlObjectSigner;
 
     /**
      * The Velocity engine factory.
@@ -96,7 +93,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         samlResponse.setStatus(status);
 
         if (service.isSignResponses()) {
-            samlResponse = samlObjectEncoder.encode(samlResponse, service, adaptor, response, request);
+            samlResponse = samlObjectSigner.encode(samlResponse, service, adaptor, response, request);
         }
 
         return samlResponse;
@@ -126,27 +123,11 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     protected Response encode(final SamlRegisteredService service, final Response samlResponse,
                               final HttpServletResponse httpResponse, final SamlMetadataAdaptor adaptor) throws SamlException {
         try {
-            final List<AssertionConsumerService> assertionConsumerServices = adaptor.getAssertionConsumerServices();
-            if (assertionConsumerServices.isEmpty()) {
-                throw new SamlException(SamlException.CODE, "No assertion consumer services could be found in the metadata for service "
-                        + service.getServiceId() + " and metadata location " + service.getMetadataLocation());
-            }
-
             final HTTPPostEncoder encoder = new HTTPPostEncoder();
             encoder.setHttpServletResponse(httpResponse);
             encoder.setVelocityEngine(this.velocityEngineFactory.createVelocityEngine());
             final MessageContext outboundMessageContext = new MessageContext<>();
-            final SAMLPeerEntityContext peerEntityContext = outboundMessageContext.getSubcontext(SAMLPeerEntityContext.class, true);
-            if (peerEntityContext != null) {
-                final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
-                if (endpointContext != null) {
-                    final AssertionConsumerService assertionConsumerService = assertionConsumerServices.get(0);
-                    logger.info("Encoding SAML response for endpoint {} and binding {}", assertionConsumerService.getLocation(),
-                            assertionConsumerService.getBinding());
-                    endpointContext.setEndpoint(assertionConsumerServices.get(0));
-                }
-            }
-
+            SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundMessageContext, adaptor);
             outboundMessageContext.setMessage(samlResponse);
             encoder.setMessageContext(outboundMessageContext);
             encoder.initialize();

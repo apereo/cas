@@ -3,7 +3,6 @@ package org.jasig.cas.support.saml.services;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,16 +10,10 @@ import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.ChainingMetadataResolverCacheLoader;
-import org.jasig.cas.util.ResourceUtils;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.saml2.metadata.SSODescriptor;
-import org.springframework.core.io.AbstractResource;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * The {@link SamlRegisteredService} is responsible for managing the SAML metadata for a given SP.
@@ -35,7 +28,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     private long metadataCacheExpirationMinutes;
     private String metadataLocation;
     private String requiredAuthenticationContextClass;
-    private boolean signAssertions = false;
+    private boolean signAssertions;
     private boolean signResponses = true;
 
     @JsonIgnore
