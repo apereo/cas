@@ -16,7 +16,7 @@ import java.util.Collections;
 import static org.junit.Assert.*;
 
 /**
- * The {@link SamlRegisteredServiceTests} handles test cases for {@link org.jasig.cas.support.saml.services.SamlRegisteredService}.
+ * The {@link SamlRegisteredServiceTests} handles test cases for {@link SamlRegisteredService}.
  *
  * @author Misagh Moayyed
  * @since 4.3
@@ -39,6 +39,7 @@ public class SamlRegisteredServiceTests {
 
         final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE.getFile());
         dao.save(service);
+        dao.load();
     }
 
     @Test
