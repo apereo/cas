@@ -39,21 +39,21 @@ public final class SamlIdPUtils {
         }
 
         final SAMLPeerEntityContext peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
-        if (peerEntityContext != null) {
-            final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
-            if (endpointContext != null) {
-                final Endpoint endpoint = assertionConsumerServices.get(0);
-                if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
-                    throw new SamlException(SamlException.CODE, "Assertion consumer service does not define a binding or location for "
-                            +  adaptor.getEntityId());
-                }
-                LOGGER.debug("Configured peer entity endpoint to be {} with binding {}", endpoint.getLocation(), endpoint.getBinding());
-                endpointContext.setEndpoint(assertionConsumerServices.get(0));
-            } else {
-                throw new SamlException(SamlException.CODE, "SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
-            }
+        if (peerEntityContext == null) {
+            throw new SamlException(SamlException.CODE, "SAMLPeerEntityContext could not be defined for entity " + adaptor.getEntityId());
         }
-        throw new SamlException(SamlException.CODE, "SAMLPeerEntityContext could not be defined for entity " + adaptor.getEntityId());
+
+        final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
+        if (endpointContext == null) {
+            throw new SamlException(SamlException.CODE, "SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
+        }
+        final Endpoint endpoint = assertionConsumerServices.get(0);
+        if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
+            throw new SamlException(SamlException.CODE, "Assertion consumer service does not define a binding or location for "
+                    + adaptor.getEntityId());
+        }
+        LOGGER.debug("Configured peer entity endpoint to be {} with binding {}", endpoint.getLocation(), endpoint.getBinding());
+        endpointContext.setEndpoint(endpoint);
     }
 }
 
