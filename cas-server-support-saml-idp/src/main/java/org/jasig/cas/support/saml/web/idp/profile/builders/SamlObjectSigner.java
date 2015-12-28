@@ -4,6 +4,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.CertUtil;
 import org.jasig.cas.support.saml.SamlException;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
@@ -13,11 +14,7 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler;
 import org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
-import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
-import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
-import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
-import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
 import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver;
 import org.opensaml.security.credential.Credential;
@@ -47,13 +44,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is {@link SamlObjectEncoder}.
+ * This is {@link SamlObjectSigner}.
  *
  * @author Misagh Moayyed
  * @since 4.3
  */
-@Component("samlObjectEncoder")
-public class SamlObjectEncoder {
+@Component("samlObjectSigner")
+public class SamlObjectSigner {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
@@ -103,6 +100,12 @@ public class SamlObjectEncoder {
     protected File signingKeyFile;
 
     /**
+     * The Sign error response.
+     */
+    @Value("${cas.samlidp.response.error.sign:false}")
+    protected boolean signErrorResponse;
+
+    /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
      * @param <T>        the type parameter
@@ -125,8 +128,8 @@ public class SamlObjectEncoder {
             prepareOutboundContext(samlObject, adaptor, outboundContext);
             prepareSecurityParametersContext(adaptor, outboundContext);
             prepareEndpointURLSchemeSecurityHandler(outboundContext);
-            prepareSAMLOutboundDestinationHandler(outboundContext);
-            prepareSAMLOutboundProtocolMessageSigningHandler(outboundContext);
+            prepareSamlOutboundDestinationHandler(outboundContext);
+            prepareSamlOutboundProtocolMessageSigningHandler(outboundContext);
             return samlObject;
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
@@ -140,10 +143,11 @@ public class SamlObjectEncoder {
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    protected <T extends SAMLObject> void prepareSAMLOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext)
+    protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext)
             throws Exception {
+        logger.debug("Attempting to sign the outbound saml message...");
         final SAMLOutboundProtocolMessageSigningHandler handler = new SAMLOutboundProtocolMessageSigningHandler();
-        handler.setSignErrorResponses(false);
+        handler.setSignErrorResponses(this.signErrorResponse);
         handler.invoke(outboundContext);
     }
 
@@ -154,7 +158,7 @@ public class SamlObjectEncoder {
      * @param outboundContext the outbound context
      * @throws Exception the exception
      */
-    protected <T extends SAMLObject> void prepareSAMLOutboundDestinationHandler(final MessageContext<T> outboundContext)
+    protected <T extends SAMLObject> void prepareSamlOutboundDestinationHandler(final MessageContext<T> outboundContext)
             throws Exception {
         final SAMLOutboundDestinationHandler handlerDest = new SAMLOutboundDestinationHandler();
         handlerDest.initialize();
@@ -200,22 +204,14 @@ public class SamlObjectEncoder {
      * @param samlObject      the saml object
      * @param adaptor         the adaptor
      * @param outboundContext the outbound context
+     * @throws SamlException the saml exception
      */
     protected <T extends SAMLObject> void prepareOutboundContext(final T samlObject, final SamlMetadataAdaptor adaptor,
-                                                                 final MessageContext<T> outboundContext) {
+                                                                 final MessageContext<T> outboundContext) throws SamlException {
 
         logger.debug("Outbound saml object to use is {}", samlObject.getClass().getName());
         outboundContext.setMessage(samlObject);
-        final List<AssertionConsumerService> assertionConsumerServices = adaptor.getAssertionConsumerServices();
-        final SAMLPeerEntityContext peerEntityContext = outboundContext.getSubcontext(SAMLPeerEntityContext.class, true);
-        if (peerEntityContext != null) {
-            final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
-            if (endpointContext != null) {
-                final Endpoint endpoint = assertionConsumerServices.get(0);
-                logger.debug("Configured peer entity endpoint to be {} with binding {}", endpoint.getLocation(), endpoint.getBinding());
-                endpointContext.setEndpoint(assertionConsumerServices.get(0));
-            }
-        }
+        SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundContext, adaptor);
     }
 
     /**
@@ -278,7 +274,6 @@ public class SamlObjectEncoder {
             config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
         }
 
-
         if (StringUtils.isNotBlank(overrideSignatureCanonicalizationAlgorithm)) {
             config.setSignatureCanonicalizationAlgorithm(this.overrideSignatureCanonicalizationAlgorithm);
         }
@@ -288,15 +283,9 @@ public class SamlObjectEncoder {
         logger.debug("Signature signing whitelisted algorithms: {}", config.getWhitelistedAlgorithms());
         logger.debug("Signature signing reference digest methods: {}", config.getSignatureReferenceDigestMethods());
 
-        final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(this.signingKeyFile));
-        privateKeyFactoryBean.setAlgorithm("RSA");
-        privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating signature signing key file from {}", this.signingKeyFile);
-        final PrivateKey privateKey = privateKeyFactoryBean.getObject();
+        final PrivateKey privateKey = getSigningPrivateKey();
+        final X509Certificate certificate = getSigningCertificate();
 
-        logger.debug("Locating signature signing certificate file from {}", this.signingCertFile);
-        final X509Certificate certificate = readCertificate(new FileSystemResource(this.signingCertFile));
         final List<Credential> creds = new ArrayList<>();
         creds.add(new BasicX509Credential(certificate, privateKey));
         config.setSigningCredentials(creds);
@@ -306,12 +295,37 @@ public class SamlObjectEncoder {
     }
 
     /**
+     * Gets signing certificate.
+     *
+     * @return the signing certificate
+     */
+    protected X509Certificate getSigningCertificate() {
+        logger.debug("Locating signature signing certificate file from {}", this.signingCertFile);
+        return readCertificate(new FileSystemResource(this.signingCertFile));
+    }
+
+    /**
+     * Gets signing private key.
+     *
+     * @return the signing private key
+     * @throws Exception the exception
+     */
+    protected PrivateKey getSigningPrivateKey() throws Exception {
+        final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
+        privateKeyFactoryBean.setLocation(new FileSystemResource(this.signingKeyFile));
+        privateKeyFactoryBean.setAlgorithm("RSA");
+        privateKeyFactoryBean.setSingleton(false);
+        logger.debug("Locating signature signing key file from {}", this.signingKeyFile);
+        return privateKeyFactoryBean.getObject();
+    }
+
+    /**
      * Read certificate x 509 certificate.
      *
      * @param resource the resource
      * @return the x 509 certificate
      */
-    private static X509Certificate readCertificate(final Resource resource) {
+    protected X509Certificate readCertificate(final Resource resource) {
         try (final InputStream in = resource.getInputStream()) {
             return CertUtil.readCertificate(in);
         } catch (final Exception e) {
