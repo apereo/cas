@@ -1,24 +1,33 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpStatus;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.pac4j.core.profile.UserProfile;
+import org.pac4j.core.util.CommonHelper;
+import org.pac4j.jwt.JwtConstants;
+import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This controller returns an access token which is the CAS
- * granting ticket according to the service and code (service ticket) given.
+ * This controller returns an access token according to the service and code (service ticket) given.
  *
  * @author Jerome Leleu
  * @since 3.5.0
@@ -27,13 +36,18 @@ import java.util.concurrent.TimeUnit;
 public final class OAuth20AccessTokenController extends BaseOAuthWrapperController {
 
     @Autowired
-    @Qualifier("defaultAccessTokenGenerator")
-    private AccessTokenGenerator accessTokenGenerator;
+    @Qualifier("accessTokenJwtGenerator")
+    private JwtGenerator accessTokenJwtGenerator;
 
     /**
      * Instantiates a new o auth20 access token controller.
      */
     public OAuth20AccessTokenController() {}
+
+    @PostConstruct
+    public void postConstruct() {
+        CommonHelper.assertNotNull("encryptionSecret", accessTokenJwtGenerator.getEncryptionSecret());
+    }
 
     @Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
@@ -65,10 +79,25 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         // remove service ticket
         ticketRegistry.deleteTicket(serviceTicket.getId());
 
-        final String accessTokenEncoded = this.accessTokenGenerator.generate(serviceTicket.getService(), ticketGrantingTicket);
+        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
+        final String id = principal.getId();
+        final Map<String, Object> attributes = new HashMap<>(service.getAttributeReleasePolicy().getAttributes(principal));
+        if (!service.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(id, attributes)) {
+            logger.error("Service [{}] is not authorized for use by [{}].", service.getServiceId(), principal);
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
+        }
+        attributes.put(JwtConstants.AUDIENCE, service.getServiceId());
         final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
                 .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
-        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessTokenEncoded, OAuthConstants.EXPIRES, expires);
+        attributes.put(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), expires));
+
+        final UserProfile profile = new UserProfile();
+        profile.setId(id);
+        profile.addAttributes(attributes);
+        final String accessToken = this.accessTokenJwtGenerator.generate(profile);
+
+        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken, OAuthConstants.EXPIRES, expires);
         logger.debug("OAuth access token response: {}", text);
         response.setContentType("text/plain");
         return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
@@ -110,23 +139,21 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         }
 
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
-        if (service == null) {
-            logger.error("Unknown {} : {}", OAuthConstants.CLIENT_ID, clientId);
+        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
+            logger.error("Service {} is not found in the registry or it is disabled.", clientId);
             return false;
         }
 
         final String serviceId = service.getServiceId();
         if (!redirectUri.matches(serviceId)) {
-            logger.error("Unsupported {} : {} for serviceId : {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
+            logger.error("Unsupported {}: {} for serviceId: {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
             return false;
         }
 
         if (!StringUtils.equals(service.getClientSecret(), clientSecret)) {
-            logger.error("Wrong client secret for service {}", service);
+            logger.error("Wrong client secret for service: {}", service);
             return false;
         }
         return true;
     }
-
-
 }
