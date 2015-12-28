@@ -24,7 +24,7 @@ customizations to further ease future upgrades and maintenance.
 
 ## Download [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.jasig.cas/cas-server) [![Github Releases](https://img.shields.io/github/release/Jasig/cas.svg)](https://github.com/Jasig/cas/releases)
 
-- Binary releases may be downloaded from [here][downloadcas].
+- Tagged source releases may be downloaded from [here][downloadcas].
 - CAS artifacts are published to the [Maven Central Repository][casmavencentral].
 - Remember that the [Maven War Overlay method][overlay] is the recommended approach for deployments.
 - A snapshot of the codebase's `master` branch may be downloaded from [here][downloadcasgithub].

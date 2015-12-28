@@ -47,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link KryoTranscoder} class.
@@ -100,10 +100,9 @@ public class KryoTranscoderTests {
                 new AcceptUsersAuthenticationHandler(),
                 new BasicCredentialMetaData(userPassCredential)));
 
-        final TicketGrantingTicket parent =
-                new TicketGrantingTicketImpl(TGT_ID,
-                        org.jasig.cas.authentication.TestUtils.getService(), null, bldr.build(),
-                        new NeverExpiresExpirationPolicy());
+        new TicketGrantingTicketImpl(TGT_ID,
+                org.jasig.cas.authentication.TestUtils.getService(), null, bldr.build(),
+                new NeverExpiresExpirationPolicy());
 
         final TicketGrantingTicket expectedTGT =
                 new TicketGrantingTicketImpl(TGT_ID,

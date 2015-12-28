@@ -6,7 +6,7 @@ import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.CompressionUtils;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * This is {@link GoogleAppsSamlAuthenticationRequestTests}.

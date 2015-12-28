@@ -57,7 +57,7 @@ import java.util.Set;
  * @see javax.security.auth.callback.CallbackHandler
  * @see javax.security.auth.callback.PasswordCallback
  * @see javax.security.auth.callback.NameCallback
- * @since 3.0.0.5
+ * @since 3.0.0
  */
 @Component("jaasAuthenticationHandler")
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {

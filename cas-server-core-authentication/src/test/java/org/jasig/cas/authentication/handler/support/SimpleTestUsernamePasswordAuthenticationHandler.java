@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -18,6 +19,8 @@ import org.jasig.cas.authentication.InvalidLoginTimeException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -37,6 +40,9 @@ import org.springframework.util.StringUtils;
 public final class SimpleTestUsernamePasswordAuthenticationHandler implements AuthenticationHandler {
     /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
+
+    @NotNull
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /** Instance of logging for subclasses. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -86,7 +92,8 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
             logger.debug("User [{}] was successfully authenticated.", username);
-            return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential));
+            return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential),
+                    this.principalFactory.createPrincipal(username));
         }
         logger.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();

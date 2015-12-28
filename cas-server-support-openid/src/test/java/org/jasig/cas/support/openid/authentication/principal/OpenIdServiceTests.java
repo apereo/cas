@@ -1,5 +1,7 @@
 package org.jasig.cas.support.openid.authentication.principal;
 
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
@@ -7,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openid4java.association.Association;
 import org.springframework.mock.web.MockHttpServletRequest;
+
 
 import static org.junit.Assert.*;
 
@@ -38,10 +41,10 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
+            final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), openIdService);
 
-            final String tgt = centralAuthenticationService.createTicketGrantingTicket(
-                    org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
-            final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService).getId();
+            final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
+            final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
             final Response response = this.openIdService.getResponse(st);
@@ -68,10 +71,9 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-
-            final String tgt = centralAuthenticationService.createTicketGrantingTicket(
-                    org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword()).getId();
-            final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService).getId();
+            final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), openIdService);
+            final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
+            final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
 
             synchronized (this) {
@@ -109,4 +111,5 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
         assertTrue(o1.equals(o2));
         assertFalse(o1.equals(new Object()));
     }
+
 }
