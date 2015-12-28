@@ -1,24 +1,21 @@
 package org.jasig.cas.support.saml.web.idp.profile.builders;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.joda.time.DateTime;
-import org.opensaml.saml.saml2.core.AuthnContext;
-import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.AuthnStatement;
-import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.SubjectLocality;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 /**
  * This is {@link SamlProfileSamlAuthNStatementBuilder}.
@@ -32,13 +29,16 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
     private static final long serialVersionUID = 8761566449790497226L;
 
-
     @Value("${cas.samlidp.response.skewAllowance:0}")
     private int skewAllowance;
 
+    @Autowired
+    @Qualifier("defaultAuthnContextClassRefBuilder")
+    private AuthnContextClassRefBuilder authnContextClassRefBuilder;
+
     @Override
     public final AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                       final Assertion assertion, final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
+                                      final Assertion assertion, final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
             throws SamlException {
         return buildAuthnStatement(assertion, authnRequest, adaptor, service);
     }
@@ -57,7 +57,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                final SamlMetadataAdaptor adaptor, final SamlRegisteredService service)
             throws SamlException {
 
-        final String authenticationMethod = getAuthenticationMethodFromAssertion(assertion, authnRequest, adaptor, service);
+        final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
         final AuthnStatement statement = newAuthnStatement(authenticationMethod, new DateTime(assertion.getAuthenticationDate()));
         if (assertion.getValidUntilDate() != null) {
             final DateTime dt = new DateTime(assertion.getValidUntilDate());
@@ -82,41 +82,4 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         subjectLocality.setAddress(authnRequest.getIssuer().getValue());
         return subjectLocality;
     }
-
-
-    /**
-     * Gets authentication method from assertion.
-     *
-     * @param assertion    the assertion
-     * @param authnRequest the authn request
-     * @param adaptor      the adaptor
-     * @param service      the service
-     * @return the authentication method from assertion
-     */
-    protected String getAuthenticationMethodFromAssertion(final Assertion assertion, final AuthnRequest authnRequest,
-                                                          final SamlMetadataAdaptor adaptor, final SamlRegisteredService service) {
-        final RequestedAuthnContext requestedAuthnContext = authnRequest.getRequestedAuthnContext();
-        if (requestedAuthnContext == null) {
-            logger.debug("No specific authN context is requested. Returning {}", AuthnContext.UNSPECIFIED_AUTHN_CTX);
-            return AuthnContext.UNSPECIFIED_AUTHN_CTX;
-        }
-        final List<AuthnContextClassRef> authnContextClassRefs = requestedAuthnContext.getAuthnContextClassRefs();
-        if (authnContextClassRefs == null || authnContextClassRefs.isEmpty()) {
-            logger.debug("Requested authN context class ref is unspecified. Returning {}", AuthnContext.UNSPECIFIED_AUTHN_CTX);
-            return AuthnContext.UNSPECIFIED_AUTHN_CTX;
-        }
-        logger.debug("AuthN Context comparison is requested to use {}", requestedAuthnContext.getComparison());
-        for (final AuthnContextClassRef authnContextClassRef : authnContextClassRefs) {
-            logger.debug("Requested AuthN Context {}", authnContextClassRef.getAuthnContextClassRef());
-        }
-        if (StringUtils.isNotBlank(service.getRequiredAuthenticationContextClass())) {
-            logger.debug("Using {} as indicated by registered service {}",
-                    service.getRequiredAuthenticationContextClass(),
-                    service.getName());
-            return service.getRequiredAuthenticationContextClass();
-        }
-        logger.debug("Returning default AuthN Context {}", AuthnContext.PPT_AUTHN_CTX);
-        return AuthnContext.PPT_AUTHN_CTX;
-    }
-
 }
