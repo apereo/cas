@@ -145,10 +145,11 @@ public class SamlObjectSigner {
      */
     protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext)
             throws Exception {
-        logger.debug("Attempting to sign the outbound saml message...");
+        logger.debug("Attempting to sign the outbound SAML message...");
         final SAMLOutboundProtocolMessageSigningHandler handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.setSignErrorResponses(this.signErrorResponse);
         handler.invoke(outboundContext);
+        logger.debug("Signed SAML message successfully");
     }
 
     /**

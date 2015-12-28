@@ -3,6 +3,7 @@ package org.jasig.cas.support.saml.services.idp.metadata;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
+import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.joda.time.DateTime;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
@@ -10,6 +11,7 @@ import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EndpointCriterion;
+import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
@@ -52,11 +54,13 @@ public final class SamlMetadataAdaptor {
     /**
      * Adapt saml metadata and parse. Acts as a facade.
      *
+     * @param resolver          the resolver
      * @param registeredService the service
      * @param authnRequest      the authn request
      * @return the saml metadata adaptor
      */
-    public static SamlMetadataAdaptor adapt(final SamlRegisteredService registeredService,
+    public static SamlMetadataAdaptor adapt(final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                            final SamlRegisteredService registeredService,
                                             final AuthnRequest authnRequest) {
         try {
             final String issuer = authnRequest.getIssuer().getValue();
@@ -69,7 +73,8 @@ public final class SamlMetadataAdaptor {
             criterions.add(new EntityIdCriterion(issuer));
             criterions.add(new EndpointCriterion<>(assertionConsumerService, true));
 
-            final EntityDescriptor entityDescriptor = registeredService.getChainingMetadataResolver().resolveSingle(criterions);
+            final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
+            final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 throw new SAMLException("Cannot find entity " + assertionConsumerService.getLocation() + " in metadata provider");
             }
@@ -133,6 +138,7 @@ public final class SamlMetadataAdaptor {
     public boolean isWantAssertionsSigned() {
         return this.ssoDescriptor.getWantAssertionsSigned();
     }
+
     /**
      * Is supported protocol?
      *

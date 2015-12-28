@@ -58,8 +58,8 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
 
     @Override
     public final Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
-                          final HttpServletResponse response, final Assertion casAssertion,
-                          final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SamlException {
+                                final HttpServletResponse response, final Assertion casAssertion,
+                                final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SamlException {
         final org.opensaml.saml.saml2.core.Assertion assertion =
                 this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
         final Response finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);

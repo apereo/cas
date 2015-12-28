@@ -29,7 +29,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
 
     @Override
     public final Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                       final Assertion assertion, final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
+                                  final Assertion assertion, final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
             throws SamlException {
         return buildConditions(authnRequest, assertion, service, adaptor);
     }
@@ -37,7 +37,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
     private Conditions buildConditions(final AuthnRequest authnRequest, final Assertion assertion,
                                        final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SamlException {
 
-        final DateTime currentDateTime = new DateTime();
+        final DateTime currentDateTime = DateTime.now();
         final Conditions conditions = newConditions(currentDateTime,
                 currentDateTime.plusSeconds(this.skewAllowance),
                 adaptor.getEntityId());

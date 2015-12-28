@@ -1,4 +1,4 @@
-package org.jasig.cas.support.saml.services.idp.metadata;
+package org.jasig.cas.support.saml.services.idp.metadata.cache;
 
 import com.google.common.cache.CacheLoader;
 import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
