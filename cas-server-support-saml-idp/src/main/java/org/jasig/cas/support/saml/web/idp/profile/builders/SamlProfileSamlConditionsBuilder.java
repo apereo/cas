@@ -28,7 +28,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
     private int skewAllowance;
 
     @Override
-    public Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public final Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                        final Assertion assertion, final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
             throws SamlException {
         return buildConditions(authnRequest, assertion, service, adaptor);
@@ -40,7 +40,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
         final DateTime currentDateTime = new DateTime();
         final Conditions conditions = newConditions(currentDateTime,
                 currentDateTime.plusSeconds(this.skewAllowance),
-                service.getEntityId());
+                adaptor.getEntityId());
         return conditions;
     }
 }

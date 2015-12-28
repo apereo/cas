@@ -34,9 +34,9 @@ public final class ChainingMetadataResolverCacheLoader extends CacheLoader<Strin
     @Override
     public ChainingMetadataResolver load(final String metadataLocation) throws Exception {
         final OpenSamlConfigBean configBean = ApplicationContextProvider.getApplicationContext().getBean(OpenSamlConfigBean.class);
+        LOGGER.info("Loading SAML metadata from {}", metadataLocation);
 
         final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-
         try (final InputStream in = metadataResource.getInputStream()) {
             LOGGER.debug("Parsing metadata from [{}]", metadataLocation);
             final Document document = configBean.getParserPool().parse(in);
@@ -55,19 +55,19 @@ public final class ChainingMetadataResolverCacheLoader extends CacheLoader<Strin
     }
 
     private List<MetadataResolver> buildSingleMetadataResolver(final Document document, final String key) throws IOException {
-        final OpenSamlConfigBean configBean = ApplicationContextProvider.getApplicationContext().getBean(OpenSamlConfigBean.class);
-
-        final List<MetadataResolver> resolvers = new ArrayList<>();
-        final Element metadataRoot = document.getDocumentElement();
-        final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
-
-        metadataProvider.setParserPool(configBean.getParserPool());
-        metadataProvider.setFailFastInitialization(true);
-        metadataProvider.setRequireValidMetadata(true);
-        metadataProvider.setId(metadataProvider.getClass().getCanonicalName());
-        LOGGER.debug("Initializing metadata resolver from [{}]", key);
-
         try {
+            final OpenSamlConfigBean configBean = ApplicationContextProvider.getApplicationContext().getBean(OpenSamlConfigBean.class);
+
+            final List<MetadataResolver> resolvers = new ArrayList<>();
+            final Element metadataRoot = document.getDocumentElement();
+            final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
+
+            metadataProvider.setParserPool(configBean.getParserPool());
+            metadataProvider.setFailFastInitialization(true);
+            metadataProvider.setRequireValidMetadata(true);
+            metadataProvider.setId(metadataProvider.getClass().getCanonicalName());
+            LOGGER.debug("Initializing metadata resolver from [{}]", key);
+
             metadataProvider.initialize();
             resolvers.add(metadataProvider);
             return resolvers;

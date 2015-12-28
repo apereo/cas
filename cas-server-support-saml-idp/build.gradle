@@ -5,6 +5,7 @@ dependencies {
         exclude(module: 'xml-apis')
         exclude(module: 'guava')
     }
+
     compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
     compile(group: 'org.jasig.cas.client', name: 'cas-client-core', version: casClientVersion) {
         exclude(module: 'servlet-api')
@@ -26,6 +27,8 @@ dependencies {
         exclude(module: 'guava')
         exclude(module: 'spring-webflow')
         exclude(module: 'spring-webmvc')
+        exclude(module: 'logback-core')
+        exclude(module: 'logback-classic')
     }
 
     compile(group: 'net.shibboleth.idp', name: 'idp-attribute-filter-api', version: idpVersion) {
@@ -42,6 +45,8 @@ dependencies {
         exclude(module: 'guava')
         exclude(module: 'spring-webflow')
         exclude(module: 'spring-webmvc')
+        exclude(module: 'logback-core')
+        exclude(module: 'logback-classic')
     }
     compile(group: 'net.shibboleth.idp', name: 'idp-profile-spring', version: idpVersion) {
         exclude(module: 'spring-beans')
@@ -57,6 +62,8 @@ dependencies {
         exclude(module: 'guava')
         exclude(module: 'spring-webflow')
         exclude(module: 'spring-webmvc')
+        exclude(module: 'logback-core')
+        exclude(module: 'logback-classic')
     }
     compile(group: 'net.shibboleth.idp', name: 'idp-attribute-resolver-api', version: idpVersion) {
         exclude(module: 'spring-beans')
@@ -72,6 +79,8 @@ dependencies {
         exclude(module: 'guava')
         exclude(module: 'spring-webflow')
         exclude(module: 'spring-webmvc')
+        exclude(module: 'logback-core')
+        exclude(module: 'logback-classic')
     }
     compile(group: 'net.shibboleth.idp', name: 'idp-installer', version: idpVersion) {
         exclude(module: 'spring-beans')
@@ -87,6 +96,8 @@ dependencies {
         exclude(module: 'guava')
         exclude(module: 'spring-webflow')
         exclude(module: 'spring-webmvc')
+        exclude(module: 'logback-core')
+        exclude(module: 'logback-classic')
     }
     compile(group: 'net.shibboleth.idp', name: 'idp-saml-impl', version: idpVersion) {
         exclude(module: 'slf4j-api')
@@ -102,6 +113,8 @@ dependencies {
         exclude(module: 'spring-webflow')
         exclude(module: 'spring-webmvc')
         exclude(module: 'spring-web')
+        exclude(module: 'logback-core')
+        exclude(module: 'logback-classic')
     }
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
         exclude(module: 'slf4j-api')

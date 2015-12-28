@@ -32,7 +32,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     private static final long serialVersionUID = -6231886395225437320L;
 
     @Override
-    public NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
+    public final NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                         final Assertion assertion, final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
                         throws SamlException {
         return buildNameId(authnRequest, assertion, service, adaptor);
@@ -43,7 +43,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             throws SamlException {
 
         final List<String> supportedNameFormats = adaptor.getSupportedNameFormats();
-        logger.debug("Metadata for {} declares support for the following NameIDs {}", service.getEntityId(), supportedNameFormats);
+        logger.debug("Metadata for {} declares support for the following NameIDs {}", adaptor.getEntityId(), supportedNameFormats);
 
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {
@@ -64,7 +64,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
             logger.warn("Required NameID format {} in the AuthN request issued by {} is not supported based on the metadata for {}",
-                    requiredNameFormat, authnRequest.getIssuer().getValue(), service.getEntityId());
+                    requiredNameFormat, authnRequest.getIssuer().getValue(), adaptor.getEntityId());
             throw new SamlException("Required NameID format cannot be provided because it is not supported");
         }
 

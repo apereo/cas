@@ -1,9 +1,9 @@
 {
   "@class" : "org.jasig.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "^https:\/\/mmoayyed.+",
+  "serviceId" : "^https:\/\/sp\\.testshib\\.org.+",
   "name" : "SAMLService",
   "id" : 10000003,
   "evaluationOrder" : 10,
   "metadataCacheExpirationMinutes" : 30,
-  "metadataLocation" : "c:/Misagh/GitWorkspace/shibboleth-sample-java-sp/src/main/resources/metadata/sp-metadata.xml"
+  "metadataLocation" : "http://www.testshib.org/metadata/testshib-providers.xml"
 }
