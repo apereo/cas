@@ -1,6 +1,7 @@
 package org.jasig.cas.support.saml;
 
 import org.apache.commons.lang3.StringUtils;
+import org.cryptacular.util.CertUtil;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.messaging.context.MessageContext;
@@ -11,13 +12,16 @@ import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.io.InputStream;
 import java.io.StringWriter;
+import java.security.cert.X509Certificate;
 import java.util.List;
 
 /**
@@ -32,6 +36,19 @@ public final class SamlIdPUtils {
     private SamlIdPUtils() {
     }
 
+    /**
+     * Read certificate x 509 certificate.
+     *
+     * @param resource the resource
+     * @return the x 509 certificate
+     */
+    public static X509Certificate readCertificate(final Resource resource) {
+        try (final InputStream in = resource.getInputStream()) {
+            return CertUtil.readCertificate(in);
+        } catch (final Exception e) {
+            throw new RuntimeException("Error reading certificate " + resource, e);
+        }
+    }
     /**
      * Log saml object.
      *

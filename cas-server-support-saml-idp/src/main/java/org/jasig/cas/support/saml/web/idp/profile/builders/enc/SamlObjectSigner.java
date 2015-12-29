@@ -2,7 +2,6 @@ package org.jasig.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
-import org.cryptacular.util.CertUtil;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
@@ -31,13 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.InputStream;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -281,7 +278,7 @@ public class SamlObjectSigner {
         logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
         logger.debug("Signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
-        logger.debug("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        logger.debug("Signature signing whitelisted algorithms: {}", config.getWhitelistedAlgorithms());
         logger.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         final PrivateKey privateKey = getSigningPrivateKey();
@@ -302,7 +299,7 @@ public class SamlObjectSigner {
      */
     protected X509Certificate getSigningCertificate() {
         logger.debug("Locating signature signing certificate file from [{}]", this.signingCertFile);
-        return readCertificate(new FileSystemResource(this.signingCertFile));
+        return SamlIdPUtils.readCertificate(new FileSystemResource(this.signingCertFile));
     }
 
     /**
@@ -320,19 +317,7 @@ public class SamlObjectSigner {
         return privateKeyFactoryBean.getObject();
     }
 
-    /**
-     * Read certificate x 509 certificate.
-     *
-     * @param resource the resource
-     * @return the x 509 certificate
-     */
-    protected X509Certificate readCertificate(final Resource resource) {
-        try (final InputStream in = resource.getInputStream()) {
-            return CertUtil.readCertificate(in);
-        } catch (final Exception e) {
-            throw new RuntimeException("Error reading certificate " + resource, e);
-        }
-    }
+
 
 
 }
