@@ -44,7 +44,7 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
 
-    compile project(':cas-server-support-saml-idp')
+    
 
     compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
         exclude(module: 'spring-webmvc')
