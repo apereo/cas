@@ -1,4 +1,4 @@
-package org.jasig.cas.support.saml.web.idp.profile.builders;
+package org.jasig.cas.support.saml.web.idp.profile.builders.enc;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
@@ -117,7 +117,7 @@ public class SamlObjectSigner {
      * @return the t
      * @throws SamlException the saml exception
      */
-    protected final <T extends SAMLObject> T encode(final T samlObject,
+    public final <T extends SAMLObject> T encode(final T samlObject,
                                                     final SamlRegisteredService service,
                                                     final SamlMetadataAdaptor adaptor,
                                                     final HttpServletResponse response,
