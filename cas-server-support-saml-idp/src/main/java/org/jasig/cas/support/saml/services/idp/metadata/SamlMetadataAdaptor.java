@@ -78,7 +78,7 @@ public final class SamlMetadataAdaptor {
             final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
-                throw new SAMLException("Cannot find entity " + assertionConsumerService.getLocation() + " in metadata provider");
+                throw new SAMLException("Cannot find entity " + assertionConsumerService.getLocation() + " in metadata provider.");
             }
             LOGGER.debug("Located EntityDescriptor in metadata for [{}]", issuer);
             final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
