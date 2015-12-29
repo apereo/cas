@@ -52,7 +52,7 @@ public final class SamlIdPUtils {
             throw new SamlException(SamlException.CODE, "Assertion consumer service does not define a binding or location for "
                     + adaptor.getEntityId());
         }
-        LOGGER.debug("Configured peer entity endpoint to be {} with binding {}", endpoint.getLocation(), endpoint.getBinding());
+        LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
     }
 }
