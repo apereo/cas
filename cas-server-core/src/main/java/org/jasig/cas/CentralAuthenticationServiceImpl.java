@@ -5,9 +5,8 @@ import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
+import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationManager;
-import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.MixedPrincipalException;
 import org.jasig.cas.authentication.principal.Principal;
@@ -25,20 +24,19 @@ import org.jasig.cas.support.events.CasProxyGrantingTicketCreatedEvent;
 import org.jasig.cas.support.events.CasProxyTicketGrantedEvent;
 import org.jasig.cas.support.events.CasServiceTicketGrantedEvent;
 import org.jasig.cas.support.events.CasServiceTicketValidatedEvent;
-import org.jasig.cas.support.events.CasTicketGrantingTicketDestroyedEvent;
 import org.jasig.cas.support.events.CasTicketGrantingTicketCreatedEvent;
+import org.jasig.cas.support.events.CasTicketGrantingTicketDestroyedEvent;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
-import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
-import org.jasig.cas.ticket.proxy.ProxyGrantingTicketFactory;
-import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketFactory;
-import org.jasig.cas.ticket.TicketCreationException;
 import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketFactory;
 import org.jasig.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicketFactory;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicketFactory;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.validation.Assertion;
@@ -51,29 +49,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 
 /**
  * Concrete implementation of a {@link CentralAuthenticationService}, and also the
  * central, organizing component of CAS's internal implementation.
- * <p>
  * This class is threadsafe.
- * </p>
- * This class has the following properties that must be set:
- * <ul>
- * <li> {@code ticketRegistry} - The Ticket Registry to maintain the list
- * of available tickets.</li>
- * <li> {@code authenticationManager} - The service that will handle
- * authentication.</li>
- * <li> {@code ticketGrantingTicketUniqueTicketIdGenerator} - Plug in to
- * generate unique secure ids for TicketGrantingTickets.</li>
- * <li> {@code serviceTicketUniqueTicketIdGenerator} - Plug in to
- * generate unique secure ids for ServiceTickets.</li>
- * <li> {@code ticketGrantingTicketExpirationPolicy} - The expiration
- * policy for TicketGrantingTickets.</li>
- * <li> {@code serviceTicketExpirationPolicy} - The expiration policy for
- * ServiceTickets.</li>
- * </ul>
  *
  * @author William G. Thompson, Jr.
  * @author Scott Battaglia
@@ -97,19 +78,17 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
      * Build the central authentication service implementation.
      *
      * @param ticketRegistry                              the tickets registry.
-     * @param authenticationManager                       the authentication manager.
      * @param ticketFactory                               the ticket factory
      * @param servicesManager                             the services manager.
      * @param logoutManager                               the logout manager.
      */
     public CentralAuthenticationServiceImpl(
             final TicketRegistry ticketRegistry,
-            final AuthenticationManager authenticationManager,
             final TicketFactory ticketFactory,
             final ServicesManager servicesManager,
             final LogoutManager logoutManager) {
 
-        super(ticketRegistry, ticketFactory, authenticationManager, servicesManager, logoutManager);
+        super(ticketRegistry, ticketFactory, servicesManager, logoutManager);
     }
 
     /**
@@ -156,26 +135,14 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     @Override
     public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId,
-            final Service service, final Credential... credentials)
+            final Service service, final AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException {
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         verifyRegisteredServiceProperties(registeredService, service);
-        final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
-
-        Authentication currentAuthentication = null;
-        if (!sanitizedCredentials.isEmpty()) {
-            currentAuthentication = this.authenticationManager.authenticate(
-                    sanitizedCredentials.toArray(new Credential[] {}));
-            final Authentication original = ticketGrantingTicket.getAuthentication();
-            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
-                throw new MixedPrincipalException(
-                        currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
-            }
-            ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
-        }
+        final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(context, ticketGrantingTicket);
 
         if (currentAuthentication == null && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
             logger.warn("Service [{}] is not allowed to use SSO.", service.getId());
@@ -209,12 +176,30 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, currentAuthentication != null);
         this.ticketRegistry.addTicket(serviceTicket);
 
-        logger.info("Granted ticket [{}] for service [{}] for user [{}]",
+        logger.info("Granted ticket [{}] for service [{}] and principal [{}]",
                 serviceTicket.getId(), service.getId(), principal.getId());
 
         doPublishEvent(new CasServiceTicketGrantedEvent(this, ticketGrantingTicket, serviceTicket));
 
         return serviceTicket;
+    }
+
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationContext context,
+                                                                final TicketGrantingTicket ticketGrantingTicket)
+            throws MixedPrincipalException {
+        Authentication currentAuthentication = null;
+        if (context != null) {
+            currentAuthentication = context.getAuthentication();
+            if (currentAuthentication != null) {
+                final Authentication original = ticketGrantingTicket.getAuthentication();
+                if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                    throw new MixedPrincipalException(
+                            currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
+                }
+                ticketGrantingTicket.getSupplementalAuthentications().add(currentAuthentication);
+            }
+        }
+        return currentAuthentication;
     }
 
     @Audit(
@@ -273,24 +258,6 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         return proxyTicket;
     }
 
-
-    @Audit(
-        action="SERVICE_TICKET",
-        actionResolverName="GRANT_SERVICE_TICKET_RESOLVER",
-        resourceResolverName="GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
-    @Timed(name = "GRANT_SERVICE_TICKET_TIMER")
-    @Metered(name="GRANT_SERVICE_TICKET_METER")
-    @Counted(name="GRANT_SERVICE_TICKET_COUNTER", monotonic=true)
-    @Override
-    public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId,
-        final Service service) throws AbstractTicketException {
-        try {
-            return this.grantServiceTicket(ticketGrantingTicketId, service, (Credential[]) null);
-        } catch (final AuthenticationException e) {
-            throw new IllegalStateException("Unexpected authentication exception", e);
-        }
-    }
-
     @Audit(
             action="PROXY_GRANTING_TICKET",
             actionResolverName="CREATE_PROXY_GRANTING_TICKET_RESOLVER",
@@ -299,7 +266,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     @Metered(name = "CREATE_PROXY_GRANTING_TICKET_METER")
     @Counted(name="CREATE_PROXY_GRANTING_TICKET_COUNTER", monotonic=true)
     @Override
-    public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final Credential... credentials)
+    public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException {
 
         final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
@@ -319,8 +286,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
             throw new UnauthorizedProxyingException();
         }
 
-
-        final Authentication authentication = this.authenticationManager.authenticate(credentials);
+        final Authentication authentication = context.getAuthentication();
         final ProxyGrantingTicketFactory factory = this.ticketFactory.get(ProxyGrantingTicket.class);
         final ProxyGrantingTicket proxyGrantingTicket = factory.create(serviceTicket, authentication);
 
@@ -414,24 +380,20 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     @Metered(name = "CREATE_TICKET_GRANTING_TICKET_METER")
     @Counted(name="CREATE_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
     @Override
-    public TicketGrantingTicket createTicketGrantingTicket(final Credential... credentials)
+    public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationContext context)
             throws AuthenticationException, AbstractTicketException {
 
-        final Set<Credential> sanitizedCredentials = sanitizeCredentials(credentials);
-        if (!sanitizedCredentials.isEmpty()) {
-            final Authentication authentication = this.authenticationManager.authenticate(credentials);
-            final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);
-            final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
+        final Authentication authentication = context.getAuthentication();
+        final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);
+        final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
 
-            this.ticketRegistry.addTicket(ticketGrantingTicket);
+        this.ticketRegistry.addTicket(ticketGrantingTicket);
 
-            doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
+        doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
 
-            return ticketGrantingTicket;
-        }
-        final String msg = "No credentials were specified in the request for creating a new ticket-granting ticket";
-        logger.warn(msg);
-        throw new TicketCreationException(new IllegalArgumentException(msg));
+        return ticketGrantingTicket;
+
+
     }
 
 

@@ -16,7 +16,7 @@ import java.security.GeneralSecurityException;
 import java.util.Map;
 
 /**
- * Test one-time password authentication handler that supports {@link MultifactorAuthenticationTests}.
+ * Test one-time password authentication handler.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
@@ -44,7 +44,7 @@ public class TestOneTimePasswordAuthenticationHandler implements AuthenticationH
             throws GeneralSecurityException, PreventedException {
         final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
         final String valueOnRecord = credentialMap.get(otp.getId());
-        if (otp.getPassword().equals(credentialMap.get(otp.getId()))) {
+        if (otp.getPassword().equals(valueOnRecord)) {
             return new DefaultHandlerResult(this, new BasicCredentialMetaData(otp),
                     new DefaultPrincipalFactory().createPrincipal(otp.getId()));
         }

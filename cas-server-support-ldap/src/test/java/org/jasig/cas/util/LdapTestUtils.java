@@ -6,8 +6,6 @@ import com.unboundid.ldap.sdk.LDAPConnection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.io.LdifReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +27,6 @@ public final class LdapTestUtils {
 
     /** System-wide newline character string. */
     private static final String NEWLINE = System.getProperty("line.separator");
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapTestUtils.class);
 
     /** Private constructor of utility class. */
     private LdapTestUtils() {

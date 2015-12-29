@@ -1,14 +1,15 @@
 package org.jasig.cas.web.support;
 
-import org.jasig.inspektr.common.web.ClientInfo;
-import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.inspektr.common.web.ClientInfo;
+import org.jasig.inspektr.common.web.ClientInfoHolder;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -19,7 +20,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.sql.DataSource;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
@@ -29,14 +30,15 @@ import static org.junit.Assert.fail;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-        "classpath:/core-context.xml", "classpath:/applicationContext.xml", "classpath:/jpaTestApplicationContext.xml",
+        "classpath:/core-context.xml",
+        "classpath:/jpaTestApplicationContext.xml",
         "classpath:/inspektrThrottledSubmissionContext.xml"
 })
-@Ignore("Disable temporarily until we have time to investigate cause of test failure")
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
-AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+                AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
+    @Qualifier("inspektrIpAddressUsernameThrottle")
     private InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter throttle;
 
     @Autowired
@@ -79,7 +81,7 @@ AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
         getThrottle().preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(badCredentials(username));
+            authenticationManager.authenticate(AuthenticationTransaction.wrap(badCredentials(username)));
         } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);
             return response;

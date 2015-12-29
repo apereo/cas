@@ -142,4 +142,33 @@ public final class TestUtils {
         when(service.getDescription()).thenReturn("service description");
         return service;
     }
+
+    public static AuthenticationContext getAuthenticationContext(final AuthenticationSystemSupport support, final Service service)
+            throws AuthenticationException {
+        return getAuthenticationContext(support, service, getCredentialsWithSameUsernameAndPassword());
+    }
+
+    public static AuthenticationContext getAuthenticationContext(final AuthenticationSystemSupport support)
+            throws AuthenticationException {
+        return getAuthenticationContext(support, getService(), getCredentialsWithSameUsernameAndPassword());
+    }
+
+    public static AuthenticationContext getAuthenticationContext(final AuthenticationSystemSupport support,
+                                                                 final Credential... credentials)
+            throws AuthenticationException {
+        return getAuthenticationContext(support, getService(), credentials);
+    }
+
+    public static AuthenticationContext getAuthenticationContext(final AuthenticationSystemSupport support,
+                                                                 final Service service,
+                                                                 final Credential... credentials)
+            throws AuthenticationException {
+        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                support.getPrincipalElectionStrategy());
+        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credentials);
+        support.getAuthenticationTransactionManager()
+                .handle(transaction,  builder);
+        final AuthenticationContext ctx = builder.build(service);
+        return ctx;
+    }
 }

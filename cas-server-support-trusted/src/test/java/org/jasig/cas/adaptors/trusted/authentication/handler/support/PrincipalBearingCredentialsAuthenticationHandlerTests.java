@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 
 /**
  * @author Andrew Petro
- * @since 3.0.0.5
+ * @since 3.0.0
  */
 public final class PrincipalBearingCredentialsAuthenticationHandlerTests {
 

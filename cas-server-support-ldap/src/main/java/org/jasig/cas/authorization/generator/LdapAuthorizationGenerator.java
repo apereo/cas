@@ -183,7 +183,6 @@ public class LdapAuthorizationGenerator implements AuthorizationGenerator<Common
         if (userAttribute == null) {
             throw new IllegalStateException(this.userAttributeName + " attribute not found in results.");
         }
-        final String id = userAttribute.getStringValue();
 
         final SearchResult roleResult;
         try {
