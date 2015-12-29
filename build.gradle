@@ -192,8 +192,6 @@ subprojects {
         provided group: 'javax.el', name: 'javax.el-api', version: javaxElVersion
     }
 
-    uploadArchives.dependsOn checkArtifactUpload
-
     uploadArchives {
         repositories {
             mavenDeployer {
@@ -214,7 +212,8 @@ subprojects {
                 pom.project {
                     url "http://www.apereo.org/cas"
                     inceptionYear 2004
-
+                    name project.name
+                    description project.name
                     issueManagement {
                         system "Github"
                         url "https://github.com/Jasig/cas/issues"
