@@ -22,7 +22,9 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = 1218757374062931021L;
 
     private String metadataLocation;
+    private long metadataMaxValidity;
     private String requiredAuthenticationContextClass;
+    private String metadataSignatureLocation;
     private boolean signAssertions;
     private boolean signResponses = true;
 
@@ -33,30 +35,12 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         super();
     }
 
-    /**
-     * Sets metadata location.
-     *
-     * @param metadataLocation the metadata location
-     */
     public void setMetadataLocation(final String metadataLocation) {
-        try {
-            this.metadataLocation = metadataLocation;
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("Metadata location " + metadataLocation + " cannot be determined");
-        }
+        this.metadataLocation = metadataLocation;
     }
 
-    /**
-     * Gets metadata location.
-     *
-     * @return the metadata location
-     */
     public String getMetadataLocation() {
-        try {
-            return this.metadataLocation;
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        return this.metadataLocation;
     }
 
     public boolean isSignAssertions() {
@@ -83,6 +67,22 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         this.requiredAuthenticationContextClass = requiredAuthenticationContextClass;
     }
 
+    public String getMetadataSignatureLocation() {
+        return metadataSignatureLocation;
+    }
+
+    public void setMetadataSignatureLocation(final String metadataSignatureLocation) {
+        this.metadataSignatureLocation = metadataSignatureLocation;
+    }
+
+    public long getMetadataMaxValidity() {
+        return metadataMaxValidity;
+    }
+
+    public void setMetadataMaxValidity(final long metadataMaxValidity) {
+        this.metadataMaxValidity = metadataMaxValidity;
+    }
+
     @Override
     public void copyFrom(final RegisteredService source) {
         super.copyFrom(source);
@@ -91,6 +91,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
             samlRegisteredService.setMetadataLocation(this.metadataLocation);
             samlRegisteredService.setSignAssertions(this.signAssertions);
             samlRegisteredService.setSignResponses(this.signResponses);
+            samlRegisteredService.setRequiredAuthenticationContextClass(this.requiredAuthenticationContextClass);
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
@@ -118,6 +119,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
                 .append(this.metadataLocation, rhs.getMetadataLocation())
                 .append(this.signResponses, rhs.isSignResponses())
                 .append(this.signAssertions, rhs.isSignAssertions())
+                .append(this.requiredAuthenticationContextClass, rhs.getRequiredAuthenticationContextClass())
                 .isEquals();
     }
 
@@ -125,6 +127,10 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     public int hashCode() {
         return new HashCodeBuilder(13, 17)
                 .appendSuper(super.hashCode())
+                .append(this.metadataLocation)
+                .append(this.signAssertions)
+                .append(this.signResponses)
+                .append(this.requiredAuthenticationContextClass)
                 .toHashCode();
     }
 
@@ -135,6 +141,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
                 .append("metadataLocation", this.metadataLocation)
                 .append("signResponses", this.signResponses)
                 .append("signAssertions", this.signAssertions)
+                .append("requiredAuthenticationContextClass", this.requiredAuthenticationContextClass)
                 .toString();
     }
 

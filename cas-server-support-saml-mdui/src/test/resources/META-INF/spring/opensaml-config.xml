@@ -75,7 +75,7 @@
 
     <util:map id="dynaMetadataResources">
         <entry key="http://mdq-beta.incommon.org/global/entities/">
-            <bean class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
+            <bean class="org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain">
                 <property name="filters">
                     <list />
                 </property>
@@ -99,7 +99,7 @@
                value-ref="inCommonMetadataFilters" />
     </util:map>
 
-    <bean id="inCommonMetadataFilters" class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
+    <bean id="inCommonMetadataFilters" class="org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain">
         <property name="filters">
             <list>
                 <!--
