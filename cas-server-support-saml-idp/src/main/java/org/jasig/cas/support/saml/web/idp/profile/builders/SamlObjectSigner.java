@@ -123,7 +123,7 @@ public class SamlObjectSigner {
                                                     final HttpServletResponse response,
                                                     final HttpServletRequest request) throws SamlException {
         try {
-            logger.debug("Attempting to encode {} for {}", samlObject.getClass().getName(), adaptor.getEntityId());
+            logger.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
             final MessageContext<T> outboundContext = new MessageContext<>();
             prepareOutboundContext(samlObject, adaptor, outboundContext);
             prepareSecurityParametersContext(adaptor, outboundContext);
@@ -210,7 +210,7 @@ public class SamlObjectSigner {
     protected <T extends SAMLObject> void prepareOutboundContext(final T samlObject, final SamlMetadataAdaptor adaptor,
                                                                  final MessageContext<T> outboundContext) throws SamlException {
 
-        logger.debug("Outbound saml object to use is {}", samlObject.getClass().getName());
+        logger.debug("Outbound saml object to use is [{}]", samlObject.getClass().getName());
         outboundContext.setMessage(samlObject);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(outboundContext, adaptor);
     }
@@ -228,7 +228,7 @@ public class SamlObjectSigner {
             criteria.add(new SignatureSigningConfigurationCriterion(getSignatureSigningConfiguration()));
             criteria.add(new RoleDescriptorCriterion(descriptor));
             final SAMLMetadataSignatureSigningParametersResolver resolver = new SAMLMetadataSignatureSigningParametersResolver();
-            logger.debug("Resolving signature signing parameters for {}", descriptor.getElementQName().getLocalPart());
+            logger.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
 
             final SignatureSigningParameters params = resolver.resolveSingle(criteria);
             if (params == null) {
@@ -236,9 +236,9 @@ public class SamlObjectSigner {
             }
 
             logger.debug("Created signature signing parameters."
-                            + "\nSignature algorithm: {}"
-                            + "\nSignature canonicalization algorithm: {}"
-                            + "\nSignature reference digest methods: {}",
+                            + "\nSignature algorithm: [{}]"
+                            + "\nSignature canonicalization algorithm: [{}]"
+                            + "\nSignature reference digest methods: [{}]",
                     params.getSignatureAlgorithm(), params.getSignatureCanonicalizationAlgorithm(),
                     params.getSignatureReferenceDigestMethod());
 
@@ -278,11 +278,11 @@ public class SamlObjectSigner {
         if (StringUtils.isNotBlank(overrideSignatureCanonicalizationAlgorithm)) {
             config.setSignatureCanonicalizationAlgorithm(this.overrideSignatureCanonicalizationAlgorithm);
         }
-        logger.debug("Signature signing blacklisted algorithms: {}", config.getBlacklistedAlgorithms());
-        logger.debug("Signature signing signature algorithms: {}", config.getSignatureAlgorithms());
-        logger.debug("Signature signing signature canonicalization algorithm: {}", config.getSignatureCanonicalizationAlgorithm());
-        logger.debug("Signature signing whitelisted algorithms: {}", config.getWhitelistedAlgorithms());
-        logger.debug("Signature signing reference digest methods: {}", config.getSignatureReferenceDigestMethods());
+        logger.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        logger.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
+        logger.debug("Signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
+        logger.debug("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        logger.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         final PrivateKey privateKey = getSigningPrivateKey();
         final X509Certificate certificate = getSigningCertificate();
@@ -301,7 +301,7 @@ public class SamlObjectSigner {
      * @return the signing certificate
      */
     protected X509Certificate getSigningCertificate() {
-        logger.debug("Locating signature signing certificate file from {}", this.signingCertFile);
+        logger.debug("Locating signature signing certificate file from [{}]", this.signingCertFile);
         return readCertificate(new FileSystemResource(this.signingCertFile));
     }
 
@@ -316,7 +316,7 @@ public class SamlObjectSigner {
         privateKeyFactoryBean.setLocation(new FileSystemResource(this.signingKeyFile));
         privateKeyFactoryBean.setAlgorithm("RSA");
         privateKeyFactoryBean.setSingleton(false);
-        logger.debug("Locating signature signing key file from {}", this.signingKeyFile);
+        logger.debug("Locating signature signing key file from [{}]", this.signingKeyFile);
         return privateKeyFactoryBean.getObject();
     }
 

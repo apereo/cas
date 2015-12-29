@@ -64,7 +64,7 @@ public final class SamlMetadataAdaptor {
                                             final AuthnRequest authnRequest) {
         try {
             final String issuer = authnRequest.getIssuer().getValue();
-            LOGGER.info("Adapting SAML metadata for CAS service {} issued by {}",
+            LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
                     registeredService.getName(), issuer);
 
             final AssertionConsumerService assertionConsumerService = getAssertionConsumerServiceFor(authnRequest);
@@ -73,15 +73,17 @@ public final class SamlMetadataAdaptor {
             criterions.add(new EntityIdCriterion(issuer));
             criterions.add(new EndpointCriterion<>(assertionConsumerService, true));
 
+            LOGGER.info("Locating metadata for entityID [{}], with binding [{}] and ACS endpoint [{}]",
+                    issuer, SAMLConstants.SAML2_POST_BINDING_URI, assertionConsumerService.getLocation());
             final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
                 throw new SAMLException("Cannot find entity " + assertionConsumerService.getLocation() + " in metadata provider");
             }
-            LOGGER.debug("Located EntityDescriptor in metadata for {}", issuer);
+            LOGGER.debug("Located EntityDescriptor in metadata for [{}]", issuer);
             final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
             if (ssoDescriptor != null) {
-                LOGGER.debug("Located SPSSODescriptor in metadata for {}. Metadata is valid until {}",
+                LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]",
                         issuer, ssoDescriptor.getValidUntil());
                 return new SamlMetadataAdaptor(assertionConsumerService, ssoDescriptor, entityDescriptor);
             }
