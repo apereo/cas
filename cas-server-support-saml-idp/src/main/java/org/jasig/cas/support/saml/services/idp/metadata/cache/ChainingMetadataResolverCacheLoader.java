@@ -127,7 +127,7 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
      * @throws Exception the exception
      */
     protected void resolveMetadataDynamically(final SamlRegisteredService service, final List<MetadataResolver> metadataResolvers)
-                throws Exception {
+            throws Exception {
         logger.info("Loading metadata dynamically for [{}]", service.getName());
         final FunctionDrivenDynamicHTTPMetadataResolver resolver =
                 new FunctionDrivenDynamicHTTPMetadataResolver(httpClient.getWrappedHttpClient());
