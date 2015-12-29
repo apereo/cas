@@ -27,6 +27,7 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     private String metadataSignatureLocation;
     private boolean signAssertions;
     private boolean signResponses = true;
+    private boolean encryptAssertions;
 
     /**
      * Instantiates a new Saml registered service.
@@ -73,6 +74,14 @@ public final class SamlRegisteredService extends RegexRegisteredService {
 
     public void setMetadataSignatureLocation(final String metadataSignatureLocation) {
         this.metadataSignatureLocation = metadataSignatureLocation;
+    }
+
+    public boolean isEncryptAssertions() {
+        return encryptAssertions;
+    }
+
+    public void setEncryptAssertions(final boolean encryptAssertions) {
+        this.encryptAssertions = encryptAssertions;
     }
 
     public long getMetadataMaxValidity() {
