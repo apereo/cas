@@ -103,19 +103,19 @@ function generateToolbarIcons() {
   }
 
   editLink += editablePage;
-  editLink = editLink.replace("//", "/");
+ 
 
   $('#toolbarIcons').append("<a target='_blank' href='" + editLink +
     "'><img src='" + imagesPath + "edit.png' alt='Edit with Github' title='Edit with Github'></a>");
 
   historyLink += editablePage;
-  historyLink = historyLink.replace("//", "/");
+  
   
   $('#toolbarIcons').append("<a target='_blank' href='" + historyLink +
     "'><img src='" + imagesPath + "history.png' alt='View commit history on Github' title='View commit history on Github'>");
 
   deleteLink += editablePage;
-  deleteLink = deleteLink.replace("//", "/");
+  
   
   $('#toolbarIcons').append("<a target='_blank' href='" + deleteLink +
     "'><img src='" + imagesPath + "delete.png' alt='Delete with Github' title='Delete with Github'>");
