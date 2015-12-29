@@ -99,6 +99,8 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(Date.class, new DefaultSerializers.DateSerializer());
         kryo.register(HardTimeoutExpirationPolicy.class);
         kryo.register(HashMap.class);
+        kryo.register(LinkedHashMap.class);
+        kryo.register(HashSet.class);
         kryo.register(DefaultHandlerResult.class);
         kryo.register(ImmutableAuthentication.class);
         kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
@@ -110,6 +112,8 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(TicketGrantingTicketExpirationPolicy.class);
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(TimeoutExpirationPolicy.class);
+        kryo.register(UsernamePasswordCredential.class);
+        kryo.register(SimplePrincipal.class);
         kryo.register(URL.class, new URLSerializer());
         kryo.register(URI.class, new URISerializer());
         kryo.register(Pattern.class, new RegexSerializer());
@@ -131,6 +135,10 @@ public class KryoTranscoder implements Transcoder<Object> {
         ImmutableSetSerializer.registerSerializers(kryo);
         ImmutableMapSerializer.registerSerializers(kryo);
         ImmutableMultimapSerializer.registerSerializers(kryo);
+        
+        kryo.register( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
+        kryo.register( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
+        kryo.register( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
 
         // Register other types
         if (serializerMap != null) {
