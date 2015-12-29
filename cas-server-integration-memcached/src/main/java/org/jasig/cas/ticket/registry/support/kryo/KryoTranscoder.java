@@ -144,9 +144,9 @@ public class KryoTranscoder implements Transcoder<Object> {
         ImmutableMapSerializer.registerSerializers(kryo);
         ImmutableMultimapSerializer.registerSerializers(kryo);
         
-        kryo.register( Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer() );
-        kryo.register( Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer() );
-        kryo.register( Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer() );
+        kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
+        kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
+        kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
 
         // Register other types
         if (serializerMap != null) {
