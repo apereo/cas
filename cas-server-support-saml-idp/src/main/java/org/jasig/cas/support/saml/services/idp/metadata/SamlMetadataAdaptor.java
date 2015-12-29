@@ -12,6 +12,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.criterion.EndpointCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.ContactPerson;
@@ -42,13 +43,16 @@ public final class SamlMetadataAdaptor {
     private final AssertionConsumerService assertionConsumerService;
     private final SPSSODescriptor ssoDescriptor;
     private final EntityDescriptor entityDescriptor;
+    private final MetadataResolver metadataResolver;
 
     private SamlMetadataAdaptor(final AssertionConsumerService assertionConsumerService,
                                 final SPSSODescriptor ssoDescriptor,
-                                final EntityDescriptor entityDescriptor) {
+                                final EntityDescriptor entityDescriptor,
+                                final MetadataResolver metadataResolver) {
         this.assertionConsumerService = assertionConsumerService;
         this.ssoDescriptor = ssoDescriptor;
         this.entityDescriptor = entityDescriptor;
+        this.metadataResolver = metadataResolver;
     }
 
     /**
@@ -85,7 +89,7 @@ public final class SamlMetadataAdaptor {
             if (ssoDescriptor != null) {
                 LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]",
                         issuer, ssoDescriptor.getValidUntil());
-                return new SamlMetadataAdaptor(assertionConsumerService, ssoDescriptor, entityDescriptor);
+                return new SamlMetadataAdaptor(assertionConsumerService, ssoDescriptor, entityDescriptor, chainingMetadataResolver);
             }
             throw new SamlException("Could not locate SPSSODescriptor in the metadata for " + issuer);
         } catch (final Exception e) {
@@ -184,6 +188,10 @@ public final class SamlMetadataAdaptor {
 
     public AssertionConsumerService getAssertionConsumerService() {
         return getAssertionConsumerServices().get(0);
+    }
+
+    public MetadataResolver getMetadataResolver() {
+        return metadataResolver;
     }
 
     /**

@@ -1,17 +1,19 @@
 package org.jasig.cas.support.saml.web.idp.profile.builders;
 
-import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
+import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.Issuer;
@@ -65,12 +67,15 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     @Qualifier("samlProfileSamlAssertionBuilder")
     private SamlProfileSamlAssertionBuilder samlProfileSamlAssertionBuilder;
 
+    @Autowired
+    @Qualifier("samlObjectEncrypter")
+    private SamlObjectEncrypter samlObjectEncrypter;
+
     @Override
     public final Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
-                                final HttpServletResponse response, final Assertion casAssertion,
+                                final HttpServletResponse response, final org.jasig.cas.client.validation.Assertion casAssertion,
                                 final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SamlException {
-        final org.opensaml.saml.saml2.core.Assertion assertion =
-                this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
+        final Assertion assertion = samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
         final Response finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);
         return encode(service, finalResponse, response, adaptor);
     }
@@ -87,7 +92,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      * @return the response
      * @throws SamlException the saml exception
      */
-    protected Response buildResponse(final org.opensaml.saml.saml2.core.Assertion assertion,
+    protected Response buildResponse(final Assertion assertion,
                                      final AuthnRequest authnRequest, final SamlRegisteredService service,
                                      final SamlMetadataAdaptor adaptor,
                                      final HttpServletRequest request, final HttpServletResponse response)
@@ -97,12 +102,14 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
 
-        if (assertion instanceof EncryptedAssertion) {
+        final SAMLObject finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
+
+        if (finalAssertion instanceof EncryptedAssertion) {
             logger.debug("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
-            samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(assertion));
+            samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(finalAssertion));
         } else {
             logger.debug("Built assertion is not encrypted, so the response will add it to the assertions collection");
-            samlResponse.getAssertions().add(assertion);
+            samlResponse.getAssertions().add(Assertion.class.cast(finalAssertion));
         }
 
         final Status status = newStatus(StatusCode.SUCCESS, StatusCode.SUCCESS);
@@ -156,6 +163,33 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
+    }
 
+    /**
+     * Encrypt assertion.
+     *
+     * @param assertion the assertion
+     * @param request   the request
+     * @param response  the response
+     * @param service   the service
+     * @param adaptor   the adaptor
+     * @return the saml object
+     * @throws SamlException the saml exception
+     */
+    protected SAMLObject encryptAssertion(final Assertion assertion,
+                                          final HttpServletRequest request, final HttpServletResponse response,
+                                          final SamlRegisteredService service,
+                                          final SamlMetadataAdaptor adaptor) throws SamlException {
+        try {
+            if (service.isEncryptAssertions()) {
+                logger.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
+                final EncryptedAssertion encryptedAssertion = samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
+                return encryptedAssertion;
+            }
+            logger.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
+            return assertion;
+        } catch (final Exception e) {
+            throw new SamlException("Unable to marshall assertion for encryption", e);
+        }
     }
 }
