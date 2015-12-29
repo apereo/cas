@@ -20,6 +20,13 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
+and defining the appropriate keys for JWT signing and encryption:
+
+{% highlight properties %}
+cas.oauth.jwt.signingSecret=
+cas.oauth.jwt.encryptionSecret=
+{% endhighlight %}
+
 After enabling OAuth support, three new urls will be available:
 
 * **/oauth2.0/authorize**  
