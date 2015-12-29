@@ -9,8 +9,8 @@ import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.util.CommonHelper;
+import org.pac4j.http.profile.HttpProfile;
 import org.pac4j.jwt.JwtConstants;
 import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,15 +54,15 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
                                                  final HttpServletResponse response) throws Exception {
 
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        logger.debug("{} : {}", OAuthConstants.REDIRECT_URI, redirectUri);
+        logger.debug("{}: {}", OAuthConstants.REDIRECT_URI, redirectUri);
 
         final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        logger.debug("{} : {}", OAuthConstants.CLIENT_ID, clientId);
+        logger.debug("{}: {}", OAuthConstants.CLIENT_ID, clientId);
 
         final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
 
         final String code = request.getParameter(OAuthConstants.CODE);
-        logger.debug("{} : {}", OAuthConstants.CODE, code);
+        logger.debug("{}: {}", OAuthConstants.CODE, code);
 
         final boolean isVerified = verifyAccessTokenRequest(response, redirectUri, clientId, clientSecret, code);
         if (!isVerified) {
@@ -72,7 +72,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
         // service ticket should be valid
         if (serviceTicket == null || serviceTicket.isExpired()) {
-            logger.error("Code expired : {}", code);
+            logger.error("Code expired: {}", code);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
         final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
@@ -81,18 +81,27 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
-        final String id = principal.getId();
         final Map<String, Object> attributes = new HashMap<>(service.getAttributeReleasePolicy().getAttributes(principal));
+        final String id = principal.getId();
         if (!service.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(id, attributes)) {
             logger.error("Service [{}] is not authorized for use by [{}].", service.getServiceId(), principal);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
+
+        if (attributes.containsKey(JwtConstants.SUBJECT) || attributes.containsKey(JwtConstants.ISSUE_TIME)
+         || attributes.containsKey(JwtConstants.ISSUER) || attributes.containsKey(JwtConstants.AUDIENCE)
+         || attributes.containsKey(JwtConstants.EXPIRATION_TIME)) {
+            logger.error("Current profile: {} has forbidden attributes.", principal);
+            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_PROFILE, HttpStatus.SC_BAD_REQUEST);
+        }
+
+        attributes.put(JwtConstants.ISSUER, loginUrl.replace("/login$",OAuthConstants.ENDPOINT_OAUTH2));
         attributes.put(JwtConstants.AUDIENCE, service.getServiceId());
         final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
                 .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
         attributes.put(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), expires));
 
-        final UserProfile profile = new UserProfile();
+        final HttpProfile profile = new HttpProfile();
         profile.setId(id);
         profile.addAttributes(attributes);
         final String accessToken = this.accessTokenJwtGenerator.generate(profile);

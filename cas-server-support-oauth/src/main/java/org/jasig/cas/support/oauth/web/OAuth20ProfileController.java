@@ -114,6 +114,7 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
         attributes.remove(JwtConstants.ISSUE_TIME);
         attributes.remove(JwtConstants.AUDIENCE);
         attributes.remove(JwtConstants.EXPIRATION_TIME);
+        attributes.remove(JwtConstants.ISSUER);
 
         jsonGenerator.writeStartObject();
         jsonGenerator.writeStringField(ID, id);
