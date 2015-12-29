@@ -4,7 +4,6 @@ import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
-import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -54,9 +53,6 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     @Qualifier("samlObjectSigner")
     private SamlObjectSigner samlObjectSigner;
 
-    @Autowired
-    @Qualifier("samlObjectEncrypter")
-    private SamlObjectEncrypter samlObjectEncrypter;
 
     @Override
     public final Assertion build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
@@ -73,7 +69,6 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         assertion.setConditions(samlProfileSamlConditionsBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
 
         signAssertion(assertion, request, response, service, adaptor);
-        encryptAssertion(assertion, request, response, service, adaptor);
         return assertion;
     }
 
@@ -103,29 +98,4 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         }
     }
 
-    /**
-     * Encrypt assertion.
-     *
-     * @param assertion the assertion
-     * @param request   the request
-     * @param response  the response
-     * @param service   the service
-     * @param adaptor   the adaptor
-     * @throws SamlException the saml exception
-     */
-    protected void encryptAssertion(final Assertion assertion,
-                                 final HttpServletRequest request, final HttpServletResponse response,
-                                 final SamlRegisteredService service,
-                                 final SamlMetadataAdaptor adaptor) throws SamlException {
-        try {
-            if (service.isEncryptAssertions()) {
-                logger.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-                this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
-            } else {
-                logger.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
-            }
-        } catch (final Exception e) {
-            throw new SamlException("Unable to marshall assertion for encryption", e);
-        }
-    }
 }

@@ -3,7 +3,6 @@ package org.jasig.cas.support.saml.services.idp.metadata.cache;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheLoader;
 import net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean;
-import net.shibboleth.utilities.java.support.component.ComponentInitializationException;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
@@ -11,7 +10,6 @@ import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.util.ResourceUtils;
 import org.jasig.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
-import org.opensaml.saml.metadata.resolver.DynamicMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
@@ -59,9 +57,6 @@ import java.util.concurrent.TimeUnit;
 public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegisteredService, ChainingMetadataResolver> {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")
-    private long metadataCacheExpirationMinutes;
-
     /**
      * The Config bean.
      */
@@ -75,6 +70,9 @@ public class ChainingMetadataResolverCacheLoader extends CacheLoader<SamlRegiste
     @Autowired
     @Qualifier("noRedirectHttpClient")
     protected HttpClient httpClient;
+
+    @Value("${cas.samlidp.metadata.cache.exp.minutes:30}")
+    private long metadataCacheExpirationMinutes;
 
     private final transient Object lock = new Object();
 
