@@ -17,15 +17,17 @@ import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.jasig.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
+import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
-import org.opensaml.saml.saml2.core.AuthnContextClassRef;
-import org.opensaml.saml.saml2.core.AuthnContextDeclRef;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +36,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.w3c.dom.Element;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
 import java.security.SecureRandom;
 
 /**
@@ -104,6 +112,12 @@ public abstract class AbstractSamlProfileHandlerController {
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
+
+    /**
+     * The Config bean.
+     */
+    @Autowired
+    protected OpenSamlConfigBean configBean;
 
     @Autowired
     @Qualifier("samlProfileSamlResponseBuilder")
@@ -179,42 +193,7 @@ public abstract class AbstractSamlProfileHandlerController {
         }
     }
 
-    /**
-     * Log authn request.
-     *
-     * @param authnRequest the authn request
-     */
-    protected void logAuthnRequest(final AuthnRequest authnRequest) {
-        logger.debug("\t Request Issuer: [{}]", authnRequest.getIssuer().getValue());
-        logger.debug("\t AssertionConsumerServiceURL: [{}]", authnRequest.getAssertionConsumerServiceURL());
-        logger.debug("\t Destination: [{}]", authnRequest.getDestination());
-        logger.debug("\t ProtocolBinding: [{}]", authnRequest.getProtocolBinding());
-        logger.debug("\t Forced AuthN: [{}]", authnRequest.isForceAuthn());
-        logger.debug("\t Passive AuthN: [{}]", authnRequest.isPassive());
-        logger.debug("\t Signed AuthN: [{}]", authnRequest.isSigned());
 
-        if (StringUtils.isNotBlank(authnRequest.getProviderName())) {
-            logger.debug("\t ProviderName: [{}]", authnRequest.getProviderName());
-        }
-        logger.debug("\t IssueInstant: [{}]", authnRequest.getIssueInstant());
-
-        if (authnRequest.getRequestedAuthnContext() != null) {
-            for (final AuthnContextClassRef ctx : authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()) {
-                logger.debug("\t AuthnContextClassRef: [{}]", ctx.getAuthnContextClassRef());
-            }
-
-            for (final AuthnContextDeclRef ctx : authnRequest.getRequestedAuthnContext().getAuthnContextDeclRefs()) {
-                logger.debug("\t AuthnContextClassRef: [{}]", ctx.getAuthnContextDeclRef());
-            }
-            logger.debug("\t AuthnContextClass Comparison: [{}]",
-                    authnRequest.getRequestedAuthnContext().getComparison());
-        }
-
-        if (authnRequest.getNameIDPolicy() != null) {
-            logger.debug("\t NameIDFormat: [{}]", authnRequest.getNameIDPolicy().getFormat());
-            logger.debug("\t SPNameQualifier: [{}]", authnRequest.getNameIDPolicy().getSPNameQualifier());
-        }
-    }
 
     /**
      * Gets registered service and verify.
@@ -312,7 +291,6 @@ public abstract class AbstractSamlProfileHandlerController {
             decoder.decode();
             final AuthnRequest authnRequest = decoder.getMessageContext().getMessage();
             logger.debug("Decoded authentication request from http request");
-            logAuthnRequest(authnRequest);
             return authnRequest;
         } catch (final Exception e) {
             throw new RuntimeException(e);
@@ -334,7 +312,7 @@ public abstract class AbstractSamlProfileHandlerController {
         final AuthnRequest authnRequest = decodeAuthenticationRequest(request, decoder);
         verifySamlRegisteredService(authnRequest);
         storeAuthnRequest(request, authnRequest);
-        logAuthnRequest(authnRequest);
+        SamlIdPUtils.logSamlObject(this.configBean, authnRequest);
         performAuthentication(authnRequest, request, response);
     }
 

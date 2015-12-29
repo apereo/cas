@@ -1,16 +1,19 @@
 package org.jasig.cas.support.saml.web.idp.profile.builders;
 
 import org.jasig.cas.client.validation.Assertion;
+import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostEncoder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
@@ -35,6 +38,12 @@ import java.security.SecureRandom;
 @Component("samlProfileSamlResponseBuilder")
 public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Response> {
     private static final long serialVersionUID = -1891703354216174875L;
+
+    /**
+     * The Config bean.
+     */
+    @Autowired
+    protected OpenSamlConfigBean configBean;
 
     /**
      * The Saml object encoder.
@@ -88,11 +97,22 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
 
-        samlResponse.getAssertions().add(assertion);
+        if (assertion instanceof EncryptedAssertion) {
+            logger.debug("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
+            samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(assertion));
+        } else {
+            logger.debug("Built assertion is not encrypted, so the response will add it to the assertions collection");
+            samlResponse.getAssertions().add(assertion);
+        }
+
         final Status status = newStatus(StatusCode.SUCCESS, StatusCode.SUCCESS);
         samlResponse.setStatus(status);
 
+        SamlIdPUtils.logSamlObject(this.configBean, samlResponse);
+
         if (service.isSignResponses()) {
+            logger.debug("SAML entity id [{}] indicates that SAML responses should be signed",
+                    adaptor.getEntityId());
             samlResponse = samlObjectSigner.encode(samlResponse, service, adaptor, response, request);
         }
 

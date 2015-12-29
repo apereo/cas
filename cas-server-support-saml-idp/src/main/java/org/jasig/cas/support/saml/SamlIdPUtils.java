@@ -2,14 +2,22 @@ package org.jasig.cas.support.saml;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Element;
 
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
 import java.util.List;
 
 /**
@@ -22,6 +30,31 @@ public final class SamlIdPUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPUtils.class);
 
     private SamlIdPUtils() {
+    }
+
+    /**
+     * Log saml object.
+     *
+     * @param configBean the config bean
+     * @param samlObject the saml object
+     * @throws SamlException the saml exception
+     */
+    public static void logSamlObject(final OpenSamlConfigBean configBean, final SAMLObject samlObject) throws SamlException {
+        try {
+            final Marshaller marshaller = configBean.getMarshallerFactory().getMarshaller(samlObject.getElementQName());
+            if (marshaller != null) {
+                final Element element = marshaller.marshall(samlObject);
+                final DOMSource domSource = new DOMSource(element);
+                final StringWriter writer = new StringWriter();
+                final StreamResult result = new StreamResult(writer);
+                final TransformerFactory tf = TransformerFactory.newInstance();
+                final Transformer transformer = tf.newTransformer();
+                transformer.transform(domSource, result);
+                LOGGER.debug("Logging [{}]\n{}", samlObject.getClass().getName(), writer);
+            }
+        } catch (final Exception e) {
+            throw new SamlException(e.getMessage(), e);
+        }
     }
 
     /**
