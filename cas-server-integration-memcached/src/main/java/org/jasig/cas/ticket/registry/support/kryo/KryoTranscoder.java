@@ -5,14 +5,20 @@ import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
 import de.javakaffee.kryoserializers.EnumMapSerializer;
 import de.javakaffee.kryoserializers.EnumSetSerializer;
 import de.javakaffee.kryoserializers.KryoReflectionFactorySupport;
@@ -29,6 +35,8 @@ import net.spy.memcached.transcoders.Transcoder;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.ImmutableAuthentication;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.jasig.cas.authentication.principal.SimplePrincipal;
 import org.jasig.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
@@ -99,6 +107,8 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(Date.class, new DefaultSerializers.DateSerializer());
         kryo.register(HardTimeoutExpirationPolicy.class);
         kryo.register(HashMap.class);
+        kryo.register(LinkedHashMap.class);
+        kryo.register(HashSet.class);
         kryo.register(DefaultHandlerResult.class);
         kryo.register(ImmutableAuthentication.class);
         kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
@@ -110,6 +120,8 @@ public class KryoTranscoder implements Transcoder<Object> {
         kryo.register(TicketGrantingTicketExpirationPolicy.class);
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(TimeoutExpirationPolicy.class);
+        kryo.register(UsernamePasswordCredential.class);
+        kryo.register(SimplePrincipal.class);
         kryo.register(URL.class, new URLSerializer());
         kryo.register(URI.class, new URISerializer());
         kryo.register(Pattern.class, new RegexSerializer());
@@ -131,6 +143,10 @@ public class KryoTranscoder implements Transcoder<Object> {
         ImmutableSetSerializer.registerSerializers(kryo);
         ImmutableMapSerializer.registerSerializers(kryo);
         ImmutableMultimapSerializer.registerSerializers(kryo);
+        
+        kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
+        kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
+        kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
 
         // Register other types
         if (serializerMap != null) {
