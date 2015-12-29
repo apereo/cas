@@ -43,12 +43,12 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             throws SamlException {
 
         final List<String> supportedNameFormats = adaptor.getSupportedNameFormats();
-        logger.debug("Metadata for {} declares support for the following NameIDs {}", adaptor.getEntityId(), supportedNameFormats);
+        logger.debug("Metadata for [{}] declares support for the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
 
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {
             requiredNameFormat = authnRequest.getNameIDPolicy().getFormat();
-            logger.debug("AuthN request says {} is the required NameID format", requiredNameFormat);
+            logger.debug("AuthN request says [{}] is the required NameID format", requiredNameFormat);
             if (NameID.ENCRYPTED.equals(requiredNameFormat)) {
                 logger.warn("Encrypted NameID formats are not supported");
                 requiredNameFormat = null;
@@ -57,13 +57,13 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
         final Map<String, Object> principalAttributes = assertion.getPrincipal().getAttributes();
         if (principalAttributes.isEmpty() && StringUtils.isNotBlank(requiredNameFormat)) {
-            logger.warn("No CAS attributes for CAS principal {}, so no name identifier will be created.",
+            logger.warn("No CAS attributes for CAS principal [{}], so no name identifier will be created.",
                     assertion.getPrincipal().getName());
             throw new SamlException("No attributes for principal, so NameID format required can not be supported");
         }
 
         if (StringUtils.isNotBlank(requiredNameFormat) && !supportedNameFormats.contains(requiredNameFormat)) {
-            logger.warn("Required NameID format {} in the AuthN request issued by {} is not supported based on the metadata for {}",
+            logger.warn("Required NameID format [{}] in the AuthN request issued by [{}] is not supported based on the metadata for [{}]",
                     requiredNameFormat, authnRequest.getIssuer().getValue(), adaptor.getEntityId());
             throw new SamlException("Required NameID format cannot be provided because it is not supported");
         }

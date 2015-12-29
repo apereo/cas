@@ -4,7 +4,9 @@
   "name" : "SAMLService",
   "id" : 10000003,
   "evaluationOrder" : 10,
-  "metadataLocation" : "http://www.testshib.org/metadata/testshib-providers.xml",
+  "metadataLocation" : "C:\\etc\\cas\\saml\\Incommon-metadata.xml",
+  "metadataMaxValidity" : 0,
+  "metadataSignatureLocation" : "C:\\Misagh\\GitWorkspace\\cas-server\\cas-server-support-saml-mdui\\src\\test\\resources\\inc-md-pub.pem",
   "signAssertions" : false,
   "signResponses" : true
 }
