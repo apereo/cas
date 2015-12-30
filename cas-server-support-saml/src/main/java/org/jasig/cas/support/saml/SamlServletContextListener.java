@@ -1,5 +1,6 @@
 package org.jasig.cas.support.saml;
 
+import org.jasig.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.support.saml.web.SamlValidateController;
@@ -20,7 +21,7 @@ import javax.servlet.annotation.WebListener;
  * @since 4.2
  */
 @WebListener
-@Component
+@Component("samlServletContextListener")
 public class SamlServletContextListener extends AbstractServletContextInitializer {
 
     @Autowired
@@ -35,6 +36,10 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
     @Qualifier("samlValidateController")
     private SamlValidateController samlValidateController;
 
+    @Autowired
+    @Qualifier("samlAuthenticationMetaDataPopulator")
+    private SamlAuthenticationMetaDataPopulator samlAuthenticationMetaDataPopulator;
+
     @Override
     public void initializeServletContext(final ServletContextEvent event) {
         if (WebUtils.isCasServletInitializing(event)) {
@@ -47,6 +52,7 @@ public class SamlServletContextListener extends AbstractServletContextInitialize
         addServiceFactory(samlServiceFactory);
         addServiceTicketUniqueIdGenerator(SamlService.class.getCanonicalName(),
                 this.samlServiceTicketUniqueIdGenerator);
+        addAuthenticationMetadataPopulator(samlAuthenticationMetaDataPopulator);
     }
 
     @Override

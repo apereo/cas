@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Ticket expiration policy based on a hard timeout from ticket creation time rather than the
- * "idle" timeout provided by {@link org.jasig.cas.ticket.support.TimeoutExpirationPolicy}.
+ * "idle" timeout provided by {@link TimeoutExpirationPolicy}.
  *
  * @author Andrew Feller
  * @since 3.1.2
@@ -21,7 +21,7 @@ public final class HardTimeoutExpirationPolicy extends AbstractCasExpirationPoli
     private static final long serialVersionUID = 6728077010285422290L;
 
     /** The time to kill in milliseconds. */
-    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
+    @Value("#{${tgt.timeout.hard.maxTimeToLiveInSeconds:28800}*1000}")
     private long timeToKillInMilliSeconds;
 
     /** No-arg constructor for serialization support. */
