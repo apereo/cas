@@ -2,7 +2,6 @@ package org.jasig.cas.support.saml.web.idp.metadata;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.SamlIdPConstants;
 import org.slf4j.Logger;

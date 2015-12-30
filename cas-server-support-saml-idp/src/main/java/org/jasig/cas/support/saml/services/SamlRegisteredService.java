@@ -111,6 +111,8 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         return new SamlRegisteredService();
     }
 
+
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -125,21 +127,27 @@ public final class SamlRegisteredService extends RegexRegisteredService {
         final SamlRegisteredService rhs = (SamlRegisteredService) obj;
         return new EqualsBuilder()
                 .appendSuper(super.equals(obj))
-                .append(this.metadataLocation, rhs.getMetadataLocation())
-                .append(this.signResponses, rhs.isSignResponses())
-                .append(this.signAssertions, rhs.isSignAssertions())
-                .append(this.requiredAuthenticationContextClass, rhs.getRequiredAuthenticationContextClass())
+                .append(this.metadataLocation, rhs.metadataLocation)
+                .append(this.metadataMaxValidity, rhs.metadataMaxValidity)
+                .append(this.requiredAuthenticationContextClass, rhs.requiredAuthenticationContextClass)
+                .append(this.metadataSignatureLocation, rhs.metadataSignatureLocation)
+                .append(this.signAssertions, rhs.signAssertions)
+                .append(this.signResponses, rhs.signResponses)
+                .append(this.encryptAssertions, rhs.encryptAssertions)
                 .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 17)
+        return new HashCodeBuilder()
                 .appendSuper(super.hashCode())
-                .append(this.metadataLocation)
-                .append(this.signAssertions)
-                .append(this.signResponses)
-                .append(this.requiredAuthenticationContextClass)
+                .append(metadataLocation)
+                .append(metadataMaxValidity)
+                .append(requiredAuthenticationContextClass)
+                .append(metadataSignatureLocation)
+                .append(signAssertions)
+                .append(signResponses)
+                .append(encryptAssertions)
                 .toHashCode();
     }
 
@@ -147,12 +155,13 @@ public final class SamlRegisteredService extends RegexRegisteredService {
     public String toString() {
         return new ToStringBuilder(this)
                 .appendSuper(super.toString())
-                .append("metadataLocation", this.metadataLocation)
-                .append("signResponses", this.signResponses)
-                .append("signAssertions", this.signAssertions)
-                .append("requiredAuthenticationContextClass", this.requiredAuthenticationContextClass)
+                .append("metadataLocation", metadataLocation)
+                .append("metadataMaxValidity", metadataMaxValidity)
+                .append("requiredAuthenticationContextClass", requiredAuthenticationContextClass)
+                .append("metadataSignatureLocation", metadataSignatureLocation)
+                .append("signAssertions", signAssertions)
+                .append("signResponses", signResponses)
+                .append("encryptAssertions", encryptAssertions)
                 .toString();
     }
-
-
 }
