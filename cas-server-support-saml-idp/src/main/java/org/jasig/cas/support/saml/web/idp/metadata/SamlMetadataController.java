@@ -33,21 +33,13 @@ public final class SamlMetadataController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${cas.samlidp.metadata.location:}")
-    private File metadataLocation;
-
-    @Value("${cas.samlidp.entityid:}")
-    private String entityId;
-
-    @Value("${cas.samlidp.hostname:}")
-    private String hostName;
-
-    @Value("${cas.samlidp.scope:}")
-    private String scope;
-
     @Autowired
     @Qualifier("templateSpMetadata")
     private Resource templateSpMetadata;
+
+    @Autowired
+    @Qualifier("shibbolethIdpMetadataAndCertificatesGenerationService")
+    private SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService;
 
     /**
      * Instantiates a new Saml metadata controller.
@@ -109,25 +101,8 @@ public final class SamlMetadataController {
      */
     @RequestMapping(method = RequestMethod.GET, value = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
-
-        if (StringUtils.isBlank(this.entityId)
-                || StringUtils.isBlank(this.hostName)
-                || StringUtils.isAllLowerCase(this.scope)) {
-            logger.warn("Metadata cannot be generated, because the SAML Identity Provider is not configured."
-                    + " Examine settings and ensure metadata location, entityId, hostName and scope are all defined");
-            return;
-        }
-
-        logger.debug("Preparing to generate metadata for entityId [{}]", this.entityId);
-        final GenerateSamlIdpMetadata generator = new GenerateSamlIdpMetadata(this.metadataLocation,
-                this.hostName, this.entityId, this.scope);
-        if (generator.isMetadataMissing()) {
-            logger.debug("Metadata does not exist at [{}]. Creating...", this.metadataLocation);
-            generator.generate();
-        }
-        logger.debug("Metadata is available at [{}]", generator.getMetadataFile());
-
-        final String contents = FileUtils.readFileToString(generator.getMetadataFile());
+        final File metadataFile = this.metadataAndCertificatesGenerationService.performGenerationSteps();
+        final String contents = FileUtils.readFileToString(metadataFile);
         response.setContentType("text/xml;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         final PrintWriter writer = response.getWriter();
