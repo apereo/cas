@@ -12,6 +12,7 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
+    <bean id="templateSpMetadata" class="org.springframework.core.io.ClassPathResource" c:path="template-sp-metadata.xml" />
 
     <bean id="shibboleth.VelocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
         <property name="overrideLogging" value="false"/>
