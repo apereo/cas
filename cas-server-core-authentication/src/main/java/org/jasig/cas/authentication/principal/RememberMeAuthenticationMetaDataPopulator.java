@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.AuthenticationBuilder;
 import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.RememberMeCredential;
+import org.springframework.stereotype.Component;
 
 /**
  * Determines if the credential provided are for Remember Me Services and then sets the appropriate
@@ -12,6 +13,7 @@ import org.jasig.cas.authentication.RememberMeCredential;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@Component("rememberMeAuthenticationMetaDataPopulator")
 public final class RememberMeAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     @Override
