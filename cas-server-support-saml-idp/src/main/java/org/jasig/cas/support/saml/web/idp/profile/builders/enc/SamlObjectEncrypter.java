@@ -90,6 +90,9 @@ public class SamlObjectEncrypter {
     @Qualifier("overrideWhiteListedEncryptionAlgorithms")
     protected List overrideWhiteListedAlgorithms;
 
+    @Value("${cas.samlidp.key.private.alg:RSA}")
+    private String privateKeyAlgName;
+
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
      *
@@ -257,7 +260,7 @@ public class SamlObjectEncrypter {
     protected PrivateKey getEncryptionPrivateKey() throws Exception {
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(new FileSystemResource(this.encryptionKeyFile));
-        privateKeyFactoryBean.setAlgorithm("RSA");
+        privateKeyFactoryBean.setAlgorithm(this.privateKeyAlgName);
         privateKeyFactoryBean.setSingleton(false);
         logger.debug("Locating encryption key file from [{}]", this.encryptionKeyFile);
         return privateKeyFactoryBean.getObject();
