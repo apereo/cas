@@ -85,8 +85,11 @@ John Smith
 {% endhighlight %}
 
 ##Update Maven Overlay
-Update the [Maven Overlay](https://github.com/Jasig/cas-overlay-template) project to point to the newly released CAS version. 
-This task is only relevant when dealing with GA releases.
+Update the following overlay projects to point to the newly released CAS version. This task is only relevant when dealing with GA releases.
+
+- [CAS WebApp Overlay](https://github.com/Jasig/cas-overlay-template)
+- [CAS Services Management WebApp Overlay](https://github.com/Jasig/cas-services-management-overlay)
+
 
 ##Docker Image
 Release a new CAS [Docker image](https://github.com/Jasig/cas/tree/dockerized-caswebapp).
