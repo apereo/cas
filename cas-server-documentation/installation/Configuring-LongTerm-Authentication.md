@@ -33,8 +33,8 @@ are handled via the CAS default SSO session expiration policy.
 
 {% highlight xml %}
 <alias name="rememberMeDelegatingExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-<alias name="rememberMeExpirationPolicy" alias="timeoutExpirationPolicy" />
-<alias name="sessionExpirationPolicy" alias="ticketGrantingTicketExpirationPolicy" />
+<alias name="timeoutExpirationPolicy" alias="rememberMeExpirationPolicy" />
+<alias name="ticketGrantingTicketExpirationPolicy" alias="sessionExpirationPolicy" />
 {% endhighlight %}
 
 The length of the long term authentication session is determined by:
