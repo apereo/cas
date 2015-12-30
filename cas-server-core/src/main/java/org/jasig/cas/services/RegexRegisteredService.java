@@ -42,6 +42,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     private transient Pattern servicePattern;
 
+    @Override
     public void setServiceId(final String id) {
         serviceId = id;
 
