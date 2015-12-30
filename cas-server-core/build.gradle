@@ -21,7 +21,6 @@ dependencies {
         exclude(module: 'commons-logging')
         exclude(module: 'slf4j-api')
         exclude(module: 'commons-lang3')
-        exclude(module: 'commons-collections4')
         exclude(module: 'spring-beans')
         exclude(module: 'spring-context')
         exclude(module: 'spring-core')
