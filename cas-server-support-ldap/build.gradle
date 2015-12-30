@@ -39,5 +39,6 @@ dependencies {
         exclude(module: 'jboss-logging-annotations')
         exclude(module: 'javassist')
     }
+    testCompile project(':cas-server-core-services')
     testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version: unboundidVersion
 }
