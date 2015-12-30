@@ -3,8 +3,14 @@ package org.jasig.cas.support.saml.web.idp.metadata;
 import net.shibboleth.idp.installer.metadata.MetadataGenerator;
 import net.shibboleth.idp.installer.metadata.MetadataGeneratorParameters;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,51 +20,53 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The {@link GenerateSamlIdpMetadata} is responsible for
- * generating metadata and required certificates for signing
- * and encryption.
+ * A metadata generator based on the Shibboleth IdP's {@link MetadataGenerator}.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-public final class GenerateSamlIdpMetadata {
+@Component("shibbolethIdpMetadataAndCertificatesGenerationService")
+public class ShibbolethIdpMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "idp/metadata";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final File metadataFile;
+    private File metadataFile;
+    private File signingCertFile;
+    private File signingKeyFile;
 
-    private final String entityId;
-    private final String scope;
-    private final String hostName;
+    private File encryptionCertFile;
+    private File encryptionCertKeyFile;
 
-    private final File signingCertFile;
-    private final File signingKeyFile;
+    @Value("${cas.samlidp.metadata.location:}")
+    private File metadataLocation;
 
-    private final File encryptionCertFile;
-    private final File encryptionCertKeyFile;
+    @Value("${cas.samlidp.entityid:}")
+    private String entityId;
+
+    @Value("${cas.samlidp.hostname:}")
+    private String hostName;
+
+    @Value("${cas.samlidp.scope:}")
+    private String scope;
 
     /**
-     * Instantiates a new Generate saml metadata.
-     *
-     * @param metadataLocation the metadata location
-     * @param hostName the host name
-     * @param entityId the entity id
-     * @param scope the scope
+     * Initializes a new Generate saml metadata.
      */
-    public GenerateSamlIdpMetadata(final File metadataLocation, final String hostName,
-                                   final String entityId,
-                                   final String scope) {
-        this.entityId = entityId;
-        this.hostName = hostName;
-        this.scope = scope;
+    @Autowired
+    public void initialize() {
+        Assert.notNull(this.metadataLocation, "metadataLocation cannot be null and must be defined");
+        Assert.hasText(this.entityId, "entityID cannot be empty and must be defined");
+        Assert.hasText(this.hostName, "hostName cannot be empty and must be defined");
+        Assert.hasText(this.scope, "scope cannot be empty and must be defined");
 
         if (!metadataLocation.exists()) {
             if (!metadataLocation.mkdir()) {
-                throw new IllegalArgumentException("Metadata location cannot be located/created");
+                throw new IllegalArgumentException("Metadata directory location " + this.metadataLocation + " cannot be located/created");
             }
         }
-        this.metadataFile = new File(metadataLocation, "idp-metadata.xml");
+        logger.info("Metadata directory location is at [{}] with entityID [{}]", this.metadataLocation, this.entityId);
 
+        this.metadataFile = new File(metadataLocation, "idp-metadata.xml");
         this.signingCertFile = new File(metadataLocation, "idp-signing.crt");
         this.signingKeyFile = new File(metadataLocation, "idp-signing.key");
 
@@ -94,19 +102,26 @@ public final class GenerateSamlIdpMetadata {
         return !this.metadataFile.exists();
     }
 
-    /**
-     * Generate the certificates for signing, encryption and then metadata.
-     */
-    public void generate() {
+    @Override
+    public File performGenerationSteps() {
         try {
-            logger.debug("Creating self-sign certificate for signing...");
-            buildSelfSignedSigningCert();
+            logger.debug("Preparing to generate metadata for entityId [{}]", this.entityId);
+            if (isMetadataMissing()) {
+                logger.info("Metadata does not exist at [{}]. Creating...", this.metadataFile);
 
-            logger.debug("Creating self-sign certificate for encryption...");
-            buildSelfSignedEncryptionCert();
+                logger.info("Creating self-sign certificate for signing...");
+                buildSelfSignedSigningCert();
 
-            logger.debug("Creating metadata...");
-            buildMetadataGeneratorParameters();
+                logger.info("Creating self-sign certificate for encryption...");
+                buildSelfSignedEncryptionCert();
+
+                logger.info("Creating metadata...");
+                buildMetadataGeneratorParameters();
+            }
+
+            logger.info("Metadata is available at [{}]", metadataFile);
+
+            return metadataFile;
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
