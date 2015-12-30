@@ -81,6 +81,7 @@ public final class SendTicketGrantingTicketAction extends AbstractAction {
             LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
                     + "SSO cookie will not be generated. Subsequent requests will be challenged for authentication.");
         } else {
+            LOGGER.debug("Setting TGC for current session.");
             this.ticketGrantingTicketCookieGenerator.addCookie(WebUtils.getHttpServletRequest(context), WebUtils
                 .getHttpServletResponse(context), ticketGrantingTicketId);
         }
