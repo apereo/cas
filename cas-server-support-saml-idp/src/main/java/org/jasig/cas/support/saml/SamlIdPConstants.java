@@ -12,5 +12,8 @@ public interface SamlIdPConstants {
     /** The IdP metadata endpoint. */
     String ENDPOINT_IDP_METADATA = "/idp/metadata";
 
+    /** The RP metadata generation endpoint. */
+    String ENDPOINT_GENERATE_RP_METADATA = "/idp/servicemetadatagen";
+
 }
 

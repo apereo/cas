@@ -21,6 +21,7 @@ public class SamlIdPServletContextListener extends AbstractServletContextInitial
     public void initializeServletContext(final ServletContextEvent event) {
         if (WebUtils.isCasServletInitializing(event)) {
             addEndpointMappingToCasServlet(event, SamlIdPConstants.ENDPOINT_IDP_METADATA);
+            addEndpointMappingToCasServlet(event, SamlIdPConstants.ENDPOINT_GENERATE_RP_METADATA);
             addEndpointMappingToCasServlet(event, SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
             addEndpointMappingToCasServlet(event, SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST);
             addEndpointMappingToCasServlet(event, SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT);
