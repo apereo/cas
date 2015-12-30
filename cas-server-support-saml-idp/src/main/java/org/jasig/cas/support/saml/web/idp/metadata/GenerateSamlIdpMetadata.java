@@ -14,14 +14,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The {@link GenerateSamlMetadata} is responsible for
+ * The {@link GenerateSamlIdpMetadata} is responsible for
  * generating metadata and required certificates for signing
  * and encryption.
  *
  * @author Misagh Moayyed
- * @since 4.3
+ * @since 4.3.0
  */
-public class GenerateSamlMetadata {
+public final class GenerateSamlIdpMetadata {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "idp/metadata";
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -45,9 +45,9 @@ public class GenerateSamlMetadata {
      * @param entityId the entity id
      * @param scope the scope
      */
-    public GenerateSamlMetadata(final File metadataLocation, final String hostName,
-                                final String entityId,
-                                final String scope) {
+    public GenerateSamlIdpMetadata(final File metadataLocation, final String hostName,
+                                   final String entityId,
+                                   final String scope) {
         this.entityId = entityId;
         this.hostName = hostName;
         this.scope = scope;
