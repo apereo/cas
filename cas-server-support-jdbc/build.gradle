@@ -9,6 +9,7 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-jdbc', version: springVersion
     compile group: 'org.springframework', name: 'spring-orm', version: springVersion
     compile project(':cas-server-core-monitor')
+    runtime group: 'javax.transaction', name:'jta', version: '1.1'
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-util')
     testCompile group: 'org.hsqldb', name: 'hsqldb', version: hsqlVersion
