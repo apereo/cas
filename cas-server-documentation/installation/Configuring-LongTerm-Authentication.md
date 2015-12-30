@@ -21,9 +21,7 @@ by weighing convenience against security risks. The length of the long term auth
 The use of long term authentication sessions dramatically increases the length of time ticket-granting tickets are
 stored in the ticket registry. Loss of a ticket-granting ticket corresponding to a long-term SSO session would require
 the user to re-authenticate to CAS. A security policy that requires that long term authentication sessions MUST NOT
-be terminated prior to their natural expiration would mandate a ticket registry component that provides for durable storage.
-Memcached is a notable example of a store that has no facility for durable storage. In many cases loss of
-ticket-granting tickets is acceptable, even for long term authentication sessions.
+be terminated prior to their natural expiration would mandate a ticket registry component that provides for durable storage, such as the `JpaTicketRegistry`.
 
 ## Configuration
 
