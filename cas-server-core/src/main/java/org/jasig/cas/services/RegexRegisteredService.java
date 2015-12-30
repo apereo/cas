@@ -44,6 +44,9 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     public void setServiceId(final String id) {
         serviceId = id;
+
+        // reset the servicePattern because we just changed the serviceId
+        servicePattern = null;
     }
     
     @Override
