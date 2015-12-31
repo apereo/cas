@@ -44,6 +44,9 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      */
     public OAuth20AccessTokenController() {}
 
+    /**
+     * Ensure the encryption secret has been set.
+     */
     @PostConstruct
     public void postConstruct() {
         CommonHelper.assertNotNull("encryptionSecret", accessTokenJwtGenerator.getEncryptionSecret());
@@ -95,7 +98,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_PROFILE, HttpStatus.SC_BAD_REQUEST);
         }
 
-        attributes.put(JwtConstants.ISSUER, loginUrl.replace("/login$",OAuthConstants.ENDPOINT_OAUTH2));
+        attributes.put(JwtConstants.ISSUER, loginUrl.replace("/login$", OAuthConstants.ENDPOINT_OAUTH2));
         attributes.put(JwtConstants.AUDIENCE, service.getServiceId());
         final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
                 .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
