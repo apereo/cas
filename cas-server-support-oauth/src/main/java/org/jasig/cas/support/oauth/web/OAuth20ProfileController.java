@@ -53,6 +53,9 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
     public OAuth20ProfileController() {
     }
 
+    /**
+     * Ensure the encryption secret has been set.
+     */
     @PostConstruct
     public void postConstruct() {
         CommonHelper.assertNotNull("encryptionSecret", accessTokenJwtAuthenticator.getEncryptionSecret());
