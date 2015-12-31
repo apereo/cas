@@ -122,8 +122,8 @@ SAML relying parties and services must be registered within the CAS service regi
 
 
 <div class="alert alert-info"><strong>Aggregated Metadata</strong><p>If metadata 
-contains data for more than one relying party, (i.e. InCommon) those relying parties need to be defined explicitly via the `serviceId` 
-field. </p></div>
+contains data for more than one relying party, (i.e. InCommon) those relying parties need to be defined explicitly via the 
+<code>serviceId</code> field. </p></div>
 
 The following fields are available for SAML services:
 
