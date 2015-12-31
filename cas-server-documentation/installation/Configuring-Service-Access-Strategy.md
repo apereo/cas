@@ -11,13 +11,8 @@ attributes that must exist before access can be granted to the service. This beh
 various attributes in terms of access roles for the application and define rules that would be enacted and 
 validated when an authentication request from the application arrives.
 
-##Components
-
-###`RegisteredServiceAccessStrategy`
-This is the parent interface that outlines the required operations from the CAS perspective that need to be carried out in order to determine whether the service can proceed to the next step in the authentication flow.
-
-###`DefaultRegisteredServiceAccessStrategy`
-The default access manager allows one to configure a service with the following properties:
+##Default Strategy
+The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service with the following properties:
 
 | Field                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
@@ -31,8 +26,8 @@ The default access manager allows one to configure a service with the following 
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-###`TimeBasedRegisteredServiceAccessStrategy`
-This access strategy is an extension of the default which additionally,
+##Time-based Strategy
+The `TimeBasedRegisteredServiceAccessStrategy` access strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
 | Field                             | Description
@@ -40,8 +35,8 @@ allows one to configure a service with the following properties:
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
-###`GrouperRegisteredServiceAccessStrategy`
-Support is enabled by including the following dependency in the Maven WAR overlay:
+##Grouper Strategy
+The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
 <dependency>
@@ -51,8 +46,8 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-This access strategy attempts to locate Grouper groups for the CAS principal. The groups returned by Grouper
-are collected as CAS attribtues and examines against the list of required attributes for service access.
+This access strategy attempts to locate [Grouper](https://www.internet2.edu/products-services/trust-identity-middleware/grouper/) groups for the CAS principal. The groups returned by Grouper
+are collected as CAS attribtues and examined against the list of required attributes for service access.
 
 The following properties are available:
 

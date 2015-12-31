@@ -79,6 +79,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
             svc.setName("Services Management Web Application");
             svc.setDescription(svc.getName());
             this.servicesManager.save(svc);
+            this.servicesManager.reload();
         }
     }
     /**
