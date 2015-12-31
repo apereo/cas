@@ -4,7 +4,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
@@ -106,7 +106,7 @@ public class SamlObjectEncrypter {
      */
     public final EncryptedAssertion encode(final Assertion samlObject,
                                            final SamlRegisteredService service,
-                                           final SamlMetadataAdaptor adaptor,
+                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final HttpServletResponse response,
                                            final HttpServletRequest request) throws SamlException {
         try {
@@ -140,7 +140,7 @@ public class SamlObjectEncrypter {
      * @return the encrypter
      */
     protected Encrypter getEncrypter(final Assertion samlObject, final SamlRegisteredService service,
-                                     final SamlMetadataAdaptor adaptor, final KeyEncryptionParameters keyEncParams, final
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final KeyEncryptionParameters keyEncParams, final
                                      DataEncryptionParameters dataEncParams) {
         final Encrypter encrypter = new Encrypter(dataEncParams, keyEncParams);
         encrypter.setKeyPlacement(Encrypter.KeyPlacement.PEER);
@@ -156,7 +156,7 @@ public class SamlObjectEncrypter {
      * @return the data encryption parameters
      */
     protected DataEncryptionParameters getDataEncryptionParameters(final Assertion samlObject, final SamlRegisteredService service,
-                                                                   final SamlMetadataAdaptor adaptor) {
+                                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         final DataEncryptionParameters dataEncParams = new DataEncryptionParameters();
         dataEncParams.setAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128);
         return dataEncParams;
@@ -172,7 +172,7 @@ public class SamlObjectEncrypter {
      * @return the key encryption parameters
      */
     protected KeyEncryptionParameters getKeyEncryptionParameters(final Assertion samlObject, final SamlRegisteredService service,
-                                                                 final SamlMetadataAdaptor adaptor, final Credential credential) {
+                                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final Credential credential) {
         final KeyEncryptionParameters keyEncParams = new KeyEncryptionParameters();
         keyEncParams.setRecipient(adaptor.getEntityId());
         keyEncParams.setEncryptionCredential(credential);
@@ -189,7 +189,7 @@ public class SamlObjectEncrypter {
      * @return the key encryption credential
      * @throws Exception the exception
      */
-    protected Credential getKeyEncryptionCredential(final String peerEntityId, final SamlMetadataAdaptor adaptor,
+    protected Credential getKeyEncryptionCredential(final String peerEntityId, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                     final SamlRegisteredService service) throws Exception {
         final BasicEncryptionConfiguration config =
                 DefaultSecurityConfigurationBootstrap.buildDefaultEncryptionConfiguration();

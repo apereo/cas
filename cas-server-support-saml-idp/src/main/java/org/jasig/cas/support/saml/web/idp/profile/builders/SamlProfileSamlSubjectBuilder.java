@@ -3,7 +3,7 @@ package org.jasig.cas.support.saml.web.idp.profile.builders;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -32,7 +32,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     @Override
     public final Subject build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                               final Assertion assertion, final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
+                               final Assertion assertion, final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         return buildSubject(request, response, authnRequest, assertion, service, adaptor);
     }
@@ -41,7 +41,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
                                  final HttpServletResponse response,
                                  final AuthnRequest authnRequest, final Assertion assertion,
                                  final SamlRegisteredService service,
-                                 final SamlMetadataAdaptor adaptor) throws SamlException {
+                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         final NameID nameID = ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor);
         final Subject subject = newSubject(nameID.getFormat(), nameID.getValue(),
                 authnRequest.getAssertionConsumerServiceURL(),

@@ -3,7 +3,7 @@ package org.jasig.cas.support.saml.web.idp.profile.builders;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -27,7 +27,7 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public String build(final Assertion assertion, final AuthnRequest authnRequest, final SamlMetadataAdaptor adaptor,
+    public String build(final Assertion assertion, final AuthnRequest authnRequest, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                         final SamlRegisteredService service) {
         final RequestedAuthnContext requestedAuthnContext = authnRequest.getRequestedAuthnContext();
         if (requestedAuthnContext == null) {

@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
@@ -120,7 +120,7 @@ public class SamlObjectSigner {
      */
     public final <T extends SAMLObject> T encode(final T samlObject,
                                                     final SamlRegisteredService service,
-                                                    final SamlMetadataAdaptor adaptor,
+                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                     final HttpServletResponse response,
                                                     final HttpServletRequest request) throws SamlException {
         try {
@@ -189,7 +189,7 @@ public class SamlObjectSigner {
      * @param outboundContext the outbound context
      * @throws SAMLException the saml exception
      */
-    protected <T extends SAMLObject> void prepareSecurityParametersContext(final SamlMetadataAdaptor adaptor,
+    protected <T extends SAMLObject> void prepareSecurityParametersContext(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                            final MessageContext<T> outboundContext) throws SAMLException {
         final SecurityParametersContext secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
         if (secParametersContext == null) {
@@ -208,7 +208,8 @@ public class SamlObjectSigner {
      * @param outboundContext the outbound context
      * @throws SamlException the saml exception
      */
-    protected <T extends SAMLObject> void prepareOutboundContext(final T samlObject, final SamlMetadataAdaptor adaptor,
+    protected <T extends SAMLObject> void prepareOutboundContext(final T samlObject,
+                                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                  final MessageContext<T> outboundContext) throws SamlException {
 
         logger.debug("Outbound saml object to use is [{}]", samlObject.getClass().getName());

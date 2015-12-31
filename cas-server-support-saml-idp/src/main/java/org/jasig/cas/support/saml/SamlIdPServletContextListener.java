@@ -11,7 +11,7 @@ import javax.servlet.annotation.WebListener;
  * Initializes the CAS root servlet context to make sure
  * SAML IdP can be activated by the main CAS servlet.
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 @WebListener
 @Component("samlIdPServletContextListener")
@@ -22,9 +22,9 @@ public class SamlIdPServletContextListener extends AbstractServletContextInitial
         if (WebUtils.isCasServletInitializing(event)) {
             addEndpointMappingToCasServlet(event, SamlIdPConstants.ENDPOINT_IDP_METADATA);
             addEndpointMappingToCasServlet(event, SamlIdPConstants.ENDPOINT_GENERATE_RP_METADATA);
-            addEndpointMappingToCasServlet(event, SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
-            addEndpointMappingToCasServlet(event, SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST);
-            addEndpointMappingToCasServlet(event, SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT);
+            addEndpointMappingToCasServlet(event, SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
+            addEndpointMappingToCasServlet(event, SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST);
+            addEndpointMappingToCasServlet(event, SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT);
         }
     }
 
