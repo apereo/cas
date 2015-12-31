@@ -2,7 +2,7 @@ package org.jasig.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.jasig.cas.authentication.TestUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -10,6 +10,9 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.pac4j.http.profile.HttpProfile;
+import org.pac4j.jwt.JwtConstants;
+import org.pac4j.jwt.profile.JwtGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.servlet.mvc.Controller;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,10 +58,9 @@ public final class OAuth20ProfileControllerTests {
     @Autowired
     private Controller oauth20WrapperController;
 
-
     @Autowired
-    @Qualifier("defaultAccessTokenGenerator")
-    private AccessTokenGenerator accessTokenGenerator;
+    @Qualifier("accessTokenJwtGenerator")
+    private JwtGenerator accessTokenJwtGenerator;
 
     @Test
     public void verifyNoAccessToken() throws Exception {
@@ -105,12 +108,15 @@ public final class OAuth20ProfileControllerTests {
         final Principal p = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
         final TicketGrantingTicket impl = new TicketGrantingTicketImpl(TGT_ID,
                 org.jasig.cas.authentication.TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
-
+        final HttpProfile profile = new HttpProfile();
+        profile.setId(ID);
+        profile.addAttributes(map);
+        profile.addAttribute(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), 5));
         ((OAuth20WrapperController) oauth20WrapperController).getTicketRegistry().addTicket(impl);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
-        mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessTokenGenerator.generate(TestUtils.getService(), impl));
+        mockRequest.setParameter(OAuthConstants.ACCESS_TOKEN, accessTokenJwtGenerator.generate(profile));
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
@@ -130,26 +136,38 @@ public final class OAuth20ProfileControllerTests {
         assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
     }
-    
+
     @Test
     public void verifyOKWithAuthorizationHeader() throws Exception {
+        final Map<String, Object> map = new HashMap<>();
+        map.put(NAME, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
+        map.put(NAME2, list);
+
+        final Principal p = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
+        final TicketGrantingTicket impl = new TicketGrantingTicketImpl(TGT_ID,
+                org.jasig.cas.authentication.TestUtils.getAuthentication(p), new NeverExpiresExpirationPolicy());
+        final HttpProfile profile = new HttpProfile();
+        profile.setId(ID);
+        profile.addAttributes(map);
+        profile.addAttribute(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), 5));
+        ((OAuth20WrapperController) oauth20WrapperController).getTicketRegistry().addTicket(impl);
+
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
-        final TicketGrantingTicket impl = new TicketGrantingTicketImpl(TGT_ID,
-                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
-                + accessTokenGenerator.generate(TestUtils.getService(), impl));
+                + accessTokenJwtGenerator.generate(profile));
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
 
         final ObjectMapper mapper = new ObjectMapper();
+
         final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
                 + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
         final JsonNode expectedObj = mapper.readTree(expected);
         final JsonNode receivedObj = mapper.readTree(mockResponse.getContentAsString());
-
         assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
 
         final JsonNode expectedAttributes = expectedObj.get("attributes");
