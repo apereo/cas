@@ -122,7 +122,8 @@ public final class CasLoggerFactory implements ILoggerFactory {
         try {
             return loggerFactory.newInstance();
         } catch (final Exception e) {
-            return null;
+            Util.report(e.getMessage(), e);
         }
+        return null;
     }
 }
