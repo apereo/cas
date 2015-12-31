@@ -27,7 +27,8 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public String build(final Assertion assertion, final AuthnRequest authnRequest, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+    public String build(final Assertion assertion, final AuthnRequest authnRequest,
+                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                         final SamlRegisteredService service) {
         final RequestedAuthnContext requestedAuthnContext = authnRequest.getRequestedAuthnContext();
         if (requestedAuthnContext == null) {
