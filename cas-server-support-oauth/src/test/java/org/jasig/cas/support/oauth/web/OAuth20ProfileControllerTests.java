@@ -22,7 +22,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.servlet.mvc.Controller;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -152,7 +156,8 @@ public final class OAuth20ProfileControllerTests {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.PROFILE_URL);
         mockRequest.addHeader("Authorization", OAuthConstants.BEARER_TOKEN + ' '
-                + accessTokenJwtGenerator.generate(profile));        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+                + accessTokenJwtGenerator.generate(profile));
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oauth20WrapperController.handleRequest(mockRequest, mockResponse);
         assertEquals(200, mockResponse.getStatus());
         assertEquals(CONTENT_TYPE, mockResponse.getContentType());
