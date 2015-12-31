@@ -55,7 +55,7 @@ subprojects {
 
     test {
         enabled = !Boolean.getBoolean("skipTests")
-        ignoreFailures true
+        //ignoreFailures true
         useJUnit()
         scanForTestClasses false
         include '**/*Tests.*'
