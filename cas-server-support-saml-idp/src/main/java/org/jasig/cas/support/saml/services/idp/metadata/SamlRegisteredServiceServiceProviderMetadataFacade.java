@@ -32,23 +32,27 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This is {@link SamlMetadataAdaptor}.
+ * This is {@link SamlRegisteredServiceServiceProviderMetadataFacade} that acts a façade between the SAML metadata resolved
+ * from a metadata resource and other outer layers in CAS that need access to the bits of that
+ * metadata. Once the metadata resolved for a service is adapted and parsed for a given entity id,
+ * callers will be able to peek into the various configuration elements of the metadata to handle
+ * further saml processing. A metadata adaptor is always linked to a saml service.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-public final class SamlMetadataAdaptor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataAdaptor.class);
+public final class SamlRegisteredServiceServiceProviderMetadataFacade {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceServiceProviderMetadataFacade.class);
 
     private final AssertionConsumerService assertionConsumerService;
     private final SPSSODescriptor ssoDescriptor;
     private final EntityDescriptor entityDescriptor;
     private final MetadataResolver metadataResolver;
 
-    private SamlMetadataAdaptor(final AssertionConsumerService assertionConsumerService,
-                                final SPSSODescriptor ssoDescriptor,
-                                final EntityDescriptor entityDescriptor,
-                                final MetadataResolver metadataResolver) {
+    private SamlRegisteredServiceServiceProviderMetadataFacade(final AssertionConsumerService assertionConsumerService,
+                                                               final SPSSODescriptor ssoDescriptor,
+                                                               final EntityDescriptor entityDescriptor,
+                                                               final MetadataResolver metadataResolver) {
         this.assertionConsumerService = assertionConsumerService;
         this.ssoDescriptor = ssoDescriptor;
         this.entityDescriptor = entityDescriptor;
@@ -63,9 +67,9 @@ public final class SamlMetadataAdaptor {
      * @param authnRequest      the authn request
      * @return the saml metadata adaptor
      */
-    public static SamlMetadataAdaptor adapt(final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                            final SamlRegisteredService registeredService,
-                                            final AuthnRequest authnRequest) {
+    public static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                          final SamlRegisteredService registeredService,
+                                                                          final AuthnRequest authnRequest) {
         try {
             final String issuer = authnRequest.getIssuer().getValue();
             LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
@@ -89,7 +93,8 @@ public final class SamlMetadataAdaptor {
             if (ssoDescriptor != null) {
                 LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]",
                         issuer, ssoDescriptor.getValidUntil());
-                return new SamlMetadataAdaptor(assertionConsumerService, ssoDescriptor, entityDescriptor, chainingMetadataResolver);
+                return new SamlRegisteredServiceServiceProviderMetadataFacade(assertionConsumerService,
+                        ssoDescriptor, entityDescriptor, chainingMetadataResolver);
             }
             throw new SamlException("Could not locate SPSSODescriptor in the metadata for " + issuer);
         } catch (final Exception e) {

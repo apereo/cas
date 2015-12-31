@@ -4,7 +4,9 @@ import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 
 /**
- * This is {@link SamlRegisteredServiceCachingMetadataResolver}.
+ * This is {@link SamlRegisteredServiceCachingMetadataResolver}
+ * that defines how metadata is to be resolved and cached for a given saml
+ * registered service.
  *
  * @author Misagh Moayyed
  * @since 4.3.0

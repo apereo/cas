@@ -2,7 +2,7 @@ package org.jasig.cas.support.saml;
 
 import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.CertUtil;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -81,7 +81,8 @@ public final class SamlIdPUtils {
      * @param adaptor         the adaptor
      * @throws SamlException the saml exception
      */
-    public static void preparePeerEntitySamlEndpointContext(final MessageContext outboundContext, final SamlMetadataAdaptor adaptor)
+    public static void preparePeerEntitySamlEndpointContext(final MessageContext outboundContext,
+                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         final List<AssertionConsumerService> assertionConsumerServices = adaptor.getAssertionConsumerServices();
         if (assertionConsumerServices.isEmpty()) {
