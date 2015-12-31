@@ -12,5 +12,14 @@
        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/webflow-config http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
+       <bean id="accessTokenJwtGenerator" class="org.pac4j.jwt.profile.JwtGenerator">
+              <constructor-arg name="signingSecret" value="${cas.oauth.jwt.signingSecret}" />
+              <constructor-arg name="encryptionSecret" value="${cas.oauth.jwt.encryptionSecret}" />
+       </bean>
+
+       <bean id="accessTokenJwtAuthenticator" class="org.pac4j.jwt.credentials.authenticator.JwtAuthenticator">
+              <constructor-arg name="signingSecret" value="${cas.oauth.jwt.signingSecret}" />
+              <constructor-arg name="encryptionSecret" value="${cas.oauth.jwt.encryptionSecret}" />
+       </bean>
 
 </beans>
