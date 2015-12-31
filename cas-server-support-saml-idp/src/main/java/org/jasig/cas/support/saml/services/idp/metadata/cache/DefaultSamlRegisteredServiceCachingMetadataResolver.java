@@ -15,7 +15,9 @@ import javax.annotation.PostConstruct;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link DefaultSamlRegisteredServiceCachingMetadataResolver}.
+ * An adaptation of metadata resolver which handles the resolution of metadata resources
+ * inside a Guava cache. It basically is a fancy wrapper around Guava, and constructs the cache
+ * semantics before processing the resolution of metadata for a SAML service.
  *
  * @author Misagh Moayyed
  * @since 4.3.0

@@ -9,7 +9,7 @@ import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
@@ -33,13 +33,13 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     @Override
     public final NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                              final Assertion assertion, final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
+                              final Assertion assertion, final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         return buildNameId(authnRequest, assertion, service, adaptor);
     }
 
     private NameID buildNameId(final AuthnRequest authnRequest, final Assertion assertion,
-                               final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
+                               final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
 
         final List<String> supportedNameFormats = adaptor.getSupportedNameFormats();
