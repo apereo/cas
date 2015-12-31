@@ -157,7 +157,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
             ((AbstractRegisteredService) service).setId(System.nanoTime());
         }
         final File f = makeFile(service);
-        try (final LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f));) {
+        try (final LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {
             this.registeredServiceJsonSerializer.toJson(out, service);
 
             if (this.serviceMap.containsKey(service.getId())) {
