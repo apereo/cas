@@ -140,7 +140,8 @@ public class SamlObjectEncrypter {
      * @return the encrypter
      */
     protected Encrypter getEncrypter(final Assertion samlObject, final SamlRegisteredService service,
-                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final KeyEncryptionParameters keyEncParams, final
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                     final KeyEncryptionParameters keyEncParams, final
                                      DataEncryptionParameters dataEncParams) {
         final Encrypter encrypter = new Encrypter(dataEncParams, keyEncParams);
         encrypter.setKeyPlacement(Encrypter.KeyPlacement.PEER);
@@ -172,7 +173,8 @@ public class SamlObjectEncrypter {
      * @return the key encryption parameters
      */
     protected KeyEncryptionParameters getKeyEncryptionParameters(final Assertion samlObject, final SamlRegisteredService service,
-                                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final Credential credential) {
+                                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                                 final Credential credential) {
         final KeyEncryptionParameters keyEncParams = new KeyEncryptionParameters();
         keyEncParams.setRecipient(adaptor.getEntityId());
         keyEncParams.setEncryptionCredential(credential);
@@ -189,7 +191,8 @@ public class SamlObjectEncrypter {
      * @return the key encryption credential
      * @throws Exception the exception
      */
-    protected Credential getKeyEncryptionCredential(final String peerEntityId, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+    protected Credential getKeyEncryptionCredential(final String peerEntityId,
+                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                     final SamlRegisteredService service) throws Exception {
         final BasicEncryptionConfiguration config =
                 DefaultSecurityConfigurationBootstrap.buildDefaultEncryptionConfiguration();
