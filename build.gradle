@@ -55,7 +55,7 @@ subprojects {
 
     test {
         enabled = !Boolean.getBoolean("skipTests")
-        //ignoreFailures true
+        maxParallelForks = 1
         useJUnit()
         scanForTestClasses false
         include '**/*Tests.*'
