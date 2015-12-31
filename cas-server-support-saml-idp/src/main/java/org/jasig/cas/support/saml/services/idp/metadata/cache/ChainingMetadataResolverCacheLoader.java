@@ -48,7 +48,9 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link ChainingMetadataResolverCacheLoader} that uses Guava's cache loading strategy
- * to keep track of metadata resources and resolvers.
+ * to keep track of metadata resources and resolvers. The cache loader here supports loading
+ * metadata resources from SAML services, supports dynamic metadata queries and is able
+ * to run various validation filters on the metadata before finally caching the resolver.
  *
  * @author Misagh Moayyed
  * @since 4.3.0

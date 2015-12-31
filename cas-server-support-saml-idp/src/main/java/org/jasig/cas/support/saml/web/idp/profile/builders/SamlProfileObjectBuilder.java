@@ -3,7 +3,7 @@ package org.jasig.cas.support.saml.web.idp.profile.builders;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 
@@ -35,5 +35,5 @@ public interface SamlProfileObjectBuilder<T extends SAMLObject> {
      */
     <T> T build(final AuthnRequest authnRequest, final HttpServletRequest request,
                 final HttpServletResponse response, final Assertion assertion,
-                final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SamlException;
+                final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException;
 }

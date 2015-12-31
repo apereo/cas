@@ -3,7 +3,7 @@ package org.jasig.cas.support.saml.web.idp.profile.builders;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.joda.time.DateTime;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -38,7 +38,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
     @Override
     public final AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                                      final Assertion assertion, final SamlRegisteredService service, final SamlMetadataAdaptor adaptor)
+                                      final Assertion assertion, final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         return buildAuthnStatement(assertion, authnRequest, adaptor, service);
     }
@@ -54,7 +54,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @throws SamlException the saml exception
      */
     private AuthnStatement buildAuthnStatement(final Assertion assertion, final AuthnRequest authnRequest,
-                                               final SamlMetadataAdaptor adaptor, final SamlRegisteredService service)
+                                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final SamlRegisteredService service)
             throws SamlException {
 
         final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
@@ -77,7 +77,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @throws SamlException the saml exception
      */
     protected SubjectLocality buildSubjectLocality(final Assertion assertion, final AuthnRequest authnRequest,
-                                                   final SamlMetadataAdaptor adaptor) throws SamlException {
+                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
         subjectLocality.setAddress(authnRequest.getIssuer().getValue());
         return subjectLocality;

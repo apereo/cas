@@ -2,7 +2,7 @@ package org.jasig.cas.support.saml.web.idp.profile.builders;
 
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.joda.time.DateTime;
@@ -57,7 +57,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     @Override
     public final Assertion build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                            final org.jasig.cas.client.validation.Assertion casAssertion, final SamlRegisteredService service,
-                           final SamlMetadataAdaptor adaptor) throws SamlException {
+                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
         final List<Statement> statements = new ArrayList<>();
         statements.add(samlProfileSamlAuthNStatementBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
@@ -85,7 +85,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
     protected void signAssertion(final Assertion assertion,
                                  final HttpServletRequest request, final HttpServletResponse response,
                                  final SamlRegisteredService service,
-                                 final SamlMetadataAdaptor adaptor) throws SamlException {
+                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         try {
             if (service.isSignAssertions()) {
                 logger.info("SAML registered service [{}] requires assertions to be signed", adaptor.getEntityId());

@@ -19,10 +19,10 @@ import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
+import org.jasig.cas.support.saml.SamlIdPConstants;
 import org.jasig.cas.support.saml.SamlIdPUtils;
-import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.jasig.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
@@ -43,7 +43,12 @@ import javax.validation.constraints.NotNull;
 import java.security.SecureRandom;
 
 /**
- * This is {@link AbstractSamlProfileHandlerController}.
+ * A parent controller to handle SAML requests.
+ * Specific profile endpoints are handled by extensions.
+ * This parent provides the necessary ops for profile endpoint
+ * controllers to respond to end points. The parent
+ * handles the callback return trip once the request is
+ * authenticated.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
@@ -122,7 +127,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     @PostConstruct
     protected void initialize() {
-        this.callbackService = registerCallback(SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
+        this.callbackService = registerCallback(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
     }
 
     /**
@@ -132,9 +137,10 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param authnRequest      the authn request
      * @return the saml metadata adaptor for service
      */
-    protected SamlMetadataAdaptor getSamlMetadataAdaptorForService(final SamlRegisteredService registeredService, final AuthnRequest
-            authnRequest) {
-        return SamlMetadataAdaptor.adapt(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
+    protected SamlRegisteredServiceServiceProviderMetadataFacade getSamlMetadataFacadeFor(final SamlRegisteredService registeredService,
+                                                                                          final AuthnRequest authnRequest) {
+        return SamlRegisteredServiceServiceProviderMetadataFacade
+                .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
     }
 
     /**
@@ -144,7 +150,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param request  the request
      * @throws Exception the exception
      */
-    @RequestMapping(path = SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
+    @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK, method = RequestMethod.GET)
     protected void handleCallbackProfileRequest(final HttpServletResponse response,
                                                 final HttpServletRequest request) throws Exception {
         try {
@@ -174,7 +180,7 @@ public abstract class AbstractSamlProfileHandlerController {
                 throw new SamlException("CAS assertion received is invalid");
             }
             final SamlRegisteredService registeredService = verifySamlRegisteredService(authnRequest);
-            final SamlMetadataAdaptor adaptor = getSamlMetadataAdaptorForService(registeredService, authnRequest);
+            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor = getSamlMetadataFacadeFor(registeredService, authnRequest);
 
             logger.debug("Preparing SAML response for [{}]", adaptor.getEntityId());
             responseBuilder.build(authnRequest, request, response, assertion, registeredService, adaptor);
@@ -184,7 +190,6 @@ public abstract class AbstractSamlProfileHandlerController {
             storeAuthnRequest(request, null);
         }
     }
-
 
 
     /**
@@ -228,7 +233,7 @@ public abstract class AbstractSamlProfileHandlerController {
             final RegexRegisteredService service = new RegexRegisteredService();
             service.setId(new SecureRandom().nextLong());
             service.setName(service.getClass().getSimpleName());
-            service.setDescription(SamlProtocolConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(" Callback Url"));
+            service.setDescription(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(" Callback Url"));
             service.setServiceId(callbackService.getId());
 
             logger.debug("Saving callback service [{}] into the registry", service);

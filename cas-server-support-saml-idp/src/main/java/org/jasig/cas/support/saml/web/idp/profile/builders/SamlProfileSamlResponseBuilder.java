@@ -4,7 +4,7 @@ import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
-import org.jasig.cas.support.saml.services.idp.metadata.SamlMetadataAdaptor;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
@@ -74,7 +74,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     @Override
     public final Response build(final AuthnRequest authnRequest, final HttpServletRequest request,
                                 final HttpServletResponse response, final org.jasig.cas.client.validation.Assertion casAssertion,
-                                final SamlRegisteredService service, final SamlMetadataAdaptor adaptor) throws SamlException {
+                                final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         final Assertion assertion = samlProfileSamlAssertionBuilder.build(authnRequest, request, response, casAssertion, service, adaptor);
         final Response finalResponse = buildResponse(assertion, authnRequest, service, adaptor, request, response);
         return encode(service, finalResponse, response, adaptor);
@@ -94,7 +94,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      */
     protected Response buildResponse(final Assertion assertion,
                                      final AuthnRequest authnRequest, final SamlRegisteredService service,
-                                     final SamlMetadataAdaptor adaptor,
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                      final HttpServletRequest request, final HttpServletResponse response)
             throws SamlException {
         final String id = String.valueOf(Math.abs(new SecureRandom().nextLong()));
@@ -148,7 +148,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
      * @throws SamlException the saml exception
      */
     protected Response encode(final SamlRegisteredService service, final Response samlResponse,
-                              final HttpServletResponse httpResponse, final SamlMetadataAdaptor adaptor) throws SamlException {
+                              final HttpServletResponse httpResponse, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         try {
             final HTTPPostEncoder encoder = new HTTPPostEncoder();
             encoder.setHttpServletResponse(httpResponse);
@@ -179,7 +179,7 @@ public class SamlProfileSamlResponseBuilder extends AbstractSaml20ObjectBuilder 
     protected SAMLObject encryptAssertion(final Assertion assertion,
                                           final HttpServletRequest request, final HttpServletResponse response,
                                           final SamlRegisteredService service,
-                                          final SamlMetadataAdaptor adaptor) throws SamlException {
+                                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
         try {
             if (service.isEncryptAssertions()) {
                 logger.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
