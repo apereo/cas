@@ -38,7 +38,8 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
     @Override
     public final AuthnStatement build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                                      final Assertion assertion, final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+                                      final Assertion assertion, final SamlRegisteredService service,
+                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         return buildAuthnStatement(assertion, authnRequest, adaptor, service);
     }
@@ -54,7 +55,8 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @throws SamlException the saml exception
      */
     private AuthnStatement buildAuthnStatement(final Assertion assertion, final AuthnRequest authnRequest,
-                                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor, final SamlRegisteredService service)
+                                               final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                               final SamlRegisteredService service)
             throws SamlException {
 
         final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);

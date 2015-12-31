@@ -29,13 +29,15 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
 
     @Override
     public final Conditions build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
-                                  final Assertion assertion, final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+                                  final Assertion assertion, final SamlRegisteredService service,
+                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
             throws SamlException {
         return buildConditions(authnRequest, assertion, service, adaptor);
     }
 
     private Conditions buildConditions(final AuthnRequest authnRequest, final Assertion assertion,
-                                       final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                                       final SamlRegisteredService service,
+                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
         final DateTime currentDateTime = DateTime.now();
         final Conditions conditions = newConditions(currentDateTime,
