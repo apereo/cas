@@ -51,7 +51,7 @@ before_install:
 install:
 - ./gradlew clean
 script:
-- ./gradlew build --parallel -x javadoc -DskipAspectJ=true --stacktrace
+- ./gradlew build -x javadoc -DskipAspectJ=true --stacktrace
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
