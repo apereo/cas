@@ -100,10 +100,6 @@ public class KryoTranscoderTests {
                 new AcceptUsersAuthenticationHandler(),
                 new BasicCredentialMetaData(userPassCredential)));
 
-        new TicketGrantingTicketImpl(TGT_ID,
-                org.jasig.cas.authentication.TestUtils.getService(), null, bldr.build(),
-                new NeverExpiresExpirationPolicy());
-
         final TicketGrantingTicket expectedTGT =
                 new TicketGrantingTicketImpl(TGT_ID,
                         org.jasig.cas.services.TestUtils.getService(),
