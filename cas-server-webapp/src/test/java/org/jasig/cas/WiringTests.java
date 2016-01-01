@@ -25,9 +25,9 @@ public class WiringTests {
         applicationContext = new XmlWebApplicationContext();
         applicationContext.setConfigLocations(
                 "classpath:/webappContext.xml",
-                "classpath:spring-configuration/*.xml",
-                "classpath:cas-management-servlet.xml",
-                "classpath:managementConfigContext.xml");
+                "file:src/main/webapp/WEB-INF/cas-servlet.xml",
+                "file:src/main/webapp/WEB-INF/deployerConfigContext.xml",
+                "file:src/main/webapp/WEB-INF/spring-configuration/*.xml");
         applicationContext.setServletContext(new MockServletContext(new ResourceLoader() {
             @Override
             public Resource getResource(final String location) {
