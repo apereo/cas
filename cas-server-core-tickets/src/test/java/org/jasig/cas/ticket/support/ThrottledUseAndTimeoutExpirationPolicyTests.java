@@ -13,7 +13,7 @@ import org.junit.Test;
  */
 public class ThrottledUseAndTimeoutExpirationPolicyTests  {
 
-    private static final long TIMEOUT = 50;
+    private static final long TIMEOUT = 2000;
 
     private static final long TIMEOUT_BUFFER = 10;
 
