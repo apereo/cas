@@ -13,6 +13,7 @@ The following CAS endpoints respond to supported SAML2 profiles:
 
 - `/cas/idp/profile/SAML2/Redirect/SSO`
 - `/cas/idp/profile/SAML2/POST/SSO`
+- `/cas/idp/profile/SAML2/POST/SLO`
 
 ### IdP Metadata
 The following CAS endpoints handle the generation of SAML2 metadata:
@@ -55,6 +56,9 @@ Here is a generated metadata file as an example:
 
         <NameIDFormat>urn:mace:shibboleth:1.0:nameIdentifier</NameIDFormat>
         <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
+
+        <SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" 
+                             Location="https://HOST_NAME/cas/idp/profile/SAML2/POST/SLO"/>
 
         <SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" 
                              Location="https://HOST_NAME/cas/idp/profile/SAML2/POST/SSO"/>

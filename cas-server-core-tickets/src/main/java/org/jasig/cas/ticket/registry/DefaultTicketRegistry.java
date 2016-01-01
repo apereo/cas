@@ -234,7 +234,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 
         try {
-            logger.info("Beginning ticket cleanup...");
+            logger.debug("Beginning ticket cleanup...");
             final Collection<Ticket> ticketsToRemove = Collections2.filter(this.getTickets(), new Predicate<Ticket>() {
                 @Override
                 public boolean apply(@Nullable final Ticket ticket) {
