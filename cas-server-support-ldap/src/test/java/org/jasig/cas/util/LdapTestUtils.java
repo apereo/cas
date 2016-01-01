@@ -3,8 +3,14 @@ package org.jasig.cas.util;
 import com.unboundid.ldap.sdk.AddRequest;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
+import org.ldaptive.AttributeModification;
+import org.ldaptive.AttributeModificationType;
+import org.ldaptive.Connection;
+import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.ModifyOperation;
+import org.ldaptive.ModifyRequest;
 import org.ldaptive.io.LdifReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,5 +93,40 @@ public final class LdapTestUtils {
         } catch (final Exception e) {
             LOGGER.debug(e.getLocalizedMessage());
         }
+    }
+
+    /**
+     * Modify ldap entry.
+     *
+     * @param serverCon the server con
+     * @param dn        the dn
+     * @param attr      the attr
+     */
+    public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn, final LdapAttribute attr) {
+        try {
+            final String address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
+            try (final Connection conn = DefaultConnectionFactory.getConnection(address)) {
+                try {
+                    conn.open();
+                    final ModifyOperation modify = new ModifyOperation(conn);
+                    modify.execute(new ModifyRequest(dn, new AttributeModification(AttributeModificationType.ADD, attr)));
+                } catch (final Exception e) {
+                    LOGGER.debug(e.getMessage(), e);
+                }
+            }
+        } finally {
+            serverCon.close();
+        }
+    }
+
+    /**
+     * Modify ldap entry.
+     *
+     * @param serverCon the server con
+     * @param dn        the dn
+     * @param attr      the attr
+     */
+    public static void modifyLdapEntry(final LDAPConnection serverCon, final LdapEntry dn, final LdapAttribute attr) {
+        modifyLdapEntry(serverCon, dn.getDn(), attr);
     }
 }
