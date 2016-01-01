@@ -62,6 +62,10 @@ subprojects {
         exclude '**/*Abstract*.*'
         classpath = it.classpath + files("${projectDir}/src/main/resources") +
                 files("${projectDir}/src/test/resources")
+        testLogging {
+	        events "started", "passed", "skipped", "failed", "standardOut", "standardError"
+	        exceptionFormat "full"
+    	}
 
     }
 
