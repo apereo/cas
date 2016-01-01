@@ -49,9 +49,9 @@ before_install:
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
 install:
-- ./gradlew clean
+- ./gradlew clean build -DskipAspectJ=true --parallel -x test -x javadoc -Dorg.gradle.daemon=true -Dorg.gradle.configureondemand=true -Dorg.gradle.workers.max=8
 script:
-- ./gradlew build -x javadoc -DskipAspectJ=true --stacktrace
+- ./gradlew test -DskipAspectJ=true --stacktrace
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
