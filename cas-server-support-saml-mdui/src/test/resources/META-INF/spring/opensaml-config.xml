@@ -131,7 +131,7 @@
           c:credential-ref="credentialFactoryBean" />
 
     <bean id="credentialFactoryBean"
-          class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialFactoryBean"
+          class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean"
           p:publicKeyInfo-ref="publicKeyInfo" />
 
     <bean id="publicKeyInfo" class="org.springframework.core.io.ClassPathResource"

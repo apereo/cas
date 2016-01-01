@@ -185,7 +185,7 @@ public class ShibbolethIdpMetadataAndCertificatesGenerationService implements Sa
         generator.setEntityID(this.entityId);
         generator.setScope(this.scope);
         generator.setSAML2AttributeQueryCommented(true);
-        generator.setSAML2LogoutCommented(true);
+        generator.setSAML2LogoutCommented(false);
 
         generator.generate();
     }

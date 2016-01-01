@@ -1,8 +1,14 @@
 package org.jasig.cas.support.saml.web.idp.profile;
 
 import org.jasig.cas.support.saml.SamlIdPConstants;
+import org.jasig.cas.support.saml.SamlIdPUtils;
+import org.jasig.cas.support.saml.services.SamlRegisteredService;
+import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPRedirectDeflateDecoder;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +43,7 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_REDIRECT, method = RequestMethod.GET)
     protected void handleSaml2ProfileSsoRedirectRequest(final HttpServletResponse response,
                                                         final HttpServletRequest request) throws Exception {
-        handleProfileRequest(response, request, new HTTPRedirectDeflateDecoder());
+        handleSsoPostProfileRequest(response, request, new HTTPRedirectDeflateDecoder());
     }
 
     /**
@@ -50,7 +56,40 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     @RequestMapping(path = SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST, method = RequestMethod.POST)
     protected void handleSaml2ProfileSsoPostRequest(final HttpServletResponse response,
                                                     final HttpServletRequest request) throws Exception {
-        handleProfileRequest(response, request, new HTTPPostDecoder());
+        handleSsoPostProfileRequest(response, request, new HTTPPostDecoder());
+    }
+
+    /**
+     * Handle profile request.
+     *
+     * @param response the response
+     * @param request  the request
+     * @param decoder  the decoder
+     * @throws Exception the exception
+     */
+    protected void handleSsoPostProfileRequest(final HttpServletResponse response,
+                                               final HttpServletRequest request,
+                                               final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
+        final AuthnRequest authnRequest = decodeRequest(request, decoder, AuthnRequest.class);
+        final SamlRegisteredService registeredService = verifySamlRegisteredService(authnRequest.getAssertionConsumerServiceURL());
+        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
+                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+                        registeredService, authnRequest);
+        SamlIdPUtils.logSamlObject(this.configBean, authnRequest);
+
+        if (!authnRequest.isSigned()) {
+            if (adaptor.isAuthnRequestsSigned()) {
+                logger.error("Metadata for [{}] says authentication requests are signed, yet this authentication request is not",
+                        adaptor.getEntityId());
+                throw new SAMLException("AuthN request is not signed but should be");
+            }
+            logger.info("Authentication request is not signed, so there is no need to verify its signature.");
+        } else {
+            this.samlObjectSigner.verifySamlProfileRequestIfNeeded(authnRequest, registeredService, adaptor);
+        }
+
+        storeAuthnRequest(request, authnRequest);
+        issueAuthenticationRequestRedirect(authnRequest, request, response);
     }
 
 }
