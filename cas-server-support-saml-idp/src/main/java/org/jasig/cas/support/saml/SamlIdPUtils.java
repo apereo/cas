@@ -1,15 +1,33 @@
 package org.jasig.cas.support.saml;
 
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.CertUtil;
+import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
+import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
+import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.saml.security.impl.MetadataCredentialResolver;
+import org.opensaml.saml.security.impl.SAMLSignatureProfileValidator;
+import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.criteria.UsageCriterion;
+import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
+import org.opensaml.xmlsec.criterion.SignatureValidationConfigurationCriterion;
+import org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration;
+import org.opensaml.xmlsec.signature.Signature;
+import org.opensaml.xmlsec.signature.support.SignatureValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -49,6 +67,7 @@ public final class SamlIdPUtils {
             throw new RuntimeException("Error reading certificate " + resource, e);
         }
     }
+
     /**
      * Log saml object.
      *
@@ -106,6 +125,7 @@ public final class SamlIdPUtils {
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
     }
+
 }
 
 

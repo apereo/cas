@@ -7,23 +7,37 @@ import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.util.PrivateKeyFactoryBean;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler;
 import org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
+import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
+import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.opensaml.saml.security.impl.MetadataCredentialResolver;
 import org.opensaml.saml.security.impl.SAMLMetadataSignatureSigningParametersResolver;
+import org.opensaml.saml.security.impl.SAMLSignatureProfileValidator;
 import org.opensaml.security.credential.Credential;
+import org.opensaml.security.credential.UsageType;
+import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.opensaml.xmlsec.SignatureSigningConfiguration;
 import org.opensaml.xmlsec.SignatureSigningParameters;
 import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
+import org.opensaml.xmlsec.criterion.SignatureValidationConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
+import org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration;
+import org.opensaml.xmlsec.signature.Signature;
+import org.opensaml.xmlsec.signature.support.SignatureValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,10 +133,10 @@ public class SamlObjectSigner {
      * @throws SamlException the saml exception
      */
     public final <T extends SAMLObject> T encode(final T samlObject,
-                                                    final SamlRegisteredService service,
-                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                    final HttpServletResponse response,
-                                                    final HttpServletRequest request) throws SamlException {
+                                                 final SamlRegisteredService service,
+                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                 final HttpServletResponse response,
+                                                 final HttpServletRequest request) throws SamlException {
         try {
             logger.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
             final MessageContext<T> outboundContext = new MessageContext<>();
@@ -322,7 +336,55 @@ public class SamlObjectSigner {
         return privateKeyFactoryBean.getObject();
     }
 
+    /**
+     * Validate authn request signature.
+     *
+     * @param profileRequest      the authn request
+     * @param registeredService the registered service
+     * @param adaptor           the adaptor
+     * @throws Exception the exception
+     */
+    public void verifySamlProfileRequestIfNeeded(final RequestAbstractType profileRequest,
+                                                 final SamlRegisteredService registeredService,
+                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+            throws Exception {
 
+        logger.debug("Validating signature of the request for [{}]", profileRequest.getClass().getName());
+        final Signature signature = profileRequest.getSignature();
+        if (signature == null) {
+            throw new SAMLException("Request is signed but there is no signature associated with the request");
+        }
+        final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
+        final BasicRoleDescriptorResolver roleDescriptorResolver = new BasicRoleDescriptorResolver(adaptor.getMetadataResolver());
+        roleDescriptorResolver.initialize();
+
+        final BasicSignatureValidationConfiguration config =
+                DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
+
+        kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
+        kekCredentialResolver.setKeyInfoCredentialResolver(
+                DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
+        kekCredentialResolver.initialize();
+
+        final CriteriaSet criteriaSet = new CriteriaSet();
+        criteriaSet.add(new SignatureValidationConfigurationCriterion(config));
+        criteriaSet.add(new EntityIdCriterion(profileRequest.getIssuer().getValue()));
+        criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+        criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
+
+        final Credential credential = kekCredentialResolver.resolveSingle(criteriaSet);
+        if (credential == null) {
+            throw new SamlException("Signing credential for validation could not be resolved");
+        }
+
+        logger.debug("Validating profile signature...");
+        final SAMLSignatureProfileValidator validator = new SAMLSignatureProfileValidator();
+        validator.validate(signature);
+
+        logger.debug("Validating signature using credentials for [{}]", credential.getEntityId());
+        SignatureValidator.validate(signature, credential);
+        logger.info("Successfully validated the request signature.");
+    }
 
 
 }

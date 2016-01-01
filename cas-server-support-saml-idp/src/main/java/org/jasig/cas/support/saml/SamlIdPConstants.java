@@ -21,6 +21,9 @@ public interface SamlIdPConstants {
     /** The SAML2 SSO redirect profile endpoint. */
     String ENDPOINT_SAML2_SSO_PROFILE_REDIRECT = "/idp/profile/SAML2/Redirect/SSO";
 
+    /** The SAML2 SLO post endpoint. */
+    String ENDPOINT_SAML2_SLO_PROFILE_POST = "/idp/profile/SAML2/POST/SLO";
+
     /** The SAML2 SSO post callback profile endpoint. */
     String ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK = "/idp/profile/SAML2/POST/SSO/Callback";
 }
