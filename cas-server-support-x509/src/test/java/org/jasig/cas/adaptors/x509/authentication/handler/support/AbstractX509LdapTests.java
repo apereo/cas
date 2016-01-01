@@ -1,19 +1,18 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPException;
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
 import org.jasig.cas.util.CompressionUtils;
-import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModificationType;
-import org.ldaptive.Connection;
-import org.ldaptive.DefaultConnectionFactory;
+import org.jasig.cas.util.LdapTestUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.ModifyOperation;
-import org.ldaptive.ModifyRequest;
+import org.ldaptive.LdapException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -22,12 +21,21 @@ import java.util.Collection;
  * @since 4.1
  */
 public abstract class AbstractX509LdapTests extends AbstractLdapTests {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractX509LdapTests.class);
+
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
 
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
-        getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
+        try {
+            initDirectoryServer();
+            getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
+            populateCertificateRevocationListAttribute();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    private static void populateCertificateRevocationListAttribute() throws IOException, LDAPException, LdapException {
         /**
          * Dynamically set the attribute value to the crl content.
          * Encode it as base64 first. Doing this in the code rather
@@ -44,17 +52,8 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
                 value = CompressionUtils.encodeBase64ToByteArray(value);
                 attr.setName("certificateRevocationList");
                 attr.addBinaryValue(value);
+                LdapTestUtils.modifyLdapEntry(getDirectory().getConnection(), ldapEntry, attr);
 
-                final LDAPConnection serverCon = getDirectory().getConnection();
-                final String address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-                final Connection conn = DefaultConnectionFactory.getConnection(address);
-                conn.open();
-                final ModifyOperation modify = new ModifyOperation(conn);
-                modify.execute(new ModifyRequest(ldapEntry.getDn(),
-                        new AttributeModification(AttributeModificationType.ADD, attr)));
-                conn.close();
-                serverCon.close();
-                return;
             }
         }
     }
