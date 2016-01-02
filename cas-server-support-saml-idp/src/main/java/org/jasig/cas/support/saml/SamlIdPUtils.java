@@ -1,33 +1,25 @@
 package org.jasig.cas.support.saml;
 
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.CertUtil;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.opensaml.core.criterion.EntityIdCriterion;
+import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.opensaml.core.xml.io.Marshaller;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
-import org.opensaml.saml.criterion.EntityRoleCriterion;
-import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;
+import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.Endpoint;
-import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.saml.security.impl.MetadataCredentialResolver;
-import org.opensaml.saml.security.impl.SAMLSignatureProfileValidator;
-import org.opensaml.security.credential.Credential;
-import org.opensaml.security.credential.UsageType;
-import org.opensaml.security.criteria.UsageCriterion;
-import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
-import org.opensaml.xmlsec.criterion.SignatureValidationConfigurationCriterion;
-import org.opensaml.xmlsec.impl.BasicSignatureValidationConfiguration;
-import org.opensaml.xmlsec.signature.Signature;
-import org.opensaml.xmlsec.signature.support.SignatureValidator;
+import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
@@ -40,6 +32,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -124,6 +118,50 @@ public final class SamlIdPUtils {
         }
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
+    }
+
+    /**
+     * Gets chaining metadata resolver for all saml services.
+     *
+     * @param servicesManager the services manager
+     * @param entityID        the entity id
+     * @param resolver        the resolver
+     * @return the chaining metadata resolver for all saml services
+     * @throws Exception the exception
+     */
+    public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
+                                         final String entityID, final SamlRegisteredServiceCachingMetadataResolver resolver)
+            throws Exception {
+        final Predicate p = Predicates.instanceOf(SamlRegisteredService.class);
+        final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(p);
+        final List<MetadataResolver> resolvers = new ArrayList<>();
+        final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
+
+        for (final RegisteredService registeredService : registeredServices) {
+            final SamlRegisteredService samlRegisteredService = SamlRegisteredService.class.cast(registeredService);
+
+            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
+                    SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlRegisteredService, entityID);
+            resolvers.add(adaptor.getMetadataResolver());
+        }
+        chainingMetadataResolver.setResolvers(resolvers);
+        chainingMetadataResolver.setId(entityID);
+        chainingMetadataResolver.initialize();
+        return chainingMetadataResolver;
+    }
+
+    /**
+     * Gets assertion consumer service for.
+     *
+     * @param authnRequest the authn request
+     * @return the assertion consumer service for
+     */
+    public static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest) {
+        final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
+        acs.setBinding(authnRequest.getProtocolBinding());
+        acs.setLocation(authnRequest.getAssertionConsumerServiceURL());
+        acs.setResponseLocation(authnRequest.getAssertionConsumerServiceURL());
+        return acs;
     }
 
 }

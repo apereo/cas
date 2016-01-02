@@ -1,6 +1,7 @@
 package org.jasig.cas.support.saml.web.flow.mdui;
 
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +33,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     public void verifyEntityIdUIInfoExists() throws Exception {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(SamlMetadataUIParserAction.ENTITY_ID_PARAMETER_NAME, "https://carmenwiki.osu.edu/shibboleth");
+        request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -46,7 +47,7 @@ public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
     public void verifyEntityIdUIInfoExistsDynamically() throws Exception {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(SamlMetadataUIParserAction.ENTITY_ID_PARAMETER_NAME, "https://carmenwiki.osu.edu/shibboleth");
+        request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
 
         final MockHttpServletResponse response = new MockHttpServletResponse();
 

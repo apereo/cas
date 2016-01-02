@@ -11,7 +11,6 @@ import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.impl.SAMLOutboundDestinationHandler;
 import org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityHandler;
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
@@ -341,7 +340,6 @@ public class SamlObjectSigner {
      * Validate authn request signature.
      *
      * @param profileRequest    the authn request
-     * @param registeredService the registered service
      * @param metadataResolver  the metadata resolver
      * @throws Exception the exception
      */
