@@ -1,6 +1,8 @@
 package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -47,6 +49,9 @@ public final class WebUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
 
     private static final String UNKNOWN_USER = "audit:unknown";
+
+    /** Flow scope attribute that determines if authn is happening at a public workstation. */
+    private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
 
     /**
      * Instantiates a new web utils instance.
@@ -419,6 +424,32 @@ public final class WebUtils {
     }
 
     /**
+     * Is authenticating at a public workstation?
+     *
+     * @param ctx the ctx
+     * @return true if the cookie value is present
+     */
+    public static boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
+        if (ctx.getFlowScope().contains(PUBLIC_WORKSTATION_ATTRIBUTE)) {
+            LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * Put public workstation into the flow if request parameter present.
+     *
+     * @param context the context
+     */
+    public static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
+        if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get(PUBLIC_WORKSTATION_ATTRIBUTE))) {
+            context.getFlowScope().put(PUBLIC_WORKSTATION_ATTRIBUTE, Boolean.TRUE);
+        }
+    }
+
+    /**
      * Put warn cookie if request parameter present.
      *
      * @param warnCookieGenerator the warn cookie generator
@@ -436,5 +467,45 @@ public final class WebUtils {
         } else {
             LOGGER.debug("No warning cookie generator is defined");
         }
+    }
+
+    /**
+     * Put authentication context builder.
+     *
+     * @param builder the builder
+     * @param ctx     the ctx
+     */
+    public static void putAuthenticationContextBuilder(final AuthenticationContextBuilder builder, final RequestContext ctx) {
+        ctx.getConversationScope().put("authenticationContextBuilder", builder);
+    }
+
+    /**
+     * Gets authentication context builder.
+     *
+     * @param ctx the ctx
+     * @return the authentication context builder
+     */
+    public static AuthenticationContextBuilder getAuthenticationContextBuilder(final RequestContext ctx) {
+        return ctx.getConversationScope().get("authenticationContextBuilder", AuthenticationContextBuilder.class);
+    }
+
+    /**
+     * Put authentication context.
+     *
+     * @param authenticationContext the authentication context
+     * @param context               the context
+     */
+    public static void putAuthenticationContext(final AuthenticationContext authenticationContext, final RequestContext context) {
+        context.getConversationScope().put("authenticationContext", authenticationContext);
+    }
+
+    /**
+     * Gets authentication context builder.
+     *
+     * @param ctx the ctx
+     * @return the authentication context builder
+     */
+    public static AuthenticationContext getAuthenticationContext(final RequestContext ctx) {
+        return ctx.getConversationScope().get("authenticationContext", AuthenticationContext.class);
     }
 }

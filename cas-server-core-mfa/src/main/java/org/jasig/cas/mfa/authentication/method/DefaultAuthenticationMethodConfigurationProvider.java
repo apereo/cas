@@ -12,7 +12,7 @@ import java.util.Map;
  * Methods are mapped in memory via a static map.
  *
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 @Component("defaultAuthenticationMethodProvider")
 public final class DefaultAuthenticationMethodConfigurationProvider implements AuthenticationMethodConfigurationProvider {

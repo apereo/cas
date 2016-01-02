@@ -1,6 +1,10 @@
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
+
+import java.io.Serializable;
+
 
 /**
  * The {@link AuthenticationContext} is an abstraction on top of a given authentication request.
@@ -11,18 +15,27 @@ import org.jasig.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public interface AuthenticationContext {
+public interface AuthenticationContext extends Serializable {
 
     /**
      * Obtains the primary authentication event for this context.
+     *
      * @return the authentication
      */
     Authentication getAuthentication();
 
     /**
+     * Gets principal.
+     *
+     * @return the principal
+     */
+    Principal getPrincipal();
+
+    /**
      * Gets the service for which this authentication context is relevant.
      * The service MAY be null, as an authentication context in CAS
      * can be established without providing a service/destination.
+     *
      * @return the service
      */
     Service getService();
