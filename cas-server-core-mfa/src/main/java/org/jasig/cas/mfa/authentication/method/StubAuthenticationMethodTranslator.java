@@ -1,7 +1,7 @@
 package org.jasig.cas.mfa.authentication.method;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.mfa.exceptions.UnrecognizedMfaMethodException;
+import org.jasig.cas.authentication.UnrecognizedAuthenticationMethodException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +16,7 @@ import java.util.Set;
  * should be the set of received authentication methods, and the value is a single
  * string to define the new authentication method name.
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 @Component("stubAuthenticationMethodTranslator")
 public class StubAuthenticationMethodTranslator implements AuthenticationMethodTranslator {
@@ -59,6 +59,6 @@ public class StubAuthenticationMethodTranslator implements AuthenticationMethodT
         if (this.ignoreIfNoMatchIsFound) {
             return receivedAuthenticationMethod;
         }
-        throw new UnrecognizedMfaMethodException(receivedAuthenticationMethod, targetService.getId());
+        throw new UnrecognizedAuthenticationMethodException(receivedAuthenticationMethod);
     }
 }

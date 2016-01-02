@@ -13,7 +13,7 @@ import java.io.Serializable;
  * and its relevant properties.
  *
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 public final class AuthenticationMethod implements Comparable, Serializable {
     private static final long serialVersionUID = -8960685427442975943L;
@@ -43,7 +43,6 @@ public final class AuthenticationMethod implements Comparable, Serializable {
         this.name = name;
     }
 
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -60,7 +59,6 @@ public final class AuthenticationMethod implements Comparable, Serializable {
                 .append(this.name, rhs.name)
                 .isEquals();
     }
-
 
     @Override
     public int hashCode() {

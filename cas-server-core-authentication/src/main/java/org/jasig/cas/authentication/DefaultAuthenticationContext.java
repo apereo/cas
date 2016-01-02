@@ -1,9 +1,11 @@
 package org.jasig.cas.authentication;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * The {@link DefaultAuthenticationContext} represents a concrete
@@ -18,6 +20,7 @@ import org.slf4j.LoggerFactory;
 public final class DefaultAuthenticationContext implements AuthenticationContext {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContext.class);
+    private static final long serialVersionUID = 8454900425245262824L;
 
     private final Authentication authentication;
 
@@ -46,6 +49,11 @@ public final class DefaultAuthenticationContext implements AuthenticationContext
     @Override
     public Authentication getAuthentication() {
         return authentication;
+    }
+
+    @Override
+    public Principal getPrincipal() {
+        return getAuthentication().getPrincipal();
     }
 
     @Override

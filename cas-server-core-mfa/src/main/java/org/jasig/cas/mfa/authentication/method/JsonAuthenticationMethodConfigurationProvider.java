@@ -31,7 +31,7 @@ import java.util.TreeSet;
  * </pre>
  *
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 @Component("jsonAuthenticationMethodConfigurationProvider")
 public final class JsonAuthenticationMethodConfigurationProvider implements AuthenticationMethodConfigurationProvider {
