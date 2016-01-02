@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  * already bear the ready-to-go Principal.
  *
  * @author Andrew Petro
- * @since 3.0.0.5
+ * @since 3.0.0
  */
 @Component("trustedPrincipalResolver")
 public final class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {

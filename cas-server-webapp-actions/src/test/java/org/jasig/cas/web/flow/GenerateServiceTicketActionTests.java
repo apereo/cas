@@ -1,6 +1,11 @@
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.AbstractCentralAuthenticationServiceTest;
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
@@ -18,9 +23,9 @@ import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
- * @since 3.0.0.4
+ * @since 3.0.0
  */
-public final class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTest {
+public final class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private GenerateServiceTicketAction action;
 
@@ -30,10 +35,16 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
     public void onSetUp() throws Exception {
         this.action = new GenerateServiceTicketAction();
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
+        this.action.setAuthenticationSystemSupport(getAuthenticationSystemSupport());
         this.action.afterPropertiesSet();
 
-        this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(
-                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                getAuthenticationSystemSupport().getPrincipalElectionStrategy());
+        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        getAuthenticationSystemSupport().getAuthenticationTransactionManager()
+                .handle(transaction,  builder);
+        final AuthenticationContext ctx = builder.build(TestUtils.getService());
+        this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
     }
 
     @Test

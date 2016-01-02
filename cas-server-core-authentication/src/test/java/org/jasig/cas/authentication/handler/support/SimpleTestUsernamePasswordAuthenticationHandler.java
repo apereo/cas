@@ -3,9 +3,11 @@ package org.jasig.cas.authentication.handler.support;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
 
 import org.jasig.cas.authentication.AccountDisabledException;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -17,6 +19,8 @@ import org.jasig.cas.authentication.InvalidLoginTimeException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -37,6 +41,9 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
     /** Default mapping of special usernames to exceptions raised when that user attempts authentication. */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
 
+    @NotNull
+    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
     /** Instance of logging for subclasses. */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -52,10 +59,12 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
         DEFAULT_USERNAME_ERROR_MAP.put("passwordExpired", new CredentialExpiredException("Password expired"));
     }
 
-    public SimpleTestUsernamePasswordAuthenticationHandler() {
-        logger.warn(
-                "{} is only to be used in a testing environment.  NEVER enable this in a production environment.",
-                getName());
+    public SimpleTestUsernamePasswordAuthenticationHandler() {}
+
+    @PostConstruct
+    private void init() {
+        logger.warn("{} is only to be used in a testing environment. NEVER enable this in a production environment.",
+                this.getClass().getName());
     }
 
     public void setUsernameErrorMap(final Map<String, Exception> map) {
@@ -83,7 +92,8 @@ public final class SimpleTestUsernamePasswordAuthenticationHandler implements Au
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
             logger.debug("User [{}] was successfully authenticated.", username);
-            return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential));
+            return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential),
+                    this.principalFactory.createPrincipal(username));
         }
         logger.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();

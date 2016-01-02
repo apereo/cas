@@ -4,9 +4,11 @@ dependencies {
     compile project(':cas-server-core-api-web')
     compile project(':cas-server-core-api-ticket')
     compile project(':cas-server-core-api-services')
+    compile project(':cas-server-core-authentication')
     compile project(':cas-server-core-api-logout')
-    
-    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
+    compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
+    }
+    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version: springWebflowVersion) {
         exclude(module: 'commons-logging')
         exclude(module: 'spring-context')
         exclude(module: 'spring-web')
@@ -15,10 +17,8 @@ dependencies {
         exclude(module: 'spring-expression')
         exclude(module: 'spring-webmvc')
     }
-    compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
-    compile group: 'org.springframework', name: 'spring-context', version:springVersion
-    compile group: 'org.springframework', name: 'spring-web', version:springVersion
-    compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
+    compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
+    compile group: 'org.springframework', name: 'spring-context', version: springVersion
+    compile group: 'org.springframework', name: 'spring-web', version: springVersion
+    compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
 }
-
-

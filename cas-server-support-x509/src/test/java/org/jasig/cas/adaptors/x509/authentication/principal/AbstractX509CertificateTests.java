@@ -1,5 +1,7 @@
 package org.jasig.cas.adaptors.x509.authentication.principal;
 
+import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
+
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -19,13 +21,11 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public abstract class AbstractX509CertificateTests {
+public abstract class AbstractX509CertificateTests extends AbstractCentralAuthenticationServiceTests {
 
-    public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(
-            true);
+    public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
-    public static final X509Certificate INVALID_CERTIFICATE = new CasX509Certificate(
-            false);
+    public static final X509Certificate INVALID_CERTIFICATE = new CasX509Certificate(false);
 
     protected static class CasX509Certificate extends X509Certificate {
 

@@ -1,6 +1,6 @@
 package org.jasig.cas.support.oauth.web;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.junit.Test;

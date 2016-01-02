@@ -2,23 +2,25 @@ package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.AopUtils;
+import org.jasig.cas.web.support.WebUtils;
 import org.jasig.inspektr.common.spi.PrincipalResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 
 /**
  * PrincipalResolver that can retrieve the username from either the Ticket or from the Credential.
@@ -36,6 +38,10 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     @NotNull
     @Resource(name="centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired(required = false)
+    @Qualifier("principalIdProvider")
+    private PrincipalIdProvider principalIdProvider = new DefaultPrincipalIdProvider();
 
     private TicketOrCredentialPrincipalResolver() {}
 
@@ -76,15 +82,27 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
         final Object arg1 = joinPoint.getArgs()[0];
         if (arg1.getClass().isArray()) {
             final Object[] args1AsArray = (Object[]) arg1;
-            for (final Object arg: args1AsArray) {
-                builder.append(resolveArgument(arg));
-            }
+            resolveArguments(builder, args1AsArray);
         } else {
             builder.append(resolveArgument(arg1));
         }
 
         return builder.toString();
 
+    }
+
+    private String resolveArguments(final StringBuilder builder, final Collection args1AsArray) {
+        for (final Object arg: args1AsArray) {
+            builder.append(resolveArgument(arg));
+        }
+        return builder.toString();
+    }
+
+    private String resolveArguments(final StringBuilder builder, final Object[] args1AsArray) {
+        for (final Object arg: args1AsArray) {
+            builder.append(resolveArgument(arg));
+        }
+        return builder.toString();
     }
 
     /**
@@ -96,33 +114,39 @@ public final class TicketOrCredentialPrincipalResolver implements PrincipalResol
     private String resolveArgument(final Object arg1) {
         LOGGER.debug("Resolving argument [{}] for audit", arg1.getClass().getSimpleName());
 
+        if (arg1 instanceof AuthenticationTransaction) {
+            final AuthenticationTransaction transaction = AuthenticationTransaction.class.cast(arg1);
+            return resolveArguments(new StringBuilder(), transaction.getCredentials());
+        }
         if (arg1 instanceof Credential) {
             return arg1.toString();
-        } else if (arg1 instanceof String) {
+        }
+        if (arg1 instanceof String) {
             try {
                 final Ticket ticket = this.centralAuthenticationService.getTicket((String) arg1, Ticket.class);
+                Authentication authentication = null;
                 if (ticket instanceof ServiceTicket) {
-                    final ServiceTicket serviceTicket = (ServiceTicket) ticket;
-                    return serviceTicket.getGrantingTicket().getAuthentication().getPrincipal().getId();
+                    authentication = ServiceTicket.class.cast(ticket).getGrantingTicket().getAuthentication();
                 } else if (ticket instanceof TicketGrantingTicket) {
-                    final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
-                    return tgt.getAuthentication().getPrincipal().getId();
+                    authentication = TicketGrantingTicket.class.cast(ticket).getAuthentication();
                 }
+                return this.principalIdProvider.getPrincipalIdFrom(authentication);
             } catch (final InvalidTicketException e) {
                 LOGGER.trace(e.getMessage(), e);
             }
             LOGGER.debug("Could not locate ticket [{}] in the registry", arg1);
-        } else {
-            final SecurityContext securityContext = SecurityContextHolder.getContext();
-            if (securityContext != null) {
-                final Authentication authentication = securityContext.getAuthentication();
-
-                if (authentication != null) {
-                    return ((UserDetails) authentication.getPrincipal()).getUsername();
-                }
-            }
         }
-        LOGGER.debug("Unable to determine the audit argument. Returning [{}]", UNKNOWN_USER);
-        return UNKNOWN_USER;
+        return WebUtils.getAuthenticatedUsername();
+    }
+
+    /**
+     * Default implementation that simply returns principal#id.
+     */
+    static class DefaultPrincipalIdProvider implements PrincipalIdProvider {
+
+        @Override
+        public String getPrincipalIdFrom(final Authentication authentication) {
+            return authentication.getPrincipal().getId();
+        }
     }
 }
