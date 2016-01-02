@@ -107,6 +107,7 @@ The following settings are applicable:
 # cas.samlidp.metadata.cache.exp.minutes=30
 # cas.samlidp.metadata.failfast.init=true
 # cas.samlidp.metadata.require.valid=true
+# cas.samlidp.logout.request.force.signed=true
 {% endhighlight %}
 
 
