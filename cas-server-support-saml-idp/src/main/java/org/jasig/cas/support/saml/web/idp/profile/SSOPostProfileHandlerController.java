@@ -75,7 +75,7 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor =
                 SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
                         registeredService, authnRequest);
-        SamlIdPUtils.logSamlObject(this.configBean, authnRequest);
+
 
         if (!authnRequest.isSigned()) {
             if (adaptor.isAuthnRequestsSigned()) {
@@ -85,8 +85,10 @@ public class SSOPostProfileHandlerController extends AbstractSamlProfileHandlerC
             }
             logger.info("Authentication request is not signed, so there is no need to verify its signature.");
         } else {
-            this.samlObjectSigner.verifySamlProfileRequestIfNeeded(authnRequest, registeredService, adaptor);
+            this.samlObjectSigner.verifySamlProfileRequestIfNeeded(authnRequest, adaptor.getMetadataResolver());
         }
+
+        SamlIdPUtils.logSamlObject(this.configBean, authnRequest);
 
         storeAuthnRequest(request, authnRequest);
         issueAuthenticationRequestRedirect(authnRequest, request, response);
