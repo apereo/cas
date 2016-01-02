@@ -17,6 +17,7 @@ import org.opensaml.saml.common.binding.security.impl.EndpointURLSchemeSecurityH
 import org.opensaml.saml.common.binding.security.impl.SAMLOutboundProtocolMessageSigningHandler;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.criterion.RoleDescriptorCriterion;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.BasicRoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.RoleDescriptor;
@@ -339,14 +340,13 @@ public class SamlObjectSigner {
     /**
      * Validate authn request signature.
      *
-     * @param profileRequest      the authn request
+     * @param profileRequest    the authn request
      * @param registeredService the registered service
-     * @param adaptor           the adaptor
+     * @param metadataResolver  the metadata resolver
      * @throws Exception the exception
      */
     public void verifySamlProfileRequestIfNeeded(final RequestAbstractType profileRequest,
-                                                 final SamlRegisteredService registeredService,
-                                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor)
+                                                 final MetadataResolver metadataResolver)
             throws Exception {
 
         logger.debug("Validating signature of the request for [{}]", profileRequest.getClass().getName());
@@ -354,8 +354,14 @@ public class SamlObjectSigner {
         if (signature == null) {
             throw new SAMLException("Request is signed but there is no signature associated with the request");
         }
+
+        logger.debug("Validating profile signature...");
+        final SAMLSignatureProfileValidator validator = new SAMLSignatureProfileValidator();
+        validator.validate(signature);
+
+
         final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
-        final BasicRoleDescriptorResolver roleDescriptorResolver = new BasicRoleDescriptorResolver(adaptor.getMetadataResolver());
+        final BasicRoleDescriptorResolver roleDescriptorResolver = new BasicRoleDescriptorResolver(metadataResolver);
         roleDescriptorResolver.initialize();
 
         final BasicSignatureValidationConfiguration config =
@@ -376,10 +382,6 @@ public class SamlObjectSigner {
         if (credential == null) {
             throw new SamlException("Signing credential for validation could not be resolved");
         }
-
-        logger.debug("Validating profile signature...");
-        final SAMLSignatureProfileValidator validator = new SAMLSignatureProfileValidator();
-        validator.validate(signature);
 
         logger.debug("Validating signature using credentials for [{}]", credential.getEntityId());
         SignatureValidator.validate(signature, credential);
