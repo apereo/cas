@@ -64,6 +64,13 @@ public class LogoutManagerImplTests {
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
         this.logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator());
 
+        final DefaultSingleLogoutServiceMessageHandler handler = new DefaultSingleLogoutServiceMessageHandler();
+        handler.setHttpClient(client);
+        handler.setLogoutMessageBuilder(new SamlCompliantLogoutMessageCreator());
+        handler.setServicesManager(servicesManager);
+        handler.setSingleLogoutServiceLogoutUrlBuilder(new DefaultSingleLogoutServiceLogoutUrlBuilder());
+        this.logoutManager.setSingleLogoutServiceMessageHandler(handler);
+
         this.services = new HashMap<>();
         this.simpleWebApplicationServiceImpl = org.jasig.cas.services.TestUtils.getService(URL);
         this.services.put(ID, this.simpleWebApplicationServiceImpl);
