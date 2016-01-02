@@ -140,6 +140,22 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
                 && registeredService.getLogoutType() != LogoutType.NONE;
     }
 
+    public void setServicesManager(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
+
+    public void setHttpClient(final HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
+    public void setLogoutMessageBuilder(final LogoutMessageCreator logoutMessageBuilder) {
+        this.logoutMessageBuilder = logoutMessageBuilder;
+    }
+
+    public void setSingleLogoutServiceLogoutUrlBuilder(final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder) {
+        this.singleLogoutServiceLogoutUrlBuilder = singleLogoutServiceLogoutUrlBuilder;
+    }
+
     public ServicesManager getServicesManager() {
         return servicesManager;
     }
