@@ -2,6 +2,7 @@ package org.jasig.cas.support.saml.services.idp.metadata;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.SamlException;
+import org.jasig.cas.support.saml.SamlIdPUtils;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.joda.time.DateTime;
@@ -23,7 +24,7 @@ import org.opensaml.saml.saml2.metadata.KeyDescriptor;
 import org.opensaml.saml.saml2.metadata.NameIDFormat;
 import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
+import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.xmlsec.signature.Signature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,21 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         this.metadataResolver = metadataResolver;
     }
 
+
+    /**
+     * Adapt saml metadata and parse. Acts as a facade.
+     *
+     * @param resolver          the resolver
+     * @param registeredService the service
+     * @param entityID          the entity id
+     * @return the saml metadata adaptor
+     */
+    public static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                         final SamlRegisteredService registeredService,
+                                                                         final String entityID) {
+        return get(resolver, registeredService, entityID, new CriteriaSet());
+    }
+
     /**
      * Adapt saml metadata and parse. Acts as a facade.
      *
@@ -68,11 +84,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     public static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                          final SamlRegisteredService registeredService,
                                                                          final RequestAbstractType request) {
-        try {
-            return get(resolver, registeredService, request, new CriteriaSet());
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return get(resolver, registeredService, request.getIssuer().getValue());
     }
 
     /**
@@ -87,13 +99,13 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
                                                                           final SamlRegisteredService registeredService,
                                                                           final AuthnRequest authnRequest) {
         try {
-            final AssertionConsumerService assertionConsumerService = getAssertionConsumerServiceFor(authnRequest);
+            final AssertionConsumerService assertionConsumerService = SamlIdPUtils.getAssertionConsumerServiceFor(authnRequest);
             final CriteriaSet criterions = new CriteriaSet();
             criterions.add(new EndpointCriterion<>(assertionConsumerService, true));
             LOGGER.info("Locating metadata for entityID [{}], with binding [{}] and ACS endpoint [{}]",
                     authnRequest.getIssuer().getValue(), SAMLConstants.SAML2_POST_BINDING_URI,
                     assertionConsumerService.getLocation());
-            return get(resolver, registeredService, authnRequest, criterions);
+            return get(resolver, registeredService, authnRequest.getIssuer().getValue(), criterions);
 
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -102,30 +114,29 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     private static SamlRegisteredServiceServiceProviderMetadataFacade get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                          final SamlRegisteredService registeredService,
-                                                                         final RequestAbstractType request,
+                                                                         final String entityID,
                                                                          final CriteriaSet criterions) {
         try {
             criterions.add(new BindingCriterion(Collections.singletonList(SAMLConstants.SAML2_POST_BINDING_URI)));
-            criterions.add(new EntityIdCriterion(request.getIssuer().getValue()));
+            criterions.add(new EntityIdCriterion(entityID));
 
-            final String issuer = request.getIssuer().getValue();
             LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
-                    registeredService.getName(), issuer);
+                    registeredService.getName(), entityID);
             LOGGER.info("Locating metadata for entityID [{}], with binding [{}] and ACS endpoint [{}]",
-                    issuer, SAMLConstants.SAML2_POST_BINDING_URI, issuer);
+                    entityID, SAMLConstants.SAML2_POST_BINDING_URI, entityID);
             final ChainingMetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
-                throw new SAMLException("Cannot find entity " + issuer + " in metadata provider.");
+                throw new SAMLException("Cannot find entity " + entityID + " in metadata provider.");
             }
-            LOGGER.debug("Located EntityDescriptor in metadata for [{}]", issuer);
+            LOGGER.debug("Located EntityDescriptor in metadata for [{}]", entityID);
             final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
             if (ssoDescriptor != null) {
                 LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]",
-                        issuer, ssoDescriptor.getValidUntil());
+                        entityID, ssoDescriptor.getValidUntil());
                 return new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor, chainingMetadataResolver);
             }
-            throw new SamlException("Could not locate SPSSODescriptor in the metadata for " + issuer);
+            throw new SamlException("Could not locate SPSSODescriptor in the metadata for " + entityID);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -220,6 +231,14 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return (List) this.ssoDescriptor.getEndpoints(AssertionConsumerService.DEFAULT_ELEMENT_NAME);
     }
 
+    public List<SingleLogoutService> getSingleLogoutServices() {
+        return (List) this.ssoDescriptor.getEndpoints(SingleLogoutService.DEFAULT_ELEMENT_NAME);
+    }
+
+    public SingleLogoutService getSingleLogoutService() {
+        return getSingleLogoutServices().get(0);
+    }
+
     public AssertionConsumerService getAssertionConsumerService() {
         return getAssertionConsumerServices().get(0);
     }
@@ -228,17 +247,5 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         return metadataResolver;
     }
 
-    /**
-     * Gets assertion consumer service for.
-     *
-     * @param authnRequest the authn request
-     * @return the assertion consumer service for
-     */
-    private static AssertionConsumerService getAssertionConsumerServiceFor(final AuthnRequest authnRequest) {
-        final AssertionConsumerService acs = new AssertionConsumerServiceBuilder().buildObject();
-        acs.setBinding(authnRequest.getProtocolBinding());
-        acs.setLocation(authnRequest.getAssertionConsumerServiceURL());
-        acs.setResponseLocation(authnRequest.getAssertionConsumerServiceURL());
-        return acs;
-    }
+
 }

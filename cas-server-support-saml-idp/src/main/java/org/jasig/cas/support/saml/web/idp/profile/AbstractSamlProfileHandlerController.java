@@ -19,15 +19,13 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.saml.SamlException;
 import org.jasig.cas.support.saml.SamlIdPConstants;
-import org.jasig.cas.support.saml.SamlIdPUtils;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.jasig.cas.support.saml.web.idp.profile.builders.SamlProfileSamlResponseBuilder;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
-import org.opensaml.saml.common.SAMLException;
-import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.slf4j.Logger;
@@ -326,7 +324,7 @@ public abstract class AbstractSamlProfileHandlerController {
             throws SamlException {
         try {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
-            builder.getQueryParams().add(new Pair<>("entityId", authnRequest.getIssuer().getValue()));
+            builder.getQueryParams().add(new Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID, authnRequest.getIssuer().getValue()));
             final String url = builder.buildURL();
 
             logger.debug("Built service callback url [{}]", url);
