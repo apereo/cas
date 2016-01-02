@@ -108,6 +108,7 @@ The following settings are applicable:
 # cas.samlidp.metadata.failfast.init=true
 # cas.samlidp.metadata.require.valid=true
 # cas.samlidp.logout.request.force.signed=true
+# cas.samlidp.logout.slo.callbacks.disabled=false
 {% endhighlight %}
 
 

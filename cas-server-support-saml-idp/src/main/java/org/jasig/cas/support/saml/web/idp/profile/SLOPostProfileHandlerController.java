@@ -28,6 +28,9 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     @Value("${cas.samlidp.logout.request.force.signed:true}")
     private boolean forceSignedLogoutRequests = true;
 
+    @Value("${cas.samlidp.logout.slo.callbacks.disabled:false}")
+    private boolean singleLogoutCallbacksDisabled;
+
     /**
      * Instantiates a new Slo post profile handler controller.
      */
@@ -58,6 +61,11 @@ public class SLOPostProfileHandlerController extends AbstractSamlProfileHandlerC
     protected void handleSloPostProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
+        if (singleLogoutCallbacksDisabled) {
+            logger.info("Processing SAML IdP SLO requests is disabled");
+            return;
+        }
+
         final LogoutRequest logoutRequest = decodeRequest(request, decoder, LogoutRequest.class);
         if (this.forceSignedLogoutRequests && !logoutRequest.isSigned()) {
             throw new SAMLException("Logout request is not signed but should be.");
