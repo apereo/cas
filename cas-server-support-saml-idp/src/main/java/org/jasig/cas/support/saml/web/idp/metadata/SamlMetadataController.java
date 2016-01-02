@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.support.saml.SamlIdPConstants;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ public final class SamlMetadataController {
     @RequestMapping(method = RequestMethod.POST, value = SamlIdPConstants.ENDPOINT_GENERATE_RP_METADATA)
     public void generateMetadataForService(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
 
-        final String entityID = request.getParameter("entityId");
+        final String entityID = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
         final String authnRequestSigned = StringUtils.defaultString(request.getParameter("authnRequestSigned"), "false");
         final String wantAssertionsSigned = StringUtils.defaultString(request.getParameter("wantAssertionsSigned"), "false");
         final String x509Certificate = request.getParameter("x509Certificate");

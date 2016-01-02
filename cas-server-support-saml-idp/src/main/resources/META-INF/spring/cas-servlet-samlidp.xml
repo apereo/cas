@@ -39,4 +39,5 @@
         </property>
     </bean>
 
+    <alias name="samlIdPSingleLogoutServiceLogoutUrlBuilder" alias="defaultSingleLogoutServiceLogoutUrlBuilder" />
 </beans>
