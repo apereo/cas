@@ -8,7 +8,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
  * have defined arbitrary names for the MFA trigger, or that service providers are unable
  * to change submitted parameter names in the request to trigger MFA.
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 public interface AuthenticationMethodTranslator {
     /**

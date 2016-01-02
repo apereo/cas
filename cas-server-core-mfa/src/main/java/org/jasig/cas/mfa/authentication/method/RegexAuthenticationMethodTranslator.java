@@ -1,7 +1,7 @@
 package org.jasig.cas.mfa.authentication.method;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.mfa.exceptions.UnrecognizedMfaMethodException;
+import org.jasig.cas.authentication.UnrecognizedAuthenticationMethodException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * A translator that will check a list of regex patterns and return an authentication method name.
  *
  * @author John Gasper
- * @since 4.2
+ * @since 4.3
  */
 @Component("regexAuthenticationMethodTranslator")
 public class RegexAuthenticationMethodTranslator implements AuthenticationMethodTranslator {
@@ -68,6 +68,6 @@ public class RegexAuthenticationMethodTranslator implements AuthenticationMethod
             return defaultMfaMethod;
         }
 
-        throw new UnrecognizedMfaMethodException(triggerValue, targetService.getId());
+        throw new UnrecognizedAuthenticationMethodException(triggerValue);
     }
 }

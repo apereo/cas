@@ -107,6 +107,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy;
 
+    /** The authentication policy. */
+    @Lob
+    @Column(name = "authn_policy", nullable = true, length = Integer.MAX_VALUE)
+    private RegisteredServiceAuthenticationPolicy authenticationPolicy;
+
     @Column(name = "logo")
     private URL logo;
 
@@ -188,6 +193,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         if (this.accessStrategy == null) {
             this.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         }
+        if (this.authenticationPolicy == null) {
+            this.authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
+        }
         if (this.properties == null) {
             this.properties = new HashMap<>();
         }
@@ -227,6 +235,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.requiredHandlers, that.requiredHandlers)
                 .append(this.proxyPolicy, that.proxyPolicy)
                 .append(this.properties, that.properties)
+                .append(this.authenticationPolicy, that.authenticationPolicy)
                 .isEquals();
     }
 
@@ -249,6 +258,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
                 .append(this.requiredHandlers)
                 .append(this.proxyPolicy)
                 .append(this.properties)
+                .append(this.authenticationPolicy)
                 .toHashCode();
     }
 
@@ -355,6 +365,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         this.setPublicKey(source.getPublicKey());
         this.setRequiredHandlers(source.getRequiredHandlers());
         this.setProperties(source.getProperties());
+        this.setAuthenticationPolicy(source.getAuthenticationPolicy());
+
     }
 
     /**
@@ -392,6 +404,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         toStringBuilder.append("logoutUrl", this.logoutUrl);
         toStringBuilder.append("requiredHandlers", this.requiredHandlers);
         toStringBuilder.append("properties", this.properties);
+        toStringBuilder.append("authenticationPolicy", this.authenticationPolicy);
 
         return toStringBuilder.toString();
     }
@@ -465,5 +478,14 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
 
     public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
         this.properties = (Map) properties;
+    }
+
+    @Override
+    public RegisteredServiceAuthenticationPolicy getAuthenticationPolicy() {
+        return authenticationPolicy;
+    }
+
+    public void setAuthenticationPolicy(final RegisteredServiceAuthenticationPolicy authenticationPolicy) {
+        this.authenticationPolicy = authenticationPolicy;
     }
 }
