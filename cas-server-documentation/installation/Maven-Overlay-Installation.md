@@ -10,7 +10,7 @@ customizations such as component configuration and UI design.
 The output of a Maven WAR overlay build is a `cas.war` file that can be deployed on a Java servlet container like
 [Tomcat](http://tomcat.apache.org/whichversion.html).
 
-A simple Maven WAR overlay project is provided for reference and study:
+A simple Maven WAR overlay project is provided for reference:
 [https://github.com/Jasig/cas-overlay-template](https://github.com/Jasig/cas-overlay-template)
 
 The following list of CAS components are those most often customized by deployers:
@@ -19,42 +19,21 @@ The following list of CAS components are those most often customized by deployer
 2. Storage backend (i.e. `MemcachedTicketRegistry`)
 3. View layer files (JSP/CSS/Javascript)
 
-The first two are controlled by modifying Spring XML configuration files under
-`src/main/webapp/WEB-INF/spring-configuration`, the latter by modifying JSP and CSS files under
-`src/main/webapp/WEB-INF/view/jsp/default` in the Maven WAR overlay project. Every aspect of CAS can be controlled by
+Every aspect of CAS can be controlled by
 adding, removing, or modifying files in the overlay; it's also possible and indeed common to customize the behavior of
 CAS by adding third-party components that implement CAS APIs as Java source files or dependency references.
 
 Once an overlay project has been created, the `cas.war` file must be built and subsequently deployed into a Java
-servlet container like Tomcat. The following set of commands, issued from the Maven WAR overlay project root
-directory, provides a sketch of how to accomplish this on a Unix platform.
-
-The approach to Spring configuration is to group related components into a single configuration file, which allows
-deployers to include the handful of files containing components (typically authentication and ticketing) required
-for their environment. The files are intended to be self-identifying with respect to the kinds of components they
-contain, with the exception of `applicationContext.xml` and `cas-servlet.xml`. For example, `auditTrailContext.xml`
-contains components related to the CAS audit trail where events are emitted for successful and failed authentication attempts, among other kinds of auditable events.
-
-It is common practice to exclude `cas.properties` from the overlay and place it at a well-known filesystem location
-outside the WAR deployable. In that case, `propertyFileConfigurer.xml` must be configured to point to the filesystem
-location of `cas.properties`. Generally, the Spring XML configuration files under `spring-configuration` are the most
-common configuration files, beyond `deployerConfigContext.xml`, to be included in an overlay. The supplementary Spring
-configuration files are organized into logically separate configuration concerns that are clearly indicated by the file
-name.
+servlet container like Tomcat. 
 
 CAS uses Spring Webflow to drive the login process in a modular and configurable fashion; the `login-webflow.xml`
 file contains a straightforward description of states and transitions in the flow. Customizing this file is probably
-the most common configuration concern beyond component configuration in the Spring XML configuration files. See the
-Spring Webflow Customization Guide for a thorough description of the various CAS flows and discussion of common
-configuration points.
+the most common configuration concern beyond component configuration in the Spring XML configuration files. 
 
 ## Spring Configuration
-CAS server depends heavily on the Spring framework. There are exact and specific XML configuration files under `spring-configuration` directory that control various properties of CAS as well as `cas-servlet.xml` and `deployerConfigContext.xml` the latter of which is mostly expected by CAS adopters to be included in the overlay for environment-specific CAS settings.
+CAS server depends heavily on the Spring framework. There are exact and specific XML configuration files under `spring-configuration` directory that control various properties of CAS as well as `deployerConfigContext.xml` which is mostly expected by CAS adopters to be included in the overlay for environment-specific CAS settings.
 
-Spring beans in the XML configuration files can be overwritten to change behavior if need be via the Maven overlay process. There are two approaches to this:
-
-1. The XML file can be obtained from source for the CAS version and placed at the same exact path by the same exact name in the Maven overlay build. If configured correctly, the build will use the locally-provided XML file rather than the default.
-2. CAS server is able to load patterns of XML configuration files to overwrite what is provided by default. These configuration files that intend to overrule CAS default behavior can be placed at `/WEB-INF/` and must be named by the following pattern: `cas-servlet-*.xml`. Beans placed in this file will overwrite others.
+XML configuration files can be overwritten to change behavior if need be via the Maven overlay process. The XML file can be obtained from source for the CAS version and placed at the same exact path by the same exact name in the Maven overlay build. If configured correctly, the build will use the locally-provided XML file rather than the default.
 
 ## Custom and Third-Party Source
 It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or

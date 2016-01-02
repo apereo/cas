@@ -1,12 +1,17 @@
 package org.jasig.cas.support.rest;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.AuthenticationManager;
+import org.jasig.cas.authentication.AuthenticationTransaction;
+import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.TicketRegistrySupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +30,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 /**
  * Unit tests for {@link org.jasig.cas.support.rest.TicketsResource}.
  *
@@ -37,13 +43,25 @@ public class TicketsResourceTests {
     @Mock
     private CentralAuthenticationService casMock;
 
+    @Mock
+    private TicketRegistrySupport ticketSupport;
+
     @InjectMocks
     private TicketsResource ticketsResourceUnderTest;
 
     private MockMvc mockMvc;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
+        final AuthenticationManager mgmr = mock(AuthenticationManager.class);
+        when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(TestUtils.getAuthentication());
+
+        this.ticketsResourceUnderTest.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
+                .setAuthenticationManager(mgmr);
+        this.ticketsResourceUnderTest.setWebApplicationServiceFactory(new WebApplicationServiceFactory());
+
+        when(this.ticketSupport.getAuthenticationFrom(anyString())).thenReturn(TestUtils.getAuthentication());
+        this.ticketsResourceUnderTest.setTicketRegistrySupport(ticketSupport);
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")
                 .contextPath("/cas")
@@ -78,8 +96,30 @@ public class TicketsResourceTests {
         this.mockMvc.perform(post("/cas/v1/tickets")
                 .param("username", "test")
                 .param("password", "test"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().json("{\"authentication_exceptions\" : [ \"LoginException\" ]}"));
+    }
+
+    @Test
+    public void creationOfTGTWithUnexpectedRuntimeException() throws Throwable {
+        configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
+
+        this.mockMvc.perform(post("/cas/v1/tickets")
+                .param("username", "test")
+                .param("password", "test"))
+                .andExpect(status().is5xxServerError())
+                .andExpect(content().string("Other exception"));
+    }
+
+    @Test
+    public void creationOfTGTWithBadPayload() throws Throwable {
+        configureCasMockTGTCreationToThrow(new RuntimeException("Other exception"));
+
+        this.mockMvc.perform(post("/cas/v1/tickets")
+                .param("no_username_param", "test")
+                .param("no_password_param", "test"))
                 .andExpect(status().is4xxClientError())
-                .andExpect(content().string("1 errors, 0 successes"));
+                .andExpect(content().string("Invalid payload. 'username' and 'password' form fields are required."));
     }
 
     @Test
@@ -87,7 +127,7 @@ public class TicketsResourceTests {
         configureCasMockToCreateValidST();
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", "https://www.google.com"))
+                .param("service", TestUtils.getService().getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=ISO-8859-1"))
                 .andExpect(content().string("ST-1"));
@@ -98,7 +138,7 @@ public class TicketsResourceTests {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", "https://www.google.com"))
+                .param("service", TestUtils.getService().getId()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("TicketGrantingTicket could not be found"));
     }
@@ -108,8 +148,8 @@ public class TicketsResourceTests {
         configureCasMockSTCreationToThrow(new RuntimeException("Other exception"));
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", "https://www.google.com"))
-                .andExpect(status().is4xxClientError())
+                .param("service", TestUtils.getService().getId()))
+                .andExpect(status().is5xxServerError())
                 .andExpect(content().string("Other exception"));
     }
 
@@ -122,22 +162,28 @@ public class TicketsResourceTests {
     private void configureCasMockToCreateValidTGT() throws Throwable {
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
-        when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenReturn(tgt);
+        when(this.casMock.createTicketGrantingTicket(any(AuthenticationContext.class))).thenReturn(tgt);
+
     }
 
     private void configureCasMockTGTCreationToThrowAuthenticationException() throws Throwable {
         final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>(1);
         handlerErrors.put("TestCaseAuthenticationHander", LoginException.class);
-        when(this.casMock.createTicketGrantingTicket(any(Credential.class))).thenThrow(new AuthenticationException(handlerErrors));
+        when(this.casMock.createTicketGrantingTicket(any(AuthenticationContext.class)))
+                .thenThrow(new AuthenticationException(handlerErrors));
+    }
+
+    private void configureCasMockTGTCreationToThrow(final Throwable e) throws Throwable {
+        when(this.casMock.createTicketGrantingTicket(any(AuthenticationContext.class))).thenThrow(e);
     }
 
     private void configureCasMockSTCreationToThrow(final Throwable e) throws Throwable {
-        when(this.casMock.grantServiceTicket(anyString(), any(Service.class))).thenThrow(e);
+        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationContext.class))).thenThrow(e);
     }
 
     private void configureCasMockToCreateValidST() throws Throwable {
         final ServiceTicket st = mock(ServiceTicket.class);
         when(st.getId()).thenReturn("ST-1");
-        when(this.casMock.grantServiceTicket(anyString(), any(Service.class))).thenReturn(st);
+        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationContext.class))).thenReturn(st);
     }
 }

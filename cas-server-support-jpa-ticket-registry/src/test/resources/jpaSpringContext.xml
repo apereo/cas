@@ -24,7 +24,7 @@
   <context:component-scan base-package="org.jasig.cas" />
   <context:annotation-config/>
 
-  <import resource="classpath:META-INF/spring/jpa-ticket-reg-context.xml" />
+  <import resource="classpath:jpaTicketRegistryContext.xml" />
 
   <bean
       id="dataSourceTicket"
@@ -51,6 +51,7 @@
 
   <!-- CAS Context Core -->
   <alias name="defaultPrincipalFactory" alias="principalFactory" />
+  <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
   <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
   <alias name="inMemoryServiceRegistryDao" alias="serviceRegistryDao" />
   <util:map id="authenticationHandlersResolvers"/>

@@ -3,6 +3,13 @@ apply plugin: "org.akhikhl.gretty"
 
 description = 'Apereo CAS Web Application'
 
+ext {
+    jettySslConfigEnabled = project.hasProperty('jettySslKeyStorePath') && 
+                            project.hasProperty('jettySslTrustStorePath') &&
+                            project.hasProperty('jettySslTrustStorePassword') &&
+                            project.hasProperty('jettySslKeyStorePassword')
+}
+
 javadoc {
     enabled false
 }
@@ -37,22 +44,13 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
 
-    compile(group: 'org.springframework.security', name: 'spring-security-config', version: springSecVersion) {
-        exclude(module: 'commons-logging')
+    compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
+        exclude(module: 'spring-webmvc')
         exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
+        exclude(module: 'pac4j-core')
     }
-    compile(group: 'org.springframework.security', name: 'spring-security-web', version: springSecVersion) {
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-web')
+    compile group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion
+    compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
     }
     compile group: 'com.lmax', name: 'disruptor', version: disruptorVersion
     runtime group: 'org.springframework', name: 'spring-expression', version: springVersion
@@ -106,13 +104,12 @@ gretty {
     jvmArgs = ["-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug","-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
     scanInterval = 5
     contextPath = '/cas'
-    httpsEnabled = true
-    httpsPort = 8443
-    sslKeyStorePath = '/etc/cas/jetty/thekeystore'
-    sslKeyStorePassword = 'changeit'
-    sslTrustStorePath = '/etc/cas/jetty/thekeystore'
-    sslKeyStorePassword = 'changeit'
+    httpsEnabled = project.ext.jettySslConfigEnabled
+    if (project.ext.jettySslConfigEnabled) {
+        httpsPort = 8443
+        sslKeyStorePath = project.ext.jettySslKeyStorePath
+        sslKeyStorePassword = project.ext.jettySslKeyStorePassword
+        sslTrustStorePath = project.ext.jettySslTrustStorePath
+        sslTrustStorePassword = project.ext.jettySslTrustStorePassword
+    }
 }
-
-
-

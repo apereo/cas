@@ -3,11 +3,9 @@ package org.jasig.cas.mock;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.UniqueTicketIdGenerator;
-import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
 import java.util.Date;
 
@@ -20,8 +18,6 @@ import java.util.Date;
 public class MockServiceTicket implements ServiceTicket {
 
     private static final long serialVersionUID = 8203377063087967768L;
-
-    private static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     private final String id;
 

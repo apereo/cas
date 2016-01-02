@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <util:list id="ticketPackagesToScan">
+        <value>org.jasig.cas.ticket</value>
+        <value>org.jasig.cas.adaptors.jdbc</value>
+    </util:list>
+
+    <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+          id="ticketJpaVendorAdapter"
+          p:generateDdl="${database.gen.ddl:true}"
+          p:showSql="${database.show.sql:true}" />
+
+    <bean id="abstractJpaEntityManagerFactory" abstract="true"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
+          p:persistenceUnitName="jpaTicketRegistryContext"
+          p:jpaVendorAdapter-ref="ticketJpaVendorAdapter"
+          p:packagesToScan-ref="ticketPackagesToScan">
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${ticketreg.database.dialect:org.hibernate.dialect.HSQLDialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${ticketreg.database.ddl.auto:create-drop}</prop>
+                <prop key="hibernate.jdbc.batch_size">${ticketreg.database.batchSize:1}</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean
+            id="dataSourceTicket"
+            class="com.mchange.v2.c3p0.ComboPooledDataSource"
+            p:driverClass="${ticketreg.database.driverClass:org.hsqldb.jdbcDriver}"
+            p:jdbcUrl="jdbc:hsqldb:hsql://localhost:9001/"
+            p:user="${ticketreg.database.user:sa}"
+            p:password="${ticketreg.database.password:}"
+            p:initialPoolSize="${ticketreg.database.pool.minSize:6}"
+            p:minPoolSize="${ticketreg.database.pool.minSize:6}"
+            p:maxPoolSize="${ticketreg.database.pool.maxSize:18}"
+            p:maxIdleTimeExcessConnections="${ticketreg.database.pool.maxIdleTime:1000}"
+            p:checkoutTimeout="${ticketreg.database.pool.maxWait:2000}"
+            p:acquireIncrement="${ticketreg.database.pool.acquireIncrement:16}"
+            p:acquireRetryAttempts="${ticketreg.database.pool.acquireRetryAttempts:5}"
+            p:acquireRetryDelay="${ticketreg.database.pool.acquireRetryDelay:2000}"
+            p:idleConnectionTestPeriod="${ticketreg.database.pool.idleConnectionTestPeriod:30}"
+            p:preferredTestQuery="${ticketreg.database.pool.connectionHealthQuery:select 1}"/>
+
+    <bean id="abstractTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+          abstract="true"/>
+
+    <bean id="ticketEntityManagerFactory" parent="abstractJpaEntityManagerFactory"
+          p:dataSource-ref="dataSourceTicket" />
+
+    <bean id="ticketTransactionManager" parent="abstractTransactionManager"
+          p:entityManagerFactory-ref="ticketEntityManagerFactory" />
+
+    <!--
+    <tx:advice id="txCentralAuthenticationServiceAdvice" transaction-manager="ticketTransactionManager">
+        <tx:attributes>
+            <tx:method name="destroyTicketGrantingTicket" read-only="false" />
+            <tx:method name="grantServiceTicket" read-only="false" />
+            <tx:method name="delegateTicketGrantingTicket" read-only="false" />
+            <tx:method name="validateServiceTicket" read-only="false" />
+            <tx:method name="createTicketGrantingTicket" read-only="false" />
+            <tx:method name="createProxyGrantingTicket" read-only="false" />
+            <tx:method name="grantProxyTicket" read-only="false" />
+
+            <tx:method name="getTicket" read-only="true" />
+            <tx:method name="getTickets" read-only="true" />
+        </tx:attributes>
+    </tx:advice>
+    -->
+
+    <tx:advice id="txRegistryAdvice" transaction-manager="ticketTransactionManager">
+        <tx:attributes>
+            <tx:method name="deleteTicket" read-only="false" />
+            <tx:method name="addTicket" read-only="false" />
+            <tx:method name="updateTicket" read-only="false" />
+            <tx:method name="getTicket" read-only="true" />
+            <tx:method name="getTickets" read-only="true" />
+            <tx:method name="sessionCount" read-only="true" />
+            <tx:method name="serviceTicketCount" read-only="true" />
+        </tx:attributes>
+    </tx:advice>
+
+    <tx:advice id="txRegistryServiceTicketDelegatorAdvice" transaction-manager="ticketTransactionManager">
+        <tx:attributes>
+            <tx:method name="grantProxyGrantingTicket" read-only="false" />
+        </tx:attributes>
+    </tx:advice>
+
+    <tx:advice id="txRegistryTicketGrantingTicketDelegatorAdvice" transaction-manager="ticketTransactionManager">
+        <tx:attributes>
+            <tx:method name="markTicketExpired" read-only="false" />
+            <tx:method name="grantServiceTicket" read-only="false" />
+        </tx:attributes>
+    </tx:advice>
+
+    <tx:advice id="txRegistryProxyGrantingTicketDelegatorAdvice" transaction-manager="ticketTransactionManager">
+        <tx:attributes>
+            <tx:method name="grantProxyTicket" read-only="false" />
+        </tx:attributes>
+    </tx:advice>
+
+    <tx:advice id="txRegistryLockingAdvice" transaction-manager="ticketTransactionManager">
+        <tx:attributes>
+            <tx:method name="getOwner" read-only="true" />
+            <tx:method name="acquire" read-only="false" />
+            <tx:method name="release" read-only="false" />
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="ticketRegistryOperations"
+                      expression="execution(* org.jasig.cas.ticket.registry.JpaTicketRegistry.*(..))"/>
+        <aop:pointcut id="ticketRegistryLockingOperations"
+                      expression="execution(* org.jasig.cas.ticket.registry.support.JpaLockingStrategy.*(..))"/>
+        <aop:pointcut id="ticketRegistryServiceTicketDelegatorOperations"
+                      expression="execution(* org.jasig.cas.ticket.registry.ServiceTicketDelegator.*(..))"/>
+        <aop:pointcut id="ticketRegistryTicketGrantingTicketDelegatorOperations"
+                      expression="execution(* org.jasig.cas.ticket.registry.TicketGrantingTicketDelegator.*(..))"/>
+        <aop:pointcut id="ticketRegistryProxyGrantingTicketDelegatorOperations"
+                      expression="execution(* org.jasig.cas.ticket.registry.ProxyGrantingTicketDelegator.*(..))"/>
+
+        <!--
+        <aop:pointcut id="casOperations"
+                      expression="execution(* org.jasig.cas.CentralAuthenticationServiceImpl.*(..))"/>
+        -->
+
+        <aop:advisor advice-ref="txRegistryAdvice"
+                     pointcut-ref="ticketRegistryOperations"/>
+        <aop:advisor advice-ref="txRegistryLockingAdvice"
+                     pointcut-ref="ticketRegistryLockingOperations"/>
+        <aop:advisor advice-ref="txRegistryTicketGrantingTicketDelegatorAdvice"
+                     pointcut-ref="ticketRegistryTicketGrantingTicketDelegatorOperations"/>
+        <aop:advisor advice-ref="txRegistryServiceTicketDelegatorAdvice"
+                     pointcut-ref="ticketRegistryServiceTicketDelegatorOperations"/>
+        <aop:advisor advice-ref="txRegistryProxyGrantingTicketDelegatorAdvice"
+                     pointcut-ref="ticketRegistryProxyGrantingTicketDelegatorOperations"/>
+
+        <!--
+        <aop:advisor advice-ref="txCentralAuthenticationServiceAdvice"
+                     pointcut-ref="casOperations"/>
+        -->
+
+    </aop:config>
+
+
+</beans>

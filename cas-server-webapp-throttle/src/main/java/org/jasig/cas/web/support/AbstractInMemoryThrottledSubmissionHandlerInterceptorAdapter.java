@@ -16,7 +16,6 @@ import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import javax.annotation.PostConstruct;
@@ -39,9 +38,8 @@ import java.util.concurrent.TimeUnit;
  * (i.e. a Quartz Job) and runs independent of the threshold of the parent.
  *
  * @author Scott Battaglia
- * @since 3.0.0.5
+ * @since 3.0.0
  */
-@Component("abstractInMemoryThrottledSubmissionHandlerInterceptorAdapter")
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter
                 extends AbstractThrottledSubmissionHandlerInterceptorAdapter implements Job {
 
@@ -107,7 +105,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      *
      * @return  Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
      */
-    private double submissionRate(final Date a, final Date b) {
+    private static double submissionRate(final Date a, final Date b) {
         return SUBMISSION_RATE_DIVIDEND / (a.getTime() - b.getTime());
     }
 

@@ -56,8 +56,13 @@ Clients can be defined via properties for the most common ones (in the `cas.prop
 # cas.pac4j.oidc.id=
 # cas.pac4j.oidc.secret=
 # cas.pac4j.oidc.discoveryUri=
+# cas.pac4j.oidc.useNonce=
+# cas.pac4j.oidc.preferredJwsAlgorithm=
+# cas.pac4j.oidc.maxClockSkew=
 # cas.pac4j.oidc.customParamKey1=
 # cas.pac4j.oidc.customParamValue1=
+# cas.pac4j.oidc.customParamKey2=
+# cas.pac4j.oidc.customParamValue2=
 {% endhighlight %}
 
 Or like any bean, in a dedicated `WEB-INF/spring-configuration/pac4jContext.xml` file:
