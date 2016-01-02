@@ -4,7 +4,7 @@ package org.jasig.cas.mfa.authentication.method;
  * Defines where authentication methods come from, which are
  * supported and how they are loaded into the application context.
  * @author Misagh Moayyed
- * @since 4.2
+ * @since 4.3
  */
 public interface AuthenticationMethodConfigurationProvider {
     /**

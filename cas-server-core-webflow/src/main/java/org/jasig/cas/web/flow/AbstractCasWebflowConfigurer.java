@@ -69,6 +69,11 @@ public abstract class AbstractCasWebflowConfigurer {
     protected static final String TRANSITION_ID_SUCCESS = "success";
 
     /**
+     * The transition state 'realSubmit'.
+     */
+    protected static final String TRANSITION_ID_REAL_SUBMIT = "realSubmit";
+
+    /**
      * The transition state 'yes'.
      */
     protected static final String TRANSITION_ID_YES = "yes";
@@ -120,12 +125,15 @@ public abstract class AbstractCasWebflowConfigurer {
 
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Autowired
-    private FlowBuilderServices flowBuilderServices;
-
+    /**
+     * The Login flow definition registry.
+     */
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    protected FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired
+    private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("logoutFlowRegistry")
@@ -136,8 +144,6 @@ public abstract class AbstractCasWebflowConfigurer {
 
     /**
      * Initialize.
-     *
-     * @throws Exception the exception
      */
     @PostConstruct
     public final void initialize() {
@@ -521,6 +527,18 @@ public abstract class AbstractCasWebflowConfigurer {
         }
 
         return state;
+    }
+
+    /**
+     * Create subflow state subflow state.
+     *
+     * @param flow    the flow
+     * @param id      the id
+     * @param subflow the subflow
+     * @return the subflow state
+     */
+    protected SubflowState createSubflowState(final Flow flow, final String id, final String subflow) {
+        return createSubflowState(flow, id, subflow, null);
     }
 
     /**

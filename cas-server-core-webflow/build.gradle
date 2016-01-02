@@ -27,6 +27,10 @@ dependencies {
     }
     compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
     compile group: 'com.google.guava', name: 'guava', version:guavaVersion
+    compile project(':cas-server-core-api-authentication')
+    compile project(':cas-server-core-web')
+    compile project(':cas-server-core-api-ticket')
+    compile project(':cas-server-core-api')
 }
 
 

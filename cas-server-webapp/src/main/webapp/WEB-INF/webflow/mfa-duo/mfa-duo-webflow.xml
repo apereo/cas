@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to Jasig under one or more contributor license
+    agreements. See the NOTICE file distributed with this work
+    for additional information regarding copyright ownership.
+    Jasig licenses this file to you under the Apache License,
+    Version 2.0 (the "License"); you may not use this file
+    except in compliance with the License.  You may obtain a
+    copy of the License at the following location:
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+
+-->
+<flow xmlns="http://www.springframework.org/schema/webflow"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow-2.4.xsd">
+
+    <var name="credentials" class="org.jasig.cas.adaptors.duo.DuoCredential" />
+    <on-start>
+        <evaluate expression="initialFlowSetupAction" />
+    </on-start>
+
+    <action-state id="generateLoginTicket">
+        <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)" />
+        <transition on="generated" to="viewLoginFormDuo" />
+    </action-state>
+
+    <view-state id="viewLoginFormDuo" view="casDuoLoginView" model="credentials">
+        <binder>
+            <binding property="signedDuoResponse"/>
+        </binder>
+        <on-entry>
+            <set name="credentials.username" value="conversationScope.authenticationContext.principal.id"/>
+            <set name="viewScope.sigRequest"
+                 value="duoAuthenticationService.generateSignedRequestToken(conversationScope.authenticationContext.principal.id)" />
+            <set name="viewScope.apiHost" value="duoAuthenticationService.getDuoApiHost()" />
+            <set name="viewScope.commandName" value="'credentials'" />
+        </on-entry>
+        <transition on="submit" bind="true" validate="false" to="realSubmitDuo"/>
+
+    </view-state>
+
+    <action-state id="realSubmitDuo">
+        <transition on="mfa-duo-two-factor" to="mfaSuccess" />
+        <transition on="error" to="generateLoginTicket" />
+    </action-state>
+
+    <end-state id="mfaSuccess" />
+
+</flow>
