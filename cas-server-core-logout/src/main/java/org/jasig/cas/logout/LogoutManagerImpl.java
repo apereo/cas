@@ -105,6 +105,14 @@ public final class LogoutManagerImpl implements LogoutManager {
         this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
     }
 
+    public void setLogoutMessageBuilder(final LogoutMessageCreator logoutMessageBuilder) {
+        this.logoutMessageBuilder = logoutMessageBuilder;
+    }
+
+    public void setSingleLogoutServiceMessageHandler(final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler) {
+        this.singleLogoutServiceMessageHandler = singleLogoutServiceMessageHandler;
+    }
+
     public boolean isSingleLogoutCallbacksDisabled() {
         return singleLogoutCallbacksDisabled;
     }
