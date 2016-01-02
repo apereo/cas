@@ -66,9 +66,13 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
      * @throws Exception if key creation encountered an error.
      */
     @PostConstruct
-    public void init() throws Exception {
-        createGoogleAppsPrivateKey();
-        createGoogleAppsPublicKey();
+    public void init() {
+        try {
+            createGoogleAppsPrivateKey();
+            createGoogleAppsPublicKey();
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

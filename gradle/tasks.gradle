@@ -22,29 +22,6 @@ task cleanLogs(description: "Clean build log files") {
     delete fileTree(dir: project.projectDir, includes: ['**/*.log', '**/*.gz', '**/*.log.gz'])
 }
 
-task checkArtifactUpload(description: "Examines the build to see if archives can be uploaded and log the outcome") {
-	if (sonatypeUsername == null || sonatypePassword == null) {
-		logger.info "Sonatype username/password is undefined. Build will not upload project artifacts for $project.name."
-		uploadArchives.enabled = false
-	} else {
-		if (publishReleases) {
-			logger.quiet "Build will upload project release artifacts for $project.name"
-			uploadArchives.enabled = true
-			} else {
-			logger.info "Build will not upload project release artifacts for $project.name. Use [-DpublishReleases=true] to enable releases."
-			uploadArchives.enabled = false
-		}
-
-		if (publishSnapshots) {
-			logger.quiet "Build will upload project snapshot artifacts for $project.name"
-			uploadArchives.enabled = true
-		} else {
-			logger.info "Build will not upload project snapshot artifacts for $project.name. Use [-DpublishSnapshots=true] to enable snapshot."
-			uploadArchives.enabled = false
-		}
-	}
-}
-
 clean << {
     cleanLogs
 }

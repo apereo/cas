@@ -57,7 +57,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkAuthzPrincipalNoAttrRequirements() {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(new HashMap<String, Object>()));
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<String, Object>()));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
-        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(new HashMap<String, Object>()));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<String, Object>()));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
         authz.setRequiredAttributes(this.getRequiredAttributes());
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test",
                 this.getPrincipalAttributes()));
     }
 
@@ -86,7 +86,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
 
-        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
 
-        assertTrue(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+        assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
         pAttrs.put("givenName", "theName");
-        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
 
     @Test
@@ -121,17 +121,17 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.put("cn", "CAS");
         pAttrs.put("givenName", "kaz");
-        assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+        assertFalse(authz.doPrincipalAttributesAllowServiceAccess("test", pAttrs));
     }
 
-    private Map<String, Set<String>> getRequiredAttributes() {
+    private static Map<String, Set<String>> getRequiredAttributes() {
         final Map<String, Set<String>> map = new HashMap<>();
         map.put("cn", Sets.newHashSet("cas", "SSO"));
         map.put("givenName", Sets.newHashSet("CAS", "KAZ"));
         return map;
     }
 
-    private Map<String, Object> getPrincipalAttributes() {
+    private static Map<String, Object> getPrincipalAttributes() {
         final Map<String, Object> map = new HashMap<>();
         map.put("cn", "cas");
         map.put("givenName", Arrays.asList("cas", "KAZ"));

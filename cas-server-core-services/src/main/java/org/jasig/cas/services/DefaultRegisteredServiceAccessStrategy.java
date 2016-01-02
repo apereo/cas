@@ -150,7 +150,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * for any individual attribute value.
      */
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final Map<String, Object> principalAttributes) {
+    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         if (this.requiredAttributes.isEmpty()) {
             logger.debug("No required attributes are specified");
             return true;

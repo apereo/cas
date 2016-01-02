@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
-  <display-name>CAS Management 4.1.0-SNAPSHOT</display-name>
+  <display-name>CAS Management</display-name>
 
   <context-param>
     <param-name>isLog4jAutoInitializationDisabled</param-name>
@@ -25,15 +25,6 @@
   </filter>
   <filter-mapping>
     <filter-name>CAS Client Info Logging Filter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>springSecurityFilterChain</filter-name>
-    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>springSecurityFilterChain</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
@@ -71,6 +62,14 @@
     <servlet-name>cas-management</servlet-name>
     <url-pattern>*.html</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>cas-management</servlet-name>
+    <url-pattern>/callback</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>cas-management</servlet-name>
+    <url-pattern>/logout</url-pattern>
+  </servlet-mapping>
 
   <session-config>
     <!-- Default to 30 minute session timeouts -->
@@ -79,6 +78,10 @@
 
   <error-page>
     <error-code>401</error-code>
+    <location>/authorizationFailure.html</location>
+  </error-page>
+  <error-page>
+    <error-code>403</error-code>
     <location>/authorizationFailure.html</location>
   </error-page>
 

@@ -27,6 +27,9 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     @Override
     public void setServiceId(final String id) {
         serviceId = id;
+
+        // reset the servicePattern because we just changed the serviceId
+        servicePattern = null;
     }
     
     @Override
@@ -49,7 +52,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
      * @param pattern the pattern, may not be null.
      * @return the pattern
      */
-    private Pattern createPattern(final String pattern) {
+    private static Pattern createPattern(final String pattern) {
         if (pattern == null) {
             throw new IllegalArgumentException("Pattern cannot be null.");
         }

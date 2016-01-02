@@ -4,15 +4,13 @@ import java.security.cert.X509Certificate;
 
 import org.jasig.cas.authentication.principal.PersonDirectoryPrincipalResolver;
 import org.jasig.cas.authentication.Credential;
-import org.springframework.stereotype.Component;
 
 /**
  * Abstract class in support of multiple resolvers for X509 Certificates.
  *
  * @author Scott Battaglia
- * @since 3.0.0.4
+ * @since 3.0.0
  */
-@Component("abstractX509PrincipalResolver")
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override

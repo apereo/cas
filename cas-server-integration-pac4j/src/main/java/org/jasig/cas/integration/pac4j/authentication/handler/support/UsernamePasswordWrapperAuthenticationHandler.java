@@ -1,5 +1,6 @@
 package org.jasig.cas.integration.pac4j.authentication.handler.support;
 
+import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.NoOpPrincipalNameTransformer;
@@ -7,6 +8,8 @@ import org.jasig.cas.authentication.handler.PasswordEncoder;
 import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.http.credentials.UsernamePasswordCredentials;
+import org.pac4j.http.credentials.authenticator.Authenticator;
+import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.validation.constraints.NotNull;
@@ -30,7 +33,7 @@ public class UsernamePasswordWrapperAuthenticationHandler
     private PasswordEncoder passwordEncoder = new PlainTextPasswordEncoder();
 
     /**
-     * PrincipalNameTransformer to be used by subclasses to tranform the principal name.
+     * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
     @NotNull
     private PrincipalNameTransformer principalNameTransformer = new NoOpPrincipalNameTransformer();
@@ -46,15 +49,20 @@ public class UsernamePasswordWrapperAuthenticationHandler
     protected UsernamePasswordCredentials convertToPac4jCredentials(final UsernamePasswordCredential casCredential)
             throws GeneralSecurityException, PreventedException {
         logger.debug("CAS credentials: {}", casCredential);
-        final UsernamePasswordCredential credential = (UsernamePasswordCredential) casCredential;
-        final String username = this.principalNameTransformer.transform(credential.getUsername());
+
+        final String username = this.principalNameTransformer.transform(casCredential.getUsername());
         if (username == null) {
             throw new AccountNotFoundException("Username is null.");
         }
-        final String password = this.passwordEncoder.encode(credential.getPassword());
+        final String password = this.passwordEncoder.encode(casCredential.getPassword());
         final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password, getClass().getSimpleName());
         logger.debug("pac4j credentials: {}", credentials);
         return credentials;
+    }
+
+    @Override
+    protected Authenticator getAuthenticator(final Credential credential) {
+        return new SimpleTestUsernamePasswordAuthenticator();
     }
 
     @Override
