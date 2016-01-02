@@ -1,7 +1,6 @@
 package org.jasig.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.logout.SingleLogoutService;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.LogoutManager;
@@ -9,6 +8,7 @@ import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
 import org.jasig.cas.logout.SamlCompliantLogoutMessageCreator;
+import org.jasig.cas.logout.SingleLogoutService;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.LogoutType;
@@ -16,7 +16,6 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.util.CompressionUtils;
-import org.jasig.cas.util.http.SimpleHttpClientFactoryBean;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -74,8 +73,7 @@ public class FrontChannelLogoutActionTests {
     @Before
     public void onSetUp() throws Exception {
 
-        this.logoutManager = new LogoutManagerImpl(this.servicesManager,
-                new SimpleHttpClientFactoryBean().getObject(), new SamlCompliantLogoutMessageCreator());
+        this.logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator());
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(this.logoutManager);
 
         this.request = new MockHttpServletRequest();
