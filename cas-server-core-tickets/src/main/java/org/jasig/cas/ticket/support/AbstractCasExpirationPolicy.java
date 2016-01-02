@@ -14,15 +14,19 @@ import javax.servlet.http.HttpServletRequest;
  * and exposes a few internal helper methods to children can access
  * to objects like the request, etc.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
     private static final long serialVersionUID = 8042104336580063690L;
 
-    /** The Logger instance shared by all children of this class. */
-    protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
+    /**
+     * The Logger instance for this class. Using a transient instance field for
+     * the Logger doesn't work; On object
+     * deserialization the field is null.
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasExpirationPolicy.class);
 
     /**
      * Gets the http request based on the
@@ -36,7 +40,7 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
                 return attrs.getRequest();
             }
         }  catch (final Exception e) {
-            logger.trace("Unable to obtain the http request", e);
+            LOGGER.trace("Unable to obtain the http request", e);
         }
         return null;
     }

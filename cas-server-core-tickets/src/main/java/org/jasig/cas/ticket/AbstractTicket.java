@@ -34,7 +34,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * The {@link ExpirationPolicy} this is associated with.
      **/
     @Lob
-    @Column(name="EXPIRATION_POLICY", length = 1000000, nullable=false)
+    @Column(name="EXPIRATION_POLICY", length = Integer.MAX_VALUE, nullable=false)
     private ExpirationPolicy expirationPolicy;
 
     /** The unique identifier for this ticket. */

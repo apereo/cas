@@ -4,8 +4,9 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.RegexRegisteredService;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
+import org.jasig.cas.services.web.factory.RegisteredServiceFactory;
 import org.jasig.cas.services.web.view.JsonViewUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,6 +36,13 @@ import java.util.Map;
  */
 @Controller("manageRegisteredServicesMultiActionController")
 public final class ManageRegisteredServicesMultiActionController extends AbstractManagementController {
+
+    /**
+     * Instance of the RegisteredServiceFactory.
+     */
+    @NotNull
+    private final RegisteredServiceFactory registeredServiceFactory;
+
     @NotNull
     private final Service defaultService;
 
@@ -42,13 +50,16 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * Instantiates a new manage registered services multi action controller.
      *
      * @param servicesManager the services manager
+     * @param registeredServiceFactory the registered service factory
      * @param defaultServiceUrl the default service url
      */
     @Autowired
     public ManageRegisteredServicesMultiActionController(
-        @Qualifier("servicesManager") final ServicesManager servicesManager,
+        @Qualifier("servicesManager") final ReloadableServicesManager servicesManager,
+        @Qualifier("registeredServiceFactory") final RegisteredServiceFactory registeredServiceFactory,
         @Value("${cas-management.securityContext.serviceProperties.service}") final String defaultServiceUrl) {
         super(servicesManager);
+        this.registeredServiceFactory = registeredServiceFactory;
         this.defaultService = new WebApplicationServiceFactory().createService(defaultServiceUrl);
     }
 
@@ -56,6 +67,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
      * Ensure default service exists.
      */
     private void ensureDefaultServiceExists() {
+        this.servicesManager.reload();
         final Collection<RegisteredService> c = this.servicesManager.getAllServices();
         if (c == null) {
             throw new IllegalStateException("Services cannot be empty");
@@ -67,6 +79,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
             svc.setName("Services Management Web Application");
             svc.setDescription(svc.getName());
             this.servicesManager.save(svc);
+            this.servicesManager.reload();
         }
     }
     /**
@@ -146,7 +159,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
         final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
         for (final RegisteredService svc : services) {
-            serviceBeans.add(RegisteredServiceViewBean.fromRegisteredService(svc));
+            serviceBeans.add(registeredServiceFactory.createServiceViewBean(svc));
         }
         model.put("services", serviceBeans);
         model.put("status", HttpServletResponse.SC_OK);

@@ -15,21 +15,8 @@ You MUST keep in mind that both applications (the CAS server and the services ma
 share the <strong>same</strong> configuration for the CAS services.
 </p></div>
 
-You can install the services management webapp in your favorite applications server, there is no restriction.
-Though, you need to configure it according to your environment. Towards that goal, the best way to
-proceed is to create your own services management webapp using
-a [Maven overlay](http://maven.apache.org/plugins/maven-war-plugin/overlays.html)
-based on the CAS services management webapp:
-
-{% highlight xml %}
-<dependency>
-  <groupId>org.jasig.cas</groupId>
-  <artifactId>cas-management-webapp</artifactId>
-  <version>${cas.version}</version>
-  <type>war</type>
-  <scope>runtime</scope>
-</dependency>
-{% endhighlight %}
+A sample Maven overlay for the services management webapp is provided here: [https://github.com/Jasig/cas-services-management-overlay]
+(https://github.com/Jasig/cas-services-management-overlay)
 
 ## Services Registry
 
@@ -37,17 +24,37 @@ You also need to define the *common* services registry by overriding the `WEB-IN
 file and set the appropriate `serviceRegistryDao`. The [persistence storage](Service-Management.html) MUST be the same.
 It should be the same configuration you already use in your CAS server in the `WEB-INF/deployerConfigContext.xml` file.
 
-## Authentication method
+## Authentication Method
 
-By default, the `cas-management-webapp` is configured to authenticate against a CAS server. We assume that it's the case in this documentation. However, you could change the authentication method by overriding the `WEB-INF/spring-configuration/securityContext.xml` file.
+By default, the `cas-management-webapp` is configured to authenticate against a CAS server. We assume that it's the case in this 
+documentation. However, you could change the authentication method by 
+overriding the `WEB-INF/spring-configuration/securityContext.xml` file.
 
+## Configuration
+The following properties are applicable and must be adjusted by overriding the default `WEB-INF/cas-management.properties` file:
+
+{% highlight properties %}
+# CAS
+cas.host=http://localhost:8080
+cas.prefix=${cas.host}/cas
+cas.securityContext.casProcessingFilterEntryPoint.loginUrl=${cas.prefix}/login
+
+# Management
+cas-management.host=${cas.host}
+cas-management.prefix=${cas-management.host}/cas-management
+cas-management.securityContext.serviceProperties.service=${cas-management.prefix}/callback
+
+cas-management.securityContext.serviceProperties.adminRoles=ROLE_ADMIN
+{% endhighlight %}
 
 ##Securing Access and Authorization
-Access to the management webapp is controlled via Spring Security. Rules are defined in the `/cas-management-webapp/src/main/webapp/WEB-INF/managementConfigContext.xml` file.
+Access to the management webapp is controlled via pac4j. Rules are defined in 
+the `/WEB-INF/managementConfigContext.xml` file.
 
 
 ###Static List of Users
-By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` file that should be available on the runtime classpath.
+By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` 
+file that should be available on the runtime classpath.
 
 {% highlight xml %}
 <sec:user-service id="userDetailsService"
@@ -75,72 +82,83 @@ The format of the file should be as such:
 # casuser=notused,ROLE_ADMIN
 {% endhighlight %}
 
+###CAS ABAC
 
-###LDAP-managed List of Users
-If you wish allow access to the services management application via an LDAP group/server, open up the `deployerConfigContext` file of the management web application and adjust for the following:
-
+The following authorization generator examines the CAS response for attributes
+and will grant access if an attribute name matches the value of `adminRoles` defined in the configuration.
+ 
 {% highlight xml %}
-<sec:ldap-server id="ldapServer" url="ldap://myserver:13060/"
-                 manager-dn="cn=adminusername,cn=Users,dc=london-scottish,dc=com"
-                 manager-password="mypassword" />
-<sec:ldap-user-service id="userDetailsService" server-ref="ldapServer"
-            group-search-base="cn=Groups,dc=mycompany,dc=com" group-role-attribute="cn"
-            group-search-filter="(uniquemember={0})"
-            user-search-base="cn=Users,dc=mycompany,dc=com"
-            user-search-filter="(uid={0})"/>
+<bean id="authorizationGenerator" class="org.pac4j.core.authorization.FromAttributesAuthorizationGenerator"
+    c:roleAttributes="ROLE_ADMIN,ROLE_CUSTOM" c:permissionAttributes="CUSTOM_PERMISSION1,CUSTOM_PERMISSION2" />
 {% endhighlight %}
 
-You will also need to ensure that the `spring-security-ldap` dependency is available to your build at runtime:
+###Custom ABAC
+
+Define a custom set of roles and permissions that would be cross-checked later against the value of `adminRoles`
+defined in the configuration.
+ 
+{% highlight xml %}
+<bean id="authorizationGenerator" class="org.pac4j.core.authorization.DefaultRolesPermissionsAuthorizationGenerator">
+    c:defaultRoles="ROLE_ADMIN,ROLE_CUSTOM" c:defaultPermissions="CUSTOM_PERMISSION1,CUSTOM_PERMISSION2" />
+{% endhighlight %}
+
+###LDAP
+
+Support is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
 <dependency>
-   <groupId>org.springframework.security</groupId>
-   <artifactId>spring-security-ldap</artifactId>
-   <version>${spring.security.ldap.version}</version>
-   <exclusions>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-aop</artifactId>
-     </exclusion>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-tx</artifactId>
-     </exclusion>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-beans</artifactId>
-     </exclusion>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-context</artifactId>
-     </exclusion>
-     <exclusion>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-core</artifactId>
-     </exclusion>
-   </exclusions>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-ldap</artifactId>
+  <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
 
+Define a custom set of roles and permissions that would be cross-checked later against the value of `adminRoles`.
+ 
+{% highlight xml %}
+<ldaptive:pooled-connection-factory
+    id="ldapAuthorizationGeneratorConnectionFactory"
+    ldapUrl="${ldap.url}"
+    blockWaitTime="${ldap.pool.blockWaitTime}"
+    failFastInitialize="true"
+    connectTimeout="${ldap.connectTimeout}"
+    useStartTLS="${ldap.useStartTLS}"
+    validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+    validatePeriodically="${ldap.pool.validatePeriodically}"
+    validatePeriod="${ldap.pool.validatePeriod}"
+    idleTime="${ldap.pool.idleTime}"
+    maxPoolSize="${ldap.pool.maxSize}"
+    minPoolSize="${ldap.pool.minSize}"
+    useSSL="${ldap.use.ssl:false}"
+    prunePeriod="${ldap.pool.prunePeriod}"
+/>
 
-## Urls Configuration
+<bean id="ldapAuthorizationGeneratorUserSearchExecutor" class="org.ldaptive.SearchExecutor"
+      p:baseDn="${ldap.baseDn}"
+      p:searchFilter="${ldap.user.searchFilter}"
+      p:returnAttributes-ref="userDetailsUserAttributes" />
 
-The urls configuration of the CAS server and management applications can be done
-by overriding the default `WEB-INF/cas-management.properties` file:
+<bean id="ldapAuthorizationGeneratorRoleSearchExecutor" class="org.ldaptive.SearchExecutor"
+      p:baseDn="${ldap.role.baseDn}"
+      p:searchFilter="${ldap.role.searchFilter}"
+      p:returnAttributes-ref="userDetailsRoleAttributes" />
 
-{% highlight properties %}
-# CAS
-cas.host=http://localhost:8080
-cas.prefix=${cas.host}/cas
-cas.securityContext.casProcessingFilterEntryPoint.loginUrl=${cas.prefix}/login
-cas.securityContext.ticketValidator.casServerUrlPrefix=${cas.prefix}
+<util:list id="userDetailsUserAttributes">
+    <value>...</value>
+</util:list>
 
-# Management
-cas-management.host=${cas.host}
-cas-management.prefix=${cas-management.host}/cas-management
-cas-management.securityContext.serviceProperties.service=${cas-management.prefix}/login/cas
-cas-management.securityContext.serviceProperties.adminRoles=hasRole('ROLE_ADMIN')
+<util:list id="userDetailsRoleAttributes">
+    <value>...</value>
+</util:list>
 {% endhighlight %}
 
-When authenticating against a CAS server, the services management webapp will be processed as a
-regular CAS service and thus, needs to be defined in the services registry of the CAS server.
+The following properties are applicable to this configuration:
+
+{% highlight properties %}
+# ldap.authorizationgenerator.user.attr=uid
+# ldap.authorizationgenerator.role.attr=roleAttributeName
+# ldap.authorizationgenerator.role.prefix=ROLE_
+# ldap.authorizationgenerator.allow.multiple=false
+{% endhighlight %}
+

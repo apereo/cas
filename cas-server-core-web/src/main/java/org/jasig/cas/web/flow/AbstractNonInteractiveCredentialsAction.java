@@ -1,12 +1,20 @@
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -26,7 +35,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author Scott Battaglia
 
- * @since 3.0.0.4
+ * @since 3.0.0
  */
 @Component
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAction {
@@ -34,18 +43,25 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
     /** The logger instance. */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    /**
-     * The Principal factory.
-     */
+    /** Principal factory instance. */
     @Autowired
     @Qualifier("principalFactory")
     protected PrincipalFactory principalFactory;
 
-    /** Instance of CentralAuthenticationService. */
+    @NotNull
+    @Autowired(required=false)
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
+
     @NotNull
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
+
+    /** Instance of warn cookie generator. */
+    @Autowired(required=false)
+    @Qualifier("warnCookieGenerator")
+    private CookieGenerator warnCookieGenerator;
 
     /**
      * Checks if is renew present.
@@ -54,7 +70,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @return true, if  renew present
      */
     protected final boolean isRenewPresent(final RequestContext context) {
-        return StringUtils.hasText(context.getRequestParameters().get("renew"));
+        return StringUtils.hasText(context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW));
     }
 
     @Override
@@ -68,17 +84,22 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         final Service service = WebUtils.getService(context);
 
-        if (isRenewPresent(context)
-            && ticketGrantingTicketId != null
-            && service != null) {
+        if (isRenewPresent(context) && ticketGrantingTicketId != null && service != null) {
 
             try {
+                final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                        this.authenticationSystemSupport.getPrincipalElectionStrategy());
+                final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credential);
+
+                this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
+                final AuthenticationContext authenticationContext = builder.build(service);
+
                 final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketId,
-                        service,
-                            credential);
+                    .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
+                onWarn(context, credential);
                 return result("warn");
+
             } catch (final AuthenticationException e) {
                 onError(context, credential);
                 return error();
@@ -89,13 +110,20 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         }
 
         try {
-            WebUtils.putTicketGrantingTicketInScopes(
-                context,
-                this.centralAuthenticationService
-                    .createTicketGrantingTicket(credential));
+            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
+            final AuthenticationTransaction transaction =
+                    AuthenticationTransaction.wrap(credential);
+            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
+            final AuthenticationContext authenticationContext = builder.build(service);
+
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+            WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             onSuccess(context, credential);
             return success();
+
         } catch (final Exception e) {
+            logger.warn(e.getMessage(), e);
             onError(context, credential);
             return error();
         }
@@ -105,10 +133,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         return centralAuthenticationService;
     }
 
-    public final void setCentralAuthenticationService(
-        final CentralAuthenticationService centralAuthenticationService) {
+    public final void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
         this.centralAuthenticationService = centralAuthenticationService;
     }
+
 
     /**
      * Sets principal factory to create principal objects.
@@ -126,8 +154,7 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @param context the context for this specific request.
      * @param credential the credential for this request.
      */
-    protected void onError(final RequestContext context,
-        final Credential credential) {
+    protected void onError(final RequestContext context, final Credential credential) {
         // default implementation does nothing
     }
 
@@ -138,9 +165,28 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @param context the context for this specific request.
      * @param credential the credential for this request.
      */
-    protected void onSuccess(final RequestContext context,
-        final Credential credential) {
+    protected void onSuccess(final RequestContext context, final Credential credential) {
         // default implementation does nothing
+    }
+
+    public PrincipalFactory getPrincipalFactory() {
+        return principalFactory;
+    }
+
+    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
+        return authenticationSystemSupport;
+    }
+
+    /**
+     * Hook method to note to the flow thar a warning
+     * must be issued prior to resuming the normal
+     * authentication flow.
+     *
+     * @param context the context for this specific request.
+     * @param credential the credential for this request.
+     */
+    protected void onWarn(final RequestContext context, final Credential credential) {
+        WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
     }
 
     /**
@@ -151,6 +197,5 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
      * @return the constructed credential or null if none could be constructed
      * from the request.
      */
-    protected abstract Credential constructCredentialsFromRequest(
-        RequestContext context);
+    protected abstract Credential constructCredentialsFromRequest(RequestContext context);
 }

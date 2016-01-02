@@ -33,7 +33,7 @@ public class SamlValidateController extends AbstractServiceValidateController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @RequestMapping(path="/samlValidate", method = RequestMethod.GET)
+    @RequestMapping(path="/samlValidate", method = RequestMethod.POST)
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {

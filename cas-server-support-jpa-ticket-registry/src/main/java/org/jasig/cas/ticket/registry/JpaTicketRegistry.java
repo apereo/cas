@@ -8,6 +8,7 @@ import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.quartz.Job;
@@ -48,9 +49,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.2.1
- *
  */
 @Component("jpaTicketRegistry")
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
@@ -77,11 +76,8 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
-    @NotNull
-    private String ticketGrantingTicketPrefix = TicketGrantingTicket.PREFIX;
-
     @Override
-    protected void updateTicket(final Ticket ticket) {
+    public void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
         logger.debug("Updated ticket [{}].", ticket);
     }
@@ -170,7 +166,9 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      */
     private Ticket getRawTicket(final String ticketId) {
         try {
-            if (ticketId.startsWith(this.ticketGrantingTicketPrefix)) {
+            if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
+                    || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
+                // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
                 return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
             }
 
@@ -197,10 +195,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
         return tickets;
     }
 
-    public void setTicketGrantingTicketPrefix(final String ticketGrantingTicketPrefix) {
-        this.ticketGrantingTicketPrefix = ticketGrantingTicketPrefix;
-    }
-
     @Override
     protected boolean needsCallback() {
         return false;
@@ -223,7 +217,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
      * @param result the result
      * @return the int
      */
-    private int countToInt(final Object result) {
+    private static int countToInt(final Object result) {
         final int intval;
         if (result instanceof Long) {
             intval = ((Long) result).intValue();

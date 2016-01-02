@@ -9,17 +9,19 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.ISOStandardDateFormat;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -27,8 +29,6 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private GoogleAccountsServiceFactory factory;
@@ -65,7 +65,19 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     public void verifyResponse() {
         final Response resp = this.googleAccountsService.getResponse("ticketId");
         assertEquals(resp.getResponseType(), DefaultResponse.ResponseType.POST);
-        assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RESPONSE));
+        final String response = resp.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_RESPONSE);
+        assertNotNull(response);
+        assertTrue(response.contains("NotOnOrAfter"));
+
+        final Pattern pattern = Pattern.compile("NotOnOrAfter\\s*=\\s*\"(.+Z)\"");
+        final Matcher matcher = pattern.matcher(response);
+        final DateTime now = DateTime.parse(new ISOStandardDateFormat().getCurrentDateAndTime());
+
+        while (matcher.find()) {
+            final String onOrAfter = matcher.group(1);
+            final DateTime dt = DateTime.parse(onOrAfter);
+            assertTrue(dt.isAfter(now));
+        }
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
     }
 

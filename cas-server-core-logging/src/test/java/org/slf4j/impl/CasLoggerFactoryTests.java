@@ -3,7 +3,7 @@ package org.slf4j.impl;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.InvalidTicketException;
-import org.jasig.cas.ticket.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.After;
 import org.junit.Before;
@@ -322,11 +322,11 @@ public class CasLoggerFactoryTests {
         validateLogData();
     }
 
-    private String getMessageToLog() {
+    private static String getMessageToLog() {
         return String.format("Here is one %s and here is another %s", ID1, ID2);
     }
 
-    private String getMessageToLogWithParams() {
+    private static String getMessageToLogWithParams() {
         return "Here is one {} and here is another {}";
     }
 

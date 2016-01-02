@@ -1,5 +1,6 @@
 package org.jasig.cas.services;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,14 @@ public class MongoServiceRegistryDaoTests {
 
     @Autowired
     private ServiceRegistryDao serviceRegistryDao;
+
+    @Before
+    public void setup() {
+        final List<RegisteredService> services = this.serviceRegistryDao.load();
+        for (final RegisteredService service : services) {
+            this.serviceRegistryDao.delete(service);
+        }
+    }
 
     @Test
     public void verifySaveAndLoad() {
@@ -59,4 +68,6 @@ public class MongoServiceRegistryDaoTests {
 
         return rs;
     }
+
+
 }

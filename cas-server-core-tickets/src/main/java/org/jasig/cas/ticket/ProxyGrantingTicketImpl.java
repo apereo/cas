@@ -2,6 +2,11 @@ package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyTicket;
+
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 /**
  * Concrete implementation of a proxy granting ticket (PGT). A PGT is
@@ -17,8 +22,16 @@ import org.jasig.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Entity
+@DiscriminatorValue(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)
 public final class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements ProxyGrantingTicket {
     private static final long serialVersionUID = -8126909926138945649L;
+
+    /**
+     * Instantiates a new proxy granting ticket impl.
+     */
+    public ProxyGrantingTicketImpl() {
+    }
 
     /**
      * Instantiates a new proxy granting ticket impl.
@@ -43,6 +56,17 @@ public final class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl impl
     public ProxyGrantingTicketImpl(final String id, final Service proxiedBy, final TicketGrantingTicket ticketGrantingTicket,
                                    final Authentication authentication, final ExpirationPolicy policy) {
         super(id, proxiedBy, ticketGrantingTicket, authentication, policy);
+    }
+
+    @Override
+    public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
+                                        final boolean onlyTrackMostRecentSession) {
+        final ProxyTicket serviceTicket = new ProxyTicketImpl(id, this,
+                service, this.getCountOfUses() == 0,
+                expirationPolicy);
+
+        updateServiceAndTrackSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
+        return serviceTicket;
     }
 
 }

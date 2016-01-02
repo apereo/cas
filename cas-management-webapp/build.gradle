@@ -3,6 +3,13 @@ apply plugin: "org.akhikhl.gretty"
 
 description = 'Apereo CAS Management Web Application'
 
+ext {
+    jettySslConfigEnabled = project.hasProperty('jettySslKeyStorePath') && 
+                            project.hasProperty('jettySslTrustStorePath') &&
+                            project.hasProperty('jettySslTrustStorePassword') &&
+                            project.hasProperty('jettySslKeyStorePassword')
+}
+
 javadoc {
     enabled false
 }
@@ -39,13 +46,12 @@ gretty {
     jvmArgs = ["-Dorg.eclipse.jetty.annotations.maxWait=120","-Xdebug","-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n"]
     scanInterval = 5
     contextPath = '/cas-management'
-    httpsEnabled = true
-    httpsPort = 8443
-    sslKeyStorePath = '/etc/cas/jetty/thekeystore'
-    sslKeyStorePassword = 'changeit'
-    sslTrustStorePath = '/etc/cas/jetty/thekeystore'
-    sslKeyStorePassword = 'changeit'
+    httpsEnabled = project.ext.jettySslConfigEnabled
+    if (project.ext.jettySslConfigEnabled) {
+        httpsPort = 8443
+        sslKeyStorePath = project.ext.jettySslKeyStorePath
+        sslKeyStorePassword = project.ext.jettySslKeyStorePassword
+        sslTrustStorePath = project.ext.jettySslTrustStorePath
+        sslTrustStorePassword = project.ext.jettySslTrustStorePassword
+    }
 }
-
-
-
