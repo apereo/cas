@@ -23,6 +23,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
+import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
@@ -479,6 +480,20 @@ public abstract class AbstractCasWebflowConfigurer {
             logger.debug("Created end state state {} on flow id {}, backed by view {}", id, flow.getId(), viewId);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Register flow definition into login flow registry.
+     *
+     * @param sourceRegistry the source registry
+     */
+    protected void registerFlowDefinitionIntoLoginFlowRegistry(final FlowDefinitionRegistry sourceRegistry) {
+        final String[] flowIds = sourceRegistry.getFlowDefinitionIds();
+        for (final String flowId : flowIds) {
+            final FlowDefinition definition = sourceRegistry.getFlowDefinition(flowId);
+            logger.debug("Registering flow definition [{}]", flowId);
+            this.loginFlowDefinitionRegistry.registerFlowDefinition(definition);
         }
     }
 

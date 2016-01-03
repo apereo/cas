@@ -1,13 +1,20 @@
 package org.jasig.cas.adaptors.duo;
 
 import org.jasig.cas.web.flow.AbstractCasWebflowConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.stereotype.Component;
+import org.springframework.webflow.definition.FlowDefinition;
+import org.springframework.webflow.definition.registry.FlowDefinitionHolder;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
+import org.springframework.webflow.engine.builder.DefaultFlowHolder;
+import org.springframework.webflow.engine.builder.FlowAssembler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +30,10 @@ public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigure
 
     private static final String MFA_SUCCESS_EVENT_ID = "mfaSuccess";
     private static final String MFA_DUO_EVENT_ID = "mfa-duo";
+
+    @Autowired
+    @Qualifier("duoFlowRegistry")
+    private FlowDefinitionRegistry duoFlowRegistry;
 
     @Override
     protected void doInitialize() throws Exception {
@@ -40,5 +51,6 @@ public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigure
         logger.debug("Retrieved action state {}", actionState.getId());
         createTransitionForState(actionState, MFA_DUO_EVENT_ID, MFA_DUO_EVENT_ID);
 
+        registerFlowDefinitionIntoLoginFlowRegistry(this.duoFlowRegistry);
     }
 }

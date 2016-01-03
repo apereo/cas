@@ -15,8 +15,8 @@
     <bean id="casDuoLoginView" class="org.springframework.web.servlet.view.JstlView"
           p:url="/WEB-INF/view/jsp/default/ui/casDuoLoginView.jsp"/>
 
-    <webflow:flow-registry id="loginFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
-        <webflow:flow-location-pattern value="/login/*-webflow.xml"/>
+
+    <webflow:flow-registry id="duoFlowRegistry" flow-builder-services="builder" base-path="/WEB-INF/webflow">
         <webflow:flow-location-pattern value="/mfa-duo/*-webflow.xml"/>
     </webflow:flow-registry>
 
