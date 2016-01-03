@@ -50,7 +50,8 @@
     </view-state>
 
     <action-state id="realSubmitDuo">
-        <transition on="mfa-duo-two-factor" to="mfaSuccess" />
+        <evaluate expression="duoTerminatingAuthenticationWebflowAction" />
+        <transition on="mfaSuccess" to="mfaSuccess" />
         <transition on="error" to="generateLoginTicket" />
     </action-state>
 

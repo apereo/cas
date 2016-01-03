@@ -28,13 +28,13 @@ import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 /**
- * This is {@link PrimaryAuthenticationContextWebflowEventResolver}.
+ * This is {@link DefaultAuthenticationContextWebflowEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-@Component("primaryAuthenticationContextWebflowEventResolver")
-public class PrimaryAuthenticationContextWebflowEventResolver implements AuthenticationContextWebflowEventResolver {
+@Component("defaultAuthenticationContextWebflowEventResolver")
+public class DefaultAuthenticationContextWebflowEventResolver implements AuthenticationContextWebflowEventResolver {
     /**
      * Authentication succeeded with warnings from authn subsystem that should be displayed to user.
      */
