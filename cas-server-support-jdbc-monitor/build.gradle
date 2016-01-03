@@ -9,7 +9,6 @@ dependencies {
         exclude(module: 'slf4j-api')
         exclude(module: 'c3p0')
     }
-    runtime group: 'javax.transaction', name:'jta', version: jtaVersion
     runtime group: 'javax.transaction', name: 'jta', version: jtaVersion
     compile group: 'org.springframework', name: 'spring-orm', version: springVersion
     compile(group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion) {
