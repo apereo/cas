@@ -22,6 +22,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
+import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.ServletContext;
@@ -394,7 +395,12 @@ public final class WebUtils {
         final Credential cFromRequest = (Credential) context.getRequestScope().get("credential");
         final Credential cFromFlow = (Credential) context.getFlowScope().get("credential");
 
-        final Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
+        Credential credential = cFromRequest != null ? cFromRequest : cFromFlow;
+
+        if (credential == null) {
+            final FlowSession session = context.getFlowExecutionContext().getActiveSession();
+            credential = session.getScope().getRequired("credentials", Credential.class);
+        }
         if (credential != null && StringUtils.isBlank(credential.getId())) {
             return null;
         }
