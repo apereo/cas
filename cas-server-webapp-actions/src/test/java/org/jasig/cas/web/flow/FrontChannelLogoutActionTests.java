@@ -3,6 +3,8 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.logout.DefaultLogoutRequest;
+import org.jasig.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
+import org.jasig.cas.logout.DefaultSingleLogoutServiceMessageHandler;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.LogoutRequest;
@@ -64,7 +66,7 @@ public class FrontChannelLogoutActionTests {
     @Mock
     private ServicesManager servicesManager;
 
-    private LogoutManager logoutManager;
+    private LogoutManagerImpl logoutManager;
 
     public FrontChannelLogoutActionTests() {
         MockitoAnnotations.initMocks(this);
@@ -74,6 +76,13 @@ public class FrontChannelLogoutActionTests {
     public void onSetUp() throws Exception {
 
         this.logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator());
+        final DefaultSingleLogoutServiceMessageHandler handler = new DefaultSingleLogoutServiceMessageHandler();
+        
+        handler.setLogoutMessageBuilder(new SamlCompliantLogoutMessageCreator());
+        handler.setServicesManager(servicesManager);
+        handler.setSingleLogoutServiceLogoutUrlBuilder(new DefaultSingleLogoutServiceLogoutUrlBuilder());
+        this.logoutManager.setSingleLogoutServiceMessageHandler(handler);
+
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(this.logoutManager);
 
         this.request = new MockHttpServletRequest();
