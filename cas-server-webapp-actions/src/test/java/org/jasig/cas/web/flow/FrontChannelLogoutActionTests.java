@@ -5,7 +5,6 @@ import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.logout.DefaultLogoutRequest;
 import org.jasig.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.jasig.cas.logout.DefaultSingleLogoutServiceMessageHandler;
-import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutManagerImpl;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.logout.LogoutRequestStatus;
