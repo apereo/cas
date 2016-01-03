@@ -64,7 +64,7 @@ public class AuthenticationViaFormAction {
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @Autowired
-    @Qualifier("primaryAuthenticationContextWebflowEventResolver")
+    @Qualifier("defaultAuthenticationContextWebflowEventResolver")
     private AuthenticationContextWebflowEventResolver authenticationContextWebflowEventResolver;
 
     /**
