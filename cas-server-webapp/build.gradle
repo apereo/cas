@@ -44,13 +44,19 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
 
+    
+
     compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
         exclude(module: 'spring-webmvc')
         exclude(module: 'spring-core')
+        exclude(module: 'slf4j-api')
         exclude(module: 'pac4j-core')
     }
-    compile group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion
+    compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
+        exclude(module: 'slf4j-api')
+    }
     compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
+        exclude(module: 'slf4j-api')
     }
     compile group: 'com.lmax', name: 'disruptor', version: disruptorVersion
     runtime group: 'org.springframework', name: 'spring-expression', version: springVersion
@@ -84,6 +90,7 @@ dependencies {
     }
     runtime group: 'com.mchange', name: 'c3p0', version: c3p0Version
     runtime group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:bouncyCastleVersion
+    runtime group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version:bouncyCastleVersion
 }
 
 configurations {

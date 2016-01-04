@@ -1,15 +1,15 @@
 package org.jasig.cas.services;
 
-import java.util.Collection;
-
+import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.principal.Service;
+
+import java.util.Collection;
 
 /**
  * Manages the storage, retrieval, and matching of Services wishing to use CAS
  * and services that have been registered with CAS.
  *
  * @author Scott Battaglia
-
  * @since 3.1
  */
 public interface ServicesManager {
@@ -37,6 +37,14 @@ public interface ServicesManager {
      * @return the RegisteredService that matches the supplied service.
      */
     RegisteredService findServiceBy(Service service);
+
+    /**
+     * Find a collection of services by type.
+     *
+     * @param clazz the clazz
+     * @return the  collection of services that matches the supplied type
+     */
+    Collection<RegisteredService> findServiceBy(Predicate<RegisteredService> clazz);
 
     /**
      * Find a RegisteredService by matching with the supplied id.
