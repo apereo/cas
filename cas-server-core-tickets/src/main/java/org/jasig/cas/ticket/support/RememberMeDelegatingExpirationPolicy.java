@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
+import javax.annotation.PostConstruct;
 
 /**
  * Delegates to different expiration policies depending on whether remember me
@@ -31,6 +32,7 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeDelegatingExpirationPolicy.class);
 
+
     @Nullable
     @Autowired(required=false)
     @Qualifier("rememberMeExpirationPolicy")
@@ -46,18 +48,29 @@ public final class RememberMeDelegatingExpirationPolicy extends AbstractCasExpir
      */
     public RememberMeDelegatingExpirationPolicy() {}
 
+    @PostConstruct
+    private void postConstruct() {
+        if (rememberMeExpirationPolicy != null) {
+            LOGGER.debug("Using remember-me expiration policy of {}", rememberMeExpirationPolicy);
+        }
+        if (sessionExpirationPolicy != null) {
+            LOGGER.debug("Using session expiration policy of {}", sessionExpirationPolicy);
+        }
+    }
+
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        if (this.rememberMeExpirationPolicy != null
-            && this.sessionExpirationPolicy != null) {
+        if (this.rememberMeExpirationPolicy != null && this.sessionExpirationPolicy != null) {
 
             final Boolean b = (Boolean) ticketState.getAuthentication().getAttributes().
-                get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+                    get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
 
             if (b == null || b.equals(Boolean.FALSE)) {
+                LOGGER.debug("Ticket is not associated with a remember-me authentication. Invoking {}", sessionExpirationPolicy);
                 return this.sessionExpirationPolicy.isExpired(ticketState);
             }
 
+            LOGGER.debug("Ticket is associated with a remember-me authentication. Invoking {}", rememberMeExpirationPolicy);
             return this.rememberMeExpirationPolicy.isExpired(ticketState);
         }
         LOGGER.warn("No expiration policy settings are defined");
