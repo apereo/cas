@@ -122,6 +122,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Gets model attributes.
      *
      * @param model the model
+     * @return the model attributes
      */
     protected final Map<String, Object> getModelAttributes(final Map<String, Object> model) {
         return (Map<String, Object>) model.get(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
