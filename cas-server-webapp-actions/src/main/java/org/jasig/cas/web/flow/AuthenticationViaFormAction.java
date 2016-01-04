@@ -31,6 +31,7 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
@@ -88,6 +89,24 @@ public class AuthenticationViaFormAction {
         if (!checkLoginTicketIfExists(context)) {
             return returnInvalidLoginTicketEvent(context, messageContext);
         }
+
+        /**
+         * TODO: It is not possible to pass around the servlet context through a hierarcy
+         * of changes without making much change in the class interfaces. Therefore, using
+         * threadlocal to maintain the tenant information. May be it is possible to use
+         * spring flow to do that but this should be a place holder till we figure out the best
+         * way to achieve that.
+         */
+        String tenantId = AuthUtils.SELF;
+        HttpServletRequest req =
+                (HttpServletRequest)context.getExternalContext().getNativeRequest();
+
+        if(req!=null) {
+          //The URL is //https://localhost:8443/cas/login.
+          tenantId = AuthUtils.extractTenantID(req);
+        }
+
+        AuthUtils.setTenantId(tenantId);
 
         if (isRequestAskingForServiceTicket(context)) {
             return grantServiceTicket(context, credential);
