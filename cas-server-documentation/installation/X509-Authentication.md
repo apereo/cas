@@ -373,7 +373,7 @@ Uncomment the `startAuthenticate` state in `login-webflow.xml`:
 
 {% highlight xml %}
 <action-state id="startAuthenticate">
-  <action bean="x509Check" />
+  <evaluate expression="x509Check" />
   <transition on="success" to="sendTicketGrantingTicket" />
   <transition on="warn" to="warn" />
   <transition on="error" to="generateLoginTicket" />
