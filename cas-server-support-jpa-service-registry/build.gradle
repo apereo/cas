@@ -21,6 +21,7 @@ dependencies {
     }
     compile group: 'org.springframework', name: 'spring-context', version: springVersion
     runtime group: 'com.mchange', name: 'c3p0', version: c3p0Version
+    runtime group: 'javax.transaction', name:'jta', version: jtaVersion
     testCompile(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
         exclude(module: 'slf4j-api')
         exclude(module: 'jboss-logging')

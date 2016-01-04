@@ -7,7 +7,7 @@ dependencies {
     compile project(':cas-server-integration-pac4j')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:jacksonDatabindVersion
     compile(group: 'org.pac4j', name: 'pac4j-jwt', version: pac4jVersion) {
-        
+        exclude(module: 'slf4j-api')
     }
     compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
         exclude(module: 'commons-logging')

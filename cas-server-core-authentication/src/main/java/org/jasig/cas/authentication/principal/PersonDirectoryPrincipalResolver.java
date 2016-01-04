@@ -101,21 +101,31 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         final Map<String, List<Object>> attributes;
 
         if (personAttributes == null) {
+            logger.debug("Principal id [{}] could not be found", principalId);
             attributes = null;
         } else {
             attributes = personAttributes.getAttributes();
         }
 
         if (attributes == null || attributes.isEmpty()) {
+            logger.debug("Principal id [{}] did not specify any attributes", principalId);
+
             if (!this.returnNullIfNoAttributes) {
+                logger.debug("Returning the principal with id [{}] without any attributes", principalId);
                 return this.principalFactory.createPrincipal(principalId);
             }
+            logger.debug("[{}] is configured to return null if no attributes are found for [{}]",
+                    this.getClass().getName(), principalId);
             return null;
         }
+        logger.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
 
         final Map<String, Object> convertedAttributes = new HashMap<>();
         for (final Map.Entry<String, List<Object>> entry : attributes.entrySet()) {
             final String key = entry.getKey();
+
+            logger.debug("Found attribute [{}]", key);
+
             final List<Object> values = entry.getValue();
             if (StringUtils.isNotBlank(this.principalAttributeName)
                         && key.equalsIgnoreCase(this.principalAttributeName)) {
@@ -132,6 +142,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
             }
         }
+        logger.debug("Creating a principal with id [{}] and attributes [{}]", principalId, convertedAttributes);
         return this.principalFactory.createPrincipal(principalId, convertedAttributes);
     }
 
