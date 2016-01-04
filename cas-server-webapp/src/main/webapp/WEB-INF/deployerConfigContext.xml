@@ -34,8 +34,10 @@
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
     </util:map>
+
     <util:list id="authenticationMetadataPopulators">
         <ref bean="successfulHandlerMetaDataPopulator" />
+        <ref bean="rememberMeAuthenticationMetaDataPopulator" />
     </util:list>
 
     <bean id="attributeRepository" class="org.jasig.services.persondir.support.NamedStubPersonAttributeDao"
