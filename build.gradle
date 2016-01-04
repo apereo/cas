@@ -32,6 +32,12 @@ allprojects {
     apply plugin: "signing"
 }
 
+eclipse {
+    classpath {
+        downloadSources=true
+    }
+}
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'checkstyle'
