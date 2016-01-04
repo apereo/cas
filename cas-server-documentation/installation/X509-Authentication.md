@@ -346,7 +346,7 @@ Use the following template to configure authentication in `deployerConfigContext
       p:maxPathLengthAllowUnspecified="true"
       p:checkKeyUsage="true"
       p:requireKeyUsage="true"
-      p:revocationChecker-ref="revocationChecker">
+      p:revocationChecker-ref="revocationChecker" />
 
 <bean id="x509PrincipalResolver"
       class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
