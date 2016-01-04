@@ -58,9 +58,16 @@ org.jasig.cas.support.rest
 org.jasig.cas.support.saml
 org.jasig.cas.support.saml.authentication
 org.jasig.cas.support.saml.authentication.principal
+org.jasig.cas.support.saml.services
+org.jasig.cas.support.saml.services.idp.metadata
+org.jasig.cas.support.saml.services.idp.metadata.cache
 org.jasig.cas.support.saml.util
 org.jasig.cas.support.saml.web
 org.jasig.cas.support.saml.web.flow.mdui
+org.jasig.cas.support.saml.web.idp.metadata
+org.jasig.cas.support.saml.web.idp.profile
+org.jasig.cas.support.saml.web.idp.profile.builders
+org.jasig.cas.support.saml.web.idp.profile.builders.enc
 org.jasig.cas.support.saml.web.support
 org.jasig.cas.support.saml.web.view
 org.jasig.cas.support.spnego
