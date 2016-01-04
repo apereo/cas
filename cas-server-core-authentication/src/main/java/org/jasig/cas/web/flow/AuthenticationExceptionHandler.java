@@ -1,12 +1,21 @@
 package org.jasig.cas.web.flow;
 
+import org.jasig.cas.authentication.AccountDisabledException;
+import org.jasig.cas.authentication.AccountPasswordMustChangeException;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.InvalidLoginLocationException;
+import org.jasig.cas.authentication.InvalidLoginTimeException;
+import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.stereotype.Component;
 
+import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.AccountNotFoundException;
+import javax.security.auth.login.CredentialExpiredException;
+import javax.security.auth.login.FailedLoginException;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,14 +51,15 @@ public class AuthenticationExceptionHandler {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     
     static {
-        DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountLockedException.class);
-        DEFAULT_ERROR_LIST.add(javax.security.auth.login.FailedLoginException.class);
-        DEFAULT_ERROR_LIST.add(javax.security.auth.login.CredentialExpiredException.class);
-        DEFAULT_ERROR_LIST.add(javax.security.auth.login.AccountNotFoundException.class);
-        DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountDisabledException.class);
-        DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginLocationException.class);
-        DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.AccountPasswordMustChangeException.class);
-        DEFAULT_ERROR_LIST.add(org.jasig.cas.authentication.InvalidLoginTimeException.class);
+        DEFAULT_ERROR_LIST.add(AccountLockedException.class);
+        DEFAULT_ERROR_LIST.add(FailedLoginException.class);
+        DEFAULT_ERROR_LIST.add(CredentialExpiredException.class);
+        DEFAULT_ERROR_LIST.add(AccountNotFoundException.class);
+        DEFAULT_ERROR_LIST.add(AccountDisabledException.class);
+        DEFAULT_ERROR_LIST.add(InvalidLoginLocationException.class);
+        DEFAULT_ERROR_LIST.add(AccountPasswordMustChangeException.class);
+        DEFAULT_ERROR_LIST.add(InvalidLoginTimeException.class);
+        DEFAULT_ERROR_LIST.add(UnauthorizedServiceForPrincipalException.class);
     }
 
     /** Ordered list of error classes that this class knows how to handle. */
