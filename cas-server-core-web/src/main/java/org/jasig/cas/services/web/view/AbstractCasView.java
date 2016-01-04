@@ -107,6 +107,17 @@ public abstract class AbstractCasView extends AbstractView {
     }
 
     /**
+     * Gets authentication attributes from the primary authentication object.
+     *
+     * @param model the model
+     * @return the authentication attribute
+     */
+    protected final Map<String, Object> getAuthenticationAttributes(final Map<String, Object> model) {
+        final Authentication authn = getPrimaryAuthenticationFrom(model);
+        return authn.getAttributes();
+    }
+
+    /**
      * Gets an authentication attribute from the primary authentication object.
      *
      * @param model the model
