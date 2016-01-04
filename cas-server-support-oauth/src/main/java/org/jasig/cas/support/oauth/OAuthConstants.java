@@ -73,6 +73,9 @@ public interface OAuthConstants {
     /** The invalid grant. */
     String INVALID_GRANT = "invalid_grant";
 
+    /** Error in case of invalid profile. */
+    String INVALID_PROFILE = "invalid_profile";
+
     /** The authorize url. */
     String AUTHORIZE_URL = "authorize";
 

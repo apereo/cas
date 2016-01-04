@@ -34,7 +34,7 @@ if [ "$invokeJavadoc" == true ]; then
   echo -e "Started to publish latest Javadoc to gh-pages...\n"
 
   echo -e "Invoking build to generate the project site...\n"
-  ./gradlew javadoc -q
+  ./gradlew javadoc -q -Dorg.gradle.configureondemand=true -Dorg.gradle.workers.max=8 --parallel
   
   echo -e "Copying the generated docs over...\n"
   cp -R build/javadoc $HOME/javadoc-latest
