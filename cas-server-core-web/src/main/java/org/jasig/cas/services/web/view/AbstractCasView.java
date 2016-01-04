@@ -1,6 +1,7 @@
 package org.jasig.cas.services.web.view;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
@@ -94,6 +95,17 @@ public abstract class AbstractCasView extends AbstractView {
     protected final String getProxyGrantingTicketId(final Map<String, Object> model) {
         return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
     }
+    /**
+     * Gets the PGT-IOU from the model.
+     *
+     * @param model the model
+     * @return the pgt-iou id
+     */
+    protected final String getProxyGrantingTicketIou(final Map<String, Object> model) {
+        return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU);
+    }
+
+
 
     /**
      * Gets the authentication from the model.
@@ -104,6 +116,27 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final Authentication getPrimaryAuthenticationFrom(final Map<String, Object> model) {
         return getAssertionFrom(model).getPrimaryAuthentication();
+    }
+
+    /**
+     * Gets model attributes.
+     *
+     * @param model the model
+     * @return the model attributes
+     */
+    protected final Map<String, Object> getModelAttributes(final Map<String, Object> model) {
+        return (Map<String, Object>) model.get(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
+    }
+
+    /**
+     * Gets authentication attributes from the primary authentication object.
+     *
+     * @param model the model
+     * @return the authentication attribute
+     */
+    protected final Map<String, Object> getAuthenticationAttributes(final Map<String, Object> model) {
+        final Authentication authn = getPrimaryAuthenticationFrom(model);
+        return authn.getAttributes();
     }
 
     /**

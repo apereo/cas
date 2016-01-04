@@ -143,10 +143,20 @@ public abstract class AbstractServletContextInitializer
      * @param populator the populator
      */
     protected final void addAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
+        addAuthenticationMetadataPopulator(populator, 0);
+    }
+
+    /**
+     * Add authentication metadata populator.
+     *
+     * @param populator the populator
+     * @param index     the index
+     */
+    protected final void addAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator, final int index) {
         logger.debug("Adding {} to application context", populator);
         final List<AuthenticationMetaDataPopulator> authenticationMetadataPopulators =
-            applicationContext.getBean("authenticationMetadataPopulators", List.class);
-        authenticationMetadataPopulators.add(populator);
+                applicationContext.getBean("authenticationMetadataPopulators", List.class);
+        authenticationMetadataPopulators.add(index, populator);
     }
 
     protected final ConfigurableEnvironment getEnvironment() {
@@ -252,11 +262,20 @@ public abstract class AbstractServletContextInitializer
      * @param ext the ext
      */
     protected final void addArgumentExtractor(final ArgumentExtractor ext) {
-        logger.debug("Adding [{}] application context", ext);
-        final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
-        list.add(ext);
+        addArgumentExtractor(ext, 0);
     }
 
+    /**
+     * Add argument extractor.
+     *
+     * @param ext   the ext
+     * @param index the index
+     */
+    protected final void addArgumentExtractor(final ArgumentExtractor ext, final int index) {
+        logger.debug("Adding [{}] application context", ext);
+        final List<ArgumentExtractor> list = applicationContext.getBean("argumentExtractors", List.class);
+        list.add(index, ext);
+    }
 
     /**
      * Add service factory.
@@ -264,10 +283,20 @@ public abstract class AbstractServletContextInitializer
      * @param factory the factory
      */
     protected void addServiceFactory(final ServiceFactory<? extends Service> factory) {
+        addServiceFactory(factory, 0);
+    }
+
+    /**
+     * Add service factory.
+     *
+     * @param factory the factory
+     * @param index   the index
+     */
+    protected void addServiceFactory(final ServiceFactory<? extends Service> factory, final int index) {
         logger.debug("Adding [{}] application context", factory);
         final List<ServiceFactory<? extends Service>> list =
                 applicationContext.getBean("serviceFactoryList", List.class);
-        list.add(factory);
+        list.add(index, factory);
     }
 
     /**

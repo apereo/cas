@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
+
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -42,23 +44,21 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
      * Initialized registry post construction.
      * Will decide if the configured collection should
      * be dropped and recreated.
-     * @throws Exception thrown if collection cant be dropped/created.
      */
     @PostConstruct
     public void init() {
-        if (this.mongoTemplate == null) {
-            throw new RuntimeException("Mongo template is not correctly configured");
-        } else {
-            if (this.dropCollection) {
-                LOGGER.debug("Dropping database collection: {}", this.collectionName);
-                this.mongoTemplate.dropCollection(this.collectionName);
-            }
+        Assert.notNull(this.mongoTemplate);
 
-            if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-                LOGGER.debug("Creating database collection: {}", this.collectionName);
-                this.mongoTemplate.createCollection(this.collectionName);
-            }
+        if (this.dropCollection) {
+            LOGGER.debug("Dropping database collection: {}", this.collectionName);
+            this.mongoTemplate.dropCollection(this.collectionName);
         }
+
+        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
+            LOGGER.debug("Creating database collection: {}", this.collectionName);
+            this.mongoTemplate.createCollection(this.collectionName);
+        }
+
 
     }
 

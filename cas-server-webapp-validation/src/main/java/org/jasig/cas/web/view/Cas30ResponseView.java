@@ -36,13 +36,31 @@ public class Cas30ResponseView extends Cas20ResponseView {
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                             final HttpServletResponse response) throws Exception {
-
         super.prepareMergedOutputModel(model, request, response);
 
         final Service service = super.getServiceFrom(model);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        final Map<String, Object> attributes = new HashMap<>(getPrincipalAttributesAsMultiValuedAttributes(model));
+        final Map<String, Object> attributes = new HashMap<>();
+        attributes.putAll(getCasPrincipalAttributes(model, registeredService));
+        attributes.putAll(getCasProtocolAuthenticationAttributes(model, registeredService));
+
+        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
+        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
+
+        putCasResponseAttributesIntoModel(model, attributes, registeredService);
+    }
+
+    /**
+     * Put cas authentication attributes into model.
+     *
+     * @param model             the model
+     * @param registeredService the registered service
+     * @return the cas authentication attributes
+     */
+    protected Map<String, Object> getCasProtocolAuthenticationAttributes(final Map<String, Object> model,
+                                                                 final RegisteredService registeredService) {
+        final Map<String, Object> attributes = new HashMap<>();
         attributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
                 Collections.singleton(getAuthenticationDate(model)));
         attributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
@@ -50,9 +68,35 @@ public class Cas30ResponseView extends Cas20ResponseView {
         attributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
                 Collections.singleton(isRememberMeAuthentication(model)));
 
-        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
-        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
+        final Map<String, Object> filteredAuthenticationAttributes = new HashMap<>(getAuthenticationAttributes(model));
+        filteredAuthenticationAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        filteredAuthenticationAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
+        filteredAuthenticationAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
+        attributes.putAll(filteredAuthenticationAttributes);
 
+        return attributes;
+    }
+
+    /**
+     * Put cas principal attributes into model.
+     *
+     * @param model             the model
+     * @param registeredService the registered service
+     * @return the cas principal attributes
+     */
+    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model, final RegisteredService registeredService) {
+        return super.getPrincipalAttributesAsMultiValuedAttributes(model);
+    }
+
+    /**
+     * Put cas response attributes into model.
+     *
+     * @param model             the model
+     * @param attributes        the attributes
+     * @param registeredService the registered service
+     */
+    protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
+                                                     final Map<String, Object> attributes, final RegisteredService registeredService) {
         super.putIntoModel(model,
                 CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES,
                 this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model)));
