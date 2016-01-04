@@ -18,10 +18,10 @@
         <Logger name="org.apache.xml.security" level="off" />
         <Logger name="org.springframework.test" level="off" />
 
-        <Logger name="edu.internet2.middleware" level="debug" additivity="false">
+        <Logger name="edu.internet2.middleware" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.jasig" level="info" additivity="false">
+        <Logger name="org.jasig" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="warn">
