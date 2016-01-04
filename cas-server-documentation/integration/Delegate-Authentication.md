@@ -257,7 +257,7 @@ By default, the identifier returned by a delegated authentication is composed of
 <bean id="primaryAuthenticationHandler"
     class="org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler"
     c:clients-ref="clients"
-    p:typeIdUsed="false" />
+    p:typedIdUsed="false" />
 {% endhighlight %}
 
 
