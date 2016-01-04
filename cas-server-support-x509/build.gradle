@@ -25,8 +25,12 @@ dependencies {
     provided group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:bouncyCastleVersion
     testCompile project(':cas-server-support-generic')
     testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
-    testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version: unboundidVersion
-    testCompile group: 'org.ldaptive', name: 'ldaptive-unboundid', version: ldaptiveVersion
+    testCompile(group: 'com.unboundid', name: 'unboundid-ldapsdk', version: unboundidVersion) {
+        exclude(module: 'slf4j-api')
+    }
+    testCompile(group: 'org.ldaptive', name: 'ldaptive-unboundid', version: ldaptiveVersion) {
+        exclude(module: 'slf4j-api')
+    }
     testCompile(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
         exclude(module: 'slf4j-api')
         exclude(module: 'jboss-logging')
