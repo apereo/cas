@@ -5,11 +5,9 @@ package org.jasig.cas.services;
  * allowed to.
  *
  * @author Scott Battaglia
-
  * @since 3.1
  */
-public class UnauthorizedSsoServiceException extends
-    UnauthorizedServiceException {
+public class UnauthorizedSsoServiceException extends UnauthorizedServiceException {
 
     /**
      * Comment for {@code serialVersionUID}.

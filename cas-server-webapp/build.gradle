@@ -82,6 +82,9 @@ dependencies {
         exclude(module: 'spring-beans')
         exclude(module: 'bcprov-jdk15on')
     }
+    runtime(group:'org.codehaus.groovy', name:'groovy-jsr223', version: groovyVersion) {
+
+    }
     runtime group: 'com.mchange', name: 'c3p0', version: c3p0Version
     runtime group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:bouncyCastleVersion
 }

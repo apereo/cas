@@ -9,6 +9,7 @@ import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.MixedPrincipalException;
+import org.jasig.cas.authentication.PrincipalException;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
@@ -384,6 +385,30 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
             throws AuthenticationException, AbstractTicketException {
 
         final Authentication authentication = context.getAuthentication();
+        final Service service = context.getService();
+
+        if (service != null) {
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+                logger.warn("Service [{}] is not allowed to use SSO.", registeredService);
+                throw new UnauthorizedSsoServiceException();
+            }
+            final Principal principal = authentication.getPrincipal();
+            if (!registeredService.getAccessStrategy()
+                    .doPrincipalAttributesAllowServiceAccess(principal.getId(), principal.getAttributes())) {
+                logger.warn("Cannot grant ticket-granting ticket because Service [{}] is not authorized for use by [{}].",
+                        service.getId(), principal);
+
+                final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>();
+                handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(),
+                        UnauthorizedServiceForPrincipalException.class);
+
+                throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE,
+                                    handlerErrors, new HashMap());
+            }
+        }
+
+
         final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);
         final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
 
@@ -392,8 +417,6 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
 
         return ticketGrantingTicket;
-
-
     }
 
 
