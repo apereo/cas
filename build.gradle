@@ -163,11 +163,13 @@ subprojects {
             compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
                 exclude(module: 'validation-api')
                 exclude(module: 'aspectjrt')
+                exclude(module: 'slf4j-api')
             }
 
             aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
                 exclude(module: 'validation-api')
                 exclude(module: 'aspectjrt')
+                exclude(module: 'slf4j-api')
             }
         }
 

@@ -7,13 +7,16 @@ dependencies {
     compile project(':cas-server-integration-pac4j-core')
     compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
         exclude(module: 'commons-lang3')
+        exclude(module: 'slf4j-api')
     }
     compile(group: 'org.pac4j', name: 'pac4j-oauth', version: pac4jVersion) {
         exclude(module: 'commons-lang3')
         exclude(module: 'jackson-databind')
+        exclude(module: 'slf4j-api')
     }
     compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
         exclude(module: 'commons-lang3')
+        exclude(module: 'slf4j-api')
     }
     compile(group: 'org.pac4j', name: 'pac4j-saml', version: pac4jVersion) {
         exclude(module: 'commons-lang3')
@@ -28,6 +31,7 @@ dependencies {
         exclude(module: 'xml-apis')
         exclude(module: 'junit')
         exclude(module: 'jcl-over-slf4j')
+        exclude(module: 'guava')
     }
     compile(group: 'org.pac4j', name: 'pac4j-config', version: pac4jVersion) {
         exclude(module: 'pac4j-core')

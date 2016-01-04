@@ -34,10 +34,13 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-beans', version: springVersion
     compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
     compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
-    compile group: 'org.reflections', name: 'reflections', version: reflectionsVersion
+    compile(group: 'org.reflections', name: 'reflections', version: reflectionsVersion) {
+        exclude(module: 'guava')
+    }
     compile group: 'org.springframework', name: 'spring-context', version: springVersion
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-util')
+    runtime group: 'javax.transaction', name: 'jta', version: jtaVersion
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
         exclude(module: 'slf4j-api')
         exclude(module: 'jboss-logging')

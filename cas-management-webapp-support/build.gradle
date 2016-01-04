@@ -4,9 +4,12 @@ dependencies {
     compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
         exclude(module: 'spring-webmvc')
         exclude(module: 'spring-core')
+        exclude(module: 'slf4j-api')
         exclude(module: 'pac4j-core')
     }
-    compile group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion
+    compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
+        exclude(module: 'slf4j-api')
+    }
     compile(group: 'org.pac4j', name: 'pac4j-cas', version: pac4jVersion) {
         exclude(module: 'slf4j-api')
         exclude(module: 'joda-time')
@@ -40,7 +43,9 @@ dependencies {
         exclude(module: 'slf4j-api')
     }
     compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
-    compile group: 'org.springframework', name: 'spring-expression', version: springVersion
+    compile(group: 'org.springframework', name: 'spring-expression', version: springVersion) {
+
+    }
     compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
         exclude(module: 'commons-logging')
     }

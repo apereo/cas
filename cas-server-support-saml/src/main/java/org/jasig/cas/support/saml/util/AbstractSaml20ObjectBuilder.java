@@ -8,6 +8,9 @@ import org.jasig.cas.util.CompressionUtils;
 import org.joda.time.DateTime;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeStatement;
+import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AudienceRestriction;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -17,6 +20,7 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.StatusMessage;
@@ -25,6 +29,10 @@ import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link AbstractSaml20ObjectBuilder}.
@@ -34,6 +42,7 @@ import java.security.SecureRandom;
  */
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
+    private static final long serialVersionUID = -4325127376598205277L;
 
     /**
      * Gets name id.
@@ -64,6 +73,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         samlResponse.setID(id);
         samlResponse.setIssueInstant(issueInstant);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
+        samlResponse.setInResponseTo(recipient);
+
         if (service instanceof SamlService) {
             final SamlService samlService = (SamlService) service;
 
@@ -106,11 +117,27 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Assertion newAssertion(final AuthnStatement authnStatement, final String issuer,
                                   final DateTime issuedAt, final String id) {
+        final List<Statement> list = new ArrayList<>();
+        list.add(authnStatement);
+        return newAssertion(list, issuer, issuedAt, id);
+    }
+
+    /**
+     * Create a new SAML1 response object.
+     *
+     * @param authnStatement the authn statement
+     * @param issuer the issuer
+     * @param issuedAt the issued at
+     * @param id the id
+     * @return the assertion
+     */
+    public Assertion newAssertion(final List<Statement> authnStatement, final String issuer,
+                                  final DateTime issuedAt, final String id) {
         final Assertion assertion = newSamlObject(Assertion.class);
         assertion.setID(id);
         assertion.setIssueInstant(issuedAt);
         assertion.setIssuer(newIssuer(issuer));
-        assertion.getAuthnStatements().add(authnStatement);
+        assertion.getStatements().addAll(authnStatement);
         return assertion;
     }
 
@@ -124,6 +151,37 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         final Issuer issuer = newSamlObject(Issuer.class);
         issuer.setValue(issuerValue);
         return issuer;
+    }
+
+    /**
+     * New attribute statement.
+     *
+     * @param attributes         the attributes
+     * @return the attribute statement
+     */
+    public AttributeStatement newAttributeStatement(final Map<String, Object> attributes) {
+
+        final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
+        for (final Map.Entry<String, Object> e : attributes.entrySet()) {
+            if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
+                logger.info("Skipping attribute {} because it does not have any values.", e.getKey());
+                continue;
+            }
+            final Attribute attribute = newSamlObject(Attribute.class);
+            attribute.setName(e.getKey());
+            attribute.setFriendlyName(e.getKey());
+            if (e.getValue() instanceof Collection<?>) {
+                final Collection<?> c = (Collection<?>) e.getValue();
+                for (final Object value : c) {
+                    attribute.getAttributeValues().add(newAttributeValue(value, AttributeValue.DEFAULT_ELEMENT_NAME));
+                }
+            } else {
+                attribute.getAttributeValues().add(newAttributeValue(e.getValue(), AttributeValue.DEFAULT_ELEMENT_NAME));
+            }
+            attrStatement.getAttributes().add(attribute);
+        }
+
+        return attrStatement;
     }
 
     /**
