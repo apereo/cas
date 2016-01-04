@@ -136,13 +136,7 @@ The following fields are available for SAML services:
 | Field                                | Description
 |--------------------------------------+-----------------------------------------------------------------+
 | `metadataLocation`                   | Location of service metadata defined from system files, classpath or URL resources. 
-| `metadataSignatureLocation`          | Location of the metadata *public key* to validate the metadata which must be defined from system files or classpath. If defined, will enforce the `SignatureValidationFilter` validation filter on metadata.
-| `metadataMaxValidity`                | If defined, will enforce the `RequiredValidUntilFilter` validation filter on metadata.
-| `signAssertions`                     | Whether assertions should be signed. Default is `false`.
-| `signResponses`                      | Whether responses should be signed. Default is `true`.
-| `encryptAssertions`                  | Whether assertions should be encrypted. Default is `false`.
-| `requiredAuthenticationContextClass` | If defined, will specify the SAML authentication context class in the final response. If undefined, the authentication class will either be `urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified"` or 
-`urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport` depending on the SAML authentication request.
+
 
 ### Dynamic Metadata
 CAS also supports the [Dynamic Metadata Query Protocol](https://spaces.internet2.edu/display/InCFederation/Metadata+Query+Protocol)
