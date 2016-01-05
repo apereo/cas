@@ -1,0 +1,15 @@
+org.jasig.cas
+org.jasig.cas.authentication
+org.jasig.cas.authentication.handler
+org.jasig.cas.authentication.principal
+org.jasig.cas.authentication.support
+org.jasig.cas.logout
+org.jasig.cas.monitor
+org.jasig.cas.services
+org.jasig.cas.ticket
+org.jasig.cas.ticket.proxy
+org.jasig.cas.ticket.registry
+org.jasig.cas.ticket.registry.support
+org.jasig.cas.util.services
+org.jasig.cas.validation
+org.jasig.cas.web.support
