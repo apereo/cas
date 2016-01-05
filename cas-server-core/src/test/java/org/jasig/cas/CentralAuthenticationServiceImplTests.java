@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.MixedPrincipalException;
+import org.jasig.cas.authentication.PrincipalException;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -114,7 +115,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService(), ctx);
     }
 
-    @Test(expected = UnauthorizedServiceForPrincipalException.class)
+    @Test(expected = PrincipalException.class)
     public void verifyGrantServiceTicketFailsAuthzRule() throws Exception {
         final AuthenticationContext ctx =  TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(),
                 getService("TestServiceAttributeForAuthzFails"));
