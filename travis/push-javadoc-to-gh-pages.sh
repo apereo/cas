@@ -66,17 +66,17 @@ if [ "$invokeDoc" == true ]; then
 
 
 
-#  echo -e "Staring to move project Javadocs over...\n"
+  echo -e "Staring to move project Javadocs over...\n"
 
-#  echo -e "Removing previous Javadocs from /$TRAVIS_BRANCH/javadocs...\n"
-#  git rm -rf ./"$TRAVIS_BRANCH"/javadocs > /dev/null
+  echo -e "Removing previous Javadocs from /$TRAVIS_BRANCH/javadocs...\n"
+  git rm -rf ./"$TRAVIS_BRANCH"/javadocs > /dev/null
 
-#  echo -e "Creating Javadocs directory at /$TRAVIS_BRANCH/javadocs...\n"
-#  test -d "./$TRAVIS_BRANCH/javadocs" || mkdir -m777 -v ./"$TRAVIS_BRANCH"/javadocs
+  echo -e "Creating Javadocs directory at /$TRAVIS_BRANCH/javadocs...\n"
+  test -d "./$TRAVIS_BRANCH/javadocs" || mkdir -m777 -v ./"$TRAVIS_BRANCH"/javadocs
 
-#  echo -e "Copying new Javadocs...\n"
-#  cp -Rf $HOME/javadoc-latest/* ./"$TRAVIS_BRANCH"/javadocs
-#  echo -e "Copied project Javadocs...\n"
+  echo -e "Copying new Javadocs...\n"
+  cp -Rf $HOME/javadoc-latest/* ./"$TRAVIS_BRANCH"/javadocs
+  echo -e "Copied project Javadocs...\n"
 
 
   echo -e "Adding changes to the git index...\n"
