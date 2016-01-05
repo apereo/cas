@@ -10,7 +10,7 @@ such that users can go days or weeks without having to log in to CAS. See the
 for discussion of security concerns related to long term authentication.
 
 
-### Policy and Deployment Considerations
+## Policy and Deployment Considerations
 While users can elect to establish a long term authentication session, the duration is established through
 configuration as a matter of security policy. Deployers must determine the length of long term authentication sessions
 by weighing convenience against security risks. The length of the long term authentication session is configured
@@ -20,116 +20,45 @@ by weighing convenience against security risks. The length of the long term auth
 
 The use of long term authentication sessions dramatically increases the length of time ticket-granting tickets are
 stored in the ticket registry. Loss of a ticket-granting ticket corresponding to a long-term SSO session would require
-the user to reauthenticate to CAS. A security policy that requires that long term authentication sessions MUST NOT
-be terminated prior to their natural expiration would mandate a ticket registry component that provides for durable storage. Memcached is a notable example of a store that has no facility for durable storage. In many cases loss of
-ticket-granting tickets is acceptable, even for long term authentication sessions.
+the user to re-authenticate to CAS. A security policy that requires that long term authentication sessions MUST NOT
+be terminated prior to their natural expiration would mandate a ticket registry component that provides for durable storage, such as the `JpaTicketRegistry`.
 
-It's important to note that ticket-granting tickets and service tickets can be stored in separate registries, where
-the former provides durable storage for persistent long-term authentication tickets and the latter provides less
-durable storage for ephemeral service tickets. Thus deployers could mix `JpaTicketRegistry` and
-`MemcachedTicketRegistry`, for example, to take advantage of their strengths, durability and speed respectively.
+## Configuration
 
+Adjust your expiration policy so that remember-me authentication requests are
+handled via a long-term timeout expiration policy, and other requests
+are handled via the CAS default SSO session expiration policy.
 
-### Component Configuration
-Long term authentication requires configuring CAS components in Spring configuration, modification of the CAS login
-webflow, and UI customization of the login form. The length of the long term authentication session is represented
-in following sections by the following property:
-
-    # Long term authentication session length in seconds
-    rememberMeDuration=1209600
-
-The duration of the long term authentication session is configured in two different places:
-1. `ticketExpirationPolicies.xml`
-2. `ticketGrantingTicketCookieGenerator.xml`
-
-Update the ticket-granting ticket expiration policy in `ticketExpirationPolicies.xml` to accommodate both long term
-and stardard sessions.
 {% highlight xml %}
-<!--
-   | The following policy applies to standard CAS SSO sessions.
-   | Default 2h (7200s) sliding expiration with default 8h (28800s) maximum lifetime.
-   -->
-<bean id="standardSessionTGTExpirationPolicy"
-      class="org.jasig.cas.ticket.support.TicketGrantingTicketExpirationPolicy"
-      p:maxTimeToLiveInSeconds="${tgt.maxTimeToLiveInSeconds:28800}"
-      p:timeToKillInSeconds="${tgt.timeToKillInSeconds:7200}"/>
-
-<!--
-   | The following policy applies to long term CAS SSO sessions.
-   | Default duration is two weeks (1209600s).
-   -->
-<bean id="longTermSessionTGTExpirationPolicy"
-      class="org.jasig.cas.ticket.support.TimeoutExpirationPolicy"
-      c:timeToKillInMilliSeconds="#{ ${rememberMeDuration:1209600} * 1000 }" />
-
-<bean id="grantingTicketExpirationPolicy"
-      class="org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy"
-      p:sessionExpirationPolicy-ref="standardSessionTGTExpirationPolicy"
-      p:rememberMeExpirationPolicy-ref="longTermSessionTGTExpirationPolicy" />
+<alias name="rememberMeDelegatingExpirationPolicy" alias="grantingTicketExpirationPolicy" />
+<alias name="timeoutExpirationPolicy" alias="rememberMeExpirationPolicy" />
+<alias name="ticketGrantingTicketExpirationPolicy" alias="sessionExpirationPolicy" />
 {% endhighlight %}
 
-Update the CASTGC cookie expiration in `ticketGrantingTicketCookieGenerator.xml` to match the long term authentication
-duration:
-{% highlight xml %}
-<bean id="ticketGrantingTicketCookieGenerator" class="org.jasig.cas.web.support.CookieRetrievingCookieGenerator"
-      p:cookieSecure="true"
-      p:cookieMaxAge="-1"
-      p:rememberMeMaxAge="${rememberMeDuration:1209600}"
-      p:cookieName="CASTGC"
-      p:cookiePath="/cas" />
+The length of the long term authentication session is determined by:
+
+{% highlight properties %}
+# Inactivity Timeout Policy
+# tgt.timeout.maxTimeToLiveInSeconds=1209600
+
+# Default Expiration Policy
+# tgt.maxTimeToLiveInSeconds=28800
+# tgt.timeToKillInSeconds=7200
+
+# tgc.remember.me.maxAge=1209600
 {% endhighlight %}
 
-Modify the `PolicyBasedAuthenticationManager` bean in `deployerConfigContext.xml` to include the
-`RememberMeAuthenticationMetaDataPopulator` component that flags long-term SSO sessions:
-{% highlight xml %}
-<bean id="authenticationManager"
-      class="org.jasig.cas.authentication.PolicyBasedAuthenticationManager">
-  <constructor-arg>
-    <map>
-      <entry key-ref="passwordHandler" value-ref="ldapPrincipalResolver"/>
-    </map>
-  </constructor-arg>
-  <property name="authenticationMetaDataPopulators">
-    <list>
-      <bean class="org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator" />
-      <bean class="org.jasig.cas.authentication.principal.RememberMeAuthenticationMetaDataPopulator" />
-    </list>
-  </property>
-</bean>
-{% endhighlight %}
+This allows CAS to preserve a ticket expiration policy for 2 weeks for
+long-term authentication requests, while using a maximum 8-hour expiration policy
+with a sliding inactivity window of 2 hours for all other requests.
 
+It also allows CAS to preserve the SSO session cookie for a maximum age of
+2 weeks for long-term authentication requests.
 
 ### Webflow Configuration
 Two sections of `login-webflow.xml` require changes:
-1. `credential` variable declaration
-2. `viewLoginForm` action state
-
-Change the `credential` variable declaration as follows:
-{% highlight xml %}
-<var name="credential" class="org.jasig.cas.authentication.RememberMeUsernamePasswordCredential" />
-{% endhighlight %}
-
-Change the `viewLoginForm` action state as follows:
-{% highlight xml %}
-<view-state id="viewLoginForm" view="casLoginView" model="credential">
-  <binder>
-    <binding property="username" />
-    <binding property="password" />
-    <binding property="rememberMe" />
-  </binder>
-  <on-entry>
-    <set name="viewScope.commandName" value="'credential'" />
-  </on-entry>
-  <transition on="submit" bind="true" validate="true" to="realSubmit"/>
-</view-state>
-{% endhighlight %}
-
+1. Uncomment `RememberMeUsernamePasswordCredential` as the `credential` type.
+2. Uncomment the binding property for `rememberMe`.
 
 ### User Interface Customization
-A checkbox or other suitable control must be added to the CAS login form to allow user selection of long term
-authentication. We recommend adding a checkbox control to `casLoginView.jsp` as in the following code snippet.
-The only functional consideration is that the name of the form element is _rememberMe_.
-{% highlight xml %}
-<input type="checkbox" name="rememberMe" id="rememberMe" value="true" />
-<label for="rememberMe">Remember Me</label>
-{% endhighlight %}
+Uncomment the `rememberMe` checkbox control in `casLoginView.jsp`.
