@@ -5,6 +5,10 @@
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
 
     <var name="credential" class="org.jasig.cas.authentication.UsernamePasswordCredential"/>
+
+    <!--
+    <var name="credential" class="org.jasig.cas.authentication.RememberMeUsernamePasswordCredential" />
+    -->
     <on-start>
         <evaluate expression="initialFlowSetupAction"/>
     </on-start>
@@ -58,6 +62,10 @@
         <binder>
             <binding property="username" required="true"/>
             <binding property="password" required="true"/>
+
+            <!--
+            <binding property="rememberMe" />
+            -->
         </binder>
         <on-entry>
             <set name="viewScope.commandName" value="'credential'"/>
@@ -151,8 +159,9 @@
 
 
     <!--
-    The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned") to be turned on.  It delegates to a
-    view defines in default_views.properties that display the "Please click here to go to the service." message.
+    The "showWarningView" end state is the end state for when the user has requested privacy settings (to be "warned")
+    to be turned on.  It delegates to a view defines in default_views.properties that display the
+    "Please click here to go to the service." message.
     -->
     <end-state id="showWarningView" view="casConfirmView"/>
 
