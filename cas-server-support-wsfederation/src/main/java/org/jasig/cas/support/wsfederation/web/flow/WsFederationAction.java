@@ -120,7 +120,7 @@ public final class WsFederationAction extends AbstractAction {
                         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                                 this.authenticationSystemSupport.getPrincipalElectionStrategy());
                         final AuthenticationTransaction transaction =
-                                AuthenticationTransaction.wrap(credential);
+                                AuthenticationTransaction.wrap(service, credential);
                         this.authenticationSystemSupport.getAuthenticationTransactionManager()
                                 .handle(transaction,  builder);
                         final AuthenticationContext authenticationContext = builder.build(service);

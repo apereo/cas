@@ -6,9 +6,15 @@ import com.codahale.metrics.annotation.Timed;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
+import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.ReloadableServicesManager;
+import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -18,9 +24,12 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Provides an authenticaiton manager that is inherently aware of multiple credentials and supports pluggable
@@ -64,6 +73,13 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
     /** Log instance for logging events, errors, warnings, etc. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /**
+     * The Services manager.
+     */
+    @Autowired
+    @Qualifier("servicesManager")
+    protected ReloadableServicesManager servicesManager;
 
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
@@ -137,8 +153,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     @Metered(name="AUTHENTICATE")
     @Counted(name="AUTHENTICATE", monotonic=true)
     public final Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
-
-        final AuthenticationBuilder builder = authenticateInternal(transaction.getCredentials());
+        final AuthenticationBuilder builder = authenticateInternal(transaction);
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
         if (principal instanceof NullPrincipal) {
@@ -204,32 +219,67 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     }
 
     /**
+     * Resolve authentication handlers for transaction set.
+     *
+     * @param transaction the transaction
+     * @return the set
+     */
+    protected Set<AuthenticationHandler> filterAuthenticationHandlersForTransaction(final AuthenticationTransaction transaction) {
+        final Service service = transaction.getService();
+        if (service != null) {
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+                logger.warn("Service [{}] is not allowed to use SSO.", registeredService);
+                throw new UnauthorizedSsoServiceException();
+            }
+            if (!registeredService.getRequiredHandlers().isEmpty()) {
+                logger.debug("authentication transaction requires {} for service {}", registeredService.getRequiredHandlers(), service);
+                final Set<AuthenticationHandler> handlerSet = new LinkedHashSet<>(this.handlerResolverMap.keySet());
+                logger.info("Candidate authentication handlers examined this transaction are {}", handlerSet);
+
+                final Iterator<AuthenticationHandler> it = handlerSet.iterator();
+                while (it.hasNext()) {
+                    final AuthenticationHandler handler = it.next();
+                    if (!registeredService.getRequiredHandlers().contains(handler.getName())) {
+                        logger.debug("Authentication handler {} is not required for this transaction and is removed", handler.getName());
+                        it.remove();
+                    }
+                }
+                logger.info("Authentication handlers used for this transaction are {}", handlerSet);
+                return handlerSet;
+            }
+        }
+
+        return this.handlerResolverMap.keySet();
+    }
+
+    /**
      * Follows the same contract as {@link AuthenticationManager#authenticate(AuthenticationTransaction)}.
      *
-     * @param credentials One or more credentials to authenticate.
-     *
-     * @return An authentication containing a resolved principal and metadata about successful and failed
-     * authentications. There SHOULD be a record of each attempted authentication, whether success or failure.
-     *
-     * @throws AuthenticationException When one or more credentials failed authentication such that security policy
-     * was not satisfied.
+     * @param transaction the authentication transaction
+     * @return An authentication containing a resolved principal and metadata about successful and failed authentications.
+     * There SHOULD be a record of each attempted authentication, whether success or failure.
+     * @throws AuthenticationException When one or more credentials failed authentication such that security policy was not satisfied.
      */
-    protected AuthenticationBuilder authenticateInternal(final Collection<Credential> credentials)
+    protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction)
             throws AuthenticationException {
 
+        final Collection<Credential> credentials = transaction.getCredentials();
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         for (final Credential c : credentials) {
             builder.addCredential(new BasicCredentialMetaData(c));
         }
         boolean found;
+        final Set<AuthenticationHandler> handlerSet = filterAuthenticationHandlersForTransaction(transaction);
+
         for (final Credential credential : credentials) {
             found = false;
-            for (final Map.Entry<AuthenticationHandler, PrincipalResolver> entry : this.handlerResolverMap.entrySet()) {
-                final AuthenticationHandler handler = entry.getKey();
+
+            for (final AuthenticationHandler handler : handlerSet) {
                 if (handler.supports(credential)) {
                     found = true;
                     try {
-                        authenticateAndResolvePrincipal(builder, credential, entry.getValue(), handler);
+                        authenticateAndResolvePrincipal(builder, credential, this.handlerResolverMap.get(handler), handler);
                         if (this.authenticationPolicy.isSatisfiedBy(builder.build())) {
                             return builder;
                         }

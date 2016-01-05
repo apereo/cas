@@ -163,7 +163,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                     this.authenticationSystemSupport.getPrincipalElectionStrategy());
             final AuthenticationTransaction transaction =
-                    AuthenticationTransaction.wrap(credential);
+                    AuthenticationTransaction.wrap(serviceTicket.getService(), credential);
             this.authenticationSystemSupport.getAuthenticationTransactionManager()
                     .handle(transaction,  builder);
             final AuthenticationContext authenticationContext = builder.build(serviceTicket.getService());
