@@ -82,9 +82,7 @@ as [the PGT](Configuring-Proxy-Authentication.html) or [the credential](../integ
 See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.  
 | `logoutUrl`                  		| URL endpoint for this service to receive logout requests. 
 See [this guide](Logout-Single-Signout.html) for more details
-| `properties`                  		| Extra metadata associated with this service in form of key/value pairs. 
-This is used to inject custom fields into the service definition, to be used later by extension 
-modules to define additional behavior on a per-service basis.
+| `properties`                  		| Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis.
 
 ###Configure Service Access Strategy
 
