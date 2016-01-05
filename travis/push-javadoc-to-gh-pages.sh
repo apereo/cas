@@ -36,11 +36,11 @@ echo -e "Staring with project docs...\n"
 
 if [ "$invokeDoc" == true ]; then
 
-#  echo -e "Started to publish latest Javadoc to gh-pages...\n"
-#  echo -e "Invoking Maven to generate the project site...\n"
-#  mvn -T 20 site site:stage -q -ff -B -P nocheck -Dversions.skip=false
-#  echo -e "Copying the generated docs over...\n"
-#  cp -R target/staging $HOME/javadoc-latest
+  echo -e "Started to publish latest Javadoc to gh-pages...\n"
+  echo -e "Invoking Maven to generate the project site...\n"
+  mvn -T 20 site site:stage -q -ff -B -P nocheck -Dversions.skip=false
+  echo -e "Copying the generated docs over...\n"
+  cp -R target/staging $HOME/javadoc-latest
 
   echo -e "Copying project documentation over to $HOME/docs-latest...\n"
   cp -R cas-server-documentation $HOME/docs-latest
@@ -64,8 +64,6 @@ if [ "$invokeDoc" == true ]; then
   cp -Rf $HOME/docs-latest/* ./4.1.x
   echo -e "Copied project documentation...\n"
 
-
-
   echo -e "Staring to move project Javadocs over...\n"
 
   echo -e "Removing previous Javadocs from /$TRAVIS_BRANCH/javadocs...\n"
@@ -88,6 +86,6 @@ if [ "$invokeDoc" == true ]; then
   echo -e "Pushing upstream to origin...\n"
   git push -fq origin gh-pages > /dev/null
 
-  echo -e "Successfully published documenetation to [gh-pages] branch.\n"
+  echo -e "Successfully published documenetation to [gh-pages] $TRAVIS_BRANCH branch.\n"
 
 fi
