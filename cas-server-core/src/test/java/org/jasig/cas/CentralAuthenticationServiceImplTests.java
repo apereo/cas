@@ -11,7 +11,6 @@ import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.ExpirationPolicy;
