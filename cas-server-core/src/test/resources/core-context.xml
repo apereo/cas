@@ -95,10 +95,10 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+        <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="1"/>
             <property name="name" value="Test Default Service"/>
-            <property name="serviceId" value="testDefault"/>
+            <property name="serviceId" value="^test.*"/>
             <property name="evaluationOrder" value="2"/>
         </bean>
 
