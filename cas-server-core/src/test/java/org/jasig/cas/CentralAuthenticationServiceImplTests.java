@@ -227,15 +227,16 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test(expected = UnauthorizedServiceException.class)
     public void verifyValidateServiceTicketWithInvalidService() throws Exception {
-        final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), getService("test2"));
+        final Service service = getService("badtestservice");
+        final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), service);
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService()
             .createTicketGrantingTicket(ctx);
         final ServiceTicket serviceTicket = getCentralAuthenticationService()
-            .grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx);
+            .grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
 
         getCentralAuthenticationService().validateServiceTicket(
-            serviceTicket.getId(), getService("test2"));
+            serviceTicket.getId(), service);
     }
 
     @Test(expected = AbstractTicketException.class)
