@@ -693,17 +693,6 @@
 
     </dependencies>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>mojo-snapshot</id>
-            <name>Codehause Mojo Snapshot Repository</name>
-            <url>https://nexus.codehaus.org/content/repositories/codehaus-snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
