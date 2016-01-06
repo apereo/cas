@@ -49,15 +49,25 @@
                     <artifactId>log4j</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>slf4j-api</artifactId>
                     <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>commons-collections</artifactId>
                     <groupId>commons-collections</groupId>
+                    <artifactId>commons-collections</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>gnu-getopt</groupId>
+                    <artifactId>getopt</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>        
+        </dependency>
+        <dependency>
+            <groupId>gnu.getopt</groupId>
+            <artifactId>java-getopt</artifactId>
+            <version>1.0.13</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>
