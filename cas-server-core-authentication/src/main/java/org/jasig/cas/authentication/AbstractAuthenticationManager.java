@@ -14,6 +14,8 @@ import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
@@ -40,26 +42,23 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     /** Log instance for logging events, errors, warnings, etc. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    /**
-     * The Services manager.
-     */
-    protected ReloadableServicesManager servicesManager;
-
-
     /** An array of AuthenticationAttributesPopulators. */
     @NotNull
     protected List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulators =
             new ArrayList<>();
-
-    /** Authentication security policy. */
-    @NotNull
-    protected AuthenticationPolicy authenticationPolicy = new AnyAuthenticationPolicy();
 
     /** Map of authentication handlers to resolvers to be used when handler does not resolve a principal. */
     @NotNull
     @Resource(name="authenticationHandlersResolvers")
     protected Map<AuthenticationHandler, PrincipalResolver> handlerResolverMap;
 
+    /**
+     * The Authentication handler resolver.
+     */
+    @NotNull
+    @Resource(name="registeredServiceAuthenticationHandlerResolver")
+    protected AuthenticationHandlerResolver authenticationHandlerResolver =
+            new RegisteredServiceAuthenticationHandlerResolver();
 
     /**
      * Instantiates a new Policy based authentication manager.
@@ -123,23 +122,6 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
     }
 
     /**
-     * Evaluate produced authentication context.
-     *
-     * @param builder the builder
-     * @throws AuthenticationException the authentication exception
-     */
-    protected void evaluateProducedAuthenticationContext(final AuthenticationBuilder builder) throws AuthenticationException {
-        // We apply an implicit security policy of at least one successful authentication
-        if (builder.getSuccesses().isEmpty()) {
-            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
-        }
-        // Apply the configured security policy
-        if (!this.authenticationPolicy.isSatisfiedBy(builder.build())) {
-            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
-        }
-    }
-
-    /**
      * Add authentication method attribute.
      *
      * @param builder the builder
@@ -178,46 +160,6 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         }
         return null;
     }
-
-    /**
-     * Resolve authentication handlers for transaction set.
-     *
-     * @param transaction the transaction
-     * @return the set
-     */
-    protected Set<AuthenticationHandler> filterAuthenticationHandlersForTransaction(final AuthenticationTransaction transaction) {
-        final Service service = transaction.getService();
-        if (service != null && this.servicesManager != null) {
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                logger.warn("Service [{}] is not allowed to use SSO.", registeredService);
-                throw new UnauthorizedSsoServiceException();
-            }
-            if (!registeredService.getRequiredHandlers().isEmpty()) {
-                logger.debug("Authentication transaction requires {} for service {}", registeredService.getRequiredHandlers(), service);
-                final Set<AuthenticationHandler> handlerSet = new LinkedHashSet<>(this.handlerResolverMap.keySet());
-                logger.info("Candidate authentication handlers examined this transaction are {}", handlerSet);
-
-                final Iterator<AuthenticationHandler> it = handlerSet.iterator();
-                while (it.hasNext()) {
-                    final AuthenticationHandler handler = it.next();
-                    if (!(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler)
-                        && !registeredService.getRequiredHandlers().contains(handler.getName())) {
-                        logger.debug("Authentication handler {} is not required for this transaction and is removed", handler.getName());
-                        it.remove();
-                    }
-                }
-                logger.debug("Authentication handlers used for this transaction are {}", handlerSet);
-                return handlerSet;
-            } else {
-                logger.debug("No specific authentication handlers are required for this transaction");
-            }
-        }
-
-        logger.debug("Authentication handlers used for this transaction are {}", this.handlerResolverMap.keySet());
-        return this.handlerResolverMap.keySet();
-    }
-
 
     @Override
     @Audit(
@@ -300,18 +242,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         this.authenticationMetaDataPopulators = populators;
     }
 
-    /**
-     * Sets the authentication policy used by this component.
-     *
-     * @param policy Non-null authentication policy. The default policy is {@link AnyAuthenticationPolicy}.
-     */
-    @Resource(name="authenticationPolicy")
-    public void setAuthenticationPolicy(final AuthenticationPolicy policy) {
-        this.authenticationPolicy = policy;
-    }
-
-    @Resource(name="servicesManager")
-    public void setServicesManager(final ReloadableServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
+    public void setAuthenticationHandlerResolver(final AuthenticationHandlerResolver authenticationHandlerResolver) {
+        this.authenticationHandlerResolver = authenticationHandlerResolver;
     }
 }

@@ -21,7 +21,6 @@ public class PolicyBasedAuthenticationManagerTests {
 
     private final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getService(),
             mock(Credential.class), mock(Credential.class));
-    private ReloadableServicesManager servicesManager = mock(ReloadableServicesManager.class);
 
     @Test
     public void verifyAuthenticateAnySuccess() throws Exception {
