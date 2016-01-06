@@ -4,11 +4,11 @@ title: CAS - Configuring Service Access Strategy
 ---
 
 #Configure Service Access Strategy
-The access strategy of a registered service provides fine-grained control over the service authorization rules. 
-it describes whether the service is allowed to use the CAS server, allowed to participate in 
-single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal 
-attributes that must exist before access can be granted to the service. This behavior allows one to configure 
-various attributes in terms of access roles for the application and define rules that would be enacted and 
+The access strategy of a registered service provides fine-grained control over the service authorization rules.
+it describes whether the service is allowed to use the CAS server, allowed to participate in
+single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal
+attributes that must exist before access can be granted to the service. This behavior allows one to configure
+various attributes in terms of access roles for the application and define rules that would be enacted and
 validated when an authentication request from the application arrives.
 
 ##Default Strategy
@@ -21,8 +21,11 @@ The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service w
 | `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes must be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
 | `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully.
 | `unauthorizedRedirectUrl`         | Optional url to redirect the flow in case service access is not allowed.
+| `caseInsensitive`                 | Indicates whether matching on required attribute values should be done in a case-insensitive manner. Default is `false`
 
-<div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attributes is case-sensitive. Exact matches are required for any individual attribute value.</p></div>
+
+<div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attribute <strong>names</strong> is
+case-sensitive. Exact matches are required for any individual attribute name.</p></div>
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
@@ -53,7 +56,7 @@ The following properties are available:
 
 | Field                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
-| `groupField`                | Decides which attribute of the Grouper group should be used when converting the group to a CAS attribute. Possible values are `NAME`, `EXTENSION`, `DISPLAY_NAME`, `DISPLAY_EXTENSION`. 
+| `groupField`                | Decides which attribute of the Grouper group should be used when converting the group to a CAS attribute. Possible values are `NAME`, `EXTENSION`, `DISPLAY_NAME`, `DISPLAY_EXTENSION`.
 
 You will also need to ensure `grouper.client.properties` is available on the classpath:
 

@@ -7,12 +7,10 @@ import org.jasig.cas.services.RegisteredServiceProxyPolicy;
 import org.jasig.cas.services.web.beans.RegisteredServiceEditBean.ServiceData;
 import org.jasig.cas.services.web.beans.RegisteredServiceProxyPolicyBean;
 import org.jasig.cas.services.web.beans.RegisteredServiceViewBean;
+import org.jasig.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Default mapper for converting {@link RegisteredServiceProxyPolicy} to/from {@link ServiceData}.
@@ -61,7 +59,7 @@ public final class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
         final String type = proxyPolicy.getType();
         if (StringUtils.equalsIgnoreCase(type, RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
             final String value = proxyPolicy.getValue();
-            if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
+            if (StringUtils.isNotBlank(value) && RegexUtils.isValidRegex(value)) {
                 return new RegexMatchingRegisteredServiceProxyPolicy(value);
             } else {
                 throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
@@ -73,19 +71,4 @@ public final class DefaultProxyPolicyMapper implements ProxyPolicyMapper {
         return null;
     }
 
-    /**
-     * Check to see if the specified pattern is a valid regular expression.
-     *
-     * @param pattern the pattern
-     * @return whether this is a valid regex or not
-     */
-    private boolean isValidRegex(final String pattern) {
-        try {
-            Pattern.compile(pattern);
-            LOGGER.debug("Pattern {} is a valid regex.", pattern);
-            return true;
-        } catch (final PatternSyntaxException exception) {
-            return false;
-        }
-    }
 }
