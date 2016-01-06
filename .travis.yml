@@ -44,6 +44,8 @@ script: mvn package -ff -B
 before_install:
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
+install:
+- mvn -T 10 install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Dcheckstyle.skip=true -Dfindbugs.skip=true
 after_success:
 - chmod -R 777 ./travis/push-javadoc-to-gh-pages.sh
 - ./travis/push-javadoc-to-gh-pages.sh
