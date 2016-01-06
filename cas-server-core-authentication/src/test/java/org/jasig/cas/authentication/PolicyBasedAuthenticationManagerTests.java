@@ -2,10 +2,10 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.services.ReloadableServicesManager;
 import org.junit.Test;
 
 import javax.security.auth.login.FailedLoginException;
-
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -21,6 +21,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
     private final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getService(),
             mock(Credential.class), mock(Credential.class));
+    private ReloadableServicesManager servicesManager = mock(ReloadableServicesManager.class);
 
     @Test
     public void verifyAuthenticateAnySuccess() throws Exception {
