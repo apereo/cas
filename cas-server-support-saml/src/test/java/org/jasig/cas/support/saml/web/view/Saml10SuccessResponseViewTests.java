@@ -24,6 +24,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.support.DefaultCasAttributeEncoder;
 import org.jasig.cas.services.DefaultServicesManagerImpl;
 import org.jasig.cas.services.InMemoryServiceRegistryDaoImpl;
 import org.jasig.cas.services.RegisteredService;
@@ -76,6 +77,8 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final ServicesManager servicesManager = new DefaultServicesManagerImpl(dao);
         this.response = new Saml10SuccessResponseView();
         this.response.setIssuer("testIssuer");
+        this.response.setServicesManager(servicesManager);
+        this.response.setCasAttributeEncoder(new DefaultCasAttributeEncoder(servicesManager));
         this.response.setIssueLength(1000);
     }
 
