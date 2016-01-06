@@ -4,6 +4,8 @@ import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
 import java.util.Collection;
 import java.util.List;
@@ -51,6 +53,12 @@ import java.util.Set;
 public class PolicyBasedAuthenticationManager extends AbstractAuthenticationManager {
 
     /**
+     * Authentication security policy.
+     */
+    @NotNull
+    protected AuthenticationPolicy authenticationPolicy = new AnyAuthenticationPolicy();
+
+    /**
      * Instantiates a new Policy based authentication manager.
      */
     public PolicyBasedAuthenticationManager() {
@@ -93,7 +101,8 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
             builder.addCredential(new BasicCredentialMetaData(c));
         }
         boolean found;
-        final Set<AuthenticationHandler> handlerSet = filterAuthenticationHandlersForTransaction(transaction);
+        final Set<AuthenticationHandler> handlerSet = this.authenticationHandlerResolver
+                .resolve(this.handlerResolverMap.keySet(), transaction);
 
         for (final Credential credential : credentials) {
             found = false;
@@ -125,6 +134,33 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
         evaluateProducedAuthenticationContext(builder);
 
         return builder;
+    }
+
+    /**
+     * Evaluate produced authentication context.
+     *
+     * @param builder the builder
+     * @throws AuthenticationException the authentication exception
+     */
+    protected void evaluateProducedAuthenticationContext(final AuthenticationBuilder builder) throws AuthenticationException {
+        // We apply an implicit security policy of at least one successful authentication
+        if (builder.getSuccesses().isEmpty()) {
+            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
+        }
+        // Apply the configured security policy
+        if (!this.authenticationPolicy.isSatisfiedBy(builder.build())) {
+            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
+        }
+    }
+
+    /**
+     * Sets the authentication policy used by this component.
+     *
+     * @param policy Non-null authentication policy. The default policy is {@link AnyAuthenticationPolicy}.
+     */
+    @Resource(name = "authenticationPolicy")
+    public void setAuthenticationPolicy(final AuthenticationPolicy policy) {
+        this.authenticationPolicy = policy;
     }
 
 }
