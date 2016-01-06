@@ -47,6 +47,7 @@ The `LdapAuthenticationHandler` is capable of resolving and retrieving principal
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
 class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+      init-method="initialize"
       p:principalIdAttribute="sAMAccountName"
       c:authenticator-ref="authenticator">
     <property name="principalAttributeMap">
@@ -64,6 +65,7 @@ The above configuration defines a map of attribtues. Keys are LDAP attribute nam
 {% highlight xml %}
 <bean id="ldapAuthenticationHandler"
     class="org.jasig.cas.authentication.LdapAuthenticationHandler"
+    init-method="initialize"
     p:principalIdAttribute-ref="usernameAttribute"
     c:authenticator-ref="authenticator">
     <property name="principalAttributeList">
