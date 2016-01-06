@@ -23,9 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.CachingPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
-
 import org.joda.time.DateTime;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -302,7 +300,7 @@ public class JsonServiceRegistryDaoTests {
 
         for (final RegisteredService r2 : list) {
             this.dao.delete(r2);
-            Thread.sleep(1);
+            Thread.sleep(2000);
             assertNull(this.dao.findServiceById(r2.getId()));
         }
 
