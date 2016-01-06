@@ -47,6 +47,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
             }
             if (StringUtils.isNotBlank(id)) {
                 credentials.setUserProfile(profile);
+                credentials.setTypedIdUsed(typedIdUsed);
                 return new DefaultHandlerResult(
                         this,
                         new BasicCredentialMetaData(credentials),
