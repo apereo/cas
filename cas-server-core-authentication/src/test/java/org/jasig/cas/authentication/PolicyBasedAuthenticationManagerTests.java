@@ -2,7 +2,6 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.services.ReloadableServicesManager;
 import org.junit.Test;
 
 import javax.security.auth.login.FailedLoginException;
