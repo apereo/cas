@@ -58,7 +58,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     }
 
     @Test
-    public void testAuthenticationHandlerResolutionDefault() {
+    public void checkAuthenticationHandlerResolutionDefault() {
         final RegisteredServiceAuthenticationHandlerResolver resolver =
                 new RegisteredServiceAuthenticationHandlerResolver();
         resolver.setServicesManager(this.defaultServicesManagerImpl);
@@ -71,7 +71,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     }
 
     @Test
-    public void testAuthenticationHandlerResolution() {
+    public void checkAuthenticationHandlerResolution() {
         final RegisteredServiceAuthenticationHandlerResolver resolver =
                 new RegisteredServiceAuthenticationHandlerResolver();
         resolver.setServicesManager(this.defaultServicesManagerImpl);
