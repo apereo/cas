@@ -3,19 +3,12 @@ package org.jasig.cas.authentication;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import org.jasig.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.PrincipalResolver;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.ReloadableServicesManager;
-import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
@@ -24,12 +17,9 @@ import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link AbstractAuthenticationManager}, which provides common operations
