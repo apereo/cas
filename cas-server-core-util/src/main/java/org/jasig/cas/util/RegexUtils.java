@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Utility class to assist with resource operations.
+ * Utility class to assist with regex operations.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
