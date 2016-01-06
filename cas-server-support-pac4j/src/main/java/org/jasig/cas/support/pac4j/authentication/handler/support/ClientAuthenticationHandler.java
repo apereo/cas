@@ -66,6 +66,7 @@ public class ClientAuthenticationHandler extends AbstractClientAuthenticationHan
         }
         if (StringUtils.isNotBlank(id)) {
             credentials.setUserProfile(profile);
+            credentials.setTypedIdUsed(typedIdUsed);
             return new DefaultHandlerResult(
                 this,
                 new BasicCredentialMetaData(credentials),
