@@ -12,7 +12,7 @@ import java.util.regex.PatternSyntaxException;
  * Utility class to assist with resource operations.
  *
  * @author Misagh Moayyed
- * @since 4.3.0
+ * @since 4.2.0
  */
 public final class RegexUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);
