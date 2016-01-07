@@ -125,7 +125,9 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkAuthzPrincipalWithAttrRequirementsNoValueMatch() {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
-        authz.setRequiredAttributes(this.getRequiredAttributes());
+        final Map<String, Set<String>>  reqs = this.getRequiredAttributes();
+        reqs.remove("phone");
+        authz.setRequiredAttributes(reqs);
         authz.setRequireAllAttributes(false);
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.remove("cn");
@@ -137,7 +139,11 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     public void checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
         final DefaultRegisteredServiceAccessStrategy authz =
                 new DefaultRegisteredServiceAccessStrategy();
-        authz.setRequiredAttributes(this.getRequiredAttributes());
+
+        final Map<String, Set<String>>  reqs = this.getRequiredAttributes();
+        reqs.remove("phone");
+        authz.setRequiredAttributes(reqs);
+
         final Map<String, Object> pAttrs = this.getPrincipalAttributes();
         pAttrs.put("cn", "CAS");
         pAttrs.put("givenName", "kaz");
@@ -174,9 +180,12 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     }
 
     private Map<String, Set<String>> getRequiredAttributes() {
+
+
         final Map<String, Set<String>> map = new HashMap<>();
         map.put("cn", Sets.newHashSet("cas", "SSO"));
         map.put("givenName", Sets.newHashSet("CAS", "KAZ"));
+        map.put("phone", Sets.newHashSet("\\d\\d\\d-\\d\\d\\d-\\d\\d\\d"));
         return map;
     }
 
