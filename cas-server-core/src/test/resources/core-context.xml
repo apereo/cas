@@ -228,6 +228,17 @@
             </property>
         </bean>
 
+        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+            <property name="id" value="334"/>
+            <property name="name" value="usernameAttributeProviderService"/>
+            <property name="serviceId" value="usernameAttributeProviderService"/>
+            <property name="evaluationOrder" value="11"/>
+            <property name="usernameAttributeProvider">
+                <bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider" c:usernameAttribute="cn" />
+            </property>
+        </bean>
+
+
         <bean class="org.jasig.cas.services.RegexRegisteredService">
             <property name="id" value="100"/>
             <property name="name" value="TestProxyService"/>
