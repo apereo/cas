@@ -144,7 +144,7 @@ public class MultifactorAuthenticationTests {
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                 this.authenticationSystemSupport.getPrincipalElectionStrategy());
         final AuthenticationTransaction transaction =
-                AuthenticationTransaction.wrap(credential);
+                AuthenticationTransaction.wrap(service, credential);
         this.authenticationSystemSupport.getAuthenticationTransactionManager()
                 .handle(transaction, builder);
         return builder.build(service);

@@ -161,7 +161,7 @@ public final class ClientAction extends AbstractAction {
             if (credentials != null) {
                 final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                         this.authenticationSystemSupport.getPrincipalElectionStrategy());
-                final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(new ClientCredential(credentials));
+                final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(service, new ClientCredential(credentials));
                 this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
                 final AuthenticationContext authenticationContext = builder.build(service);
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
