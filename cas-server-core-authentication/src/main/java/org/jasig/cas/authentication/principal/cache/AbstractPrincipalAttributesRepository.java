@@ -188,7 +188,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     public final Map<String, Object> getAttributes(final Principal p) {
         final Map<String, Object> cachedAttributes = getPrincipalAttributes(p);
         if (cachedAttributes != null && !cachedAttributes.isEmpty()) {
-            logger.debug("Found [{}] cached attributes for principal [{}]", cachedAttributes.size(), p.getId());
+            logger.debug("Found [{}] cached attributes for principal [{}] that are {}", cachedAttributes.size(), p.getId(),
+                    cachedAttributes);
             return cachedAttributes;
         }
 
