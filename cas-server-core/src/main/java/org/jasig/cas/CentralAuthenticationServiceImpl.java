@@ -15,11 +15,11 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.logout.LogoutRequest;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
-import org.jasig.cas.services.UnauthorizedServiceForPrincipalException;
 import org.jasig.cas.services.UnauthorizedSsoServiceException;
 import org.jasig.cas.support.events.CasProxyGrantingTicketCreatedEvent;
 import org.jasig.cas.support.events.CasProxyTicketGrantedEvent;
@@ -47,7 +47,6 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -141,15 +140,10 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket);
 
-        verifyRegisteredServiceProperties(registeredService, service);
         final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(context, ticketGrantingTicket);
-
-        if (currentAuthentication == null && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
-            logger.warn("Service [{}] is not allowed to use SSO.", service.getId());
-            throw new UnauthorizedSsoServiceException();
-        }
-
+        RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, currentAuthentication);
         evaluateProxiedServiceIfNeeded(service, ticketGrantingTicket, registeredService);
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
@@ -158,21 +152,6 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         final List<Authentication> authentications = ticketGrantingTicket.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
-
-        final RegisteredServiceAttributeReleasePolicy releasePolicy = registeredService.getAttributeReleasePolicy();
-        final Map<String, Object> principalAttrs;
-        if (releasePolicy != null) {
-            principalAttrs = releasePolicy.getAttributes(principal);
-        } else {
-            principalAttrs = new HashMap<>();
-        }
-
-        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principalAttrs)) {
-            logger.warn("Cannot grant service ticket because Service [{}] is not authorized for use by [{}].",
-                    service.getId(), principal);
-            throw new UnauthorizedServiceForPrincipalException();
-        }
-
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
         final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, currentAuthentication != null);
         this.ticketRegistry.addTicket(serviceTicket);
@@ -217,11 +196,11 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         final ProxyGrantingTicket proxyGrantingTicketObject = getTicket(proxyGrantingTicket, ProxyGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        verifyRegisteredServiceProperties(registeredService, service);
-
-        if (proxyGrantingTicketObject.getAuthentication() == null
-                && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso()) {
-            logger.warn("Service [{}] is not allowed to use SSO.", service.getId());
+        try {
+            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service,
+                    registeredService, proxyGrantingTicketObject);
+            RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
+        } catch (final PrincipalException e) {
             throw new UnauthorizedSsoServiceException();
         }
 
@@ -233,21 +212,6 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         final List<Authentication> authentications = proxyGrantingTicketObject.getChainedAuthentications();
         final Principal principal = authentications.get(authentications.size() - 1).getPrincipal();
-
-        final RegisteredServiceAttributeReleasePolicy releasePolicy = registeredService.getAttributeReleasePolicy();
-        final Map<String, Object> principalAttrs;
-        if (releasePolicy != null) {
-            principalAttrs = releasePolicy.getAttributes(principal);
-        } else {
-            principalAttrs = new HashMap<>();
-        }
-
-        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principalAttrs)) {
-            logger.warn("Cannot grant proxy ticket because Service [{}] is not authorized for use by [{}].",
-                    service.getId(), principal);
-            throw new UnauthorizedServiceForPrincipalException();
-        }
-
         final ProxyTicketFactory factory = this.ticketFactory.get(ProxyTicket.class);
         final ProxyTicket proxyTicket = factory.create(proxyGrantingTicketObject, service);
         this.ticketRegistry.addTicket(proxyTicket);
@@ -277,11 +241,10 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
             throw new InvalidTicketException(serviceTicketId);
         }
 
-        final RegisteredService registeredService = this.servicesManager
-                .findServiceBy(serviceTicket.getService());
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceTicket.getService());
 
-        verifyRegisteredServiceProperties(registeredService, serviceTicket.getService());
-        
+        RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(serviceTicket, context, registeredService);
+
         if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
             logger.warn("ServiceManagement: Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
             throw new UnauthorizedProxyingException();
@@ -316,7 +279,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-        verifyRegisteredServiceProperties(registeredService, service);
+        RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService);
 
         final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
@@ -389,23 +352,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                logger.warn("Service [{}] is not allowed to use SSO.", registeredService);
-                throw new UnauthorizedSsoServiceException();
-            }
-            final Principal principal = authentication.getPrincipal();
-            if (!registeredService.getAccessStrategy()
-                    .doPrincipalAttributesAllowServiceAccess(principal.getId(), principal.getAttributes())) {
-                logger.warn("Cannot grant ticket-granting ticket because Service [{}] is not authorized for use by [{}].",
-                        service.getId(), principal);
-
-                final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>();
-                handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(),
-                        UnauthorizedServiceForPrincipalException.class);
-
-                throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE,
-                                    handlerErrors, new HashMap());
-            }
+            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
         }
 
 
