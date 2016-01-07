@@ -140,7 +140,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-        RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService, ticketGrantingTicket);
+        RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket);
 
         final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(context, ticketGrantingTicket);
         RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, currentAuthentication);
@@ -197,7 +197,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         try {
-            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService, proxyGrantingTicketObject);
+            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, proxyGrantingTicketObject);
             RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
         } catch (final PrincipalException e) {
             throw new UnauthorizedSsoServiceException();
@@ -242,7 +242,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceTicket.getService());
 
-        RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(serviceTicket, context, registeredService);
+        RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(serviceTicket, context, registeredService);
 
         if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
             logger.warn("ServiceManagement: Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
@@ -351,7 +351,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService, authentication);
+            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
         }
 
 

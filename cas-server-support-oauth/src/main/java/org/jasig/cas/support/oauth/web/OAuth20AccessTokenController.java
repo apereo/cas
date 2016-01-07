@@ -85,7 +85,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
             // remove service ticket
             ticketRegistry.deleteTicket(serviceTicket.getId());
 
-            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(serviceTicket, service, ticketGrantingTicket);
+            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(serviceTicket, service, ticketGrantingTicket);
             final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
             final Map<String, Object> attributes = new HashMap<>(service.getAttributeReleasePolicy().getAttributes(principal));
 
