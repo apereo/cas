@@ -47,6 +47,15 @@ public final class TestUtils {
         }
     }
 
+    public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(
+            final String username) {
+        final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();
+        usernamePasswordCredentials.setUsername(username);
+        usernamePasswordCredentials.setPassword(username);
+
+        return usernamePasswordCredentials;
+    }
+
     public static UsernamePasswordCredential getCredentialsWithDifferentUsernameAndPassword(
             final String username, final String password) {
         final UsernamePasswordCredential usernamePasswordCredentials = new UsernamePasswordCredential();

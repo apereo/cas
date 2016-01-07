@@ -165,7 +165,7 @@ public final class TestUtils {
             throws AuthenticationException {
         final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
                 support.getPrincipalElectionStrategy());
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credentials);
+        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(service, credentials);
         support.getAuthenticationTransactionManager()
                 .handle(transaction,  builder);
         final AuthenticationContext ctx = builder.build(service);
