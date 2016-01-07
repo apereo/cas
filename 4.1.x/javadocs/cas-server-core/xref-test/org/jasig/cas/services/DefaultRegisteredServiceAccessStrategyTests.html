@@ -133,72 +133,81 @@
 <a class="jxr_linenumber" name="L125" href="#L125">125</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkAuthzPrincipalWithAttrRequirementsNoValueMatch() {
 <a class="jxr_linenumber" name="L126" href="#L126">126</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
 <a class="jxr_linenumber" name="L127" href="#L127">127</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy();
-<a class="jxr_linenumber" name="L128" href="#L128">128</a>         authz.setRequiredAttributes(<strong class="jxr_keyword">this</strong>.getRequiredAttributes());
-<a class="jxr_linenumber" name="L129" href="#L129">129</a>         authz.setRequireAllAttributes(false);
-<a class="jxr_linenumber" name="L130" href="#L130">130</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; pAttrs = <strong class="jxr_keyword">this</strong>.getPrincipalAttributes();
-<a class="jxr_linenumber" name="L131" href="#L131">131</a>         pAttrs.remove(<span class="jxr_string">"cn"</span>);
-<a class="jxr_linenumber" name="L132" href="#L132">132</a>         pAttrs.put(<span class="jxr_string">"givenName"</span>, <span class="jxr_string">"theName"</span>);
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
-<a class="jxr_linenumber" name="L134" href="#L134">134</a>     }
-<a class="jxr_linenumber" name="L135" href="#L135">135</a> 
-<a class="jxr_linenumber" name="L136" href="#L136">136</a>     @Test
-<a class="jxr_linenumber" name="L137" href="#L137">137</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
-<a class="jxr_linenumber" name="L138" href="#L138">138</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
-<a class="jxr_linenumber" name="L139" href="#L139">139</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy();
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>         authz.setRequiredAttributes(<strong class="jxr_keyword">this</strong>.getRequiredAttributes());
-<a class="jxr_linenumber" name="L141" href="#L141">141</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; pAttrs = <strong class="jxr_keyword">this</strong>.getPrincipalAttributes();
-<a class="jxr_linenumber" name="L142" href="#L142">142</a>         pAttrs.put(<span class="jxr_string">"cn"</span>, <span class="jxr_string">"CAS"</span>);
-<a class="jxr_linenumber" name="L143" href="#L143">143</a>         pAttrs.put(<span class="jxr_string">"givenName"</span>, <span class="jxr_string">"kaz"</span>);
-<a class="jxr_linenumber" name="L144" href="#L144">144</a>         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
-<a class="jxr_linenumber" name="L145" href="#L145">145</a>     }
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Set&lt;String&gt;&gt;  reqs = <strong class="jxr_keyword">this</strong>.getRequiredAttributes();
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         reqs.remove(<span class="jxr_string">"phone"</span>);
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         authz.setRequiredAttributes(reqs);
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         authz.setRequireAllAttributes(false);
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; pAttrs = <strong class="jxr_keyword">this</strong>.getPrincipalAttributes();
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         pAttrs.remove(<span class="jxr_string">"cn"</span>);
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         pAttrs.put(<span class="jxr_string">"givenName"</span>, <span class="jxr_string">"theName"</span>);
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>     }
+<a class="jxr_linenumber" name="L137" href="#L137">137</a> 
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     @Test
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkAuthzPrincipalWithAttrValueCaseSensitiveComparison() {
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy();
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> 
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Set&lt;String&gt;&gt;  reqs = <strong class="jxr_keyword">this</strong>.getRequiredAttributes();
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         reqs.remove(<span class="jxr_string">"phone"</span>);
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>         authz.setRequiredAttributes(reqs);
 <a class="jxr_linenumber" name="L146" href="#L146">146</a> 
-<a class="jxr_linenumber" name="L147" href="#L147">147</a>     @Test
-<a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkAuthorizationByRangePass() {
-<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
-<a class="jxr_linenumber" name="L150" href="#L150">150</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(<strong class="jxr_keyword">true</strong>, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L151" href="#L151">151</a>         authz.setStartingDateTime(DateTime.now().toString());
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>         authz.setEndingDateTime(DateTime.now().plusMinutes(10).toString());
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>         assertTrue(authz.isServiceAccessAllowed());
-<a class="jxr_linenumber" name="L154" href="#L154">154</a> 
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>     }
-<a class="jxr_linenumber" name="L156" href="#L156">156</a> 
-<a class="jxr_linenumber" name="L157" href="#L157">157</a>     @Test
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkAuthorizationByRangeFailStartTime() {
-<a class="jxr_linenumber" name="L159" href="#L159">159</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(<strong class="jxr_keyword">true</strong>, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>         authz.setStartingDateTime(DateTime.now().plusDays(1).toString());
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>         authz.setEndingDateTime(DateTime.now().plusMinutes(10).toString());
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>         assertFalse(authz.isServiceAccessAllowed());
-<a class="jxr_linenumber" name="L164" href="#L164">164</a> 
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>     }
-<a class="jxr_linenumber" name="L166" href="#L166">166</a> 
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>     @Test
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkAuthorizationByRangePassEndTime() {
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(<strong class="jxr_keyword">true</strong>, <strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>         authz.setStartingDateTime(DateTime.now().toString());
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>         authz.setEndingDateTime(DateTime.now().plusSeconds(30).toString());
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>         assertTrue(authz.isServiceAccessAllowed());
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>     }
-<a class="jxr_linenumber" name="L175" href="#L175">175</a> 
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Set&lt;String&gt;&gt; getRequiredAttributes() {
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Set&lt;String&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>         map.put(<span class="jxr_string">"cn"</span>, Sets.newHashSet(<span class="jxr_string">"cas"</span>, <span class="jxr_string">"SSO"</span>));
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>         map.put(<span class="jxr_string">"givenName"</span>, Sets.newHashSet(<span class="jxr_string">"CAS"</span>, <span class="jxr_string">"KAZ"</span>));
-<a class="jxr_linenumber" name="L180" href="#L180">180</a>         <strong class="jxr_keyword">return</strong> map;
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>     }
-<a class="jxr_linenumber" name="L182" href="#L182">182</a> 
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Object&gt; getPrincipalAttributes() {
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>         map.put(<span class="jxr_string">"cn"</span>, <span class="jxr_string">"cas"</span>);
-<a class="jxr_linenumber" name="L186" href="#L186">186</a>         map.put(<span class="jxr_string">"givenName"</span>, Arrays.asList(<span class="jxr_string">"cas"</span>, <span class="jxr_string">"KAZ"</span>));
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>         map.put(<span class="jxr_string">"sn"</span>, <span class="jxr_string">"surname"</span>);
-<a class="jxr_linenumber" name="L188" href="#L188">188</a>         map.put(<span class="jxr_string">"phone"</span>, <span class="jxr_string">"123-456-7890"</span>);
-<a class="jxr_linenumber" name="L189" href="#L189">189</a> 
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>         <strong class="jxr_keyword">return</strong> map;
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>     }
-<a class="jxr_linenumber" name="L192" href="#L192">192</a> 
-<a class="jxr_linenumber" name="L193" href="#L193">193</a> }
+<a class="jxr_linenumber" name="L147" href="#L147">147</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; pAttrs = <strong class="jxr_keyword">this</strong>.getPrincipalAttributes();
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>         pAttrs.put(<span class="jxr_string">"cn"</span>, <span class="jxr_string">"CAS"</span>);
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         pAttrs.put(<span class="jxr_string">"givenName"</span>, <span class="jxr_string">"kaz"</span>);
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         assertFalse(authz.doPrincipalAttributesAllowServiceAccess(pAttrs));
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>     }
+<a class="jxr_linenumber" name="L152" href="#L152">152</a> 
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>     @Test
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkAuthorizationByRangePass() {
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(<strong class="jxr_keyword">true</strong>, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         authz.setStartingDateTime(DateTime.now().toString());
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>         authz.setEndingDateTime(DateTime.now().plusMinutes(10).toString());
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>         assertTrue(authz.isServiceAccessAllowed());
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> 
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>     }
+<a class="jxr_linenumber" name="L162" href="#L162">162</a> 
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     @Test
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkAuthorizationByRangeFailStartTime() {
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(<strong class="jxr_keyword">true</strong>, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>         authz.setStartingDateTime(DateTime.now().plusDays(1).toString());
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>         authz.setEndingDateTime(DateTime.now().plusMinutes(10).toString());
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>         assertFalse(authz.isServiceAccessAllowed());
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> 
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>     }
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> 
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>     @Test
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> checkAuthorizationByRangePassEndTime() {
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>         <strong class="jxr_keyword">final</strong> DefaultRegisteredServiceAccessStrategy authz =
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>                 <strong class="jxr_keyword">new</strong> DefaultRegisteredServiceAccessStrategy(<strong class="jxr_keyword">true</strong>, <strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>         authz.setStartingDateTime(DateTime.now().toString());
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>         authz.setEndingDateTime(DateTime.now().plusSeconds(30).toString());
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>         assertTrue(authz.isServiceAccessAllowed());
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>     }
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> 
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Set&lt;String&gt;&gt; getRequiredAttributes() {
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> 
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> 
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Set&lt;String&gt;&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>         map.put(<span class="jxr_string">"cn"</span>, Sets.newHashSet(<span class="jxr_string">"cas"</span>, <span class="jxr_string">"SSO"</span>));
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>         map.put(<span class="jxr_string">"givenName"</span>, Sets.newHashSet(<span class="jxr_string">"CAS"</span>, <span class="jxr_string">"KAZ"</span>));
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>         map.put(<span class="jxr_string">"phone"</span>, Sets.newHashSet(<span class="jxr_string">"&#92;&#92;d&#92;&#92;d&#92;&#92;d-&#92;&#92;d&#92;&#92;d&#92;&#92;d-&#92;&#92;d&#92;&#92;d&#92;&#92;d"</span>));
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>         <strong class="jxr_keyword">return</strong> map;
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>     }
+<a class="jxr_linenumber" name="L191" href="#L191">191</a> 
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>     <strong class="jxr_keyword">private</strong> Map&lt;String, Object&gt; getPrincipalAttributes() {
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>         <strong class="jxr_keyword">final</strong> Map&lt;String, Object&gt; map = <strong class="jxr_keyword">new</strong> HashMap&lt;&gt;();
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>         map.put(<span class="jxr_string">"cn"</span>, <span class="jxr_string">"cas"</span>);
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>         map.put(<span class="jxr_string">"givenName"</span>, Arrays.asList(<span class="jxr_string">"cas"</span>, <span class="jxr_string">"KAZ"</span>));
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>         map.put(<span class="jxr_string">"sn"</span>, <span class="jxr_string">"surname"</span>);
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>         map.put(<span class="jxr_string">"phone"</span>, <span class="jxr_string">"123-456-7890"</span>);
+<a class="jxr_linenumber" name="L198" href="#L198">198</a> 
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>         <strong class="jxr_keyword">return</strong> map;
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>     }
+<a class="jxr_linenumber" name="L201" href="#L201">201</a> 
+<a class="jxr_linenumber" name="L202" href="#L202">202</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2004&#x2013;2016 <a href="http://www.apereo.org">Apereo</a>. All rights reserved.</div>
