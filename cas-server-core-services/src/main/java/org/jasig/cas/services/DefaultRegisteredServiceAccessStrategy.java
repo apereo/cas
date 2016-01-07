@@ -1,18 +1,20 @@
 package org.jasig.cas.services;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.jasig.cas.util.RegexUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link DefaultRegisteredServiceAccessStrategy}
@@ -55,6 +57,12 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * for this service to proceed.
      */
     private Map<String, Set<String>> requiredAttributes = new HashMap<>();
+
+    /**
+     * Indicates whether matching on required attribute values
+     * should be done in a case-insensitive manner.
+     */
+    private boolean caseInsensitive;
 
     /**
      * Instantiates a new Default registered service authorization strategy.
@@ -123,6 +131,25 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
 
     /**
+     * Is attribute value matching case insensitive?
+     *
+     * @return true/false
+     */
+    public boolean isCaseInsensitive() {
+        return caseInsensitive;
+    }
+
+    /**
+     * Sets case insensitive.
+     *
+     * @param caseInsensitive the case insensitive
+     * @since 4.3
+     */
+    public void setCaseInsensitive(final boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
+    }
+
+    /**
      * Defines the required attribute names and values that
      * must be available to the principal before the flow
      * can proceed to the next step. Every attribute in
@@ -180,18 +207,25 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         }
 
         for (final String key : copy) {
-            final Set<?> requiredValues = this.requiredAttributes.get(key);
-            final Set<?> availableValues;
+            final Set<String> requiredValues = this.requiredAttributes.get(key);
+            final Set<String> availableValues;
 
             final Object objVal = principalAttributes.get(key);
             if (objVal instanceof Collection) {
                 final Collection valCol = (Collection) objVal;
-                availableValues = Sets.newHashSet(valCol.toArray());
+                availableValues = Sets.newHashSet(valCol.iterator());
             } else {
-                availableValues = Collections.singleton(objVal);
+                availableValues = Sets.newHashSet(objVal.toString());
             }
 
-            final Sets.SetView<?> differenceInValues = Sets.intersection(availableValues, requiredValues);
+            final Set<?> differenceInValues;
+            final Pattern pattern = RegexUtils.concatenate(requiredValues, this.caseInsensitive);
+            if (pattern != null) {
+                differenceInValues = Sets.filter(availableValues, Predicates.contains(pattern));
+            } else {
+                differenceInValues = Sets.intersection(availableValues, requiredValues);
+            }
+
             if (!differenceInValues.isEmpty()) {
                 logger.info("Principal is authorized to access the service");
                 return true;
@@ -237,6 +271,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.requireAllAttributes, rhs.requireAllAttributes)
                 .append(this.requiredAttributes, rhs.requiredAttributes)
                 .append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
+                .append(this.caseInsensitive, rhs.caseInsensitive)
                 .isEquals();
     }
 
@@ -248,6 +283,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append(this.requireAllAttributes)
                 .append(this.requiredAttributes)
                 .append(this.unauthorizedRedirectUrl)
+                .append(this.caseInsensitive)
                 .toHashCode();
     }
 
@@ -260,6 +296,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
                 .append("requireAllAttributes", requireAllAttributes)
                 .append("requiredAttributes", requiredAttributes)
                 .append("unauthorizedRedirectUrl", unauthorizedRedirectUrl)
+                .append("caseInsensitive", caseInsensitive)
                 .toString();
     }
 
