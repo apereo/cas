@@ -290,7 +290,7 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
      */
     void refreshServicesManager() {
         if (this.applicationContext == null) {
-            LOGGER.debug("Application context has failed to initialize"
+            LOGGER.debug("Application context has failed to initialize because it's null. "
                + "Service definition may not take immediate effect, which suggests a configuration problem");
             return;
         }
