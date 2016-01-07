@@ -24,6 +24,7 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.util.JsonSerializer;
 import org.jasig.cas.util.LdapUtils;
+import org.jasig.cas.util.RegexUtils;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -37,8 +38,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Default implementation of {@link LdapRegisteredServiceMapper} that is able
@@ -136,22 +135,6 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
     }
 
     /**
-     * Checks if is valid regex pattern.
-     *
-     * @param pattern the pattern
-     * @return true, if  valid regex pattern
-     */
-    private boolean isValidRegexPattern(final String pattern) {
-        try {
-            Pattern.compile(pattern);
-        } catch (final PatternSyntaxException e) {
-            LOGGER.debug("Failed to identify [{}] as a regular expression", pattern);
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Gets the attribute values if more than one, otherwise an empty list.
      *
      * @param entry the entry
@@ -173,7 +156,7 @@ public final class DefaultLdapRegisteredServiceMapper implements LdapRegisteredS
      * @return the registered service
      */
     private AbstractRegisteredService getRegisteredService(@NotNull final String id) {
-        if (isValidRegexPattern(id)) {
+        if (RegexUtils.isValidRegex(id)) {
             return new RegexRegisteredService();
         }
 
