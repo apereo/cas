@@ -35,6 +35,9 @@ import java.util.regex.PatternSyntaxException;
 public final class RegexUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);
 
+    /**
+     * Instantiates a new Regex utils.
+     */
     private RegexUtils() {}
 
     /**
