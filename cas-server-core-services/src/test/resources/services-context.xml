@@ -128,6 +128,10 @@
             <property name="name" value="proxyService"/>
             <property name="serviceId" value="proxyService"/>
             <property name="evaluationOrder" value="333"/>
+            <property name="proxyPolicy">
+                <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
+                      c:pgtUrlPattern="^https://.+"/>
+            </property>
         </bean>
 
         <bean class="org.jasig.cas.services.RegisteredServiceImpl">
@@ -151,14 +155,17 @@
             </property>
         </bean>
 
-        <bean class="org.jasig.cas.services.RegexRegisteredService">
-            <property name="id" value="100"/>
-            <property name="name" value="TestProxyService"/>
-            <property name="serviceId" value="proxyService"/>
-            <property name="evaluationOrder" value="100"/>
-            <property name="proxyPolicy">
-                <bean class="org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy"
-                      c:pgtUrlPattern="^https://.+"/>
+
+        <bean class="org.jasig.cas.services.RegisteredServiceImpl">
+            <property name="id" value="335"/>
+            <property name="name" value="usernameAttributeProviderService"/>
+            <property name="serviceId" value="usernameAttributeProviderService"/>
+            <property name="evaluationOrder" value="11"/>
+            <property name="usernameAttributeProvider">
+                <bean class="org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider" c:usernameAttribute="cn" />
+            </property>
+            <property name="attributeReleasePolicy">
+                <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
             </property>
         </bean>
 
