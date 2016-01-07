@@ -197,7 +197,8 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         try {
-            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, proxyGrantingTicketObject);
+            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service,
+                    registeredService, proxyGrantingTicketObject);
             RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
         } catch (final PrincipalException e) {
             throw new UnauthorizedSsoServiceException();
