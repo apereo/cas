@@ -49,6 +49,7 @@ import org.jasig.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.jasig.cas.util.RegexUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.merger.IAttributeMerger;
 import org.jasig.services.persondir.support.merger.MultivaluedAttributeMerger;
@@ -579,7 +580,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                 } else if (StringUtils.equalsIgnoreCase(proxyType,
                         RegisteredServiceProxyPolicyBean.Types.REGEX.toString())) {
                     final String value = this.proxyPolicy.getValue();
-                    if (StringUtils.isNotBlank(value) && isValidRegex(value)) {
+                    if (StringUtils.isNotBlank(value) && RegexUtils.isValidRegex(value)) {
                         regSvc.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(value));
                     } else {
                         throw new IllegalArgumentException("Invalid regex pattern specified for proxy policy: " + value);
@@ -683,22 +684,6 @@ public final class RegisteredServiceEditBean implements Serializable {
                 }
             }
             throw new RuntimeException("Service id " + serviceId + " cannot be resolve to a service type");
-        }
-
-        /**
-         * Determine service type by pattern.
-         *
-         * @param pattern the pattern
-         * @return the abstract registered service
-         */
-        private boolean isValidRegex(final String pattern) {
-            try {
-                Pattern.compile(serviceId);
-                LOGGER.debug("Pattern {} is a valid regex.", pattern);
-                return true;
-            } catch (final PatternSyntaxException exception) {
-                return false;
-            }
         }
     }
 }
