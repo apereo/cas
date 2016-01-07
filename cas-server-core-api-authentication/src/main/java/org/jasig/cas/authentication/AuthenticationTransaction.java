@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Service;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,14 +21,17 @@ public final class AuthenticationTransaction implements Serializable {
     private static final long serialVersionUID = 6213904009424725484L;
 
     private final Collection<Credential> credentials;
+    private final Service service;
 
     /**
      * Instantiates a new Default authentication transaction.
      *
+     * @param service     the service
      * @param credentials the credentials
      */
-    private AuthenticationTransaction(final Collection<Credential> credentials) {
+    private AuthenticationTransaction(final Service service, final Collection<Credential> credentials) {
         this.credentials = credentials;
+        this.service = service;
     }
 
     public Collection<Credential> getCredentials() {
@@ -37,11 +42,27 @@ public final class AuthenticationTransaction implements Serializable {
      * Wrap credentials into an authentication transaction, as a factory method,
      * and return the final result.
      *
+     * @param service     the service
+     * @param credentials the credentials
+     * @return the authentication transaction
+     */
+    public static AuthenticationTransaction wrap(final Service service, final Credential... credentials) {
+        return new AuthenticationTransaction(service, sanitizeCredentials(credentials));
+    }
+
+    /**
+     * Wrap credentials into an authentication transaction, as a factory method,
+     * and return the final result.
+     *
      * @param credentials the credentials
      * @return the authentication transaction
      */
     public static AuthenticationTransaction wrap(final Credential... credentials) {
-        return new AuthenticationTransaction(sanitizeCredentials(credentials));
+        return wrap(null, credentials);
+    }
+
+    public Service getService() {
+        return this.service;
     }
 
     private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
