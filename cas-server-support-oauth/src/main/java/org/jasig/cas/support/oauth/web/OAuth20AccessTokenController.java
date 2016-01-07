@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpStatus;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
@@ -55,64 +56,65 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
     @Override
     protected ModelAndView internalHandleRequest(final String method, final HttpServletRequest request,
                                                  final HttpServletResponse response) throws Exception {
+        try {
 
-        final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
-        logger.debug("{}: {}", OAuthConstants.REDIRECT_URI, redirectUri);
+            final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
+            logger.debug("{}: {}", OAuthConstants.REDIRECT_URI, redirectUri);
 
-        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        logger.debug("{}: {}", OAuthConstants.CLIENT_ID, clientId);
+            final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+            logger.debug("{}: {}", OAuthConstants.CLIENT_ID, clientId);
 
-        final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
+            final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
 
-        final String code = request.getParameter(OAuthConstants.CODE);
-        logger.debug("{}: {}", OAuthConstants.CODE, code);
+            final String code = request.getParameter(OAuthConstants.CODE);
+            logger.debug("{}: {}", OAuthConstants.CODE, code);
 
-        final boolean isVerified = verifyAccessTokenRequest(response, redirectUri, clientId, clientSecret, code);
-        if (!isVerified) {
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_BAD_REQUEST);
-        }
+            final boolean isVerified = verifyAccessTokenRequest(response, redirectUri, clientId, clientSecret, code);
+            if (!isVerified) {
+                return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_REQUEST, HttpStatus.SC_BAD_REQUEST);
+            }
 
-        final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
-        // service ticket should be valid
-        if (serviceTicket == null || serviceTicket.isExpired()) {
-            logger.error("Code expired: {}", code);
+            final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+            final ServiceTicket serviceTicket = (ServiceTicket) ticketRegistry.getTicket(code);
+            // service ticket should be valid
+            if (serviceTicket == null || serviceTicket.isExpired()) {
+                logger.error("Code expired: {}", code);
+                return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
+            }
+            final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
+            // remove service ticket
+            ticketRegistry.deleteTicket(serviceTicket.getId());
+
+            RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(serviceTicket, service, ticketGrantingTicket);
+            final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
+            final Map<String, Object> attributes = new HashMap<>(service.getAttributeReleasePolicy().getAttributes(principal));
+
+            if (attributes.containsKey(JwtConstants.SUBJECT) || attributes.containsKey(JwtConstants.ISSUE_TIME)
+                    || attributes.containsKey(JwtConstants.ISSUER) || attributes.containsKey(JwtConstants.AUDIENCE)
+                    || attributes.containsKey(JwtConstants.EXPIRATION_TIME)) {
+                logger.error("Current profile: {} has forbidden attributes.", principal);
+                return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_PROFILE, HttpStatus.SC_BAD_REQUEST);
+            }
+
+            attributes.put(JwtConstants.ISSUER, loginUrl.replace("/login$", OAuthConstants.ENDPOINT_OAUTH2));
+            attributes.put(JwtConstants.AUDIENCE, service.getServiceId());
+            final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
+                    .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
+            attributes.put(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), expires));
+
+            final HttpProfile profile = new HttpProfile();
+            profile.setId(principal.getId());
+            profile.addAttributes(attributes);
+            final String accessToken = this.accessTokenJwtGenerator.generate(profile);
+
+            final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken, OAuthConstants.EXPIRES, expires);
+            logger.debug("OAuth access token response: {}", text);
+            response.setContentType("text/plain");
+            return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
+        } catch (final Exception e) {
+            logger.error(e.getMessage(), e);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
-        final TicketGrantingTicket ticketGrantingTicket = serviceTicket.getGrantingTicket();
-        // remove service ticket
-        ticketRegistry.deleteTicket(serviceTicket.getId());
-
-        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
-        final Principal principal = ticketGrantingTicket.getAuthentication().getPrincipal();
-        final Map<String, Object> attributes = new HashMap<>(service.getAttributeReleasePolicy().getAttributes(principal));
-        final String id = principal.getId();
-        if (!service.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(id, attributes)) {
-            logger.error("Service [{}] is not authorized for use by [{}].", service.getServiceId(), principal);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
-        }
-
-        if (attributes.containsKey(JwtConstants.SUBJECT) || attributes.containsKey(JwtConstants.ISSUE_TIME)
-         || attributes.containsKey(JwtConstants.ISSUER) || attributes.containsKey(JwtConstants.AUDIENCE)
-         || attributes.containsKey(JwtConstants.EXPIRATION_TIME)) {
-            logger.error("Current profile: {} has forbidden attributes.", principal);
-            return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_PROFILE, HttpStatus.SC_BAD_REQUEST);
-        }
-
-        attributes.put(JwtConstants.ISSUER, loginUrl.replace("/login$", OAuthConstants.ENDPOINT_OAUTH2));
-        attributes.put(JwtConstants.AUDIENCE, service.getServiceId());
-        final int expires = (int) (this.timeout - TimeUnit.MILLISECONDS
-                .toSeconds(System.currentTimeMillis() - ticketGrantingTicket.getCreationTime()));
-        attributes.put(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), expires));
-
-        final HttpProfile profile = new HttpProfile();
-        profile.setId(id);
-        profile.addAttributes(attributes);
-        final String accessToken = this.accessTokenJwtGenerator.generate(profile);
-
-        final String text = String.format("%s=%s&%s=%s", OAuthConstants.ACCESS_TOKEN, accessToken, OAuthConstants.EXPIRES, expires);
-        logger.debug("OAuth access token response: {}", text);
-        response.setContentType("text/plain");
-        return OAuthUtils.writeText(response, text, HttpStatus.SC_OK);
     }
 
     /**

@@ -16,7 +16,6 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServiceContext;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedProxyingException;
-import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.AbstractTicketException;
 import org.jasig.cas.ticket.InvalidTicketException;
 import org.jasig.cas.ticket.Ticket;
@@ -222,28 +221,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         throw new UnsatisfiedAuthenticationPolicyException(policy);
     }
 
-    /**
-     * Ensure that the service is found and enabled in the service registry.
-     * @param registeredService the located entry in the registry
-     * @param service authenticating service
-     * @throws UnauthorizedServiceException if service is unauthorized
-     */
-    protected final void verifyRegisteredServiceProperties(final RegisteredService registeredService,
-                                                           final Service service) throws UnauthorizedServiceException {
-        if (registeredService == null) {
-            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service [%s] is not found in service registry.", service.getId());
-            logger.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-        }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service [%s] is not enabled in service registry.", service.getId());
-
-            logger.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-        }
-    }
 
     /**
      * Evaluate proxied service if needed.
