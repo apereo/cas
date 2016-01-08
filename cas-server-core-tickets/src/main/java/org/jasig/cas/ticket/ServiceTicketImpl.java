@@ -135,9 +135,10 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
             }
             this.grantedTicketAlready = Boolean.TRUE;
         }
-
-        return new ProxyGrantingTicketImpl(id, service,
+        final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, service,
                 this.getGrantingTicket(), authentication, expirationPolicy);
+        getGrantingTicket().getProxyGrantingTickets().add(pgt);
+        return pgt;
     }
 
     @Override
