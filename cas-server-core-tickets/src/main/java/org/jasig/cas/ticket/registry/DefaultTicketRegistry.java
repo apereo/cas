@@ -113,6 +113,10 @@ public final class DefaultTicketRegistry extends AbstractCrypticTicketRegistry i
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
+        if (ticketId == null) {
+            return null;
+        }
+
         final Ticket ticket = decodeTicket(this.cache.get(encTicketId));
         return getProxiedTicketInstance(ticket);
     }

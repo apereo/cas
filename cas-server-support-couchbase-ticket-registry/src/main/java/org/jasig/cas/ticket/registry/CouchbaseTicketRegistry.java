@@ -87,27 +87,33 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
-        logger.debug("Adding ticket {}", ticket);
+    public void addTicket(final Ticket ticketToAdd) {
+        logger.debug("Adding ticket {}", ticketToAdd);
         try {
+            final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document =
                     SerializableDocument.create(ticket.getId(), getTimeout(ticket), ticket);
             couchbase.bucket().upsert(document);
         } catch (final Exception e) {
-            logger.error("Failed adding {}: {}", ticket, e);
+            logger.error("Failed adding {}: {}", ticketToAdd, e);
         }
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
         try {
-            final SerializableDocument document = couchbase.bucket().get(ticketId, SerializableDocument.class);
+            final String encTicketId = encodeTicketId(ticketId);
+            if (ticketId == null) {
+                return null;
+            }
+
+            final SerializableDocument document = couchbase.bucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
                 logger.debug("Got ticket {} from registry.", t);
                 return getProxiedTicketInstance(t);
             }
-            logger.debug("Ticket {} not found in registry.", ticketId);
+            logger.debug("Ticket {} not found in registry.", encTicketId);
             return null;
         } catch (final Exception e) {
             logger.error("Failed fetching {}: {}", ticketId, e);
