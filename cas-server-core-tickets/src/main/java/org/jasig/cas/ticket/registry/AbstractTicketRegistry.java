@@ -76,9 +76,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
 
         if (ticket instanceof TicketGrantingTicket) {
             logger.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
-            deleteChildren((TicketGrantingTicket) ticket);
-        }
+            final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
+            deleteChildren(tgt);
 
+            final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
+            for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
+                logger.debug("Removing proxy-granting ticket [{}]", proxyGrantingTicket.getId());
+                deleteTicket(proxyGrantingTicket.getId());
+            }
+
+        }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
         return deleteSingleTicket(ticketId);
     }
@@ -101,11 +108,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                     logger.debug("Unable to remove ticket [{}]", entry.getKey());
                 }
             }
-        }
-        final Collection<ProxyGrantingTicket> proxyGrantingTickets = ticket.getProxyGrantingTickets();
-        for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
-            logger.debug("Removing proxy-granting ticket [{}]", proxyGrantingTicket.getId());
-            deleteTicket(proxyGrantingTicket.getId());
         }
     }
 
