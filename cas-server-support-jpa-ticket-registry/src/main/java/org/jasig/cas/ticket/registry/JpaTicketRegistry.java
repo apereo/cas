@@ -78,6 +78,9 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @Override
     public void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
+        if (ticket.getGrantingTicket() != null) {
+            entityManager.merge(ticket.getGrantingTicket());
+        }
         logger.debug("Updated ticket [{}].", ticket);
     }
 
@@ -90,17 +93,16 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     /**
      * Removes the ticket.
      *
-     * @param ticketId the ticket
+     * @param ticket the ticket
      */
-    private boolean removeTicket(final String ticketId) {
+    private boolean removeTicket(final Ticket ticket) {
         try {
-            final Ticket ticket = getTicket(ticketId);
             final Date creationDate = new Date(ticket.getCreationTime());
             logger.debug("Removing Ticket [{}] created: {}", ticket, creationDate.toString());
             entityManager.remove(ticket);
             return true;
         } catch (final Exception e) {
-            logger.error("Error removing {} from registry.", ticketId, e);
+            logger.error("Error removing {} from registry.", ticket.getId(), e);
         }
         return false;
     }
@@ -134,11 +136,11 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @Override
     public Collection<Ticket> getTickets() {
         final List<TicketGrantingTicketImpl> tgts = entityManager
-            .createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
-            .getResultList();
+                .createQuery("select t from TicketGrantingTicketImpl t", TicketGrantingTicketImpl.class)
+                .getResultList();
         final List<ServiceTicketImpl> sts = entityManager
-            .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
-            .getResultList();
+                .createQuery("select s from ServiceTicketImpl s", ServiceTicketImpl.class)
+                .getResultList();
 
         final List<Ticket> tickets = new ArrayList<>();
         tickets.addAll(tgts);
@@ -165,7 +167,57 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        return removeTicket(ticketId);
+        final Ticket ticket = getTicket(ticketId);
+        int failureCount = 0;
+
+        if (ticket instanceof ServiceTicket) {
+            failureCount = deleteServiceTickets(ticketId);
+        } else if (ticket instanceof TicketGrantingTicket) {
+            failureCount = deleteTicketGrantingTickets(ticketId);
+        } else {
+            throw new IllegalArgumentException("Invalid ticket type with id " + ticketId);
+        }
+        return failureCount == 0;
+    }
+
+    <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, final Class<? extends Ticket> clazz) {
+        return (List) entityManager.createQuery(query, clazz)
+                .setParameter("id", ticketId)
+                .getResultList();
+    }
+
+    private int deleteServiceTickets(final String ticketId) {
+        final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
+                "select s from ServiceTicketImpl s where s.id = :id", ServiceTicketImpl.class);
+        return deleteTicketsFromResultList(serviceTicketImpls);
+    }
+
+    private int deleteTicketsFromResultList(final List<? extends Ticket> serviceTicketImpls) {
+        int failureCount = 0;
+        for (final Ticket serviceTicketImpl : serviceTicketImpls) {
+            if (!removeTicket(serviceTicketImpl)) {
+                failureCount++;
+            }
+        }
+        return failureCount;
+    }
+
+    private int deleteTicketGrantingTickets(final String ticketId) {
+        int failureCount = 0;
+
+        final List<ServiceTicketImpl> serviceTicketImpls = getTicketQueryResultList(ticketId,
+                "select s from ServiceTicketImpl s where s.ticketGrantingTicket.id = :id", ServiceTicketImpl.class);
+        failureCount += deleteTicketsFromResultList(serviceTicketImpls);
+
+        List<TicketGrantingTicketImpl> ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
+                "select t from TicketGrantingTicketImpl t where t.ticketGrantingTicket.id = :id", TicketGrantingTicketImpl.class);
+        failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
+
+        ticketGrantingTicketImpls = getTicketQueryResultList(ticketId,
+                "select t from TicketGrantingTicketImpl t where t.id = :id", TicketGrantingTicketImpl.class);
+        failureCount += deleteTicketsFromResultList(ticketGrantingTicketImpls);
+
+        return failureCount;
     }
 
     /**
@@ -194,19 +246,17 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @PostConstruct
     public void scheduleCleanerJob() {
         try {
-
             logger.info("Preparing to schedule cleaner job");
-
             final JobDetail job = JobBuilder.newJob(this.getClass())
-                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                .build();
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .build();
 
             final Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                .startAt(new Date(System.currentTimeMillis() + this.startDelay))
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                    .withIntervalInMinutes(this.refreshInterval)
-                    .repeatForever()).build();
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                            .withIntervalInMinutes(this.refreshInterval)
+                            .repeatForever()).build();
 
             final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
             final SchedulerFactory schFactory = new StdSchedulerFactory();
@@ -216,10 +266,10 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
             logger.debug("Started {} scheduler", this.getClass().getName());
             sch.scheduleJob(job, trigger);
             logger.info("{} will clean tickets every {} seconds",
-                this.getClass().getSimpleName(),
-                TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
+                    this.getClass().getSimpleName(),
+                    TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
 
-        } catch (final Exception e){
+        } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
         }
 
