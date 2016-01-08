@@ -328,10 +328,10 @@ public class JsonServiceRegistryDaoTests {
     }
 
     @Test
-    public void verifyAAccessStrategyWithStarEndDate() throws Exception {
+    public void verifyAccessStrategyWithStarEndDate() throws Exception {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setServiceId("^https://.+");
-        r.setName("verifyAAccessStrategyWithStarEndDate");
+        r.setName("verifyAccessStrategyWithStarEndDate");
         r.setId(62);
 
         final DefaultRegisteredServiceAccessStrategy authz =
