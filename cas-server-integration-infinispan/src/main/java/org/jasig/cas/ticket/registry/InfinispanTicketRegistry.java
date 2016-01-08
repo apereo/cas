@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * This is {@link InfinispanTicketRegistry}. Infinispan is a distributed in-memory key/value data store with optional schema.
@@ -41,10 +42,11 @@ public final class InfinispanTicketRegistry extends AbstractCrypticTicketRegistr
     /**
      * Add a ticket to the registry. Ticket storage is based on the ticket id.
      *
-     * @param ticket The ticket we wish to add to the cache.
+     * @param ticketToAdd The ticket we wish to add to the cache.
      */
     @Override
-    public void addTicket(final Ticket ticket) {
+    public void addTicket(final Ticket ticketToAdd) {
+        final Ticket ticket = encodeTicket(ticketToAdd);
         this.cache.put(ticket.getId(), ticket);
     }
 
@@ -56,7 +58,11 @@ public final class InfinispanTicketRegistry extends AbstractCrypticTicketRegistr
      */
     @Override
     public Ticket getTicket(final String ticketId) {
-        final Ticket ticket = this.cache.get(ticketId);
+        final String encTicketId = encodeTicketId(ticketId);
+        if (ticketId == null) {
+            return null;
+        }
+        final Ticket ticket = this.cache.get(encTicketId);
         return getProxiedTicketInstance(ticket);
     }
 
@@ -78,7 +84,12 @@ public final class InfinispanTicketRegistry extends AbstractCrypticTicketRegistr
      */
     @Override
     public Collection<Ticket> getTickets() {
-        return this.cache.values();
+        final Collection<Ticket> allTickets = new HashSet<>();
+        for (final Ticket ticket : this.cache.values()) {
+            final Ticket proxiedTicket = getProxiedTicketInstance(ticket);
+            allTickets.add(proxiedTicket);
+        }
+        return decodeTickets(allTickets);
     }
 
     public void setCache(final Cache<String, Ticket> cache) {
