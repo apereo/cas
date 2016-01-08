@@ -4,11 +4,11 @@ title: CAS - Configuring Service Access Strategy
 ---
 
 #Configure Service Access Strategy
-The access strategy of a registered service provides fine-grained control over the service authorization rules. 
-it describes whether the service is allowed to use the CAS server, allowed to participate in 
-single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal 
-attributes that must exist before access can be granted to the service. This behavior allows one to configure 
-various attributes in terms of access roles for the application and define rules that would be enacted and 
+The access strategy of a registered service provides fine-grained control over the service authorization rules.
+it describes whether the service is allowed to use the CAS server, allowed to participate in
+single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal
+attributes that must exist before access can be granted to the service. This behavior allows one to configure
+various attributes in terms of access roles for the application and define rules that would be enacted and
 validated when an authentication request from the application arrives.
 
 ##Components
@@ -27,22 +27,13 @@ The default access manager allows one to configure a service with the following 
 | `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully.
 | `unauthorizedRedirectUrl`         | Optional url to redirect the flow in case service access is not allowed.
 | `caseInsensitive`                 | Indicates whether matching on required attribute values should be done in a case-insensitive manner. Default is `false`
-
+| `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
+| `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
 <div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attribute <strong>names</strong> is
 case-sensitive. Exact matches are required for any individual attribute name.</p></div>
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
-
-###`TimeBasedRegisteredServiceAccessStrategy`
-This access strategy is an extension of the default which additionally,
-allows one to configure a service with the following properties:
-
-| Field                             | Description
-|-----------------------------------+--------------------------------------------------------------------------------+
-| `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
-| `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
-
 
 ##Configuration of Access Control
 Some examples of RBAC configuration follow:
@@ -157,7 +148,7 @@ OR the principal must have a `member` attribute whose value is either of `admins
   "name" : "test",
   "id" : 62,
   "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy",
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true,
     "unauthorizedRedirectUrl" : "https://www.github.com",
