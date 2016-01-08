@@ -6,6 +6,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,42 +116,10 @@ public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry imple
 
 
     @Override
-    public boolean deleteTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
-        logger.debug("Removing ticket [{}]", encTicketId);
-
-        final Ticket ticket = getTicket(encTicketId);
-        if (ticket == null) {
-            return false;
-        }
-
-        if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
-            deleteChildren((TicketGrantingTicket) ticket);
-        }
-
-        logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return (this.registry.remove(encTicketId) != null);
+    public boolean deleteSingleTicket(final String ticketId) {
+        return this.registry.remove(ticketId) != null;
     }
 
-    /**
-     * Delete TGT's service tickets.
-     *
-     * @param ticket the ticket
-     */
-    private void deleteChildren(final TicketGrantingTicket ticket) {
-        // delete service tickets
-        final Map<String, Service> services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                if (this.registry.remove(entry.getKey()) != null) {
-                    logger.trace("Removed service ticket [{}]", entry.getKey());
-                } else {
-                    logger.trace("Ticket not found or is already removed. Unable to remove service ticket [{}]", entry.getKey());
-                }
-            }
-        }
-    }
 
     @Override
     public Collection<Ticket> getTickets() {

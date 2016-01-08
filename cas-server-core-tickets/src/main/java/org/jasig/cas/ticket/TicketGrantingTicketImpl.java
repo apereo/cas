@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +64,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Lob
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = 1000000)
     private final HashMap<String, Service> services = new HashMap<>();
+
+    /** The PGTs associated to this ticket. */
+    @Lob
+    @Column(name="PROXY_GRANTING_TICKETS", nullable=false, length = 1000000)
+    private final HashSet<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     @Lob
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = 1000000)
@@ -194,6 +201,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Override
     public final synchronized Map<String, Service> getServices() {
         return ImmutableMap.copyOf(this.services);
+    }
+
+    @Override
+    public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+        return proxyGrantingTickets;
     }
 
     /**

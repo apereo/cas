@@ -1,9 +1,15 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Scott Battaglia
@@ -56,4 +62,68 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }
+
+    @Override
+    public final boolean deleteTicket(final String ticketId) {
+        if (ticketId == null) {
+            return false;
+        }
+
+        final Ticket ticket = getTicket(ticketId);
+        if (ticket == null) {
+            return false;
+        }
+
+        if (ticket instanceof TicketGrantingTicket) {
+            logger.debug("Removing children of ticket [{}] from the registry.", ticket);
+            deleteChildren((TicketGrantingTicket) ticket);
+        }
+
+        logger.debug("Removing ticket [{}] from the registry.", ticket);
+        return deleteSingleTicket(ticketId);
+    }
+
+
+    /**
+     * Delete TGT's service tickets.
+     *
+     * @param ticket the ticket
+     */
+    private void deleteChildren(final TicketGrantingTicket ticket) {
+        // delete service tickets
+        final Map<String, Service> services = ticket.getServices();
+        if (services != null && !services.isEmpty()) {
+            for (final Map.Entry<String, Service> entry : services.entrySet()) {
+                final String ticketId = entry.getKey();
+                if (deleteSingleTicket(ticketId)) {
+                    logger.trace("Removed ticket [{}]", entry.getKey());
+                } else {
+                    logger.trace("Unable to remove ticket [{}]", entry.getKey());
+                }
+            }
+        }
+        final Collection<ProxyGrantingTicket> proxyGrantingTickets = ticket.getProxyGrantingTickets();
+        for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
+            deleteChildren(proxyGrantingTicket);
+        }
+    }
+
+
+    /**
+     * Delete a single ticket instance from the store.
+     *
+     * @param ticketId the ticket id
+     * @return the boolean
+     */
+    public boolean deleteSingleTicket(final Ticket ticketId) {
+        return deleteSingleTicket(ticketId.getId());
+    }
+
+    /**
+     * Delete a single ticket instance from the store.
+     *
+     * @param ticketId the ticket id
+     * @return the boolean
+     */
+    public abstract boolean deleteSingleTicket(final String ticketId);
 }

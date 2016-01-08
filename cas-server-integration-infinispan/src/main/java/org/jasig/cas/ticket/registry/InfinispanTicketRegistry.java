@@ -60,21 +60,10 @@ public final class InfinispanTicketRegistry extends AbstractCrypticTicketRegistr
         return getProxiedTicketInstance(ticket);
     }
 
-    /**
-     * Remove a specific ticket from the registry.
-     *
-     * @param ticketId The id of the ticket to delete.
-     * @return true if the ticket was removed and false if the ticket did not
-     *         exist.
-     */
     @Override
-    public boolean deleteTicket(final String ticketId) {
-        if (getTicket(ticketId) == null) {
-            return false;
-        }
+    public boolean deleteSingleTicket(final String ticketId) {
         this.cache.evict(ticketId);
-        return true;
-
+        return getTicket(ticketId) == null;
     }
 
     /**
