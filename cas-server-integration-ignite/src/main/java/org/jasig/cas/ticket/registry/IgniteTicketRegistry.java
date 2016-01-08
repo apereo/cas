@@ -1,6 +1,7 @@
 package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
@@ -130,40 +131,14 @@ public final class IgniteTicketRegistry extends AbstractCrypticTicketRegistry {
         }
     }
 
+
     @Override
-    public boolean deleteTicket(final String ticketIdToDelete) {
-        final String ticketId = encodeTicketId(ticketIdToDelete);
-        if (StringUtils.isBlank(ticketId)) {
-            return false;
-        }
-
+    public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
-        if (ticket == null) {
-            return false;
+        if (ticket instanceof ServiceTicket) {
+            return this.serviceTicketsCache.remove(ticketId);
         }
-
-        if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
-            return deleteTicketAndChildren((TicketGrantingTicket) ticket);
-        }
-
-        logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return this.serviceTicketsCache.remove(ticketId);
-    }
-
-    /**
-     * Delete the TGT and all of its service tickets.
-     *
-     * @param ticket the ticket
-     * @return boolean indicating whether ticket was deleted or not
-     */
-    private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
-        final Map<String, Service> services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            this.serviceTicketsCache.removeAll(services.keySet());
-        }
-
-        return this.ticketGrantingTicketsCache.remove(ticket.getId());
+        return this.ticketGrantingTicketsCache.remove(ticketId);
     }
 
     @Override

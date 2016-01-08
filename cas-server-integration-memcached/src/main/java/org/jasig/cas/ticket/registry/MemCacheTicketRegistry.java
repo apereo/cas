@@ -8,11 +8,13 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -140,54 +142,14 @@ public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry 
     }
 
     @Override
-    public boolean deleteTicket(final String ticketIdToDel) {
-        if (this.client == null) {
-            logger.debug("No memcached client is configured.");
-            return false;
-        }
-
-        final String ticketId = encodeTicketId(ticketIdToDel);
-        if (ticketId == null) {
-            return false;
-        }
-
-        final Ticket ticket = getTicket(ticketId);
-        if (ticket == null) {
-            return false;
-        }
-
-        if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Removing ticket children [{}] from the registry.", ticket);
-            deleteChildren((TicketGrantingTicket) ticket);
-        }
-
-        logger.debug("Deleting ticket {}", ticketId);
+    public boolean deleteSingleTicket(final String ticketId) {
         try {
+            Assert.notNull(this.client, "No memcached client is configured.");
             return this.client.delete(ticketId).get();
         } catch (final Exception e) {
             logger.error("Ticket not found or is already removed. Failed deleting {}", ticketId, e);
         }
         return false;
-    }
-
-    /**
-     * Delete the TGT service tickets.
-     *
-     * @param ticket the ticket
-     */
-    private void deleteChildren(final TicketGrantingTicket ticket) {
-        // delete service tickets
-        final Map<String, Service> services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                try {
-                    this.client.delete(entry.getKey());
-                    logger.trace("Scheduled deletion of service ticket [{}]", entry.getKey());
-                } catch (final Exception e) {
-                    logger.error("Failed deleting {}", entry.getKey(), e);
-                }
-            }
-        }
     }
 
     @Override
