@@ -64,10 +64,6 @@ Registered services present the following metadata:
 
 [See this guide](Configuring-Service-Access-Strategy.html) for more info please.
 
-###Configure Proxy Authentication Policy
-
-[See this guide](Configuring-Service-Proxy-Policy.html) for more info please.
-
 ###Configure Service Custom Properties
 
 [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
