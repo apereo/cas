@@ -2,6 +2,7 @@ package org.jasig.cas.logout;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.util.CompressionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +70,16 @@ public final class LogoutManagerImpl implements LogoutManager {
             LOGGER.info("Single logout callbacks are disabled");
             return logoutRequests;
         }
+        performLogoutForTicket(ticket, logoutRequests);
+
+        final Collection<ProxyGrantingTicket> proxyGrantingTickets = ticket.getProxyGrantingTickets();
+        for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
+            performLogoutForTicket(proxyGrantingTicket, logoutRequests);
+        }
+        return logoutRequests;
+    }
+
+    private void performLogoutForTicket(final TicketGrantingTicket ticket, final List<LogoutRequest> logoutRequests) {
         final Map<String, Service> services = ticket.getServices();
         for (final Map.Entry<String, Service> entry : services.entrySet()) {
             final Service service = entry.getValue();
@@ -80,7 +92,6 @@ public final class LogoutManagerImpl implements LogoutManager {
                 }
             }
         }
-        return logoutRequests;
     }
 
     /**

@@ -99,18 +99,6 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
     }
 
     @Override
-    public boolean deleteTicket(final String ticketId) {
-        logger.debug("Deleting ticket {}", ticketId);
-        try {
-            couchbase.bucket().remove(ticketId);
-            return true;
-        } catch (final Exception e) {
-            logger.error("Failed deleting {}: {}", ticketId, e);
-            return false;
-        }
-    }
-
-    @Override
     public Ticket getTicket(final String ticketId) {
         try {
             final SerializableDocument document = couchbase.bucket().get(ticketId, SerializableDocument.class);
@@ -169,6 +157,17 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
     @Override
     public int serviceTicketCount() {
         return runQuery(ServiceTicket.PREFIX + '-');
+    }
+
+    @Override
+    public boolean deleteSingleTicket(final String ticketId) {
+        logger.debug("Deleting ticket {}", ticketId);
+        try {
+            return couchbase.bucket().remove(ticketId) != null;
+        } catch (final Exception e) {
+            logger.error("Failed deleting {}: {}", ticketId, e);
+            return false;
+        }
     }
 
     private int runQuery(final String prefix) {

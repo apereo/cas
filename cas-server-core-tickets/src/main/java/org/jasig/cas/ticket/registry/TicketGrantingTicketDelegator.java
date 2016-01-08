@@ -5,7 +5,9 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +83,11 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
     @Override
     public Map<String, Service> getServices() {
         return this.getTicket().getServices();
+    }
+
+    @Override
+    public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+        return this.getTicket().getProxyGrantingTickets();
     }
 
     @Override
