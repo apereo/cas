@@ -44,7 +44,7 @@ Registered services present the following metadata:
 | Field                             | Description
 |-----------------------------------+--------------------------------------------------------------------------------+
 | `id`                              | Required unique identifier. In most cases this is managed automatically by the `ServiceRegistryDao`.
-| `name`                            | Required name (255 characters or less).
+| `name`                            | Required name (255 characters or less). Must include valid characters allowed by the file system.
 | `description`                     | Optional free-text description of the service. (255 characters or less)
 | `logo`                              | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name.  
 | `serviceId`                       | Required [Ant pattern](http://ant.apache.org/manual/dirtasks.html#patterns) or [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches. For example, using Ant pattern, if you define the following service : `http://example.*/myService` to match `http://example.com/myService` and `http://example.fr/myService`, it's a bad idea as it can be tricked by `http://example.hostattacker.com/myService`. The best way to proceed is to define the more precise url patterns.
@@ -61,130 +61,17 @@ Registered services present the following metadata:
 | `properties`                  		| Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis.
 
 ###Configure Service Access Strategy
-The access strategy of a registered service provides fine-grained control over the service authorization rules. it describes whether the service is allowed to use the CAS server, allowed to participate in single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal attributes that must exist before access can be granted to the service. This behavior allows one to configure various attributes in terms of access roles for the application and define rules that would be enacted and validated when an authentication request from the application arrives.
 
-####Components
+[See this guide](Configuring-Service-Access-Strategy.html) for more info please.
 
-#####`RegisteredServiceAccessStrategy`
-This is the parent interface that outlines the required operations from the CAS perspective that need to be carried out in order to determine whether the service can proceed to the next step in the authentication flow.
+###Configure Proxy Authentication Policy
 
-#####`DefaultRegisteredServiceAccessStrategy`
-The default access manager allows one to configure a service with the following properties:
+[See this guide](Configuring-Service-Proxy-Policy.html) for more info please.
 
-| Field                             | Description
-|-----------------------------------+--------------------------------------------------------------------------------+
-| `enabled`                         | Flag to toggle whether the entry is active; a disabled entry produces behavior equivalent to a non-existent entry.
-| `ssoEnabled`                      | Set to `false` to force users to authenticate to the service regardless of protocol flags (e.g. `renew=true`). This flag provides some support for centralized application of security policy.
-| `requiredAttributes`              | A `Map` of required principal attribute names along with the set of values for each attribute. These attributes must be available to the authenticated Principal and resolved before CAS can proceed, providing an option for role-based access control from the CAS perspective. If no required attributes are presented, the check will be entirely ignored.
-| `requireAllAttributes`            | Flag to toggle to control the behavior of required attributes. Default is `true`, which means all required attribute names must be present. Otherwise, at least one matching attribute name may suffice. Note that this flag only controls which and how many of the attribute **names** must be present. If attribute names satisfy the CAS configuration, at the next step at least one matching attribute value is required for the access strategy to proceed successfully.
+###Configure Service Custom Properties
 
-<div class="alert alert-info"><strong>Are we sensitive to case?</strong><p>Note that comparison of principal/required attributes is case-sensitive. Exact matches are required for any individual attribute value.</p></div>
+[See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 
-<div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
-
-####Configuration of Access Control
-Some examples of RBAC configuration follow:
-
-* Service is not allowed to use CAS:
-
-{% highlight json %}
-{
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "testId",
-  "name" : "testId",
-  "id" : 1,
-  "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
-    "enabled" : false,
-    "ssoEnabled" : true
-  }
-}
-{% endhighlight %}
-
-
-* Service will be challenged to present credentials every time, thereby not using SSO:
-
-{% highlight json %}
-{
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "testId",
-  "name" : "testId",
-  "id" : 1,
-  "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
-    "enabled" : true,
-    "ssoEnabled" : false
-  }
-}
-{% endhighlight %}
-
-* To access the service, the principal must have a `cn` attribute with the value of `admin` **AND** a
-`givenName` attribute with the value of `Administrator`:
-
-{% highlight json %}
-{
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "testId",
-  "name" : "testId",
-  "id" : 1,
-  "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
-    "enabled" : true,
-    "ssoEnabled" : true,
-    "requiredAttributes" : {
-      "@class" : "java.util.HashMap",
-      "cn" : [ "java.util.HashSet", [ "admin" ] ],
-      "givenName" : [ "java.util.HashSet", [ "Administrator" ] ]
-    }
-  }
-}
-{% endhighlight %}
-
-* To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`.
-
-
-{% highlight json %}
-{
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "testId",
-  "name" : "testId",
-  "id" : 1,
-  "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
-    "enabled" : true,
-    "ssoEnabled" : true,
-    "requiredAttributes" : {
-      "@class" : "java.util.HashMap",
-      "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ]
-    }
-  }
-}
-{% endhighlight %}
-
-
-* To access the service, the principal must have a `cn` attribute whose value is either of `admin`, `Admin` or `TheAdmin`,
-OR the principal must have a `member` attribute whose value is either of `admins`, `adminGroup` or `staff`.
-
-
-{% highlight json %}
-{
-  "@class" : "org.jasig.cas.services.RegexRegisteredService",
-  "serviceId" : "testId",
-  "name" : "testId",
-  "id" : 1,
-  "accessStrategy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
-    "enabled" : true,
-    "requireAllAttributes" : false,
-    "ssoEnabled" : true,
-    "requiredAttributes" : {
-      "@class" : "java.util.HashMap",
-      "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ],
-      "member" : [ "java.util.HashSet", [ "admins, adminGroup, staff" ] ]
-    }
-  }
-}
-{% endhighlight %}
 
 ###Configure Proxy Authentication Policy
 Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT.
