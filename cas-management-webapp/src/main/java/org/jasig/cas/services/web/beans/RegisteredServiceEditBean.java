@@ -190,16 +190,15 @@ public final class RegisteredServiceEditBean implements Serializable {
      * @param bean the bean
      */
     private static void configureAccessStrategy(final RegisteredService svc, final ServiceData bean) {
-        final RegisteredServiceAccessStrategy accessStrategy = svc.getAccessStrategy();
+        final DefaultRegisteredServiceAccessStrategy accessStrategy = (DefaultRegisteredServiceAccessStrategy) svc.getAccessStrategy();
+
         final RegisteredServiceSupportAccessEditBean accessBean = bean.getSupportAccess();
         accessBean.setCasEnabled(accessStrategy.isServiceAccessAllowed());
         accessBean.setSsoEnabled(accessStrategy.isServiceAccessAllowedForSso());
-
-        if (accessStrategy instanceof DefaultRegisteredServiceAccessStrategy) {
-            final DefaultRegisteredServiceAccessStrategy def = (DefaultRegisteredServiceAccessStrategy) accessStrategy;
-            accessBean.setRequireAll(def.isRequireAllAttributes());
-            accessBean.setRequiredAttr(def.getRequiredAttributes());
-        }
+        accessBean.setRequireAll(accessStrategy.isRequireAllAttributes());
+        accessBean.setRequiredAttr(accessStrategy.getRequiredAttributes());
+        accessBean.setEndingTime(accessStrategy.getEndingDateTime());
+        accessBean.setStartingTime(accessStrategy.getStartingDateTime());
     }
 
     /**
@@ -552,14 +551,14 @@ public final class RegisteredServiceEditBean implements Serializable {
                     regSvc.setLogoutUrl(new URL(this.logoutUrl));
                 }
 
-                final RegisteredServiceAccessStrategy accessStrategy = regSvc.getAccessStrategy();
+                final DefaultRegisteredServiceAccessStrategy accessStrategy =
+                        (DefaultRegisteredServiceAccessStrategy) regSvc.getAccessStrategy();
 
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setEnabled(this.supportAccess.isCasEnabled());
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setSsoEnabled(this.supportAccess.isSsoEnabled());
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setRequireAllAttributes(this.supportAccess.isRequireAll());
+                accessStrategy.setEnabled(this.supportAccess.isCasEnabled());
+                accessStrategy.setSsoEnabled(this.supportAccess.isSsoEnabled());
+                accessStrategy.setRequireAllAttributes(this.supportAccess.isRequireAll());
+                accessStrategy.setStartingDateTime(this.supportAccess.getStartingTime());
+                accessStrategy.setEndingDateTime(this.supportAccess.getEndingTime());
 
                 final Map<String, Set<String>> requiredAttrs = this.supportAccess.getRequiredAttr();
                 final Set<Map.Entry<String, Set<String>>> entries = requiredAttrs.entrySet();

@@ -34,6 +34,9 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
 
     private static final long serialVersionUID = 2995938566845586064L;
 
+    private String startingTime;
+    private String endingTime;
+
     private boolean casEnabled;
     private boolean ssoEnabled;
     private boolean requireAll;
@@ -69,5 +72,21 @@ public class RegisteredServiceSupportAccessEditBean implements Serializable {
 
     public void setRequiredAttr(final Map<String, Set<String>> requiredAttr) {
         this.requiredAttr = requiredAttr;
+    }
+
+    public String getStartingTime() {
+        return startingTime;
+    }
+
+    public void setStartingTime(final String startingTime) {
+        this.startingTime = startingTime;
+    }
+
+    public String getEndingTime() {
+        return endingTime;
+    }
+
+    public void setEndingTime(final String endingTime) {
+        this.endingTime = endingTime;
     }
 }
