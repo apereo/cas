@@ -8,7 +8,6 @@ import org.jasig.cas.authentication.AuthenticationContext;
 import org.jasig.cas.authentication.AuthenticationContextBuilder;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
@@ -50,9 +49,9 @@ import java.util.Map;
  * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
  *
  * <ul>
- *     <li>{@code POST /v1/tickets}</li>
- *     <li>{@code POST /v1/tickets/{TGT-id}}</li>
- *     <li>{@code DELETE /v1/tickets/{TGT-id}}</li>
+ * <li>{@code POST /v1/tickets}</li>
+ * <li>{@code POST /v1/tickets/{TGT-id}}</li>
+ * <li>{@code DELETE /v1/tickets/{TGT-id}}</li>
  * </ul>
  *
  * @author Dmitriy Kopylenko
@@ -68,7 +67,7 @@ public class TicketsResource {
     private CentralAuthenticationService centralAuthenticationService;
 
     @NotNull
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
@@ -91,7 +90,9 @@ public class TicketsResource {
      *
      * @param requestBody username and password application/x-www-form-urlencoded values
      * @param request raw HttpServletRequest used to call this method
+     *
      * @return ResponseEntity representing RESTful response
+     *
      * @throws JsonProcessingException in case of JSON parsing failure
      */
     @RequestMapping(value = "/tickets", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -100,12 +101,8 @@ public class TicketsResource {
         try (Formatter fmt = new Formatter()) {
 
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
-
-            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
-            final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credential);
-            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
-            final AuthenticationContext authenticationContext = builder.build();
+            final AuthenticationContext authenticationContext =
+                    this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(null, credential);
 
             final TicketGrantingTicket tgtId = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
@@ -120,9 +117,9 @@ public class TicketsResource {
             return new ResponseEntity<>(fmt.toString(), headers, HttpStatus.CREATED);
 
         }
-        catch(final AuthenticationException e) {
+        catch (final AuthenticationException e) {
             final List<String> authnExceptions = new LinkedList<>();
-            for (final Map.Entry<String, Class<? extends Exception>> handlerErrorEntry: e.getHandlerErrors().entrySet()) {
+            for (final Map.Entry<String, Class<? extends Exception>> handlerErrorEntry : e.getHandlerErrors().entrySet()) {
                 authnExceptions.add(handlerErrorEntry.getValue().getSimpleName());
             }
             final Map<String, List<String>> errorsMap = new HashMap<>();
@@ -133,10 +130,12 @@ public class TicketsResource {
                     .writer()
                     .withDefaultPrettyPrinter()
                     .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
-        } catch(final BadRequestException e) {
+        }
+        catch (final BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (final Throwable e) {
+        }
+        catch (final Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -147,6 +146,7 @@ public class TicketsResource {
      *
      * @param requestBody service application/x-www-form-urlencoded value
      * @param tgtId ticket granting ticket id URI path param
+     *
      * @return {@link ResponseEntity} representing RESTful response
      */
     @RequestMapping(value = "/tickets/{tgtId:.+}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
@@ -165,9 +165,11 @@ public class TicketsResource {
                     service, authenticationContext);
             return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
 
-        } catch (final InvalidTicketException e) {
+        }
+        catch (final InvalidTicketException e) {
             return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
-        } catch (final Exception e) {
+        }
+        catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -177,6 +179,7 @@ public class TicketsResource {
      * Destroy ticket granting ticket.
      *
      * @param tgtId ticket granting ticket id URI path param
+     *
      * @return {@link ResponseEntity} representing RESTful response. Signals
      * {@link HttpStatus#OK} when successful.
      */
@@ -230,7 +233,7 @@ public class TicketsResource {
         public Credential fromRequestBody(@NotNull final MultiValueMap<String, String> requestBody) {
             final String username = requestBody.getFirst("username");
             final String password = requestBody.getFirst("password");
-            if(username == null || password == null) {
+            if (username == null || password == null) {
                 throw new BadRequestException("Invalid payload. 'username' and 'password' form fields are required.");
             }
             return new UsernamePasswordCredential(requestBody.getFirst("username"), requestBody.getFirst("password"));
@@ -245,6 +248,7 @@ public class TicketsResource {
 
         /**
          * Ctor.
+         *
          * @param msg error message
          */
         BadRequestException(final String msg) {
