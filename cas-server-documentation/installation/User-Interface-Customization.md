@@ -368,7 +368,7 @@ Views associated with a particular theme by default are expected to be found at:
 
 {% highlight xml %}
 <bean id="viewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
-    c:defaultThemeName="${cas.themeResolver.defaultThemeName}"
+    c:defaultThemeId="${cas.themeResolver.defaultThemeName}"
     c:servicesManager-ref="servicesManager"
     p:pathPrefix="/WEB-INF/view/jsp" />
 {% endhighlight %}
