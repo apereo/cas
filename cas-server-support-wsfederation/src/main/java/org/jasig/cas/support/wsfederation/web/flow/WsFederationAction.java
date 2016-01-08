@@ -1,10 +1,7 @@
 package org.jasig.cas.support.wsfederation.web.flow;
 
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
-import org.jasig.cas.authentication.AuthenticationTransaction;
-import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.support.wsfederation.WsFederationConfiguration;
 import org.jasig.cas.support.wsfederation.WsFederationHelper;
@@ -117,13 +114,8 @@ public final class WsFederationAction extends AbstractAction {
                         restoreRequestAttribute(request, session, LOCALE);
                         restoreRequestAttribute(request, session, METHOD);
 
-                        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                                this.authenticationSystemSupport.getPrincipalElectionStrategy());
-                        final AuthenticationTransaction transaction =
-                                AuthenticationTransaction.wrap(service, credential);
-                        this.authenticationSystemSupport.getAuthenticationTransactionManager()
-                                .handle(transaction,  builder);
-                        final AuthenticationContext authenticationContext = builder.build(service);
+                        final AuthenticationContext authenticationContext =
+                                this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(service, credential);
 
                         WebUtils.putTicketGrantingTicketInScopes(context,
                                 this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));

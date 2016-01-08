@@ -1,12 +1,9 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
-import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
@@ -141,12 +138,7 @@ public class MultifactorAuthenticationTests {
 
     private AuthenticationContext processAuthenticationAttempt(final Service service, final Credential... credential) throws
             AuthenticationException {
-        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                this.authenticationSystemSupport.getPrincipalElectionStrategy());
-        final AuthenticationTransaction transaction =
-                AuthenticationTransaction.wrap(service, credential);
-        this.authenticationSystemSupport.getAuthenticationTransactionManager()
-                .handle(transaction, builder);
-        return builder.build(service);
+
+        return this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(service, credential);
     }
 }

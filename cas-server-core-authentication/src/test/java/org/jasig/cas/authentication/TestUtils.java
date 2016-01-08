@@ -163,12 +163,7 @@ public final class TestUtils {
                                                                  final Service service,
                                                                  final Credential... credentials)
             throws AuthenticationException {
-        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                support.getPrincipalElectionStrategy());
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(service, credentials);
-        support.getAuthenticationTransactionManager()
-                .handle(transaction,  builder);
-        final AuthenticationContext ctx = builder.build(service);
-        return ctx;
+
+        return support.handleFinalizedAuthenticationAttempt(service, credentials);
     }
 }
