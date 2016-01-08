@@ -76,7 +76,7 @@ public class JpaTicketRegistryTests {
         // TGT
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
-        final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
         assertNotNull(tgtFromDb);
         assertEquals(newTgt.getId(), tgtFromDb.getId());
 
@@ -92,6 +92,10 @@ public class JpaTicketRegistryTests {
         assertNotNull(pgtFromDb);
         assertEquals(newPgt.getId(), pgtFromDb.getId());
 
+        tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        assertNotNull(tgtFromDb);
+        assertFalse(tgtFromDb.getProxyGrantingTickets().isEmpty());
+
         // PT
         final ProxyTicket newPt = grantProxyTicketInTransaction(pgtFromDb);
         final ProxyTicket ptFromDb = (ProxyTicket) getTicketInTransaction(newPt.getId());
@@ -99,7 +103,9 @@ public class JpaTicketRegistryTests {
         assertEquals(newPt.getId(), ptFromDb.getId());
 
         // delete ticket hierarchy
-        deleteTicketInTransaction(newTgt.getId());
+        tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        assertNotNull(tgtFromDb);
+        deleteTicketInTransaction(tgtFromDb.getId());
         assertNull(getTicketInTransaction(newTgt.getId()));
         assertNull(getTicketInTransaction(newSt.getId()));
         assertNull(getTicketInTransaction(newPgt.getId()));
