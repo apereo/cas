@@ -364,14 +364,18 @@ associated theme to selectively choose which set of UI views will be used to gen
 for a different type of audience are entirely different structurally that simply
 using the `ServiceThemeResolver` is not practical to augment the default views. In such cases, new view pages may be required.
 
-Views associated with a particular theme by default are expected to be found at: `/WEB-INF/view/jsp/<theme-id>/ui/` 
+Replace the `internalViewResolver` definition with the following:
 
 {% highlight xml %}
-<bean id="viewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
-    c:defaultThemeId="${cas.themeResolver.defaultThemeName}"
+<bean id="internalViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
+    c:defaultThemeId="default"
     c:servicesManager-ref="servicesManager"
-    p:pathPrefix="/WEB-INF/view/jsp" />
+    p:pathPrefix="/WEB-INF/view/jsp"
+    p:suffix=".jsp"
+    p:order="3" />
 {% endhighlight %}
+
+Change the `c:defaultThemeId` value if your default theme is in a different directory than `/WEB-INF/view/jsp/default/`. Views associated with a particular theme by default are expected to be found at: `/WEB-INF/view/jsp/<theme-id>/ui/`
 
 ####Configuration
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `/WEB-INF/view/jsp/<theme-id>/ui/`).
