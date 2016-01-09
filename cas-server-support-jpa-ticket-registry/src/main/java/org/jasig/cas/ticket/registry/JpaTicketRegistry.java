@@ -78,9 +78,6 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @Override
     public void updateTicket(final Ticket ticket) {
         entityManager.merge(ticket);
-        if (ticket.getGrantingTicket() != null) {
-            entityManager.merge(ticket.getGrantingTicket());
-        }
         logger.debug("Updated ticket [{}].", ticket);
     }
 
