@@ -346,7 +346,7 @@ Use the following template to configure authentication in `deployerConfigContext
       p:maxPathLengthAllowUnspecified="true"
       p:checkKeyUsage="true"
       p:requireKeyUsage="true"
-      p:revocationChecker-ref="revocationChecker">
+      p:revocationChecker-ref="revocationChecker" />
 
 <bean id="x509PrincipalResolver"
       class="org.jasig.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolver"
@@ -373,7 +373,7 @@ Uncomment the `startAuthenticate` state in `login-webflow.xml`:
 
 {% highlight xml %}
 <action-state id="startAuthenticate">
-  <action bean="x509Check" />
+  <evaluate expression="x509Check" />
   <transition on="success" to="sendTicketGrantingTicket" />
   <transition on="warn" to="warn" />
   <transition on="error" to="generateLoginTicket" />
