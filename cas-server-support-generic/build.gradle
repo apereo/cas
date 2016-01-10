@@ -5,9 +5,7 @@ dependencies {
 	compile project(':cas-server-core-authentication')
 	compile project(':cas-server-core-util')
 	compile project(':cas-server-core-web')
-	compile(group: 'org.apache.shiro', name: 'shiro-core', version:shiroVersion) {
-		exclude(module: 'slf4j-api')
-	}
+	compile libraries.shiro
 	testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
 }
 
