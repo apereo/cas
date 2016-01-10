@@ -16,7 +16,10 @@ ext.libraries = [
         ],
         bouncycastle       : [
                 "org.bouncycastle:bcpkix-jdk15on:$bouncyCastleVersion",
-                "org.cryptacular:cryptacular:$cryptacularVersion",
+                dependencies.create("org.cryptacular:cryptacular:$cryptacularVersion") {
+                    exclude(module: 'bcprov-jdk15on')
+                    force = true
+                },
                 "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion"
         ],
 
@@ -59,10 +62,12 @@ ext.libraries = [
                 dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
                     exclude(module: 'jboss-logging-annotations')
                     exclude(module: 'javassist')
+                    exclude(module: 'xml-apis')
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-entitymanager:$hibernateVersion") {
                     exclude(module: 'javassist')
+                    exclude(module: 'xml-apis')
                     force = true
                 },
                 dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
@@ -72,18 +77,28 @@ ext.libraries = [
                 },
                 "com.mchange:c3p0:$c3p0Version"
         ],
-        httpclient         : "org.apache.httpcomponents:httpclient:$httpclientVersion",
+        httpclient         : dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
+            exclude(module: 'commons-codec')
+            force = true
+        },
         shibidp            : [
                 "net.shibboleth.idp:idp-attribute-filter-api:$idpVersion",
                 "net.shibboleth.idp:idp-attribute-resolver-api:$idpVersion",
-                "net.shibboleth.idp:idp-core:$idpVersion",
+                dependencies.create("net.shibboleth.idp:idp-core:$idpVersion") {
+                    exclude(module: 'guava')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
                 "net.shibboleth.idp:idp-installer:$idpVersion",
                 "net.shibboleth.idp:idp-profile-spring:$idpVersion",
-                "net.shibboleth.idp:idp-saml-impl:$idpVersion",
+                dependencies.create("net.shibboleth.idp:idp-saml-impl:$idpVersion") {
+                    exclude(module: 'httpclient')
+                    force = true
+                },
                 dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport") {
                     exclude(module: 'guava')
                     exclude(module: 'joda-time')
-                    force = true 
+                    force = true
                 }
         ],
         ignite             : [
@@ -142,7 +157,10 @@ ext.libraries = [
                 "jcifs:jcifs:$jcifsVersion",
                 "org.samba.jcifs:jcifs-ext:$jcifsExtVersion",
         ],
-        jdom               : "jdom:jdom:$jdomVersion",
+        jdom               : dependencies.create("jdom:jdom:$jdomVersion") {
+            exclude(module: 'xml-apis')
+            force = true
+        },
         jodatime           : "joda-time:joda-time:$jodaTimeVersion",
         jose4j             : "org.bitbucket.b_c:jose4j:$jose4jVersion",
         jradius            : [
@@ -215,14 +233,28 @@ ext.libraries = [
         mongo              : "org.mongodb:mongo-java-driver:$mongoDriverVersion",
         openid4java        : "org.openid4java:openid4java:$openidVersion",
         opensaml           : [
-                "org.opensaml:opensaml-core:$opensamlVersion",
-                "org.opensaml:opensaml-saml-api:$opensamlVersion",
-                "org.opensaml:opensaml-soap-api:$opensamlVersion"
+                dependencies.create("org.opensaml:opensaml-core:$opensamlVersion") {
+                    exclude(module: 'bcprov-jdk15on')
+                    force = true
+                },
+                dependencies.create("org.opensaml:opensaml-saml-api:$opensamlVersion") {
+                    exclude(module: 'bcprov-jdk15on')
+                    force = true
+                },
+                dependencies.create("org.opensaml:opensaml-security-api:$opensamlVersion") {
+                    exclude(module: 'bcprov-jdk15on')
+                    force = true
+                },
+                dependencies.create("org.opensaml:opensaml-soap-api:$opensamlVersion") {
+                    exclude(module: 'bcprov-jdk15on')
+                    force = true
+                }
         ],
         pac4j              : [
                 dependencies.create("org.pac4j:pac4j-cas:$pac4jVersion") {
                     exclude(module: 'slf4j-api')
                     exclude(module: 'joda-time')
+                    exclude(module: 'jcl-over-slf4j')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-config:$pac4jVersion") {
@@ -230,6 +262,16 @@ ext.libraries = [
                     exclude(module: 'slf4j-api')
                     exclude(module: 'joda-time')
                     exclude(module: 'spring-core')
+                    exclude(module: 'jcl-over-slf4j')
+                    exclude(module: 'jackson-databind')
+                    exclude(module: 'guava')
+                    exclude(module: 'cryptacular')
+                    exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'commons-codec')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'httpclient-cache')
+                    exclude(module: 'commons-httpclient')
+                    exclude(module: 'json-smart')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
@@ -241,14 +283,17 @@ ext.libraries = [
                     exclude(module: 'commons-lang3')
                     exclude(module: 'slf4j-api')
                     exclude(module: 'joda-time')
+                    exclude(module: 'jcl-over-slf4j')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-jwt:$pac4jVersion") {
                     exclude(module: 'slf4j-api')
+                    exclude(module: 'jcl-over-slf4j')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-mongo:$pac4jVersion") {
                     exclude(module: 'commons-lang3')
+                    exclude(module: 'jcl-over-slf4j')
                     exclude(module: 'slf4j-api')
                     exclude(module: 'joda-time')
                     force = true
@@ -256,21 +301,33 @@ ext.libraries = [
                 dependencies.create("org.pac4j:pac4j-oauth:$pac4jVersion") {
                     exclude(module: 'commons-lang3')
                     exclude(module: 'slf4j-api')
+                    exclude(module: 'jcl-over-slf4j')
                     exclude(module: 'joda-time')
+                    exclude(module: 'jackson-databind')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-saml:$pac4jVersion") {
                     exclude(module: 'commons-lang3')
+                    exclude(module: 'jcl-over-slf4j')
                     exclude(module: 'slf4j-api')
                     exclude(module: 'joda-time')
+                    exclude(module: 'xml-apis')
                     exclude(module: 'guava')
                     exclude(module: 'spring-core')
+                    exclude(module: 'cryptacular')
+                    exclude(module: 'commons-codec')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'httpclient-cache')
+                    exclude(module: 'commons-httpclient')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-stormpath:$pac4jVersion") {
                     exclude(module: 'commons-lang3')
                     exclude(module: 'slf4j-api')
                     exclude(module: 'joda-time')
+                    exclude(module: 'jcl-over-slf4j')
+                    exclude(module: 'commons-codec')
+                    exclude(module: 'httpclient')
                     force = true
                 },
                 dependencies.create("org.pac4j:spring-webmvc-pac4j:$springWebmvcPac4jVersion") {
@@ -279,6 +336,7 @@ ext.libraries = [
                     exclude(module: 'slf4j-api')
                     exclude(module: 'pac4j-core')
                     exclude(module: 'joda-time')
+                    exclude(module: 'jcl-over-slf4j')
                     force = true
                 }
 
@@ -317,7 +375,9 @@ ext.libraries = [
                     exclude(module: 'spring-core')
                     exclude(module: 'spring-expression')
                     exclude(module: 'spring-webmvc')
-                    force = true                  
+                    exclude(module: 'spring-tx')
+                    exclude(module: 'mongo-java-driver')
+                    force = true
                 },
                 "org.springframework:spring-expression:$springVersion",
                 "org.springframework:spring-jdbc:$springVersion",
@@ -342,6 +402,9 @@ ext.libraries = [
                     exclude(module: 'commons-codec')
                     exclude(module: 'spring-core')
                     exclude(module: 'spring-beans')
+                    exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'jcl-over-slf4j')
+                    exclude(module: 'cryptacular')
                     exclude(module: 'bcprov-jdk15on')
                     force = true
                 },
