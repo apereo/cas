@@ -4,35 +4,13 @@ dependencies {
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-authentication')
     compile project(':cas-server-core-util')
-    compile(group: 'org.ldaptive', name: 'ldaptive', version: ldaptiveVersion) {
-        exclude(module: 'slf4j-api')
-    }
-    compile group: 'jcifs', name: 'jcifs', version: jcifsVersion
-    compile group: 'org.samba.jcifs', name: 'jcifs-ext', version: jcifsExtVersion
-    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version: springWebflowVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-webmvc')
-    }
-    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
-    }
+    compile libraries.ldaptive
+    compile libraries.jcifs
+    compile libraries.spring
+    runtime libraries.hibernate
+
     testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
     testCompile project(':cas-server-core')
     testCompile project(':cas-server-core-logout')
-    testCompile(group: 'com.unboundid', name: 'unboundid-ldapsdk', version: unboundidVersion) {
-        exclude(module: 'slf4j-api')
-    }
-    testCompile(group: 'org.ldaptive', name: 'ldaptive-unboundid', version: ldaptiveVersion) {
-        exclude(module: 'slf4j-api')
-    }
-    testCompile(group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion) {
-        exclude(module: 'jboss-logging-annotations')
-        exclude(module: 'javassist')
-    }
+    testCompile libraries.tests
 }
