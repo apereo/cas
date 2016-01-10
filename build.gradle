@@ -7,178 +7,187 @@ ext {
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
-
-    dependencies = [
-            aspectj            : [
-                    "org.aspectj:aspectjrt:$aspectjVersion",
-                    "org.aspectj:aspectjweaver:$aspectjVersion"
-            ],
-            bouncycastle       : [
-                    "org.bouncycastle:bcpkix-jdk15on:$bouncyCastleVersion",
-                    "org.cryptacular:cryptacular:$cryptacularVersion",
-                    "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion"
-            ],
-
-            cas_client         : "org.jasig.cas.client:cas-client-core:$casClientVersion",
-            cas_security_filter: "org.jasig.cas:cas-server-security-filter:$casSecurityFilterVersion",
-            commons            : [
-                    "commons-codec:commons-codec:$commonsCodecVersion",
-                    "commons-io:commons-io:$commonsIoVersion",
-                    "commons-jexl:commons-jexl:$commonsJexlVersion",
-                    "org.apache.commons:commons-lang3:$commonsLangVersion"
-            ],
-            ehcache            : [
-                    "net.sf.ehcache:ehcache:$ehcacheVersion",
-                    "org.ehcache:jcache:$jcacheVersion",
-            ],
-            findbugs_contrib   : "com.mebigfatguy.fb-contrib:fb-contrib:$findbugsContribVersion",
-            findbugs           : "com.google.code.findbugs:findbugs:$findbugsVersion",
-            findbugs_sec       : "com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion",
-            groovy             : "org.codehaus.groovy:groovy-jsr223:$groovyVersion",
-            grouper            : "edu.internet2.middleware.grouper:grouperClient:$grouperVersion",
-            guava              : [
-                    "com.google.guava:guava:$guavaVersion",
-                    "org.reflections:reflections:$reflectionsVersion",
-                    "javassist:javassist:$javassistVersion"
-            ],
-            hazelcast          : "com.hazelcast:hazelcast:$hazelcastVersion",
-            hibernate          : [
-                    "org.hibernate:hibernate-core:$hibernateVersion",
-                    "org.hibernate:hibernate-entitymanager:$hibernateVersion",
-                    "org.hibernate:hibernate-validator:$hibernateValidatorVersion",
-                    "com.mchange:c3p0:$c3p0Version"
-            ],
-            httpclient         : "org.apache.httpcomponents:httpclient:$httpclientVersion",
-            shibidp            : [
-                    "net.shibboleth.idp:idp-attribute-filter-api:$idpVersion",
-                    "net.shibboleth.idp:idp-attribute-resolver-api:$idpVersion",
-                    "net.shibboleth.idp:idp-core:$idpVersion",
-                    "net.shibboleth.idp:idp-installer:$idpVersion",
-                    "net.shibboleth.idp:idp-profile-spring:$idpVersion",
-                    "net.shibboleth.idp:idp-saml-impl:$idpVersion",
-                    "net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport",
-            ],
-            ignite             : [
-                    "org.apache.ignite:ignite-core:$igniteVersion",
-                    "org.apache.ignite:ignite-log4j:$igniteVersion",
-                    "org.apache.ignite:ignite-spring:$igniteVersion"
-            ],
-            infinispan         : [
-                    "org.infinispan:infinispan-cachestore-remote:$infinispanVersion",
-                    "org.infinispan:infinispan-commons:$infinispanVersion",
-                    "org.infinispan:infinispan-core:$infinispanVersion",
-                    "org.infinispan:infinispan-embedded:$infinispanVersion"
-            ],
-            inspektr           : [
-                    "org.jasig.inspektr:inspektr-aspects:$inspektrVersion",
-                    "org.jasig.inspektr:inspektr-audit:$inspektrVersion",
-                    "org.jasig.inspektr:inspektr-support-spring:$inspektrVersion",
-            ],
-            javax              : [
-                    "taglibs:standard:$taglibsVersion",
-                    "org.glassfish.web:javax.el:$javaxElImplVersion",
-                    "javax.el:javax.el-api:$javaxElVersion",
-                    "javax.servlet:javax.servlet-api:$javaxSevletVersion",
-                    "javax.servlet:jstl:$javaxJstlVersion",
-                    "javax.transaction:jta:$jtaVersion"
-            ],
-            jackson            : "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
-            couchbase          : "com.couchbase.client:java-client:$couchbaseVersion",
-
-            jcifs              : [
-                    "jcifs:jcifs:$jcifsVersion",
-                    "org.samba.jcifs:jcifs-ext:$jcifsExtVersion",
-            ],
-            jdom               : "jdom:jdom:$jdomVersion",
-            joda_time          : "joda-time:joda-time:$jodaTimeVersion",
-            jose4j             : "org.bitbucket.b_c:jose4j:$jose4jVersion",
-            jradius            : [
-                    "com.github.coova:jradius:$jradiusVersion",
-                    "gnu.getopt:java-getopt:1.0.13"
-            ],
-            jsonassert         : "org.skyscreamer:jsonassert:$jsonassertVersion",
-            tests              : [
-                    "org.mockito:mockito-core:$mockitoVersion",
-                    "junit:junit:$junitVersion",
-                    "com.unboundid:unboundid-ldapsdk:$unboundidVersion",
-                    "com.github.fakemongo:fongo:$fongoVersion",
-                    "de.flapdoodle.embed:de.flapdoodle.embed.memcached:$memcachedEmbeddedVersion",
-                    "org.hsqldb:hsqldb:$hsqlVersion"
-            ],
-            memcached          : [
-                    "net.spy:spymemcached:$spymemcachedVersion",
-                    "com.esotericsoftware:kryo:$kryoVersion",
-                    "de.javakaffee:kryo-serializers:$kryoSerializersVersion",
-                    "org.jasig.inspektr:inspektr-support-spring:$inspektrVersion"
-            ],
-            ldaptive           : [
-                    "org.ldaptive:ldaptive:$ldaptiveVersion",
-                    "org.ldaptive:ldaptive-beans:$ldaptiveVersion",
-                    "org.ldaptive:ldaptive-unboundid:$ldaptiveVersion",
-            ],
-            log4j              : [
-                    "org.apache.logging.log4j:log4j-api:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-core:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-jcl:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion",
-                    "org.apache.logging.log4j:log4j-web:$log4jVersion",
-                    "org.slf4j:slf4j-api:$slf4jVersion",
-                    "org.slf4j:jul-to-slf4j:$slf4jVersion",
-                    "com.lmax:disruptor:$disruptorVersion"
-            ],
-            metrics            : [
-                    "io.dropwizard.metrics:metrics-annotation:$dropwizardMetricsVersion",
-                    "io.dropwizard.metrics:metrics-core:$dropwizardMetricsVersion",
-                    "io.dropwizard.metrics:metrics-jvm:$dropwizardMetricsVersion",
-                    "io.dropwizard.metrics:metrics-servlets:$dropwizardMetricsVersion",
-                    "com.ryantenney.metrics:metrics-spring:$dropwizardMetricsVersion"
-            ],
-            mongo              : "org.mongodb:mongo-java-driver:$mongoDriverVersion",
-            openid4java        : "org.openid4java:openid4java:$openidVersion",
-            opensaml           : [
-                    "org.opensaml:opensaml-core:$opensamlVersion",
-                    "org.opensaml:opensaml-saml-api:$opensamlVersion",
-                    "org.opensaml:opensaml-soap-api:$opensamlVersion"
-            ],
-            pac4j              : [
-                    "org.pac4j:pac4j-cas:$pac4jVersion",
-                    "org.pac4j:pac4j-config:$pac4jVersion",
-                    "org.pac4j:pac4j-core:$pac4jVersion",
-                    "org.pac4j:pac4j-http:$pac4jVersion",
-                    "org.pac4j:pac4j-jwt:$pac4jVersion",
-                    "org.pac4j:pac4j-mongo:$pac4jVersion",
-                    "org.pac4j:pac4j-oauth:$pac4jVersion",
-                    "org.pac4j:pac4j-saml:$pac4jVersion",
-                    "org.pac4j:pac4j-stormpath:$pac4jVersion",
-                    "org.pac4j:spring-webmvc-pac4j:$springWebmvcPac4jVersion"
-
-            ],
-            person_directory   : "org.jasig.service.persondir:person-directory-impl:$personDirectoryVersion",
-            quartz             : "org.quartz-scheduler:quartz:$quartzVersion",
-            shiro              : "org.apache.shiro:shiro-core:$shiroVersion",
-            spring             : [
-                    "org.springframework:spring-aop:$springVersion",
-                    "org.springframework:spring-beans:$springVersion",
-                    "org.springframework.webflow:spring-binding:$springWebflowVersion",
-                    "org.springframework:spring-context:$springVersion",
-                    "org.springframework:spring-context-support:$springVersion",
-                    "org.springframework:spring-core:$springVersion",
-                    "org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion",
-                    "org.springframework:spring-expression:$springVersion",
-                    "org.springframework:spring-jdbc:$springVersion",
-                    "org.springframework:spring-orm:$springVersion",
-                    "org.springframework:spring-test:$springVersion",
-                    "org.springframework:spring-tx:$springVersion",
-                    "org.springframework:spring-web:$springVersion",
-                    "org.springframework.webflow:spring-webflow:$springWebflowVersion",
-                    "org.jasig:spring-webflow-client-repo:$springWebflowClientVersion",
-                    "org.springframework:spring-webmvc:$springVersion"
-            ],
-            validation_api     : "javax.validation:validation-api:$javaxValidationVersion",
-            xml_apis           : "xml-apis:xml-apis:$xmlapisVersion",
-            yubico_api         : "com.yubico:yubico-validation-client2:$yubicoVersion"
-    ]
 }
+
+ext.libraries = [
+        aspectj            : [
+                "org.aspectj:aspectjrt:$aspectjVersion",
+                "org.aspectj:aspectjweaver:$aspectjVersion"
+        ],
+        bouncycastle       : [
+                "org.bouncycastle:bcpkix-jdk15on:$bouncyCastleVersion",
+                "org.cryptacular:cryptacular:$cryptacularVersion",
+                "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion"
+        ],
+
+        casclient          : "org.jasig.cas.client:cas-client-core:$casClientVersion",
+        cassecurityfilter  : "org.jasig.cas:cas-server-security-filter:$casSecurityFilterVersion",
+        commons            : [
+                "commons-codec:commons-codec:$commonsCodecVersion",
+                "commons-io:commons-io:$commonsIoVersion",
+                "commons-jexl:commons-jexl:$commonsJexlVersion",
+                "org.apache.commons:commons-lang3:$commonsLangVersion"
+        ],
+        ehcache            : [
+                "net.sf.ehcache:ehcache:$ehcacheVersion",
+                "org.ehcache:jcache:$jcacheVersion",
+        ],
+        findbugscontrib    : "com.mebigfatguy.fb-contrib:fb-contrib:$findbugsContribVersion",
+        findbugs           : "com.google.code.findbugs:findbugs:$findbugsVersion",
+        findbugssec        : "com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion",
+        groovy             : "org.codehaus.groovy:groovy-jsr223:$groovyVersion",
+        grouper            : "edu.internet2.middleware.grouper:grouperClient:$grouperVersion",
+        guava              : [
+                "com.google.guava:guava:$guavaVersion",
+                "org.reflections:reflections:$reflectionsVersion",
+                "javassist:javassist:$javassistVersion"
+        ],
+        hazelcast          : "com.hazelcast:hazelcast:$hazelcastVersion",
+        hibernate          : [
+                "org.hibernate:hibernate-core:$hibernateVersion",
+                "org.hibernate:hibernate-entitymanager:$hibernateVersion",
+                "org.hibernate:hibernate-validator:$hibernateValidatorVersion",
+                "com.mchange:c3p0:$c3p0Version"
+        ],
+        httpclient         : "org.apache.httpcomponents:httpclient:$httpclientVersion",
+        shibidp            : [
+                "net.shibboleth.idp:idp-attribute-filter-api:$idpVersion",
+                "net.shibboleth.idp:idp-attribute-resolver-api:$idpVersion",
+                "net.shibboleth.idp:idp-core:$idpVersion",
+                "net.shibboleth.idp:idp-installer:$idpVersion",
+                "net.shibboleth.idp:idp-profile-spring:$idpVersion",
+                "net.shibboleth.idp:idp-saml-impl:$idpVersion",
+                "net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport",
+        ],
+        ignite             : [
+                "org.apache.ignite:ignite-core:$igniteVersion",
+                "org.apache.ignite:ignite-log4j:$igniteVersion",
+                "org.apache.ignite:ignite-spring:$igniteVersion"
+        ],
+        infinispan         : [
+                "org.infinispan:infinispan-cachestore-remote:$infinispanVersion",
+                "org.infinispan:infinispan-commons:$infinispanVersion",
+                "org.infinispan:infinispan-core:$infinispanVersion",
+                "org.infinispan:infinispan-embedded:$infinispanVersion"
+        ],
+        inspektr           : [
+                dependencies.create("org.jasig.inspektr:inspektr-aspects:$inspektrVersion") {
+                    exclude(module: 'validation-api')
+                    exclude(module: 'aspectjrt')
+                    exclude(module: 'slf4j-api')
+                },
+                "org.jasig.inspektr:inspektr-audit:$inspektrVersion",
+                "org.jasig.inspektr:inspektr-support-spring:$inspektrVersion",
+        ],
+        javax              : [
+                "taglibs:standard:$taglibsVersion",
+                "org.glassfish.web:javax.el:$javaxElImplVersion",
+                "javax.el:javax.el-api:$javaxElVersion",
+                "javax.servlet:javax.servlet-api:$javaxSevletVersion",
+                "javax.servlet:jstl:$javaxJstlVersion",
+                "javax.transaction:jta:$jtaVersion"
+        ],
+        jackson            : "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+        couchbase          : "com.couchbase.client:java-client:$couchbaseVersion",
+
+        jcifs              : [
+                "jcifs:jcifs:$jcifsVersion",
+                "org.samba.jcifs:jcifs-ext:$jcifsExtVersion",
+        ],
+        jdom               : "jdom:jdom:$jdomVersion",
+        jodatime           : "joda-time:joda-time:$jodaTimeVersion",
+        jose4j             : "org.bitbucket.b_c:jose4j:$jose4jVersion",
+        jradius            : [
+                "com.github.coova:jradius:$jradiusVersion",
+                "gnu.getopt:java-getopt:1.0.13"
+        ],
+        tests              : [
+                dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
+                    exclude(module: 'hamcrest-core')
+                },
+                "junit:junit:$junitVersion",
+                "com.unboundid:unboundid-ldapsdk:$unboundidVersion",
+                "com.github.fakemongo:fongo:$fongoVersion",
+                "de.flapdoodle.embed:de.flapdoodle.embed.memcached:$memcachedEmbeddedVersion",
+                "org.hsqldb:hsqldb:$hsqlVersion",
+                "org.skyscreamer:jsonassert:$jsonassertVersion",
+                "org.springframework:spring-test:$springVersion"
+        ],
+        memcached          : [
+                "net.spy:spymemcached:$spymemcachedVersion",
+                "com.esotericsoftware:kryo:$kryoVersion",
+                "de.javakaffee:kryo-serializers:$kryoSerializersVersion",
+                "org.jasig.inspektr:inspektr-support-spring:$inspektrVersion"
+        ],
+        ldaptive           : [
+                "org.ldaptive:ldaptive:$ldaptiveVersion",
+                "org.ldaptive:ldaptive-beans:$ldaptiveVersion",
+                "org.ldaptive:ldaptive-unboundid:$ldaptiveVersion",
+        ],
+        log4j              : [
+                "org.apache.logging.log4j:log4j-api:$log4jVersion",
+                "org.apache.logging.log4j:log4j-core:$log4jVersion",
+                "org.apache.logging.log4j:log4j-jcl:$log4jVersion",
+                dependencies.create("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion") {
+                    exclude(module: 'slf4j-api')
+                },
+                "org.apache.logging.log4j:log4j-web:$log4jVersion",
+                "org.slf4j:slf4j-api:$slf4jVersion",
+                "org.slf4j:jul-to-slf4j:$slf4jVersion",
+                "com.lmax:disruptor:$disruptorVersion"
+        ],
+        metrics            : [
+                "io.dropwizard.metrics:metrics-annotation:$dropwizardMetricsVersion",
+                "io.dropwizard.metrics:metrics-core:$dropwizardMetricsVersion",
+                "io.dropwizard.metrics:metrics-jvm:$dropwizardMetricsVersion",
+                "io.dropwizard.metrics:metrics-servlets:$dropwizardMetricsVersion",
+                "com.ryantenney.metrics:metrics-spring:$dropwizardMetricsVersion"
+        ],
+        mongo              : "org.mongodb:mongo-java-driver:$mongoDriverVersion",
+        openid4java        : "org.openid4java:openid4java:$openidVersion",
+        opensaml           : [
+                "org.opensaml:opensaml-core:$opensamlVersion",
+                "org.opensaml:opensaml-saml-api:$opensamlVersion",
+                "org.opensaml:opensaml-soap-api:$opensamlVersion"
+        ],
+        pac4j              : [
+                "org.pac4j:pac4j-cas:$pac4jVersion",
+                "org.pac4j:pac4j-config:$pac4jVersion",
+                "org.pac4j:pac4j-core:$pac4jVersion",
+                "org.pac4j:pac4j-http:$pac4jVersion",
+                "org.pac4j:pac4j-jwt:$pac4jVersion",
+                "org.pac4j:pac4j-mongo:$pac4jVersion",
+                "org.pac4j:pac4j-oauth:$pac4jVersion",
+                "org.pac4j:pac4j-saml:$pac4jVersion",
+                "org.pac4j:pac4j-stormpath:$pac4jVersion",
+                "org.pac4j:spring-webmvc-pac4j:$springWebmvcPac4jVersion"
+
+        ],
+        persondirectory    : "org.jasig.service.persondir:person-directory-impl:$personDirectoryVersion",
+        quartz             : "org.quartz-scheduler:quartz:$quartzVersion",
+        shiro              : "org.apache.shiro:shiro-core:$shiroVersion",
+        spring             : [
+                "org.springframework:spring-aop:$springVersion",
+                "org.springframework:spring-beans:$springVersion",
+                "org.springframework.webflow:spring-binding:$springWebflowVersion",
+                "org.springframework:spring-context:$springVersion",
+                "org.springframework:spring-context-support:$springVersion",
+                "org.springframework:spring-core:$springVersion",
+                "org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion",
+                "org.springframework:spring-expression:$springVersion",
+                "org.springframework:spring-jdbc:$springVersion",
+                "org.springframework:spring-orm:$springVersion",
+                "org.springframework:spring-tx:$springVersion",
+                "org.springframework:spring-web:$springVersion",
+                "org.springframework.webflow:spring-webflow:$springWebflowVersion",
+                "org.jasig:spring-webflow-client-repo:$springWebflowClientVersion",
+                "org.springframework:spring-webmvc:$springVersion"
+        ],
+        validationapi      : "javax.validation:validation-api:$javaxValidationVersion",
+        xmlapis            : "xml-apis:xml-apis:$xmlapisVersion",
+        yubicoapi          : "com.yubico:yubico-validation-client2:$yubicoVersion"
+]
+
 
 buildscript {
     repositories {
@@ -210,6 +219,8 @@ subprojects {
     apply plugin: 'aspectj'
     apply plugin: 'project-report'
     apply from: rootProject.file("gradle/tasks.gradle")
+
+    ext.libraries = rootProject.ext.libraries;
 
     repositories {
         mavenLocal()
@@ -325,49 +336,24 @@ subprojects {
     }
 
     dependencies {
-        compile group: 'org.aspectj', name: 'aspectjrt', version: aspectjVersion
-        compile group: 'org.aspectj', name: 'aspectjweaver', version: aspectjVersion
-        compile group: 'javax.validation', name: 'validation-api', version: javaxValidationVersion
-        compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+        compile libraries.aspectj
+        compile libraries.validationapi
+        compile libraries.log4j
 
         if (!Boolean.getBoolean("skipAspectJ")) {
-            compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
-                exclude(module: 'validation-api')
-                exclude(module: 'aspectjrt')
-                exclude(module: 'slf4j-api')
-            }
-
-            aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
-                exclude(module: 'validation-api')
-                exclude(module: 'aspectjrt')
-                exclude(module: 'slf4j-api')
-            }
+            compile libraries.inspektr
+            aspectpath libraries.inspektr
         }
 
         if (!Boolean.getBoolean("skipFindbugs")) {
-            findbugs group: 'com.google.code.findbugs', name: 'findbugs', version: findbugsVersion
+            findbugs libraries.findbugs
             findbugs configurations.findbugsPlugins.dependencies
-            findbugsPlugins group: 'com.mebigfatguy.fb-contrib', name: 'fb-contrib', version: findbugsContribVersion
-            findbugsPlugins group: 'com.h3xstream.findsecbugs', name: 'findsecbugs-plugin', version: findbugsSecVersion
+            findbugsPlugins libraries.findbugscontrib
+            findbugsPlugins libraries.findbugssec
         }
-
-        runtime(group: 'org.glassfish.web', name: 'javax.el', version: javaxElImplVersion) {
-            exclude(module: 'javax.el-api')
-        }
-        runtime group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4jVersion
-        runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4jVersion
-        runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
-        runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion) {
-            exclude(module: 'slf4j-api')
-        }
-        runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: log4jVersion
-        testCompile group: 'junit', name: 'junit', version: junitVersion
-        testCompile(group: 'org.mockito', name: 'mockito-core', version: mockitoVersion) {
-            exclude(module: 'hamcrest-core')
-        }
-        testCompile group: 'org.springframework', name: 'spring-test', version: springVersion
-        provided group: 'javax.servlet', name: 'javax.servlet-api', version: javaxSevletVersion
-        provided group: 'javax.el', name: 'javax.el-api', version: javaxElVersion
+        testCompile libraries.tests
+        provided libraries.javax
+        runtime libraries.javaximpl
     }
 
     uploadArchives {
