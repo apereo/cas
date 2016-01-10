@@ -39,14 +39,28 @@ ext.libraries = [
         grouper            : "edu.internet2.middleware.grouper:grouperClient:$grouperVersion",
         guava              : [
                 "com.google.guava:guava:$guavaVersion",
-                "org.reflections:reflections:$reflectionsVersion",
+                dependencies.create("org.reflections:reflections:$reflectionsVersion") {
+                    exclude(module: 'guava')
+                    force = true
+                },
                 "javassist:javassist:$javassistVersion"
         ],
         hazelcast          : "com.hazelcast:hazelcast:$hazelcastVersion",
         hibernate          : [
-                "org.hibernate:hibernate-core:$hibernateVersion",
-                "org.hibernate:hibernate-entitymanager:$hibernateVersion",
-                "org.hibernate:hibernate-validator:$hibernateValidatorVersion",
+                dependencies.create("org.hibernate:hibernate-core:$hibernateVersion") {
+                    exclude(module: 'jboss-logging-annotations')
+                    exclude(module: 'javassist')
+                    force = true
+                },
+                dependencies.create("org.hibernate:hibernate-entitymanager:$hibernateVersion") {
+                    exclude(module: 'javassist')
+                    force = true
+                },
+                dependencies.create("org.hibernate:hibernate-validator:$hibernateValidatorVersion") {
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'jboss-logging')
+                    force = true
+                },
                 "com.mchange:c3p0:$c3p0Version"
         ],
         httpclient         : "org.apache.httpcomponents:httpclient:$httpclientVersion",
@@ -77,8 +91,23 @@ ext.libraries = [
                     exclude(module: 'slf4j-api')
                     force = true
                 },
-                "org.jasig.inspektr:inspektr-audit:$inspektrVersion",
-                "org.jasig.inspektr:inspektr-support-spring:$inspektrVersion",
+                dependencies.create("org.jasig.inspektr:inspektr-audit:$inspektrVersion") {
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'validation-api')
+                    exclude(module: 'aspectjrt')
+                    force = true
+                },
+                dependencies.create("org.jasig.inspektr:inspektr-support-spring:$inspektrVersion") {
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'validation-api')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-webmvc')
+                    exclude(module: 'spring-tx')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-jdbc')
+                    exclude(module: 'aspectjrt')
+                    exclude(module: 'validation-api')
+                }
         ],
         javax              : [
                 "javax.el:javax.el-api:$javaxElVersion",
@@ -109,7 +138,14 @@ ext.libraries = [
                     force = true
                 },
                 "junit:junit:$junitVersion",
-                "com.unboundid:unboundid-ldapsdk:$unboundidVersion",
+                dependencies.create("com.unboundid:unboundid-ldapsdk:$unboundidVersion") {
+                    exclude(module: 'slf4j-api')
+                    force = true
+                },
+                dependencies.create("org.ldaptive:ldaptive-unboundid:$ldaptiveVersion") {
+                    exclude(module: 'slf4j-api')
+                    force = true
+                }
                 "com.github.fakemongo:fongo:$fongoVersion",
                 "de.flapdoodle.embed:de.flapdoodle.embed.memcached:$memcachedEmbeddedVersion",
                 "org.hsqldb:hsqldb:$hsqlVersion",
@@ -125,7 +161,6 @@ ext.libraries = [
         ldaptive           : [
                 "org.ldaptive:ldaptive:$ldaptiveVersion",
                 "org.ldaptive:ldaptive-beans:$ldaptiveVersion",
-                "org.ldaptive:ldaptive-unboundid:$ldaptiveVersion",
         ],
         log4j              : [
                 "org.apache.logging.log4j:log4j-api:$log4jVersion",
@@ -172,7 +207,10 @@ ext.libraries = [
                 "org.pac4j:pac4j-config:$pac4jVersion",
                 "org.pac4j:pac4j-core:$pac4jVersion",
                 "org.pac4j:pac4j-http:$pac4jVersion",
-                "org.pac4j:pac4j-jwt:$pac4jVersion",
+                dependencies.create("org.pac4j:pac4j-jwt:$pac4jVersion") {
+                    exclude(module: 'slf4j-api')
+                    force = true
+                },
                 "org.pac4j:pac4j-mongo:$pac4jVersion",
                 "org.pac4j:pac4j-oauth:$pac4jVersion",
                 "org.pac4j:pac4j-saml:$pac4jVersion",
@@ -181,12 +219,25 @@ ext.libraries = [
 
         ],
         persondirectory    : "org.jasig.service.persondir:person-directory-impl:$personDirectoryVersion",
-        quartz             : "org.quartz-scheduler:quartz:$quartzVersion",
+        quartz             : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {
+            exclude(module: 'slf4j-api')
+            exclude(module: 'c3p0')
+            force = true
+        },
         shiro              : "org.apache.shiro:shiro-core:$shiroVersion",
         spring             : [
                 "org.springframework:spring-aop:$springVersion",
                 "org.springframework:spring-beans:$springVersion",
-                "org.springframework.webflow:spring-binding:$springWebflowVersion",
+                dependencies.create("org.springframework.webflow:spring-binding:$springWebflowVersion") {
+                    exclude(module: 'commons-logging')
+                    exclude(module: 'spring-context')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'spring-webmvc')
+                    force = true
+                },
                 "org.springframework:spring-context:$springVersion",
                 "org.springframework:spring-context-support:$springVersion",
                 dependencies.create("org.springframework:spring-core:$springVersion") {
@@ -210,12 +261,16 @@ ext.libraries = [
                     exclude(module: 'spring-beans')
                     exclude(module: 'bcprov-jdk15on')
                     force = true
-                },  
+                },
                 "org.springframework:spring-webmvc:$springVersion"
         ],
         validationapi      : "javax.validation:validation-api:$javaxValidationVersion",
         xmlapis            : "xml-apis:xml-apis:$xmlapisVersion",
-        yubicoapi          : "com.yubico:yubico-validation-client2:$yubicoVersion"
+        yubicoapi          : dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
+          exclude(module: 'slf4j-api')
+          exclude(module: 'commons-codec')
+          force = true
+        }
 ]
 
 
@@ -563,4 +618,4 @@ task javadoc(type: Javadoc) {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
     destinationDir = new File(buildDir, 'javadoc')
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
-} 
+}
