@@ -75,15 +75,17 @@ ext.libraries = [
                     exclude(module: 'validation-api')
                     exclude(module: 'aspectjrt')
                     exclude(module: 'slf4j-api')
+                    force = true
                 },
                 "org.jasig.inspektr:inspektr-audit:$inspektrVersion",
                 "org.jasig.inspektr:inspektr-support-spring:$inspektrVersion",
         ],
         javax              : [
-                "taglibs:standard:$taglibsVersion",
-                "org.glassfish.web:javax.el:$javaxElImplVersion",
                 "javax.el:javax.el-api:$javaxElVersion",
                 "javax.servlet:javax.servlet-api:$javaxSevletVersion",
+        ],
+        javaximpl          : [
+                "org.glassfish.web:javax.el:$javaxElImplVersion",
                 "javax.servlet:jstl:$javaxJstlVersion",
                 "javax.transaction:jta:$jtaVersion"
         ],
@@ -104,6 +106,7 @@ ext.libraries = [
         tests              : [
                 dependencies.create("org.mockito:mockito-core:$mockitoVersion") {
                     exclude(module: 'hamcrest-core')
+                    force = true
                 },
                 "junit:junit:$junitVersion",
                 "com.unboundid:unboundid-ldapsdk:$unboundidVersion",
@@ -130,6 +133,7 @@ ext.libraries = [
                 "org.apache.logging.log4j:log4j-jcl:$log4jVersion",
                 dependencies.create("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion") {
                     exclude(module: 'slf4j-api')
+                    force = true
                 },
                 "org.apache.logging.log4j:log4j-web:$log4jVersion",
                 "org.slf4j:slf4j-api:$slf4jVersion",
@@ -139,9 +143,22 @@ ext.libraries = [
         metrics            : [
                 "io.dropwizard.metrics:metrics-annotation:$dropwizardMetricsVersion",
                 "io.dropwizard.metrics:metrics-core:$dropwizardMetricsVersion",
-                "io.dropwizard.metrics:metrics-jvm:$dropwizardMetricsVersion",
-                "io.dropwizard.metrics:metrics-servlets:$dropwizardMetricsVersion",
-                "com.ryantenney.metrics:metrics-spring:$dropwizardMetricsVersion"
+                dependencies.create("io.dropwizard.metrics:metrics-jvm:$dropwizardMetricsVersion") {
+                    exclude(module: 'slf4j-api')
+                    force = true
+                },
+                dependencies.create("io.dropwizard.metrics:metrics-servlets:$dropwizardMetricsVersion") {
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'jackson-databind')
+                },
+                dependencies.create("com.ryantenney.metrics:metrics-spring:$dropwizardMetricsVersion") {
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-context-support')
+                    exclude(module: 'spring-aop')
+                    force = true
+                }
         ],
         mongo              : "org.mongodb:mongo-java-driver:$mongoDriverVersion",
         openid4java        : "org.openid4java:openid4java:$openidVersion",
@@ -172,7 +189,10 @@ ext.libraries = [
                 "org.springframework.webflow:spring-binding:$springWebflowVersion",
                 "org.springframework:spring-context:$springVersion",
                 "org.springframework:spring-context-support:$springVersion",
-                "org.springframework:spring-core:$springVersion",
+                dependencies.create("org.springframework:spring-core:$springVersion") {
+                    exclude(module: 'commons-logging')
+                    force = true
+                },
                 "org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion",
                 "org.springframework:spring-expression:$springVersion",
                 "org.springframework:spring-jdbc:$springVersion",
@@ -180,7 +200,17 @@ ext.libraries = [
                 "org.springframework:spring-tx:$springVersion",
                 "org.springframework:spring-web:$springVersion",
                 "org.springframework.webflow:spring-webflow:$springWebflowVersion",
-                "org.jasig:spring-webflow-client-repo:$springWebflowClientVersion",
+                dependencies.create("org.jasig:spring-webflow-client-repo:$springWebflowClientVersion") {
+                    exclude(module: 'log4j')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'slf4j-log4j12')
+                    exclude(module: 'spring-webflow')
+                    exclude(module: 'commons-codec')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'bcprov-jdk15on')
+                    force = true
+                },  
                 "org.springframework:spring-webmvc:$springVersion"
         ],
         validationapi      : "javax.validation:validation-api:$javaxValidationVersion",
@@ -339,6 +369,9 @@ subprojects {
         compile libraries.aspectj
         compile libraries.validationapi
         compile libraries.log4j
+        compile libraries.guava
+        compile libraries.commons
+        compile libraries.jodatime
 
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile libraries.inspektr

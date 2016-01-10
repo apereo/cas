@@ -44,55 +44,13 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
 
-    
-
-    compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
-        exclude(module: 'spring-webmvc')
-        exclude(module: 'spring-core')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'pac4j-core')
-    }
-    compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
-        exclude(module: 'slf4j-api')
-    }
-    compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
-        exclude(module: 'slf4j-api')
-    }
-    compile group: 'com.lmax', name: 'disruptor', version: disruptorVersion
-    runtime group: 'org.springframework', name: 'spring-expression', version: springVersion
-    runtime group: 'javax.servlet', name: 'jstl', version: javaxJstlVersion
-    runtime group: 'org.jasig.cas', name: 'cas-server-security-filter', version: casSecurityFilterVersion
-    runtime(group: 'com.ryantenney.metrics', name: 'metrics-spring', version: dropwizardMetricsVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context-support')
-        exclude(module: 'spring-aop')
-    }
-    runtime(group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: dropwizardMetricsVersion) {
-        exclude(module: 'slf4j-api')
-    }
-    runtime(group: 'io.dropwizard.metrics', name: 'metrics-servlets', version: dropwizardMetricsVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jackson-databind')
-    }
-    runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
-    runtime(group: 'org.jasig', name: 'spring-webflow-client-repo', version: springWebflowClientVersion) {
-        exclude(module: 'log4j')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'slf4j-log4j12')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'commons-codec')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'bcprov-jdk15on')
-    }
-    runtime(group:'org.codehaus.groovy', name:'groovy-jsr223', version: groovyVersion) {
-
-    }
-    runtime group: 'com.mchange', name: 'c3p0', version: c3p0Version
-    runtime group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:bouncyCastleVersion
-    runtime group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version:bouncyCastleVersion
+    compile libraries.pac4j
+    runtime libraries.spring
+    runtime libraries.cassecurityfilter
+    runtime libraries.groovy
+    runtime libraries.metrics
+    runtime libraries.hibernate
+    runtime libraries.bouncycastle
 }
 
 configurations {
