@@ -20,12 +20,21 @@ ext.libraries = [
                 "org.bouncycastle:bcprov-jdk15on:$bouncyCastleVersion"
         ],
 
-        casclient          : "org.jasig.cas.client:cas-client-core:$casClientVersion",
+        casclient          : dependencies.create("org.jasig.cas.client:cas-client-core:$casClientVersion") {
+            exclude(module: 'servlet-api')
+            exclude(module: 'log4j-over-slf4j')
+            exclude(module: 'bcprov-jdk15')
+            exclude(module: 'slf4j-api')
+            force = true
+        },
         cassecurityfilter  : "org.jasig.cas:cas-server-security-filter:$casSecurityFilterVersion",
         commons            : [
                 "commons-codec:commons-codec:$commonsCodecVersion",
                 "commons-io:commons-io:$commonsIoVersion",
-                "commons-jexl:commons-jexl:$commonsJexlVersion",
+                dependencies.create("commons-jexl:commons-jexl:$commonsJexlVersion") {
+                    exclude(module: 'commons-logging')
+                    force = true
+                },
                 "org.apache.commons:commons-lang3:$commonsLangVersion"
         ],
         ehcache            : [
@@ -71,7 +80,11 @@ ext.libraries = [
                 "net.shibboleth.idp:idp-installer:$idpVersion",
                 "net.shibboleth.idp:idp-profile-spring:$idpVersion",
                 "net.shibboleth.idp:idp-saml-impl:$idpVersion",
-                "net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport",
+                dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport") {
+                    exclude(module: 'guava')
+                    exclude(module: 'joda-time')
+                    force = true 
+                }
         ],
         ignite             : [
                 "org.apache.ignite:ignite-core:$igniteVersion",
@@ -107,6 +120,7 @@ ext.libraries = [
                     exclude(module: 'spring-jdbc')
                     exclude(module: 'aspectjrt')
                     exclude(module: 'validation-api')
+                    force = true
                 }
         ],
         javax              : [
@@ -114,7 +128,10 @@ ext.libraries = [
                 "javax.servlet:javax.servlet-api:$javaxSevletVersion",
         ],
         javaximpl          : [
-                "org.glassfish.web:javax.el:$javaxElImplVersion",
+                dependencies.create("org.glassfish.web:javax.el:$javaxElImplVersion") {
+                    exclude(module: 'javax.el-api')
+                    force = true
+                },
                 "javax.servlet:jstl:$javaxJstlVersion",
                 "javax.transaction:jta:$jtaVersion"
         ],
@@ -145,7 +162,7 @@ ext.libraries = [
                 dependencies.create("org.ldaptive:ldaptive-unboundid:$ldaptiveVersion") {
                     exclude(module: 'slf4j-api')
                     force = true
-                }
+                },
                 "com.github.fakemongo:fongo:$fongoVersion",
                 "de.flapdoodle.embed:de.flapdoodle.embed.memcached:$memcachedEmbeddedVersion",
                 "org.hsqldb:hsqldb:$hsqlVersion",
@@ -203,19 +220,67 @@ ext.libraries = [
                 "org.opensaml:opensaml-soap-api:$opensamlVersion"
         ],
         pac4j              : [
-                "org.pac4j:pac4j-cas:$pac4jVersion",
-                "org.pac4j:pac4j-config:$pac4jVersion",
-                "org.pac4j:pac4j-core:$pac4jVersion",
-                "org.pac4j:pac4j-http:$pac4jVersion",
+                dependencies.create("org.pac4j:pac4j-cas:$pac4jVersion") {
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
+                dependencies.create("org.pac4j:pac4j-config:$pac4jVersion") {
+                    exclude(module: 'commons-lang3')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'joda-time')
+                    exclude(module: 'spring-core')
+                    force = true
+                },
+                dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
+                dependencies.create("org.pac4j:pac4j-http:$pac4jVersion") {
+                    exclude(module: 'commons-lang3')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
                 dependencies.create("org.pac4j:pac4j-jwt:$pac4jVersion") {
                     exclude(module: 'slf4j-api')
                     force = true
                 },
-                "org.pac4j:pac4j-mongo:$pac4jVersion",
-                "org.pac4j:pac4j-oauth:$pac4jVersion",
-                "org.pac4j:pac4j-saml:$pac4jVersion",
-                "org.pac4j:pac4j-stormpath:$pac4jVersion",
-                "org.pac4j:spring-webmvc-pac4j:$springWebmvcPac4jVersion"
+                dependencies.create("org.pac4j:pac4j-mongo:$pac4jVersion") {
+                    exclude(module: 'commons-lang3')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
+                dependencies.create("org.pac4j:pac4j-oauth:$pac4jVersion") {
+                    exclude(module: 'commons-lang3')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
+                dependencies.create("org.pac4j:pac4j-saml:$pac4jVersion") {
+                    exclude(module: 'commons-lang3')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'joda-time')
+                    exclude(module: 'guava')
+                    exclude(module: 'spring-core')
+                    force = true
+                },
+                dependencies.create("org.pac4j:pac4j-stormpath:$pac4jVersion") {
+                    exclude(module: 'commons-lang3')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
+                dependencies.create("org.pac4j:spring-webmvc-pac4j:$springWebmvcPac4jVersion") {
+                    exclude(module: 'spring-webmvc')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'pac4j-core')
+                    exclude(module: 'joda-time')
+                    force = true
+                }
 
         ],
         persondirectory    : "org.jasig.service.persondir:person-directory-impl:$personDirectoryVersion",
@@ -244,13 +309,31 @@ ext.libraries = [
                     exclude(module: 'commons-logging')
                     force = true
                 },
-                "org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion",
+                dependencies.create("org.springframework.data:spring-data-mongodb:$springDataMongoDbVersion") {
+                    exclude(module: 'commons-logging')
+                    exclude(module: 'spring-context')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'spring-webmvc')
+                    force = true                  
+                },
                 "org.springframework:spring-expression:$springVersion",
                 "org.springframework:spring-jdbc:$springVersion",
                 "org.springframework:spring-orm:$springVersion",
                 "org.springframework:spring-tx:$springVersion",
                 "org.springframework:spring-web:$springVersion",
-                "org.springframework.webflow:spring-webflow:$springWebflowVersion",
+                dependencies.create("org.springframework.webflow:spring-webflow:$springWebflowVersion") {
+                    exclude(module: 'commons-logging')
+                    exclude(module: 'spring-context')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'spring-webmvc')
+                    force = true
+                },
                 dependencies.create("org.jasig:spring-webflow-client-repo:$springWebflowClientVersion") {
                     exclude(module: 'log4j')
                     exclude(module: 'slf4j-api')
