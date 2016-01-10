@@ -94,13 +94,36 @@ public class JpaTicketRegistryTests {
 
         tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
         assertNotNull(tgtFromDb);
-        assertFalse(tgtFromDb.getProxyGrantingTickets().isEmpty());
+        assertEquals(1, tgtFromDb.getProxyGrantingTickets().size());
 
         // PT
         final ProxyTicket newPt = grantProxyTicketInTransaction(pgtFromDb);
         final ProxyTicket ptFromDb = (ProxyTicket) getTicketInTransaction(newPt.getId());
         assertNotNull(ptFromDb);
         assertEquals(newPt.getId(), ptFromDb.getId());
+
+        // ST 2
+        final ServiceTicket newSt2 = grantServiceTicketInTransaction(tgtFromDb);
+        final ServiceTicket st2FromDb = (ServiceTicket) getTicketInTransaction(newSt2.getId());
+        assertNotNull(st2FromDb);
+        assertEquals(newSt2.getId(), st2FromDb.getId());
+
+        // PGT 2
+        final ProxyGrantingTicket newPgt2 = grantProxyGrantingTicketInTransaction(st2FromDb);
+        final ProxyGrantingTicket pgt2FromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt2.getId());
+        assertNotNull(pgt2FromDb);
+        assertEquals(newPgt2.getId(), pgt2FromDb.getId());
+
+        tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        assertNotNull(tgtFromDb);
+        assertEquals(2, tgtFromDb.getProxyGrantingTickets().size());
+
+        // delete PGT 2
+        deleteTicketInTransaction(pgt2FromDb.getId());
+        assertNull(getTicketInTransaction(newPgt2.getId()));
+        tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        assertNotNull(tgtFromDb);
+        assertEquals(1, tgtFromDb.getProxyGrantingTickets().size());
 
         // delete ticket hierarchy
         tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
