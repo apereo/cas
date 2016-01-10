@@ -61,7 +61,6 @@ dependencies {
     compile group: 'com.lmax', name: 'disruptor', version: disruptorVersion
     runtime group: 'org.springframework', name: 'spring-expression', version: springVersion
     runtime group: 'javax.servlet', name: 'jstl', version: javaxJstlVersion
-    runtime group: 'taglibs', name: 'standard', version: taglibsVersion
     runtime group: 'org.jasig.cas', name: 'cas-server-security-filter', version: casSecurityFilterVersion
     runtime(group: 'com.ryantenney.metrics', name: 'metrics-spring', version: dropwizardMetricsVersion) {
         exclude(module: 'slf4j-api')
