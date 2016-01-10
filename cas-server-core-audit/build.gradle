@@ -1,20 +1,13 @@
 description = 'Apereo CAS Core Audit'
 dependencies {
     compile project(':cas-server-core-api')
-    compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version: inspektrVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'validation-api')
-        exclude(module: 'aspectjrt')
-    }
-    compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
-        exclude(module: 'slf4j-api')
-    }
+    compile libraries.pac4j
+    compile libraries.inspektr
+    compile libraries.persondirectory
+    compile libraries.spring
+    compile libraries.hibernate
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-util')
-    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
-    }
     testCompile project(':cas-server-core-logout')
     testCompile project(':cas-server-core-monitor')
     testCompile project(':cas-server-core-util')

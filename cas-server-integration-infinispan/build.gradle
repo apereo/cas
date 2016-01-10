@@ -1,21 +1,8 @@
 description = 'Apereo CAS Infinispan Integration'
 dependencies {
-    compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
-    compile group: 'org.springframework', name: 'spring-context', version:springVersion
-    compile(group: 'org.infinispan', name: 'infinispan-core', version:infinispanVersion) {
-        exclude(module: 'guava')
-        exclude(module: 'jboss-logging')
-    }
-    compile(group: 'org.infinispan', name: 'infinispan-commons', version:infinispanVersion) {
-        exclude(module: 'guava')
-        exclude(module: 'jboss-logging')
-    }
-    compile(group: 'org.infinispan', name: 'infinispan-cachestore-remote', version:infinispanVersion) {
-        exclude(module: 'guava')
-        exclude(module: 'leveldb-api')
-        exclude(module: 'leveldbjni')
-        exclude(module: 'jboss-logging')
-    }
+    compile libraries.spring
+    compile libraries.hibernate
+    compile libraries.infinispan
     compile project(':cas-server-core-api')
     compile project(':cas-server-core-tickets')
 
