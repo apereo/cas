@@ -1,16 +1,7 @@
 description = 'Apereo CAS Couchbase Support Core'
 dependencies {
-    compile(group: 'com.couchbase.client', name: 'java-client', version: couchbaseVersion) {
-
-    }
-    compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
-        exclude(module: 'commons-logging')
-    }
-
-    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
-    }
+    compile libraries.spring
+    compile libraries.hibernate
 }
 
 

@@ -3,13 +3,6 @@ description = 'Apereo CAS Authentication handler wrapping pac4j'
 dependencies {
 
     compile project(':cas-server-core-authentication')
-    compile(group: 'org.pac4j', name: 'pac4j-core', version:pac4jVersion) {
-        exclude(module: 'commons-lang3')
-        exclude(module: 'slf4j-api')
-    }
-    compile(group: 'org.pac4j', name: 'pac4j-http', version:pac4jVersion) {
-        exclude(module: 'commons-lang3')
-        exclude(module: 'slf4j-api')
-    }
+    compile libraries.pac4j
 }
 
