@@ -5,7 +5,7 @@ import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.MixedPrincipalException;
@@ -135,14 +135,14 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     @Override
     public ServiceTicket grantServiceTicket(
             final String ticketGrantingTicketId,
-            final Service service, final AuthenticationContext context)
+            final Service service, final AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException {
 
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
         RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket);
 
-        final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(context, ticketGrantingTicket);
+        final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);
         RegisteredServiceAccessStrategySupport.ensureServiceSsoAccessIsAllowed(registeredService, service, currentAuthentication);
         evaluateProxiedServiceIfNeeded(service, ticketGrantingTicket, registeredService);
 
@@ -164,7 +164,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         return serviceTicket;
     }
 
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationContext context,
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context,
                                                                 final TicketGrantingTicket ticketGrantingTicket)
             throws MixedPrincipalException {
         Authentication currentAuthentication = null;
@@ -231,7 +231,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     @Metered(name = "CREATE_PROXY_GRANTING_TICKET_METER")
     @Counted(name="CREATE_PROXY_GRANTING_TICKET_COUNTER", monotonic=true)
     @Override
-    public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationContext context)
+    public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException {
 
         final ServiceTicket serviceTicket =  this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
@@ -243,14 +243,15 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
         final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceTicket.getService());
 
-        RegisteredServiceAccessStrategySupport.ensurePrincipalAccessIsAllowedForService(serviceTicket, context, registeredService);
+        RegisteredServiceAccessStrategySupport
+                .ensurePrincipalAccessIsAllowedForService(serviceTicket, authenticationResult, registeredService);
 
         if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
             logger.warn("ServiceManagement: Service [{}] attempted to proxy, but is not allowed.", serviceTicket.getService().getId());
             throw new UnauthorizedProxyingException();
         }
 
-        final Authentication authentication = context.getAuthentication();
+        final Authentication authentication = authenticationResult.getAuthentication();
         final ProxyGrantingTicketFactory factory = this.ticketFactory.get(ProxyGrantingTicket.class);
         final ProxyGrantingTicket proxyGrantingTicket = factory.create(serviceTicket, authentication);
 
@@ -344,11 +345,11 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
     @Metered(name = "CREATE_TICKET_GRANTING_TICKET_METER")
     @Counted(name="CREATE_TICKET_GRANTING_TICKET_COUNTER", monotonic=true)
     @Override
-    public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationContext context)
+    public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException {
 
-        final Authentication authentication = context.getAuthentication();
-        final Service service = context.getService();
+        final Authentication authentication = authenticationResult.getAuthentication();
+        final Service service = authenticationResult.getService();
 
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);

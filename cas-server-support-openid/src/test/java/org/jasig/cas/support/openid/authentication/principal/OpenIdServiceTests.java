@@ -1,6 +1,6 @@
 package org.jasig.cas.support.openid.authentication.principal;
 
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.openid.AbstractOpenIdTests;
@@ -41,7 +41,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), openIdService);
+            final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
 
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
@@ -71,7 +71,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             request.addParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE, association.getHandle());
 
             openIdService = openIdServiceFactory.createService(request);
-            final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), openIdService);
+            final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), openIdService);
             final String tgt = centralAuthenticationService.createTicketGrantingTicket(ctx).getId();
             final String st = centralAuthenticationService.grantServiceTicket(tgt, openIdService, ctx).getId();
             centralAuthenticationService.validateServiceTicket(st, openIdService);
