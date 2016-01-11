@@ -6,6 +6,8 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.principal.SamlService;
 import org.jasig.cas.util.CompressionUtils;
 import org.jasig.cas.util.DateTimeUtils;
+import org.jasig.cas.util.EncodingUtils;
+
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -294,7 +296,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return null;
         }
 
-        final byte[] decodedBytes = CompressionUtils.decodeBase64(encodedRequestXmlString);
+        final byte[] decodedBytes = EncodingUtils.decodeBase64(encodedRequestXmlString);
         if (decodedBytes == null) {
             return null;
         }

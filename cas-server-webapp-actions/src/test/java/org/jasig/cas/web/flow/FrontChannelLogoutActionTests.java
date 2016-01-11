@@ -16,7 +16,7 @@ import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceImpl;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.EncodingUtils;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -136,7 +136,7 @@ public class FrontChannelLogoutActionTests {
         assertEquals(1, list.size());
         final String url = (String) event.getAttributes().get(FrontChannelLogoutAction.DEFAULT_FLOW_ATTRIBUTE_LOGOUT_URL);
         assertTrue(url.startsWith(TEST_URL + '?' + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + '='));
-        final byte[] samlMessage = CompressionUtils.decodeBase64(
+        final byte[] samlMessage = EncodingUtils.decodeBase64(
                 URLDecoder.decode(StringUtils.substringAfter(url, '?' + FrontChannelLogoutAction.DEFAULT_LOGOUT_PARAMETER + '='), "UTF-8"));
         final Inflater decompresser = new Inflater();
         decompresser.setInput(samlMessage);
