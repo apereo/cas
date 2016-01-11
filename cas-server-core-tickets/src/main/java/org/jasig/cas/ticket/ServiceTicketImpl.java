@@ -11,6 +11,7 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -32,6 +33,10 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     /** Unique Id for serialization. */
     private static final long serialVersionUID = -4223319704861765405L;
+
+    /** The {@link TicketGrantingTicket} this is associated with. */
+    @ManyToOne(targetEntity=TicketGrantingTicketImpl.class)
+    private TicketGrantingTicket ticketGrantingTicket;
 
     /** The service this ticket is valid for. */
     @Lob
@@ -74,6 +79,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
         Assert.notNull(service, "service cannot be null");
         Assert.notNull(ticket, "ticket cannot be null");
+        this.ticketGrantingTicket = ticket;
         this.service = service;
         this.fromNewLogin = fromNewLogin;
     }
@@ -139,6 +145,11 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
                 this.getGrantingTicket(), authentication, expirationPolicy);
         getGrantingTicket().getProxyGrantingTickets().add(pgt);
         return pgt;
+    }
+
+    @Override
+    public final TicketGrantingTicket getGrantingTicket() {
+        return this.ticketGrantingTicket;
     }
 
     @Override
