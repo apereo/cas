@@ -2,7 +2,7 @@ package org.jasig.cas.audit.spi;
 
 import org.aspectj.lang.JoinPoint;
 import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -44,7 +44,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     @Test
     public void verifyResolverServiceTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), c);
+        final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), c);
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
                 .createTicketGrantingTicket(ctx);
@@ -64,7 +64,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     @Test
     public void verifyResolverTicketGrantingTicket() throws Exception {
         final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final AuthenticationContext ctx = TestUtils.getAuthenticationContext(getAuthenticationSystemSupport(), c);
+        final AuthenticationResult ctx = TestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), c);
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final ServiceTicket st = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), TestUtils.getService(), ctx);
