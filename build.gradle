@@ -131,6 +131,7 @@ ext.libraries = [
                     exclude(module: 'httpclient')
                     exclude(module: 'httpclient-cache')
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'ldaptive')
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-core:$idpVersion") {
@@ -147,6 +148,7 @@ ext.libraries = [
                     exclude(module: 'httpclient')
                     exclude(module: 'httpclient-cache')
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'ldaptive')
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-installer:$idpVersion") {
@@ -163,6 +165,7 @@ ext.libraries = [
                     exclude(module: 'httpclient')
                     exclude(module: 'httpclient-cache')
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'ldaptive')
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-profile-impl:$idpVersion") {
@@ -179,6 +182,7 @@ ext.libraries = [
                   exclude(module: 'spring-expression')
                   exclude(module: 'bcprov-jdk15on')
                   exclude(module: 'guava')
+                  exclude(module: 'ldaptive')
                   force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-profile-spring:$idpVersion") {
@@ -194,6 +198,7 @@ ext.libraries = [
                   exclude(module: 'spring-webflow')
                   exclude(module: 'spring-expression')
                   exclude(module: 'bcprov-jdk15on')
+                  exclude(module: 'ldaptive')
                   exclude(module: 'guava')
                   force = true
                 },
@@ -211,6 +216,7 @@ ext.libraries = [
                     exclude(module: 'spring-webflow')
                     exclude(module: 'spring-expression')
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'ldaptive')
                     force = true
                 },
                 dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport") {
@@ -227,6 +233,7 @@ ext.libraries = [
                     exclude(module: 'spring-webflow')
                     exclude(module: 'spring-expression')
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'ldaptive')
                     force = true
                 }
         ],
@@ -503,7 +510,20 @@ ext.libraries = [
                     exclude(module: 'httpclient-cache')
                     exclude(module: 'commons-httpclient')
                     exclude(module: 'json-smart')
+                    exclude(module: 'opensaml-core')
                     exclude(module: 'opensaml-saml-impl')
+                    exclude(module: 'opensaml-saml-api')
+                    exclude(module: 'opensaml-xmlsec-api')
+                    exclude(module: 'opensaml-security-impl')
+                    exclude(module: 'opensaml-profile-api')
+                    exclude(module: 'opensaml-soap-api')
+                    exclude(module: 'opensaml-messaging-api')
+                    exclude(module: 'opensaml-xmlsec-impl')
+                    exclude(module: 'opensaml-security-api')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'spring-extensions')
+                    exclude(module: 'java-support')
+                    exclude(module: 'xml-apis')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
@@ -554,7 +574,20 @@ ext.libraries = [
                     exclude(module: 'httpclient-cache')
                     exclude(module: 'commons-httpclient')
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'opensaml-core')
+                    exclude(module: 'java-support')
                     exclude(module: 'opensaml-saml-impl')
+                    exclude(module: 'opensaml-xmlsec-api')
+                    exclude(module: 'opensaml-security-impl')
+                    exclude(module: 'opensaml-profile-api')
+                    exclude(module: 'opensaml-soap-api')
+                    exclude(module: 'opensaml-security-api')
+                    exclude(module: 'opensaml-messaging-api')
+                    exclude(module: 'opensaml-xmlsec-impl')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'spring-extensions')
+                    exclude(module: 'opensaml-saml-api')
+                    exclude(module: 'xml-apis')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-stormpath:$pac4jVersion") {
@@ -714,7 +747,7 @@ subprojects {
         maven { url "http://repo.maven.apache.org/maven2" }
         maven { url "https://jitpack.io" }
         maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
-        maven { url "https://build.shibboleth.net/nexus/content/groups/public" }
+        maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "http://files.couchbase.com/maven2" }
     }
 

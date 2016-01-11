@@ -1,6 +1,7 @@
 
 description = 'Apereo CAS Memcached Monitor Integration'
 dependencies {
+  compile project(':cas-server-core-monitor')
   compile libraries.spring
   compile libraries.memcached
   compile libraries.hibernate
@@ -12,5 +13,3 @@ dependencies {
   testCompile libraries.tests
   testCompile libraries.metrics
 }
-
-
