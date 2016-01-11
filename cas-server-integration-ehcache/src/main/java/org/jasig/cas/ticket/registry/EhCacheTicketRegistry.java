@@ -99,13 +99,31 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Either the element is removed from the cache
+     * or it's not found in the cache and is already removed.
+     * Thus the result of this op would always be true.
+     */
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
+
         final Ticket ticket = getTicket(ticketId);
-        if (ticket instanceof ServiceTicket) {
-            return this.serviceTicketsCache.remove(ticketId);
+        if (ticket == null) {
+            logger.debug("Ticket {} cannot be retrieved from the cache", ticketId);
+            return true;
         }
-        return this.ticketGrantingTicketsCache.remove(ticket);
+
+        if (ticket instanceof ServiceTicket) {
+            if (this.serviceTicketsCache.remove(ticket.getId())) {
+                logger.debug("Service ticket {} is removed", ticket.getId());
+            }
+        } else {
+            if (this.ticketGrantingTicketsCache.remove(ticket.getId())) {
+                logger.debug("Ticket-granting ticket {} is removed", ticket.getId());
+            }
+        }
+        return true;
     }
 
     @Override
