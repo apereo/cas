@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * Unit test for {@link IgniteTicketRegistry}.
  *
  * @author Scott Battaglia
- * @author tduehr
+ * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 3.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
