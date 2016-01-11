@@ -11,7 +11,7 @@ import org.jasig.cas.ticket.ServiceTicket;
 
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +39,7 @@ import java.util.List;
  * @since 4.2.0
  */
 @Component("couchbaseTicketRegistry")
-public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry implements TicketRegistryState {
+public final class CouchbaseTicketRegistry extends AbstractDistributedTicketRegistry implements TicketRegistryState {
     private static final String END_TOKEN = "\u02ad";
 
     private static final View ALL_TICKETS_VIEW = DefaultView.create(
