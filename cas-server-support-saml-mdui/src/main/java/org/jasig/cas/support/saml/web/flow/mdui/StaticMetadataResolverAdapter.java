@@ -64,12 +64,7 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
      */
     @PostConstruct
     public void refreshMetadata() {
-        final Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                buildMetadataResolverAggregate();
-            }
-        });
+        final Thread thread = new Thread(this::buildMetadataResolverAggregate);
         thread.start();
 
         final JobDetail job = JobBuilder.newJob(this.getClass())

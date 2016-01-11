@@ -38,12 +38,7 @@ public class CacheCredentialsMetaDataPopulatorTests {
         final Map<String, String> map = new HashMap<>();
         final CacheCredentialsMetaDataPopulator populator = new CacheCredentialsMetaDataPopulator(map);
 
-        final Credential c = new Credential() {
-            @Override
-            public String getId() {
-                return "something";
-            }
-        };
+        final Credential c = () -> "something";
 
         if (populator.supports(c)) {
             populator.populateAttributes(DefaultAuthenticationBuilder.newInstance(auth), c);

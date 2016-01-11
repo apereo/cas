@@ -162,12 +162,7 @@ public final class IgniteTicketRegistry extends AbstractTicketRegistry {
         final Collection<Cache.Entry<String, Ticket>> serviceTickets;
         final Collection<Cache.Entry<String, Ticket>> tgtTicketsTickets;
 
-        final IgniteBiPredicate<String, Ticket> filter = new IgniteBiPredicate<String, Ticket>() {
-          @Override
-          public boolean apply(final String key, final Ticket t) {
-            return !t.isExpired();
-          }
-        };
+        final IgniteBiPredicate<String, Ticket> filter = (IgniteBiPredicate<String, Ticket>) (key, t) -> !t.isExpired();
 
         QueryCursor<Cache.Entry<String, Ticket>> cursor = ticketGrantingTicketsCache.query(new ScanQuery<>(filter));
         tgtTicketsTickets = cursor.getAll();
