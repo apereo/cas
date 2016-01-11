@@ -12,7 +12,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * @author tduehr
+ * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 4.3.0
  */
 public final class DateTimeUtils {

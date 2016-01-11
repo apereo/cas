@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  *   <li>Monitoring : follow separately the number of TGT and ST.</li>
  * </ul>
  *
- * @author tduehr
+ * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 4.3.0`
  */
 @Component("igniteTicketRegistry")
