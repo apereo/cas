@@ -10,7 +10,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 /**
- * @author tduehr
+ * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 4.3.0
  */
 public class ZonedDateTimeTranscoder extends Serializer<ZonedDateTime> {
