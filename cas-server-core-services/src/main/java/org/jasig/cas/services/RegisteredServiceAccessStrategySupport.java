@@ -1,7 +1,7 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.PrincipalException;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
@@ -132,7 +132,7 @@ public final class RegisteredServiceAccessStrategySupport {
      * @throws PrincipalException           the principal exception
      */
     public static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
-                                                                final AuthenticationContext context,
+                                                                final AuthenticationResult context,
                                                                 final RegisteredService registeredService)
                                                     throws UnauthorizedServiceException,  PrincipalException  {
         ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(), registeredService, context.getAuthentication());
