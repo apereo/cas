@@ -773,6 +773,26 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "maven"
     apply plugin: "signing"
+
+    afterEvaluate { project ->
+        def grettyResolutionStrategy = { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.ow2.asm') {
+                details.useVersion('5.0.3')
+            }
+            if (details.requested.group == 'org.glassfish' && details.requested.name == 'javax.el') {
+                details.useVersion(javaxElVersion)
+            }
+            if (details.requested.group == 'org.eclipse.jetty' && details.requested.name != 'jetty-jsp') {
+                details.useVersion(jettyVersion)
+            }
+        }
+
+        project.configurations {
+            grettyRunnerJetty9 {
+                resolutionStrategy.eachDependency(grettyResolutionStrategy)
+            }    
+        }
+    }
 }
 
 subprojects {
@@ -1097,3 +1117,4 @@ task javadoc(type: Javadoc) {
     destinationDir = new File(buildDir, 'javadoc')
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
+
