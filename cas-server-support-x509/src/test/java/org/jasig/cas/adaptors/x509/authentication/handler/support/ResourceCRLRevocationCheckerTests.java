@@ -120,10 +120,7 @@ public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationChec
                 new ResourceCRLRevocationChecker(new ClassPathResource[] {
                         new ClassPathResource("userCA-expired.crl"),
                 }),
-                new RevocationPolicy<X509CRL>() {
-                    @Override
-                    public void apply(final X509CRL crl) {/* Do nothing to allow unconditionally */}
-                },
+                (RevocationPolicy<X509CRL>) crl -> {/* Do nothing to allow unconditionally */},
                 new String[] {"user-valid.crt"},
                 null,
         });
