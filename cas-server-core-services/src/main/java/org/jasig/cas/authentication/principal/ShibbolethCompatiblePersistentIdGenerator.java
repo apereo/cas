@@ -1,12 +1,14 @@
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.util.DigestUtils;
+import org.jasig.cas.util.EncodingUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.jasig.cas.util.CompressionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +18,6 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -33,7 +33,7 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
     /** Log instance. */
     private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethCompatiblePersistentIdGenerator.class);
 
-    private static final byte CONST_SEPARATOR = (byte) '!';
+    private static final String CONST_SEPARATOR = "!";
 
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
 
@@ -81,19 +81,10 @@ public final class ShibbolethCompatiblePersistentIdGenerator implements Persiste
 
     @Override
     public String generate(final Principal principal, final Service service) {
-        try {
-            final MessageDigest md = MessageDigest.getInstance("SHA");
-            final Charset charset = Charset.defaultCharset();
-            md.update(service.getId().getBytes(charset));
-            md.update(CONST_SEPARATOR);
-            md.update(principal.getId().getBytes(charset));
-            md.update(CONST_SEPARATOR);
-
-            final String result = CompressionUtils.encodeBase64(md.digest(convertSaltToByteArray()));
-            return result.replaceAll(System.getProperty("line.separator"), "");
-        } catch (final NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        final String data = String.join(CONST_SEPARATOR, service.getId(), principal.getId());
+        final Charset charset = Charset.defaultCharset();
+        final String result = EncodingUtils.encodeBase64(DigestUtils.sha(data.getBytes(charset)));
+        return result.replaceAll(System.getProperty("line.separator"), "");
     }
 
 

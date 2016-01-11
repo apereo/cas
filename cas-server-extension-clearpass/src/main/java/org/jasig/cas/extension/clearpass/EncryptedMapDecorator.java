@@ -1,6 +1,7 @@
 package org.jasig.cas.extension.clearpass;
 
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.EncodingUtils;
+
 import com.google.common.io.ByteSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,12 +48,9 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
     private static final int INTEGER_LEN = 4;
 
-    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     private static final int DEFAULT_SALT_SIZE = 8;
     private static final int DEFAULT_SECRET_KEY_SIZE = 32;
     private static final int BYTE_BUFFER_CAPACITY_SIZE = 4;
-    private static final int HEX_RIGHT_SHIFT_COEFFICIENT = 4;
-    private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -162,7 +160,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         secureRandom.nextBytes(bytes);
 
-        return getFormattedText(bytes);
+        return EncodingUtils.hexEncode(bytes);
     }
 
     @Override
@@ -251,7 +249,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
         final MessageDigest messageDigest = getMessageDigest();
         messageDigest.update(consumeByteSourceOrNull(this.salt));
         messageDigest.update(key.toLowerCase().getBytes(Charset.defaultCharset()));
-        final String hash = getFormattedText(messageDigest.digest());
+        final String hash = EncodingUtils.hexEncode(messageDigest.digest());
 
         logger.debug("Generated hash of value [{}] for key [{}].", hash, key);
         return hash;
@@ -271,7 +269,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
 
         try {
             final Cipher cipher = getCipherObject();
-            final byte[] ivCiphertext = CompressionUtils.decodeBase64(value);
+            final byte[] ivCiphertext = EncodingUtils.decodeBase64(value);
             final int ivSize = byte2int(Arrays.copyOfRange(ivCiphertext, 0, INTEGER_LEN));
             final byte[] ivValue = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN, (INTEGER_LEN + ivSize));
             final byte[] ciphertext = Arrays.copyOfRange(ivCiphertext, INTEGER_LEN + ivSize, ivCiphertext.length);
@@ -365,7 +363,7 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             System.arraycopy(ivValue, 0, ivCiphertext, INTEGER_LEN, this.ivSize);
             System.arraycopy(ciphertext, 0, ivCiphertext, INTEGER_LEN + this.ivSize, ciphertext.length);
 
-            return CompressionUtils.encodeBase64(ivCiphertext);
+            return EncodingUtils.encodeBase64(ivCiphertext);
         } catch(final Exception e) {
             throw new RuntimeException(e);
         }
@@ -446,22 +444,6 @@ public final class EncryptedMapDecorator implements Map<String, String> {
             logger.warn(msg, e);
             return this.getMessageDigest();
         }
-    }
-
-    /**
-     * Takes the raw bytes from the digest and formats them.
-     *
-     * @param bytes the raw bytes from the digest.
-     * @return the formatted bytes.
-     */
-    private static String getFormattedText(final byte[] bytes) {
-        final StringBuilder buf = new StringBuilder(bytes.length * 2);
-
-        for (final byte b : bytes) {
-            buf.append(HEX_DIGITS[b >> HEX_RIGHT_SHIFT_COEFFICIENT & HEX_HIGH_BITS_BITWISE_FLAG]);
-            buf.append(HEX_DIGITS[b & HEX_HIGH_BITS_BITWISE_FLAG]);
-        }
-        return buf.toString();
     }
 
     /**
