@@ -1,18 +1,12 @@
 package org.jasig.cas.util;
 
-import org.jasig.cas.CipherExecutor;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.Base64;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -20,7 +14,7 @@ import java.util.zip.InflaterInputStream;
 
 /**
  * This is {@link CompressionUtils}
- * that encapsulates common base64 calls and operations
+ * that encapsulates common compression calls and operations
  * in one spot.
  *
  * @author Misagh Moayyed mmoayyed@unicon.net
@@ -102,50 +96,10 @@ public final class CompressionUtils {
             final int resultSize = deflater.deflate(buffer);
             final byte[] output = new byte[resultSize];
             System.arraycopy(buffer, 0, output, 0, resultSize);
-            return encodeBase64(output);
+            return EncodingUtils.encodeBase64(output);
         } catch (final UnsupportedEncodingException e) {
             throw new RuntimeException("Cannot find encoding:" + UTF8_ENCODING, e);
         }
-    }
-
-    /**
-     * Base64-encode the given byte[] as a string.
-     *
-     * @param data the byte array to encode
-     * @return the encoded string
-     */
-    public static String encodeBase64(final byte[] data) {
-        return Base64.getEncoder().encodeToString(data);
-    }
-
-    /**
-     * Base64-decode the given string as byte[].
-     *
-     * @param data the base64 string
-     * @return the encoded array
-     */
-    public static byte[] decodeBase64(final String data) {
-        return Base64.getDecoder().decode(data);
-    }
-
-    /**
-     * Base64-decode the given string as byte[].
-     *
-     * @param data the base64 string
-     * @return the encoded array
-     */
-    public static byte[] decodeBase64(final byte[] data) {
-        return Base64.getDecoder().decode(data);
-    }
-
-    /**
-     * Base64-encode the given byte[] as a byte[].
-     *
-     * @param data the byte array to encode
-     * @return the byte[] in base64
-     */
-    public static byte[] encodeBase64ToByteArray(final byte[] data) {
-        return Base64.getEncoder().encode(data);
     }
 
     /**
@@ -169,53 +123,5 @@ public final class CompressionUtils {
             LOGGER.error("Base64 decoding failed", e);
             return null;
         }
-    }
-
-    /**
-     * Serialize and encode object.
-     *
-     * @param cipher the cipher
-     * @param object the object
-     * @return the byte []
-     * @since 4.2
-     */
-    public static byte[] serializeAndEncodeObject(final CipherExecutor<byte[], byte[]> cipher,
-                                                  final Serializable object) {
-        final ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
-        SerializationUtils.serialize(object, outBytes);
-        return cipher.encode(outBytes.toByteArray());
-    }
-
-    /**
-     * Decode and serialize object.
-     *
-     * @param <T>  the type parameter
-     * @param object the object
-     * @param cipher the cipher
-     * @param type the type
-     * @return the t
-     * @since 4.2
-     */
-    public static <T> T decodeAndSerializeObject(final byte[] object,
-                                                 final CipherExecutor<byte[], byte[]> cipher,
-                                                 final Class<? extends Serializable> type) {
-        final byte[] decoded = cipher.decode(object);
-        final Object result = SerializationUtils.deserialize(decoded);
-        if (!type.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Decoded object is of type " + result.getClass()
-                    + " when we were expecting " + type);
-        }
-        return (T) result;
-    }
-
-    /**
-     * Calculates the SHA-512 digest and returns the value as a hex string.
-     *
-     * @param input the input
-     * @return the value as hex
-     * @since 4.2
-     */
-    public static String sha512Hex(final String input) {
-        return DigestUtils.sha512Hex(input);
     }
 }

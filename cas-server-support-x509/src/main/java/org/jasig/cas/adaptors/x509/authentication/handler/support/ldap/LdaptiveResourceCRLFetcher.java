@@ -1,7 +1,8 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support.ldap;
 
 import org.jasig.cas.adaptors.x509.authentication.handler.support.ResourceCRLFetcher;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.EncodingUtils;
+
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
@@ -149,7 +150,7 @@ public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
             if (val == null || val.length == 0) {
                 throw new CertificateException("Empty attribute. Can not download CRL from ldap");
             }
-            final byte[] decoded64 = CompressionUtils.decodeBase64(val);
+            final byte[] decoded64 = EncodingUtils.decodeBase64(val);
             if (decoded64 == null) {
                 throw new CertificateException("Could not decode the attribute value to base64");
             }

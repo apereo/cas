@@ -7,7 +7,8 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.DigestUtils;
+import org.jasig.cas.util.SerializationUtils;
 
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
@@ -206,7 +207,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             return ticketId;
         }
 
-        return CompressionUtils.sha512Hex(ticketId);
+        return DigestUtils.sha512(ticketId);
     }
 
     /**
@@ -226,7 +227,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         logger.info("Encoding [{}]", ticket);
-        final byte[] encodedTicketObject = CompressionUtils.serializeAndEncodeObject(
+        final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(
                 this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
         final Ticket encodedTicket = new EncodedTicket(
@@ -254,7 +255,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         logger.info("Attempting to decode {}", result);
         final EncodedTicket encodedTicket = (EncodedTicket) result;
 
-        final Ticket ticket = CompressionUtils.decodeAndSerializeObject(
+        final Ticket ticket = SerializationUtils.decodeAndSerializeObject(
                 encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
         logger.info("Decoded {}",  ticket);
         return ticket;
