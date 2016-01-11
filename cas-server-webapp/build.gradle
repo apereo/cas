@@ -44,6 +44,10 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
 
+    compile project(':cas-server-support-saml')
+    compile project(':cas-server-support-saml-idp')  
+
+
     compile libraries.pac4j
     runtime libraries.spring
     runtime libraries.cassecurityfilter
