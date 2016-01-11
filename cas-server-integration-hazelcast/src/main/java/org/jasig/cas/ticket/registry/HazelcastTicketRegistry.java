@@ -5,7 +5,7 @@ import com.hazelcast.core.IMap;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
+
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.1.0
  */
 @Component("hazelcastTicketRegistry")
-public class HazelcastTicketRegistry extends AbstractCrypticTicketRegistry implements DisposableBean {
+public class HazelcastTicketRegistry extends AbstractDistributedTicketRegistry implements DisposableBean {
 
     private final IMap<String, Ticket> registry;
 
