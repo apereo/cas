@@ -9,7 +9,7 @@ import org.jasig.cas.util.DateTimeUtils;
 
 /**
  * Converts ZonedDateTime &lt;-&gt; Date.
- * @author tduehr
+ * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 4.3.0
  */
 @Converter(autoApply = true)
