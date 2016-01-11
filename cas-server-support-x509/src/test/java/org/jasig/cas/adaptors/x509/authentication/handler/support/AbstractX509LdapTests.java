@@ -3,7 +3,7 @@ package org.jasig.cas.adaptors.x509.authentication.handler.support;
 import com.unboundid.ldap.sdk.LDAPException;
 import org.apache.commons.io.IOUtils;
 import org.jasig.cas.adaptors.ldap.AbstractLdapTests;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.EncodingUtils;
 import org.jasig.cas.util.LdapTestUtils;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -49,7 +49,7 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
 
                 byte[] value = new byte[1024];
                 IOUtils.read(new ClassPathResource("userCA-valid.crl").getInputStream(), value);
-                value = CompressionUtils.encodeBase64ToByteArray(value);
+                value = EncodingUtils.encodeBase64ToByteArray(value);
                 attr.setName("certificateRevocationList");
                 attr.addBinaryValue(value);
                 LdapTestUtils.modifyLdapEntry(getDirectory().getConnection(), ldapEntry, attr);
