@@ -65,17 +65,14 @@ public final class LogoutManagerImpl implements LogoutManager {
      */
     @Override
     public List<LogoutRequest> performLogout(final TicketGrantingTicket ticket) {
+        LOGGER.info("Performing logout operations for [{}]", ticket.getId());
         final List<LogoutRequest> logoutRequests = new ArrayList<>();
         if (this.singleLogoutCallbacksDisabled) {
             LOGGER.info("Single logout callbacks are disabled");
             return logoutRequests;
         }
         performLogoutForTicket(ticket, logoutRequests);
-
-        final Collection<ProxyGrantingTicket> proxyGrantingTickets = ticket.getProxyGrantingTickets();
-        for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
-            performLogoutForTicket(proxyGrantingTicket, logoutRequests);
-        }
+        LOGGER.info("{} logout requests were processed", logoutRequests.size());
         return logoutRequests;
     }
 
@@ -84,6 +81,7 @@ public final class LogoutManagerImpl implements LogoutManager {
         for (final Map.Entry<String, Service> entry : services.entrySet()) {
             final Service service = entry.getValue();
             if (service instanceof SingleLogoutService) {
+                LOGGER.debug("Handling single logout callback for {}", service);
                 final LogoutRequest logoutRequest = this.singleLogoutServiceMessageHandler.handle((SingleLogoutService) service,
                         entry.getKey());
                 if (logoutRequest != null) {
@@ -92,6 +90,17 @@ public final class LogoutManagerImpl implements LogoutManager {
                 }
             }
         }
+
+        final Collection<ProxyGrantingTicket> proxyGrantingTickets = ticket.getProxyGrantingTickets();
+        if (proxyGrantingTickets.isEmpty()) {
+            LOGGER.info("There are no proxy-granting tickets associated with [{}] to process for single logout", ticket.getId());
+        } else {
+            for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
+                performLogoutForTicket(proxyGrantingTicket, logoutRequests);
+            }
+        }
+
+
     }
 
     /**
