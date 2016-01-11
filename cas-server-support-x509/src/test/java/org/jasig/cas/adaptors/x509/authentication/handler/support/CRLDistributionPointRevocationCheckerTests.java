@@ -145,10 +145,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         CacheManager.getInstance().addCache(cache);
         params.add(new Object[] {
                 new CRLDistributionPointRevocationChecker(cache),
-                new RevocationPolicy<X509CRL>() {
-                    @Override
-                    public void apply(final X509CRL crl) {/* Do nothing to allow unconditionally */}
-                },
+                (RevocationPolicy<X509CRL>) crl -> {/* Do nothing to allow unconditionally */},
                 new String[] {"user-valid-distcrl.crt"},
                 "userCA-expired.crl",
                 null,
