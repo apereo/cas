@@ -3,7 +3,7 @@ package org.jasig.cas.support.pac4j.web.flow;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.TestUtils;
@@ -121,7 +121,7 @@ public final class ClientActionTests {
 
         final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
-        when(casImpl.createTicketGrantingTicket(any(AuthenticationContext.class))).thenReturn(tgt);
+        when(casImpl.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
         final ClientAction action = new ClientAction();
 
         final AuthenticationManager authNManager = mock(AuthenticationManager.class);
