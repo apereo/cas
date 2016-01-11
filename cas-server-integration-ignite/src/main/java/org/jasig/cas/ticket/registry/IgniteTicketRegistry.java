@@ -17,7 +17,7 @@ import org.apache.ignite.ssl.SslContextFactory;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.3.0`
  */
 @Component("igniteTicketRegistry")
-public final class IgniteTicketRegistry extends AbstractCrypticTicketRegistry {
+public final class IgniteTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @Autowired
     @NotNull
@@ -110,7 +110,6 @@ public final class IgniteTicketRegistry extends AbstractCrypticTicketRegistry {
      * Instantiates a new Ignite ticket registry.
      */
     public IgniteTicketRegistry() {
-        super();
     }
 
     @Override

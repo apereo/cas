@@ -2,7 +2,7 @@ package org.jasig.cas.ticket.registry;
 
 import org.infinispan.Cache;
 import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
+
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -18,7 +18,7 @@ import java.util.HashSet;
  * @since 4.2.0
  */
 @Component("infinispanTicketRegistry")
-public final class InfinispanTicketRegistry extends AbstractCrypticTicketRegistry {
+public final class InfinispanTicketRegistry extends AbstractDistributedTicketRegistry {
 
     @Resource(name="infinispanTicketsCache")
     private Cache<String, Ticket> cache;
