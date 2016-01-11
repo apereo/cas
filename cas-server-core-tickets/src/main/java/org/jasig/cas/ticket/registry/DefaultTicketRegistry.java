@@ -6,7 +6,6 @@ import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.jasig.cas.web.support.WebUtils;
 import org.joda.time.DateTime;
@@ -47,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.0.0
  */
 @Component("defaultTicketRegistry")
-public final class DefaultTicketRegistry extends AbstractCrypticTicketRegistry implements Job {
+public final class DefaultTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
 
     @Value("${ticket.registry.cleaner.repeatinterval:120}")
     private int refreshInterval;
