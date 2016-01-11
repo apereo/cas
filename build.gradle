@@ -36,6 +36,7 @@ ext.libraries = [
                 "commons-io:commons-io:$commonsIoVersion",
                 dependencies.create("commons-jexl:commons-jexl:$commonsJexlVersion") {
                     exclude(module: 'commons-logging')
+                    exclude(module: 'junit')
                     force = true
                 },
                 "org.apache.commons:commons-lang3:$commonsLangVersion"
@@ -63,6 +64,7 @@ ext.libraries = [
           exclude(module: 'xml-apis')
           exclude(module: 'xom')
           exclude(module: 'commons-lang')
+          exclude(module: 'mail')
           exclude(module: 'commons-beanutils')
           force = true
         },
@@ -99,17 +101,30 @@ ext.libraries = [
             force = true
         },
         shibidp            : [
-                "net.shibboleth.idp:idp-attribute-filter-api:$idpVersion",
-                "net.shibboleth.idp:idp-attribute-resolver-api:$idpVersion",
+                dependencies.create("net.shibboleth.idp:idp-attribute-filter-api:$idpVersion") {
+                    exclude(module: 'guava')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
+                dependencies.create("net.shibboleth.idp:idp-attribute-resolver-api:$idpVersion") {
+                    exclude(module: 'guava')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
                 dependencies.create("net.shibboleth.idp:idp-core:$idpVersion") {
                     exclude(module: 'guava')
                     exclude(module: 'joda-time')
                     force = true
                 },
-                "net.shibboleth.idp:idp-installer:$idpVersion",
+                dependencies.create("net.shibboleth.idp:idp-installer:$idpVersion") {
+                    exclude(module: 'guava')
+                    exclude(module: 'joda-time')
+                    force = true
+                },
                 "net.shibboleth.idp:idp-profile-spring:$idpVersion",
                 dependencies.create("net.shibboleth.idp:idp-saml-impl:$idpVersion") {
                     exclude(module: 'httpclient')
+                    exclude(module: 'joda-time')
                     force = true
                 },
                 dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport") {
@@ -209,7 +224,10 @@ ext.libraries = [
             force = true
         },
         jodatime           : "joda-time:joda-time:$jodaTimeVersion",
-        jose4j             : "org.bitbucket.b_c:jose4j:$jose4jVersion",
+        jose4j             : dependencies.create("org.bitbucket.b_c:jose4j:$jose4jVersion") {
+          exclude(module: 'slf4j-api')
+          force = true
+        },
         jradius            : [
                 dependencies.create("com.github.coova:jradius:$jradiusVersion") {
                   exclude(module: 'commons-logging')
@@ -241,7 +259,11 @@ ext.libraries = [
                     exclude(module: 'slf4j-api')
                     force = true
                 },
-                "com.github.fakemongo:fongo:$fongoVersion",
+                dependencies.create("com.github.fakemongo:fongo:$fongoVersion") {
+                  exclude(module: 'jackson-databind')
+                  exclude(module: 'jackson-core')
+                  force = true
+                },
                 dependencies.create("de.flapdoodle.embed:de.flapdoodle.embed.memcached:$memcachedEmbeddedVersion") {
                   exclude(module: 'commons-lang3')
                   exclude(module: 'spymemcached')
@@ -257,7 +279,7 @@ ext.libraries = [
                 dependencies.create("com.esotericsoftware:kryo:$kryoVersion") {
                   exclude(module: 'spymemcached')
                   force = true
-                }
+                },
                 dependencies.create("de.javakaffee:kryo-serializers:$kryoSerializersVersion") {
                   exclude(module: 'kryo')
                   force = true
@@ -265,8 +287,14 @@ ext.libraries = [
 
         ],
         ldaptive           : [
-                "org.ldaptive:ldaptive:$ldaptiveVersion",
-                "org.ldaptive:ldaptive-beans:$ldaptiveVersion",
+                dependencies.create("org.ldaptive:ldaptive:$ldaptiveVersion") {
+                  exclude(module: 'slf4j-api')
+                  force = true
+                },
+                dependencies.create("org.ldaptive:ldaptive-beans:$ldaptiveVersion") {
+                  exclude(module: 'slf4j-api')
+                  force = true
+                }
         ],
         log4j              : [
                 "org.apache.logging.log4j:log4j-api:$log4jVersion",
@@ -282,8 +310,14 @@ ext.libraries = [
                 "com.lmax:disruptor:$disruptorVersion"
         ],
         metrics            : [
-                "io.dropwizard.metrics:metrics-annotation:$dropwizardMetricsVersion",
-                "io.dropwizard.metrics:metrics-core:$dropwizardMetricsVersion",
+                dependencies.create("io.dropwizard.metrics:metrics-annotation:$dropwizardMetricsVersion") {
+                  exclude(module: 'slf4j-api')
+                  force = true
+                },
+                dependencies.create("io.dropwizard.metrics:metrics-core:$dropwizardMetricsVersion") {
+                  exclude(module: 'slf4j-api')
+                  force = true
+                },
                 dependencies.create("io.dropwizard.metrics:metrics-jvm:$dropwizardMetricsVersion") {
                     exclude(module: 'slf4j-api')
                     force = true
@@ -372,6 +406,7 @@ ext.libraries = [
                     exclude(module: 'jcl-over-slf4j')
                     exclude(module: 'slf4j-api')
                     exclude(module: 'joda-time')
+                    exclude(module: 'mongo-java-driver')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-oauth:$pac4jVersion") {
@@ -435,7 +470,10 @@ ext.libraries = [
             exclude(module: 'c3p0')
             force = true
         },
-        shiro              : "org.apache.shiro:shiro-core:$shiroVersion",
+        shiro              : dependencies.create("org.apache.shiro:shiro-core:$shiroVersion") {
+          exclude(module: 'slf4j-api')
+          force = true
+        },
         spring             : [
                 "org.springframework:spring-aop:$springVersion",
                 "org.springframework:spring-beans:$springVersion",
@@ -447,6 +485,7 @@ ext.libraries = [
                     exclude(module: 'spring-core')
                     exclude(module: 'spring-expression')
                     exclude(module: 'spring-webmvc')
+                    exclude(module: 'slf4j-api')
                     force = true
                 },
                 "org.springframework:spring-context:$springVersion",
