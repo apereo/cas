@@ -8,10 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
-import org.jasig.cas.authentication.AuthenticationTransaction;
-import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.ClientCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -159,11 +156,9 @@ public final class ClientAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                        this.authenticationSystemSupport.getPrincipalElectionStrategy());
-                final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(service, new ClientCredential(credentials));
-                this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
-                final AuthenticationContext authenticationContext = builder.build(service);
+                final AuthenticationContext authenticationContext =
+                        this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(service, new ClientCredential(credentials));
+
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
