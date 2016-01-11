@@ -14,7 +14,10 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -66,10 +70,13 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = Integer.MAX_VALUE)
     private final HashMap<String, Service> services = new HashMap<>();
 
+    /** The {@link TicketGrantingTicket} this is associated with. */
+    @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
+    private TicketGrantingTicket ticketGrantingTicket;
+
     /** The PGTs associated to this ticket. */
-    @Lob
-    @Column(name="PROXY_GRANTING_TICKETS", nullable=false, length = Integer.MAX_VALUE)
-    private final HashSet<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
+    @OneToMany(targetEntity = TicketGrantingTicketImpl.class, mappedBy = "ticketGrantingTicket", fetch = FetchType.EAGER)
+    private final Set<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     @Lob
     @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = Integer.MAX_VALUE)
@@ -103,6 +110,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
         }
         Assert.notNull(authentication, "authentication cannot be null");
+        this.ticketGrantingTicket = parentTicketGrantingTicket;
         this.authentication = authentication;
         this.proxiedBy = proxiedBy;
     }
@@ -120,6 +128,10 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         this(id, null, null, authentication, policy);
     }
 
+    @Override
+    public final TicketGrantingTicket getGrantingTicket() {
+        return this.ticketGrantingTicket;
+    }
 
     @Override
     public final Authentication getAuthentication() {
