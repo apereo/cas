@@ -11,15 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.ZoneOffset;
@@ -118,11 +115,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                     new Object[]{remoteAddress, userToUse, this.authenticationFailureCode,
                     this.applicationCode, DateTimeUtils.timestampOf(cutoff)},
                     new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-                    new RowMapper<Timestamp>() {
-                        @Override
-                        public Timestamp mapRow(final ResultSet resultSet, final int i) throws SQLException {
-                            return resultSet.getTimestamp(1);
-                        }
+                    (resultSet, i) -> {
+                        return resultSet.getTimestamp(1);
                     });
             if (failures.size() < 2) {
                 return false;

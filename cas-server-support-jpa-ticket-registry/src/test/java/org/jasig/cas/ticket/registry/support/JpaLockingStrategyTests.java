@@ -8,8 +8,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManagerFactory;
@@ -233,18 +231,15 @@ public class JpaLockingStrategyTests {
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-            return new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
-                @Override
-                public Object doInTransaction(final TransactionStatus status) {
-                    try {
-                        final Object result = method.invoke(jpaLock, args);
-                        jpaLock.entityManager.flush();
-                        logger.debug("Performed {} on {}", method.getName(), jpaLock);
-                        return result;
-                        // Force result of transaction to database
-                    } catch (final Exception e) {
-                        throw new RuntimeException("Transactional method invocation failed.", e);
-                    }
+            return new TransactionTemplate(txManager).execute(status -> {
+                try {
+                    final Object result = method.invoke(jpaLock, args);
+                    jpaLock.entityManager.flush();
+                    logger.debug("Performed {} on {}", method.getName(), jpaLock);
+                    return result;
+                    // Force result of transaction to database
+                } catch (final Exception e) {
+                    throw new RuntimeException("Transactional method invocation failed.", e);
                 }
             });
         }
