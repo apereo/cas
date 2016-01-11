@@ -59,7 +59,6 @@ dependencies {
         exclude(module: 'validation-api')
     }
     runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
-    runtime group: 'taglibs', name: 'standard', version: taglibsVersion
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
         exclude(module: 'slf4j-api')
         exclude(module: 'jboss-logging')
