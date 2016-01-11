@@ -1,9 +1,9 @@
 package org.jasig.cas.services;
 
-import org.apache.commons.lang3.SerializationUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.jasig.cas.util.SerializationUtils;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.IPersonAttributes;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
@@ -48,7 +48,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertTrue(attr.containsKey("newAttr1"));
         
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnMappedAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
+        final ReturnMappedAttributeReleasePolicy p2 =
+            SerializationUtils.deserializeAndCheckObject(data, ReturnMappedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
@@ -73,7 +74,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertTrue(attr.containsKey("attr3"));
         
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
+        final ReturnAllowedAttributeReleasePolicy p2 =
+            SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
@@ -96,7 +98,8 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         assertEquals(attr.size(), map.size());
 
         final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllAttributeReleasePolicy p2 = SerializationUtils.deserialize(data);
+        final ReturnAllAttributeReleasePolicy p2 =
+            SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);
         assertNotNull(p2);
     }
 

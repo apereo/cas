@@ -32,7 +32,6 @@ ext.libraries = [
         },
         cassecurityfilter: "org.jasig.cas:cas-server-security-filter:$casSecurityFilterVersion",
         commons          : [
-                "commons-codec:commons-codec:$commonsCodecVersion",
                 "commons-io:commons-io:$commonsIoVersion",
                 dependencies.create("commons-jexl:commons-jexl:$commonsJexlVersion") {
                     exclude(group: 'commons-logging', module: 'commons-logging')
@@ -109,10 +108,13 @@ ext.libraries = [
                 },
                 "com.mchange:c3p0:$c3p0Version"
         ],
-        httpclient       : dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
-            exclude(group: 'commons-codec', module: 'commons-codec')
-            force = true
-        },
+        httpclient       : [
+                dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
+                    exclude(module: 'commons-codec')
+                    force = true
+                },
+                "commons-codec:commons-codec:$commonsCodecVersion"
+        ],
         shibidp          : [
                 dependencies.create("net.shibboleth.idp:idp-attribute-filter-api:$idpVersion") {
                     exclude(group: 'com.google.guava', module: 'guava')
@@ -257,6 +259,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-context-support')
                     exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
                     exclude(group: 'org.apache.httpcomponents', module: 'httpclient-cache')
+                    exclude(group: 'commons-codec', module: 'commons-codec')
                     exclude(group: 'org.springframework.webflow', module: 'spring-webflow')
                     exclude(group: 'org.springframework', module: 'spring-expression')
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
@@ -264,7 +267,8 @@ ext.libraries = [
                     exclude(group: 'ch.qos.logback', module: 'logback-core')
                     exclude(group: 'ch.qos.logback', module: 'logback-classic')
                     force = true
-                }
+                },
+                "commons-codec:commons-codec:$commonsCodecVersion"
         ],
         ignite           : [
                 "org.apache.ignite:ignite-core:$igniteVersion",
@@ -495,6 +499,7 @@ ext.libraries = [
                     exclude(group: 'org.springframework', module: 'spring-beans')
                     exclude(group: 'org.springframework', module: 'spring-core')
                     exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
+                    exclude(group: 'commons-codec', module: 'commons-codec')
                     exclude(group: 'com.google.guava', module: 'guava')
                     force = true
                 },
@@ -547,7 +552,8 @@ ext.libraries = [
                     exclude(group: 'org.apache.httpcomponents', module: 'httpclient')
                     exclude(group: 'com.google.guava', module: 'guava')
                     force = true
-                }
+                },
+                "commons-codec:commons-codec:$commonsCodecVersion"
         ],
         pac4j            : [
                 dependencies.create("org.pac4j:pac4j-cas:$pac4jVersion") {
@@ -594,6 +600,7 @@ ext.libraries = [
                 dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'joda-time', module: 'joda-time')
+                    exclude(group: 'commons-codec', module: 'commons-codec')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-http:$pac4jVersion") {
@@ -626,6 +633,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.pac4j:pac4j-oauth:$pac4jVersion") {
                     exclude(group: 'org.apache.commons', module: 'commons-lang3')
+                    exclude(group: 'org.apache.commons', module: 'commons-codec')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     exclude(group: 'joda-time', module: 'joda-time')
@@ -682,8 +690,8 @@ ext.libraries = [
                     exclude(group: 'joda-time', module: 'joda-time')
                     exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
                     force = true
-                }
-
+                },
+                "commons-codec:commons-codec:$commonsCodecVersion",
         ],
         persondirectory  : dependencies.create("org.jasig.service.persondir:person-directory-impl:$personDirectoryVersion") {
             exclude(group: 'commons-logging', module: 'commons-logging')
@@ -768,15 +776,19 @@ ext.libraries = [
                     exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
                     force = true
                 },
+                "commons-codec:commons-codec:$commonsCodecVersion",
                 "org.springframework:spring-webmvc:$springVersion"
         ],
         validationapi    : "javax.validation:validation-api:$javaxValidationVersion",
         xmlapis          : "xml-apis:xml-apis:$xmlapisVersion",
-        yubicoapi        : dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
-            exclude(group: 'org.slf4j', module: 'slf4j-api')
-            exclude(group: 'commons-codec', module: 'commons-codec')
-            force = true
-        }
+        yubicoapi        : [
+            dependencies.create("com.yubico:yubico-validation-client2:$yubicoVersion") {
+                exclude(group: 'org.slf4j', module: 'slf4j-api')
+                exclude(group: 'commons-codec', module: 'commons-codec')
+                force = true
+            },
+            "commons-codec:commons-codec:$commonsCodecVersion",
+        ]
 ]
 
 
@@ -821,6 +833,9 @@ allprojects {
 }
 
 subprojects {
+    task allDepInsight(type: DependencyInsightReportTask) << {}
+    task allDeps(type: DependencyReportTask) {}
+
     apply plugin: 'java'
     apply plugin: 'checkstyle'
     apply plugin: 'findbugs'
