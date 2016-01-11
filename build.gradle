@@ -104,32 +104,129 @@ ext.libraries = [
                 dependencies.create("net.shibboleth.idp:idp-attribute-filter-api:$idpVersion") {
                     exclude(module: 'guava')
                     exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-context')
+                    exclude(module: 'spring-context-support')
+                    exclude(module: 'spring-webflow')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'httpclient-cache')
+                    exclude(module: 'bcprov-jdk15on')
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-attribute-resolver-api:$idpVersion") {
                     exclude(module: 'guava')
                     exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-context')
+                    exclude(module: 'spring-context-support')
+                    exclude(module: 'spring-webflow')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'httpclient-cache')
+                    exclude(module: 'bcprov-jdk15on')
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-core:$idpVersion") {
                     exclude(module: 'guava')
                     exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-context')
+                    exclude(module: 'spring-context-support')
+                    exclude(module: 'spring-webflow')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'httpclient-cache')
+                    exclude(module: 'bcprov-jdk15on')
                     force = true
                 },
                 dependencies.create("net.shibboleth.idp:idp-installer:$idpVersion") {
                     exclude(module: 'guava')
                     exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-context')
+                    exclude(module: 'spring-context-support')
+                    exclude(module: 'spring-webflow')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'httpclient-cache')
+                    exclude(module: 'bcprov-jdk15on')
                     force = true
                 },
-                "net.shibboleth.idp:idp-profile-spring:$idpVersion",
+                dependencies.create("net.shibboleth.idp:idp-profile-impl:$idpVersion") {
+                  exclude(module: 'httpclient')
+                  exclude(module: 'httpclient-cache')
+                  exclude(module: 'joda-time')
+                  exclude(module: 'slf4j-api')
+                  exclude(module: 'spring-beans')
+                  exclude(module: 'spring-core')
+                  exclude(module: 'spring-web')
+                  exclude(module: 'spring-context')
+                  exclude(module: 'spring-context-support')
+                  exclude(module: 'spring-webflow')
+                  exclude(module: 'spring-expression')
+                  exclude(module: 'bcprov-jdk15on')
+                  exclude(module: 'guava')
+                  force = true
+                },
+                dependencies.create("net.shibboleth.idp:idp-profile-spring:$idpVersion") {
+                  exclude(module: 'httpclient')
+                  exclude(module: 'httpclient-cache')
+                  exclude(module: 'joda-time')
+                  exclude(module: 'slf4j-api')
+                  exclude(module: 'spring-beans')
+                  exclude(module: 'spring-core')
+                  exclude(module: 'spring-web')
+                  exclude(module: 'spring-context')
+                  exclude(module: 'spring-context-support')
+                  exclude(module: 'spring-webflow')
+                  exclude(module: 'spring-expression')
+                  exclude(module: 'bcprov-jdk15on')
+                  exclude(module: 'guava')
+                  force = true
+                },
                 dependencies.create("net.shibboleth.idp:idp-saml-impl:$idpVersion") {
                     exclude(module: 'httpclient')
+                    exclude(module: 'httpclient-cache')
                     exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'guava')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-context')
+                    exclude(module: 'spring-context-support')
+                    exclude(module: 'spring-webflow')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'bcprov-jdk15on')
                     force = true
                 },
                 dependencies.create("net.shibboleth.utilities:java-support:$shibbolethUtilJavaSupport") {
                     exclude(module: 'guava')
                     exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'spring-web')
+                    exclude(module: 'spring-context')
+                    exclude(module: 'spring-context-support')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'httpclient-cache')
+                    exclude(module: 'spring-webflow')
+                    exclude(module: 'spring-expression')
+                    exclude(module: 'bcprov-jdk15on')
                     force = true
                 }
         ],
@@ -345,18 +442,42 @@ ext.libraries = [
         opensaml           : [
                 dependencies.create("org.opensaml:opensaml-core:$opensamlVersion") {
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'guava')
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-saml-api:$opensamlVersion") {
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'guava')
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-security-api:$opensamlVersion") {
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'guava')
                     force = true
                 },
                 dependencies.create("org.opensaml:opensaml-soap-api:$opensamlVersion") {
                     exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'joda-time')
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'spring-beans')
+                    exclude(module: 'spring-core')
+                    exclude(module: 'httpclient')
+                    exclude(module: 'guava')
                     force = true
                 }
         ],
@@ -382,6 +503,7 @@ ext.libraries = [
                     exclude(module: 'httpclient-cache')
                     exclude(module: 'commons-httpclient')
                     exclude(module: 'json-smart')
+                    exclude(module: 'opensaml-saml-impl')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
@@ -399,6 +521,7 @@ ext.libraries = [
                 dependencies.create("org.pac4j:pac4j-jwt:$pac4jVersion") {
                     exclude(module: 'slf4j-api')
                     exclude(module: 'jcl-over-slf4j')
+                    exclude(module: 'bcprov-jdk15on')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-mongo:$pac4jVersion") {
@@ -430,6 +553,8 @@ ext.libraries = [
                     exclude(module: 'httpclient')
                     exclude(module: 'httpclient-cache')
                     exclude(module: 'commons-httpclient')
+                    exclude(module: 'bcprov-jdk15on')
+                    exclude(module: 'opensaml-saml-impl')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-stormpath:$pac4jVersion") {
