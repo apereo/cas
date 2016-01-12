@@ -1,5 +1,9 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -14,10 +18,6 @@ import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.lang.IgniteBiPredicate;
 import org.apache.ignite.ssl.SslContextFactory;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +50,7 @@ import java.util.concurrent.TimeUnit;
  * @since 4.3.0`
  */
 @Component("igniteTicketRegistry")
-public final class IgniteTicketRegistry extends AbstractDistributedTicketRegistry {
+public final class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
     @NotNull
