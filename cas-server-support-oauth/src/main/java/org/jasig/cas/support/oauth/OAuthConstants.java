@@ -11,8 +11,8 @@ public interface OAuthConstants {
     /** OAuth 2 endpoint in CAS. */
     String ENDPOINT_OAUTH2 = "/oauth2.0/*";
 
-    /** OAuth 2 endpoint in CAS. */
-    String ENDPOINT_OAUTH2_CALLBACK_AUTHORIZE = "/oauth2.0/callbackAuthorize";
+    /** Base OAuth 2.0 url. */
+    String BASE_OAUTH20_URL = "/oauth2.0";
 
     /** The redirect uri. */
     String REDIRECT_URI = "redirect_uri";
@@ -29,12 +29,6 @@ public interface OAuthConstants {
     /** The code. */
     String CODE = "code";
 
-    /** The service. */
-    String SERVICE = "service";
-
-    /** The ticket. */
-    String TICKET = "ticket";
-
     /** The state. */
     String STATE = "state";
 
@@ -43,7 +37,7 @@ public interface OAuthConstants {
 
     /** The bearer token. */
     String BEARER_TOKEN = "Bearer";
-    
+
     /** The OAUT h20_ callbackurl. */
     String OAUTH20_CALLBACKURL = "oauth20_callbackUrl";
 
@@ -53,9 +47,7 @@ public interface OAuthConstants {
     /** The OAUT h20_ state. */
     String OAUTH20_STATE = "oauth20_state";
 
-    /**
-     * The missing access token.
-     **/
+    /** The missing access token. */
     String MISSING_ACCESS_TOKEN = "missing_accessToken";
 
     /** The expired access token. */
@@ -73,14 +65,14 @@ public interface OAuthConstants {
     /** The invalid grant. */
     String INVALID_GRANT = "invalid_grant";
 
-    /** Error in case of invalid profile. */
-    String INVALID_PROFILE = "invalid_profile";
-
     /** The authorize url. */
     String AUTHORIZE_URL = "authorize";
 
     /** The callback authorize url. */
     String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
+
+    /** The callback authorize url definition. */
+    String CALLBACK_AUTHORIZE_URL_DEFINITION = "callbackAuthorize.*";
 
     /** The access token url. */
     String ACCESS_TOKEN_URL = "accessToken";
