@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -137,6 +139,11 @@ public class HazelcastTicketRegistryTests {
         @Override
         public Map<String, Service> getServices() {
             return null;
+        }
+
+        @Override
+        public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+            return Collections.emptySet();
         }
 
         @Override
