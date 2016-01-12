@@ -1,13 +1,13 @@
 package org.jasig.cas.ticket.registry;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
-import org.apache.commons.lang3.BooleanUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.config.CacheConfiguration;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ import java.util.HashSet;
  * @since 3.5
  */
 @Component("ehcacheTicketRegistry")
-public final class EhCacheTicketRegistry extends AbstractDistributedTicketRegistry implements InitializingBean {
+public final class EhCacheTicketRegistry extends AbstractTicketRegistry implements InitializingBean {
 
     @Autowired
     @Qualifier("serviceTicketsCache")
