@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+import org.pac4j.core.util.CommonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -11,8 +12,6 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Iterator;
 
 /**
@@ -26,11 +25,7 @@ public final class OAuthUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthUtils.class);
 
-    /**
-     * Instantiates a new OAuth utils.
-     */
-    private OAuthUtils() {
-    }
+    private OAuthUtils() {}
 
     /**
      * Write to the output this error text and return a null view.
@@ -74,7 +69,7 @@ public final class OAuthUtils {
         if (StringUtils.isBlank(useUrl)) {
             useUrl = "/";
         }
-        return OAuthUtils.redirectTo(OAuthUtils.addParameter(useUrl, "error", error));
+        return OAuthUtils.redirectTo(CommonHelper.addParameter(useUrl, "error", error));
     }
 
     /**
@@ -87,33 +82,6 @@ public final class OAuthUtils {
         return new ModelAndView(new RedirectView(url));
     }
 
-    /**
-     * Add a parameter with given name and value to an url.
-     *
-     * @param url url to which parameters will be added
-     * @param name name of parameter
-     * @param value parameter value
-     * @return the url with the parameter
-     */
-    public static String addParameter(final String url, final String name, final String value) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(url);
-        if (url.indexOf('?') >= 0) {
-            sb.append('&');
-        } else {
-            sb.append('?');
-        }
-        sb.append(name);
-        sb.append('=');
-        if (value != null) {
-            try {
-                sb.append(URLEncoder.encode(value, "UTF-8"));
-            } catch (final UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return sb.toString();
-    }
 
     /**
      * Locate the requested instance of {@link OAuthRegisteredService} by the given clientId.
