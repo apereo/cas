@@ -5,9 +5,9 @@ import org.jasig.cas.authentication.principal.Service;
 /**
  * This is {@link AuthenticationSystemSupport} - a facade that exposes a high level authentication system API to CAS core.
  *
- * This component is to be injected into others where authentication subsystem interaction needs to happen -like performing single
- * authentication transaction, performing a finalized authentication attempt, or finalizing an authentication attempt consisting of
- * multiple authentication transaction steps.
+ * This component is to be injected into others where authentication subsystem interaction needs to happen - like performing single
+ * authentication transaction, performing a finalized authentication transaction, or finalizing an all authentication transactions
+ * that might have been processed and collected.
  *
  * This facade also exposes lower level components that implementations use to perform necessary authentication steps, so that clients of
  * this API have the ability to use those components directly if they choose so.
@@ -33,51 +33,55 @@ public interface AuthenticationSystemSupport {
     PrincipalElectionStrategy getPrincipalElectionStrategy();
 
     /**
-     * Initiate potential multi-transaction authentication attempt by handling the initial authentication transaction.
+     * Initiate potential multi-transaction authentication event by handling the initial authentication transaction.
      *
      * @param credential a credential for the initial authentication transaction.
      *
-     * @return authentication context builder used to accumulate authentication transactions in this authentication attempt.
+     * @return authentication result builder used to accumulate authentication transactions in this authentication event.
      *
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 4.3.0
      */
-    AuthenticationContextBuilder handleInitialAuthenticationTransaction(Credential... credential) throws AuthenticationException;
+    AuthenticationResultBuilder handleInitialAuthenticationTransaction(Credential... credential) throws AuthenticationException;
 
     /**
-     * Handle single authentication transaction within potential multi-transaction authentication attempt.
+     * Handle single authentication transaction within potential multi-transaction authentication event.
      *
-     * @param authenticationContextBuilder builder used to accumulate authentication transactions in this authentication attempt.
+     * @param authenticationResultBuilder builder used to accumulate authentication transactions in this authentication event.
      * @param credential a credential used for this authentication transaction.
+     *
+     * @return authentication result builder used to accumulate authentication transactions in this authentication event.
      *
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 4.3.0
      */
-    void handleAuthenticationTransaction(AuthenticationContextBuilder authenticationContextBuilder, Credential... credential)
+    AuthenticationResultBuilder handleAuthenticationTransaction(AuthenticationResultBuilder authenticationResultBuilder,
+                                                                Credential... credential)
             throws AuthenticationException;
 
     /**
-     * Finalize a potential multi-transaction authentication attempt.
+     * Finalize all authentication transactions processed and collected for this authentication event.
      *
-     * @param authenticationContextBuilder builder used to accumulate authentication transactions in this authentication attempt.
-     * @param service a service for which this authentication attempt is performed.
+     * @param authenticationResultBuilder builder used to accumulate authentication transactions in this authentication event.
+     * @param service a service for this authentication event.
      *
-     * @return authentication context representing a final outcome of the authentication attempt.
+     * @return authentication result representing a final outcome of the authentication event.
      *
      * @since 4.3.0
      */
-    AuthenticationContext finalizeAuthenticationAttempt(AuthenticationContextBuilder authenticationContextBuilder, Service service);
+    AuthenticationResult finalizeAllAuthenticationTransactions(AuthenticationResultBuilder authenticationResultBuilder, Service service);
 
     /**
-     * Handle a single-transaction authentication attempt.
+     * Handle a single-transaction authentication event and immediately produce a finalized {@link AuthenticationResult}.
      *
-     * @param credential a credential used for this single-transaction authentication attempt.
-     * @param service a service for which this single-transaction authentication attempt is performed.
+     * @param credential a credential used for this single-transaction authentication event.
+     * @param service a service for this authentication event.
      *
-     * @return authentication context representing a final outcome of the authentication attempt.
+     * @return authentication result representing a final outcome of the authentication event.
      *
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 4.3.0
      */
-    AuthenticationContext handleFinalizedAuthenticationAttempt(Service service, Credential... credential) throws AuthenticationException;
+    AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(Service service, Credential... credential)
+            throws AuthenticationException;
 }

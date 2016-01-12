@@ -1,6 +1,6 @@
 package org.jasig.cas.support.wsfederation.web.flow;
 
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.support.wsfederation.WsFederationConfiguration;
@@ -114,11 +114,11 @@ public final class WsFederationAction extends AbstractAction {
                         restoreRequestAttribute(request, session, LOCALE);
                         restoreRequestAttribute(request, session, METHOD);
 
-                        final AuthenticationContext authenticationContext =
-                                this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(service, credential);
+                        final AuthenticationResult authenticationResult =
+                                this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
                         WebUtils.putTicketGrantingTicketInScopes(context,
-                                this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));
+                                this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
 
                         logger.info("Token validated and new {} created: {}", credential.getClass().getName(), credential);
                         return success();

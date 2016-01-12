@@ -26,7 +26,7 @@ public final class DefaultAuthenticationTransactionManager implements Authentica
 
     @Override
     public AuthenticationTransactionManager handle(final AuthenticationTransaction authenticationTransaction,
-                                                   final AuthenticationContextBuilder authenticationContext)
+                                                   final AuthenticationResultBuilder authenticationContext)
                                                     throws AuthenticationException {
         if (!authenticationTransaction.getCredentials().isEmpty()) {
             final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);

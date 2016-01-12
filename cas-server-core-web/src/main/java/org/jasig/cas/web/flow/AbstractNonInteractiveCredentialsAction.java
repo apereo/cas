@@ -2,7 +2,7 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
@@ -84,11 +84,11 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         if (isRenewPresent(context) && ticketGrantingTicketId != null && service != null) {
 
             try {
-                final AuthenticationContext authenticationContext =
-                        this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(service, credential);
+                final AuthenticationResult authenticationResult =
+                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
                 final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicketId, service, authenticationContext);
+                    .grantServiceTicket(ticketGrantingTicketId, service, authenticationResult);
                 WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
                 onWarn(context, credential);
                 return result("warn");
@@ -103,10 +103,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAc
         }
 
         try {
-            final AuthenticationContext authenticationContext =
-                    this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(service, credential);
+            final AuthenticationResult authenticationResult =
+                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
-            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             onSuccess(context, credential);
             return success();
