@@ -29,7 +29,7 @@ public class TicketGrantingTicketDelegator<T extends TicketGrantingTicket> exten
      * @param ticketGrantingTicket the ticket granting ticket
      * @param callback the callback
      */
-    TicketGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
+    TicketGrantingTicketDelegator(final AbstractTicketRegistry ticketRegistry,
                                   final T ticketGrantingTicket, final boolean callback) {
         super(ticketRegistry, ticketGrantingTicket, callback);
     }
