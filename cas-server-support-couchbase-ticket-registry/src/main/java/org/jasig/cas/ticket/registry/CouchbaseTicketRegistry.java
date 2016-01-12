@@ -1,22 +1,20 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
-import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
-import org.jasig.cas.ticket.ServiceTicket;
-
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -39,7 +37,7 @@ import java.util.List;
  * @since 4.2.0
  */
 @Component("couchbaseTicketRegistry")
-public final class CouchbaseTicketRegistry extends AbstractDistributedTicketRegistry implements TicketRegistryState {
+public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
     private static final String END_TOKEN = "\u02ad";
 
     private static final View ALL_TICKETS_VIEW = DefaultView.create(
