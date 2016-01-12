@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationResult;
+import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -101,10 +101,10 @@ public class TicketsResource {
         try (Formatter fmt = new Formatter()) {
 
             final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
-            final AuthenticationContext authenticationContext =
-                    this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(null, credential);
+            final AuthenticationResult authenticationResult =
+                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, credential);
 
-            final TicketGrantingTicket tgtId = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+            final TicketGrantingTicket tgtId = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
             final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + tgtId.getId());
             final HttpHeaders headers = new HttpHeaders();
             headers.setLocation(ticketReference);
@@ -154,15 +154,15 @@ public class TicketsResource {
                                                             @PathVariable("tgtId") final String tgtId) {
         try {
             final String serviceId = requestBody.getFirst(CasProtocolConstants.PARAMETER_SERVICE);
-            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+            final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(
                     this.authenticationSystemSupport.getPrincipalElectionStrategy());
 
             final Service service = this.webApplicationServiceFactory.createService(serviceId);
-            final AuthenticationContext authenticationContext =
+            final AuthenticationResult authenticationResult =
                     builder.collect(this.ticketRegistrySupport.getAuthenticationFrom(tgtId)).build(service);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(tgtId,
-                    service, authenticationContext);
+                    service, authenticationResult);
             return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
 
         }

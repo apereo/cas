@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.principal.ClientCredential;
@@ -156,10 +156,11 @@ public final class ClientAction extends AbstractAction {
 
             // credentials not null -> try to authenticate
             if (credentials != null) {
-                final AuthenticationContext authenticationContext =
-                        this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(service, new ClientCredential(credentials));
+                final AuthenticationResult authenticationResult =
+                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service,
+                                new ClientCredential(credentials));
 
-                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
             }
