@@ -1101,6 +1101,37 @@ subprojects {
                         }
                     }
 
+                    repositories {
+                        repository {
+                            id "shib-release"
+                            url "https://build.shibboleth.net/nexus/content/repositories/releases"
+                            releases {
+                                enabled true
+                            }
+                       }
+                       repository {
+                            id "jitpack"
+                            url "https://jitpack.io"
+                            releases {
+                                enabled true
+                            }
+                       }  
+                       repository {
+                            id "jasig-legacy"
+                            url "http://developer.jasig.org/repo/content/groups/m2-legacy"
+                            releases {
+                                enabled true
+                            }
+                       }  
+                       repository {
+                            id "couchbase"
+                            url "http://files.couchbase.com/maven2/"
+                            releases {
+                                enabled true
+                            }
+                       } 
+                    }
+
                 }
             }
         }
@@ -1117,4 +1148,3 @@ task javadoc(type: Javadoc) {
     destinationDir = new File(buildDir, 'javadoc')
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
 }
-
