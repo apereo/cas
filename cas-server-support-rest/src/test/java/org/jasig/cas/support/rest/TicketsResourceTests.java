@@ -1,7 +1,7 @@
 package org.jasig.cas.support.rest;
 
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationTransaction;
@@ -162,28 +162,28 @@ public class TicketsResourceTests {
     private void configureCasMockToCreateValidTGT() throws Throwable {
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
-        when(this.casMock.createTicketGrantingTicket(any(AuthenticationContext.class))).thenReturn(tgt);
+        when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
 
     }
 
     private void configureCasMockTGTCreationToThrowAuthenticationException() throws Throwable {
         final Map<String, Class<? extends Exception>> handlerErrors = new HashMap<>(1);
         handlerErrors.put("TestCaseAuthenticationHander", LoginException.class);
-        when(this.casMock.createTicketGrantingTicket(any(AuthenticationContext.class)))
+        when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class)))
                 .thenThrow(new AuthenticationException(handlerErrors));
     }
 
     private void configureCasMockTGTCreationToThrow(final Throwable e) throws Throwable {
-        when(this.casMock.createTicketGrantingTicket(any(AuthenticationContext.class))).thenThrow(e);
+        when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenThrow(e);
     }
 
     private void configureCasMockSTCreationToThrow(final Throwable e) throws Throwable {
-        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationContext.class))).thenThrow(e);
+        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenThrow(e);
     }
 
     private void configureCasMockToCreateValidST() throws Throwable {
         final ServiceTicket st = mock(ServiceTicket.class);
         when(st.getId()).thenReturn("ST-1");
-        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationContext.class))).thenReturn(st);
+        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
     }
 }

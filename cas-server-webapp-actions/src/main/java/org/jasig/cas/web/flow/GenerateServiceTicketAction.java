@@ -2,7 +2,7 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
@@ -50,11 +50,11 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
         try {
             final Credential credential = WebUtils.getCredential(context);
-            final AuthenticationContext authenticationContext =
-                    this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(service, credential);
+            final AuthenticationResult authenticationResult =
+                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
-                    .grantServiceTicket(ticketGrantingTicket, service, authenticationContext);
+                    .grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             return success();
 

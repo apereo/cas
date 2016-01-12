@@ -1,6 +1,6 @@
 package org.jasig.cas;
 
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.Credential;
@@ -51,7 +51,7 @@ public class MultifactorAuthenticationTests {
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
 
-        final AuthenticationContext ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials("alice", "alice"));
+        final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials("alice", "alice"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -61,7 +61,7 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
-        final AuthenticationContext ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential("alice", "31415"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -71,7 +71,7 @@ public class MultifactorAuthenticationTests {
 
     @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
     public void verifyDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
-        final AuthenticationContext ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"));
+        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -80,7 +80,7 @@ public class MultifactorAuthenticationTests {
 
     @Test(expected = UnsatisfiedAuthenticationPolicyException.class)
     public void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
-        final AuthenticationContext ctx =  processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential("alice", "31415"));
+        final AuthenticationResult ctx =  processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential("alice", "31415"));
 
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -90,7 +90,7 @@ public class MultifactorAuthenticationTests {
 
     @Test
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Exception {
-        final AuthenticationContext ctx = processAuthenticationAttempt(HIGH_SERVICE,
+        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE,
                 newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
 
@@ -104,10 +104,10 @@ public class MultifactorAuthenticationTests {
     public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
         // Note the original credential used to start SSO session does not satisfy security policy
 
-        final AuthenticationContext ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"));
+        final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"));
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-        final AuthenticationContext ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"),
+        final AuthenticationResult ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials("alice", "alice"),
                 new OneTimePasswordCredential("alice", "31415"));
 
         final ServiceTicket st = cas.grantServiceTicket(
@@ -136,9 +136,9 @@ public class MultifactorAuthenticationTests {
         return TestUtils.getService(id);
     }
 
-    private AuthenticationContext processAuthenticationAttempt(final Service service, final Credential... credential) throws
+    private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws
             AuthenticationException {
 
-        return this.authenticationSystemSupport.handleFinalizedAuthenticationAttempt(service, credential);
+        return this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
     }
 }
