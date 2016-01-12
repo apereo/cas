@@ -47,7 +47,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
 
     /** The authenticated object for which this ticket was generated for. */
     @Lob
-    @Column(name="AUTHENTICATION", nullable=false, length = 1000000)
+    @Column(name="AUTHENTICATION", nullable=false, length = Integer.MAX_VALUE)
     private Authentication authentication;
 
     /** Flag to enforce manual expiration. */
@@ -55,16 +55,16 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     private Boolean expired = Boolean.FALSE;
 
     /** Service that produced a proxy-granting ticket. */
-    @Column(name="PROXIED_BY", nullable=true)
+    @Column(name="PROXIED_BY", nullable=true, length = Integer.MAX_VALUE)
     private Service proxiedBy;
 
     /** The services associated to this ticket. */
     @Lob
-    @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = 1000000)
+    @Column(name="SERVICES_GRANTED_ACCESS_TO", nullable=false, length = Integer.MAX_VALUE)
     private final HashMap<String, Service> services = new HashMap<>();
 
     @Lob
-    @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = 1000000)
+    @Column(name="SUPPLEMENTAL_AUTHENTICATIONS", nullable=false, length = Integer.MAX_VALUE)
     private final ArrayList<Authentication> supplementalAuthentications = new ArrayList<>();
 
     /**
