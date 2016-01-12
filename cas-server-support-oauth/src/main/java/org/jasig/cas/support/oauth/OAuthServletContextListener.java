@@ -25,8 +25,8 @@ import javax.servlet.annotation.WebListener;
 @Component
 public class OAuthServletContextListener extends AbstractServletContextInitializer {
 
-    @Value("${server.prefix:http://localhost:8080/cas}" + OAuthConstants.ENDPOINT_OAUTH2_CALLBACK_AUTHORIZE)
-    private String callbackAuthorizeUrl;
+    @Value("${server.prefix:http://localhost:8080/cas}")
+    private String casServerUrl;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -34,15 +34,23 @@ public class OAuthServletContextListener extends AbstractServletContextInitializ
 
     @Override
     protected void initializeServletApplicationContext() {
-        addControllerToCasServletHandlerMapping(OAuthConstants.ENDPOINT_OAUTH2, "oauth20WrapperController");
+        addControllerToCasServletHandlerMapping(OAuthConstants.BASE_OAUTH20_URL + "/" + OAuthConstants.AUTHORIZE_URL,
+                "authorizeController");
+        addControllerToCasServletHandlerMapping(OAuthConstants.BASE_OAUTH20_URL + "/" + OAuthConstants.CALLBACK_AUTHORIZE_URL,
+                "callbackAuthorizeController");
+        addControllerToCasServletHandlerMapping(OAuthConstants.BASE_OAUTH20_URL + "/" + OAuthConstants.ACCESS_TOKEN_URL,
+                "accessTokenController");
+        addControllerToCasServletHandlerMapping(OAuthConstants.BASE_OAUTH20_URL + "/" + OAuthConstants.PROFILE_URL, "profileController");
 
+        final String oAuthCallbackUrl = casServerUrl + OAuthConstants.BASE_OAUTH20_URL + "/"
+                + OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION;
         final ReloadableServicesManager servicesManager = getServicesManager();
-        final Service callbackService = webApplicationServiceFactory.createService(this.callbackAuthorizeUrl);
+        final Service callbackService = webApplicationServiceFactory.createService(oAuthCallbackUrl);
         if (!servicesManager.matchesExistingService(callbackService))  {
             final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
             service.setName("OAuth Callback url");
             service.setDescription("OAuth Wrapper Callback Url");
-            service.setServiceId(this.callbackAuthorizeUrl);
+            service.setServiceId(oAuthCallbackUrl);
 
             addRegisteredServiceToServicesManager(service);
             servicesManager.reload();
