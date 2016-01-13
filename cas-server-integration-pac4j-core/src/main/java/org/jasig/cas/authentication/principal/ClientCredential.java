@@ -1,9 +1,9 @@
 package org.jasig.cas.authentication.principal;
 
-import java.io.Serializable;
-
 import org.jasig.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
+
+import java.io.Serializable;
 
 /**
  * This class represents client credentials and (after authentication) a user profile.
@@ -17,6 +17,8 @@ public final class ClientCredential implements Credential, Serializable {
      * The servialVersionUID.
      */
     private static final long serialVersionUID = -7883301304291894763L;
+
+    private boolean typedIdUsed = true;
 
     /**
      * The user profile after authentication.
@@ -67,8 +69,15 @@ public final class ClientCredential implements Credential, Serializable {
     @Override
     public String getId() {
         if (this.userProfile != null) {
-            return this.userProfile.getTypedId();
+            if (this.typedIdUsed) {
+                return this.userProfile.getTypedId();
+            }
+            return this.userProfile.getId();
         }
         return null;
+    }
+
+    public void setTypedIdUsed(final boolean typedIdUsed) {
+        this.typedIdUsed = typedIdUsed;
     }
 }

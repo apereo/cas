@@ -55,7 +55,7 @@ public final class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpi
         final long timeToKillInMilliSeconds) {
         this.timeToKillInMilliSeconds = timeToKillInMilliSeconds;
         this.numberOfUses = numberOfUses;
-        Assert.isTrue(this.numberOfUses > 0, "numberOfUsers must be greater than 0.");
+        Assert.isTrue(this.numberOfUses > 0, "numberOfUses must be greater than 0.");
         Assert.isTrue(this.timeToKillInMilliSeconds > 0, "timeToKillInMilliseconds must be greater than 0.");
 
     }

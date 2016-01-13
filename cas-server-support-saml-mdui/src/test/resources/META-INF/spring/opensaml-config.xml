@@ -31,6 +31,8 @@
           p:maxPoolSize="100"
           p:coalescing="true"
           p:ignoreComments="true"
+          p:xincludeAware="false"
+          p:expandEntityReferences="false"
           p:ignoreElementContentWhitespace="true"
           p:namespaceAware="true"
           init-method="initialize">
@@ -52,6 +54,12 @@
                 </entry>
                 <entry key="http://javax.xml.XMLConstants/feature/secure-processing">
                     <util:constant static-field="java.lang.Boolean.TRUE"/>
+                </entry>
+                <entry key="http://xml.org/sax/features/external-general-entities">
+                    <util:constant static-field="java.lang.Boolean.FALSE"/>
+                </entry>
+                <entry key="http://xml.org/sax/features/external-parameter-entities">
+                    <util:constant static-field="java.lang.Boolean.FALSE"/>
                 </entry>
             </map>
         </property>
@@ -75,7 +83,7 @@
 
     <util:map id="dynaMetadataResources">
         <entry key="http://mdq-beta.incommon.org/global/entities/">
-            <bean class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
+            <bean class="org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain">
                 <property name="filters">
                     <list />
                 </property>
@@ -99,7 +107,7 @@
                value-ref="inCommonMetadataFilters" />
     </util:map>
 
-    <bean id="inCommonMetadataFilters" class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
+    <bean id="inCommonMetadataFilters" class="org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain">
         <property name="filters">
             <list>
                 <!--
@@ -131,7 +139,7 @@
           c:credential-ref="credentialFactoryBean" />
 
     <bean id="credentialFactoryBean"
-          class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialFactoryBean"
+          class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.impl.BasicResourceCredentialFactoryBean"
           p:publicKeyInfo-ref="publicKeyInfo" />
 
     <bean id="publicKeyInfo" class="org.springframework.core.io.ClassPathResource"

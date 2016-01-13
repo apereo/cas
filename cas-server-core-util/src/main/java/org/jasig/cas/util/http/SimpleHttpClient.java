@@ -148,4 +148,8 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
         IOUtils.closeQuietly(this.requestExecutorService);
     }
 
+    @Override
+    public org.apache.http.client.HttpClient getWrappedHttpClient() {
+        return this.httpClient;
+    }
 }

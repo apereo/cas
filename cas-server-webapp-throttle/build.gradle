@@ -1,47 +1,14 @@
 description = 'Apereo CAS Web Application Authentication Throttling'
 dependencies {
-    compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
-        exclude(module: 'commons-logging')
-    }
-    compile group: 'org.springframework', name: 'spring-jdbc', version: springVersion
-    compile(group: 'org.quartz-scheduler', name: 'quartz', version: quartzVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'c3p0')
-    }
-    compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version: inspektrVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'validation-api')
-        exclude(module: 'aspectjrt')
-    }
-    compile(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version: inspektrVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'validation-api')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-webmvc')
-        exclude(module: 'spring-tx')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-jdbc')
-        exclude(module: 'aspectjrt')
-        exclude(module: 'validation-api')
-    }
-    compile(group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion) {
-        exclude(module: 'jboss-logging-annotations')
-        exclude(module: 'javassist')
-    }
-    compile(group: 'org.hibernate', name: 'hibernate-entitymanager', version: hibernateVersion) {
-        exclude(module: 'javassist')
-    }
-    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
-    compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
-    compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
-    compile group: 'org.reflections', name: 'reflections', version: reflectionsVersion
-    compile group: 'org.springframework', name: 'spring-context', version: springVersion
+    compile libraries.spring
+    compile libraries.quartz
+    compile libraries.inspektr
+    compile libraries.hibernate
+    compile libraries.guava
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-util')
-    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
-    }
+    runtime libraries.javaximpl
+
     testCompile project(':cas-server-core-authentication')
     testCompile project(':cas-server-core-audit')
     testCompile project(':cas-server-core')
@@ -49,7 +16,6 @@ dependencies {
     testCompile project(':cas-server-core-monitor')
     testCompile project(path: ":cas-server-core", configuration: "tests")
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
-    testCompile group: 'org.hsqldb', name: 'hsqldb', version: hsqlVersion
-    testCompile group: 'org.springframework', name: 'spring-orm', version: springVersion
+    testCompile libraries.tests
 }
 

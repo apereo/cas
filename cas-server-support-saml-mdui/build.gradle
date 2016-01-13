@@ -1,32 +1,15 @@
-
 description = 'Apereo CAS SAML Server MDUI Support'
 dependencies {
-  compile(group: 'org.quartz-scheduler', name: 'quartz', version:quartzVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'c3p0')
-    exclude(module: 'xml-apis')
-  }
-  compile(project(':cas-server-support-saml')) {
-    exclude(module: 'xml-apis')
-  }
-  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'jboss-logging')
-  }
-  testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version:log4jVersion
-  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:dropwizardMetricsVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'spring-core')
-    exclude(module: 'spring-beans')
-    exclude(module: 'spring-context-support')
-    exclude(module: 'spring-aop')
-  }
-  testCompile(project(path: ":cas-server-support-saml", configuration: "tests")) {
-    exclude(module: 'xml-apis')
-  }
-  testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
-  testCompile project(':cas-server-core')
-  testCompile project(':cas-server-core-logout')
+    compile libraries.quartz
+    compile project(':cas-server-support-saml')
+    compile libraries.opensaml
+    runtime libraries.hibernate
+    testCompile libraries.log4j
+    testCompile libraries.metrics
+    testCompile project(path: ":cas-server-support-saml", configuration: "tests")
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+    testCompile project(':cas-server-core')
+    testCompile project(':cas-server-core-logout')
 }
 
 

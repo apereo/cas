@@ -135,9 +135,8 @@ class JsonServiceRegistryConfigWatcher implements Runnable {
                 this.serviceRegistryDao.updateRegisteredService(newService);
                 this.serviceRegistryDao.refreshServicesManager();
             } else {
-                LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. "
-                            + "Services manager will not reload", newService.getId(),
-                        file.getName());
+                LOGGER.debug("Service [{}] loaded from [{}] is identical to the existing entry. Entry may have already been saved "
+                        + "in the event processing pipeline", newService.getId(), file.getName());
             }
         }
     }

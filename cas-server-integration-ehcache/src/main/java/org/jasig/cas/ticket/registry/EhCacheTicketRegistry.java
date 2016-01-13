@@ -4,11 +4,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 
 /**
  * <p>
@@ -102,40 +99,31 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * Either the element is removed from the cache
+     * or it's not found in the cache and is already removed.
+     * Thus the result of this op would always be true.
+     */
     @Override
-    public boolean deleteTicket(final String ticketIdToDelete) {
-        final String ticketId = encodeTicketId(ticketIdToDelete);
-        if (StringUtils.isBlank(ticketId)) {
-            return false;
-        }
+    public boolean deleteSingleTicket(final String ticketId) {
 
         final Ticket ticket = getTicket(ticketId);
         if (ticket == null) {
-            return false;
+            logger.debug("Ticket {} cannot be retrieved from the cache", ticketId);
+            return true;
         }
 
-        if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
-            return deleteTicketAndChildren((TicketGrantingTicket) ticket);
+        if (ticket instanceof ServiceTicket) {
+            if (this.serviceTicketsCache.remove(ticket.getId())) {
+                logger.debug("Service ticket {} is removed", ticket.getId());
+            }
+        } else {
+            if (this.ticketGrantingTicketsCache.remove(ticket.getId())) {
+                logger.debug("Ticket-granting ticket {} is removed", ticket.getId());
+            }
         }
-
-        logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return this.serviceTicketsCache.remove(ticketId);
-    }
-
-    /**
-     * Delete the TGT and all of its service tickets.
-     *
-     * @param ticket the ticket
-     * @return boolean indicating whether ticket was deleted or not
-     */
-    private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
-        final Map<String, Service> services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            this.serviceTicketsCache.removeAll(services.keySet());
-        }
-
-        return this.ticketGrantingTicketsCache.remove(ticket.getId());
+        return true;
     }
 
     @Override

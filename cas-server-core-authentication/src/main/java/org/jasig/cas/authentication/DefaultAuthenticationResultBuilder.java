@@ -17,13 +17,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link DefaultAuthenticationContextBuilder}.
+ * This is {@link DefaultAuthenticationResultBuilder}.
  *
  * @author Misagh Moayyed
+ * @see {@link AuthenticationResultBuilder}
  * @since 4.2.0
  */
-public final class DefaultAuthenticationContextBuilder implements AuthenticationContextBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContextBuilder.class);
+public final class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResultBuilder.class);
     private static final long serialVersionUID = 6180465589526463843L;
 
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<Authentication>());
@@ -31,35 +32,35 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
     private PrincipalElectionStrategy principalElectionStrategy;
 
     /**
-     * Instantiates a new Default authentication context builder.
+     * Instantiates a new default authentication result builder.
      *
      * @param principalElectionStrategy the principal election strategy
      */
-    public DefaultAuthenticationContextBuilder(final PrincipalElectionStrategy principalElectionStrategy) {
+    public DefaultAuthenticationResultBuilder(final PrincipalElectionStrategy principalElectionStrategy) {
         this.principalElectionStrategy = principalElectionStrategy;
     }
 
     @Override
-    public AuthenticationContextBuilder collect(final Authentication authentication) {
+    public AuthenticationResultBuilder collect(final Authentication authentication) {
         this.authentications.add(authentication);
         return this;
     }
 
     @Override
-    public AuthenticationContext build() {
+    public AuthenticationResult build() {
         return build(null);
     }
 
     @Override
-    public AuthenticationContext build(final Service service) {
+    public AuthenticationResult build(final Service service) {
         final Authentication authentication = buildAuthentication();
         if (authentication == null) {
-            LOGGER.info("Authentication context cannot be produced because no authentication is recorded into in the chain. Returning "
+            LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning "
                     + "null");
             return null;
         }
-        LOGGER.debug("Building an authentication context for authentication {} and service {}", authentication, service);
-        return new DefaultAuthenticationContext(authentication, service);
+        LOGGER.debug("Building an authentication result for authentication {} and service {}", authentication, service);
+        return new DefaultAuthenticationResult(authentication, service);
     }
 
     private boolean isEmpty() {
@@ -68,7 +69,7 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
 
     private Authentication buildAuthentication() {
         if (isEmpty()) {
-            LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication context");
+            LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication result");
             return null;
         }
         final Map<String, Object> authenticationAttributes = new HashMap<>();
@@ -81,11 +82,11 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
         LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
 
         authenticationBuilder.setAttributes(authenticationAttributes);
-        LOGGER.debug("Collected authentication attributes for this context are [{}]", authenticationAttributes);
+        LOGGER.debug("Collected authentication attributes for this result are [{}]", authenticationAttributes);
 
         final DateTime dt = DateTime.now();
         authenticationBuilder.setAuthenticationDate(dt);
-        LOGGER.debug("Authentication context commenced at [{}]", dt);
+        LOGGER.debug("Authentication result commenced at [{}]", dt);
 
         return authenticationBuilder.build();
 
@@ -99,10 +100,10 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
         LOGGER.debug("Collecting authentication history based on [{}] authentication events", authentications.size());
         for (final Authentication authn : authentications) {
             final Principal authenticatedPrincipal = authn.getPrincipal();
-            LOGGER.debug("Evaluating authentication principal [{}] for inclusion in context", authenticatedPrincipal);
+            LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
 
             principalAttributes.putAll(authenticatedPrincipal.getAttributes());
-            LOGGER.debug("Collected principal attributes [{}] for inclusion in context for principal [{}]",
+            LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                     principalAttributes, authenticatedPrincipal.getId());
 
             for (final String attrName : authn.getAttributes().keySet()) {
@@ -125,7 +126,7 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
                     LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
                 }
             }
-            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in authentication context",
+            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result",
                     authenticationAttributes);
 
             authenticationBuilder.addSuccesses(authn.getSuccesses())
@@ -135,7 +136,7 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
     }
 
     /**
-     * Principal id is and must be enforced to be the same for all authentication contexts.
+     * Principal id is and must be enforced to be the same for all authentications.
      * Based on that restriction, it's safe to simply grab the first principal id in the chain
      * when composing the authentication chain for the caller.
      */
@@ -150,19 +151,19 @@ public final class DefaultAuthenticationContextBuilder implements Authentication
      */
     @SuppressWarnings("unchecked")
     public static Set<Object> convertValueToCollection(final Object obj) {
+        //does this method belong here? Looks like a general utility method
         final Set<Object> c = new HashSet<>();
-
         if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
-            LOGGER.debug("Converting multi-valued attribute [{}] for the authentication context", obj);
+            LOGGER.debug("Converting multi-valued attribute [{}] for the authentication result", obj);
         } else if (obj instanceof Map) {
             throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
         } else if (obj.getClass().isArray()) {
             c.addAll(Arrays.asList((Object[]) obj));
-            LOGGER.debug("Converting array attribute [{}] for the authentication context", obj);
+            LOGGER.debug("Converting array attribute [{}] for the authentication result", obj);
         } else {
             c.add(obj);
-            LOGGER.debug("Converting attribute [{}] for the authentication context", obj);
+            LOGGER.debug("Converting attribute [{}] for the authentication result", obj);
         }
         return c;
     }
