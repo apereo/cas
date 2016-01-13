@@ -12,11 +12,14 @@ import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +47,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     private Service proxiedBy;
 
     private final Map<String, Service> services = new HashMap<>();
+
+    private final HashSet<ProxyGrantingTicket> proxyGrantingTickets = new HashSet<>();
 
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");
@@ -131,6 +136,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     @Override
     public Map<String, Service> getServices() {
         return this.services;
+    }
+
+    @Override
+    public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+        return this.proxyGrantingTickets;
     }
 
     @Override

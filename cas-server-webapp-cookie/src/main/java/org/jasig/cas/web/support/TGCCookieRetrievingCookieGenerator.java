@@ -52,5 +52,10 @@ public class TGCCookieRetrievingCookieGenerator extends CookieRetrievingCookieGe
         super.setCookieSecure(cookieSecure);
     }
 
-
+    @Override
+    @Autowired
+    public void setRememberMeMaxAge(@Value("${tgc.remember.me.maxAge:1209600}")
+                                final int max) {
+        super.setRememberMeMaxAge(max);
+    }
 }

@@ -16,7 +16,13 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-#SAML 1.1
+## SAML2
+CAS provides support for [SAML2 Authentication](../integration/Configuring-SAML2-Authentication.html). 
+
+## Google Apps
+CAS provides support for [Google Apps Integration](../integration/Google-Apps-Integration.html). 
+
+## SAML 1.1
 CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
 
 - Support a method of [attribute release](../integration/Attribute-Release.html)
@@ -124,10 +130,6 @@ SAML configuration in CAS is contained within the `cas.properties` file.
 # cas.saml.response.skewAllowance=0
 {% endhighlight %}
 
-#SAML 2
 
-CAS support for SAML 2 at this point is mostly limited to 
-[Google Apps Integration](../integration/Google-Apps-Integration.html). 
-Full SAML 2 support can also be achieved via Shibboleth with CAS 
-handling the authentication and SSO. [See this guide](../integration/Shibboleth.html) for more info.
+
 

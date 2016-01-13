@@ -2,11 +2,11 @@ package org.jasig.cas.ticket.registry;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.jasig.cas.web.support.WebUtils;
 import org.joda.time.DateTime;
@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.0.0
  */
 @Component("defaultTicketRegistry")
-public final class DefaultTicketRegistry extends AbstractTicketRegistry implements Job {
+public final class DefaultTicketRegistry extends AbstractCrypticTicketRegistry implements Job {
 
     @Value("${ticket.registry.cleaner.repeatinterval:120}")
     private int refreshInterval;
@@ -112,58 +112,20 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
 
     @Override
     public Ticket getTicket(final String ticketId) {
+        final String encTicketId = encodeTicketId(ticketId);
         if (ticketId == null) {
             return null;
         }
 
-        logger.debug("Attempting to retrieve ticket [{}]", ticketId);
-        final Ticket ticket = this.cache.get(ticketId);
-
-        if (ticket != null) {
-            logger.debug("Ticket [{}] found in registry.", ticketId);
-        }
-
-        return ticket;
+        final Ticket ticket = decodeTicket(this.cache.get(encTicketId));
+        return getProxiedTicketInstance(ticket);
     }
 
     @Override
-    public boolean deleteTicket(final String ticketId) {
-        if (ticketId == null) {
-            return false;
-        }
-
-        final Ticket ticket = getTicket(ticketId);
-        if (ticket == null) {
-            return false;
-        }
-
-        if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Removing children of ticket [{}] from the registry.", ticket);
-            deleteChildren((TicketGrantingTicket) ticket);
-        }
-
-        logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return (this.cache.remove(ticketId) != null);
+    public boolean deleteSingleTicket(final String ticketId) {
+        return this.cache.remove(ticketId) != null;
     }
 
-    /**
-     * Delete TGT's service tickets.
-     *
-     * @param ticket the ticket
-     */
-    private void deleteChildren(final TicketGrantingTicket ticket) {
-        // delete service tickets
-        final Map<String, Service> services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                if (this.cache.remove(entry.getKey()) != null) {
-                    logger.trace("Removed service ticket [{}]", entry.getKey());
-                } else {
-                    logger.trace("Unable to remove service ticket [{}]", entry.getKey());
-                }
-            }
-        }
-    }
 
     @Override
     public Collection<Ticket> getTickets() {
@@ -234,7 +196,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 
         try {
-            logger.info("Beginning ticket cleanup...");
+            logger.debug("Beginning ticket cleanup...");
             final Collection<Ticket> ticketsToRemove = Collections2.filter(this.getTickets(), new Predicate<Ticket>() {
                 @Override
                 public boolean apply(@Nullable final Ticket ticket) {
@@ -275,6 +237,16 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
             }
         }
 
+        return false;
+    }
+
+    @Override
+    protected void updateTicket(final Ticket ticket) {
+        addTicket(ticket);
+    }
+
+    @Override
+    protected boolean needsCallback() {
         return false;
     }
 }

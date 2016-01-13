@@ -1,92 +1,22 @@
 description = 'Apereo CAS Core'
 dependencies {
-  
-  compile project(':cas-server-core-services')
-  compile project(':cas-server-core-events')
-  compile project(':cas-server-core-tickets')
-  compile project(':cas-server-core-validation')
-  compile project(':cas-server-core-authentication')
-  compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version:inspektrVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'validation-api')
-    exclude(module: 'aspectjrt')
-  }
-  compile(group: 'io.dropwizard.metrics', name: 'metrics-core', version:dropwizardMetricsVersion) {
-    exclude(module: 'slf4j-api')
-  }
-  compile(group: 'io.dropwizard.metrics', name: 'metrics-annotation', version:dropwizardMetricsVersion) {
-    exclude(module: 'slf4j-api')
-  }
-  compile(group: 'org.jasig.service.persondir', name: 'person-directory-impl', version:personDirectoryVersion) {
-    exclude(module: 'commons-logging')
-    exclude(module: 'slf4j-api')
-    exclude(module: 'commons-lang3')
-    exclude(module: 'commons-collections4')
-    exclude(module: 'spring-beans')
-    exclude(module: 'spring-context')
-    exclude(module: 'spring-core')
-    exclude(module: 'spring-tx')
-    exclude(module: 'ldaptive')
-  }
-  compile group: 'commons-codec', name: 'commons-codec', version:commonsCodecVersion
-  compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
-  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
-    exclude(module: 'commons-logging')
-  }
-  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
-  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
-  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
-  compile group: 'org.springframework', name: 'spring-tx', version:springVersion
-  compile group: 'org.springframework', name: 'spring-context', version:springVersion
-  compile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
-    exclude(module: 'jboss-logging-annotations')
-    exclude(module: 'javassist')
-    exclude(module: 'xml-apis')  
-  }
-  compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
-  compile group: 'joda-time', name: 'joda-time', version:jodaTimeVersion
-  compile group: 'com.google.guava', name: 'guava', version:guavaVersion
-  
-  compile(group: 'org.apache.shiro', name: 'shiro-core', version:shiroVersion) {
-    exclude(module: 'slf4j-api')
-  }
-  runtime(group: 'commons-jexl', name: 'commons-jexl', version:commonsJexlVersion) {
-    exclude(module: 'commons-logging')
-    exclude(module: 'junit')
-  }
-  testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'jboss-logging')
-    exclude(module: 'xml-apis')  
-  }
-  testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:dropwizardMetricsVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'spring-core')
-    exclude(module: 'spring-aop')
-    exclude(module: 'spring-beans')
-    exclude(module: 'spring-context-support')
-  }
-  testCompile(group: 'org.hibernate', name: 'hibernate-entitymanager', version:hibernateVersion) {
-    exclude(module: 'javassist')
-    exclude(module: 'xml-apis')  
-  }
-  testCompile group: 'javassist', name: 'javassist', version:javassistVersion
-  testCompile(group: 'org.jasig.inspektr', name: 'inspektr-support-spring', version:inspektrVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'spring-web')
-    exclude(module: 'spring-webmvc')
-    exclude(module: 'spring-tx')
-    exclude(module: 'spring-beans')
-    exclude(module: 'spring-jdbc')
-    exclude(module: 'aspectjrt')
-    exclude(module: 'validation-api')
-  }
-  testCompile project(path: ":cas-server-core-tickets", configuration: "tests")
-  testCompile project(path: ":cas-server-core-logout", configuration: "tests")
-  testCompile project(':cas-server-core-util')
-  testCompile project(':cas-server-core-logout')
-  testCompile project(':cas-server-core-monitor')
-  testCompile project(path: ":cas-server-core-services", configuration: "tests")
-  testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
+
+    compile project(':cas-server-core-services')
+    compile project(':cas-server-core-events')
+    compile project(':cas-server-core-tickets')
+    compile project(':cas-server-core-validation')
+    compile project(':cas-server-core-authentication')
+    compile libraries.inspektr
+    compile libraries.metrics
+    compile libraries.persondirectory
+    compile libraries.spring
+    compile libraries.hibernate
+    testCompile project(path: ":cas-server-core-tickets", configuration: "tests")
+    testCompile project(path: ":cas-server-core-logout", configuration: "tests")
+    testCompile project(':cas-server-core-util')
+    testCompile project(':cas-server-core-logout')
+    testCompile project(':cas-server-core-monitor')
+    testCompile project(path: ":cas-server-core-services", configuration: "tests")
+    testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
 }
 

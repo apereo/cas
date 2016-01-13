@@ -24,7 +24,7 @@ public class SuccessfulHandlerMetaDataPopulator implements AuthenticationMetaDat
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final Credential credential) {
         Set<String> successes = builder.getSuccesses().keySet();
-        if (successes != null) {
+        if (successes != null && !successes.isEmpty()) {
             successes = new HashSet(successes);
         }
         

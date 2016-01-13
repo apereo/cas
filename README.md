@@ -15,7 +15,7 @@ CAS provides enterprise single sign-on service:
 - Community documentation and implementation support
 - An extensive community of adopters
 
-## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png?branch=master)](http://travis-ci.org/Jasig/cas) [![Codeship Status for Jasig/cas](https://www.codeship.io/projects/a204a3a0-727c-0131-ab14-4e46b2fa20d2/status)](https://www.codeship.io/projects/13661) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/issue?style=flat)](http://www.issuestats.com/github/Jasig/cas)
+## Build [![Build Status](https://api.travis-ci.org/Jasig/cas.png?branch=master)](http://travis-ci.org/Jasig/cas) [![Codeship Status for Jasig/cas](https://www.codeship.io/projects/a204a3a0-727c-0131-ab14-4e46b2fa20d2/status)](https://www.codeship.io/projects/13661)  [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/pr?style=flat)](http://www.issuestats.com/github/Jasig/cas) [![Issue Stats](http://www.issuestats.com/github/Jasig/cas/badge/issue?style=flat)](http://www.issuestats.com/github/Jasig/cas)
 
 It is recommended to build and deploy CAS locally using the [Maven War Overlay method][overlay]. 
 This approach does not require the adopter to *explicitly* download any version of CAS, but 

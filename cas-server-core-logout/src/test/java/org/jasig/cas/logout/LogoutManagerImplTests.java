@@ -62,7 +62,14 @@ public class LogoutManagerImplTests {
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
-        this.logoutManager = new LogoutManagerImpl(servicesManager, client, new SamlCompliantLogoutMessageCreator());
+        this.logoutManager = new LogoutManagerImpl(new SamlCompliantLogoutMessageCreator());
+
+        final DefaultSingleLogoutServiceMessageHandler handler = new DefaultSingleLogoutServiceMessageHandler();
+        handler.setHttpClient(client);
+        handler.setLogoutMessageBuilder(new SamlCompliantLogoutMessageCreator());
+        handler.setServicesManager(servicesManager);
+        handler.setSingleLogoutServiceLogoutUrlBuilder(new DefaultSingleLogoutServiceLogoutUrlBuilder());
+        this.logoutManager.setSingleLogoutServiceMessageHandler(handler);
 
         this.services = new HashMap<>();
         this.simpleWebApplicationServiceImpl = org.jasig.cas.services.TestUtils.getService(URL);
@@ -146,7 +153,8 @@ public class LogoutManagerImplTests {
     @Test
     public void verifyAsynchronousLogout() {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
-        this.logoutManager.setAsynchronous(false);
+        DefaultSingleLogoutServiceMessageHandler.class.cast(this.logoutManager.getSingleLogoutServiceMessageHandler()).
+                setAsynchronous(true);
         final Collection<LogoutRequest> logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
     }

@@ -6,6 +6,7 @@ import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
+import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.web.support.WebUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -30,7 +31,7 @@ import java.util.List;
  * the mdui extension block for a SAML SP from the provided metadata locations.
  * The result is put into the flow request context under the parameter
  * {@link #MDUI_FLOW_PARAMETER_NAME}. The entity id parameter is
- * specified by default at {@link #ENTITY_ID_PARAMETER_NAME}.
+ * specified by default at {@link org.jasig.cas.support.saml.SamlProtocolConstants#PARAMETER_ENTITY_ID}.
  *
  * <p>This action is best suited to be invoked when the CAS login page
  * is about to render so that the page, once the MDUI info is obtained,
@@ -40,11 +41,6 @@ import java.util.List;
  * @since 4.1.0
  */
 public class SamlMetadataUIParserAction extends AbstractAction {
-    /**
-     * The default entityId parameter name.
-     */
-    public static final String ENTITY_ID_PARAMETER_NAME = "entityId";
-
     /**
      * The default entityId parameter name.
      */
@@ -68,12 +64,12 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
     /**
      * Instantiates a new SAML mdui parser action.
-     * Defaults the parameter name to {@link #ENTITY_ID_PARAMETER_NAME}.
+     * Defaults the parameter name to {@link org.jasig.cas.support.saml.SamlProtocolConstants#PARAMETER_ENTITY_ID}.
      *
      * @param metadataAdapter the metadata resources
      */
     public SamlMetadataUIParserAction(final MetadataResolverAdapter metadataAdapter) {
-        this(ENTITY_ID_PARAMETER_NAME, metadataAdapter);
+        this(SamlProtocolConstants.PARAMETER_ENTITY_ID, metadataAdapter);
     }
 
     /**
@@ -124,6 +120,11 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         }
 
         final Extensions extensions = spssoDescriptor.getExtensions();
+        if (extensions == null) {
+            logger.debug("No extensions are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
+            return success();
+        }
+
         final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
         if (spExtensions.isEmpty()) {
             logger.debug("No extensions are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());

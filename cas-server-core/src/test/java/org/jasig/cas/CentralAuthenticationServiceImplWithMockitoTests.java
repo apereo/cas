@@ -2,7 +2,7 @@ package org.jasig.cas;
 
 import com.google.common.base.Predicates;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
@@ -140,8 +140,8 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     }
 
-    private AuthenticationContext getAuthenticationContext() {
-        final AuthenticationContext ctx = mock(AuthenticationContext.class);
+    private AuthenticationResult getAuthenticationContext() {
+        final AuthenticationResult ctx = mock(AuthenticationResult.class);
         when(ctx.getAuthentication()).thenReturn(this.authentication);
         return ctx;
     }
