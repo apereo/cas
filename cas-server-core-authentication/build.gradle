@@ -2,43 +2,13 @@ description = 'Apereo CAS Core Authentication'
 dependencies {
     compile project(':cas-server-core-api-services')
     compile project(':cas-server-core-api-ticket')
-    compile(group: 'io.dropwizard.metrics', name: 'metrics-annotation', version: dropwizardMetricsVersion) {
-        exclude(module: 'slf4j-api')
-    }
     compile project(':cas-server-core-util')
-    compile(group: 'org.jasig.inspektr', name: 'inspektr-audit', version: inspektrVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'validation-api')
-        exclude(module: 'aspectjrt')
-    }
-    compile(group: 'org.jasig.service.persondir', name: 'person-directory-impl', version: personDirectoryVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'commons-lang3')
-        exclude(module: 'commons-collections4')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-tx')
-        exclude(module: 'ldaptive')
-    }
-    compile(group: 'org.springframework.webflow', name: 'spring-binding', version: springWebflowVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-webmvc')
-    }
+    compile libraries.metrics
+    compile libraries.inspektr
+    compile libraries.persondirectory
+    compile libraries.httpclient
+    compile libraries.spring
+    compile libraries.hibernate
     testCompile project(':cas-server-core-web')
-    testCompile(group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion) {
-        exclude(module: 'jboss-logging-annotations')
-        exclude(module: 'javassist')
-    }
-    testCompile(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
-        exclude(module: 'xml-apis')
-    }
 }
 

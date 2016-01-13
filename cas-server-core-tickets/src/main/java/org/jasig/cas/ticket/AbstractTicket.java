@@ -6,7 +6,6 @@ import org.springframework.util.Assert;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 
 /**
@@ -41,12 +40,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Id
     @Column(name="ID", nullable=false)
     private String id;
-
-    /**
-     * The {@link TicketGrantingTicket} this is associated with.
-     **/
-    @ManyToOne(targetEntity=TicketGrantingTicketImpl.class)
-    private TicketGrantingTicket ticketGrantingTicket;
 
     /** The last time this ticket was used. */
     @Column(name="LAST_TIME_USED")
@@ -89,7 +82,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         this.creationTime = System.currentTimeMillis();
         this.lastTimeUsed = System.currentTimeMillis();
         this.expirationPolicy = expirationPolicy;
-        this.ticketGrantingTicket = ticket;
     }
 
     @Override
@@ -121,11 +113,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @Override
     public final long getCreationTime() {
         return this.creationTime;
-    }
-
-    @Override
-    public final TicketGrantingTicket getGrantingTicket() {
-        return this.ticketGrantingTicket;
     }
 
     @Override

@@ -1,9 +1,7 @@
 package org.jasig.cas.support.openid.web.flow;
 
 
-import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdService;
@@ -35,11 +33,6 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
     @Autowired
     private TicketRegistry ticketRegistry;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private CentralAuthenticationService impl;
 
     @Test
     public void verifyNoTgt() throws Exception {

@@ -2,13 +2,10 @@ package org.jasig.cas.web;
 
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
-import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.principal.Service;
@@ -160,16 +157,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
         try {
             final ServiceTicket serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
-            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
-            final AuthenticationTransaction transaction =
-                    AuthenticationTransaction.wrap(credential);
-            this.authenticationSystemSupport.getAuthenticationTransactionManager()
-                    .handle(transaction,  builder);
-            final AuthenticationContext authenticationContext = builder.build(serviceTicket.getService());
+            final AuthenticationResult authenticationResult =
+                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(),
+                            credential);
 
             proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId,
-                    authenticationContext);
+                    authenticationResult);
             logger.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
                     proxyGrantingTicketId.getId(), serviceTicketId, credential);
         } catch (final AuthenticationException e) {

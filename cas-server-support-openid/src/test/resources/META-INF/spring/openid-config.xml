@@ -57,6 +57,16 @@
     <metrics:metric-registry id="metrics" />
     <metrics:health-check-registry id="healthCheckMetrics" />
 
+    <util:list id="inMemoryRegisteredServices">
+        <bean class="org.jasig.cas.services.RegexRegisteredService"
+              p:id="0" p:name="HTTP and IMAP" p:description="Allows HTTP(S) and IMAP(S) protocols"
+              p:serviceId="^(https?|imaps?)://.*" p:evaluationOrder="10000001" >
+            <property name="attributeReleasePolicy">
+                <bean class="org.jasig.cas.services.ReturnAllAttributeReleasePolicy" />
+            </property>
+        </bean>
+    </util:list>
+
     <bean id="auditTrailManager"
           class="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager"
           p:entrySeparator="${cas.audit.singleline.separator:|}"

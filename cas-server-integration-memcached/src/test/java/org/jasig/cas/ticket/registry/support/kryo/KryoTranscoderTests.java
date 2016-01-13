@@ -38,6 +38,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -359,6 +360,11 @@ public class KryoTranscoderTests {
         @Override
         public Map<String, Service> getServices() {
             return Collections.emptyMap();
+        }
+
+        @Override
+        public Collection<ProxyGrantingTicket> getProxyGrantingTickets() {
+            return Collections.emptySet();
         }
 
         @Override

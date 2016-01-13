@@ -65,10 +65,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             requestId = null;
         }
 
-        logger.debug("Attempted to extract Request from HttpServletRequest. Results:");
         logger.debug("Request Body: {}", requestBody);
-        logger.debug("Extracted ArtifactId: {}", artifactId);
-        logger.debug("Extracted Request Id: {}", requestId);
+        logger.debug("Extracted ArtifactId: {}. extracted Request Id: {}", artifactId, requestId);
 
         return new SamlService(id, service, artifactId, requestId, new SamlServiceResponseBuilder());
     }

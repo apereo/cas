@@ -28,4 +28,8 @@ public interface SamlProtocolConstants {
     /** Indicates the endpoint for saml validation. */
     String ENDPOINT_SAML_VALIDATE = "/samlValidate";
 
+    /** Parameter representing entity id. */
+    String PARAMETER_ENTITY_ID = "entityId";
+
+
 }

@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
  * amount of time, the ticket will be expired.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 @Component("timeoutExpirationPolicy")
@@ -24,7 +23,7 @@ public final class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = -7636642464326939536L;
 
     /** The time to kill in milliseconds. */
-    @Value("#{${tgt.maxTimeToLiveInSeconds:28800}*1000}")
+    @Value("#{${tgt.timeout.maxTimeToLiveInSeconds:28800}*1000}")
     private final long timeToKillInMilliSeconds;
 
 

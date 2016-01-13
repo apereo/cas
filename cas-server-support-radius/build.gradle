@@ -3,19 +3,7 @@ description = 'Apereo CAS RADIUS Support'
 dependencies {
 	
 	compile project(':cas-server-core-authentication')
-	compile(group: 'com.github.coova', name: 'jradius', version:jradiusVersion) {
-		exclude(module: 'commons-logging')
-		exclude(module: 'log4j')
-		exclude(module: 'slf4j-api')
-		exclude(module: 'commons-collections')
-		exclude(module: 'commons-beanutils')
-		exclude(module: 'bcprov-jdk15')
-		exclude(module: 'slf4j-log4j12')
-	    exclude(module: 'spring-beans')
-    	exclude(module: 'spring-context')
-    	exclude(module: 'spring-context-support')
-    	exclude(module: 'spring-core')
-	}
+	compile libraries.jradius
 }
 
 configurations.all {
