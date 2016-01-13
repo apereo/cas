@@ -36,3 +36,5 @@ For example, in the `deployerConfigContext.xml` file:
 <bean id="primaryAuthenticationHandler" 
     class="org.jasig.cas.integration.pac4j.authentication.handler.support.UsernamePasswordWrapperAuthenticationHandler" />
 {% endhighlight %}
+
+You may use a specific pac4j authenticator using the `setAuthenticator` method.
