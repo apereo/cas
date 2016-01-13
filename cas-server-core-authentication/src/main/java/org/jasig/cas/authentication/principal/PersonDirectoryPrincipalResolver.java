@@ -90,7 +90,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     public Principal resolve(final Credential credential) {
         logger.debug("Attempting to resolve a principal...");
 
-        String principalId = extractPrincipalId(credential);
+        final String principalId = extractPrincipalId(credential);
 
         if (principalId == null) {
             logger.debug("Got null for extracted principal ID; returning null.");
