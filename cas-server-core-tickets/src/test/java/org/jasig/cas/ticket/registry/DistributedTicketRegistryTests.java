@@ -120,11 +120,6 @@ public final class DistributedTicketRegistryTests {
         }
 
         @Override
-        public boolean deleteTicket(final String ticketId) {
-            return this.tickets.remove(ticketId) != null;
-        }
-
-        @Override
         public Ticket getTicket(final String ticketId) {
             return getProxiedTicketInstance(this.tickets.get(ticketId));
         }
@@ -137,6 +132,11 @@ public final class DistributedTicketRegistryTests {
         @Override
         protected boolean needsCallback() {
             return true;
+        }
+
+        @Override
+        public boolean deleteSingleTicket(final String ticketId) {
+            return this.tickets.remove(ticketId) != null;
         }
     }
 }

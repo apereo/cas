@@ -1,6 +1,7 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
 import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.AbstractServiceFactory;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
@@ -16,7 +17,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -63,7 +63,6 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
 
     /**
      * Init public and private keys.
-     * @throws Exception if key creation encountered an error.
      */
     @PostConstruct
     public void init() {
@@ -89,7 +88,7 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         final String xmlRequest = BUILDER.decodeSamlAuthnRequest(
                 request.getParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST));
 
-        if (!StringUtils.hasText(xmlRequest)) {
+        if (StringUtils.isBlank(xmlRequest)) {
             logger.trace("SAML AuthN request not found in the request");
             return null;
         }
@@ -161,10 +160,10 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
         final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
         if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             bean.setLocation(new ClassPathResource(
-                    org.apache.commons.lang3.StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+                   StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
             bean.setLocation(new FileSystemResource(
-                    org.apache.commons.lang3.StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
+                    StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
         } else {
             bean.setLocation(new FileSystemResource(this.publicKeyLocation));
         }
@@ -181,9 +180,9 @@ public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleA
     }
 
     private boolean isValidConfiguration() {
-        return org.apache.commons.lang3.StringUtils.isNotBlank(this.privateKeyLocation)
-                || org.apache.commons.lang3.StringUtils.isNotBlank(this.publicKeyLocation)
-                || org.apache.commons.lang3.StringUtils.isNotBlank(this.keyAlgorithm);
+        return StringUtils.isNotBlank(this.privateKeyLocation)
+                || StringUtils.isNotBlank(this.publicKeyLocation)
+                || StringUtils.isNotBlank(this.keyAlgorithm);
     }
 
     public void setSkewAllowance(final int skewAllowance) {

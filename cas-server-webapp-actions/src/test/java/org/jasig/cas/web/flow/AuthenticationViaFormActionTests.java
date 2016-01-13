@@ -1,7 +1,7 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.TestUtils;
@@ -142,7 +142,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     public void verifyRenewWithServiceAndSameCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
         final Service service = TestUtils.getService(TestUtils.CONST_TEST_URL);
-        final AuthenticationContext ctx = org.jasig.cas.authentication.TestUtils.getAuthenticationContext(
+        final AuthenticationResult ctx = org.jasig.cas.authentication.TestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), service, c);
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -170,7 +170,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     public void verifyRenewWithServiceAndDifferentCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
 
-        final AuthenticationContext ctx = org.jasig.cas.authentication.TestUtils.getAuthenticationContext(
+        final AuthenticationResult ctx = org.jasig.cas.authentication.TestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), TestUtils.getService("test"), c);
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -197,7 +197,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
     public void verifyRenewWithServiceAndBadCredentials() throws Exception {
         final Credential c = org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword();
         final Service service = TestUtils.getService("test");
-        final AuthenticationContext ctx = org.jasig.cas.authentication.TestUtils.getAuthenticationContext(
+        final AuthenticationResult ctx = org.jasig.cas.authentication.TestUtils.getAuthenticationResult(
                 getAuthenticationSystemSupport(), service, c);
 
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);

@@ -1,5 +1,6 @@
 package org.jasig.cas.services;
 
+import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.jasig.cas.support.events.CasRegisteredServiceSavedEvent;
@@ -32,6 +33,7 @@ import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -114,14 +116,24 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     @Override
     public RegisteredService findServiceBy(final Service service) {
         final Collection<RegisteredService> c = convertToTreeSet();
-
         for (final RegisteredService r : c) {
             if (r.matches(service)) {
                 return r;
             }
         }
-
         return null;
+    }
+
+    @Override
+    public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> predicate) {
+        final Collection<RegisteredService> c = convertToTreeSet();
+        final Iterator<RegisteredService> it = c.iterator();
+        while (it.hasNext()) {
+            if (!predicate.apply(it.next())) {
+                it.remove();
+            }
+        }
+        return c;
     }
 
     @Override

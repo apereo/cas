@@ -105,7 +105,8 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     /** The attribute filtering policy. */
     @Lob
     @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
-    private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy;
+    private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy =
+            new ReturnAllowedAttributeReleasePolicy();
 
     /** The authentication policy. */
     @Lob
@@ -198,6 +199,9 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
         }
         if (this.properties == null) {
             this.properties = new HashMap<>();
+        }
+        if (this.attributeReleasePolicy == null) {
+            this.attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
         }
     }
 

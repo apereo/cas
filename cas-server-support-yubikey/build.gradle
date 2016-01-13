@@ -1,13 +1,9 @@
 
 description = 'Apereo CAS YubiKey Support'
 dependencies {
-    
     compile project(':cas-server-core-authentication')
-    compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
-    compile(group: 'com.yubico', name: 'yubico-validation-client2', version:yubicoVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'commons-codec')
-    }
+	compile libraries.guava
+	compile libraries.yubicoapi
 }
 
 

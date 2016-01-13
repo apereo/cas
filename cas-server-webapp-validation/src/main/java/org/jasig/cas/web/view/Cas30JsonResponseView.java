@@ -3,8 +3,6 @@ package org.jasig.cas.web.view;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -43,7 +41,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
      */
     public Cas30JsonResponseView() {
         super(createDelegatedView());
-        logger.debug("Rendering {}", this.getClass().getSimpleName());
+        logger.debug("Initializing {}", this.getClass().getSimpleName());
     }
 
     private static MappingJackson2JsonView createDelegatedView() {
@@ -57,7 +55,8 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
                                             final HttpServletResponse response) throws Exception {
-        final Map<String, Object> casModel = new HashMap<>();
+        super.prepareMergedOutputModel(model, request, response);
+
         final CasServiceResponse casResponse = new CasServiceResponse();
 
         if (getAssertionFrom(model) != null){
@@ -68,6 +67,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
             casResponse.setAuthenticationFailure(failure);
         }
 
+        final Map<String, Object> casModel = new HashMap<>();
         casModel.put("serviceResponse", casResponse);
         model.clear();
         model.putAll(casModel);
@@ -82,32 +82,12 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
 
     private CasServiceResponseAuthenticationSuccess createAuthenticationSuccess(final Map<String, Object> model) {
         final CasServiceResponseAuthenticationSuccess success = new CasServiceResponseAuthenticationSuccess();
+        success.setAttributes(getModelAttributes(model));
 
-        final Authentication authentication = getPrimaryAuthenticationFrom(model);
         final Principal principal = getPrincipal(model);
-
-        final Service service = getServiceFrom(model);
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-
-        Map<String, Object> attributes = new HashMap<>(principal.getAttributes());
-        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
-        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
-
-        attributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
-        if (!attributes.isEmpty()) {
-            success.setAttributes(attributes);
-        }
         success.setUser(principal.getId());
 
-        attributes = new HashMap<>(authentication.getAttributes());
-        decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
-        decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(attributes, model, registeredService);
-        attributes = this.casAttributeEncoder.encodeAttributes(attributes, getServiceFrom(model));
-
-        if (!attributes.isEmpty()) {
-            success.setAuthenticationAttributes(attributes);
-        }
-
+        success.setProxyGrantingTicket(getProxyGrantingTicketIou(model));
         final Collection<Authentication> chainedAuthentications = getChainedAuthentications(model);
         if (chainedAuthentications != null && !chainedAuthentications.isEmpty()) {
             final List<String> proxies = new ArrayList<>();
@@ -145,7 +125,6 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         private String proxyGrantingTicket;
         private List proxies;
         private Map attributes;
-        private Map authenticationAttributes;
 
         public String getUser() {
             return user;
@@ -177,14 +156,6 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
 
         public void setAttributes(final Map attributes) {
             this.attributes = attributes;
-        }
-
-        public Map getAuthenticationAttributes() {
-            return authenticationAttributes;
-        }
-
-        public void setAuthenticationAttributes(final Map authenticationAttributes) {
-            this.authenticationAttributes = authenticationAttributes;
         }
     }
 

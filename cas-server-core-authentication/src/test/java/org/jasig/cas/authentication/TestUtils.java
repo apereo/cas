@@ -143,32 +143,27 @@ public final class TestUtils {
         return service;
     }
 
-    public static AuthenticationContext getAuthenticationContext(final AuthenticationSystemSupport support, final Service service)
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Service service)
             throws AuthenticationException {
-        return getAuthenticationContext(support, service, getCredentialsWithSameUsernameAndPassword());
+        return getAuthenticationResult(support, service, getCredentialsWithSameUsernameAndPassword());
     }
 
-    public static AuthenticationContext getAuthenticationContext(final AuthenticationSystemSupport support)
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support)
             throws AuthenticationException {
-        return getAuthenticationContext(support, getService(), getCredentialsWithSameUsernameAndPassword());
+        return getAuthenticationResult(support, getService(), getCredentialsWithSameUsernameAndPassword());
     }
 
-    public static AuthenticationContext getAuthenticationContext(final AuthenticationSystemSupport support,
-                                                                 final Credential... credentials)
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support,
+                                                               final Credential... credentials)
             throws AuthenticationException {
-        return getAuthenticationContext(support, getService(), credentials);
+        return getAuthenticationResult(support, getService(), credentials);
     }
 
-    public static AuthenticationContext getAuthenticationContext(final AuthenticationSystemSupport support,
-                                                                 final Service service,
-                                                                 final Credential... credentials)
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support,
+                                                               final Service service,
+                                                               final Credential... credentials)
             throws AuthenticationException {
-        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                support.getPrincipalElectionStrategy());
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credentials);
-        support.getAuthenticationTransactionManager()
-                .handle(transaction,  builder);
-        final AuthenticationContext ctx = builder.build(service);
-        return ctx;
+
+        return support.handleAndFinalizeSingleAuthenticationTransaction(service, credentials);
     }
 }

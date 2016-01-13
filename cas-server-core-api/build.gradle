@@ -1,9 +1,6 @@
 
 description = 'Apereo CAS Core APIs'
 dependencies {
-    compile group: 'com.google.guava', name: 'guava', version:guavaVersion
-    compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
-    compile group: 'joda-time', name: 'joda-time', version:jodaTimeVersion
     compile project(':cas-server-core-api-protocol')
     compile project(':cas-server-core-api-authentication')
     compile project(':cas-server-core-api-services')

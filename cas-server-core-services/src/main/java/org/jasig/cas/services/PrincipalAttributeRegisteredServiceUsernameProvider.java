@@ -54,6 +54,9 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
         String principalId = principal.getId();
         final Map<String, Object> attributes = getPrincipalAttributes(principal, service);
 
+        logger.debug("Principal attributes available for selection of username attribute [{}] are [{}].",
+                this.usernameAttribute, attributes);
+
         if (attributes.containsKey(this.usernameAttribute)) {
             principalId = attributes.get(this.usernameAttribute).toString();
         } else {
@@ -125,7 +128,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
 
                 if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                     logger.debug("Located service {} in the registry. Attempting to resolve attributes for {}",
-                            service.getId(), p.getId());
+                            registeredService, p.getId());
 
                     if (registeredService.getAttributeReleasePolicy() == null) {
                         logger.debug("No attribute release policy is defined for {}. Returning default principal attributes",

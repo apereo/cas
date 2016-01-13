@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.AuthenticationMetaDataPopulator;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@Component("samlAuthenticationMetaDataPopulator")
 public class SamlAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     /** The Constant ATTRIBUTE_AUTHENTICATION_METHOD. */

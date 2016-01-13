@@ -1,16 +1,7 @@
-
 description = 'Apereo CAS Core Logging'
 dependencies {
-  compile project(':cas-server-core-api-ticket')
-  compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
-  compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
-    exclude(module: 'commons-logging')
-  }
-  compile group: 'commons-io', name: 'commons-io', version:commonsIoVersion
-  compile group: 'org.springframework', name: 'spring-beans', version:springVersion
-  compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
-  compile group: 'org.springframework', name: 'spring-context', version:springVersion
-  compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion
+    compile project(':cas-server-core-api-ticket')
+    compile libraries.spring
 }
 
 
