@@ -1,14 +1,22 @@
 package org.jasig.cas.adaptors.duo;
 
 import com.duosecurity.duoweb.DuoWeb;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.util.http.HttpClient;
+import org.jasig.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 /**
  * An abstraction that encapsulates interaction with Duo 2fa authentication service via its public API.
@@ -21,6 +29,14 @@ import javax.validation.constraints.NotNull;
 @Component("duoAuthenticationService")
 public final class DuoAuthenticationService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * The Http client.
+     */
+    @NotNull
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private HttpClient httpClient;
 
     private final String duoIntegrationKey;
     private final String duoSecretKey;
@@ -97,5 +113,36 @@ public final class DuoAuthenticationService {
 
         logger.debug("Calling DuoWeb.verifyResponse with signed request token '{}'", signedRequestToken);
         return DuoWeb.verifyResponse(this.duoIntegrationKey, this.duoSecretKey, this.duoApplicationKey, signedRequestToken);
+    }
+
+    /**
+     * Can ping boolean.
+     *
+     * @return the boolean
+     */
+    public boolean canPing() {
+        try {
+            String url = this.duoApiHost.concat("/rest/v1/ping");
+            if (!url.startsWith("http://")) {
+                url = "http://" + url;
+            }
+            final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(url));
+            if (msg != null) {
+                logger.debug("Received Duo ping response {}", msg.getMessage());
+                final ObjectMapper mapper = new ObjectMapper();
+                final String response = URLDecoder.decode(msg.getMessage(), "UTF-8");
+                final JsonNode result = mapper.readTree(response);
+                if (result.has("response") && result.has("stat")
+                        && result.get("response").asText().equalsIgnoreCase("pong")
+                        && result.get("stat").asText().equalsIgnoreCase("OK")) {
+                    return true;
+                } else {
+                    logger.warn("Could not reach/ping Duo. Response returned is {}", result);
+                }
+            }
+        } catch (final Exception e) {
+            logger.warn("Pinging Duo has failed with error: {}", e.getMessage(), e);
+        }
+        return false;
     }
 }

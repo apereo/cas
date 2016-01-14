@@ -65,7 +65,11 @@ public class JsonServiceRegistryDaoTests {
 
         final DefaultRegisteredServiceAuthenticationPolicy policy =
                 new DefaultRegisteredServiceAuthenticationPolicy();
-        policy.setMultifactorAuthenticationProviderId("duo");
+        policy.setFailOpen(true);
+
+        final Set<String> set = new HashSet<>();
+        set.add("duoAuthenticationProvider");
+        policy.setMultifactorAuthenticationProviders(set);
         r.setAuthenticationPolicy(policy);
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
