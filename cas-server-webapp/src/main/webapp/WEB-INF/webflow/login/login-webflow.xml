@@ -78,8 +78,7 @@
     </view-state>
 
     <action-state id="realSubmit">
-        <evaluate
-                expression="authenticationViaFormAction.submit(flowRequestContext, flowScope.credential, messageContext)"/>
+        <evaluate expression="authenticationViaFormAction"/>
         <transition on="warn" to="warn"/>
         <!--
         To enable AUP workflows, replace the 'success' transition with the following:

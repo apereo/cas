@@ -1,6 +1,7 @@
 package org.jasig.cas.adaptors.duo;
 
 import org.jasig.cas.web.flow.AbstractCasWebflowConfigurer;
+import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.mapping.Mapper;
@@ -28,7 +29,6 @@ import java.util.List;
 @Component("duoMultifactorWebflowConfigurer")
 public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final String MFA_SUCCESS_EVENT_ID = "mfaSuccess";
     private static final String MFA_DUO_EVENT_ID = "mfa-duo";
 
     @Autowired
@@ -44,10 +44,10 @@ public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigure
         final Mapper inputMapper = createMapperToSubflowState(mappings);
         final SubflowAttributeMapper subflowMapper = createSubflowAttributeMapper(inputMapper, null);
         subflowState.setAttributeMapper(subflowMapper);
-        subflowState.getTransitionSet().add(createTransition(MFA_SUCCESS_EVENT_ID,
-                TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+        subflowState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
 
-        final ActionState actionState = (ActionState) flow.getState(TRANSITION_ID_REAL_SUBMIT);
+        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
         logger.debug("Retrieved action state {}", actionState.getId());
         createTransitionForState(actionState, MFA_DUO_EVENT_ID, MFA_DUO_EVENT_ID);
 

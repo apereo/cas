@@ -64,64 +64,6 @@ import java.util.List;
  */
 @Component("casWebflowConfigurer")
 public abstract class AbstractCasWebflowConfigurer {
-    /**
-     * The transition state 'success'.
-     */
-    protected static final String TRANSITION_ID_SUCCESS = "success";
-
-    /**
-     * The transition state 'realSubmit'.
-     */
-    protected static final String TRANSITION_ID_REAL_SUBMIT = "realSubmit";
-
-    /**
-     * The transition state 'yes'.
-     */
-    protected static final String TRANSITION_ID_YES = "yes";
-
-    /**
-     * The transition state 'no'.
-     */
-    protected static final String TRANSITION_ID_NO = "no";
-
-    /**
-     * The transition state 'submit'.
-     */
-    protected static final String TRANSITION_ID_SUBMIT = "submit";
-    /**
-     * The transition state 'generated'.
-     */
-    protected static final String TRANSITION_ID_GENERATED = "generated";
-    /**
-     * The transition state 'error'.
-     */
-    protected static final String TRANSITION_ID_ERROR = "error";
-    /**
-     * The transition state 'warn'.
-     */
-    protected static final String TRANSITION_ID_WARN = "warn";
-
-    /**
-     * The transition state 'sendTicketGrantingTicket'.
-     */
-    protected static final String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
-
-    /**
-     * The transition state 'viewLoginForm'.
-     */
-    protected static final String TRANSITION_ID_VIEW_LOGIN_FORM = "viewLoginForm";
-
-
-    /**
-     * The transition state 'ticketGrantingTicketCheck'.
-     */
-    protected static final String TRANSITION_ID_TICKET_GRANTING_TICKET_CHECK = "ticketGrantingTicketCheck";
-
-    /**
-     * The action state 'generateLoginTicket'.
-     */
-    protected static final String STATE_ID_GENERATE_LOGIN_TICKET = "generateLoginTicket";
-
     private static final String FLOW_ID_LOGIN = "login";
 
     protected final transient Logger logger = LoggerFactory.getLogger(this.getClass());
