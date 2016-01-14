@@ -1,6 +1,7 @@
 package org.jasig.cas.services;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceAuthenticationPolicy} that describes how a service
@@ -12,9 +13,16 @@ import java.io.Serializable;
 public interface RegisteredServiceAuthenticationPolicy extends Serializable {
 
     /**
-     * Gets authentication method.
+     * Gets MFA authentication provider id.
      *
-     * @return the authentication method
+     * @return the authentication provider id
      */
-    String getAuthenticationMethod();
+    Set<String> getMultifactorAuthenticationProviders();
+
+    /**
+     * Is fail open boolean.
+     *
+     * @return the boolean
+     */
+    boolean isFailOpen();
 }

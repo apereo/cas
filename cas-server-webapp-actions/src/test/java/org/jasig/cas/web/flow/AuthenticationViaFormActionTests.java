@@ -43,10 +43,6 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         this.warnCookieGenerator.setCookieName("TGT");
         this.warnCookieGenerator.setCookieDomain("/");
         this.warnCookieGenerator.setCookiePath("/");
-
-        this.action.setCentralAuthenticationService(getCentralAuthenticationService());
-        this.action.setAuthenticationSystemSupport(getAuthenticationSystemSupport());
-        this.action.setWarnCookieGenerator(this.warnCookieGenerator);
     }
 
     @Test
@@ -65,7 +61,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         putCredentialInRequestScope(context, c);
 
         final MessageContext messageContext = mock(MessageContext.class);
-        assertEquals("success", this.action.submit(context, c, messageContext).getId());
+        assertEquals("success", this.action.doExecute(context).getId());
     }
 
     @Test
@@ -88,7 +84,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         putCredentialInRequestScope(context, c);
 
         final MessageContext messageContext = mock(MessageContext.class);
-        assertEquals("success", this.action.submit(context, c, messageContext).getId());
+        assertEquals("success", this.action.doExecute(context).getId());
         assertNotNull(WebUtils.getTicketGrantingTicketId(context));
         assertNotNull(response.getCookie(this.warnCookieGenerator.getCookieName()));
     }
@@ -112,7 +108,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         putCredentialInRequestScope(context, c);
 
         final MessageContext messageContext = mock(MessageContext.class);
-        assertEquals("success", this.action.submit(context, c, messageContext).getId());
+        assertEquals("success", this.action.doExecute(context).getId());
         assertNotNull(response.getCookie(this.warnCookieGenerator.getCookieName()));
     }
 
@@ -135,7 +131,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
             new BindException(c, "credentials"));
 
         final MessageContext messageContext = mock(MessageContext.class);
-        assertEquals("error", this.action.submit(context, c, messageContext).getId());
+        assertEquals("error", this.action.doExecute(context).getId());
     }
 
     @Test
@@ -163,7 +159,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
         context.getFlowScope().put("service", TestUtils.getService());
 
         final MessageContext messageContext = mock(MessageContext.class);
-        assertEquals("warn", this.action.submit(context, c, messageContext).getId());
+        assertEquals("warn", this.action.doExecute(context).getId());
     }
 
     @Test
@@ -190,7 +186,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
             new MockServletContext(), request, new MockHttpServletResponse()));
 
         final MessageContext messageContext = mock(MessageContext.class);
-        assertEquals("success", this.action.submit(context, c, messageContext).getId());
+        assertEquals("success", this.action.doExecute(context).getId());
     }
 
     @Test
@@ -217,7 +213,7 @@ public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticat
             new BindException(c2, "credentials"));
 
         final MessageContext messageContext = mock(MessageContext.class);
-        assertEquals("error", this.action.submit(context, c2, messageContext).getId());
+        assertEquals("error", this.action.doExecute(context).getId());
     }
 
 

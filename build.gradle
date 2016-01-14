@@ -748,7 +748,13 @@ ext.libraries = [
             exclude(module: 'slf4j-api')
             exclude(module: 'commons-codec')
             force = true
-        }
+        },
+        duojava : [
+                dependencies.create("net.unicon.iam:duo-java:1.1") {
+                    exclude(module: 'slf4j-api')
+                    force = true
+                }
+        ]
 ]
 
 
@@ -813,6 +819,7 @@ subprojects {
         maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "http://files.couchbase.com/maven2" }
+        maven { url "https://dl.bintray.com/uniconiam/maven"}
     }
 
     test {
