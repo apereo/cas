@@ -1,12 +1,12 @@
 package org.jasig.cas.ticket.registry;
 
-import net.spy.memcached.AddrUtil;
-import net.spy.memcached.MemcachedClient;
-import net.spy.memcached.MemcachedClientIF;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
+
+import net.spy.memcached.AddrUtil;
+import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.MemcachedClientIF;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,7 @@ import java.util.List;
  * @since 3.3
  */
 @Component("memcachedTicketRegistry")
-public final class MemCacheTicketRegistry extends AbstractCrypticTicketRegistry implements DisposableBean {
+public final class MemCacheTicketRegistry extends AbstractTicketRegistry implements DisposableBean {
 
     /**
      * Memcached client.

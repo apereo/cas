@@ -101,7 +101,7 @@ public final class DistributedTicketRegistryTests {
         assertNull(this.ticketRegistry.getTicket("fdfas"));
     }
 
-    private static class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
+    private static class TestDistributedTicketRegistry extends AbstractTicketRegistry {
         private final DistributedTicketRegistryTests parent;
         private final Map<String, Ticket> tickets = new HashMap<>();
 

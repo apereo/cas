@@ -97,4 +97,14 @@ public final class TicketRegistryDecorator extends AbstractTicketRegistry {
 
         return this.ticketRegistry.deleteTicket(ticketId);
     }
+
+    @Override
+    protected void updateTicket(final Ticket ticket) {
+        addTicket(ticket);
+    }
+
+    @Override
+    protected boolean needsCallback() {
+        return false;
+    }
 }
