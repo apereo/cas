@@ -9,6 +9,7 @@ import org.jasig.cas.authentication.handler.PlainTextPasswordEncoder;
 import org.jasig.cas.authentication.handler.PrincipalNameTransformer;
 import org.pac4j.http.credentials.UsernamePasswordCredentials;
 import org.pac4j.http.credentials.authenticator.Authenticator;
+import org.pac4j.http.credentials.authenticator.UsernamePasswordAuthenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -24,6 +25,11 @@ import java.security.GeneralSecurityException;
  */
 public class UsernamePasswordWrapperAuthenticationHandler
         extends AbstractWrapperAuthenticationHandler<UsernamePasswordCredential, UsernamePasswordCredentials> {
+
+    /**
+     * The underlying pac4j authenticator.
+     */
+    protected UsernamePasswordAuthenticator authenticator = new SimpleTestUsernamePasswordAuthenticator();
 
     /**
      * PasswordEncoder to be used by subclasses to encode passwords for
@@ -62,7 +68,11 @@ public class UsernamePasswordWrapperAuthenticationHandler
 
     @Override
     protected Authenticator getAuthenticator(final Credential credential) {
-        return new SimpleTestUsernamePasswordAuthenticator();
+        return this.authenticator;
+    }
+
+    public void setAuthenticator(final UsernamePasswordAuthenticator authenticator) {
+        this.authenticator = authenticator;
     }
 
     @Override
