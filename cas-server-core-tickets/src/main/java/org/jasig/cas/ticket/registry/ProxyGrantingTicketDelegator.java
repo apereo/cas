@@ -23,7 +23,7 @@ public final class ProxyGrantingTicketDelegator extends TicketGrantingTicketDele
      * @param ticketGrantingTicket the proxy granting ticket
      * @param callback             the callback
      */
-    ProxyGrantingTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
+    ProxyGrantingTicketDelegator(final AbstractTicketRegistry ticketRegistry,
                                  final ProxyGrantingTicket ticketGrantingTicket, final boolean callback) {
         super(ticketRegistry, ticketGrantingTicket, callback);
     }
