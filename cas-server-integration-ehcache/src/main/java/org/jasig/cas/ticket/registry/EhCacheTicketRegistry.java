@@ -1,13 +1,13 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
-import org.jasig.cas.ticket.ServiceTicket;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ import java.util.HashSet;
  * @since 3.5
  */
 @Component("ehcacheTicketRegistry")
-public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry implements InitializingBean {
+public final class EhCacheTicketRegistry extends AbstractTicketRegistry implements InitializingBean {
 
     @Autowired
     @Qualifier("serviceTicketsCache")
@@ -55,7 +55,6 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
      * Instantiates a new EhCache ticket registry.
      */
     public EhCacheTicketRegistry() {
-        super();
     }
 
     /**
@@ -65,7 +64,6 @@ public final class EhCacheTicketRegistry extends AbstractCrypticTicketRegistry i
      * @param ticketGrantingTicketsCache the ticket granting tickets cache
      */
     public EhCacheTicketRegistry(final Cache serviceTicketsCache, final Cache ticketGrantingTicketsCache) {
-        super();
         setServiceTicketsCache(serviceTicketsCache);
         setTicketGrantingTicketsCache(ticketGrantingTicketsCache);
     }

@@ -13,7 +13,7 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
 
     private static final long serialVersionUID = 1780193477774123440L;
 
-    private final AbstractDistributedTicketRegistry ticketRegistry;
+    private final AbstractTicketRegistry ticketRegistry;
 
     private final T ticket;
 
@@ -26,7 +26,7 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
      * @param ticket the ticket
      * @param callback the callback
      */
-    protected AbstractTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry,
+    protected AbstractTicketDelegator(final AbstractTicketRegistry ticketRegistry,
                                       final T ticket, final boolean callback) {
         this.ticketRegistry = ticketRegistry;
         this.ticket = ticket;
