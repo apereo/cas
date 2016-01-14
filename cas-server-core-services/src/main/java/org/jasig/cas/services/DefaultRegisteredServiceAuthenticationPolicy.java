@@ -1,5 +1,8 @@
 package org.jasig.cas.services;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * This is {@link DefaultRegisteredServiceAuthenticationPolicy}.
  *
@@ -8,7 +11,9 @@ package org.jasig.cas.services;
  */
 public class DefaultRegisteredServiceAuthenticationPolicy implements RegisteredServiceAuthenticationPolicy {
 
-    private String authenticationMethod;
+    private static final long serialVersionUID = -3068390754996358337L;
+    private Set<String> multifactorAuthenticationProviders = new LinkedHashSet<>();
+    private boolean failOpen;
 
     /**
      * Instantiates a new Default registered service authentication policy.
@@ -17,11 +22,19 @@ public class DefaultRegisteredServiceAuthenticationPolicy implements RegisteredS
     }
 
     @Override
-    public String getAuthenticationMethod() {
-        return authenticationMethod;
+    public Set<String> getMultifactorAuthenticationProviders() {
+        return multifactorAuthenticationProviders;
     }
 
-    public void setAuthenticationMethod(final String authenticationMethod) {
-        this.authenticationMethod = authenticationMethod;
+    public void setMultifactorAuthenticationProviders(final Set<String> multifactorAuthenticationProviders) {
+        this.multifactorAuthenticationProviders = multifactorAuthenticationProviders;
+    }
+
+    public boolean isFailOpen() {
+        return failOpen;
+    }
+
+    public void setFailOpen(final boolean failOpen) {
+        this.failOpen = failOpen;
     }
 }
