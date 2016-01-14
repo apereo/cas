@@ -2,13 +2,17 @@ package org.jasig.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationResult;
+import org.jasig.cas.authentication.AuthenticationResultBuilder;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
+import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.MessageDescriptor;
 import org.jasig.cas.authentication.UnrecognizedAuthenticationMethodException;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategy;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -47,6 +51,10 @@ public class DefaultAuthenticationContextWebflowEventResolver implements Authent
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @NotNull
+    @Autowired(required=false)
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
 
     @NotNull
     @Autowired
@@ -58,18 +66,20 @@ public class DefaultAuthenticationContextWebflowEventResolver implements Authent
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-
     @Override
-    public Event resolve(final AuthenticationContextBuilder authenticationContextBuilder, final RequestContext context,
+    public Event resolve(final AuthenticationResultBuilder authenticationContextBuilder, final RequestContext context,
                          final MessageContext messageContext) throws Exception {
 
-        final Service service = WebUtils.getService(context);
-        final AuthenticationContext authenticationContext = authenticationContextBuilder.build(service);
+        final AuthenticationResult authenticationContext =
+                authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationContextBuilder,
+                        WebUtils.getService(context));
+
+
         if (authenticationContext.getService() != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(authenticationContext.getService());
-            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service access is disallowed");
-            }
+            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(authenticationContext.getService(),
+                    registeredService);
+
             if (StringUtils.isNotBlank(registeredService.getAuthenticationPolicy().getAuthenticationMethod())) {
                 return buildEventByServiceAuthenticationMethod(context, registeredService,
                         authenticationContextBuilder, authenticationContext);
@@ -106,8 +116,8 @@ public class DefaultAuthenticationContextWebflowEventResolver implements Authent
     }
 
     private Event buildEventByServiceAuthenticationMethod(final RequestContext context, final RegisteredService service,
-                                                          final AuthenticationContextBuilder builder,
-                                                          final AuthenticationContext authenticationContext) {
+                                                          final AuthenticationResultBuilder builder,
+                                                          final AuthenticationResult authenticationContext) {
         logger.debug("Attempting to build an event based on the authentication method [{}] and service [{}]",
                 service.getAuthenticationPolicy().getAuthenticationMethod(), service.getName());
 

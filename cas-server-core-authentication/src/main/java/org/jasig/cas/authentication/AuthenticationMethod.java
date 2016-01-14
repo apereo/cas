@@ -1,4 +1,4 @@
-package org.jasig.cas.mfa.authentication.method;
+package org.jasig.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.CompareToBuilder;
