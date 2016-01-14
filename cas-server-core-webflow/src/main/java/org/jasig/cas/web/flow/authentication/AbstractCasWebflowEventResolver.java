@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
@@ -43,6 +44,12 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * The Logger.
      */
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * The Application context.
+     */
+    @Autowired
+    protected WebApplicationContext applicationContext;
 
     /**
      * The Authentication system support.
