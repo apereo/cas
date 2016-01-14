@@ -83,7 +83,7 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
             if (message.isAsynchronous()) {
                 return true;
             }
-            
+
             return StringUtils.isNotBlank(task.get());
         } catch (final RejectedExecutionException e) {
             LOGGER.warn(e.getMessage(), e);
@@ -93,7 +93,40 @@ final class SimpleHttpClient implements HttpClient, Serializable, DisposableBean
             return false;
         }
     }
-        
+
+    @Override
+    public HttpMessage sendMessageToEndPoint(final URL url) {
+        Assert.notNull(this.httpClient);
+
+        HttpEntity entity = null;
+
+        try (final CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
+            final int responseCode = response.getStatusLine().getStatusCode();
+
+            for (final int acceptableCode : this.acceptableCodes) {
+                if (responseCode == acceptableCode) {
+                    LOGGER.debug("Response code from server matched {}.", responseCode);
+                    entity = response.getEntity();
+                    final HttpMessage msg = new HttpMessage(url, IOUtils.toString(entity.getContent()));
+                    msg.setContentType(entity.getContentType().getValue());
+                    return msg;
+                }
+            }
+            LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was {}",
+                    responseCode);
+            if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
+                final String value = response.getStatusLine().getReasonPhrase();
+                LOGGER.error("There was an error contacting the endpoint: {}; The error was:\n{}", url.toExternalForm(),
+                        value);
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            EntityUtils.consumeQuietly(entity);
+        }
+        return null;
+    }
+
     @Override
     public boolean isValidEndPoint(final String url) {
         try {

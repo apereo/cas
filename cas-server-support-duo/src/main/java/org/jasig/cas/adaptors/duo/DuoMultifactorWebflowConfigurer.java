@@ -29,7 +29,8 @@ import java.util.List;
 @Component("duoMultifactorWebflowConfigurer")
 public class DuoMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final String MFA_DUO_EVENT_ID = "mfa-duo";
+    /** Duo Webflow event id. */
+    public static final String MFA_DUO_EVENT_ID = "mfa-duo";
 
     @Autowired
     @Qualifier("duoFlowRegistry")

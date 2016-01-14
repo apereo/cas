@@ -750,7 +750,7 @@ ext.libraries = [
             force = true
         },
         duojava : [
-                dependencies.create("net.unicon.iam:duo-java:1.1") {
+                dependencies.create("net.unicon.iam:duo-java:$duoVersion") {
                     exclude(module: 'slf4j-api')
                     force = true
                 }
@@ -1133,7 +1133,14 @@ subprojects {
                             releases {
                                 enabled true
                             }
-                       } 
+                       }
+                       repository {
+                            id "uniconiam"
+                            url "https://dl.bintray.com/uniconiam/maven"
+                            releases {
+                                enabled true
+                            }
+                        }
                     }
 
                 }
