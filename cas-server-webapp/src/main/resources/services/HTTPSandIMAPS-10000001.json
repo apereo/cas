@@ -27,7 +27,7 @@
   },
   "authenticationPolicy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
-    "multifactorAuthenticationProviderId" : "duo",
+    "multifactorAuthenticationProviders" : [ "java.util.HashSet", [ "duoAuthenticationProvider" ] ],
     "failOpen" : false
   }
 }
