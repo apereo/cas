@@ -36,7 +36,8 @@ public class RegisteredServiceAuthenticationPolicyWebflowEventResolver extends A
             if (providerClass == null) {
                 logger.warn("Could not locate [{}] bean id in the application context as an authentication provider. "
                         + "Are you missing a dependency in your configuration?", provider);
-                throw new IllegalArgumentException("Could not locate " + provider + " in the application configuration");
+                throw new IllegalArgumentException("Could not locate " + provider + " in the application configuration",
+                            new AuthenticationException());
             }
             final Event event = resolveEventPerAuthenticationProvider(context, service, providerClass);
             if (event != null) {
