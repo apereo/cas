@@ -1,7 +1,6 @@
-package org.jasig.cas.mfa.authentication.method;
+package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
-import org.jasig.cas.authentication.UnrecognizedAuthenticationMethodException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

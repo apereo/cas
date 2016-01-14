@@ -1,6 +1,6 @@
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,6 +23,6 @@ public interface AuthenticationContextWebflowEventResolver {
      * @return the event
      * @throws Exception the exception
      */
-    Event resolve(final AuthenticationContextBuilder authenticationContextBuilder, RequestContext context, MessageContext messageContext)
+    Event resolve(final AuthenticationResultBuilder authenticationContextBuilder, RequestContext context, MessageContext messageContext)
             throws Exception;
 }
