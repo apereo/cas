@@ -1,4 +1,4 @@
-package org.jasig.cas.mfa.authentication.method;
+package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.principal.WebApplicationService;
 

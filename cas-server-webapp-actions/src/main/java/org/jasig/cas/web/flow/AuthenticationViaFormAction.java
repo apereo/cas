@@ -5,6 +5,7 @@ import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
@@ -180,12 +181,11 @@ public class AuthenticationViaFormAction {
     protected Event createTicketGrantingTicket(final RequestContext context, final Credential credential,
                                                final MessageContext messageContext) {
         try {
-
-            final AuthenticationResult authenticationResult =
-                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
             WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
-            return this.authenticationContextWebflowEventResolver.resolve(builder, context, messageContext);
+            final AuthenticationResultBuilder authenticationResult =
+                    this.authenticationSystemSupport.handleInitialAuthenticationTransaction(credential);
+            return this.authenticationContextWebflowEventResolver.resolve(authenticationResult, context, messageContext);
         } catch (final AuthenticationException e) {
             logger.debug(e.getMessage(), e);
             return newEvent(AUTHENTICATION_FAILURE, e);

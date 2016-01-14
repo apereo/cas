@@ -1,8 +1,8 @@
 package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationResult;
+import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationService;
@@ -481,8 +481,8 @@ public final class WebUtils {
      * @param builder the builder
      * @param ctx     the ctx
      */
-    public static void putAuthenticationContextBuilder(final AuthenticationContextBuilder builder, final RequestContext ctx) {
-        ctx.getConversationScope().put("authenticationContextBuilder", builder);
+    public static void putAuthenticationContextBuilder(final AuthenticationResultBuilder builder, final RequestContext ctx) {
+        ctx.getConversationScope().put("authenticationResultBuilder", builder);
     }
 
     /**
@@ -491,8 +491,8 @@ public final class WebUtils {
      * @param ctx the ctx
      * @return the authentication context builder
      */
-    public static AuthenticationContextBuilder getAuthenticationContextBuilder(final RequestContext ctx) {
-        return ctx.getConversationScope().get("authenticationContextBuilder", AuthenticationContextBuilder.class);
+    public static AuthenticationResultBuilder getAuthenticationContextBuilder(final RequestContext ctx) {
+        return ctx.getConversationScope().get("authenticationResultBuilder", AuthenticationResultBuilder.class);
     }
 
     /**
@@ -501,8 +501,8 @@ public final class WebUtils {
      * @param authenticationContext the authentication context
      * @param context               the context
      */
-    public static void putAuthenticationContext(final AuthenticationContext authenticationContext, final RequestContext context) {
-        context.getConversationScope().put("authenticationContext", authenticationContext);
+    public static void putAuthenticationContext(final AuthenticationResult authenticationContext, final RequestContext context) {
+        context.getConversationScope().put("authenticationResult", authenticationContext);
     }
 
     /**
@@ -511,7 +511,7 @@ public final class WebUtils {
      * @param ctx the ctx
      * @return the authentication context builder
      */
-    public static AuthenticationContext getAuthenticationContext(final RequestContext ctx) {
-        return ctx.getConversationScope().get("authenticationContext", AuthenticationContext.class);
+    public static AuthenticationResult getAuthenticationContext(final RequestContext ctx) {
+        return ctx.getConversationScope().get("authenticationResult", AuthenticationResult.class);
     }
 }

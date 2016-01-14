@@ -21,6 +21,7 @@ public final class DefaultAuthenticationResult implements AuthenticationResult {
     private static final long serialVersionUID = 8454900425245262824L;
 
     private final Authentication authentication;
+    private final Principal principal;
 
     private final Service service;
 
@@ -33,6 +34,7 @@ public final class DefaultAuthenticationResult implements AuthenticationResult {
     public DefaultAuthenticationResult(final Authentication authentication, final Service service) {
         this.authentication = authentication;
         this.service = service;
+        this.principal = this.authentication.getPrincipal();
     }
 
     /**
@@ -51,7 +53,7 @@ public final class DefaultAuthenticationResult implements AuthenticationResult {
 
     @Override
     public Principal getPrincipal() {
-        return getAuthentication().getPrincipal();
+        return this.principal;
     }
 
     @Override
@@ -62,7 +64,8 @@ public final class DefaultAuthenticationResult implements AuthenticationResult {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("authentication", authentication)
+                .append("authentication", this.authentication)
+                .append("principal", this.principal)
                 .toString();
     }
 }
