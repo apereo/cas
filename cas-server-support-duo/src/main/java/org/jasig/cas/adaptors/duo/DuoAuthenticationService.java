@@ -94,6 +94,7 @@ public final class DuoAuthenticationService {
         if (StringUtils.isBlank(signedRequestToken)) {
             throw new IllegalArgumentException("No signed request token was passed to verify");
         }
+
         logger.debug("Calling DuoWeb.verifyResponse with signed request token '{}'", signedRequestToken);
         return DuoWeb.verifyResponse(this.duoIntegrationKey, this.duoSecretKey, this.duoApplicationKey, signedRequestToken);
     }

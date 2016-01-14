@@ -24,5 +24,10 @@
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true
+  },
+  "authenticationPolicy" : {
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "multifactorAuthenticationProviderId" : "duo",
+    "failOpen" : false
   }
 }

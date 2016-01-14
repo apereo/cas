@@ -2,6 +2,7 @@ package org.jasig.cas.web.flow;
 
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.web.support.ArgumentExtractor;
@@ -89,12 +90,11 @@ public final class InitialFlowSetupAction extends AbstractAction {
             logger.debug("Placing service in context scope: [{}]", service.getId());
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-            if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                logger.debug("Placing registered service [{}] with id [{}] in context scope",
-                        registeredService.getServiceId(),
-                        registeredService.getId());
-                WebUtils.putRegisteredService(context, registeredService);
-            }
+            RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService);
+            logger.debug("Placing registered service [{}] with id [{}] in context scope",
+                    registeredService.getServiceId(),
+                    registeredService.getId());
+            WebUtils.putRegisteredService(context, registeredService);
         } else if (!this.enableFlowOnAbsentServiceRequest) {
             logger.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
                     WebUtils.getHttpServletRequest(context).getRequestURL());
