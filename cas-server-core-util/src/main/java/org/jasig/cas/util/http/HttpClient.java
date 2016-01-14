@@ -25,6 +25,14 @@ public interface HttpClient {
     boolean sendMessageToEndPoint(@NotNull HttpMessage message);
 
     /**
+     * Send message to an endpoint as a GET and return the resulting http message.
+     *
+     * @param url the url
+     * @return the http message
+     */
+    HttpMessage sendMessageToEndPoint(@NotNull URL url);
+
+    /**
      * Make a synchronous HTTP(S) call to ensure that the url is reachable.
      *
      * @param url the url to call

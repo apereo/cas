@@ -1,7 +1,10 @@
 package org.jasig.cas.adaptors.duo;
 
-import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
+import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceMultifactorAuthenticationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -17,14 +20,21 @@ public class DuoRegisteredServiceMultifactorAuthenticationProvider implements Re
 
     private static final long serialVersionUID = 4789727148634156909L;
 
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     @Qualifier("duoAuthenticationService")
     private DuoAuthenticationService duoAuthenticationService;
 
-    private String id;
-
     @Override
-    public String provide(final RegisteredServiceAuthenticationPolicy policy) {
-        return null;
+    public String provide(final RegisteredService service) throws AuthenticationException {
+        if (duoAuthenticationService.canPing()) {
+            return DuoMultifactorWebflowConfigurer.MFA_DUO_EVENT_ID;
+        } else if (service.getAuthenticationPolicy().isFailOpen()) {
+            logger.warn("Duo could not be reached. Since the authentication provider is configured to fail-open, authentication will "
+                    + "proceed without Duo for service {}", service.getServiceId());
+            return null;
+        }
+        throw new AuthenticationException();
     }
 }
