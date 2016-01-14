@@ -128,7 +128,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
             final List<Object> values = entry.getValue();
             if (StringUtils.isNotBlank(this.principalAttributeName)
-                        && key.equalsIgnoreCase(this.principalAttributeName)) {
+                        && StringUtils.equalsIgnoreCase(key, this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     logger.debug("{} is empty, using {} for principal", this.principalAttributeName, principalId);
                 } else {

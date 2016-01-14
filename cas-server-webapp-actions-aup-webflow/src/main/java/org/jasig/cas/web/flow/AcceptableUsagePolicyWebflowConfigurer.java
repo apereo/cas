@@ -21,17 +21,19 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
 
         final ActionState actionState = createActionState(flow, "acceptableUsagePolicyCheck",
                 createEvaluateAction("acceptableUsagePolicyFormAction.verify(flowRequestContext, flowScope.credential, messageContext)"));
-        actionState.getTransitionSet().add(createTransition(TRANSITION_ID_SUCCESS, TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
         createStateDefaultTransition(actionState, "acceptableUsagePolicyView");
 
 
         final ViewState viewState = createViewState(flow, "acceptableUsagePolicyView", "casAcceptableUsagePolicyView");
-        createTransitionForState(viewState, TRANSITION_ID_SUBMIT, "aupAcceptedAction");
-        createStateDefaultTransition(actionState, STATE_ID_GENERATE_LOGIN_TICKET);
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "aupAcceptedAction");
+        createStateDefaultTransition(actionState, CasWebflowConstants.STATE_ID_GENERATE_LOGIN_TICKET);
 
         final ActionState aupAcceptedAction = createActionState(flow, "aupAcceptedAction",
                 createEvaluateAction("acceptableUsagePolicyFormAction.submit(flowRequestContext, flowScope.credential, messageContext)"));
-        aupAcceptedAction.getTransitionSet().add(createTransition(TRANSITION_ID_SUCCESS, TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        aupAcceptedAction.getTransitionSet().add(createTransition(TRANSITION_ID_ERROR, getStartState(flow).getId()));
+        aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+        aupAcceptedAction.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
     }
 }

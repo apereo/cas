@@ -17,8 +17,10 @@ public class BasicAuthenticationWebflowConfigurer extends AbstractCasWebflowConf
         final Flow flow = getLoginFlow();
         final ActionState actionState = createActionState(flow, "basicAuthenticationCheck",
                 createEvaluateAction("basicAuthenticationAction"));
-        actionState.getTransitionSet().add(createTransition(TRANSITION_ID_SUCCESS, TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
-        actionState.getTransitionSet().add(createTransition(TRANSITION_ID_WARN, TRANSITION_ID_WARN));
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+        actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
+                CasWebflowConstants.TRANSITION_ID_WARN));
         createStateDefaultTransition(actionState, getStartState(flow).getId());
         setStartState(flow, actionState);
     }
