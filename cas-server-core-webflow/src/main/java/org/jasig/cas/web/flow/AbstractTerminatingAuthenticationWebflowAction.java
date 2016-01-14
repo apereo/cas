@@ -1,13 +1,11 @@
 package org.jasig.cas.web.flow;
 
-import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationResult;
+import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
-import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -16,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.validation.constraints.NotNull;
@@ -31,11 +28,6 @@ public abstract class AbstractTerminatingAuthenticationWebflowAction extends Abs
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @NotNull
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
-
-    @NotNull
     @Autowired(required=false)
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport = new DefaultAuthenticationSystemSupport();
@@ -45,10 +37,10 @@ public abstract class AbstractTerminatingAuthenticationWebflowAction extends Abs
         try {
             final Credential credential = WebUtils.getCredential(requestContext);
             final Service service = WebUtils.getService(requestContext);
-            final AuthenticationContextBuilder builder = WebUtils.getAuthenticationContextBuilder(requestContext);
+            final AuthenticationResultBuilder builder = WebUtils.getAuthenticationContextBuilder(requestContext);
             final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(credential);
             this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction, builder);
-            final AuthenticationContext authenticationContext = builder.build(service);
+            final AuthenticationResult authenticationContext = builder.build(service);
             return resolveSuccessfulAuthenticationEvent(requestContext, authenticationContext);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
@@ -64,5 +56,5 @@ public abstract class AbstractTerminatingAuthenticationWebflowAction extends Abs
      * @return the event
      */
     protected abstract Event resolveSuccessfulAuthenticationEvent(final RequestContext requestContext,
-                                                        final AuthenticationContext authenticationContext);
+                                                        final AuthenticationResult authenticationContext);
 }
