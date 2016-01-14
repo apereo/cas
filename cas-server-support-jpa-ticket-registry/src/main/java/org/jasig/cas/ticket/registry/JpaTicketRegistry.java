@@ -1,7 +1,5 @@
 package org.jasig.cas.ticket.registry;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
@@ -11,6 +9,9 @@ import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
 import org.jasig.cas.util.CasSpringBeanJobFactory;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -51,7 +52,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.2.1
  */
 @Component("jpaTicketRegistry")
-public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
+public final class JpaTicketRegistry extends AbstractTicketRegistry implements Job {
 
     @Value("${ticket.registry.cleaner.repeatinterval:5000000}")
     private int refreshInterval;

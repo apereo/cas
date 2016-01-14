@@ -19,7 +19,7 @@ public final class ProxyTicketDelegator extends ServiceTicketDelegator<ProxyTick
      * @param serviceTicket  the service ticket
      * @param callback       the callback
      */
-    ProxyTicketDelegator(final AbstractDistributedTicketRegistry ticketRegistry, final ProxyTicket serviceTicket,
+    ProxyTicketDelegator(final AbstractTicketRegistry ticketRegistry, final ProxyTicket serviceTicket,
                          final boolean callback) {
         super(ticketRegistry, serviceTicket, callback);
     }

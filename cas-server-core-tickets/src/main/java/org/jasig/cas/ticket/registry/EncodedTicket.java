@@ -1,11 +1,12 @@
-package org.jasig.cas.ticket.registry.encrypt;
+package org.jasig.cas.ticket.registry;
 
+
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
 
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
 
 import java.io.IOException;
 
