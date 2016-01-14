@@ -1,6 +1,7 @@
 package org.jasig.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.jasig.cas.authentication.Credential;
@@ -476,42 +477,52 @@ public final class WebUtils {
     }
 
     /**
-     * Put authentication context builder.
+     * Put authentication result builder.
+     *
+     * @param authentication the authentication
+     * @param ctx            the ctx
+     */
+    public static void putAuthentication(final Authentication authentication, final RequestContext ctx) {
+        ctx.getConversationScope().put("authentication", authentication);
+    }
+
+    /**
+     * Put authentication result builder.
      *
      * @param builder the builder
      * @param ctx     the ctx
      */
-    public static void putAuthenticationContextBuilder(final AuthenticationResultBuilder builder, final RequestContext ctx) {
+    public static void putAuthenticationResultBuilder(final AuthenticationResultBuilder builder, final RequestContext ctx) {
         ctx.getConversationScope().put("authenticationResultBuilder", builder);
     }
 
     /**
-     * Gets authentication context builder.
+     * Gets authentication result builder.
      *
      * @param ctx the ctx
-     * @return the authentication context builder
+     * @return the authentication result builder
      */
-    public static AuthenticationResultBuilder getAuthenticationContextBuilder(final RequestContext ctx) {
+    public static AuthenticationResultBuilder getAuthenticationResultBuilder(final RequestContext ctx) {
         return ctx.getConversationScope().get("authenticationResultBuilder", AuthenticationResultBuilder.class);
     }
 
     /**
-     * Put authentication context.
+     * Put authentication result.
      *
-     * @param authenticationContext the authentication context
+     * @param authenticationResult the authentication result
      * @param context               the context
      */
-    public static void putAuthenticationContext(final AuthenticationResult authenticationContext, final RequestContext context) {
-        context.getConversationScope().put("authenticationResult", authenticationContext);
+    public static void putAuthenticationResult(final AuthenticationResult authenticationResult, final RequestContext context) {
+        context.getConversationScope().put("authenticationResult", authenticationResult);
     }
 
     /**
-     * Gets authentication context builder.
+     * Gets authentication result builder.
      *
      * @param ctx the ctx
      * @return the authentication context builder
      */
-    public static AuthenticationResult getAuthenticationContext(final RequestContext ctx) {
+    public static AuthenticationResult getAuthenticationResult(final RequestContext ctx) {
         return ctx.getConversationScope().get("authenticationResult", AuthenticationResult.class);
     }
 }

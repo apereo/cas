@@ -41,6 +41,14 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
     }
 
     @Override
+    public Authentication getInitialAuthentication() {
+        if (this.authentications.isEmpty()) {
+            throw new IllegalArgumentException("Authentication chain is empty; no authentications have been collected yet");
+        }
+        return this.authentications.iterator().next();
+    }
+
+    @Override
     public AuthenticationResultBuilder collect(final Authentication authentication) {
         this.authentications.add(authentication);
         return this;
