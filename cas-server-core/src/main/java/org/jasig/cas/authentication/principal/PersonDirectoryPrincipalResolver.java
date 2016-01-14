@@ -165,6 +165,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         this.principalFactory = principalFactory;
     }
 
+    public void setAttributeRepository(final IPersonAttributeDao attributeRepository) {
+        this.attributeRepository = attributeRepository;
+    }
+
     /**
      * Extracts the id of the user from the provided credential. This method should be overridded by subclasses to
      * achieve more sophisticated strategies for producing a principal ID from a credential.
