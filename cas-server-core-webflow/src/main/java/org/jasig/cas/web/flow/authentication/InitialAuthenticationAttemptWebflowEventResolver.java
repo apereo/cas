@@ -49,13 +49,29 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 }
             }
             return grantTicketGrantingTicketToAuthenticationResult(context, builder, service);
-        } catch (final AuthenticationException e) {
-            logger.debug(e.getMessage(), e);
-            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         } catch (final Exception e) {
-            logger.debug(e.getMessage(), e);
-            return newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
+            Event event = returnAuthenticationExceptionEventIfNeeded(e);
+            if (event == null) {
+                logger.debug(e.getMessage(), e);
+                event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
+            }
+            return event;
         }
+    }
+
+    private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
+
+        final AuthenticationException ex;
+        if (e instanceof AuthenticationException) {
+            ex = (AuthenticationException) e;
+        } else if (e.getCause() instanceof AuthenticationException) {
+            ex = (AuthenticationException) e.getCause();
+        } else {
+            return null;
+        }
+
+        logger.debug(ex.getMessage(), ex);
+        return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }
 
 }

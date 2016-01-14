@@ -1,7 +1,7 @@
 package org.jasig.cas.web.flow.authentication;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.UnrecognizedAuthenticationMethodException;
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.services.RegisteredServiceMultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
@@ -36,6 +36,7 @@ public class RegisteredServiceAuthenticationPolicyWebflowEventResolver extends A
             if (providerClass == null) {
                 logger.warn("Could not locate [{}] bean id in the application context as an authentication provider. "
                         + "Are you missing a dependency in your configuration?", provider);
+                throw new IllegalArgumentException("Could not locate " + provider + " in the application configuration");
             }
             final Event event = resolveEventPerAuthenticationProvider(context, service, providerClass);
             if (event != null) {
@@ -51,28 +52,32 @@ public class RegisteredServiceAuthenticationPolicyWebflowEventResolver extends A
     private Event resolveEventPerAuthenticationProvider(final RequestContext context, final RegisteredService service,
                                                         final RegisteredServiceMultifactorAuthenticationProvider provider) {
 
-        final String identifier = provider.provide(service.getAuthenticationPolicy());
-        if (StringUtils.isBlank(identifier)) {
-            logger.warn("Multifactor authentication provider {} could not provide CAS with its identifier.", provider);
-            return null;
+        try {
+            final String identifier = provider.provide(service);
+            if (StringUtils.isBlank(identifier)) {
+                logger.warn("Multifactor authentication provider {} could not provide CAS with its identifier.", provider);
+                return null;
+            }
+            logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
+                    provider, service.getName());
+
+            final Event event = new Event(this, identifier);
+            logger.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...",
+                    event.getId());
+
+            final TransitionDefinition def = context.getMatchingTransition(event.getId());
+            if (def == null) {
+                logger.warn("Transition definition cannot be found for event [{}]", event.getId());
+                throw new AuthenticationException();
+            }
+            logger.debug("Found matching transition [{}] with target [{}] for event [{}].",
+                    def.getId(), def.getTargetStateId(), event.getId());
+
+
+            return event;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-        logger.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                provider, service.getName());
-
-        final Event event = new Event(this, identifier);
-        logger.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...",
-                event.getId());
-
-        final TransitionDefinition def = context.getMatchingTransition(event.getId());
-        if (def == null) {
-            logger.warn("Transition definition cannot be found for event [{}]", event.getId());
-            throw new UnrecognizedAuthenticationMethodException(identifier);
-        }
-        logger.debug("Found matching transition [{}] with target [{}] for event [{}].",
-                def.getId(), def.getTargetStateId(), event.getId());
-
-
-        return event;
     }
 
     private RegisteredServiceMultifactorAuthenticationProvider loadMultifactorAuthenticationProvider(final String provider) {

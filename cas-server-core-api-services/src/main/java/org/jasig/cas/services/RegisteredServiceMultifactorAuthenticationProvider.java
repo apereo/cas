@@ -1,5 +1,7 @@
 package org.jasig.cas.services;
 
+import org.jasig.cas.authentication.AuthenticationException;
+
 import java.io.Serializable;
 
 /**
@@ -13,8 +15,9 @@ public interface RegisteredServiceMultifactorAuthenticationProvider extends Seri
     /**
      * Provide string.
      *
-     * @param policy the policy
+     * @param service the service
      * @return the string
+     * @throws AuthenticationException the authentication exception
      */
-    String provide(RegisteredServiceAuthenticationPolicy policy);
+    String provide(RegisteredService service) throws AuthenticationException;
 }
