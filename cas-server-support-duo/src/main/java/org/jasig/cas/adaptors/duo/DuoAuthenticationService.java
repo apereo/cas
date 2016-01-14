@@ -123,8 +123,8 @@ public final class DuoAuthenticationService {
     public boolean canPing() {
         try {
             String url = this.duoApiHost.concat("/rest/v1/ping");
-            if (!url.startsWith("http://")) {
-                url = "http://" + url;
+            if (!url.startsWith("http")) {
+                url = "https://" + url;
             }
             final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(url));
             if (msg != null) {
@@ -136,9 +136,8 @@ public final class DuoAuthenticationService {
                         && result.get("response").asText().equalsIgnoreCase("pong")
                         && result.get("stat").asText().equalsIgnoreCase("OK")) {
                     return true;
-                } else {
-                    logger.warn("Could not reach/ping Duo. Response returned is {}", result);
                 }
+                logger.warn("Could not reach/ping Duo. Response returned is {}", result);
             }
         } catch (final Exception e) {
             logger.warn("Pinging Duo has failed with error: {}", e.getMessage(), e);
