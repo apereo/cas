@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SimpleMetadataUIInfo}.
@@ -172,9 +173,7 @@ public final class SimpleMetadataUIInfo implements Serializable {
         final List<Logo> list = new ArrayList<>();
 
         if (uiInfo != null) {
-            for (final Logo d : uiInfo.getLogos()) {
-                list.add(d);
-            }
+            list.addAll(uiInfo.getLogos().stream().collect(Collectors.toList()));
         }
 
         return list;
