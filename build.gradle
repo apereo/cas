@@ -12,7 +12,15 @@ ext {
 buildscript {
     repositories {
         mavenLocal()
+        mavenCentral()
         jcenter()
+        maven {
+            url "${artifactory_contextUrl}/wavity"
+            credentials {
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+            }
+        }
         maven {
             url "https://maven.eveoh.nl/content/repositories/releases"
         }
@@ -22,6 +30,8 @@ buildscript {
     dependencies {
         classpath "org.akhikhl.gretty:gretty:1.2.4"
         classpath "nl.eveoh:gradle-aspectj:1.6"
+		classpath(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '3.1.0')
+		classpath(group: 'wavity-gradle-plugins', name: 'plugins', version: pluginsVersion)
     }
 }
 
@@ -30,6 +40,41 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "maven"
     apply plugin: "signing"
+    
+	apply plugin: 'maven-publish'
+	apply plugin: 'com.wavity.version'
+	
+	group = 'wavity-cas'
+	
+	versions {
+		major = version_major
+		minor = version_minor
+		release = version_release
+	}
+	version = project.versions.getWavityVersion()
+	
+	repositories {
+		maven {
+            url "${artifactory_contextUrl}/wavity"
+            credentials {
+                username = "${artifactory_user}"
+                password = "${artifactory_password}"
+            }
+        }
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+		maven {
+			url 'https://maven.java.net/content/repositories/releases'
+		}
+		maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "https://jitpack.io" }
+        maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
+        maven { url "https://build.shibboleth.net/nexus/content/groups/public" }
+        maven { url "http://files.couchbase.com/maven2" }
+	}
+
 }
 
 eclipse {
@@ -45,19 +90,6 @@ subprojects {
     apply plugin: 'aspectj'
     apply plugin: 'project-report'
     apply from: rootProject.file("gradle/tasks.gradle")
-
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        maven { url "http://repo.maven.apache.org/maven2" }
-        maven { url "https://jitpack.io" }
-        maven { url "http://developer.jasig.org/repo/content/groups/m2-legacy/" }
-        maven { url "https://build.shibboleth.net/nexus/content/groups/public" }
-        maven { url "http://files.couchbase.com/maven2" }
-    }
 
     test {
         enabled = !Boolean.getBoolean("skipTests")
