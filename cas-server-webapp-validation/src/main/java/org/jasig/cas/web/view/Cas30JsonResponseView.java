@@ -1,8 +1,9 @@
 package org.jasig.cas.web.view;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -10,11 +11,11 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Renders the model prepared by CAS in JSON format.
@@ -90,10 +91,8 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         success.setProxyGrantingTicket(getProxyGrantingTicketIou(model));
         final Collection<Authentication> chainedAuthentications = getChainedAuthentications(model);
         if (chainedAuthentications != null && !chainedAuthentications.isEmpty()) {
-            final List<String> proxies = new ArrayList<>();
-            for (final Authentication authn : chainedAuthentications) {
-                proxies.add(authn.getPrincipal().getId());
-            }
+            final List<String> proxies = chainedAuthentications.stream()
+                    .map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
             success.setProxies(proxies);
         }
         return success;
