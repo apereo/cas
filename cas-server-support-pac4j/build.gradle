@@ -28,6 +28,7 @@ dependencies {
         exclude(module: 'xml-apis')
         exclude(module: 'junit')
         exclude(module: 'jcl-over-slf4j')
+        exclude(module: 'jul-to-slf4j')
     }
     compile(group: 'org.pac4j', name: 'pac4j-config', version: pac4jVersion) {
         exclude(module: 'pac4j-core')
@@ -36,6 +37,7 @@ dependencies {
         exclude(module: 'slf4j-api')
         exclude(module: 'joda-time')
         exclude(module: 'json-smart')
+        exclude(module: 'jul-to-slf4j')
     }
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-services')
