@@ -11,7 +11,7 @@ ext {
 
 buildscript {
     repositories {
-        mavenLocal()
+        //mavenLocal()
         mavenCentral()
         jcenter()
         maven {
@@ -61,7 +61,7 @@ allprojects {
                 password = "${artifactory_password}"
             }
         }
-        mavenLocal()
+        //mavenLocal()
         mavenCentral()
         jcenter()
 		maven {
