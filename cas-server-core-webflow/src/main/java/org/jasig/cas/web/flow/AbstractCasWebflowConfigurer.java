@@ -571,9 +571,7 @@ public abstract class AbstractCasWebflowConfigurer {
      */
     protected Mapper createMapperToSubflowState(final List<DefaultMapping> mappings) {
         final DefaultMapper inputMapper = new DefaultMapper();
-        for (final DefaultMapping mapping : mappings) {
-            inputMapper.addMapping(mapping);
-        }
+        mappings.forEach(inputMapper::addMapping);
         return inputMapper;
     }
 
