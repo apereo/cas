@@ -38,10 +38,10 @@ buildscript {
 allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
-    apply plugin: "maven"
+//    apply plugin: "maven"
     apply plugin: "signing"
     
-	apply plugin: 'maven-publish'
+//	apply plugin: 'maven-publish'
 	apply plugin: 'com.wavity.version'
 	
 	group = 'wavity-cas'
@@ -85,6 +85,8 @@ eclipse {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
     apply plugin: 'checkstyle'
     apply plugin: 'findbugs'
     apply plugin: 'aspectj'
