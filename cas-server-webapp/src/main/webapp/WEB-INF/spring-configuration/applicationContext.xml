@@ -136,6 +136,13 @@
           p:afterInitialization="true"/>
 
     <!-- The scheduler bean wires up any triggers that define scheduled tasks -->
-    <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"/>
+    <bean id="scheduler" class="org.jasig.cas.util.AutowiringSchedulerFactoryBean"
+        p:waitForJobsToCompleteOnShutdown="true">
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.scheduler.interruptJobsOnShutdownWithWait">true</prop>
+            </props>
+        </property>
+    </bean>
 
 </beans>
