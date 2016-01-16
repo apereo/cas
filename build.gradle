@@ -792,9 +792,6 @@ allprojects {
             if (details.requested.group == 'org.glassfish' && details.requested.name == 'javax.el') {
                 details.useVersion(javaxElVersion)
             }
-            if (details.requested.group == 'org.eclipse.jetty' && details.requested.name != 'jetty-jsp') {
-                details.useVersion(jettyVersion)
-            }
         }
 
         project.configurations {
