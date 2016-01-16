@@ -30,19 +30,20 @@ buildscript {
     dependencies {
         classpath "org.akhikhl.gretty:gretty:1.2.4"
         classpath "nl.eveoh:gradle-aspectj:1.6"
-		classpath(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '3.1.0')
+		classpath(group: 'org.jfrog.buildinfo', name: 'build-info-extractor-gradle', version: '4.0.0')
 		classpath(group: 'wavity-gradle-plugins', name: 'plugins', version: pluginsVersion)
     }
 }
 
 allprojects {
-    apply plugin: "idea"
-    apply plugin: "eclipse"
-//    apply plugin: "maven"
-    apply plugin: "signing"
-    
-//	apply plugin: 'maven-publish'
+//	apply plugin: 'java'
+//    apply plugin: 'maven'
+//    apply plugin: 'maven-publish'
+//    apply plugin: "idea"
+//    apply plugin: "eclipse"
+//    apply plugin: "signing"    
 	apply plugin: 'com.wavity.version'
+	apply plugin: 'com.jfrog.artifactory'
 	
 	group = 'wavity-cas'
 	
@@ -74,24 +75,79 @@ allprojects {
         maven { url "https://build.shibboleth.net/nexus/content/groups/public" }
         maven { url "http://files.couchbase.com/maven2" }
 	}
-
+	
+	artifactory {
+		contextUrl = "${artifactory_contextUrl}"
+		publish {
+			contextUrl = "${artifactory_contextUrl}"
+			repository {
+				if(project.hasProperty('release')) {
+					repoKey = 'wavity-release'
+				} else {
+					repoKey = 'wavity-snapshot'
+				}
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
+		}
+		resolve {
+			contextUrl = "${artifactory_contextUrl}"
+			repository {
+				repoKey = 'wavity'
+				username = "${artifactory_user}"
+				password = "${artifactory_password}"
+			}
+		}
+		clientConfig.setIncludeEnvVars(true)
+		//clientConfig.info.addEnvironmentProperty('wavity.cas.build.tstamp',new java.util.Date().toString())
+		//clientConfig.info.setBuildName('wavity-cas')
+		//clientConfig.info.setBuildNumber(project.version)
+	}
+	
+	// skip publish of all artifacts
+	artifactoryPublish.skip = true
 }
 
-eclipse {
-    classpath {
-        downloadSources=true
-    }
+project('cas-server-webapp') {
+	// publish only CAS war
+	artifactoryPublish.skip = false
 }
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
+    apply plugin: "idea"
+    apply plugin: "eclipse"
+    apply plugin: "signing"
     apply plugin: 'checkstyle'
     apply plugin: 'findbugs'
     apply plugin: 'aspectj'
     apply plugin: 'project-report'
     apply from: rootProject.file("gradle/tasks.gradle")
+    
+    publishing {
+		publications {
+			mavenJava(MavenPublication) {
+				from components.java
+			}
+		}
+	}
+	
+	artifactory {
+		publish {
+			defaults {
+				publications('mavenJava')
+            	publishArtifacts = true
+			}
+		}
+	}
+	
+	eclipse {
+		classpath {
+			downloadSources=true
+		}
+	}
 
     test {
         enabled = !Boolean.getBoolean("skipTests")
@@ -237,6 +293,7 @@ subprojects {
         provided group: 'javax.el', name: 'javax.el-api', version: javaxElVersion
     }
 
+    /*
     uploadArchives {
         repositories {
             mavenDeployer {
@@ -401,6 +458,7 @@ subprojects {
         }
 
     }
+    */
 
 }
 
