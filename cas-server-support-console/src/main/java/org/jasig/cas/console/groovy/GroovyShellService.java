@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -58,7 +57,7 @@ public class GroovyShellService {
     @Value("${cas.console.scripts.location:classpath:/scripts}")
     private Resource scriptsLocation;
 
-    @Value("${groovy.shell.socket.port:6789}")
+    @Value("${cas.console.socket.port:6789}")
     private int port;
 
     private Map<String, Object> bindings;
