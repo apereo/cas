@@ -55,7 +55,17 @@ ext.libraries = [
         findbugscontrib  : "com.mebigfatguy.fb-contrib:fb-contrib:$findbugsContribVersion",
         findbugs         : "com.google.code.findbugs:findbugs:$findbugsVersion",
         findbugssec      : "com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion",
-        groovy           : "org.codehaus.groovy:groovy-jsr223:$groovyVersion",
+        groovy           : [
+        		dependencies.create("org.codehaus.groovy:groovy-jsr223:$groovyVersion") {
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-console:$groovyVersion") {
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-groovysh:$groovyVersion") {
+                    force = true
+                }
+        ],
         grouper          : dependencies.create("edu.internet2.middleware.grouper:grouperClient:$grouperVersion") {
             exclude(module: 'slf4j-api')
             exclude(module: 'junit')
