@@ -23,10 +23,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- *
  * @author Scott Battaglia
  * @since 3.0.0
- *
  */
 public class InitialFlowSetupActionTests {
     private static final String CONST_CONTEXT_PATH = "/test";
