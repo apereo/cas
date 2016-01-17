@@ -108,11 +108,6 @@ allprojects {
 	artifactoryPublish.skip = true
 }
 
-project('cas-server-webapp') {
-	// publish only CAS war
-	artifactoryPublish.skip = false
-}
-
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
