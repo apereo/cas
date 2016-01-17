@@ -56,7 +56,7 @@ ext.libraries = [
         findbugs         : "com.google.code.findbugs:findbugs:$findbugsVersion",
         findbugssec      : "com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion",
         groovy           : [
-        		dependencies.create("org.codehaus.groovy:groovy-jsr223:$groovyVersion") {
+                dependencies.create("org.codehaus.groovy:groovy-jsr223:$groovyVersion") {
                     force = true
                 },
                 dependencies.create("org.codehaus.groovy:groovy-console:$groovyVersion") {
@@ -579,6 +579,7 @@ ext.libraries = [
                     exclude(module: 'spring-extensions')
                     exclude(module: 'java-support')
                     exclude(module: 'xml-apis')
+                    exclude(module: 'nimbus-jose-jwt')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
@@ -597,6 +598,12 @@ ext.libraries = [
                     exclude(module: 'slf4j-api')
                     exclude(module: 'jcl-over-slf4j')
                     exclude(module: 'bcprov-jdk15on')
+                    force = true
+                },
+                dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'jcl-over-slf4j')
+                    exclude(module: 'nimbus-jose-jwt')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-mongo:$pac4jVersion") {
