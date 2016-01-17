@@ -604,6 +604,7 @@ ext.libraries = [
                     exclude(module: 'slf4j-api')
                     exclude(module: 'jcl-over-slf4j')
                     exclude(module: 'nimbus-jose-jwt')
+                    exclude(module: 'json-smart')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-mongo:$pac4jVersion") {
