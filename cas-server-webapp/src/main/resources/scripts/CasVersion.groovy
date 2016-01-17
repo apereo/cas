@@ -6,7 +6,6 @@ def class CasVersion {
 
         def ticketRegistry = ctx.getBean("ticketRegistry");
         output += "\nTicket registry instance: " + ticketRegistry.getClass().getSimpleName()
-
         return output
     }
 }
