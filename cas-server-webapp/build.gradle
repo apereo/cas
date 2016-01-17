@@ -116,3 +116,24 @@ gretty {
         sslTrustStorePassword = project.ext.jettySslTrustStorePassword
     }
 }
+
+artifactoryPublish.skip = false
+	
+publishing {
+	publications {
+		mavenWeb(MavenPublication) {
+			from components.web
+		}
+	}
+}
+
+artifactory {
+	publish {
+		defaults {
+			publications('mavenWeb')
+			publishArtifacts = true
+		}
+	}
+}
+	
+// EOF
