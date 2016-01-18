@@ -1,23 +1,21 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteCache;
+import org.apache.ignite.IgniteState;
+import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.CachePeekMode;
 import org.apache.ignite.cache.query.QueryCursor;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apache.ignite.Ignite;
-import org.apache.ignite.IgniteCache;
-import org.apache.ignite.IgniteState;
-import org.apache.ignite.Ignition;
 import org.apache.ignite.lang.IgniteBiPredicate;
 import org.apache.ignite.ssl.SslContextFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +23,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-import java.util.HashSet;
-import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.cache.Cache;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
@@ -53,7 +50,7 @@ import javax.validation.constraints.NotNull;
  * @since 4.3.0`
  */
 @Component("igniteTicketRegistry")
-public final class IgniteTicketRegistry extends AbstractCrypticTicketRegistry {
+public final class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Autowired
     @NotNull
@@ -113,7 +110,6 @@ public final class IgniteTicketRegistry extends AbstractCrypticTicketRegistry {
      * Instantiates a new Ignite ticket registry.
      */
     public IgniteTicketRegistry() {
-        super();
     }
 
     @Override
@@ -130,40 +126,14 @@ public final class IgniteTicketRegistry extends AbstractCrypticTicketRegistry {
         }
     }
 
+
     @Override
-    public boolean deleteTicket(final String ticketIdToDelete) {
-        final String ticketId = encodeTicketId(ticketIdToDelete);
-        if (StringUtils.isBlank(ticketId)) {
-            return false;
-        }
-
+    public boolean deleteSingleTicket(final String ticketId) {
         final Ticket ticket = getTicket(ticketId);
-        if (ticket == null) {
-            return false;
+        if (ticket instanceof ServiceTicket) {
+            return this.serviceTicketsCache.remove(ticketId);
         }
-
-        if (ticket instanceof TicketGrantingTicket) {
-            logger.debug("Removing ticket [{}] and its children from the registry.", ticket);
-            return deleteTicketAndChildren((TicketGrantingTicket) ticket);
-        }
-
-        logger.debug("Removing ticket [{}] from the registry.", ticket);
-        return this.serviceTicketsCache.remove(ticketId);
-    }
-
-    /**
-     * Delete the TGT and all of its service tickets.
-     *
-     * @param ticket the ticket
-     * @return boolean indicating whether ticket was deleted or not
-     */
-    private boolean deleteTicketAndChildren(final TicketGrantingTicket ticket) {
-        final Map<String, Service> services = ticket.getServices();
-        if (services != null && !services.isEmpty()) {
-            this.serviceTicketsCache.removeAll(services.keySet());
-        }
-
-        return this.ticketGrantingTicketsCache.remove(ticket.getId());
+        return this.ticketGrantingTicketsCache.remove(ticketId);
     }
 
     @Override

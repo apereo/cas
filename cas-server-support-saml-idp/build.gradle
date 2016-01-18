@@ -2,140 +2,16 @@ description = 'Apereo CAS SAML Identity Provider Support'
 dependencies {
     compile project(':cas-server-core-services')
     compile project(':cas-server-core-logout')
-    compile(project(':cas-server-support-saml')) {
-        exclude(module: 'xml-apis')
-        exclude(module: 'guava')
-    }
-
-    compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
-    compile(group: 'org.jasig.cas.client', name: 'cas-client-core', version: casClientVersion) {
-        exclude(module: 'servlet-api')
-        exclude(module: 'log4j-over-slf4j')
-        exclude(module: 'bcprov-jdk15')
-        exclude(module: 'slf4j-api')
-    }
-    compile(group: 'net.shibboleth.idp', name: 'idp-core', version: idpVersion) {
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-context-support')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'joda-time')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'httpclient')
-        exclude(module: 'bcprov-jdk15on')
-        exclude(module: 'guava')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'spring-webmvc')
-        exclude(module: 'logback-core')
-        exclude(module: 'logback-classic')
-    }
-
-    compile(group: 'net.shibboleth.idp', name: 'idp-attribute-filter-api', version: idpVersion) {
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-context-support')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'joda-time')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'httpclient')
-        exclude(module: 'bcprov-jdk15on')
-        exclude(module: 'guava')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'spring-webmvc')
-        exclude(module: 'logback-core')
-        exclude(module: 'logback-classic')
-    }
-    compile(group: 'net.shibboleth.idp', name: 'idp-profile-spring', version: idpVersion) {
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-context-support')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'joda-time')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'httpclient')
-        exclude(module: 'bcprov-jdk15on')
-        exclude(module: 'guava')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'spring-webmvc')
-        exclude(module: 'logback-core')
-        exclude(module: 'logback-classic')
-    }
-    compile(group: 'net.shibboleth.idp', name: 'idp-attribute-resolver-api', version: idpVersion) {
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-context-support')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'joda-time')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'httpclient')
-        exclude(module: 'bcprov-jdk15on')
-        exclude(module: 'guava')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'spring-webmvc')
-        exclude(module: 'logback-core')
-        exclude(module: 'logback-classic')
-    }
-    compile(group: 'net.shibboleth.idp', name: 'idp-installer', version: idpVersion) {
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-context-support')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'joda-time')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'httpclient')
-        exclude(module: 'bcprov-jdk15on')
-        exclude(module: 'guava')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'spring-webmvc')
-        exclude(module: 'logback-core')
-        exclude(module: 'logback-classic')
-    }
-    compile(group: 'net.shibboleth.idp', name: 'idp-saml-impl', version: idpVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'joda-time')
-        exclude(module: 'guava')
-        exclude(module: 'httpclient')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-context-support')
-        exclude(module: 'bcprov-jdk15on')
-        exclude(module: 'idwsfconsumer')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'spring-webmvc')
-        exclude(module: 'spring-web')
-        exclude(module: 'logback-core')
-        exclude(module: 'logback-classic')
-    }
-    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
-    }
-    runtime(group:'org.codehaus.groovy', name:'groovy-jsr223', version: groovyVersion) {
-
-    }
+    compile project(':cas-server-support-saml')
+    compile libraries.commons
+    compile libraries.casclient
+    compile libraries.shibidp
+    runtime libraries.hibernate
+    runtime libraries.groovy
+    testCompile libraries.metrics
+    testCompile libraries.log4j
     testCompile project(':cas-server-core-util')
-    testCompile group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
-    testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version: dropwizardMetricsVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context-support')
-        exclude(module: 'spring-aop')
-    }
-    testCompile(project(path: ":cas-server-support-saml", configuration: "tests")) {
-        exclude(module: 'xml-apis')
-    }
+    testCompile project(path: ":cas-server-support-saml", configuration: "tests") 
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core')
     testCompile project(':cas-server-core-logout')

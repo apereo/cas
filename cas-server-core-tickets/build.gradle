@@ -2,21 +2,12 @@
 description = 'Apereo CAS Core Tickets'
 dependencies {
   compile project(':cas-server-core-api-ticket')
-  compile(group: 'org.hibernate', name: 'hibernate-core', version:hibernateVersion) {
-    exclude(module: 'jboss-logging-annotations')
-    exclude(module: 'javassist')
-    exclude(module: 'xml-apis')  
-  }
-  compile(group: 'org.reflections', name: 'reflections', version: reflectionsVersion) {
-    exclude(module: 'guava')
-  }
+  compile libraries.hibernate
+  compile libraries.quartz
+
   compile project(':cas-server-core-authentication')
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-web')
-  compile(group: 'org.quartz-scheduler', name: 'quartz', version:quartzVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'c3p0')
-  }
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
   testCompile project(path: ":cas-server-core-util", configuration: "tests")
   testCompile project(':cas-server-core-services')

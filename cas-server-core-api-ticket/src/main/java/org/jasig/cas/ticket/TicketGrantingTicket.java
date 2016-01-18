@@ -2,7 +2,9 @@ package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +18,9 @@ import java.util.Map;
  */
 public interface TicketGrantingTicket extends Ticket {
 
-    /** The prefix to use when generating an id for a Ticket Granting Ticket. */
+    /**
+     * The prefix to use when generating an id for a Ticket Granting Ticket.
+     */
     String PREFIX = "TGT";
 
 
@@ -32,20 +36,19 @@ public interface TicketGrantingTicket extends Ticket {
      * A supplemental authentication is one other than the one used to create the ticket,
      * for example, a forced authentication that happens after the beginning of a CAS SSO session.
      *
-     * @return Non-null list of supplemental authentications.
+     * @return Non -null list of supplemental authentications.
      */
     List<Authentication> getSupplementalAuthentications();
 
     /**
      * Grant a ServiceTicket for a specific service.
      *
-     * @param id The unique identifier for this ticket.
-     * @param service The service for which we are granting a ticket
-     * @param expirationPolicy the expiration policy.
-     * @param credentialsProvided if the credentials are provided.
+     * @param id                         The unique identifier for this ticket.
+     * @param service                    The service for which we are granting a ticket
+     * @param expirationPolicy           the expiration policy.
+     * @param credentialsProvided        if the credentials are provided.
      * @param onlyTrackMostRecentSession track the most recent session by keeping the latest service ticket
-     * @return the service ticket granted to a specific service for the
-     * principal of the TicketGrantingTicket
+     * @return the service ticket granted to a specific service for the principal of the TicketGrantingTicket
      */
     ServiceTicket grantServiceTicket(String id, Service service,
         ExpirationPolicy expirationPolicy, boolean credentialsProvided, boolean onlyTrackMostRecentSession);
@@ -54,8 +57,15 @@ public interface TicketGrantingTicket extends Ticket {
      * Gets an immutable map of service ticket and services accessed by this ticket-granting ticket.
      *
      * @return an immutable map of service ticket and services accessed by this ticket-granting ticket.
-    */
+     */
     Map<String, Service> getServices();
+
+    /**
+     * Gets proxy granting tickets created by this TGT.
+     *
+     * @return the proxy granting tickets
+     */
+    Collection<ProxyGrantingTicket> getProxyGrantingTickets();
 
     /**
      * Remove all services of the TGT (at logout).
@@ -78,7 +88,7 @@ public interface TicketGrantingTicket extends Ticket {
     /**
      * Gets the ticket-granting ticket at the root of the ticket hierarchy.
      *
-     * @return Non-null root ticket-granting ticket.
+     * @return Non -null root ticket-granting ticket.
      */
     TicketGrantingTicket getRoot();
 
@@ -86,18 +96,17 @@ public interface TicketGrantingTicket extends Ticket {
      * Gets all authentications ({@link #getAuthentication()}, {@link #getSupplementalAuthentications()}) from this
      * instance and all dependent tickets that reference this one.
      *
-     * @return Non-null list of authentication associated with this ticket in leaf-first order.
+     * @return Non -null list of authentication associated with this ticket in leaf-first order.
      */
     List<Authentication> getChainedAuthentications();
 
 
     /**
-    * Gets the service that produced a proxy-granting ticket.
-    *
-    * @return  Service that produced proxy-granting ticket or null if this is
-    * not a proxy-granting ticket.
+     * Gets the service that produced a proxy-granting ticket.
+     *
+     * @return Service that produced proxy-granting ticket or null if this is not a proxy-granting ticket.
      * @since 4.1
-    */
+     */
     Service getProxiedBy();
 
 }
