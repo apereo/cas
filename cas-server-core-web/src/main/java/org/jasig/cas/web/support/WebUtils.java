@@ -477,13 +477,23 @@ public final class WebUtils {
     }
 
     /**
-     * Put authentication result builder.
+     * Put authentication into conversation scope.
      *
      * @param authentication the authentication
      * @param ctx            the ctx
      */
     public static void putAuthentication(final Authentication authentication, final RequestContext ctx) {
         ctx.getConversationScope().put("authentication", authentication);
+    }
+
+    /**
+     * Gets authentication from conversation scope.
+     *
+     * @param ctx            the ctx
+     * @return the authentication
+     */
+    public static Authentication getAuthentication(final RequestContext ctx) {
+        return ctx.getConversationScope().get("authentication", Authentication.class);
     }
 
     /**
