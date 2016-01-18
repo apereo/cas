@@ -55,7 +55,17 @@ ext.libraries = [
         findbugscontrib  : "com.mebigfatguy.fb-contrib:fb-contrib:$findbugsContribVersion",
         findbugs         : "com.google.code.findbugs:findbugs:$findbugsVersion",
         findbugssec      : "com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion",
-        groovy           : "org.codehaus.groovy:groovy-jsr223:$groovyVersion",
+        groovy           : [
+                dependencies.create("org.codehaus.groovy:groovy-jsr223:$groovyVersion") {
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-console:$groovyVersion") {
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-groovysh:$groovyVersion") {
+                    force = true
+                }
+        ],
         grouper          : dependencies.create("edu.internet2.middleware.grouper:grouperClient:$grouperVersion") {
             exclude(module: 'slf4j-api')
             exclude(module: 'junit')
@@ -569,6 +579,7 @@ ext.libraries = [
                     exclude(module: 'spring-extensions')
                     exclude(module: 'java-support')
                     exclude(module: 'xml-apis')
+                    exclude(module: 'nimbus-jose-jwt')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
@@ -587,6 +598,13 @@ ext.libraries = [
                     exclude(module: 'slf4j-api')
                     exclude(module: 'jcl-over-slf4j')
                     exclude(module: 'bcprov-jdk15on')
+                    force = true
+                },
+                dependencies.create("org.pac4j:pac4j-oidc:$pac4jVersion") {
+                    exclude(module: 'slf4j-api')
+                    exclude(module: 'jcl-over-slf4j')
+                    exclude(module: 'nimbus-jose-jwt')
+                    exclude(module: 'json-smart')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-mongo:$pac4jVersion") {
@@ -781,9 +799,6 @@ allprojects {
             }
             if (details.requested.group == 'org.glassfish' && details.requested.name == 'javax.el') {
                 details.useVersion(javaxElVersion)
-            }
-            if (details.requested.group == 'org.eclipse.jetty' && details.requested.name != 'jetty-jsp') {
-                details.useVersion(jettyVersion)
             }
         }
 
