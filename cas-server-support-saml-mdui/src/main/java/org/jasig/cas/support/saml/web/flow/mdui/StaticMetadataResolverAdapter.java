@@ -8,11 +8,11 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
@@ -34,6 +34,10 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
       * minutes by default.
       **/
     private int refreshIntervalInMinutes = DEFAULT_METADATA_REFRESH_INTERNAL_MINS;
+
+    @Autowired
+    @Qualifier("scheduler")
+    private Scheduler scheduler;
 
     /**
      * New ctor - required for serialization and job scheduling.
@@ -77,10 +81,7 @@ public final class StaticMetadataResolverAdapter extends AbstractMetadataResolve
                         .repeatForever()).build();
 
         try {
-            final SchedulerFactory schFactory = new StdSchedulerFactory();
-            final Scheduler sch = schFactory.getScheduler();
-            sch.start();
-            sch.scheduleJob(job, trigger);
+            scheduler.scheduleJob(job, trigger);
         } catch (final SchedulerException e) {
             throw new RuntimeException(e);
         }
