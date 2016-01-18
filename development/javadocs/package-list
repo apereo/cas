@@ -24,6 +24,7 @@ org.jasig.cas.authentication.principal
 org.jasig.cas.authentication.principal.cache
 org.jasig.cas.authentication.support
 org.jasig.cas.authorization.generator
+org.jasig.cas.console.groovy
 org.jasig.cas.couchbase.core
 org.jasig.cas.extension.clearpass
 org.jasig.cas.grouper.services
