@@ -4,11 +4,8 @@ dependencies {
     compile project(':cas-server-core-tickets')
     compile project(':cas-server-core-util')
     compile project(':cas-server-support-couchbase-core')
-
-    runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
-    }
+    compile libraries.spring
+    compile libraries.hibernate
     testCompile project(':cas-server-core-tickets')
     testCompile project(path: ":cas-server-core-tickets", configuration: "tests")
     testCompile project(path: ":cas-server-core-util", configuration: "tests")

@@ -101,7 +101,7 @@ public final class DistributedTicketRegistryTests {
         assertNull(this.ticketRegistry.getTicket("fdfas"));
     }
 
-    private static class TestDistributedTicketRegistry extends AbstractDistributedTicketRegistry {
+    private static class TestDistributedTicketRegistry extends AbstractTicketRegistry {
         private final DistributedTicketRegistryTests parent;
         private final Map<String, Ticket> tickets = new HashMap<>();
 
@@ -120,11 +120,6 @@ public final class DistributedTicketRegistryTests {
         }
 
         @Override
-        public boolean deleteTicket(final String ticketId) {
-            return this.tickets.remove(ticketId) != null;
-        }
-
-        @Override
         public Ticket getTicket(final String ticketId) {
             return getProxiedTicketInstance(this.tickets.get(ticketId));
         }
@@ -137,6 +132,11 @@ public final class DistributedTicketRegistryTests {
         @Override
         protected boolean needsCallback() {
             return true;
+        }
+
+        @Override
+        public boolean deleteSingleTicket(final String ticketId) {
+            return this.tickets.remove(ticketId) != null;
         }
     }
 }
