@@ -10,19 +10,15 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
-import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +59,10 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @Autowired
     @NotNull
     private ApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("scheduler")
+    private Scheduler scheduler;
 
     @Autowired
     @Qualifier("logoutManager")
@@ -251,13 +251,8 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
                     .withIntervalInMinutes(this.refreshInterval)
                     .repeatForever()).build();
 
-            final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
-            final SchedulerFactory schFactory = new StdSchedulerFactory();
-            final Scheduler sch = schFactory.getScheduler();
-            sch.setJobFactory(jobFactory);
-            sch.start();
-            logger.debug("Started {} scheduler", this.getClass().getName());
-            sch.scheduleJob(job, trigger);
+            logger.debug("Scheduling {} job", this.getClass().getName());
+            scheduler.scheduleJob(job, trigger);
             logger.info("{} will clean tickets every {} seconds",
                 this.getClass().getSimpleName(),
                 TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
