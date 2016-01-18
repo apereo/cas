@@ -1,0 +1,11 @@
+description = 'Apereo CAS Groovy Console Support'
+dependencies {
+
+    compile libraries.jackson
+    compile libraries.spring
+    runtime libraries.hibernate
+    compile libraries.groovy
+
+}
+
+
