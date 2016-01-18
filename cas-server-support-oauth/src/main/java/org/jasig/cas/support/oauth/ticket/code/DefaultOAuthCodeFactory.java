@@ -29,23 +29,52 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
     /** Default instance for the ticket id generator. */
     @NotNull
-    protected UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    @Autowired(required = false)
+    @Qualifier("oAuthCodeIdGenerator")
+    protected UniqueTicketIdGenerator oAuthCodeIdGenerator = new DefaultUniqueTicketIdGenerator();
 
 
     /** ExpirationPolicy for OAuth code. */
     @Autowired(required = false)
     @Qualifier("oAuthCodeExpirationPolicy")
-    protected ExpirationPolicy oAuthCodeExpirationPolicy;
+    protected ExpirationPolicy expirationPolicy;
 
+    @Override
     public OAuthCode create(final Service service, final Authentication authentication) {
-        CommonHelper.assertNotNull("oAuthCodeExpirationPolicy", oAuthCodeExpirationPolicy);
+        CommonHelper.assertNotNull("expirationPolicy", expirationPolicy);
 
-        final String codeId = defaultServiceTicketIdGenerator.getNewTicketId(OAuthCode.PREFIX);
-        return new OAuthCodeImpl(codeId, service, authentication, oAuthCodeExpirationPolicy);
+        final String codeId = oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
+        return new OAuthCodeImpl(codeId, service, authentication, expirationPolicy);
     }
 
     @Override
     public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
         return (T) this;
+    }
+
+    /**
+     * Get the OAuth code identifier generator.
+     *
+     * @return the OAuth code identifier generator.
+     */
+    public UniqueTicketIdGenerator getoAuthCodeIdGenerator() {
+        return oAuthCodeIdGenerator;
+    }
+
+    /**
+     * Set the OAuth code identifier generator.
+     *
+     * @param oAuthCodeIdGenerator the OAuth code identifier generator.
+     */
+    public void setoAuthCodeIdGenerator(final UniqueTicketIdGenerator oAuthCodeIdGenerator) {
+        this.oAuthCodeIdGenerator = oAuthCodeIdGenerator;
+    }
+
+    public ExpirationPolicy getExpirationPolicy() {
+        return expirationPolicy;
+    }
+
+    public void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {
+        this.expirationPolicy = expirationPolicy;
     }
 }

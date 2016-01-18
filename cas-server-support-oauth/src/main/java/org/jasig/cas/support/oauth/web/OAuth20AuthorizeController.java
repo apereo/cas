@@ -1,7 +1,9 @@
 package org.jasig.cas.support.oauth.web;
 
-import org.jasig.cas.authentication.*;
-import org.jasig.cas.authentication.principal.*;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.authentication.principal.PrincipalFactory;
+import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
@@ -42,14 +44,7 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
     @Qualifier("defaultPrincipalFactory")
     private PrincipalFactory principalFactory;
 
-    /**
-     * Receive authorize calls.
-     *
-     * @param request the HTTP request
-     * @param response the HTTP response
-     * @return the model and view
-     * @throws Exception
-     */
+    @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         if (!verifyAuthorizeRequest(request)) {
@@ -113,11 +108,21 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
             && checkCallbackValid(request);
     }
 
+    /**
+     * Get the OAuth code factory.
+     *
+     * @return the OAuth code factory.
+     */
     public OAuthCodeFactory getoAuthCodeFactory() {
         return oAuthCodeFactory;
     }
 
-    public void setoAuthCodeFactory(OAuthCodeFactory oAuthCodeFactory) {
+    /**
+     * Set the OAuth code factory.
+     *
+     * @param oAuthCodeFactory the OAuth code factory.
+     */
+    public void setoAuthCodeFactory(final OAuthCodeFactory oAuthCodeFactory) {
         this.oAuthCodeFactory = oAuthCodeFactory;
     }
 
@@ -125,7 +130,7 @@ public final class OAuth20AuthorizeController extends BaseOAuthWrapperController
         return principalFactory;
     }
 
-    public void setPrincipalFactory(PrincipalFactory principalFactory) {
+    public void setPrincipalFactory(final PrincipalFactory principalFactory) {
         this.principalFactory = principalFactory;
     }
 }

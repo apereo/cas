@@ -12,5 +12,12 @@ import org.jasig.cas.ticket.TicketFactory;
  */
 public interface OAuthCodeFactory extends TicketFactory {
 
+    /**
+     * Create an OAuth code.
+     *
+     * @param service the service
+     * @param authentication the authentication
+     * @return the OAuth code
+     */
     OAuthCode create(Service service, Authentication authentication);
 }

@@ -36,6 +36,7 @@ public class OAuth20CallbackAuthorizeController extends AbstractController {
         }
     }
 
+    @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         CommonHelper.assertNotNull("callbackController", callbackController);
 
