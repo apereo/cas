@@ -99,7 +99,6 @@ This project includes:
   commons-beanutils-core under Apache License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
   Cryptacular Library under Apache 2 or GNU Lesser General Public License
-  de.javakaffee:kryo-serializers under Apache License, Version 2.0
   Digester under The Apache Software License, Version 2.0
   dom4j under BSD License
   ehcache under The Apache Software License, Version 2.0
@@ -115,6 +114,7 @@ This project includes:
   fongo under The Apache Software License, Version 2.0
   FreeMarker under Apache License, Version 2.0
   GeoJson POJOs for Jackson under The Apache Software License, Version 2.0
+  gnu.getopt:java-getopt under GNU Lesser General Public License, version 2.1
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   guice under The Apache Software License, Version 2.0
   Hamcrest Core under New BSD License
@@ -180,6 +180,7 @@ This project includes:
   JUnit under Eclipse Public License 1.0
   JVM Integration for Metrics under Apache License 2.0
   Kryo under New BSD License
+  kryo serializers under Apache License, Version 2.0
   Lang under The Apache Software License, Version 2.0
   LDAPTIVE under Apache 2 or GNU Lesser General Public License
   LDAPTIVE UNBOUNDID PROVIDER under Apache 2 or GNU Lesser General Public License
@@ -207,7 +208,6 @@ This project includes:
   net.shibboleth.idp:idp-session-api under Apache License, Version 2.0
   Objenesis under Apache 2
   OGNL - Object Graph Navigation Library under Apache License, Version 2.0
-  ON Enterprise Server JAR under GNU Lesser General Public License (LGPL)
   OpenID4Java under Apache 2
   OpenSAML :: Core under The Apache Software License, Version 2.0
   OpenSAML :: Messaging API under The Apache Software License, Version 2.0
@@ -228,6 +228,7 @@ This project includes:
   pac4j for OAuth protocol under The Apache Software License, Version 2.0
   Person Directory API under Apache License Version 2.0
   Person Directory Implementations under Apache License Version 2.0
+  Protocol Buffer Java API under New BSD license
   quartz under The Apache Software License, Version 2.0
   ReflectASM under New BSD License
   Reflections under WTFPL or The New BSD License
