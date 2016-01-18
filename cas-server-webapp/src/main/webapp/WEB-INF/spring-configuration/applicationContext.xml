@@ -69,4 +69,20 @@
           -->
     </bean>
 
+    <!-- The Quartz scheduler used by any scheduled tasks -->
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+        p:waitForJobsToCompleteOnShutdown="${scheduler.shutdown.wait:true}">
+        <property name="jobFactory">
+            <bean class="org.jasig.cas.util.CasSpringBeanJobFactory" />
+        </property>
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.scheduler.interruptJobsOnShutdown">${scheduler.shutdown.interruptJobs:true}</prop>
+                <prop key="org.quartz.scheduler.interruptJobsOnShutdownWithWait">
+                    ${scheduler.shutdown.interruptJobs:true}
+                </prop>
+            </props>
+        </property>
+    </bean>
+
 </beans>
