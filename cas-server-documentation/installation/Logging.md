@@ -17,12 +17,12 @@ these levels to  `DEBUG`.
 {% highlight xml %}
 ...
 
-<Logger name="org.jasig" level="info" additivity="false">
+<AsyncLogger name="org.jasig" level="info" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</Logger>
+</AsyncLogger>
 
-<Logger name="org.springframework" level="warn" />
+<AsyncLogger name="org.springframework" level="warn" />
 ...
 {% endhighlight %}
 
@@ -35,10 +35,10 @@ The log4j configuration is by default loaded using the following components
 at `cas-server-webapp/src/main/webapp/WEB-INF/spring-configuration/log4jConfiguration.xml`:
 
 {% highlight xml %}
-<bean id="log4jInitialization" class="org.jasig.cas.util.CasLoggerContextInitializer"
+<bean id="log4jInitialization" class="org.jasig.cas.util.CasAsyncLoggerContextInitializer"
     c:logConfigurationField="log4jConfiguration"
     c:logConfigurationFile="${log4j.config.location:classpath:log4j2.xml}"
-    c:loggerContextPackageName="org.apache.logging.log4j.web"/>
+    c:AsyncLoggerContextPackageName="org.apache.logging.log4j.web"/>
 {% endhighlight %}
 
 It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
@@ -87,38 +87,38 @@ server environment.
 {% endhighlight %}
 
 
-###Loggers
-Additional loggers are available to specify the logging level for component categories.
+###AsyncLoggers
+Additional AsyncLoggers are available to specify the logging level for component categories.
 
 {% highlight xml %}
-<Logger name="org.jasig" level="info" additivity="false">
+<AsyncLogger name="org.jasig" level="info" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</Logger>
-<Logger name="org.springframework" level="warn" />
-<Logger name="org.springframework.webflow" level="warn" />
-<Logger name="org.springframework.web" level="warn" />
-<Logger name="org.springframework.security" level="warn" />
+</AsyncLogger>
+<AsyncLogger name="org.springframework" level="warn" />
+<AsyncLogger name="org.springframework.webflow" level="warn" />
+<AsyncLogger name="org.springframework.web" level="warn" />
+<AsyncLogger name="org.springframework.security" level="warn" />
 
-<Logger name="org.jasig.cas.web.flow" level="info" additivity="true">
+<AsyncLogger name="org.jasig.cas.web.flow" level="info" additivity="true">
     <AppenderRef ref="file"/>
-</Logger>
-<Logger name="org.jasig.inspektr.audit.support" level="info">
+</AsyncLogger>
+<AsyncLogger name="org.jasig.inspektr.audit.support" level="info">
     <AppenderRef ref="file"/>
-</Logger>
+</AsyncLogger>
 <Root level="error">
     <AppenderRef ref="console"/>
 </Root>
 {% endhighlight %}
 
-If you wish enable another package for logging, you can simply add another `Logger`
+If you wish enable another package for logging, you can simply add another `AsyncLogger`
 element to the configuration. Here is an example:
 
 {% highlight xml %}
-<Logger name="org.ldaptive" level="debug" additivity="false">
+<AsyncLogger name="org.ldaptive" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
-</Logger>
+</AsyncLogger>
 {% endhighlight %}
 
 ##Log Data Sanitation
@@ -140,3 +140,9 @@ SERVER IP ADDRESS: ...
 
 Certain number of characters are left at the trailing end of the ticket id to assist with
 troubleshooting and diagnostics. This is achieved by providing a specific binding for the SLF4j configuration.
+
+##AsyncLoggers Shutdown with Tomcat
+
+Log4j automatically insert itself into the runtime application context in a Servlet 3 environment (i.e. Tomcat 8.x) and will clean up the logging context once the container is instructed to shut down. However, Tomcat ignores all JAR files named log4j.jar, which prevents this feature from working. You may need to change `catalina.properties` and remove "log4j.jar" from the `jarsToSkip` property. You may need to do something similar on other containers if they skip scanning Log4j JAR files.
+
+Failure to do so will stop Tomcat to gracefully shut down and causes logger context threads to hang. 
