@@ -1,5 +1,6 @@
 package org.jasig.cas.adaptors.duo;
 
+import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.AuthenticationResultBuilder;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.principal.Service;
@@ -8,6 +9,8 @@ import org.jasig.cas.web.support.WebUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Set;
 
 /**
  * This is {@link DuoAuthenticationWebflowEventResolver }.
@@ -19,17 +22,17 @@ import org.springframework.webflow.execution.RequestContext;
 public class DuoAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     @Override
-    protected Event resolveInternal(final RequestContext requestContext) {
+    protected Set<Event> resolveInternal(final RequestContext requestContext) {
         try {
             final Credential credential = getCredentialFromContext(requestContext);
             AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(requestContext);
             builder = this.authenticationSystemSupport.handleAuthenticationTransaction(builder, credential);
             final Service service = WebUtils.getService(requestContext);
 
-            return grantTicketGrantingTicketToAuthenticationResult(requestContext, builder, service);
+            return ImmutableSet.of(grantTicketGrantingTicketToAuthenticationResult(requestContext, builder, service));
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
-            return new Event(this, "error");
+            return ImmutableSet.of(new Event(this, "error"));
         }
     }
 }

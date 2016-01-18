@@ -1,5 +1,6 @@
 package org.jasig.cas.web.flow.authentication;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.authentication.AuthenticationException;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Set;
+
 /**
  * This is {@link ServiceTicketRequestWebflowEventResolver}.
  *
@@ -24,9 +27,9 @@ import org.springframework.webflow.execution.RequestContext;
 @Component("serviceTicketRequestWebflowEventResolver")
 public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflowEventResolver {
     @Override
-    public Event resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) {
         if (isRequestAskingForServiceTicket(context)) {
-            return grantServiceTicket(context);
+            return ImmutableSet.of(grantServiceTicket(context));
         }
         return null;
     }

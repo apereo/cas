@@ -1,5 +1,6 @@
 package org.jasig.cas.web.flow.authentication;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
@@ -7,6 +8,8 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Set;
 
 /**
  * This is {@link LoginTicketRequestValidationWebflowEventResolver}.
@@ -18,9 +21,9 @@ import org.springframework.webflow.execution.RequestContext;
 public class LoginTicketRequestValidationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     @Override
-    public Event resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) {
         if (!checkLoginTicketIfExists(context)) {
-            return returnInvalidLoginTicketEvent(context);
+            return ImmutableSet.of(returnInvalidLoginTicketEvent(context));
         }
         return null;
     }

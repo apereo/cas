@@ -3,6 +3,8 @@ package org.jasig.cas.web.flow.authentication;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Set;
+
 /**
  * This is {@link CasWebflowEventResolver}
  * that decides the next event in the authentication web flow.
@@ -18,5 +20,14 @@ public interface CasWebflowEventResolver {
      * @param context the context
      * @return the event
      */
-    Event resolve(RequestContext context);
+    Set<Event> resolve(RequestContext context);
+
+
+    /**
+     * Resolve single event.
+     *
+     * @param context the context
+     * @return the event
+     */
+    Event resolveSingle(RequestContext context);
 }
