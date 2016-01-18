@@ -33,8 +33,9 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
     @NotNull
     @Value("${tgt.timeToKillInSeconds:7200}")
-    protected long timeout;
+    private long timeout;
 
+    @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         if (!verifyAccessTokenRequest(request)) {
@@ -43,8 +44,8 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
 
         final String codeParameter = request.getParameter(OAuthConstants.CODE);
         final OAuthCodeImpl code = (OAuthCodeImpl) ticketRegistry.getTicket(codeParameter);
-        // service ticket should be valid
-        if (code == null || code.isExpired()) {
+        // code should ne be expired
+        if (code.isExpired()) {
             logger.error("Code expired: {}", code);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
@@ -69,10 +70,12 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      */
     private boolean verifyAccessTokenRequest(final HttpServletRequest request) {
 
-        return checkParameterExist(request, OAuthConstants.CLIENT_ID)
-            && checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-            && checkParameterExist(request, OAuthConstants.CLIENT_SECRET)
-            && checkParameterExist(request, OAuthConstants.CODE)
+        final boolean checkParameterExist = checkParameterExist(request, OAuthConstants.CLIENT_ID)
+                && checkParameterExist(request, OAuthConstants.REDIRECT_URI)
+                && checkParameterExist(request, OAuthConstants.CLIENT_SECRET)
+                && checkParameterExist(request, OAuthConstants.CODE);
+
+        return checkParameterExist
             && checkServiceValid(request)
             && checkCallbackValid(request)
             && checkClientSecret(request);
@@ -82,7 +85,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         return accessTokenFactory;
     }
 
-    public void setAccessTokenFactory(AccessTokenFactory accessTokenFactory) {
+    public void setAccessTokenFactory(final AccessTokenFactory accessTokenFactory) {
         this.accessTokenFactory = accessTokenFactory;
     }
 
@@ -90,7 +93,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         return timeout;
     }
 
-    public void setTimeout(long timeout) {
+    public void setTimeout(final long timeout) {
         this.timeout = timeout;
     }
 }

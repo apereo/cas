@@ -32,6 +32,7 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
 
     private final JsonFactory jsonFactory = new JsonFactory(new ObjectMapper());
 
+    @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
         String accessToken = request.getParameter(OAuthConstants.ACCESS_TOKEN);
