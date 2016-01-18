@@ -10,6 +10,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
+import org.joda.time.DateTime;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -50,10 +51,10 @@ import java.util.concurrent.TimeUnit;
 @Component("jpaTicketRegistry")
 public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry implements Job {
 
-    @Value("${ticket.registry.cleaner.repeatinterval:5000000}")
+    @Value("${ticket.registry.cleaner.repeatinterval:5000}")
     private int refreshInterval;
 
-    @Value("${ticket.registry.cleaner.startdelay:20000}")
+    @Value("${ticket.registry.cleaner.startdelay:20}")
     private int startDelay;
 
     @Autowired
@@ -246,9 +247,9 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(this.refreshInterval)
+                        .withIntervalInSeconds(this.refreshInterval)
                         .repeatForever()).build();
 
                 logger.debug("Scheduling {} job", this.getClass().getName());
