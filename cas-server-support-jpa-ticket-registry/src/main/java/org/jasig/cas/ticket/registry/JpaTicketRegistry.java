@@ -60,7 +60,7 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @NotNull
     private ApplicationContext applicationContext;
 
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("scheduler")
     private Scheduler scheduler;
 
@@ -237,26 +237,26 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
     @PostConstruct
     public void scheduleCleanerJob() {
         try {
+            if (shouldScheduleCleanerJob()) {
+                logger.info("Preparing to schedule cleaner job");
 
-            logger.info("Preparing to schedule cleaner job");
+                final JobDetail job = JobBuilder.newJob(this.getClass())
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .build();
 
-            final JobDetail job = JobBuilder.newJob(this.getClass())
-                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                .build();
+                final Trigger trigger = TriggerBuilder.newTrigger()
+                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                        .withIntervalInMinutes(this.refreshInterval)
+                        .repeatForever()).build();
 
-            final Trigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                .startAt(new Date(System.currentTimeMillis() + this.startDelay))
-                .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                    .withIntervalInMinutes(this.refreshInterval)
-                    .repeatForever()).build();
-
-            logger.debug("Scheduling {} job", this.getClass().getName());
-            scheduler.scheduleJob(job, trigger);
-            logger.info("{} will clean tickets every {} seconds",
-                this.getClass().getSimpleName(),
-                TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
-
+                logger.debug("Scheduling {} job", this.getClass().getName());
+                scheduler.scheduleJob(job, trigger);
+                logger.info("{} will clean tickets every {} seconds",
+                    this.getClass().getSimpleName(),
+                    TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
+            }
         } catch (final Exception e){
             logger.warn(e.getMessage(), e);
         }
@@ -306,5 +306,14 @@ public final class JpaTicketRegistry extends AbstractDistributedTicketRegistry i
             logger.info("Finished ticket cleanup.");
         }
 
+    }
+
+    private boolean shouldScheduleCleanerJob() {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
+            logger.debug("Found CAS servlet application context for ticket management");
+            return true;
+        }
+
+        return false;
     }
 }
