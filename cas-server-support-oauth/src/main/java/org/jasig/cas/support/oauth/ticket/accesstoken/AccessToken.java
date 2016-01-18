@@ -10,5 +10,8 @@ import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
  */
 public interface AccessToken extends OAuthCode {
 
+    /**
+     *  The prefix for access tokens.
+     */
     String PREFIX = "AT";
 }

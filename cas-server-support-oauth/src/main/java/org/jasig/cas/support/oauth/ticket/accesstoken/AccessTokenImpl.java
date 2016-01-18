@@ -5,7 +5,10 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 
-import javax.persistence.*;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -32,6 +35,7 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
      *
      * @param id the unique identifier for the ticket.
      * @param service the service this ticket is for.
+     * @param authentication the authentication.
      * @param expirationPolicy the expiration policy.
      * @throws IllegalArgumentException if the service or authentication are null.
      */

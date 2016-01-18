@@ -10,5 +10,8 @@ import org.jasig.cas.ticket.ServiceTicket;
  */
 public interface OAuthCode extends ServiceTicket {
 
+    /**
+     *  The prefix for OAuth codes.
+     */
     String PREFIX = "COD";
 }

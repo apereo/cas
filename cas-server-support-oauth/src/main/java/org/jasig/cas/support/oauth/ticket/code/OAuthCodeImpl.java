@@ -9,7 +9,12 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.Lob;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -46,6 +51,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      *
      * @param id the unique identifier for the ticket.
      * @param service the service this ticket is for.
+     * @param authentication the authentication.
      * @param expirationPolicy the expiration policy.
      * @throws IllegalArgumentException if the service or authentication are null.
      */
