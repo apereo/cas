@@ -7,7 +7,6 @@ import org.jasig.cas.logout.LogoutManager;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.jasig.cas.web.support.WebUtils;
 import org.joda.time.DateTime;
 import org.quartz.Job;
@@ -16,12 +15,9 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +54,10 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
     @Autowired
     @NotNull
     private ApplicationContext applicationContext;
+
+    @Autowired(required = false)
+    @Qualifier("scheduler")
+    private Scheduler scheduler;
 
     @Autowired
     @Qualifier("logoutManager")
@@ -212,13 +212,8 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
                         .withIntervalInSeconds(this.refreshInterval)
                         .repeatForever()).build();
 
-                final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
-                final SchedulerFactory schFactory = new StdSchedulerFactory();
-                final Scheduler sch = schFactory.getScheduler();
-                sch.setJobFactory(jobFactory);
-                sch.start();
-                logger.debug("Started {} scheduler", this.getClass().getSimpleName());
-                sch.scheduleJob(job, trigger);
+                logger.debug("Scheduling {} job", this.getClass().getSimpleName());
+                scheduler.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} minutes",
                     this.getClass().getSimpleName(),
                     TimeUnit.SECONDS.toMinutes(this.refreshInterval));
@@ -261,7 +256,7 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
     }
 
     private boolean shouldScheduleCleanerJob() {
-        if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
             if (WebUtils.isCasServletInitializing(this.applicationContext)) {
                 logger.debug("Found CAS servlet application context");
                 final String[] aliases =
