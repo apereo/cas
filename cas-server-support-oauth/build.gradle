@@ -3,23 +3,11 @@ description = 'Apereo CAS OAuth Server Support'
 dependencies {
 
   compile project(':cas-server-core-services')
-  compile project(':cas-server-core-tickets')
   compile project(':cas-server-core-web')
-  compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
-    exclude(module: 'spring-webmvc')
-    exclude(module: 'spring-core')
-    exclude(module: 'slf4j-api')
-    exclude(module: 'pac4j-core')
-  }
-  compile(group: 'org.pac4j', name: 'pac4j-cas', version: pac4jVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'joda-time')
-  }
-  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:jacksonDatabindVersion
-  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'jboss-logging')
-  }
+  compile project(':cas-server-core-tickets')
+  compile libraries.pac4j
+  compile libraries.jackson
+  runtime libraries.hibernate
   testCompile project(':cas-server-core-util')
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
   testCompile project(':cas-server-core-logout')

@@ -1,22 +1,20 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
+import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketGrantingTicket;
+
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
-import org.jasig.cas.couchbase.core.CouchbaseClientFactory;
-import org.jasig.cas.ticket.ServiceTicket;
-
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.encrypt.AbstractCrypticTicketRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -39,7 +37,7 @@ import java.util.List;
  * @since 4.2.0
  */
 @Component("couchbaseTicketRegistry")
-public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry implements TicketRegistryState {
+public final class CouchbaseTicketRegistry extends AbstractTicketRegistry implements TicketRegistryState {
     private static final String END_TOKEN = "\u02ad";
 
     private static final View ALL_TICKETS_VIEW = DefaultView.create(
@@ -87,39 +85,33 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
-        logger.debug("Adding ticket {}", ticket);
+    public void addTicket(final Ticket ticketToAdd) {
+        logger.debug("Adding ticket {}", ticketToAdd);
         try {
+            final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document =
                     SerializableDocument.create(ticket.getId(), getTimeout(ticket), ticket);
             couchbase.bucket().upsert(document);
         } catch (final Exception e) {
-            logger.error("Failed adding {}: {}", ticket, e);
-        }
-    }
-
-    @Override
-    public boolean deleteTicket(final String ticketId) {
-        logger.debug("Deleting ticket {}", ticketId);
-        try {
-            couchbase.bucket().remove(ticketId);
-            return true;
-        } catch (final Exception e) {
-            logger.error("Failed deleting {}: {}", ticketId, e);
-            return false;
+            logger.error("Failed adding {}: {}", ticketToAdd, e);
         }
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
         try {
-            final SerializableDocument document = couchbase.bucket().get(ticketId, SerializableDocument.class);
+            final String encTicketId = encodeTicketId(ticketId);
+            if (ticketId == null) {
+                return null;
+            }
+
+            final SerializableDocument document = couchbase.bucket().get(encTicketId, SerializableDocument.class);
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
                 logger.debug("Got ticket {} from registry.", t);
                 return getProxiedTicketInstance(t);
             }
-            logger.debug("Ticket {} not found in registry.", ticketId);
+            logger.debug("Ticket {} not found in registry.", encTicketId);
             return null;
         } catch (final Exception e) {
             logger.error("Failed fetching {}: {}", ticketId, e);
@@ -169,6 +161,17 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
     @Override
     public int serviceTicketCount() {
         return runQuery(ServiceTicket.PREFIX + '-');
+    }
+
+    @Override
+    public boolean deleteSingleTicket(final String ticketId) {
+        logger.debug("Deleting ticket {}", ticketId);
+        try {
+            return couchbase.bucket().remove(ticketId) != null;
+        } catch (final Exception e) {
+            logger.error("Failed deleting {}: {}", ticketId, e);
+            return false;
+        }
     }
 
     private int runQuery(final String prefix) {

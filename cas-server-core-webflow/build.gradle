@@ -1,32 +1,8 @@
 
 description = 'Apereo CAS Core Webflow'
 dependencies {
-    compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-webmvc')
-    }
-    compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
-    compile group: 'org.springframework', name: 'spring-context', version:springVersion
-    compile group: 'org.springframework', name: 'spring-web', version:springVersion
-    compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
-        exclude(module: 'commons-logging')
-    }
-    compile group: 'org.springframework', name: 'spring-beans', version:springVersion
-    compile(group: 'org.springframework.webflow', name: 'spring-binding', version: springWebflowVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-webmvc')
-    }
-    compile group: 'org.apache.commons', name: 'commons-lang3', version:commonsLangVersion
-    compile group: 'com.google.guava', name: 'guava', version:guavaVersion
+    compile libraries.spring
+    compile libraries.hibernate
 }
 
 

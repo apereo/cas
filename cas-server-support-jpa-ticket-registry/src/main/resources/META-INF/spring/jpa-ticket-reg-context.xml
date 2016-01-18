@@ -43,7 +43,7 @@
             id="dataSourceTicket"
             class="com.mchange.v2.c3p0.ComboPooledDataSource"
             p:driverClass="${ticketreg.database.driverClass:org.hsqldb.jdbcDriver}"
-            p:jdbcUrl="jdbc:hsqldb:hsql://localhost:9001/"
+            p:jdbcUrl="${ticketreg.database.url:jdbc:hsqldb:hsql://localhost:9001/}"
             p:user="${ticketreg.database.user:sa}"
             p:password="${ticketreg.database.password:}"
             p:initialPoolSize="${ticketreg.database.pool.minSize:6}"

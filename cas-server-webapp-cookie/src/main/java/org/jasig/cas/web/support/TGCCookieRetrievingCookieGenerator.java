@@ -33,7 +33,7 @@ public class TGCCookieRetrievingCookieGenerator extends CookieRetrievingCookieGe
 
     @Override
     @Autowired
-    public void setCookiePath(@Value("${tgc.path:/cas}")
+    public void setCookiePath(@Value("${tgc.path:}")
                                   final String cookiePath) {
         super.setCookiePath(cookiePath);
     }
