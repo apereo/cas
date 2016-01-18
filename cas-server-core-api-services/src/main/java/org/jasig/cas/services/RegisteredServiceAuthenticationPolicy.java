@@ -25,4 +25,20 @@ public interface RegisteredServiceAuthenticationPolicy extends Serializable {
      * @return the boolean
      */
     boolean isFailOpen();
+
+    /**
+     * Gets principal attribute name trigger.
+     *
+     * @return the principal attribute name trigger
+     */
+    String getPrincipalAttributeNameTrigger();
+
+    /**
+     * Gets principal attribute value to match.
+     * Values may be regex patterns.
+     *
+     * @return the principal attribute value to match
+     */
+    String getPrincipalAttributeValueToMatch();
+
 }

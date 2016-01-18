@@ -36,16 +36,16 @@ public class AuthenticationViaFormAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final Event event = this.loginTicketRequestValidationWebflowEventResolver.resolve(requestContext);
+        final Event event = this.loginTicketRequestValidationWebflowEventResolver.resolveSingle(requestContext);
         if (event != null) {
             return event;
         }
 
-        final Event serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolve(requestContext);
+        final Event serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
         if (serviceTicketEvent != null) {
             return serviceTicketEvent;
         }
 
-        return initialAuthenticationAttemptWebflowEventResolver.resolve(requestContext);
+        return initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
     }
 }

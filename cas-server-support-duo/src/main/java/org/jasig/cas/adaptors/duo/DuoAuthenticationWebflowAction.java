@@ -22,6 +22,6 @@ public class DuoAuthenticationWebflowAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return duoAuthenticationWebflowEventResolver.resolve(requestContext);
+        return duoAuthenticationWebflowEventResolver.resolveSingle(requestContext);
     }
 }
