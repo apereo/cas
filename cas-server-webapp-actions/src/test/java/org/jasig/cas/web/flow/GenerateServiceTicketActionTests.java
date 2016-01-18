@@ -1,10 +1,7 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
-import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
-import org.jasig.cas.authentication.AuthenticationTransaction;
-import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.support.WebUtils;
@@ -38,14 +35,12 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         this.action.setAuthenticationSystemSupport(getAuthenticationSystemSupport());
         this.action.afterPropertiesSet();
 
-        final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                getAuthenticationSystemSupport().getPrincipalElectionStrategy());
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getService(),
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
-        getAuthenticationSystemSupport().getAuthenticationTransactionManager()
-                .handle(transaction,  builder);
-        final AuthenticationContext ctx = builder.build(TestUtils.getService());
-        this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+        final AuthenticationResult authnResult =
+                getAuthenticationSystemSupport()
+                        .handleAndFinalizeSingleAuthenticationTransaction(TestUtils.getService(),
+                                TestUtils.getCredentialsWithSameUsernameAndPassword());
+
+        this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
     }
 
     @Test

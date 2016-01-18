@@ -156,7 +156,7 @@ public final class EhCacheTicketRegistryTests {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TEST", TestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("TEST1"));
+            assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket("DOESNOTEXIST"));
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
             fail("Caught an exception. But no exception should have been thrown.");

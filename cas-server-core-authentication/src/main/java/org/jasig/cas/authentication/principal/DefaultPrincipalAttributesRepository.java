@@ -25,8 +25,8 @@ public final class DefaultPrincipalAttributesRepository extends AbstractPrincipa
 
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
-        logger.debug("{} will return the collection of attributes directly associated with the principal object",
-                this.getClass().getSimpleName());
+        logger.debug("{} will return the collection of attributes directly associated with the principal object which are [{}]",
+                this.getClass().getSimpleName(), p.getAttributes());
         return p.getAttributes();
     }
 

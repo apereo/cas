@@ -22,7 +22,7 @@ public class WarningCookieRetrievingCookieGenerator extends CookieRetrievingCook
 
     @Override
     @Autowired
-    public void setCookiePath(@Value("${warn.cookie.path:/cas}")
+    public void setCookiePath(@Value("${warn.cookie.path:}")
                                   final String cookiePath) {
         super.setCookiePath(cookiePath);
     }

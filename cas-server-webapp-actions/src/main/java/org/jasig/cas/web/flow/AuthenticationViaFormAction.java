@@ -3,11 +3,8 @@ package org.jasig.cas.web.flow;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CentralAuthenticationService;
-import org.jasig.cas.authentication.AuthenticationContext;
-import org.jasig.cas.authentication.AuthenticationContextBuilder;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
-import org.jasig.cas.authentication.AuthenticationTransaction;
-import org.jasig.cas.authentication.DefaultAuthenticationContextBuilder;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.Credential;
@@ -157,15 +154,11 @@ public class AuthenticationViaFormAction {
         final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         try {
             final Service service = WebUtils.getService(context);
-            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
-            final AuthenticationTransaction transaction =
-                    AuthenticationTransaction.wrap(service, credential);
-            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
-            final AuthenticationContext authenticationContext = builder.build(service);
+            final AuthenticationResult authenticationResult =
+                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(
-                    ticketGrantingTicketId, service, authenticationContext);
+                    ticketGrantingTicketId, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
             return newEvent(AbstractCasWebflowConfigurer.TRANSITION_ID_WARN);
@@ -195,14 +188,10 @@ public class AuthenticationViaFormAction {
                                                final MessageContext messageContext) {
         try {
             final Service service = WebUtils.getService(context);
-            final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
-                    this.authenticationSystemSupport.getPrincipalElectionStrategy());
-            final AuthenticationTransaction transaction =
-                    AuthenticationTransaction.wrap(service, credential);
-            this.authenticationSystemSupport.getAuthenticationTransactionManager().handle(transaction,  builder);
-            final AuthenticationContext authenticationContext = builder.build(service);
+            final AuthenticationResult authenticationResult =
+                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
 
-            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext);
+            final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
             putPublicWorkstationToFlowIfRequestParameterPresent(context);

@@ -1,7 +1,7 @@
 package org.jasig.cas;
 
 import com.google.common.base.Predicate;
-import org.jasig.cas.authentication.AuthenticationContext;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.logout.LogoutRequest;
@@ -45,12 +45,12 @@ public interface CentralAuthenticationService {
      * of authentication success are dependent on the implementation, but it SHOULD be safe to assume
      * that at least one credential MUST be authenticated for ticket creation to succeed.
      *
-     * @param context the current authentication context in order to create the ticket.
+     * @param authenticationResult the current authentication result in order to create the ticket.
      * @return Non -null ticket-granting ticket identifier.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if ticket cannot be created
      */
-    TicketGrantingTicket createTicketGrantingTicket(@NotNull AuthenticationContext context)
+    TicketGrantingTicket createTicketGrantingTicket(@NotNull AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException;
 
 
@@ -98,13 +98,13 @@ public interface CentralAuthenticationService {
      *
      * @param ticketGrantingTicketId Proof of prior authentication.
      * @param service                The target service of the ServiceTicket.
-     * @param context             The authentication context established if credentials provided
+     * @param authenticationResult             The authentication context established if credentials provided
      * @return Non -null service ticket identifier.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
-        @NotNull String ticketGrantingTicketId, @NotNull Service service, AuthenticationContext context)
+        @NotNull String ticketGrantingTicketId, @NotNull Service service, AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException;
 
     /**
@@ -152,12 +152,12 @@ public interface CentralAuthenticationService {
      * to other Services.
      *
      * @param serviceTicketId The service ticket identifier that will delegate to a {@link org.jasig.cas.ticket.TicketGrantingTicket}.
-     * @param context     The current authentication context before this ticket can be granted.
+     * @param authenticationResult     The current authentication context before this ticket can be granted.
      * @return Non -null ticket-granting ticket identifier that can grant
      * {@link org.jasig.cas.ticket.ServiceTicket} that proxy authentication.
      * @throws AuthenticationException on errors authenticating the credentials
      * @throws AbstractTicketException if there was an error creating the ticket
      */
-    ProxyGrantingTicket createProxyGrantingTicket(@NotNull String serviceTicketId, @NotNull AuthenticationContext context)
+    ProxyGrantingTicket createProxyGrantingTicket(@NotNull String serviceTicketId, @NotNull AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException;
 }

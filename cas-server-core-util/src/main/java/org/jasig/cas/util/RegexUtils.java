@@ -30,6 +30,7 @@ public final class RegexUtils {
             LOGGER.debug("Pattern {} is a valid regex.", Pattern.compile(pattern).pattern());
             return true;
         } catch (final PatternSyntaxException exception) {
+            LOGGER.debug("Pattern {} is not a valid regex.", pattern);
             return false;
         }
     }

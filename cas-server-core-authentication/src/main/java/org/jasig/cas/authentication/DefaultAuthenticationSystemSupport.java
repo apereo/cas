@@ -1,5 +1,6 @@
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.authentication.principal.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -8,16 +9,18 @@ import org.springframework.stereotype.Component;
  * This is {@link DefaultAuthenticationSystemSupport}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
+ * @see {@link AuthenticationSystemSupport}
  * @since 4.2.0
  */
 @Component("defaultAuthenticationSystemSupport")
 public final class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("defaultAuthenticationTransactionManager")
     private AuthenticationTransactionManager authenticationTransactionManager = new DefaultAuthenticationTransactionManager();
 
-    @Autowired(required=false)
+    @Autowired(required = false)
     @Qualifier("principalElectionStrategy")
     private PrincipalElectionStrategy principalElectionStrategy = new DefaultPrincipalElectionStrategy();
 
@@ -29,6 +32,35 @@ public final class DefaultAuthenticationSystemSupport implements AuthenticationS
     @Override
     public PrincipalElectionStrategy getPrincipalElectionStrategy() {
         return this.principalElectionStrategy;
+    }
+
+    @Override
+    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Credential... credential) throws
+            AuthenticationException {
+
+        return this.handleAuthenticationTransaction(new DefaultAuthenticationResultBuilder(this.principalElectionStrategy), credential);
+    }
+
+    @Override
+    public AuthenticationResultBuilder handleAuthenticationTransaction(final AuthenticationResultBuilder authenticationResultBuilder,
+                                                                       final Credential... credential)
+            throws AuthenticationException {
+
+        this.authenticationTransactionManager.handle(AuthenticationTransaction.wrap(credential), authenticationResultBuilder);
+        return authenticationResultBuilder;
+    }
+
+    @Override
+    public AuthenticationResult finalizeAllAuthenticationTransactions(final AuthenticationResultBuilder authenticationResultBuilder,
+                                                                      final Service service) {
+        return authenticationResultBuilder.build(service);
+    }
+
+    @Override
+    public AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(final Service service, final Credential... credential)
+            throws AuthenticationException {
+
+        return this.finalizeAllAuthenticationTransactions(this.handleInitialAuthenticationTransaction(credential), service);
     }
 
     public void setAuthenticationTransactionManager(final AuthenticationTransactionManager authenticationTransactionManager) {
