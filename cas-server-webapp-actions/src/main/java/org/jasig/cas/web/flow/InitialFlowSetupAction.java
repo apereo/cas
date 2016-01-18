@@ -1,5 +1,6 @@
 package org.jasig.cas.web.flow;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -59,8 +59,6 @@ public final class InitialFlowSetupAction extends AbstractAction {
     @Size(min=1)
     private List<ArgumentExtractor> argumentExtractors;
 
-    /** Boolean to note whether we've set the values on the generators or not. */
-    private boolean pathPopulated;
 
     /** If no authentication request from a service is present, halt and warn the user. */
     private boolean enableFlowOnAbsentServiceRequest = true;
@@ -68,13 +66,23 @@ public final class InitialFlowSetupAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        if (!this.pathPopulated) {
-            final String contextPath = context.getExternalContext().getContextPath();
-            final String cookiePath = StringUtils.hasText(contextPath) ? contextPath + '/' : "/";
-            logger.info("Setting path for cookies to: {} ", cookiePath);
+
+        final String contextPath = context.getExternalContext().getContextPath();
+        final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
+
+        if (StringUtils.isBlank(warnCookieGenerator.getCookiePath())) {
+            logger.info("Setting path for cookies for warn cookie generator to: {} ", cookiePath);
             this.warnCookieGenerator.setCookiePath(cookiePath);
+        } else {
+            logger.debug("Warning cookie path is set to {} and path {}", warnCookieGenerator.getCookieDomain(),
+                    warnCookieGenerator.getCookiePath());
+        }
+        if (StringUtils.isBlank(ticketGrantingTicketCookieGenerator.getCookiePath())) {
+            logger.info("Setting path for cookies for TGC cookie generator to: {} ", cookiePath);
             this.ticketGrantingTicketCookieGenerator.setCookiePath(cookiePath);
-            this.pathPopulated = true;
+        } else {
+            logger.debug("TGC cookie path is set to {} and path {}", ticketGrantingTicketCookieGenerator.getCookieDomain(),
+                    ticketGrantingTicketCookieGenerator.getCookiePath());
         }
 
         WebUtils.putTicketGrantingTicketInScopes(context,
