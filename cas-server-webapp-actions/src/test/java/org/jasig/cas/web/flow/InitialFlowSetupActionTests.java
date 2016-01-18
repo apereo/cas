@@ -23,10 +23,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- *
  * @author Scott Battaglia
  * @since 3.0.0
- *
  */
 public class InitialFlowSetupActionTests {
     private static final String CONST_CONTEXT_PATH = "/test";
@@ -43,7 +41,9 @@ public class InitialFlowSetupActionTests {
     @Before
     public void setUp() throws Exception {
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator();
+        this.warnCookieGenerator.setCookiePath("");
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator();
+        this.tgtCookieGenerator.setCookiePath("");
         this.action.setTicketGrantingTicketCookieGenerator(this.tgtCookieGenerator);
         this.action.setWarnCookieGenerator(this.warnCookieGenerator);
         final ArgumentExtractor[] argExtractors = new ArgumentExtractor[] {new DefaultArgumentExtractor(
