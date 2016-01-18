@@ -36,7 +36,7 @@
           p:cookieSecure="true"
           p:cookieMaxAge="-1"
           p:cookieName="TGC"
-          p:cookiePath="/cas"/>
+          p:cookiePath=""/>
 
     <bean id="cookieCipherExecutor" class="org.jasig.cas.util.DefaultCipherExecutor"
           c:secretKeyEncryption="${tgc.encryption.key}"
