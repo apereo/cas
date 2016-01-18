@@ -129,7 +129,7 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setScheme(CAS_SCHEME);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
         oAuth20AuthorizeController.getServicesManager().save(service);
 
@@ -139,7 +139,7 @@ public final class OAuth20AuthorizeControllerTests {
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         profile.addAttributes(attributes);
 
-        MockHttpSession session = new MockHttpSession();
+        final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILE, profile);
 
@@ -151,7 +151,7 @@ public final class OAuth20AuthorizeControllerTests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=COD-"));
 
         final String code = StringUtils.substringAfter(redirectUrl, "?code=");
-        OAuthCodeImpl oAuthCode = (OAuthCodeImpl) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
+        final OAuthCodeImpl oAuthCode = (OAuthCodeImpl) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
         assertNotNull(oAuthCode);
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -174,7 +174,7 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setParameter(OAuthConstants.STATE, STATE);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(true);
         oAuth20AuthorizeController.getServicesManager().save(service);
 
@@ -184,7 +184,7 @@ public final class OAuth20AuthorizeControllerTests {
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         profile.addAttributes(attributes);
 
-        MockHttpSession session = new MockHttpSession();
+        final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILE, profile);
 
@@ -196,7 +196,7 @@ public final class OAuth20AuthorizeControllerTests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=COD-"));
 
         final String code = StringUtils.substringBefore(StringUtils.substringAfter(redirectUrl, "?code="), "&state=");
-        OAuthCodeImpl oAuthCode = (OAuthCodeImpl) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
+        final OAuthCodeImpl oAuthCode = (OAuthCodeImpl) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
         assertNotNull(oAuthCode);
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -219,7 +219,7 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setParameter(OAuthConstants.BYPASS_APPROVAL_PROMPT, "true");
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(false);
         oAuth20AuthorizeController.getServicesManager().save(service);
 
@@ -229,7 +229,7 @@ public final class OAuth20AuthorizeControllerTests {
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         profile.addAttributes(attributes);
 
-        MockHttpSession session = new MockHttpSession();
+        final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILE, profile);
 
@@ -241,7 +241,7 @@ public final class OAuth20AuthorizeControllerTests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=COD-"));
 
         final String code = StringUtils.substringAfter(redirectUrl, "?code=");
-        OAuthCodeImpl oAuthCode = (OAuthCodeImpl) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
+        final OAuthCodeImpl oAuthCode = (OAuthCodeImpl) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
         assertNotNull(oAuthCode);
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -263,7 +263,7 @@ public final class OAuth20AuthorizeControllerTests {
         mockRequest.setScheme(CAS_SCHEME);
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
 
-        OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
+        final OAuthRegisteredService service = getRegisteredService(REDIRECT_URI, SERVICE_NAME);
         service.setBypassApprovalPrompt(false);
         oAuth20AuthorizeController.getServicesManager().save(service);
 
@@ -273,7 +273,7 @@ public final class OAuth20AuthorizeControllerTests {
         attributes.put(FIRST_NAME_ATTRIBUTE, FIRST_NAME);
         profile.addAttributes(attributes);
 
-        MockHttpSession session = new MockHttpSession();
+        final MockHttpSession session = new MockHttpSession();
         mockRequest.setSession(session);
         session.putValue(Pac4jConstants.USER_PROFILE, profile);
 

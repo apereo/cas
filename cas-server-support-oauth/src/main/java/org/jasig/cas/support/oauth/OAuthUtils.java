@@ -1,10 +1,8 @@
 package org.jasig.cas.support.oauth;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
-import org.pac4j.core.util.CommonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
@@ -55,21 +53,6 @@ public final class OAuthUtils {
             LOGGER.error("Failed to write to response", e);
         }
         return null;
-    }
-
-    /**
-     * Return a view which is a redirection to an url with an error parameter.
-     *
-     * @param url redirect url
-     * @param error error message
-     * @return A view which is a redirection to an url with an error parameter
-     */
-    public static ModelAndView redirectToError(final String url, final String error) {
-        String useUrl = url;
-        if (StringUtils.isBlank(useUrl)) {
-            useUrl = "/";
-        }
-        return OAuthUtils.redirectTo(CommonHelper.addParameter(useUrl, "error", error));
     }
 
     /**

@@ -12,5 +12,12 @@ import org.jasig.cas.ticket.TicketFactory;
  */
 public interface AccessTokenFactory extends TicketFactory {
 
+    /**
+     * Create an access token.
+     *
+     * @param service the service
+     * @param authentication the authentication
+     * @return the access token
+     */
     AccessToken create(Service service, Authentication authentication);
 }
