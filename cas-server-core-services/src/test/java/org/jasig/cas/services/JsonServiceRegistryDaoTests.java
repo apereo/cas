@@ -70,6 +70,8 @@ public class JsonServiceRegistryDaoTests {
         final Set<String> set = new HashSet<>();
         set.add("duoAuthenticationProvider");
         policy.setMultifactorAuthenticationProviders(set);
+        policy.setPrincipalAttributeNameTrigger("memberOf");
+        policy.setPrincipalAttributeValueToMatch("cas|CAS|admin");
         r.setAuthenticationPolicy(policy);
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
