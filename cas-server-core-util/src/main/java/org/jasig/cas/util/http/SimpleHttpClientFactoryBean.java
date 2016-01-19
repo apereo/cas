@@ -38,6 +38,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -425,6 +427,14 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
     public void setRedirectsEnabled(final boolean redirectsEnabled) {
         this.redirectsEnabled = redirectsEnabled;
+    }
+
+    /**
+     * Destroy.
+     */
+    @PreDestroy
+    public void destroy() {
+        this.executorService.shutdownNow();
     }
 
     /**
