@@ -8,8 +8,7 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
-import org.jasig.cas.util.CasSpringBeanJobFactory;
-
+import org.joda.time.DateTime;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import org.quartz.Job;
@@ -18,12 +17,9 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,15 +50,19 @@ import java.util.concurrent.TimeUnit;
 @Component("jpaTicketRegistry")
 public final class JpaTicketRegistry extends AbstractTicketRegistry implements Job {
 
-    @Value("${ticket.registry.cleaner.repeatinterval:5000000}")
+    @Value("${ticket.registry.cleaner.repeatinterval:5000}")
     private int refreshInterval;
 
-    @Value("${ticket.registry.cleaner.startdelay:20000}")
+    @Value("${ticket.registry.cleaner.startdelay:20}")
     private int startDelay;
 
     @Autowired
     @NotNull
     private ApplicationContext applicationContext;
+
+    @Autowired(required = false)
+    @Qualifier("scheduler")
+    private Scheduler scheduler;
 
     @Autowired
     @Qualifier("logoutManager")
@@ -244,29 +244,25 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
     @PostConstruct
     public void scheduleCleanerJob() {
         try {
-            logger.info("Preparing to schedule cleaner job");
-            final JobDetail job = JobBuilder.newJob(this.getClass())
+            if (shouldScheduleCleanerJob()) {
+                logger.info("Preparing to schedule cleaner job");
+                final JobDetail job = JobBuilder.newJob(this.getClass())
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
                     .build();
 
-            final Trigger trigger = TriggerBuilder.newTrigger()
+                final Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                            .withIntervalInMinutes(this.refreshInterval)
-                            .repeatForever()).build();
+                        .withIntervalInSeconds(this.refreshInterval)
+                        .repeatForever()).build();
 
-            final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
-            final SchedulerFactory schFactory = new StdSchedulerFactory();
-            final Scheduler sch = schFactory.getScheduler();
-            sch.setJobFactory(jobFactory);
-            sch.start();
-            logger.debug("Started {} scheduler", this.getClass().getName());
-            sch.scheduleJob(job, trigger);
-            logger.info("{} will clean tickets every {} seconds",
+                logger.debug("Scheduling {} job", this.getClass().getName());
+                scheduler.scheduleJob(job, trigger);
+                logger.info("{} will clean tickets every {} seconds",
                     this.getClass().getSimpleName(),
                     TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
-
+            }
         } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
         }
@@ -316,5 +312,14 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
             logger.info("Finished ticket cleanup.");
         }
 
+    }
+
+    private boolean shouldScheduleCleanerJob() {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
+            logger.debug("Found CAS servlet application context for ticket management");
+            return true;
+        }
+
+        return false;
     }
 }
