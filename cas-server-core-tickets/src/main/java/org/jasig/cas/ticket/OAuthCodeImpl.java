@@ -26,6 +26,8 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue(OAuthCode.PREFIX)
 public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
+    private static final long serialVersionUID = -8072724186202305800L;
+
     /** The service this ticket is valid for. */
     @Lob
     @Column(name="SERVICE", nullable=false)
