@@ -11,7 +11,7 @@ import org.jasig.cas.ticket.AccessToken;
 public class AccessTokenDelegator<T extends AccessToken> extends OAuthCodeDelegator<T>
         implements AccessToken {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 3656947680544885480L;
 
     /**
      * Instantiates a new access token delegator.
