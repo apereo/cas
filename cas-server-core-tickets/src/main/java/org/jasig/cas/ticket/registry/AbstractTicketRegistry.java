@@ -2,6 +2,8 @@ package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.AccessToken;
+import org.jasig.cas.ticket.OAuthCode;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -168,6 +170,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     protected final Ticket getProxiedTicketInstance(final Ticket ticket) {
         if (ticket == null) {
             return null;
+        }
+
+        if (ticket instanceof AccessToken) {
+            return new AccessTokenDelegator<>(this, (AccessToken) ticket, needsCallback());
+        }
+
+        if (ticket instanceof OAuthCode) {
+            return new OAuthCodeDelegator<>(this, (OAuthCode) ticket, needsCallback());
         }
 
         if (ticket instanceof ProxyGrantingTicket) {

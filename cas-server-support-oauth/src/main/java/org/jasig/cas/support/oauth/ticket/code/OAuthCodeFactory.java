@@ -2,6 +2,7 @@ package org.jasig.cas.support.oauth.ticket.code;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.OAuthCode;
 import org.jasig.cas.ticket.TicketFactory;
 
 /**

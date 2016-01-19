@@ -5,9 +5,9 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.jasig.cas.ticket.AccessToken;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
-import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
+import org.jasig.cas.ticket.OAuthCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,9 +43,9 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
         }
 
         final String codeParameter = request.getParameter(OAuthConstants.CODE);
-        final OAuthCodeImpl code = (OAuthCodeImpl) ticketRegistry.getTicket(codeParameter);
-        // code should ne be expired
-        if (code.isExpired()) {
+        final OAuthCode code = ticketRegistry.getTicket(codeParameter, OAuthCode.class);
+        // code should not be expired
+        if (code == null || code.isExpired()) {
             logger.error("Code expired: {}", code);
             return OAuthUtils.writeTextError(response, OAuthConstants.INVALID_GRANT, HttpStatus.SC_BAD_REQUEST);
         }
