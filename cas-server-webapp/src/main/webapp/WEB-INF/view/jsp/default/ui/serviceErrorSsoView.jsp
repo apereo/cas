@@ -20,7 +20,7 @@
 --%>
 <jsp:directive.include file="includes/top.jsp" />
   <c:url var="url" value="/login">
-    <c:param name="service" value="${fn:escapeXml(param.service)}" />
+    <c:param name="service" value="${param.service}" />
     <c:param name="renew" value="true" />
   </c:url>
   
