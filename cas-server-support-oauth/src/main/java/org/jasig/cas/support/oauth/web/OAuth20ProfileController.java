@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
+import org.jasig.cas.ticket.AccessToken;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -57,7 +57,7 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
             }
             try {
 
-                final AccessTokenImpl accessTokenTicket = (AccessTokenImpl) ticketRegistry.getTicket(accessToken);
+                final AccessToken accessTokenTicket = ticketRegistry.getTicket(accessToken, AccessToken.class);
                 if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
                     logger.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
                     jsonGenerator.writeStartObject();

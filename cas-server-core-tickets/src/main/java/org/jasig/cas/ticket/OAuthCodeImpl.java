@@ -1,12 +1,8 @@
-package org.jasig.cas.support.oauth.ticket.code;
+package org.jasig.cas.ticket;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.AbstractTicket;
-import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.Ticket;
-import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
 

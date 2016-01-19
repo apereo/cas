@@ -1,6 +1,6 @@
-package org.jasig.cas.support.oauth.ticket.code;
+package org.jasig.cas.ticket;
 
-import org.jasig.cas.ticket.ServiceTicket;
+import org.jasig.cas.authentication.Authentication;
 
 /**
  * An OAuth code (is like a service ticket without PGT grant capability).
@@ -14,4 +14,11 @@ public interface OAuthCode extends ServiceTicket {
      *  The prefix for OAuth codes.
      */
     String PREFIX = "COD";
+
+    /**
+     * Get the current authentication.
+     *
+     * @return the current authentication.
+     */
+    Authentication getAuthentication();
 }
