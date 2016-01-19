@@ -155,6 +155,8 @@
         </property>
     </bean>
 
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean" />
+
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>
 
