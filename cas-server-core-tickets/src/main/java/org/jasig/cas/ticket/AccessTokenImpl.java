@@ -21,6 +21,8 @@ import javax.validation.constraints.NotNull;
 @DiscriminatorValue(AccessToken.PREFIX)
 public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
 
+    private static final long serialVersionUID = 2339545346159721563L;
+
     /**
      * Instantiates a new OAuth access token.
      */
