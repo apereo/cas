@@ -2,7 +2,12 @@ package org.jasig.cas.support.oauth.ticket.accesstoken;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.*;
+import org.jasig.cas.ticket.AccessToken;
+import org.jasig.cas.ticket.AccessTokenImpl;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.ticket.Ticket;
+import org.jasig.cas.ticket.TicketFactory;
+import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 import org.pac4j.core.util.CommonHelper;
 import org.slf4j.Logger;
