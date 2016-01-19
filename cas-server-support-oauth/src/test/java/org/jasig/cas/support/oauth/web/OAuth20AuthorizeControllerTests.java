@@ -148,7 +148,7 @@ public final class OAuth20AuthorizeControllerTests {
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
         final String redirectUrl = redirectView.getUrl();
-        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=COD-"));
+        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
 
         final String code = StringUtils.substringAfter(redirectUrl, "?code=");
         final OAuthCode oAuthCode = (OAuthCode) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
@@ -193,7 +193,7 @@ public final class OAuth20AuthorizeControllerTests {
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
         final String redirectUrl = redirectView.getUrl();
-        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=COD-"));
+        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
 
         final String code = StringUtils.substringBefore(StringUtils.substringAfter(redirectUrl, "?code="), "&state=");
         final OAuthCode oAuthCode = (OAuthCode) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
@@ -238,7 +238,7 @@ public final class OAuth20AuthorizeControllerTests {
         assertTrue(view instanceof RedirectView);
         final RedirectView redirectView = (RedirectView) view;
         final String redirectUrl = redirectView.getUrl();
-        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=COD-"));
+        assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=OC-"));
 
         final String code = StringUtils.substringAfter(redirectUrl, "?code=");
         final OAuthCode oAuthCode = (OAuthCode) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);

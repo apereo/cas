@@ -13,7 +13,7 @@ public interface OAuthCode extends ServiceTicket {
     /**
      *  The prefix for OAuth codes.
      */
-    String PREFIX = "COD";
+    String PREFIX = "OC";
 
     /**
      * Get the current authentication.
