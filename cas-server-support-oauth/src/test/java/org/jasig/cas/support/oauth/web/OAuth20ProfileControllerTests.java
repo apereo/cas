@@ -7,7 +7,7 @@ import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
+import org.jasig.cas.ticket.AccessTokenImpl;
 import org.jasig.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;

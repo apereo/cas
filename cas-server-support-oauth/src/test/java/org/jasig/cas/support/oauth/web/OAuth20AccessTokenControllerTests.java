@@ -10,9 +10,9 @@ import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
+import org.jasig.cas.ticket.AccessToken;
 import org.jasig.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
-import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
+import org.jasig.cas.ticket.OAuthCodeImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
 import org.joda.time.DateTime;
@@ -251,7 +251,7 @@ public final class OAuth20AccessTokenControllerTests {
         assertTrue(body.contains(OAuthConstants.EXPIRES + '='));
 
         final String accessTokenId = StringUtils.substringBetween(body, OAuthConstants.ACCESS_TOKEN + '=', "&");
-        final AccessTokenImpl accessToken = (AccessTokenImpl) oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId);
+        final AccessToken accessToken = oAuth20AccessTokenController.getTicketRegistry().getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
         // delta = 2 seconds
