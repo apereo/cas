@@ -4,7 +4,6 @@ import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.jasig.cas.support.events.CasRegisteredServiceSavedEvent;
-import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.jasig.inspektr.audit.annotation.Audit;
 import org.joda.time.DateTime;
 import org.quartz.Job;
@@ -13,12 +12,9 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.spi.JobFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +72,10 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired(required = false)
+    @Qualifier("scheduler")
+    private Scheduler scheduler;
 
     /**
      * Instantiates a new default services manager impl.
@@ -220,14 +220,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
                         .withIntervalInSeconds(this.refreshInterval)
                         .repeatForever()).build();
 
-                final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
-                final SchedulerFactory schFactory = new StdSchedulerFactory();
-                final Scheduler sch = schFactory.getScheduler();
-                sch.setJobFactory(jobFactory);
-
-                sch.start();
-                LOGGER.debug("Started {} scheduler", this.getClass().getName());
-                sch.scheduleJob(job, trigger);
+                LOGGER.debug("Scheduling {} job", this.getClass().getName());
+                scheduler.scheduleJob(job, trigger);
                 LOGGER.info("Services manager will reload service definitions every {} seconds",
                     this.refreshInterval);
             }
@@ -238,7 +232,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     }
 
     private boolean shouldScheduleLoaderJob() {
-        if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
             LOGGER.debug("Found CAS servlet application context for service management");
             return true;
         }
