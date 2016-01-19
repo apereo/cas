@@ -5,7 +5,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
-import org.jasig.cas.ticket.OAuthCodeImpl;
+import org.jasig.cas.ticket.OAuthCode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pac4j.cas.profile.CasProfile;
@@ -151,7 +151,7 @@ public final class OAuth20AuthorizeControllerTests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=COD-"));
 
         final String code = StringUtils.substringAfter(redirectUrl, "?code=");
-        final OAuthCodeImpl oAuthCode = (OAuthCodeImpl) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
+        final OAuthCode oAuthCode = (OAuthCode) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
         assertNotNull(oAuthCode);
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -196,7 +196,7 @@ public final class OAuth20AuthorizeControllerTests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=COD-"));
 
         final String code = StringUtils.substringBefore(StringUtils.substringAfter(redirectUrl, "?code="), "&state=");
-        final OAuthCodeImpl oAuthCode = (OAuthCodeImpl) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
+        final OAuthCode oAuthCode = (OAuthCode) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
         assertNotNull(oAuthCode);
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
@@ -241,7 +241,7 @@ public final class OAuth20AuthorizeControllerTests {
         assertTrue(redirectUrl.startsWith(REDIRECT_URI + "?code=COD-"));
 
         final String code = StringUtils.substringAfter(redirectUrl, "?code=");
-        final OAuthCodeImpl oAuthCode = (OAuthCodeImpl) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
+        final OAuthCode oAuthCode = (OAuthCode) oAuth20AuthorizeController.getTicketRegistry().getTicket(code);
         assertNotNull(oAuthCode);
         final Principal principal = oAuthCode.getAuthentication().getPrincipal();
         assertEquals(ID, principal.getId());
