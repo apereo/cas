@@ -12,7 +12,7 @@ import org.jasig.cas.ticket.OAuthCode;
 public class OAuthCodeDelegator<T extends OAuthCode> extends ServiceTicketDelegator<T>
         implements OAuthCode {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 793510783336656110L;
 
     /**
      * Instantiates a new OAuth code delegator.
