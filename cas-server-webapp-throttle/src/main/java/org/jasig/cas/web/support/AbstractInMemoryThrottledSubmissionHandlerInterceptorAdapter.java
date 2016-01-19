@@ -1,19 +1,16 @@
 package org.jasig.cas.web.support;
 
-import org.jasig.cas.util.CasSpringBeanJobFactory;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerFactory;
 import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -54,6 +51,10 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     @Autowired
     @NotNull
     private ApplicationContext applicationContext;
+
+    @Autowired(required = false)
+    @Qualifier("scheduler")
+    private Scheduler scheduler;
 
     private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<>();
 
@@ -130,13 +131,8 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                         .withIntervalInMinutes(this.refreshInterval)
                         .repeatForever()).build();
 
-                final JobFactory jobFactory = new CasSpringBeanJobFactory(this.applicationContext);
-                final SchedulerFactory schFactory = new StdSchedulerFactory();
-                final Scheduler sch = schFactory.getScheduler();
-                sch.setJobFactory(jobFactory);
-                sch.start();
-                logger.debug("Started {} scheduler", this.getClass().getName());
-                sch.scheduleJob(job, trigger);
+                logger.debug("Scheduling {} job", this.getClass().getName());
+                scheduler.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} seconds",
                     this.getClass().getSimpleName(),
                     TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
@@ -148,7 +144,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     }
 
     private boolean shouldScheduleCleanerJob() {
-        if (this.startDelay > 0 && this.applicationContext.getParent() == null) {
+        if (this.startDelay > 0 && this.applicationContext.getParent() == null && scheduler != null) {
             if (WebUtils.isCasServletInitializing(this.applicationContext)) {
                 logger.debug("Found CAS servlet application context");
                 final String[] aliases =
