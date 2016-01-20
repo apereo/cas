@@ -130,12 +130,10 @@ public class TicketsResource {
                     .writer()
                     .withDefaultPrettyPrinter()
                     .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
-        }
-        catch (final BadRequestException e) {
+        } catch (final BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-        catch (final Throwable e) {
+        } catch (final Throwable e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -165,11 +163,9 @@ public class TicketsResource {
                     service, authenticationResult);
             return new ResponseEntity<>(serviceTicketId.getId(), HttpStatus.OK);
 
-        }
-        catch (final InvalidTicketException e) {
+        } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
