@@ -52,6 +52,7 @@ import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -547,5 +548,31 @@ public abstract class AbstractCasWebflowConfigurer {
      */
     protected SubflowAttributeMapper createSubflowAttributeMapper(final Mapper inputMapper, final Mapper outputMapper) {
         return new GenericSubflowAttributeMapper(inputMapper, outputMapper);
+    }
+
+    /**
+     * Register multifactor provider authentication webflow.
+     *
+     * @param flow      the flow
+     * @param subflowId the subflow id
+     * @param registry  the registry
+     */
+    protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId,
+                                                                    final FlowDefinitionRegistry registry) {
+
+        final SubflowState subflowState = createSubflowState(flow, subflowId, subflowId);
+
+        final List<DefaultMapping> mappings = new ArrayList<>();
+        final Mapper inputMapper = createMapperToSubflowState(mappings);
+        final SubflowAttributeMapper subflowMapper = createSubflowAttributeMapper(inputMapper, null);
+        subflowState.setAttributeMapper(subflowMapper);
+        subflowState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+
+        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.TRANSITION_ID_REAL_SUBMIT);
+        logger.debug("Retrieved action state {}", actionState.getId());
+        createTransitionForState(actionState, subflowId, subflowId);
+
+        registerFlowDefinitionIntoLoginFlowRegistry(registry);
     }
 }

@@ -5,12 +5,12 @@ import org.jasig.cas.authentication.AuthenticationException;
 import java.io.Serializable;
 
 /**
- * This is {@link RegisteredServiceMultifactorAuthenticationProvider}.
+ * This is {@link MultifactorAuthenticationProvider}.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-public interface RegisteredServiceMultifactorAuthenticationProvider extends Serializable {
+public interface MultifactorAuthenticationProvider extends Serializable {
 
     /**
      * Provide string.
@@ -19,5 +19,5 @@ public interface RegisteredServiceMultifactorAuthenticationProvider extends Seri
      * @return the string
      * @throws AuthenticationException the authentication exception
      */
-    String provide(RegisteredService service) throws AuthenticationException;
+    String buildIdentifier(RegisteredService service) throws AuthenticationException;
 }

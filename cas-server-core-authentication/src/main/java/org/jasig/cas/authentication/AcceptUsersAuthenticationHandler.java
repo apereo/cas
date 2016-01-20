@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * there are existing handlers that make calls to LDAP, etc. but there is a need
  * for additional users we don't want in LDAP. With the chain of command
  * processing of handlers, this handler could be added to check before LDAP and
- * provide the list of additional users. The list of acceptable users is stored
+ * buildIdentifier the list of additional users. The list of acceptable users is stored
  * in a map. The key of the map is the username and the password is the object
  * retrieved from doing map.get(KEY).
  * <p>

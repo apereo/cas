@@ -29,6 +29,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,7 +127,11 @@ public abstract class AbstractServletContextInitializer
         logger.debug("Adding {} and {} to application context", handler, resolver);
         final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlersResolvers =
                 applicationContext.getBean("authenticationHandlersResolvers", Map.class);
+
+        final Map<AuthenticationHandler, PrincipalResolver> cloned = new LinkedHashMap<>(authenticationHandlersResolvers);
+        authenticationHandlersResolvers.clear();
         authenticationHandlersResolvers.put(handler, resolver);
+        authenticationHandlersResolvers.putAll(cloned);
     }
 
     /**
