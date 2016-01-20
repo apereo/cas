@@ -1,5 +1,6 @@
 package org.jasig.cas;
 
+import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
@@ -122,7 +123,7 @@ public class MultifactorAuthenticationTests {
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("passwordHandler"));
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey("oneTimePasswordHandler"));
         assertTrue(assertion.getPrimaryAuthentication().getAttributes().containsKey(
-                SuccessfulHandlerMetaDataPopulator.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+                AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
     }
 
     private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {

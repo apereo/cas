@@ -54,12 +54,13 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         try {
 
             final Credential credential = getCredentialFromContext(context);
-            final AuthenticationResultBuilder builder =
-                    this.authenticationSystemSupport.handleInitialAuthenticationTransaction(credential);
+            if (credential != null) {
+                final AuthenticationResultBuilder builder =
+                        this.authenticationSystemSupport.handleInitialAuthenticationTransaction(credential);
 
-            WebUtils.putAuthenticationResultBuilder(builder, context);
-            WebUtils.putAuthentication(builder.getInitialAuthentication(), context);
-
+                WebUtils.putAuthenticationResultBuilder(builder, context);
+                WebUtils.putAuthentication(builder.getInitialAuthentication(), context);
+            }
             final Service service = WebUtils.getService(context);
             if (service != null) {
 
@@ -77,6 +78,10 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 }
             }
 
+            final AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
+            if (builder == null) {
+                throw new IllegalArgumentException("No authentication result builider can be located in the context");
+            }
             return ImmutableSet.of(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             Event event = returnAuthenticationExceptionEventIfNeeded(e);

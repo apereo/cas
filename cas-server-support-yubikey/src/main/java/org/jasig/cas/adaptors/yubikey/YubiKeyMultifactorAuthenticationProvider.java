@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
@@ -32,6 +33,9 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
     @Autowired
     @Qualifier("yubiKeyAuthenticationHandler")
     private YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler;
+
+    @Value("${yubikey.rank:0}")
+    private int rank;
 
     /**
      * The Http client.
@@ -68,5 +72,10 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
     @Override
     public String getId() {
         return YubiKeyMultifactorWebflowConfigurer.MFA_YUBIKEY_EVENT_ID;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.rank;
     }
 }
