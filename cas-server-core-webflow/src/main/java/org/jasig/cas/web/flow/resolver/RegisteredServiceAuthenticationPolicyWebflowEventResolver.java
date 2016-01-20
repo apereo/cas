@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow.authentication;
+package org.jasig.cas.web.flow.resolver;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.services.RegisteredService;
@@ -10,7 +10,8 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link RegisteredServiceAuthenticationPolicyWebflowEventResolver}.
+ * This is {@link RegisteredServiceAuthenticationPolicyWebflowEventResolver}
+ * that attempts to resolve the next event basef on the authentication providers of this service.
  *
  * @author Misagh Moayyed
  * @since 4.3.0

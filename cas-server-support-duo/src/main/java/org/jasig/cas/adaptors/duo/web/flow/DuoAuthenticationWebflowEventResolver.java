@@ -1,6 +1,6 @@
 package org.jasig.cas.adaptors.duo.web.flow;
 
-import org.jasig.cas.web.flow.authentication.AbstractCasWebflowEventResolver;
+import org.jasig.cas.web.flow.resolver.AbstractCasWebflowEventResolver;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

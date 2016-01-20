@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow.authentication;
+package org.jasig.cas.web.flow.resolver;
 
 import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +14,9 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver}.
+ * This is {@link RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver}
+ * that attempts to locate the given principal attribute in the service authentication policy
+ * and match it against the pattern provided in the same policy.
  *
  * @author Misagh Moayyed
  * @since 4.3.0

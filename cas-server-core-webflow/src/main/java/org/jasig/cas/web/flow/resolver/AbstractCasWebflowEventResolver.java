@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow.authentication;
+package org.jasig.cas.web.flow.resolver;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
@@ -43,7 +43,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link AbstractCasWebflowEventResolver}.
+ * This is {@link AbstractCasWebflowEventResolver} that provides parent
+ * operations for all child event resolvers to handle core webflow changes.
  *
  * @author Misagh Moayyed
  * @since 4.3.0

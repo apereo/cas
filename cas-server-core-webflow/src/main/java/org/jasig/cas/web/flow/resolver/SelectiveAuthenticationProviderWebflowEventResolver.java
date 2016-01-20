@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow.authentication;
+package org.jasig.cas.web.flow.resolver;
 
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
@@ -7,7 +7,10 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link SelectiveAuthenticationProviderWebflowEventResolver}.
+ * This is {@link SelectiveAuthenticationProviderWebflowEventResolver}
+ * that acts as a stub resolver, specifically designed for extensions.
+ * Deployers can extend this class to perform additional processes on the final set
+ * of resolved events, to select one vs another based on the nature of the event attributes.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
