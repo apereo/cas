@@ -1,6 +1,7 @@
 package org.jasig.cas.authentication;
 
 import com.google.common.base.Functions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import org.jasig.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.Principal;
@@ -152,7 +153,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final AuthenticationResponse response;
         try {
             logger.debug("Attempting LDAP authentication for {}", upc);
-            final String password = getPasswordEncoder().encode(upc.getPassword());
+            final String password = Strings.nullToEmpty(getPasswordEncoder().encode(upc.getPassword()));
             final AuthenticationRequest request = new AuthenticationRequest(upc.getUsername(),
                     new org.ldaptive.Credential(password),
                     this.authenticatedEntryAttributes);
