@@ -13,7 +13,7 @@ import java.util.Map;
 
 /**
  * Abstract release policy for attributes, provides common shared settings such as loggers and attribute filter config.
- * Subclasses are to buildIdentifier the behavior for attribute retrieval.
+ * Subclasses are to provide the behavior for attribute retrieval.
  * @author Misagh Moayyed
  * @since 4.1.0
  */

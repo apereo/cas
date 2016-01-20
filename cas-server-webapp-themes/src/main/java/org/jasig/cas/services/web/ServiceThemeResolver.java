@@ -108,7 +108,7 @@ public final class ServiceThemeResolver extends AbstractThemeResolver {
      * Sets the map of mobile browsers.  This sets a flag on the request called "isMobile" and also
      * provides the custom flag called browserType which can be mapped into the theme.
      * <p>
-     * Themes that understand isMobile should buildIdentifier an alternative stylesheet.
+     * Themes that understand isMobile should provide an alternative stylesheet.
      *
      * @param mobileOverrides the list of mobile browsers.
      */

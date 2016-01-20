@@ -24,13 +24,19 @@ public class SelectiveAuthenticationProviderWebflowEventResolver extends Abstrac
     }
 
     /**
-     * Resolve events internal set.
+     * Resolve events internal set. Implementation may filter events from the collection
+     * to only return the one that is appropriate for this request. The default
+     * implementation returns the the entire collection.
      *
      * @param resolveEvents the resolve events
      * @return the set
      */
     protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents) {
-        logger.debug("Final collection of resolved events for this authentication sequence are {}", resolveEvents);
+        logger.debug("Final collection of resolved events for this authentication sequence are:");
+        for (final Event resolveEvent : resolveEvents) {
+            logger.debug("Event id [{}] resolved from {}",
+                    resolveEvent.getId(), resolveEvent.getSource().getClass().getName());
+        }
         return resolveEvents;
     }
 }
