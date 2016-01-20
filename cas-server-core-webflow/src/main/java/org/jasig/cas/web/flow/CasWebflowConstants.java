@@ -51,6 +51,11 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_WARN = "warn";
 
     /**
+     * The transition state 'initialAuthenticationRequestValidationCheck'.
+     */
+    String TRANSITION_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK = "initialAuthenticationRequestValidationCheck";
+
+    /**
      * The transition state 'sendTicketGrantingTicket'.
      */
     String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";

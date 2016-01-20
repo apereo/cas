@@ -20,6 +20,7 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
+import org.opensaml.xml.encryption.P;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -226,26 +227,37 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param context    the context
      * @param attributes the attributes
      * @return the event
-     * @throws Exception the exception
      */
     protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context,
-                                                                  final Map<String, Object> attributes) throws Exception {
-        final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
-        final Event event = new Event(this, eventId, attributesMap);
+                                                                  final Map<String, Object> attributes)  {
+        try {
+            final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
+            final Event event = new Event(this, eventId, attributesMap);
 
-        logger.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...",
-                event.getId());
+            logger.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...",
+                    event.getId());
 
-        final TransitionDefinition def = context.getMatchingTransition(event.getId());
-        if (def == null) {
-            logger.warn("Transition definition cannot be found for event [{}]", event.getId());
-            throw new AuthenticationException();
+            final TransitionDefinition def = context.getMatchingTransition(event.getId());
+            if (def == null) {
+                logger.warn("Transition definition cannot be found for event [{}]", event.getId());
+                throw new AuthenticationException();
+            }
+            logger.debug("Found matching transition [{}] with target [{}] for event [{}] with attributes {}.",
+                    def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
+            return event;
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
-        logger.debug("Found matching transition [{}] with target [{}] for event [{}] with attributes {}.",
-                def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
-        return event;
     }
 
+    /**
+     * Build event attribute map map.
+     *
+     * @param principal the principal
+     * @param service   the service
+     * @param provider  the provider
+     * @return the map
+     */
     protected static Map<String, Object> buildEventAttributeMap(final Principal principal, final RegisteredService service,
                                                        final MultifactorAuthenticationProvider provider) {
         final Map<String, Object> map = new HashMap<>();
@@ -412,9 +424,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             logger.debug("Locating bean definition for {}", provider);
             return this.applicationContext.getBean(provider, MultifactorAuthenticationProvider.class);
         } catch (final Exception e) {
-            logger.warn("Could not locate [{}] bean id in the application context as an authentication provider. "
-                    + "Are you missing a dependency in your configuration?", provider);
-            logger.warn(e.getMessage(), e);
+            logger.warn("Could not locate [{}] bean id in the application context as an authentication provider.", provider);
+            logger.debug(e.getMessage(), e);
         }
         return null;
 
@@ -429,7 +440,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         try {
             return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class);
         } catch (final Exception e) {
-            logger.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class, e);
+            logger.warn("Could not locate beans of type {} in the application context", MultifactorAuthenticationProvider.class);
         }
         return null;
     }
