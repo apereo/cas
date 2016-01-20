@@ -14,7 +14,7 @@ import java.net.UnknownHostException;
  * situation where they are externalized.
  * <p>The drawback is that in keeping only one {@code cas.properties} file, we'd lose the ability
  * to define unique {@code host.name} property values for each node as the suffix, which would assist with troubleshooting
- * and diagnostics. To buildIdentifier a remedy, this ticket generator is able to retrieve the {@code host.name} value directly from
+ * and diagnostics. To provide a remedy, this ticket generator is able to retrieve the {@code host.name} value directly from
  * the actual node name, rather than relying on the configuration, only if one isn't specified in
  * the {@code cas.properties} file. </p>
  * @author Misagh Moayyed
@@ -32,7 +32,7 @@ public final class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTic
 
     /**
      * Appends the first part of the host name to the ticket id,
-     * so as to moderately buildIdentifier a relevant unique value mapped to
+     * so as to moderately provide a relevant unique value mapped to
      * the host name AND not auto-leak infrastructure data out into the configuration and logs.
      * <ul>
      * <li>If the CAS node name is {@code cas-01.sso.edu} then, the suffix

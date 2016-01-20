@@ -16,7 +16,7 @@ import javax.persistence.MappedSuperclass;
  * handles common functionality amongst different ticket types (such as state
  * updating).
  *
- * AbstractTicket does not buildIdentifier a protected Logger instance to
+ * AbstractTicket does not provide a protected Logger instance to
  * avoid instantiating many such Loggers at runtime (there will be many instances
  * of subclasses of AbstractTicket in a typical running CAS server).  Instead
  * subclasses should use static Logger instances.

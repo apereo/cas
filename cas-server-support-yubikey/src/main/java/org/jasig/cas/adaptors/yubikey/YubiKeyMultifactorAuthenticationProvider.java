@@ -42,7 +42,7 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
     private HttpClient httpClient;
 
     @Override
-    public String buildIdentifier(final RegisteredService service) throws AuthenticationException {
+    public boolean verify(final RegisteredService service) throws AuthenticationException {
         try {
             final String[] endpoints = yubiKeyAuthenticationHandler.getClient().getWsapiUrls();
             for (final String endpoint : endpoints) {
@@ -51,7 +51,7 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
                 if (msg != null && StringUtils.isNotBlank(msg.getMessage())) {
                     final String response = URLDecoder.decode(msg.getMessage(), "UTF-8");
                     logger.debug("Received YubiKey ping response {}", response);
-                    return YubiKeyMultifactorWebflowConfigurer.MFA_YUBIKEY_EVENT_ID;
+                    return true;
                 }
             }
             throw new IllegalArgumentException("YubiKey WS API url cannot be reached");
@@ -59,9 +59,14 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
             if (service.getAuthenticationPolicy().isFailOpen()) {
                 logger.warn("Duo could not be reached. Since the authentication provider is configured to fail-open, authentication will "
                         + "proceed without Duo for service {}. {}", service.getServiceId(), e);
-                return null;
+                return false;
             }
         }
         throw new AuthenticationException();
+    }
+
+    @Override
+    public String getId() {
+        return YubiKeyMultifactorWebflowConfigurer.MFA_YUBIKEY_EVENT_ID;
     }
 }
