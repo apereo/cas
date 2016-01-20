@@ -13,6 +13,11 @@
         <evaluate expression="initialFlowSetupAction"/>
     </on-start>
 
+    <action-state id="initialAuthenticationRequestValidationCheck">
+        <evaluate expression="initialAuthenticationRequestValidationAction"/>
+        <transition on="success" to="ticketGrantingTicketCheck"/>
+    </action-state>
+
     <action-state id="ticketGrantingTicketCheck">
         <evaluate expression="ticketGrantingTicketCheckAction"/>
         <transition on="notExists" to="gatewayRequestCheck"/>
