@@ -1,6 +1,7 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.AuthenticationException;
+import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-public interface MultifactorAuthenticationProvider extends Serializable {
+public interface MultifactorAuthenticationProvider extends Serializable, Ordered {
 
     /**
      * Provide string.

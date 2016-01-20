@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,6 +23,9 @@ public class DuoMultifactorAuthenticationProvider implements MultifactorAuthenti
     private static final long serialVersionUID = 4789727148634156909L;
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Value("${cas.duo.rank:0}")
+    private int rank;
 
     @Autowired
     @Qualifier("duoAuthenticationService")
@@ -44,5 +48,10 @@ public class DuoMultifactorAuthenticationProvider implements MultifactorAuthenti
     @Override
     public String getId() {
         return DuoMultifactorWebflowConfigurer.MFA_DUO_EVENT_ID;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.rank;
     }
 }

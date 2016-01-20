@@ -574,5 +574,9 @@ public abstract class AbstractCasWebflowConfigurer {
         createTransitionForState(actionState, subflowId, subflowId);
 
         registerFlowDefinitionIntoLoginFlowRegistry(registry);
+
+        final TransitionableState state = flow.getTransitionableState(CasWebflowConstants
+                .TRANSITION_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
+        createTransitionForState(state, subflowId, subflowId);
     }
 }

@@ -42,6 +42,13 @@ public final class DefaultAuthenticationSystemSupport implements AuthenticationS
     }
 
     @Override
+    public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Authentication authentication) {
+        final AuthenticationResultBuilder builder =
+                new DefaultAuthenticationResultBuilder(this.principalElectionStrategy).collect(authentication);
+        return builder;
+    }
+
+    @Override
     public AuthenticationResultBuilder handleAuthenticationTransaction(final AuthenticationResultBuilder authenticationResultBuilder,
                                                                        final Credential... credential)
             throws AuthenticationException {

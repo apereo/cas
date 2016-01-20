@@ -11,6 +11,9 @@ import java.security.GeneralSecurityException;
  */
 public interface AuthenticationHandler {
 
+    /** Attribute name containing collection of handler names that successfully authenticated credential. */
+    String SUCCESSFUL_AUTHENTICATION_HANDLERS = "successfulAuthenticationHandlers";
+
     /**
      * Authenticates the given credential. There are three possible outcomes of this process, and implementers
      * MUST adhere to the following contract:
