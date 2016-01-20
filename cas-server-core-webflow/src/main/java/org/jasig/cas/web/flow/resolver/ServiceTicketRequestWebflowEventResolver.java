@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow.authentication;
+package org.jasig.cas.web.flow.resolver;
 
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +19,8 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link ServiceTicketRequestWebflowEventResolver}.
+ * This is {@link ServiceTicketRequestWebflowEventResolver}
+ * that creates the next event responding to requests that are service-ticket requests.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
