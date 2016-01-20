@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow.authentication;
+package org.jasig.cas.web.flow.resolver;
 
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +12,8 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link LoginTicketRequestValidationWebflowEventResolver}.
+ * This is {@link LoginTicketRequestValidationWebflowEventResolver}
+ * that evaluates the validity of the CAS login ticket.
  *
  * @author Misagh Moayyed
  * @since 4.3.0

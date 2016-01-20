@@ -1,6 +1,6 @@
 package org.jasig.cas.adaptors.duo.web.flow;
 
-import org.jasig.cas.web.flow.authentication.CasWebflowEventResolver;
+import org.jasig.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

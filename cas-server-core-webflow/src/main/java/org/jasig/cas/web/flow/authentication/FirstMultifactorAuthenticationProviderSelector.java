@@ -12,7 +12,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * This is {@link FirstMultifactorAuthenticationProviderSelector}.
+ * This is {@link FirstMultifactorAuthenticationProviderSelector}
+ * that grabs onto the first authentication provider in the collection.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
