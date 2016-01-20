@@ -25,10 +25,20 @@ following dependencies in the Maven WAR overlay:
 The authentication handler may be configured as such:
 
 {% highlight xml %}
-<bean class="org.jasig.cas.adaptors.yubikey.YubiKeyAuthenticationHandler"
-   	c:clientId="${yubikey.apiKey.id}"
-   	c:secretKey="${yubikey.apiKey.secret}"/>
+ <util:map id="authenticationHandlersResolvers">
+   ...
+   <entry key-ref="yubiKeyAuthenticationHandler" value="#{null}" />
+   ...
+</util:map>
 {% endhighlight %}
+
+
+### Settings
+{% highlight properties %}
+# cas.console.scripts.location:classpath:/scripts
+# cas.console.socket.port=6789
+{% endhighlight %}
+
 
 By default, all YubiKey accounts for users are allowed to authenticate. If you wish to plug in a custom registry implementation that would determine 
 which users are allowed to use their YubiKey accounts for authentication, you may plug in a custom implementation of the `YubiKeyAccountRegistry`

@@ -44,7 +44,7 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
     /**
      * Prepares the Yubico client with the received clientId and secretKey. If you wish to
      * limit the usage of this handler only to a particular set of yubikey accounts for a special
-     * group of users, you may provide an compliant implementation of {@link YubiKeyAccountRegistry}.
+     * group of users, you may buildIdentifier an compliant implementation of {@link YubiKeyAccountRegistry}.
      * By default, all accounts are allowed.
      *
      * @param clientId the client id
@@ -118,5 +118,9 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
 
     public YubiKeyAccountRegistry getRegistry() {
         return registry;
+    }
+
+    public YubicoClient getClient() {
+        return client;
     }
 }

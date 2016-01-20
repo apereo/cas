@@ -27,7 +27,7 @@
   },
   "authenticationPolicy" : {
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.HashSet", [ "duoAuthenticationProvider" ] ],
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider", "yubikeyAuthenticationProvider" ] ],
     "failOpen" : true,
     "principalAttributeNameTrigger" : "memberOf",
     "principalAttributeValueToMatch" : "cas|org|admin"

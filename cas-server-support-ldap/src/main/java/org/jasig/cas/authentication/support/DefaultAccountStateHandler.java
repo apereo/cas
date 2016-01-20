@@ -84,7 +84,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
     /**
      * Handle an account state error produced by ldaptive account state machinery.
      * <p>
-     * Override this method to provide custom error handling.
+     * Override this method to buildIdentifier custom error handling.
      *
      * @param error Account state error.
      * @param response Ldaptive authentication response.
@@ -112,7 +112,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
     /**
      * Handle an account state warning produced by ldaptive account state machinery.
      * <p>
-     * Override this method to provide custom warning message handling.
+     * Override this method to buildIdentifier custom warning message handling.
      *
      * @param warning the account state warning messages.
      * @param response Ldaptive authentication response.

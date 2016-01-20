@@ -1,8 +1,9 @@
 package org.jasig.cas.adaptors.duo;
 
+import org.jasig.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceMultifactorAuthenticationProvider;
+import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +11,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /**
- * This is {@link DuoRegisteredServiceMultifactorAuthenticationProvider}.
+ * This is {@link DuoMultifactorAuthenticationProvider}.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
 @Component("duoAuthenticationProvider")
-public class DuoRegisteredServiceMultifactorAuthenticationProvider implements RegisteredServiceMultifactorAuthenticationProvider {
+public class DuoMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
 
@@ -27,7 +28,7 @@ public class DuoRegisteredServiceMultifactorAuthenticationProvider implements Re
     private DuoAuthenticationService duoAuthenticationService;
 
     @Override
-    public String provide(final RegisteredService service) throws AuthenticationException {
+    public String buildIdentifier(final RegisteredService service) throws AuthenticationException {
         if (duoAuthenticationService.canPing()) {
             return DuoMultifactorWebflowConfigurer.MFA_DUO_EVENT_ID;
         } else if (service.getAuthenticationPolicy().isFailOpen()) {
