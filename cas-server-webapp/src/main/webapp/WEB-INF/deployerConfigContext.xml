@@ -30,7 +30,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
-    <util:map id="authenticationHandlersResolvers">
+    <util:map id="authenticationHandlersResolvers" map-class="java.util.LinkedHashMap">
         <entry key-ref="proxyAuthenticationHandler" value-ref="proxyPrincipalResolver" />
         <entry key-ref="primaryAuthenticationHandler" value-ref="primaryPrincipalResolver" />
     </util:map>
@@ -48,7 +48,7 @@
 
     <util:map id="attrRepoBackingMap">
         <entry key="uid" value="uid" />
-        <entry key="eduPersonAffiliation" value="duoAuthenticationHandler" />
+        <entry key="eduPersonAffiliation" value="yubikeyAuthenticationHandler" />
         <entry key="groupMembership" value="groupMembership" />
         <entry>
             <key><value>memberOf</value></key>
