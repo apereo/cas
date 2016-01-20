@@ -61,7 +61,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider implements Regi
             principalId = attributes.get(this.usernameAttribute).toString();
         } else {
             logger.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
-                    + "buildIdentifier the user attribute the service expects. "
+                    + "provide the user attribute the service expects. "
                     + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
                     + "is allowed to be released by the service attribute release policy.",
                     principalId,

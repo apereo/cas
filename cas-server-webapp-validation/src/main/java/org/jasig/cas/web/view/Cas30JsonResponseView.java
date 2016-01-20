@@ -22,7 +22,7 @@ import java.util.Map;
  * the output for pretty printing. The class relies on
  * {@link MappingJackson2JsonView} to handle most of the
  * model processing and as such, does not do anything special.
- * It is meant and kept to buildIdentifier a facility for adopters
+ * It is meant and kept to provide a facility for adopters
  * so that the JSON view can be augmented easily in overlays.
  *
  * @author Misagh Moayyed

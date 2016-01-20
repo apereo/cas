@@ -29,6 +29,10 @@ import java.util.Set;
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     @Autowired
+    @Qualifier("requestParameterAuthenticationPolicyWebflowEventResolver")
+    private CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver;
+
+    @Autowired
     @Qualifier("registeredServiceAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver;
 
@@ -63,29 +67,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService);
 
-                logger.debug("Evaluating authentication policy for {} based on principal attribute requirements only when accessing {}",
-                       registeredService.getServiceId(),  service);
-                final Event serviceAttributeEvent =
-                        registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
-
-                logger.debug("Evaluating authentication policy based on principal attribute requirements for {}", service);
-                final Event attributeEvent = principalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
-
-                logger.debug("Evaluating authentication policy for {}", service);
-                final Event serviceEvent = registeredServiceAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
-
-                final ImmutableSet.Builder<Event> eventBuilder = ImmutableSet.builder();
-                if (serviceAttributeEvent != null) {
-                    eventBuilder.add(serviceAttributeEvent);
-                }
-                if (attributeEvent != null) {
-                    eventBuilder.add(attributeEvent);
-                }
-                if (serviceEvent != null) {
-                    eventBuilder.add(serviceEvent);
-                }
-
-                final Set<Event> resolvedEvents = eventBuilder.build();
+                final Set<Event> resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
                 if (!resolvedEvents.isEmpty()) {
                     putResolvedEventsAsAttribute(context, resolvedEvents);
                     final Event finalResolvedEvent = selectiveAuthenticationProviderWebflowEventResolver.resolveSingle(context);
@@ -106,6 +88,47 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         }
     }
 
+    /**
+     * Resolve candidate authentication events set.
+     *
+     * @param context           the context
+     * @param service           the service
+     * @param registeredService the registered service
+     * @return the set
+     */
+    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service,
+                                                              final RegisteredService registeredService) {
+        logger.debug("Evaluating authentication policy for {} based on principal attribute requirements only when accessing {}",
+               registeredService.getServiceId(),  service);
+        final Event serviceAttributeEvent =
+                registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
+
+        logger.debug("Evaluating authentication policy based on principal attribute requirements for {}", service);
+        final Event attributeEvent = principalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
+
+        logger.debug("Evaluating authentication policy for {}", service);
+        final Event serviceEvent = registeredServiceAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
+
+        logger.debug("Evaluating authentication policy for {} based on request parameters", service);
+        final Event requestEvent =  requestParameterAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
+
+        final ImmutableSet.Builder<Event> eventBuilder = ImmutableSet.builder();
+
+        if (requestEvent != null) {
+            eventBuilder.add(requestEvent);
+        }
+        if (serviceAttributeEvent != null) {
+            eventBuilder.add(serviceAttributeEvent);
+        }
+        if (attributeEvent != null) {
+            eventBuilder.add(attributeEvent);
+        }
+        if (serviceEvent != null) {
+            eventBuilder.add(serviceEvent);
+        }
+
+        return eventBuilder.build();
+    }
 
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
