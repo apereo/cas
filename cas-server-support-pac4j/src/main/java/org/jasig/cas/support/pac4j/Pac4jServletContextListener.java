@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow;
+package org.jasig.cas.support.pac4j;
 
 import org.jasig.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.jasig.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
