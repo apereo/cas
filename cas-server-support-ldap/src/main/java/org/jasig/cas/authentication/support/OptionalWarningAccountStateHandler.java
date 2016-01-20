@@ -21,7 +21,7 @@ import java.util.List;
  * The first two parameters define an attribute on the user entry to match on, and the third parameter determines
  * whether password expiration warnings should be displayed on match.
  * <p>
- * Deployers MUST configure LDAP components to provide {@code warningAttributeName} in the set of attributes
+ * Deployers MUST configure LDAP components to buildIdentifier {@code warningAttributeName} in the set of attributes
  * returned from the LDAP query for user details.
  *
  * @author Marvin S. Addison

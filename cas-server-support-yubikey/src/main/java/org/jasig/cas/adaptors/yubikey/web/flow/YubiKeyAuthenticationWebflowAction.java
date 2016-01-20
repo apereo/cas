@@ -1,4 +1,4 @@
-package org.jasig.cas.adaptors.duo;
+package org.jasig.cas.adaptors.yubikey.web.flow;
 
 import org.jasig.cas.web.flow.authentication.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,19 +9,19 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link DuoAuthenticationWebflowAction}.
+ * This is {@link YubiKeyAuthenticationWebflowAction}.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-@Component("duoAuthenticationWebflowAction")
-public class DuoAuthenticationWebflowAction extends AbstractAction {
+@Component("yubikeyAuthenticationWebflowAction")
+public class YubiKeyAuthenticationWebflowAction extends AbstractAction {
     @Autowired
-    @Qualifier("duoAuthenticationWebflowEventResolver")
-    private CasWebflowEventResolver duoAuthenticationWebflowEventResolver;
+    @Qualifier("yubikeyAuthenticationWebflowEventResolver")
+    private CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        return duoAuthenticationWebflowEventResolver.resolveSingle(requestContext);
+        return yubikeyAuthenticationWebflowEventResolver.resolveSingle(requestContext);
     }
 }

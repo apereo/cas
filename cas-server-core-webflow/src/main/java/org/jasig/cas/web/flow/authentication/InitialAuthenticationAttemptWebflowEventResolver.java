@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.xml.transform.URIResolver;
 import java.util.Set;
 
 /**
@@ -39,6 +38,11 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     @Qualifier("registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver;
 
+    @Autowired
+    @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+    private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
+
+
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
@@ -52,27 +56,43 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
             final Service service = WebUtils.getService(context);
             if (service != null) {
+
+                logger.debug("Locating service {} in service registry to determine authentication policy", service);
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 RegisteredServiceAccessStrategySupport.ensureServiceAccessIsAllowed(service, registeredService);
 
-                final Set<Event> roleEvents = registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver.resolve(context);
-                final Set<Event> attributeEvents = principalAttributeAuthenticationPolicyWebflowEventResolver.resolve(context);
-                final Event event = registeredServiceAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
+                logger.debug("Evaluating authentication policy for {} based on principal attribute requirements only when accessing {}",
+                       registeredService.getServiceId(),  service);
+                final Event serviceAttributeEvent =
+                        registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
+
+                logger.debug("Evaluating authentication policy based on principal attribute requirements for {}", service);
+                final Event attributeEvent = principalAttributeAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
+
+                logger.debug("Evaluating authentication policy for {}", service);
+                final Event serviceEvent = registeredServiceAuthenticationPolicyWebflowEventResolver.resolveSingle(context);
 
                 final ImmutableSet.Builder<Event> eventBuilder = ImmutableSet.builder();
-                if (event != null) {
-                    eventBuilder.add(event);
+                if (serviceAttributeEvent != null) {
+                    eventBuilder.add(serviceAttributeEvent);
                 }
-                if (roleEvents != null) {
-                    eventBuilder.addAll(roleEvents);
+                if (attributeEvent != null) {
+                    eventBuilder.add(attributeEvent);
                 }
-                if (attributeEvents != null) {
-                    eventBuilder.addAll(attributeEvents);
+                if (serviceEvent != null) {
+                    eventBuilder.add(serviceEvent);
                 }
+
                 final Set<Event> resolvedEvents = eventBuilder.build();
-
-
+                if (!resolvedEvents.isEmpty()) {
+                    putResolvedEventsAsAttribute(context, resolvedEvents);
+                    final Event finalResolvedEvent = selectiveAuthenticationProviderWebflowEventResolver.resolveSingle(context);
+                    if (finalResolvedEvent != null) {
+                        return ImmutableSet.of(finalResolvedEvent);
+                    }
+                }
             }
+
             return ImmutableSet.of(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             Event event = returnAuthenticationExceptionEventIfNeeded(e);
@@ -83,6 +103,8 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             return ImmutableSet.of(event);
         }
     }
+
+
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
 

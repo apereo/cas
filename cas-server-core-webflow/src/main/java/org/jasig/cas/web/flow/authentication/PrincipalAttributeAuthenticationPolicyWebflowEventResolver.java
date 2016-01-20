@@ -25,6 +25,9 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
     @Value("${cas.mfa.principal.attribute:}")
     private String attributeName;
 
+    @Value("${cas.mfa.principal.attribute.value:}")
+    private String attributeValue;
+
     @Override
     protected Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = WebUtils.getRegisteredService(context);
@@ -36,13 +39,12 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
         }
 
         final Principal principal = authentication.getPrincipal();
-        if (StringUtils.isBlank(this.attributeName)) {
-            logger.debug("Attribute name to determine event is not configured for {}", principal.getId());
+        if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
+            logger.debug("Attribute name/value to determine event is not configured for {}", principal.getId());
             return null;
         }
 
         return resolveEventViaPrincipalAttribute(principal, this.attributeName, service, context,
-                Predicates.alwaysTrue());
-
+                Predicates.containsPattern(this.attributeValue));
     }
 }

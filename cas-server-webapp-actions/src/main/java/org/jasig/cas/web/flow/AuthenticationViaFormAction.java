@@ -1,8 +1,6 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.web.flow.authentication.CasWebflowEventResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

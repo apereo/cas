@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.NotNull;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 /**
  * An abstraction that encapsulates interaction with Duo 2fa authentication service via its public API.
@@ -128,9 +127,9 @@ public final class DuoAuthenticationService {
             }
             final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(url));
             if (msg != null) {
-                logger.debug("Received Duo ping response {}", msg.getMessage());
-                final ObjectMapper mapper = new ObjectMapper();
                 final String response = URLDecoder.decode(msg.getMessage(), "UTF-8");
+                logger.debug("Received Duo ping response {}", response);
+                final ObjectMapper mapper = new ObjectMapper();
                 final JsonNode result = mapper.readTree(response);
                 if (result.has("response") && result.has("stat")
                         && result.get("response").asText().equalsIgnoreCase("pong")

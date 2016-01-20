@@ -29,11 +29,13 @@ public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEvent
 
         final RegisteredServiceAuthenticationPolicy policy = service.getAuthenticationPolicy();
         if (service.getAuthenticationPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
+            logger.debug("Authentication policy does not contain any multifactor authentication providers");
             return null;
         }
 
         if (StringUtils.isBlank(policy.getPrincipalAttributeNameTrigger())
                 || StringUtils.isBlank(policy.getPrincipalAttributeValueToMatch())) {
+            logger.debug("Authentication policy does not define a principal attribute and/or value to trigger multifactor authentication");
             return null;
         }
 
