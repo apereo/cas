@@ -1,4 +1,4 @@
-package org.jasig.cas.web.flow.authentication;
+package org.jasig.cas.web.flow.resolver;
 
 import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.AuthenticationException;
@@ -18,7 +18,9 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link InitialAuthenticationAttemptWebflowEventResolver}.
+ * This is {@link InitialAuthenticationAttemptWebflowEventResolver},
+ * which handles the initial authentication attempt and calls upon a number of
+ * embedded resolvers to produce the next event in the authentication flow.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
