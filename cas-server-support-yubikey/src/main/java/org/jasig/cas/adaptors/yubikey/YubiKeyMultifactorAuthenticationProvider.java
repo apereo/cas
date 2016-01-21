@@ -5,6 +5,7 @@ import org.jasig.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigur
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.HttpMessage;
 import org.slf4j.Logger;
@@ -60,7 +61,8 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
             }
             throw new IllegalArgumentException("YubiKey WS API url cannot be reached");
         } catch (final Exception e) {
-            if (service.getAuthenticationPolicy().isFailOpen()) {
+            final RegisteredServiceAuthenticationPolicy policy = service.getAuthenticationPolicy();
+            if (policy != null && policy.isFailOpen()) {
                 logger.warn("Duo could not be reached. Since the authentication provider is configured to fail-open, authentication will "
                         + "proceed without Duo for service {}. {}", service.getServiceId(), e);
                 return false;
