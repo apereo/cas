@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -242,17 +243,12 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      * @return the built request executor service
      */
     private FutureRequestExecutionService buildRequestExecutorService(final CloseableHttpClient httpClient) {
-
-        final ExecutorService definedExecutorService;
-        // no executor service provided -> create a default one
         if (this.executorService == null) {
-            definedExecutorService = new ThreadPoolExecutor(this.threadsNumber, this.threadsNumber,
+            this.executorService = new ThreadPoolExecutor(this.threadsNumber, this.threadsNumber,
                     0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(this.queueSize));
-        } else {
-            definedExecutorService = this.executorService;
         }
 
-        return new FutureRequestExecutionService(httpClient, definedExecutorService);
+        return new FutureRequestExecutionService(httpClient, this.executorService);
     }
 
     public ExecutorService getExecutorService() {
@@ -425,6 +421,14 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
 
     public void setRedirectsEnabled(final boolean redirectsEnabled) {
         this.redirectsEnabled = redirectsEnabled;
+    }
+
+    /**
+     * Destroy.
+     */
+    @PreDestroy
+    public void destroy() {
+        this.executorService.shutdownNow();
     }
 
     /**
