@@ -1,0 +1,122 @@
+<html>
+<head>
+<title>Error Page 404</title>
+<base href="http://download.oracle.com/index.html" />
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+<link rel="stylesheet" type="text/css" href="/errors/us/assets/hp-styles.css" />
+<link rel="stylesheet" type="text/css" href="/errors/us/assets/master-master.css" />
+
+<body style="margin: 0px" bgcolor=#ffffff>
+<div id="banner">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td rowspan="2" valign="middle" nowrap><a href="http://www.oracle.com"><img src="/errors/us/assets/oralogo-small.gif" width="154" height="19" hspace="10" vspace="25" border="0" ></a></td>
+      <td align="right" valign="top" width="70%" nowrap class="padMid"><div id="bannerMid"> </div></td>
+      <td width="30%" align="left" valign="bottom" nowrap></td>
+    </tr>
+    <tr>
+      <td align="right" valign="bottom" nowrap class="padMid"></td>
+      <td width="30%" align="left" valign="bottom" nowrap></td>
+    </tr>
+  </table>
+</div>
+<!-- Header END //-->
+<table  BORDER=0 CELLPADDING=0 CELLSPACING=0 WIDTH="100%">
+  <tr>
+    <TD WIDTH="10"><IMG SRC="/errors/us/assets/spacer.gif" BORDER=0 ALT="" WIDTH="10"></TD>
+    <td><table width="100%"  border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td><IMG SRC="/errors/us/assets/spacer.gif" BORDER=0 ALT="" height="15"></td>
+        </tr>
+        <tr>
+          <td><h1>We're sorry, the page you requested was not found.</h1></td>
+        </tr>
+        <tr>
+          <td><IMG SRC="/errors/us/assets/spacer.gif" BORDER=0 ALT="" height="5"></td>
+        </tr>
+        <tr>
+          <td>We have recorded this error (404) to help us fix the problem.<br>
+            You may wish to try again using one of the tools below. </td>
+        </tr>
+        <tr>
+          <td><IMG SRC="/errors/us/assets/spacer.gif" BORDER=0 ALT="" height="5"></td>
+        </tr>
+      </table>
+      <table width="100%" border="0" align="center" cellpadding="2" cellspacing="2">
+        <tr valign="middle">
+          <td align="right" valign="top" width="2%"><img src="/errors/us/assets/004894.gif" width="7" height="7" vspace="3"></td>
+          <td><a href="javascript:history.back(-1)">Back to Previous Page</a></td>
+        </tr>
+            <tr valign="middle">
+              <td align="right" valign="top"><img src="/errors/us/assets/004894.gif" width="7" height="7" vspace="3"></td>
+              <td><a href="http://www.oracle.com/us/sitemaps/index.html#otn">Site Map</a></td>
+            </tr>
+        <tr valign="middle">
+          <td align="right" valign="top"><img src="/errors/us/assets/004894.gif" width="7" height="7" vspace="3"></td>
+          <td><a href="http://www.oracle.com/technetwork/indexes/products/index.html">Product Index</a></td>
+        </tr>
+        <tr valign="middle">
+          <td align="right" valign="top"><img src="/errors/us/assets/004894.gif" width="7" height="7" vspace="3"></td>
+          <td><a href="http://www.oracle.com/technetwork/indexes/downloads/index.html">Software Download Index</a></td>
+        </tr>
+        <tr valign="middle">
+          <td align="right" valign="top"><img src="/errors/us/assets/004894.gif" width="7" height="7" vspace="3"></td>
+          <td>To <strong>search</strong> for your page, try our Search function.</td>
+        </tr>
+      </table>
+      <table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr valign="top">
+          <td width="99%"><form name=searchForm onSubmit="javascript: return isNotNull(this.keyword.value)" action="http://search.oracle.com/search/search" method=get target="_top">
+              <table cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td width="23">&nbsp;&nbsp;</td>
+                  <td align="left"><input type="hidden" name="default" value="true"/>
+                    <input class="textA" name="keyword" size="35" maxlength="2048" value="search site" onClick="javascript: document.searchForm.keyword.value = ''" title="Search"/>
+                    <input type="hidden" name="start" value="1"/>
+                  </td>
+                  <td align="left">&nbsp;&nbsp;</td>
+                  <td align="left"><input type="hidden" name="nodeid" value=""/>
+                    <input type="hidden" name="fid" value=""/>
+                    <input type="hidden" name="showSimilarDoc" value="true"/>
+                    <select name="group" onChange="javascript: setFormValues(document.searchForm,document.searchForm.group.value)" class="textA" size=1>
+                      <option value="All">All</option>
+                      <option value="Oracle Technology Network" selected="selected">Technology Network</option>
+                      <option value="Oracle PartnerNetwork (Public)">PartnerNetwork (Public Only)</option>
+                      <!-- <option value="Documentation">Documentation</option> -->
+                      <option value="Video and Multimedia">Video and Multimedia</option>
+                    </select>
+                  </td>
+                  <td align="left">&nbsp;</td>
+                  <td align="left"><a onClick="javascript: return isNotNull(document.searchForm.keyword.value)" href="javascript:document.searchForm.submit()"> <img src="/errors/us/assets/search-icon-search-icon.gif" width="21" height="20" vspace="1" hspace="1" border="0" /></a></td>
+                  <td align="left">&nbsp;&nbsp;</td>
+                  <td align="left"><a href="http://search.oracle.com/search/search" class="suggestedLink">Refine Search</a></td>
+                </tr>
+              </table>
+            </form></td>
+        </tr>
+      </table>
+      <br>
+      <div id="footer">
+        <table width="100%"  border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td width="50%" class="legalese" align="right" valign="top">&nbsp;</td>
+            <td width="50%" class="legalese" align="left" valign="top" >&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="50%" class="legalese" align="left" valign="top">&nbsp;</td>
+            <td width="50%" class="legalese" align="right" valign="top"><a class=legalese href="http://www.oracle.com/rss/index.html" target="_top">RSS <img src="/errors/us/assets/feed-icon-14x14.png" width="14" height="14" border="0"></A><span class=navlink> | </span> <a class=legalese href="http://www.oracle.com/html/copyright.html" target="_top">Legal Notices and Terms for Use</a><span class=navlink> | </span> <a class=legalese href="http://www.oracle.com/html/privacy.html" target="_top">Privacy Statement</a><br />
+            </td>
+          </tr>
+          <tr>
+            <td width="50%" class="legalese" align="right" valign="top">&nbsp;</td>
+            <td width="50%" class="legalese" align="left" valign="top" ></td>
+          </tr>
+        </table>
+      </div>
+    </td>
+    <TD WIDTH="10"><IMG SRC="/errors/us/assets/spacer.gif" BORDER=0 ALT="" WIDTH="10"></TD>
+  </tr>
+</table>
+</body>
+</html>
+
