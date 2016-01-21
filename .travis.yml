@@ -46,8 +46,8 @@ before_script:
  - echo $JAVA_OPTS
 before_install:
 - ls ./etc
-- sudo unzip -j -o /tmp/policy.zip *.jar -d `jdk_switcher home oraclejdk7`/jre/lib/security
-- rm /tmp/policy.zip"
+- sudo unzip -j -o ./etc/policy7.zip *.jar -d `jdk_switcher home oraclejdk7`/jre/lib/security
+- sudo ls `jdk_switcher home oraclejdk7`/jre/lib/security
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
