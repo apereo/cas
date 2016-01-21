@@ -81,7 +81,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return resumeFlow();
         }
 
-        if (event.getId().equals(CasWebflowConstants.TRANSITION_ID_ERROR)) {
+        if (event.getId().equals(CasWebflowConstants.TRANSITION_ID_ERROR)
+            || event.getId().equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)) {
             return ImmutableSet.of(event);
         }
 
@@ -99,7 +100,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
 
         if (!satisfiedProviders.isEmpty()) {
-            final MultifactorAuthenticationProvider[] providersArray = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
+            final MultifactorAuthenticationProvider[] providersArray =
+                    satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
             OrderComparator.sortIfNecessary(providersArray);
             for (final MultifactorAuthenticationProvider provider : providersArray) {
                 if (provider.getOrder() > requestedProvider.getOrder()) {
@@ -129,7 +131,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         return satisfiedProviders;
     }
 
-    private MultifactorAuthenticationProvider locateRequestedProvider(final Collection<MultifactorAuthenticationProvider> providersArray,
+    private static MultifactorAuthenticationProvider locateRequestedProvider(final Collection<MultifactorAuthenticationProvider>
+                                                                                  providersArray,
                                                                       final Event event) {
         for (final MultifactorAuthenticationProvider provider : providersArray) {
             if (provider.getId().equals(event.getId())) {

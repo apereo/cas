@@ -4,6 +4,7 @@ import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -46,7 +49,25 @@ public class PrincipalAttributeAuthenticationPolicyWebflowEventResolver extends 
             return null;
         }
 
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+                getAllMultifactorAuthenticationProvidersFromApplicationContext();
+        if (providerMap == null || providerMap.isEmpty()) {
+            logger.warn("No multifactor authentication providers are available in the application context");
+            return null;
+        }
+
+        final Set<MultifactorAuthenticationProvider> providers = new LinkedHashSet<>(providerMap.size());
+        for (final MultifactorAuthenticationProvider provider : providerMap.values()) {
+            try {
+                if (provider.getId().matches(this.attributeValue)) {
+                    logger.debug("Matched provider {} against attribute value {}", provider, this.attributeValue);
+                    providers.add(provider);
+                }
+            } catch (final Exception e) {
+                logger.warn("Could not verify multifactor authentication provider {}", provider, e);
+            }
+        }
         return resolveEventViaPrincipalAttribute(principal, this.attributeName, service, context,
-                Predicates.containsPattern(this.attributeValue));
+                providers, Predicates.alwaysTrue());
     }
 }

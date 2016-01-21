@@ -2,6 +2,7 @@ package org.jasig.cas.web.flow.resolver;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
@@ -29,7 +30,8 @@ public class RegisteredServiceAuthenticationPolicyWebflowEventResolver extends A
             return null;
         }
 
-        if (service.getAuthenticationPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
+        final RegisteredServiceAuthenticationPolicy policy = service.getAuthenticationPolicy();
+        if (policy == null || policy.getMultifactorAuthenticationProviders().isEmpty()) {
             logger.debug("Authentication policy does not contain any multifactor authentication providers");
             return null;
         }
