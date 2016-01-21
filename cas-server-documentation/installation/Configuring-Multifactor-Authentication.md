@@ -18,7 +18,7 @@ interface with the authentication subsystem accept one or more credentials to au
 
 ## Supported Providers
 
-### DuoSecurity
+### Duo Security
 
 Configure authentication per instructions [here] (DuoSecurity-Authentication.html). 
 
