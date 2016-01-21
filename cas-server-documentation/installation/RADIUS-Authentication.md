@@ -16,10 +16,6 @@ RADIUS support is enabled by including the following dependency in the Maven WAR
 
 ## Configuration
 
-{% highlight xml %}
-<alias name="radiusAuthenticationHandler" alias="primaryAuthenticationHandler" />
-{% endhighlight %}
-
 The following settings may control the configuration RADIUS server and client:
 
 {% highlight properties %}
