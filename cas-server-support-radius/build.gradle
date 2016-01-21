@@ -1,9 +1,9 @@
-
 description = 'Apereo CAS RADIUS Support'
 dependencies {
-	
-	compile project(':cas-server-core-authentication')
-	compile libraries.jradius
+    compile project(':cas-server-core-authentication')
+    compile libraries.jradius
+    compile project(':cas-server-core-webflow')
+    compile project(':cas-server-core-web')
 }
 
 configurations.all {

@@ -46,6 +46,7 @@ dependencies {
 
     compile project(':cas-server-support-duo')
     compile project(':cas-server-support-yubikey')
+    compile project(':cas-server-support-radius')
 
     compile libraries.pac4j
     runtime libraries.spring

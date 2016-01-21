@@ -1,13 +1,12 @@
 package org.jasig.cas;
 
+import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationResult;
-import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationSystemSupport;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
-import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
