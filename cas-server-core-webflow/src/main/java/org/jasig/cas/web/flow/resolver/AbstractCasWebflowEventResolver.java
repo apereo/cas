@@ -16,11 +16,11 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.MultifactorAuthenticationProviderSelector;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.flow.CasWebflowConstants;
 import org.jasig.cas.web.support.WebUtils;
-import org.opensaml.xml.encryption.P;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -206,17 +206,21 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the authentication provider for service
      */
     protected Set<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
-        final Set<String> providers = service.getAuthenticationPolicy().getMultifactorAuthenticationProviders();
-        final Set<MultifactorAuthenticationProvider> providersSet = new HashSet<>(providers.size());
+        final RegisteredServiceAuthenticationPolicy policy = service.getAuthenticationPolicy();
+        if (policy != null) {
+            final Set<String> providers = policy.getMultifactorAuthenticationProviders();
+            final Set<MultifactorAuthenticationProvider> providersSet = new HashSet<>(providers.size());
 
-        for (final String provider : providers) {
-            final MultifactorAuthenticationProvider providerClass = getMultifactorAuthenticationProviderFromApplicationContext(provider);
-            if (providerClass != null) {
-                logger.debug("Added multifactor authentication provider {} as an available provider for {}", providerClass, service);
-                providersSet.add(providerClass);
+            for (final String provider : providers) {
+                final MultifactorAuthenticationProvider providerInst = getMultifactorAuthenticationProviderFromApplicationContext(provider);
+                if (providerInst != null) {
+                    logger.debug("Added multifactor authentication provider {} as an available provider for {}", providerInst, service);
+                    providersSet.add(providerInst);
+                }
             }
+            return providersSet;
         }
-        return providersSet;
+        return null;
     }
 
 
@@ -274,24 +278,26 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param attributeName the attribute name
      * @param service       the service
      * @param context       the context
+     * @param providers     the providers
      * @param predicate     the predicate
-     * @return the set
+     * @return the set of resolved events
      */
     protected Set<Event> resolveEventViaPrincipalAttribute(final Principal principal,
                                                            final String attributeName,
                                                            final RegisteredService service,
                                                            final RequestContext context,
+                                                           final Set<MultifactorAuthenticationProvider> providers,
                                                            final Predicate predicate) {
-        final Set<MultifactorAuthenticationProvider> providers = getAuthenticationProviderForService(service);
-        if (providers == null || providers.isEmpty()) {
-            logger.debug("No authentication provider is associated with this service");
-            return null;
-        }
 
         logger.debug("Locating principal attribute value for {}", attributeName);
         final Object attributeValue = principal.getAttributes().get(attributeName);
         if (attributeValue == null) {
             logger.debug("Attribute value for {} to determine event is not configured for {}", attributeName, principal.getId());
+            return null;
+        }
+
+        if (providers == null || providers.isEmpty()) {
+            logger.debug("No authentication provider is associated with this service");
             return null;
         }
 
@@ -424,8 +430,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             logger.debug("Locating bean definition for {}", provider);
             return this.applicationContext.getBean(provider, MultifactorAuthenticationProvider.class);
         } catch (final Exception e) {
-            logger.warn("Could not locate [{}] bean id in the application context as an authentication provider.", provider);
-            logger.debug(e.getMessage(), e);
+            logger.debug("Could not locate [{}] bean id in the application context as an authentication provider.", provider);
         }
         return null;
 

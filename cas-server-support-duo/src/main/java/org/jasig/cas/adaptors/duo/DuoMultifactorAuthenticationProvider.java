@@ -4,6 +4,7 @@ import org.jasig.cas.adaptors.duo.web.flow.DuoMultifactorWebflowConfigurer;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
+import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,8 @@ public class DuoMultifactorAuthenticationProvider implements MultifactorAuthenti
         if (duoAuthenticationService.canPing()) {
             return true;
         }
-        if (service.getAuthenticationPolicy().isFailOpen()) {
+        final RegisteredServiceAuthenticationPolicy policy = service.getAuthenticationPolicy();
+        if (policy != null && policy.isFailOpen()) {
             logger.warn("Duo could not be reached. Since the authentication provider is configured to fail-open, authentication will "
                     + "proceed without Duo for service {}", service.getServiceId());
             return false;
