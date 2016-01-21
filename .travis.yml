@@ -45,6 +45,7 @@ before_script:
  - export JAVA_OPTS="-Xmx2048m -XX:MaxPermSize=512m"
  - echo $JAVA_OPTS
 before_install:
+- "curl -L --cookie 'oraclelicense=accept-securebackup-cookie;' http://download.oracle.com/otn-pub/java/jce/7/jce_policy-7.zip -o /tmp/policy.zip && sudo unzip -j -o /tmp/policy.zip *.jar -d `jdk_switcher home oraclejdk7`/jre/lib/security && rm /tmp/policy.zip"
 - chmod -R 777 ./travis/init-travis-build.sh
 - ./travis/init-travis-build.sh
 - chmod -R 777 ./gradlew
