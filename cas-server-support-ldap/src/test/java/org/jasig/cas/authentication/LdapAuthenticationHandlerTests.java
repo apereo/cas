@@ -63,6 +63,16 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
         }
     }
 
+    @Test(expected=FailedLoginException.class)
+    public void verifyNullPasswordAuthenticateFailure() throws Exception {
+        for (final LdapEntry entry : this.getEntries()) {
+            final String username = getUsername(entry);
+            this.handler.authenticate(new UsernamePasswordCredential(username, null));
+            fail("Should have thrown FailedLoginException.");
+
+        }
+    }
+
     @Test(expected=AccountNotFoundException.class)
     public void verifyAuthenticateNotFound() throws Exception {
         this.handler.authenticate(new UsernamePasswordCredential("notfound", "somepwd"));
