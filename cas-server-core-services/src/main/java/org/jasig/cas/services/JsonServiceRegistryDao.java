@@ -8,14 +8,13 @@ import org.jasig.cas.util.LockedOutputStream;
 import org.jasig.cas.util.services.RegisteredServiceJsonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.PreDestroy;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -73,7 +72,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 4.1.0
  */
 @Component("jsonServiceRegistryDao")
-public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationContextAware {
+public class JsonServiceRegistryDao implements ServiceRegistryDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonServiceRegistryDao.class);
 
@@ -97,7 +96,11 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
      */
     private final JsonSerializer<RegisteredService> registeredServiceJsonSerializer;
 
+    @Autowired
     private ApplicationContext applicationContext;
+
+    private final Thread jsonServiceRegistryWatcherThread;
+    private final JsonServiceRegistryConfigWatcher jsonServiceRegistryConfigWatcher;
 
     /**
      * Instantiates a new Json service registry dao.
@@ -110,7 +113,12 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), serviceRegistryDirectory + " is not a directory");
         this.registeredServiceJsonSerializer = registeredServiceJsonSerializer;
-        initializeWatchServiceThread();
+
+        this.jsonServiceRegistryConfigWatcher = new JsonServiceRegistryConfigWatcher(this);
+        this.jsonServiceRegistryWatcherThread = new Thread(this.jsonServiceRegistryConfigWatcher);
+        this.jsonServiceRegistryWatcherThread.setName(this.getClass().getName());
+        this.jsonServiceRegistryWatcherThread.start();
+        LOGGER.debug("Started service registry watcher thread");
     }
 
     /**
@@ -197,9 +205,12 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
                     temp.put(service.getId(), service);
                 }
             }
-        }
+        }        
         if (errorCount == 0) {
             this.serviceMap = temp;
+        } else {
+            LOGGER.warn("{} errors encountered when loading service definitions. New definitions are not loaded until errors are "
+                   +  "corrected", errorCount);
         }
         return new ArrayList<>(this.serviceMap.values());
     }
@@ -273,15 +284,6 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
     }
 
     /**
-     * Initialize watch service thread.
-     */
-    private void initializeWatchServiceThread() {
-        final Thread thread = new Thread(new JsonServiceRegistryConfigWatcher(this));
-        thread.start();
-        LOGGER.debug("Started service registry watcher thread");
-    }
-
-    /**
      * Refreshes the services manager, forcing it to reload.
      */
     void refreshServicesManager() {
@@ -304,8 +306,12 @@ public class JsonServiceRegistryDao implements ServiceRegistryDao, ApplicationCo
         return getClass().getSimpleName();
     }
 
-    @Override
-    public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+    /**
+     * Destroy the watch service thread.
+     */
+    @PreDestroy
+    public void destroy() {
+        this.jsonServiceRegistryConfigWatcher.close();
+        this.jsonServiceRegistryWatcherThread.interrupt();
     }
 }
