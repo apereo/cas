@@ -32,7 +32,7 @@ dependencies {
     compile project(':cas-server-core-logging')
     compile project(':cas-server-core-tickets')
     compile project(':cas-server-core-audit')
-    compile project(':cas-server-support-oauth')
+    compile project(':cas-server-support-oauth-core')
     compile(group: 'org.jasig.cas.client', name: 'cas-client-core', version: casClientVersion) {
         exclude(module: 'servlet-api')
         exclude(module: 'log4j-over-slf4j')
