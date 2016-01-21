@@ -4,9 +4,11 @@ dependencies {
   
   compile project(':cas-server-core-services')
   compile project(':cas-server-core-web')
-  compile libraries.pac4j
-  compile libraries.jackson
-  runtime libraries.hibernate
+  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:jacksonDatabindVersion
+  runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
+    exclude(module: 'slf4j-api')
+    exclude(module: 'jboss-logging')
+  }
   testCompile project(':cas-server-core-tickets')
   testCompile project(':cas-server-core-util')
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
