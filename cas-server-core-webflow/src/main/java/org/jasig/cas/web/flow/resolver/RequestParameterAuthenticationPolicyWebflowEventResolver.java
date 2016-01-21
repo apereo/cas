@@ -40,9 +40,9 @@ public class RequestParameterAuthenticationPolicyWebflowEventResolver extends Ab
         final String[] values = request.getParameterValues(this.parameterName);
         if (values != null && values.length > 0) {
             logger.debug("Received request parameter {} as {}", this.parameterName, values);
+
             final Map<String, MultifactorAuthenticationProvider> providerMap =
                     getAllMultifactorAuthenticationProvidersFromApplicationContext();
-
             if (providerMap == null || providerMap.isEmpty()) {
                 logger.warn("No multifactor authentication providers are available in the application context");
                 return null;

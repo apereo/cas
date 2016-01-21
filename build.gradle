@@ -377,6 +377,7 @@ ext.libraries = [
                     exclude(module: 'spring-context')
                     exclude(module: 'spring-context-support')
                     exclude(module: 'spring-core')
+                    exclude(module: 'commons-lang')
                     force = true
                 },
                 "gnu.getopt:java-getopt:1.0.13"

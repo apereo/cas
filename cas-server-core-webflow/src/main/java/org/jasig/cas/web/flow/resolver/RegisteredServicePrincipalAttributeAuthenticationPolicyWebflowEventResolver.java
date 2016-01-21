@@ -4,6 +4,7 @@ import com.google.common.base.Predicates;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.jasig.cas.web.support.WebUtils;
@@ -30,8 +31,8 @@ public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEvent
         final Authentication authentication = WebUtils.getAuthentication(context);
 
         final RegisteredServiceAuthenticationPolicy policy = service.getAuthenticationPolicy();
-        if (service.getAuthenticationPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
-            logger.debug("Authentication policy does not contain any multifactor authentication providers");
+        if (policy == null || service.getAuthenticationPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
+            logger.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
             return null;
         }
 
@@ -42,7 +43,8 @@ public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEvent
         }
 
         final Principal principal = authentication.getPrincipal();
+        final Set<MultifactorAuthenticationProvider> providers = getAuthenticationProviderForService(service);
         return resolveEventViaPrincipalAttribute(principal, policy.getPrincipalAttributeNameTrigger(), service, context,
-                Predicates.containsPattern(policy.getPrincipalAttributeValueToMatch()));
+                providers, Predicates.containsPattern(policy.getPrincipalAttributeValueToMatch()));
     }
 }
