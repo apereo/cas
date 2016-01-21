@@ -24,12 +24,5 @@
     "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy",
     "enabled" : true,
     "ssoEnabled" : true
-  },
-  "authenticationPolicy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider", "yubikeyAuthenticationProvider" ] ],
-    "failOpen" : true,
-    "principalAttributeNameTrigger" : "memberOf",
-    "principalAttributeValueToMatch" : "cas|org|admin"
   }
 }

@@ -1,16 +1,11 @@
 package org.jasig.cas.web.flow;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAccessStrategySupport;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistrySupport;
-import org.jasig.cas.ticket.registry.TicketRegistrySupport;
-import org.jasig.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jasig.cas.web.support.WebUtils;
@@ -30,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Class to automatically set the paths for the CookieGenerators.
