@@ -11,7 +11,6 @@ import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.TicketState;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -239,7 +238,6 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    @Ignore
     public void verifyOK() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
