@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
+import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -256,17 +257,12 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
      * @return the built request executor service
      */
     private FutureRequestExecutionService buildRequestExecutorService(final CloseableHttpClient httpClient) {
-
-        final ExecutorService definedExecutorService;
-        // no executor service provided -> create a default one
         if (this.executorService == null) {
-            definedExecutorService = new ThreadPoolExecutor(this.threadsNumber, this.threadsNumber,
+            this.executorService = new ThreadPoolExecutor(this.threadsNumber, this.threadsNumber,
                     0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(this.queueSize));
-        } else {
-            definedExecutorService = this.executorService;
         }
 
-        return new FutureRequestExecutionService(httpClient, definedExecutorService);
+        return new FutureRequestExecutionService(httpClient, this.executorService);
     }
 
     public ExecutorService getExecutorService() {
@@ -435,5 +431,13 @@ public final class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttp
 
     public void setRedirectsEnabled(final boolean redirectsEnabled) {
         this.redirectsEnabled = redirectsEnabled;
+    }
+
+    /**
+     * Destroy.
+     */
+    @PreDestroy
+    public void destroy() {
+        this.executorService.shutdownNow();
     }
 }
