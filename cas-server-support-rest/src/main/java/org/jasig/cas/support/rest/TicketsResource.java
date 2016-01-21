@@ -134,7 +134,7 @@ public class TicketsResource {
                     .writer()
                     .withDefaultPrettyPrinter()
                     .writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
-        } catch(final BadRequestException e) {
+        } catch (final BadRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (final Throwable e) {
