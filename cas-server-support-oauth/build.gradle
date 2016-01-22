@@ -3,8 +3,8 @@ dependencies {
     compile project(':cas-server-support-oauth-core')
   compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:jacksonDatabindVersion
   runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'jboss-logging')
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
   }
     testCompile project(':cas-server-core-tickets')
     testCompile project(':cas-server-core-util')
