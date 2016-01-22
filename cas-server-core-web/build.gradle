@@ -9,13 +9,13 @@ dependencies {
     compile(group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion) {
     }
     compile(group: 'org.springframework.webflow', name: 'spring-webflow', version: springWebflowVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-webmvc')
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-expression')
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
     }
     compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
     compile group: 'org.springframework', name: 'spring-context', version: springVersion

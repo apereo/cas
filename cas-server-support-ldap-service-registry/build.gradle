@@ -3,8 +3,8 @@ dependencies {
     compile project(':cas-server-core-services')
     compile project(':cas-server-support-ldap')
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
     }
     testCompile project(path: ":cas-server-support-ldap", configuration: "tests")
     testCompile group: 'com.unboundid', name: 'unboundid-ldapsdk', version: unboundidVersion
