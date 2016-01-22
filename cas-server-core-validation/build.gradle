@@ -4,7 +4,7 @@ dependencies {
     compile project(':cas-server-core-api-validation')
     compile project(':cas-server-core-api-protocol')
     compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
-        exclude(module: 'commons-logging')
+        exclude(group: 'commons-logging', module: 'commons-logging')
     }
     compile group: 'org.springframework', name: 'spring-beans', version: springVersion
     compile group: 'org.springframework', name: 'spring-context-support', version: springVersion
