@@ -9,6 +9,14 @@
         <evaluate expression="initialFlowSetupAction"/>
     </on-start>
 
+	<action-state id="clientAction">
+        <evaluate expression="clientAction" />
+        <transition on="success" to="sendTicketGrantingTicket" />
+        <transition on="error" to="ticketGrantingTicketCheck" />
+        <transition on="stop" to="stopWebflow" />
+    </action-state>
+    <view-state id="stopWebflow" />
+
     <action-state id="ticketGrantingTicketCheck">
         <evaluate expression="ticketGrantingTicketCheckAction"/>
         <transition on="notExists" to="gatewayRequestCheck"/>
