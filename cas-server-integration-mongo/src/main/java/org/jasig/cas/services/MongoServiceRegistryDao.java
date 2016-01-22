@@ -42,7 +42,6 @@ public final class MongoServiceRegistryDao implements ServiceRegistryDao {
      * Initialized registry post construction.
      * Will decide if the configured collection should
      * be dropped and recreated.
-     * @throws Exception thrown if collection cant be dropped/created.
      */
     @PostConstruct
     public void init() {
