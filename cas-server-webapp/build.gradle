@@ -45,9 +45,9 @@ dependencies {
     compile project(':cas-server-webapp-validation')
 
     compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
-        exclude(module: 'spring-webmvc')
-        exclude(module: 'spring-core')
-        exclude(module: 'pac4j-core')
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.pac4j', module: 'pac4j-core')
     }
     compile group: 'org.pac4j', name: 'pac4j-core', version: pac4jVersion
     compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
@@ -57,29 +57,30 @@ dependencies {
     runtime group: 'javax.servlet', name: 'jstl', version: javaxJstlVersion
     runtime group: 'org.jasig.cas', name: 'cas-server-security-filter', version: casSecurityFilterVersion
     runtime(group: 'com.ryantenney.metrics', name: 'metrics-spring', version: dropwizardMetricsVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context-support')
-        exclude(module: 'spring-aop')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-context-support')
+        exclude(group: 'org.springframework', module: 'spring-aop')
     }
     runtime(group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: dropwizardMetricsVersion) {
-        exclude(module: 'slf4j-api')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
     }
     runtime(group: 'io.dropwizard.metrics', name: 'metrics-servlets', version: dropwizardMetricsVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jackson-databind')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'com.fasterxml.jackson.core', module: 'jackson-databind')
     }
     runtime group: 'org.apache.logging.log4j', name: 'log4j-web', version: log4jVersion
     runtime(group: 'org.jasig', name: 'spring-webflow-client-repo', version: springWebflowClientVersion) {
-        exclude(module: 'log4j')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'slf4j-log4j12')
-        exclude(module: 'spring-webflow')
-        exclude(module: 'commons-codec')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'bcprov-jdk15on')
+        exclude(group: 'log4j', module: 'log4j')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.slf4j', module: 'slf4j-log4j12')
+        exclude(group: 'org.springframework.webflow', module: 'spring-webflow')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'commons-codec', module: 'commons-codec')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15on')
     }
     runtime group: 'com.mchange', name: 'c3p0', version: c3p0Version
     runtime group: 'org.bouncycastle', name: 'bcprov-jdk15on', version:bouncyCastleVersion
