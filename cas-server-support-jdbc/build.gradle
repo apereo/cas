@@ -3,8 +3,8 @@ dependencies {
 
     compile project(':cas-server-core-authentication')
     compile(group: 'org.hibernate', name: 'hibernate-core', version: hibernateVersion) {
-        exclude(module: 'jboss-logging-annotations')
-        exclude(module: 'javassist')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging-annotations')
+        exclude(group: 'org.javassist', module: 'javassist')
     }
     compile group: 'org.springframework', name: 'spring-jdbc', version: springVersion
     compile group: 'org.springframework', name: 'spring-orm', version: springVersion
@@ -13,7 +13,7 @@ dependencies {
     testCompile project(':cas-server-core-util')
     testCompile group: 'org.hsqldb', name: 'hsqldb', version: hsqlVersion
     testCompile(group: 'org.hibernate', name: 'hibernate-entitymanager', version: hibernateVersion) {
-        exclude(module: 'javassist')
+        exclude(group: 'org.javassist', module: 'javassist')
     }
 }
 

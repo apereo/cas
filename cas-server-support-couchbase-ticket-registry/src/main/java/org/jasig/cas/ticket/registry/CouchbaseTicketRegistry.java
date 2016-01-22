@@ -141,7 +141,6 @@ public final class CouchbaseTicketRegistry extends AbstractCrypticTicketRegistry
 
     /**
      * Stops the couchbase client.
-     * @throws Exception on errors.
      */
     @PreDestroy
     public void destroy() {

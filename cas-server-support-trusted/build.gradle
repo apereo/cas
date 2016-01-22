@@ -5,18 +5,18 @@ dependencies {
     compile project(':cas-server-core-web')
     compile project(':cas-server-core-authentication')
     compile(group: 'org.springframework.webflow', name: 'spring-webflow', version:springWebflowVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-web')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-webmvc')
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-web')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-expression')
+        exclude(group: 'org.springframework', module: 'spring-webmvc')
     }
     testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
-        exclude(module: 'xml-apis')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+        exclude(group: 'xml-apis', module: 'xml-apis')
     }
     testCompile project(':cas-server-core')
     testCompile project(':cas-server-core-tickets')

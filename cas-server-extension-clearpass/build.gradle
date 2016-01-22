@@ -5,13 +5,13 @@ dependencies {
   compile project(':cas-server-core-util')
   compile project(':cas-server-core-tickets')
   compile(group: 'net.sf.ehcache', name: 'ehcache', version:ehcacheVersion) {
-    exclude(module: 'slf4j-api')
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
   }
   compile(group: 'org.jasig.cas.client', name: 'cas-client-core', version:casClientVersion) {
-    exclude(module: 'servlet-api')
-    exclude(module: 'log4j-over-slf4j')
-    exclude(module: 'bcprov-jdk15')
-    exclude(module: 'slf4j-api')
+    exclude(group: 'javax.servlet', module: 'servlet-api')
+    exclude(group: 'org.slf4j', module: 'log4j-over-slf4j')
+    exclude(group: 'org.bouncycastle', module: 'bcprov-jdk15')
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
   }
   testCompile project(':cas-server-integration-ehcache')
   testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
