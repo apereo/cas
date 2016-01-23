@@ -43,7 +43,7 @@ public final class DefaultRegisteredServiceMapper implements RegisteredServiceMa
 
     @Override
     public void mapRegisteredService(final RegisteredService svc, final ServiceData bean) {
-        bean.setAssignedId(svc.getId());
+        bean.setAssignedId(Long.toString(svc.getId()));
         bean.setServiceId(svc.getServiceId());
         bean.setName(svc.getName());
         bean.setDescription(svc.getDescription());
@@ -94,7 +94,7 @@ public final class DefaultRegisteredServiceMapper implements RegisteredServiceMa
 
     @Override
     public void mapRegisteredService(final RegisteredService svc, final RegisteredServiceViewBean bean) {
-        bean.setAssignedId(svc.getId());
+        bean.setAssignedId(Long.toString(svc.getId()));
         bean.setServiceId(svc.getServiceId());
         bean.setName(svc.getName());
         bean.setDescription(svc.getDescription());
@@ -126,7 +126,7 @@ public final class DefaultRegisteredServiceMapper implements RegisteredServiceMa
             }
 
             // set the assigned Id
-            final long assignedId = data.getAssignedId();
+            final long assignedId = Long.parseLong(data.getAssignedId());
             if (assignedId <= 0) {
                 regSvc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
             } else {
