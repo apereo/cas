@@ -616,7 +616,9 @@ Next, you have to explicitly define an LDAP-specific response handler in your `A
     <property name="authenticationResponseHandlers">
         <util:list>
             <bean class="org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler" />
+            <!--
             <bean class="org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler" />
+            -->
         </util:list>
 </property>
 </bean>
