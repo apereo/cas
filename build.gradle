@@ -580,6 +580,7 @@ ext.libraries = [
                     exclude(group: 'net.shibboleth.utilities', module: 'java-support')
                     exclude(group: 'xml-apis', module: 'xml-apis')
                     exclude(group: 'com.nimbusds', module: 'nimbus-jose-jwt')
+                    exclude(group: 'org.opensaml', module: 'xmltooling')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-core:$pac4jVersion") {
@@ -653,6 +654,7 @@ ext.libraries = [
                     exclude(group: 'net.shibboleth.ext', module: 'spring-extensions')
                     exclude(group: 'org.opensaml', module: 'opensaml-saml-api')
                     exclude(group: 'xml-apis', module: 'xml-apis')
+                    exclude(group: 'org.opensaml', module: 'xmltooling')
                     force = true
                 },
                 dependencies.create("org.pac4j:pac4j-stormpath:$pac4jVersion") {
