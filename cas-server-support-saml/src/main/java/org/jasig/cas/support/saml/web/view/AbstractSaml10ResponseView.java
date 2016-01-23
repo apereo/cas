@@ -14,6 +14,7 @@ import org.opensaml.saml.saml1.core.Response;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
@@ -91,14 +92,18 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             if (service == null || StringUtils.isBlank(service.getId())) {
                 serviceId = "UNKNOWN";
             } else {
-                serviceId = new URL(service.getId()).getHost();
+                try {
+                    serviceId = new URL(service.getId()).getHost();
+                } catch (final MalformedURLException e) {
+                    logger.debug(e.getMessage(), e);
+                }
             }
+
+            logger.debug("Using {} as the recipient of the SAML response for {}", serviceId, service);
             final Response samlResponse = this.samlObjectBuilder.newResponse(
                     this.samlObjectBuilder.generateSecureRandomId(),
                     DateTime.now().minusSeconds(this.skewAllowance), serviceId, service);
-
             prepareResponse(samlResponse, model);
-
             this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
             logger.error("Error generating SAML response for service {}.", serviceId, e);
