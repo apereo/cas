@@ -100,7 +100,7 @@ public final class RegisteredServiceEditBean implements Serializable {
      * The type Service data.
      */
     public static class ServiceData {
-        private long assignedId;
+        private String assignedId;
         private String serviceId;
         private String name;
         private String description;
@@ -217,11 +217,11 @@ public final class RegisteredServiceEditBean implements Serializable {
             this.supportAccess = supportAccess;
         }
 
-        public long getAssignedId() {
+        public String getAssignedId() {
             return assignedId;
         }
 
-        public void setAssignedId(final long assignedId) {
+        public void setAssignedId(final String assignedId) {
             this.assignedId = assignedId;
         }
 
