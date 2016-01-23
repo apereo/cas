@@ -88,7 +88,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
         try {
             response.setCharacterEncoding(this.encoding);
             final WebApplicationService service = this.samlArgumentExtractor.extractService(request);
-            if (StringUtils.isBlank(service.getId())) {
+            if (service == null || StringUtils.isBlank(service.getId())) {
                 serviceId = "UNKNOWN";
             } else {
                 serviceId = new URL(service.getId()).getHost();
