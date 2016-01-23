@@ -15,7 +15,6 @@ public interface HttpClient {
     /**
      * Sends a message to a particular endpoint.  Option of sending it without
      * waiting to ensure a response was returned.
-     * <p/>
      * This is useful when it doesn't matter about the response as you'll perform no action based on the response.
      *
      * @param message The message that should be sent to the http endpoint
