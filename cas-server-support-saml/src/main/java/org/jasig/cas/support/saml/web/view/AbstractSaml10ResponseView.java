@@ -1,5 +1,6 @@
 package org.jasig.cas.support.saml.web.view;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
@@ -13,6 +14,7 @@ import org.opensaml.saml.saml1.core.Response;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
+import java.net.URL;
 import java.util.Map;
 
 /**
@@ -82,12 +84,15 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
     protected void renderMergedOutputModel(
             final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-        response.setCharacterEncoding(this.encoding);
-
-        final WebApplicationService service = this.samlArgumentExtractor.extractService(request);
-        final String serviceId = service != null ? service.getId() : "UNKNOWN";
-
+        String serviceId = null;
         try {
+            response.setCharacterEncoding(this.encoding);
+            final WebApplicationService service = this.samlArgumentExtractor.extractService(request);
+            if (StringUtils.isBlank(service.getId())) {
+                serviceId = "UNKNOWN";
+            } else {
+                serviceId = new URL(service.getId()).getHost();
+            }
             final Response samlResponse = this.samlObjectBuilder.newResponse(
                     this.samlObjectBuilder.generateSecureRandomId(),
                     DateTime.now().minusSeconds(this.skewAllowance), serviceId, service);
@@ -96,7 +101,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
 
             this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {
-            logger.error("Error generating SAML response for service {}.", serviceId);
+            logger.error("Error generating SAML response for service {}.", serviceId, e);
             throw e;
         }
     }
