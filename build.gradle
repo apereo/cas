@@ -348,7 +348,10 @@ ext.libraries = [
                 "javax.servlet:jstl:$javaxJstlVersion",
                 "javax.transaction:jta:$jtaVersion"
         ],
-        jackson          : "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+        jackson          : [
+            "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+            "com.fasterxml.jackson.core:jackson-datatype-guava:$jacksonDatabindVersion"
+        ],
         couchbase        : "com.couchbase.client:java-client:$couchbaseVersion",
 
         jcifs            : [
