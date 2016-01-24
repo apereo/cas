@@ -4,12 +4,12 @@ dependencies {
 
     }
     compile(group: 'org.springframework', name: 'spring-core', version: springVersion) {
-        exclude(module: 'commons-logging')
+        exclude(group: 'commons-logging', module: 'commons-logging')
     }
 
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
     }
 }
 

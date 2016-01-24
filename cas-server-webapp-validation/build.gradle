@@ -2,7 +2,7 @@
 description = 'Apereo CAS Web Application Protocol Validation'
 dependencies {
   compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
-    exclude(module: 'commons-logging')
+    exclude(group: 'commons-logging', module: 'commons-logging')
   }
   compile group: 'org.springframework', name: 'spring-beans', version:springVersion
   compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
@@ -13,9 +13,9 @@ dependencies {
   compile project(':cas-server-core-tickets')
   compile group: 'org.springframework', name: 'spring-context', version:springVersion
   runtime(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'jboss-logging')
-    exclude(module: 'xml-apis')  
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
+    exclude(group: 'xml-apis', module: 'xml-apis')  
   }
   testCompile project(':cas-server-core')
   testCompile project(':cas-server-core-logout')
