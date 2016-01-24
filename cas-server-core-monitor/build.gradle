@@ -6,7 +6,7 @@ dependencies {
   compile group: 'com.google.guava', name: 'guava', version:guavaVersion
   compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
   compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
-    exclude(module: 'commons-logging')
+    exclude(group: 'commons-logging', module: 'commons-logging')
   }
   compile group: 'org.springframework', name: 'spring-beans', version:springVersion
   compile group: 'org.springframework', name: 'spring-webmvc', version:springVersion

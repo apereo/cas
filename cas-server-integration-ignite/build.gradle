@@ -3,14 +3,14 @@ dependencies {
     compile(group: 'org.apache.ignite', name: 'ignite-core', version:igniteVersion)
     compile(group: 'org.apache.ignite', name: 'ignite-log4j', version:igniteVersion)
     compile(group: 'org.apache.ignite', name: 'ignite-spring', version:igniteVersion) {
-        exclude(module: 'commons-logging')
-        exclude(module: 'spring-core')
-        exclude(module: 'spring-beans')
-        exclude(module: 'spring-context')
-        exclude(module: 'spring-aop')
-        exclude(module: 'spring-expression')
-        exclude(module: 'spring-jdbc')
-        exclude(module: 'spring-tx')
+        exclude(group: 'commons-logging', module: 'commons-logging')
+        exclude(group: 'org.springframework', module: 'spring-core')
+        exclude(group: 'org.springframework', module: 'spring-beans')
+        exclude(group: 'org.springframework', module: 'spring-context')
+        exclude(group: 'org.springframework', module: 'spring-aop')
+        exclude(group: 'org.springframework', module: 'spring-expression')
+        exclude(group: 'org.springframework', module: 'spring-jdbc')
+        exclude(group: 'org.springframework', module: 'spring-tx')
     }
 
     compile project(':cas-server-core-api')

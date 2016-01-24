@@ -2,7 +2,7 @@
 description = 'Apereo CAS Memcached Monitor Integration'
 dependencies {
   compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
-    exclude(module: 'commons-logging')
+    exclude(group: 'commons-logging', module: 'commons-logging')
   }
   compile group: 'org.springframework', name: 'spring-beans', version:springVersion
   compile group: 'org.springframework', name: 'spring-context-support', version:springVersion
@@ -12,30 +12,30 @@ dependencies {
   compile group: 'net.spy', name: 'spymemcached', version:spymemcachedVersion
   compile group: 'com.esotericsoftware', name: 'kryo', version:kryoVersion
   compile(group: 'de.javakaffee', name: 'kryo-serializers', version:kryoSerializersVersion) {
-    exclude(module: 'kryo')
+    exclude(group: 'com.esotericsoftware.kryo', module: 'kryo')
   }
   testCompile(group: 'de.flapdoodle.embed', name: 'de.flapdoodle.embed.memcached', version:memcachedEmbeddedVersion) {
-    exclude(module: 'commons-lang3')  
-    exclude(module: 'spymemcached')
-    exclude(module: 'slf4j-api')
+    exclude(group: 'org.apache.commons', module: 'commons-lang3')  
+    exclude(group: 'net.spy', module: 'spymemcached')
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
   }
   testCompile project(':cas-server-core-authentication')
   testCompile(group: 'org.hibernate', name: 'hibernate-validator', version:hibernateValidatorVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'jboss-logging')
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.jboss.logging', module: 'jboss-logging')
   }
   testCompile(group: 'com.ryantenney.metrics', name: 'metrics-spring', version:dropwizardMetricsVersion) {
-    exclude(module: 'slf4j-api')
-    exclude(module: 'spring-core')
-    exclude(module: 'spring-beans')
-    exclude(module: 'spring-context-support')
-    exclude(module: 'spring-aop')
+    exclude(group: 'org.slf4j', module: 'slf4j-api')
+    exclude(group: 'org.springframework', module: 'spring-core')
+    exclude(group: 'org.springframework', module: 'spring-beans')
+    exclude(group: 'org.springframework', module: 'spring-context-support')
+    exclude(group: 'org.springframework', module: 'spring-aop')
   }
   testCompile project(path: ":cas-server-integration-memcached", configuration: "tests")
   testCompile project(':cas-server-core')
   testCompile project(':cas-server-core-logout')
   provided(project(':cas-server-support-saml')) {
-    exclude(module: 'xml-apis')
+    exclude(group: 'xml-apis', module: 'xml-apis')
   }
 }
 
