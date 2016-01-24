@@ -28,6 +28,7 @@ dependencies {
         exclude(group: 'xml-apis', module: 'xml-apis')
         exclude(group: 'junit', module: 'junit')
         exclude(group: 'org.slf4j', module: 'jcl-over-slf4j')
+        exclude(group: 'org.opensaml', module: 'xmltooling')
     }
     compile(group: 'org.pac4j', name: 'pac4j-config', version: pac4jVersion) {
         exclude(group: 'org.pac4j', module: 'pac4j-core')
@@ -36,6 +37,7 @@ dependencies {
         exclude(group: 'org.slf4j', module: 'slf4j-api')
         exclude(group: 'joda-time', module: 'joda-time')
         exclude(group: 'net.minidev', module: 'json-smart')
+        exclude(group: 'org.opensaml', module: 'xmltooling')
     }
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-services')
