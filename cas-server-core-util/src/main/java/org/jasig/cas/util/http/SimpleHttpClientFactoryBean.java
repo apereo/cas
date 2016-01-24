@@ -428,7 +428,10 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     @PreDestroy
     public void destroy() {
-        this.executorService.shutdownNow();
+        if (this.executorService != null) {
+            this.executorService.shutdownNow();
+            this.executorService = null;
+        }
     }
 
     /**
