@@ -124,7 +124,7 @@ public final class RegisteredServiceEditBean implements Serializable {
         final RegisteredServiceEditBean serviceBean = new RegisteredServiceEditBean();
         final ServiceData bean = serviceBean.getServiceData();
 
-        bean.setAssignedId(svc.getId());
+        bean.setAssignedId(Long.toString(svc.getId()));
         bean.setServiceId(svc.getServiceId());
         bean.setName(svc.getName());
         bean.setDescription(svc.getDescription());
@@ -338,7 +338,7 @@ public final class RegisteredServiceEditBean implements Serializable {
      * The type Service data.
      */
     public static class ServiceData {
-        private long assignedId;
+        private String assignedId;
         private String serviceId;
         private String name;
         private String description;
@@ -454,11 +454,11 @@ public final class RegisteredServiceEditBean implements Serializable {
             this.supportAccess = supportAccess;
         }
 
-        public long getAssignedId() {
+        public String getAssignedId() {
             return assignedId;
         }
 
-        public void setAssignedId(final long assignedId) {
+        public void setAssignedId(final String assignedId) {
             this.assignedId = assignedId;
         }
 
@@ -519,10 +519,11 @@ public final class RegisteredServiceEditBean implements Serializable {
                     regSvc = determineServiceTypeByPattern(this.serviceId);
                 }
 
-                if (this.assignedId <=0) {
+                final long assignedId = Long.parseLong(this.assignedId);
+                if (assignedId <= 0) {
                     regSvc.setId(RegisteredService.INITIAL_IDENTIFIER_VALUE);
                 } else {
-                    regSvc.setId(this.assignedId);
+                    regSvc.setId(assignedId);
                 }
 
                 regSvc.setServiceId(this.serviceId);
@@ -568,8 +569,7 @@ public final class RegisteredServiceEditBean implements Serializable {
                         it.remove();
                     }
                 }
-                ((DefaultRegisteredServiceAccessStrategy) accessStrategy)
-                        .setRequiredAttributes(requiredAttrs);
+                accessStrategy.setRequiredAttributes(requiredAttrs);
 
                 final String proxyType = this.proxyPolicy.getType();
                 if (StringUtils.equalsIgnoreCase(proxyType,
@@ -669,17 +669,15 @@ public final class RegisteredServiceEditBean implements Serializable {
          * @param serviceId the service id
          * @return the abstract registered service
          */
-        private AbstractRegisteredService determineServiceTypeByPattern(final String serviceId) {
-            try {
-                Pattern.compile(serviceId);
+        private static AbstractRegisteredService determineServiceTypeByPattern(final String serviceId) {
+            if (RegexUtils.isValidRegex(serviceId)) {
                 LOGGER.debug("Service id {} is a valid regex.", serviceId);
                 return new RegexRegisteredService();
-            } catch (final PatternSyntaxException exception) {
-                LOGGER.debug("Service id {} is not a valid regex. Checking ant patterns...", serviceId);
-                if (new AntPathMatcher().isPattern(serviceId)) {
-                    LOGGER.debug("Service id {} is a valid ant pattern.", serviceId);
-                    return new RegisteredServiceImpl();
-                }
+            }
+
+            if (new AntPathMatcher().isPattern(serviceId)) {
+                LOGGER.debug("Service id {} is a valid ant pattern.", serviceId);
+                return new RegisteredServiceImpl();
             }
             throw new RuntimeException("Service id " + serviceId + " cannot be resolve to a service type");
         }
