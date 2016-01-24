@@ -6,8 +6,8 @@ dependencies {
     compile project(':cas-server-support-couchbase-core')
 
     runtime(group: 'org.hibernate', name: 'hibernate-validator', version: hibernateValidatorVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'jboss-logging')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'org.jboss.logging', module: 'jboss-logging')
     }
     testCompile project(':cas-server-core-tickets')
     testCompile project(path: ":cas-server-core-tickets", configuration: "tests")

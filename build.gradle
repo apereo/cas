@@ -156,13 +156,13 @@ subprojects {
 
         if (!Boolean.getBoolean("skipAspectJ")) {
             compile(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
-                exclude(module: 'validation-api')
-                exclude(module: 'aspectjrt')
+                exclude(group: 'javax.validation', module: 'validation-api')
+                exclude(group: 'org.aspectj', module: 'aspectjrt')
             }
 
             aspectpath(group: 'org.jasig.inspektr', name: 'inspektr-aspects', version: inspektrVersion) {
-                exclude(module: 'validation-api')
-                exclude(module: 'aspectjrt')
+                exclude(group: 'javax.validation', module: 'validation-api')
+                exclude(group: 'org.aspectj', module: 'aspectjrt')
             }
         }
 
@@ -174,18 +174,18 @@ subprojects {
         }
 
         runtime(group: 'org.glassfish.web', name: 'javax.el', version: javaxElImplVersion) {
-            exclude(module: 'javax.el-api')
+            exclude(group: 'javax.el', module: 'javax.el-api')
         }
         runtime group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4jVersion
         runtime group: 'org.apache.logging.log4j', name: 'log4j-api', version: log4jVersion
         runtime group: 'org.apache.logging.log4j', name: 'log4j-core', version: log4jVersion
         runtime(group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion) {
-            exclude(module: 'slf4j-api')
+            exclude(group: 'org.slf4j', module: 'slf4j-api')
         }
         runtime group: 'org.apache.logging.log4j', name: 'log4j-jcl', version: log4jVersion
         testCompile group: 'junit', name: 'junit', version: junitVersion
         testCompile(group: 'org.mockito', name: 'mockito-core', version: mockitoVersion) {
-            exclude(module: 'hamcrest-core')
+            exclude(group: 'org.hamcrest', module: 'hamcrest-core')
         }
         testCompile group: 'org.springframework', name: 'spring-test', version: springVersion
         provided group: 'javax.servlet', name: 'javax.servlet-api', version: javaxSevletVersion

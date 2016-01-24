@@ -5,8 +5,8 @@ dependencies {
     compile project(':cas-server-core-authentication')
     compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
     compile(group: 'com.yubico', name: 'yubico-validation-client2', version:yubicoVersion) {
-        exclude(module: 'slf4j-api')
-        exclude(module: 'commons-codec')
+        exclude(group: 'org.slf4j', module: 'slf4j-api')
+        exclude(group: 'commons-codec', module: 'commons-codec')
     }
 }
 
