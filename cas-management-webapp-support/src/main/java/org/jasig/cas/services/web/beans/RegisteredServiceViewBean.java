@@ -15,7 +15,7 @@ public class RegisteredServiceViewBean implements Serializable {
     private static final long serialVersionUID = 4882440567964605644L;
 
     private int evalOrder = Integer.MIN_VALUE;
-    private long assignedId;
+    private String assignedId;
     private boolean sasCASEnabled;
     private String serviceId;
     private String name;
@@ -33,11 +33,11 @@ public class RegisteredServiceViewBean implements Serializable {
         this.evalOrder = evalOrder;
     }
 
-    public long getAssignedId() {
+    public String getAssignedId() {
         return assignedId;
     }
 
-    public void setAssignedId(final long assignedId) {
+    public void setAssignedId(final String assignedId) {
         this.assignedId = assignedId;
     }
 
