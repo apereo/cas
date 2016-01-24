@@ -25,7 +25,6 @@ import java.util.Map;
 /**
  * Provides an authenticaiton manager that is inherently aware of multiple credentials and supports pluggable
  * security policy via the {@link AuthenticationPolicy} component. The authentication process is as follows:
- *
  * <ul>
  *   <li>For each given credential do the following:
  *     <ul>
@@ -53,7 +52,6 @@ import java.util.Map;
  *     In all cases {@link AuthenticationException} is raised if security policy is not met.
  *   </li>
  * </ul>
- *
  * It is an error condition to fail to resolve a principal.
  *
  * @author Marvin S. Addison
