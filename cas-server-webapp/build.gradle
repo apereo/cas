@@ -62,13 +62,10 @@ dependencies {
         exclude(module: 'slf4j-api')
         exclude(module: 'joda-time')
     }
-    
+
     compile(group: 'org.apache.commons', name: 'commons-lang3', version: 3.4)
     compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: tempJacksonDatabindVersion)
     compile(group: 'joda-time', name: 'joda-time', version: 2.9)
-    
-    //compile(group: 'org.pac4j', name: 'pac4j-openid', version: pac4jVersion)
-    //compile(group: 'org.pac4j', name: 'pac4j-saml', version: pac4jVersion)
     ////////////////////////////////////////////////
     //for OAuth      END
     ////////////////////////////////////////////////

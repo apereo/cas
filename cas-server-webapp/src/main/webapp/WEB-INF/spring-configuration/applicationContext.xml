@@ -68,5 +68,11 @@
          </property>
           -->
     </bean>
+    
+	<bean id="google1" class="org.pac4j.oauth.client.Google2Client">
+  		<property name="key" value="503859240112-7ltpv749p4tjl1kfb95nb3pruqck05a3.apps.googleusercontent.com" />
+  		<property name="secret" value="F4uI-dUyyUTyQOIeJVQ71dff" />
+  		<property name="scope" value="EMAIL_AND_PROFILE" />
+	</bean>
 
 </beans>
