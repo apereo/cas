@@ -9,6 +9,9 @@
     <param-name>isLog4jAutoInitializationDisabled</param-name>
     <param-value>true</param-value>
   </context-param>
+  <listener>
+    <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>
+  </listener>
 
   <context-param>
     <param-name>contextConfigLocation</param-name>
