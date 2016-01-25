@@ -348,7 +348,13 @@ ext.libraries = [
                 "javax.servlet:jstl:$javaxJstlVersion",
                 "javax.transaction:jta:$jtaVersion"
         ],
-        jackson          : "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+        jackson          : [
+            "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+             dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
+                    exclude(group: 'com.google.guava', module: 'guava')
+                    force = true
+            }
+        ],
         couchbase        : "com.couchbase.client:java-client:$couchbaseVersion",
 
         jcifs            : [
