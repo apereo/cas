@@ -39,6 +39,7 @@ dependencies {
     compile project(':cas-server-core-validation')
     compile project(':cas-server-core-util')
     compile project(':cas-server-support-ldap')
+    compile project(':cas-server-support-pac4j')
     compile project(':cas-server-webapp-throttle')
     compile project(':cas-server-webapp-actions')
     compile project(':cas-server-webapp-cookie')
@@ -56,6 +57,17 @@ dependencies {
     compile(group: 'org.pac4j', name: 'pac4j-http', version: pac4jVersion) {
     }
     compile group: 'com.lmax', name: 'disruptor', version: disruptorVersion
+
+    runtime (group: 'org.pac4j', name: 'pac4j-cas', version: pac4jVersion) {
+        exclude(module: 'slf4j-api')
+        exclude(module: 'joda-time')
+
+    }
+    runtime (group: 'org.pac4j', name: 'pac4j-oauth', version: pac4jVersion) {
+        exclude(module: 'slf4j-api')
+        exclude(module: 'commons-lang3')
+        exclude(module: 'jackson-databind')
+    }
     runtime group: 'org.springframework', name: 'spring-expression', version: springVersion
     runtime group: 'javax.servlet', name: 'jstl', version: javaxJstlVersion
     runtime group: 'taglibs', name: 'standard', version: taglibsVersion
