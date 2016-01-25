@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
- * @see {@link AuthenticationSystemSupport}
  * @since 4.2.0
  */
 @Component("defaultAuthenticationSystemSupport")

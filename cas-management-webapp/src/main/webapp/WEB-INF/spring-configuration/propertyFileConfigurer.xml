@@ -14,5 +14,5 @@
         can be moved between tiers without modification.
     </description>
 
-    <context:property-placeholder location="/WEB-INF/cas-management.properties"/>
+    <context:property-placeholder location="${cas-management.properties.config.location:/WEB-INF/cas-management.properties}"/>
 </beans>
