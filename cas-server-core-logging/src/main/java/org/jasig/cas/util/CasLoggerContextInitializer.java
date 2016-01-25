@@ -15,9 +15,7 @@ import java.net.URI;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Initializes the CAS logging framework by calling
- * the logger initializer and sets the location of the
- * log configuration file.
+ * Reinitializes the CAS logging framework by updating the location of the log configuration file.
  * @author Misagh Moayyed
  * @since 4.1
  */
@@ -47,10 +45,7 @@ public final class CasLoggerContextInitializer implements ServletContextAware {
     }
 
     /**
-     * Initialize the logger by decorating the context
-     * with settings for the log file and context.
-     * Calls the initializer of the logging framework
-     * to start the logger.
+     * Reinitialize the logger by updating the location for the logging config file.
      */
     private void initialize() {
         if (this.logConfigurationFile == null || !this.logConfigurationFile.exists()) {
@@ -75,11 +70,10 @@ public final class CasLoggerContextInitializer implements ServletContextAware {
 
     /**
      * {@inheritDoc}
-     * <p>Prepared the logger context with the
-     * received servlet web context. Because the context
+     * <p>Reinitialize the logging config. Because the context
      * may be initialized twice, there are safety checks
-     * added to ensure we don't create duplicate log
-     * environments.</p>
+     * added to ensure we don't reinitialize the log
+     * config multiple times.</p>
      * @param servletContext the servlet context
      */
     @Override
