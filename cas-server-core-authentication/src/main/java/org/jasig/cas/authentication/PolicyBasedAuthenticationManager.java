@@ -15,7 +15,6 @@ import java.util.Set;
 /**
  * Provides an authentication manager that is inherently aware of multiple credentials and supports pluggable
  * security policy via the {@link AuthenticationPolicy} component. The authentication process is as follows:
- * <p/>
  * <ul>
  * <li>For each given credential do the following:
  * <ul>
@@ -43,7 +42,6 @@ import java.util.Set;
  * In all cases {@link AuthenticationException} is raised if security policy is not met.
  * </li>
  * </ul>
- * <p/>
  * It is an error condition to fail to resolve a principal.
  *
  * @author Marvin S. Addison
