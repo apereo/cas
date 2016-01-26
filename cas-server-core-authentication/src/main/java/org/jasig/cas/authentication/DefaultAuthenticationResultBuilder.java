@@ -20,7 +20,6 @@ import java.util.Set;
  * This is {@link DefaultAuthenticationResultBuilder}.
  *
  * @author Misagh Moayyed
- * @see {@link AuthenticationResultBuilder}
  * @since 4.2.0
  */
 public final class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {

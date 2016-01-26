@@ -12,6 +12,7 @@ import javax.persistence.Entity;
  * An extension of the {@link RegexRegisteredService} that attempts to enforce the
  * correct url syntax for the OAuth callback authorize url. The url must end with
  * {@link OAuthConstants#CALLBACK_AUTHORIZE_URL_DEFINITION}.
+ *
  * @author Misagh Moayyed
  * @since 4.0.0
  */
