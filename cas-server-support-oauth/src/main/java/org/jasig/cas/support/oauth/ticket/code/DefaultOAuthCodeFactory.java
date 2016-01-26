@@ -3,8 +3,6 @@ package org.jasig.cas.support.oauth.ticket.code;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.OAuthCode;
-import org.jasig.cas.ticket.OAuthCodeImpl;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
