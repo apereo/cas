@@ -1,7 +1,9 @@
-package org.jasig.cas.ticket.registry;
+package org.jasig.cas.support.oauth.ticket.registry;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.ticket.OAuthCode;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
+import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
+import org.jasig.cas.ticket.registry.ServiceTicketDelegator;
 
 /**
  * This is a specific delegator for {@link OAuthCode}.
@@ -21,7 +23,7 @@ public class OAuthCodeDelegator<T extends OAuthCode> extends ServiceTicketDelega
      * @param oauthCode the OAuth code
      * @param callback the callback
      */
-    OAuthCodeDelegator(final AbstractTicketRegistry ticketRegistry,
+    public OAuthCodeDelegator(final AbstractTicketRegistry ticketRegistry,
                        final T oauthCode, final boolean callback) {
         super(ticketRegistry, oauthCode, callback);
     }

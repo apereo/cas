@@ -5,6 +5,13 @@ import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.ReloadableServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
+import org.jasig.cas.support.oauth.ticket.registry.AccessTokenDelegator;
+import org.jasig.cas.support.oauth.ticket.registry.OAuthCodeDelegator;
+import org.jasig.cas.ticket.registry.AbstractTicketDelegator;
+import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
+import org.jasig.cas.util.Pair;
 import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +39,11 @@ public class OAuthServletContextListener extends AbstractServletContextInitializ
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    @Autowired
+    private AbstractTicketRegistry ticketRegistry;
+
     @Override
+    @SuppressWarnings("unchecked")
     protected void initializeServletApplicationContext() {
         addControllerToCasServletHandlerMapping(OAuthConstants.BASE_OAUTH20_URL + "/" + OAuthConstants.AUTHORIZE_URL,
                 "authorizeController");
@@ -56,6 +67,10 @@ public class OAuthServletContextListener extends AbstractServletContextInitializ
             servicesManager.reload();
         }
 
+        ticketRegistry.getTicketDelegators().add(0, new Pair(AccessToken.class,
+                AbstractTicketDelegator.getDefaultConstructor(AccessTokenDelegator.class)));
+        ticketRegistry.getTicketDelegators().add(1, new Pair(OAuthCode.class,
+                AbstractTicketDelegator.getDefaultConstructor(OAuthCodeDelegator.class)));
     }
 
     @Override

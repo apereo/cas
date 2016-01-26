@@ -1,6 +1,7 @@
-package org.jasig.cas.ticket;
+package org.jasig.cas.support.oauth.ticket.code;
 
 import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.ticket.ServiceTicket;
 
 /**
  * An OAuth code (is like a service ticket without PGT grant capability).

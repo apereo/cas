@@ -1,7 +1,9 @@
-package org.jasig.cas.ticket;
+package org.jasig.cas.support.oauth.ticket.accesstoken;
 
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.ticket.ExpirationPolicy;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
