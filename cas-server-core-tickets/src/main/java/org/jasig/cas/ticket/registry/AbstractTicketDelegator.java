@@ -100,7 +100,8 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
      * @return the default constructor.
      */
     @SuppressWarnings("unchecked")
-    public static Constructor<? extends AbstractTicketDelegator> getDefaultConstructor(final Class<? extends AbstractTicketDelegator> clazz) {
+    public static Constructor<? extends AbstractTicketDelegator> getDefaultConstructor(final Class<? extends AbstractTicketDelegator>
+                                                                                                   clazz) {
         try {
             return (Constructor<? extends AbstractTicketDelegator>) Class.forName(clazz.getName())
                     .getDeclaredConstructors()[0];
