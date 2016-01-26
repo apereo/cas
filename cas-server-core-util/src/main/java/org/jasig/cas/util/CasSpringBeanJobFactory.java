@@ -3,6 +3,7 @@ package org.jasig.cas.util;
 import org.quartz.spi.TriggerFiredBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
@@ -26,6 +27,7 @@ public class CasSpringBeanJobFactory extends SpringBeanJobFactory {
      *
      * @param applicationContext the application context
      */
+    @Autowired
     public CasSpringBeanJobFactory(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
