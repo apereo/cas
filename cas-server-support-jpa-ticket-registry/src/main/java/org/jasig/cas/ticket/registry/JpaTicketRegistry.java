@@ -30,6 +30,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -121,7 +122,7 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
             if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
                     || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
                 // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
-                return entityManager.find(TicketGrantingTicketImpl.class, ticketId);
+                return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
             }
 
             return entityManager.find(ServiceTicketImpl.class, ticketId);
