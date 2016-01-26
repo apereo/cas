@@ -1,6 +1,7 @@
-package org.jasig.cas.ticket.registry;
+package org.jasig.cas.support.oauth.ticket.registry;
 
-import org.jasig.cas.ticket.AccessToken;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.jasig.cas.ticket.registry.AbstractTicketRegistry;
 
 /**
  * This is a specific delegator for {@link AccessToken}.
@@ -20,7 +21,7 @@ public class AccessTokenDelegator<T extends AccessToken> extends OAuthCodeDelega
      * @param accessToken the access token
      * @param callback the callback
      */
-    AccessTokenDelegator(final AbstractTicketRegistry ticketRegistry,
+    public AccessTokenDelegator(final AbstractTicketRegistry ticketRegistry,
                          final T accessToken, final boolean callback) {
         super(ticketRegistry, accessToken, callback);
     }

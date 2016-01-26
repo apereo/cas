@@ -2,8 +2,6 @@ package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.CipherExecutor;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.ticket.AccessToken;
-import org.jasig.cas.ticket.OAuthCode;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -13,6 +11,7 @@ import org.jasig.cas.util.CompressionUtils;
 
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +19,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * @author Scott Battaglia
@@ -39,6 +38,26 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     @Autowired(required = false)
     @Qualifier("ticketCipherExecutor")
     private CipherExecutor<byte[], byte[]> cipherExecutor;
+
+    @Nullable
+    @Autowired(required = false)
+    @Qualifier("ticketDelegators")
+    private List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> ticketDelegators = new ArrayList<>();
+
+    /**
+     * Default constructor which registers the appropriate ticket delegators.
+     */
+    @SuppressWarnings("unchecked")
+    public AbstractTicketRegistry() {
+        ticketDelegators.add(new Pair(ProxyGrantingTicket.class,
+                AbstractTicketDelegator.getDefaultConstructor(ProxyGrantingTicketDelegator.class)));
+        ticketDelegators.add(new Pair(TicketGrantingTicket.class,
+                AbstractTicketDelegator.getDefaultConstructor(TicketGrantingTicketDelegator.class)));
+        ticketDelegators.add(new Pair(ProxyTicket.class,
+                AbstractTicketDelegator.getDefaultConstructor(ProxyTicketDelegator.class)));
+        ticketDelegators.add(new Pair(ServiceTicket.class,
+                AbstractTicketDelegator.getDefaultConstructor(ServiceTicketDelegator.class)));
+    }
 
     /**
      * {@inheritDoc}
@@ -172,31 +191,19 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             return null;
         }
 
-        if (ticket instanceof AccessToken) {
-            return new AccessTokenDelegator<>(this, (AccessToken) ticket, needsCallback());
+        for (final Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>> ticketDelegator: ticketDelegators) {
+            final Class<? extends Ticket> clazz = ticketDelegator.getFirst();
+            if (clazz.isAssignableFrom(ticket.getClass())) {
+                final Constructor<? extends AbstractTicketDelegator> constructor = ticketDelegator.getSecond();
+                try {
+                    return constructor.newInstance(this, ticket, needsCallback());
+                } catch (final InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
-        if (ticket instanceof OAuthCode) {
-            return new OAuthCodeDelegator<>(this, (OAuthCode) ticket, needsCallback());
-        }
-
-        if (ticket instanceof ProxyGrantingTicket) {
-            return new ProxyGrantingTicketDelegator(this, (ProxyGrantingTicket) ticket, needsCallback());
-        }
-
-        if (ticket instanceof TicketGrantingTicket) {
-            return new TicketGrantingTicketDelegator<>(this, (TicketGrantingTicket) ticket, needsCallback());
-        }
-
-        if (ticket instanceof ProxyTicket) {
-            return new ProxyTicketDelegator(this, (ProxyTicket) ticket, needsCallback());
-        }
-
-        if (ticket instanceof ServiceTicket) {
-            return new ServiceTicketDelegator<>(this, (ServiceTicket) ticket, needsCallback());
-        }
-
-        throw new IllegalStateException("Cannot wrap ticket of type: " + ticket.getClass() + " with a proxy delegator");
+        throw new IllegalStateException("Cannot wrap ticket of type: " + ticket.getClass() + " with a ticket delegator");
     }
 
     public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
@@ -294,5 +301,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             tickets.add(ticket);
         }
         return tickets;
+    }
+
+    @Nullable
+    public List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> getTicketDelegators() {
+        return ticketDelegators;
+    }
+
+    public void setTicketDelegators(@Nullable final List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> ticketDelegators) {
+        this.ticketDelegators = ticketDelegators;
     }
 }

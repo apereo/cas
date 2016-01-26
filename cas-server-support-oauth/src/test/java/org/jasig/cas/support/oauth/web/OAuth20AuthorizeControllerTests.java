@@ -5,7 +5,7 @@ import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
-import org.jasig.cas.ticket.OAuthCode;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pac4j.cas.profile.CasProfile;
