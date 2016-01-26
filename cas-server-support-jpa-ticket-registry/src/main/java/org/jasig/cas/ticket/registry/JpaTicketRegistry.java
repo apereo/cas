@@ -73,6 +73,9 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
     @Qualifier("jpaLockingStrategy")
     private LockingStrategy jpaLockingStrategy;
 
+    @Value("${ticketreg.database.jpa.locking.tgt.enabled:true}")
+    private boolean lockTgt = true;
+
     @NotNull
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
@@ -122,7 +125,8 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
             if (ticketId.startsWith(TicketGrantingTicket.PREFIX)
                     || ticketId.startsWith(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)) {
                 // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
-                return entityManager.find(TicketGrantingTicketImpl.class, ticketId, LockModeType.PESSIMISTIC_WRITE);
+                return entityManager.find(TicketGrantingTicketImpl.class, ticketId,
+                        lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
             }
 
             return entityManager.find(ServiceTicketImpl.class, ticketId);
