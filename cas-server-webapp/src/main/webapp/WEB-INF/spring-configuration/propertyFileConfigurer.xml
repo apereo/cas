@@ -16,7 +16,7 @@
         can be moved between tiers without modification.
     </description>
 
-    <util:properties id="casProperties" location="${cas.properties.filepath:/WEB-INF/cas.properties}"/>
+    <util:properties id="casProperties" location="${cas.properties.config.location:/WEB-INF/cas.properties}"/>
 
     <context:property-placeholder properties-ref="casProperties"/>
 
