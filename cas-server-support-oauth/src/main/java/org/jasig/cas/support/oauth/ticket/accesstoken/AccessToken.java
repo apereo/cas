@@ -1,4 +1,6 @@
-package org.jasig.cas.ticket;
+package org.jasig.cas.support.oauth.ticket.accesstoken;
+
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 
 /**
  * An OAuth access token (is like an OAuth code with a different expiration policy).

@@ -9,7 +9,7 @@ import org.jasig.cas.support.oauth.OAuthUtils;
 import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.services.OAuthWebApplicationService;
-import org.jasig.cas.ticket.OAuthCode;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCodeFactory;
 import org.joda.time.DateTime;
 import org.pac4j.core.context.J2EContext;
