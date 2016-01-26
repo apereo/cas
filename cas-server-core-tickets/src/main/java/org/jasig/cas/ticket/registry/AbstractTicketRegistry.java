@@ -308,7 +308,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         return ticketDelegators;
     }
 
-    public void setTicketDelegators(@Nullable final List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> ticketDelegators) {
+    public void setTicketDelegators(@Nullable final List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>>
+                                            ticketDelegators) {
         this.ticketDelegators = ticketDelegators;
     }
 }
