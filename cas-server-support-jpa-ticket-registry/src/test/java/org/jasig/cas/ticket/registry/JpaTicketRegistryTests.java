@@ -156,7 +156,7 @@ public class JpaTicketRegistryTests {
             executor.shutdownNow();
         }
 
-        TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
         assertEquals(CONCURRENT_SIZE, tgtFromDb.getCountOfUses());
     }
 
