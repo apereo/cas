@@ -1,6 +1,7 @@
 package org.jasig.cas.support.wsfederation;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,5 +18,5 @@ public interface WsFederationAttributeMutator extends Serializable {
      *
      * @param attributes the attribute returned by the IdP.
      */
-    void modifyAttributes(Map<String, Object> attributes);
+    void modifyAttributes(Map<String, List<Object>> attributes);
 }
