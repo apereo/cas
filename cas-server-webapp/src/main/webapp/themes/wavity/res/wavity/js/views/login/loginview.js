@@ -51,12 +51,18 @@ define(
 			
 			$('#loginForm input[name=prevAddress]').val($('input[name=prevAddressContainer]').val());
 			
+			$('#loginColumns .socialNetWorks a#facebook').attr("href", $('#list-providers li#Facebook a').attr("href"));
+			$('#loginColumns .socialNetWorks a#twitter').attr("href", $('#list-providers li#Twitter a').attr("href"));
+			$('#loginColumns .socialNetWorks a#google').attr("href", $('#list-providers li#Google2 a').attr("href"));
+			$('#loginColumns .socialNetWorks a#linkedin').attr("href", $('#list-providers li#LinkedIn2 a').attr("href"));
+			
 			$('input[name=appLogo]').remove();
 			$('input[name=tenantLogo]').remove();
 			$('input[name=loginTicket]').remove();
 			$('input[name=flowExecutionKey]').remove();
 			$('#tempForm').remove();
-			$('input[name=prevAddressContainer]').remove()
+			$('input[name=prevAddressContainer]').remove();
+			$('#list-providers').remove();
 		},
 		errormsgclose: function() {
     	   $('.notification_inner').hide(500);
