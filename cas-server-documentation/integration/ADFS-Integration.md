@@ -4,7 +4,8 @@ title: CAS - ADFS Integration
 ---
 
 #Overview
-The integration between the CAS Server and ADFS delegates user authentication from CAS Server to ADFS, making CAS Server a WS-Federation client. Claims released from ADFS are made available as attributes to CAS Server, and by extension CAS Clients.
+The integration between the CAS Server and ADFS delegates user authentication from CAS Server to ADFS, making CAS Server a WS-Federation client. 
+Claims released from ADFS are made available as attributes to CAS Server, and by extension CAS Clients.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
@@ -43,6 +44,9 @@ cas.wsfed.idp.signingcerts=classpath:adfs-signing.crt
 #
 # Slack dealing with time-drift between the ADFS Server and the CAS Server.
 # cas.wsfed.idp.tolerance=10000
+
+# cas.wsfed.idp.attribute.resolver.enabled=true
+# cas.wsfed.idp.attribute.resolver.type=WSFED
 {% endhighlight %}
 
 
@@ -54,7 +58,7 @@ to put together an implementation of `WsFederationAttributeMutator` that changes
 package org.jasig.cas.support.wsfederation;
 
 public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
-    public void modifyAttributes(final Map<String, Object> attributes) {
+    public void modifyAttributes(...) {
         ...
     }
 }
@@ -70,7 +74,6 @@ The mutator then needs to be declared in your configuration:
 
 Finally, ensure that the attributes sent from ADFS are available and mapped in
 your `attributeRepository` configuration.
-
 
 ### Handling CAS Logout
 
