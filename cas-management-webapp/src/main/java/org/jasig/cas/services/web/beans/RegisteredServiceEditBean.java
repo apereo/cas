@@ -68,8 +68,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import static org.slf4j.LoggerFactory.*;
 
