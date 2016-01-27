@@ -11,7 +11,6 @@ dependencies {
     testCompile libraries.metrics
     testCompile libraries.log4j
     testCompile project(':cas-server-core-util')
-    testCompile project(path: ":cas-server-support-saml", configuration: "tests") 
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core')
     testCompile project(':cas-server-core-logout')
