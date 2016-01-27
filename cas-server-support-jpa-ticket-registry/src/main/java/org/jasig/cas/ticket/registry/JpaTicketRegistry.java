@@ -183,8 +183,8 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
         return failureCount == 0;
     }
 
-    <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, final Class<? extends Ticket> clazz) {
-        return (List) entityManager.createQuery(query, clazz)
+    <T extends Ticket> List<T> getTicketQueryResultList(final String ticketId, final String query, final Class<T> clazz) {
+        return entityManager.createQuery(query, clazz)
                 .setParameter("id", ticketId)
                 .getResultList();
     }
