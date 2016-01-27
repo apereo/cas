@@ -20,7 +20,6 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -201,7 +200,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
                 final Constructor<? extends AbstractTicketDelegator> constructor = ticketDelegator.getSecond();
                 try {
                     return constructor.newInstance(this, ticket, needsCallback());
-                } catch (final InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                } catch (final Exception e) {
                     throw new RuntimeException(e);
                 }
             }
