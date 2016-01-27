@@ -47,30 +47,6 @@ dependencies {
     compile project(':cas-server-webapp-themes')
     compile project(':cas-server-webapp-validation')
     
-	////////////////////////////////////////////////
-    //for OAuth      START
-    ////////////////////////////////////////////////
-    compile project(':cas-server-support-pac4j')
-    compile project(':cas-server-integration-pac4j')
-    compile (group: 'org.pac4j', name: 'pac4j-oauth', version: pac4jVersion) {
-    	exclude(module: 'commons-lang3')
-    	exclude(module: 'jackson-databind')
-    	
-    }
-    compile(group: 'org.pac4j', name: 'pac4j-cas', version: pac4jVersion) {
-        exclude(module: 'bcprov-jdk15')
-        exclude(module: 'opensaml')
-        exclude(module: 'slf4j-api')
-        exclude(module: 'joda-time')
-    }
-
-    compile(group: 'org.apache.commons', name: 'commons-lang3', version: 3.4)
-    compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: tempJacksonDatabindVersion)
-    compile(group: 'joda-time', name: 'joda-time', version: 2.9)
-    ////////////////////////////////////////////////
-    //for OAuth      END
-    ////////////////////////////////////////////////
-
     compile(group: 'org.pac4j', name: 'spring-webmvc-pac4j', version: springWebmvcPac4jVersion) {
         exclude(module: 'spring-webmvc')
         exclude(module: 'spring-core')
