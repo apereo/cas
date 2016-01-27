@@ -15,11 +15,11 @@ These are:
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
-    <dependency>
-      <groupId>org.jasig.cas</groupId>
-      <artifactId>cas-server-support-generic</artifactId>
-      <version>${cas.version}</version>
-    </dependency>
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-generic</artifactId>
+  <version>${cas.version}</version>
+</dependency>
 {% endhighlight %}
 
 ###`AcceptUsersAuthenticationHandler`
