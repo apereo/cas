@@ -26,9 +26,9 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% highlight xml %}
 <bean class="org.jasig.cas.adaptors.generic.RejectUsersAuthenticationHandler">
     <property name="users">
-       <map>
-          <entry key="scott" value="password" />
-       </map>
+       <set>
+        <value>casuser</value>
+       </set>
     </property>
 </bean>
 {% endhighlight %}
