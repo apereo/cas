@@ -49,7 +49,7 @@
 <a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> serialVersionUID = 4882440567964605644L;
 <a class="jxr_linenumber" name="L42" href="#L42">42</a>  
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong> evalOrder = Integer.MIN_VALUE;
-<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">long</strong> assignedId;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">private</strong> String assignedId;
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> sasCASEnabled;
 <a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">private</strong> String serviceId;
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">private</strong> String name;
@@ -66,11 +66,11 @@
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>          <strong class="jxr_keyword">this</strong>.evalOrder = evalOrder;
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      }
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
-<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong> getAssignedId() {
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>      <strong class="jxr_keyword">public</strong> String getAssignedId() {
 <a class="jxr_linenumber" name="L62" href="#L62">62</a>          <strong class="jxr_keyword">return</strong> assignedId;
 <a class="jxr_linenumber" name="L63" href="#L63">63</a>      }
 <a class="jxr_linenumber" name="L64" href="#L64">64</a>  
-<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setAssignedId(<strong class="jxr_keyword">final</strong> <strong class="jxr_keyword">long</strong> assignedId) {
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setAssignedId(<strong class="jxr_keyword">final</strong> String assignedId) {
 <a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">this</strong>.assignedId = assignedId;
 <a class="jxr_linenumber" name="L67" href="#L67">67</a>      }
 <a class="jxr_linenumber" name="L68" href="#L68">68</a>  
@@ -138,7 +138,7 @@
 <a class="jxr_linenumber" name="L130" href="#L130">130</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L131" href="#L131">131</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <a href="../../../../../../org/jasig/cas/services/web/beans/RegisteredServiceViewBean.html">RegisteredServiceViewBean</a> fromRegisteredService(<strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/services/RegisteredService.html">RegisteredService</a> svc) {
 <a class="jxr_linenumber" name="L132" href="#L132">132</a>         <strong class="jxr_keyword">final</strong> <a href="../../../../../../org/jasig/cas/services/web/beans/RegisteredServiceViewBean.html">RegisteredServiceViewBean</a> bean = <strong class="jxr_keyword">new</strong> <a href="../../../../../../org/jasig/cas/services/web/beans/RegisteredServiceViewBean.html">RegisteredServiceViewBean</a>();
-<a class="jxr_linenumber" name="L133" href="#L133">133</a>         bean.setAssignedId(svc.getId());
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         bean.setAssignedId(Long.toString(svc.getId()));
 <a class="jxr_linenumber" name="L134" href="#L134">134</a>         bean.setServiceId(svc.getServiceId());
 <a class="jxr_linenumber" name="L135" href="#L135">135</a>         bean.setName(svc.getName());
 <a class="jxr_linenumber" name="L136" href="#L136">136</a>         bean.setDescription(svc.getDescription());
