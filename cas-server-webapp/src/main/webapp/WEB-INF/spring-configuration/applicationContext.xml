@@ -69,16 +69,23 @@
           -->
     </bean>
     
+    <bean id="facebook1" class="org.pac4j.oauth.client.FacebookClient">
+  		<property name="key" value="159510941087159" />
+  		<property name="secret" value="4ca0e4c2ea4add32d6774bef5732b4a5" />
+  		<property name="scope" value="email,public_profile,user_friends" />
+	</bean>
+	<bean id="twitter1" class="org.pac4j.oauth.client.TwitterClient">
+  		<property name="key" value="x5xdSG46Q1OBnhvhu2doG1jdc" />
+  		<property name="secret" value="29biRk5CGwfDA3MgCBHX1Hw6JM8dhmGBt0DCwzCHpWFDX7C1zs" />
+	</bean>
 	<bean id="google1" class="org.pac4j.oauth.client.Google2Client">
   		<property name="key" value="503859240112-7ltpv749p4tjl1kfb95nb3pruqck05a3.apps.googleusercontent.com" />
   		<property name="secret" value="F4uI-dUyyUTyQOIeJVQ71dff" />
   		<property name="scope" value="EMAIL_AND_PROFILE" />
 	</bean>
-	
 	<bean id="linkedin1" class="org.pac4j.oauth.client.LinkedIn2Client">
   		<property name="key" value="75mebxdqhzi23f" />
   		<property name="secret" value="Gu8ZK9n4NlWC9MJe" />
   		<property name="scope" value="r_basicprofile,r_emailaddress" />
 	</bean>
-
 </beans>
