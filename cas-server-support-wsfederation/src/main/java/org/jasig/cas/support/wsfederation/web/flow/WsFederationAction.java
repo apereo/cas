@@ -88,50 +88,60 @@ public final class WsFederationAction extends AbstractAction {
                 final String wresult = request.getParameter(WRESULT);
                 logger.debug("Parameter [{}] received: {}", WRESULT, wresult);
 
+                if (StringUtils.isBlank(wresult)) {
+                    logger.error("No {} parameter is found", WRESULT);
+                    return error();
+                }
+
                 // create credentials
                 final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
 
-                //Validate the signature
-                if (wsFederationHelper.validateSignature(assertion, configuration)) {
-                    try {
+                if (assertion == null) {
+                    logger.error("Could not validate assertion via parsing the token from {}", WRESULT);
+                    return error();
+                }
 
-                        final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion);
-                        if (credential != null && credential.isValid(configuration.getRelyingPartyIdentifier(),
-                                configuration.getIdentityProviderIdentifier(),
-                                configuration.getTolerance())) {
-
-                            if (configuration.getAttributeMutator() != null) {
-                                configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
-                            }
-                        } else {
-                            logger.warn("SAML assertions are blank or no longer valid.");
-                            return error();
-                        }
-
-                        final Service service = (Service) session.getAttribute(SERVICE);
-                        context.getFlowScope().put(SERVICE, service);
-                        restoreRequestAttribute(request, session, THEME);
-                        restoreRequestAttribute(request, session, LOCALE);
-                        restoreRequestAttribute(request, session, METHOD);
-
-                        final AuthenticationResult authenticationResult =
-                                this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-
-                        WebUtils.putTicketGrantingTicketInScopes(context,
-                                this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
-
-                        logger.info("Token validated and new {} created: {}", credential.getClass().getName(), credential);
-                        return success();
-
-                    } catch (final AbstractTicketException e) {
-                        logger.error(e.getMessage(), e);
-                        return error();
-                    }
-
-                } else {
+                if (!wsFederationHelper.validateSignature(assertion, configuration)) {
                     logger.error("WS Requested Security Token is blank or the signature is not valid.");
                     return error();
                 }
+
+                try {
+
+                    final WsFederationCredential credential = wsFederationHelper.createCredentialFromToken(assertion);
+                    if (credential != null && credential.isValid(configuration.getRelyingPartyIdentifier(),
+                            configuration.getIdentityProviderIdentifier(),
+                            configuration.getTolerance())) {
+
+                        if (configuration.getAttributeMutator() != null) {
+                            configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
+                        }
+                    } else {
+                        logger.warn("SAML assertions are blank or no longer valid.");
+                        return error();
+                    }
+
+                    final Service service = (Service) session.getAttribute(SERVICE);
+                    context.getFlowScope().put(SERVICE, service);
+                    restoreRequestAttribute(request, session, THEME);
+                    restoreRequestAttribute(request, session, LOCALE);
+                    restoreRequestAttribute(request, session, METHOD);
+
+                    final AuthenticationResult authenticationResult =
+                            this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+
+                    WebUtils.putTicketGrantingTicketInScopes(context,
+                            this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
+
+                    logger.info("Token validated and new {} created: {}", credential.getClass().getName(), credential);
+                    return success();
+
+                } catch (final AbstractTicketException e) {
+                    logger.error(e.getMessage(), e);
+                    return error();
+                }
+
+
 
             } else { // no authentication : go to login page
 
