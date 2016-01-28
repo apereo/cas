@@ -130,8 +130,8 @@ public final class WsFederationAction extends AbstractAction {
                     restoreRequestAttribute(request, session, LOCALE);
                     restoreRequestAttribute(request, session, METHOD);
 
-                    final AuthenticationResult authenticationResult =
-                            this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+                    final AuthenticationContextBuilder builder = new DefaultAuthenticationContextBuilder(
+                            this.authenticationSystemSupport.getPrincipalElectionStrategy());
                         final AuthenticationTransaction transaction =
                                 AuthenticationTransaction.wrap(credential);
                         this.authenticationSystemSupport.getAuthenticationTransactionManager()
@@ -139,7 +139,7 @@ public final class WsFederationAction extends AbstractAction {
                         final AuthenticationContext authenticationContext = builder.build(service);
 
                     WebUtils.putTicketGrantingTicketInScopes(context,
-                            this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
+                            this.centralAuthenticationService.createTicketGrantingTicket(authenticationContext));
 
                     logger.info("Token validated and new {} created: {}", credential.getClass().getName(), credential);
                     return success();
