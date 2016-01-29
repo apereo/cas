@@ -12,6 +12,7 @@ import org.slf4j.helpers.Util;
 
 import java.net.URL;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class CasLoggerFactory implements ILoggerFactory {
 
+    private static final String DEFAULT_LOGGER_FACTORY_CLASS = "org.apache.logging.slf4j.Log4jLoggerFactory";
+    private static final String ENVIRONMENT_VAR_LOGGER_FACTORY = "loggerFactory";
+
     private static final String PACKAGE_TO_SCAN = "org.slf4j.impl";
 
     private final Map<String, CasDelegatingLogger> loggerMap;
@@ -37,20 +41,20 @@ public final class CasLoggerFactory implements ILoggerFactory {
      */
     public CasLoggerFactory() {
         this.loggerMap = new ConcurrentHashMap<>();
-        final Collection<URL> set = ClasspathHelper.forPackage(PACKAGE_TO_SCAN);
-        final Reflections reflections = new Reflections(new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
 
-        final Set<Class<? extends ILoggerFactory>> subTypesOf = reflections.getSubTypesOf(ILoggerFactory.class);
-        subTypesOf.remove(this.getClass());
+        Set<Class<? extends ILoggerFactory>> loggerFactories = lookUpConfiguredLoggerFactory();
+        if (loggerFactories.isEmpty()) {
+            loggerFactories = scanContextForLoggerFactories();
+        }
 
-        if (subTypesOf.size() > 1) {
+        if (loggerFactories.size() > 1) {
             Util.report("Multiple ILoggerFactory bindings are found on the classpath:");
-            for (final Class<? extends ILoggerFactory> c : subTypesOf) {
+            for (final Class<? extends ILoggerFactory> c : loggerFactories) {
                 Util.report("* " + c.getCanonicalName());
             }
         }
 
-        if (subTypesOf.isEmpty()) {
+        if (loggerFactories.isEmpty()) {
             final RuntimeException e = new RuntimeException("No ILoggerFactory could be found on the classpath."
                     + " CAS cannot determine the logging framework."
                     + " Examine the project dependencies and ensure that there is one and only one logging framework available.");
@@ -59,7 +63,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
             throw e;
         }
         this.realLoggerFactoryClass = null;
-        for (final Class<? extends ILoggerFactory> factory : subTypesOf) {
+        for (final Class<? extends ILoggerFactory> factory : loggerFactories) {
             if (getLoggerFactoryBeInstantiated(factory) != null) {
                 this.realLoggerFactoryClass = factory;
                 Util.report("ILoggerFactory to be used for logging is: " + this.realLoggerFactoryClass.getName());
@@ -73,6 +77,16 @@ public final class CasLoggerFactory implements ILoggerFactory {
             throw new RuntimeException("No ILoggerFactory is available to use. Log configuration is incorrect, "
                             + "or multiple logging frameworks are at conflict with one another on the classpath.");
         }
+    }
+
+    private Set<Class<? extends ILoggerFactory>> scanContextForLoggerFactories() {
+        final Set<Class<? extends ILoggerFactory>> loggerFactories;
+        final Collection<URL> set = ClasspathHelper.forPackage(PACKAGE_TO_SCAN);
+        final Reflections reflections = new Reflections(new ConfigurationBuilder().addUrls(set).setScanners(new SubTypesScanner()));
+
+        loggerFactories = reflections.getSubTypesOf(ILoggerFactory.class);
+        loggerFactories.remove(this.getClass());
+        return loggerFactories;
     }
 
     /**
@@ -95,6 +109,22 @@ public final class CasLoggerFactory implements ILoggerFactory {
         }
     }
 
+    private Set<Class<? extends ILoggerFactory>> lookUpConfiguredLoggerFactory() {
+        final Set<Class<? extends ILoggerFactory>> loggerFactories = new HashSet<>();
+
+        final String configuredLoggerFactory = System.getProperty(ENVIRONMENT_VAR_LOGGER_FACTORY);
+        if (StringUtils.isNotBlank(configuredLoggerFactory)) {
+            Util.report("Instructed logger factory to use is " + configuredLoggerFactory);
+            try {
+                final Class clazz = Class.forName(configuredLoggerFactory);
+                loggerFactories.add(clazz);
+            } catch (final Exception e) {
+                Util.report("Could not locate the provided logger factory: " + configuredLoggerFactory + ". Error: " + e.getMessage());
+            }
+        }
+
+        return loggerFactories;
+    }
     /**
      * Find the actual {@code Logger} instance that is available on the classpath.
      * This is usually the logger adapter that is provided by the real logging framework,
