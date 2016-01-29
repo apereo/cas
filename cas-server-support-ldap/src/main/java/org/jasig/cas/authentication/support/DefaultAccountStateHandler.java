@@ -22,6 +22,7 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -131,7 +132,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
             return;
         }
 
-        final Calendar expDate = warning.getExpiration();
+        final ZonedDateTime expDate = warning.getExpiration();
         final Days ttl = Days.daysBetween(Instant.now(), new Instant(expDate));
         logger.debug(
                 "Password expires in {} days. Expiration warning threshold is {} days.",

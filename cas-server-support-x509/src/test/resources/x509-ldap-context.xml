@@ -5,9 +5,11 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       ttp://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.jasig.cas" />
@@ -26,71 +28,27 @@
           c:searchExecutor-ref="searchExecutor"
           c:connectionPool-ref="connectionPool"/>
 
-    <bean id="baseDn" class="java.lang.String">
-        <constructor-arg type="java.lang.String" value="${ldap.baseDn}" />
-    </bean>
+    <ldaptive:search-executor id="searchExecutor"
+                              baseDn="${ldap.baseDn}" searchFilter="${ldap.searchfilter.cert}"
+                              returnAttributes="certificateRevocationList" binaryAttributes="certificateRevocationList" />
 
-    <util:list id="returnAttributes">
-        <value>certificateRevocationList</value>
-    </util:list>
+    <ldaptive:connection-config connectTimeout="${ldap.connectTimeout}"
+                                id="provisioningConnectionConfig"
+                                managerDN=""
+                                password=""
+                                useStartTLS="${ldap.useStartTLS:false}" />
 
-    <bean id="searchFilter" class="org.ldaptive.SearchFilter"
-          p:filter="${ldap.searchfilter.cert}" />
+    <ldaptive:connection-pool id="connectionPool"
+                              blockWaitTime="${ldap.pool.blockWaitTime}"
+                              prunePeriod="${ldap.pool.prunePeriod}"
+                              idleTime="${ldap.pool.idleTime}"
+                              maxPoolSize="${ldap.pool.maxSize}"
+                              minPoolSize="${ldap.pool.minSize}"
+                              failFastInitialize="false"
+                              validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+                              validatePeriodically="${ldap.pool.validatePeriodically}"
+                              validatePeriod="${ldap.pool.validatePeriod}" />
 
-    <bean id="searchExecutor" class="org.ldaptive.SearchExecutor"
-          p:baseDn-ref="baseDn"
-          p:searchFilter-ref="searchFilter"
-          p:returnAttributes-ref="returnAttributes"
-          p:binaryAttributes-ref="returnAttributes" />
-
-    <bean id="provisioningConnectionFactory" class="org.ldaptive.DefaultConnectionFactory"
-          p:connectionConfig-ref="provisioningConnectionConfig"
-          p:provider-ref="unboundidLdapProvider"  />
-
-    <bean id="unboundidLdapProvider"
-          class="org.ldaptive.provider.unboundid.UnboundIDProvider"/>
-
-    <bean id="provisioningConnectionConfig" class="org.ldaptive.ConnectionConfig"
-          p:connectTimeout="${ldap.connectTimeout}"
-          p:useStartTLS="${ldap.useStartTLS: false}"
-          p:connectionInitializer-ref="bindConnectionInitializer"
-          p:sslConfig-ref="provisionSslConfig"/>
-
-    <bean id="provisionSslConfig" class="org.ldaptive.ssl.SslConfig">
-        <property name="credentialConfig">
-            <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig" />
-        </property>
-    </bean>
-
-    <bean id="bindConnectionInitializer"
-          class="org.ldaptive.BindConnectionInitializer"
-          p:bindDn="${ldap.managerDn}">
-        <property name="bindCredential">
-            <bean class="org.ldaptive.Credential"
-                  c:password="${ldap.managerPassword}" />
-        </property>
-    </bean>
-
-    <bean id="connectionPool"
-          class="org.ldaptive.pool.BlockingConnectionPool"
-          lazy-init="true"
-          p:poolConfig-ref="ldapPoolConfig"
-          p:blockWaitTime="${ldap.pool.blockWaitTime}"
-          p:validator-ref="searchValidator"
-          p:pruneStrategy-ref="pruneStrategy" />
-
-    <bean id="pruneStrategy" class="org.ldaptive.pool.IdlePruneStrategy"
-          p:prunePeriod="${ldap.pool.prunePeriod}"
-          p:idleTime="${ldap.pool.idleTime}" />
-
-    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
-
-    <bean id="ldapPoolConfig" class="org.ldaptive.pool.PoolConfig"
-          p:minPoolSize="${ldap.pool.minSize}"
-          p:maxPoolSize="${ldap.pool.maxSize}"
-          p:validateOnCheckOut="${ldap.pool.validateOnCheckout}"
-          p:validatePeriodically="${ldap.pool.validatePeriodically}"
-          p:validatePeriod="${ldap.pool.validatePeriod}" />
 
     <bean id="validationAnnotationBeanPostProcessor" class="org.jasig.cas.util.CustomBeanValidationPostProcessor"
           p:afterInitialization="true"/>

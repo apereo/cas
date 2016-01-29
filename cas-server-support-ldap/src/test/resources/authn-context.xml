@@ -33,8 +33,8 @@
             prunePeriod="${ldap.pool.prunePeriod}"
             useSSL="${ldap.use.ssl:false}"
             subtreeSearch="${ldap.subtree.search:true}"
-            useStartTLS="${ldap.useStartTLS}"
-            />
+            useStartTLS="${ldap.useStartTLS}" />
+
 
     <ldaptive:anonymous-search-authenticator id="authenticator-anonymous"
            ldapUrl="${ldap.url}"
@@ -51,12 +51,14 @@
            prunePeriod="${ldap.pool.prunePeriod}"
            useSSL="${ldap.use.ssl:false}"
            useStartTLS="${ldap.useStartTLS}"
-           usePasswordPolicy="${ldap.usePpolicy:true}"
            allowMultipleDns="${ldap.allowMultipleDns:false}"
            baseDn="${ldap.baseDn}"
            subtreeSearch="${ldap.subtree.search:true}"
-           userFilter="${ldap.authn.searchFilter}"
-    />
+           userFilter="${ldap.authn.searchFilter}">
+        <ldaptive:authentication-response-handler>
+            <ldaptive:password-policy-handler />
+        </ldaptive:authentication-response-handler>
+    </ldaptive:anonymous-search-authenticator>
 
     <ldaptive:direct-authenticator id="authenticator-direct"
             format="${ldap.authn.searchFilter}"
@@ -67,15 +69,17 @@
             failFastInitialize="true"
             blockWaitTime="${ldap.pool.blockWaitTime}"
             idleTime="${ldap.pool.idleTime}"
-            usePasswordPolicy="${ldap.usePpolicy:true}"
             maxPoolSize="${ldap.pool.maxSize}"
             minPoolSize="${ldap.pool.minSize}"
             validatePeriodically="${ldap.pool.validatePeriodically}"
             validatePeriod="${ldap.pool.validatePeriod}"
             prunePeriod="${ldap.pool.prunePeriod}"
             useSSL="${ldap.use.ssl:false}"
-            useStartTLS="${ldap.useStartTLS}" />
-
+            useStartTLS="${ldap.useStartTLS}">
+        <ldaptive:authentication-response-handler>
+            <ldaptive:password-policy-handler />
+        </ldaptive:authentication-response-handler>
+    </ldaptive:direct-authenticator>
 
     <ldaptive:bind-search-authenticator id="authenticator"
             ldapUrl="${ldap.url}"
@@ -88,7 +92,6 @@
             blockWaitTime="${ldap.pool.blockWaitTime}"
             maxPoolSize="${ldap.pool.maxSize}"
             allowMultipleDns="${ldap.allowMultipleDns:false}"
-            usePasswordPolicy="${ldap.usePpolicy:true}"
             minPoolSize="${ldap.pool.minSize}"
             validateOnCheckOut="${ldap.pool.validateOnCheckout}"
             validatePeriodically="${ldap.pool.validatePeriodically}"
@@ -98,8 +101,11 @@
             failFastInitialize="true"
             provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
             subtreeSearch="${ldap.subtree.search:true}"
-            useSSL="${ldap.use.ssl:false}"
-    />
+            useSSL="${ldap.use.ssl:false}">
+        <ldaptive:authentication-response-handler>
+            <ldaptive:password-policy-handler />
+        </ldaptive:authentication-response-handler>
+    </ldaptive:bind-search-authenticator>
 
     <bean id="ldapAuthenticationHandler"
           class="org.jasig.cas.authentication.LdapAuthenticationHandler"

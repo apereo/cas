@@ -118,7 +118,6 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
         blockWaitTime="${ldap.pool.blockWaitTime}"
         maxPoolSize="${ldap.pool.maxSize}"
         allowMultipleDns="${ldap.allowMultipleDns:false}"
-        usePasswordPolicy="${ldap.usePpolicy:false}"
         minPoolSize="${ldap.pool.minSize}"
         validateOnCheckOut="${ldap.pool.validateOnCheckout}"
         validatePeriodically="${ldap.pool.validatePeriodically}"
@@ -149,7 +148,6 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
        prunePeriod="${ldap.pool.prunePeriod}"
        useSSL="${ldap.use.ssl:false}"
        useStartTLS="${ldap.useStartTLS}"
-       usePasswordPolicy="${ldap.usePpolicy:true}"
        allowMultipleDns="${ldap.allowMultipleDns:false}"
        baseDn="${ldap.baseDn}"
        subtreeSearch="${ldap.subtree.search:true}"
@@ -176,7 +174,6 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
         failFastInitialize="true"
         blockWaitTime="${ldap.pool.blockWaitTime}"
         idleTime="${ldap.pool.idleTime}"
-        usePasswordPolicy="${ldap.usePpolicy:false}"
         maxPoolSize="${ldap.pool.maxSize}"
         minPoolSize="${ldap.pool.minSize}"
         validatePeriodically="${ldap.pool.validatePeriodically}"
@@ -267,9 +264,6 @@ ldap.authn.searchFilter=cn={user}
 # Ldap domain used to resolve dn
 ldap.domain=example.org
 
-# Should LDAP Password Policy be enabled?
-ldap.usePpolicy=false
-
 # Allow multiple DNs during authentication?
 ldap.allowMultipleDns=false
 {% endhighlight %}
@@ -328,13 +322,27 @@ Next, in your `ldapAuthenticationHandler` bean, configure the password policy co
 Next, make sure `Authenticator` is set to enable/use password policy:
 
 {% highlight xml %}
-<ldaptive:bind-search-authenticator id="authenticator"
-      ...
-      usePasswordPolicy="${ldap.usePpolicy:true}"
-      ...
-/>
+<ldaptive:bind-search-authenticator id="authenticator">
+    ...
+    <ldaptive:authentication-response-handler>
+      <ldaptive:password-policy-handler />
+    </ldaptive:authentication-response-handler>
+</ldaptive:bind-search-authenticator>
 {% endhighlight %}
 
+Other available password policy handlers that could be associated with an `authenticator` are:
+
+{% highlight xml %}
+...
+<ldaptive:e-directory-handler warningPeriod="..." />
+...
+<ldaptive:free-ipa-handler expirationPeriod="..." maxLoginFailures="..." warningPeriod="..." />
+...
+<ldaptive:password-expiration-handler />
+...
+{% endhighlight %}
+
+            
 ### Components
 
 #### `DefaultAccountStateHandler`

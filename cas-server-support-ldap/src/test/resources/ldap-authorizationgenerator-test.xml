@@ -5,9 +5,11 @@
        xmlns:c="http://www.springframework.org/schema/c"
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <bean id="usernameAttribute" class="java.lang.String">
@@ -18,23 +20,11 @@
     <alias name="searchExecutorUser" alias="ldapAuthorizationGeneratorUserSearchExecutor" />
     <alias name="searchExecutorRole" alias="ldapAuthorizationGeneratorRoleSearchExecutor" />
 
-    <bean id="searchExecutorUser" class="org.ldaptive.SearchExecutor"
-          p:baseDn="${ldap.baseDn}"
-          p:searchFilter="${ldap.user.searchFilter}"
-          p:returnAttributes-ref="userDetailsUserAttributes" />
+    <ldaptive:search-executor id="searchExecutorUser" baseDn="${ldap.baseDn}"
+                              searchFilter="${ldap.user.searchFilter}" returnAttributes="mail" />
+    <ldaptive:search-executor id="searchExecutorRole" baseDn="${ldap.role.baseDn}"
+                              searchFilter="${ldap.role.searchFilter}" returnAttributes="uugid" />
 
-    <bean id="searchExecutorRole" class="org.ldaptive.SearchExecutor"
-          p:baseDn="${ldap.role.baseDn}"
-          p:searchFilter="${ldap.role.searchFilter}"
-          p:returnAttributes-ref="userDetailsRoleAttributes" />
-
-    <util:list id="userDetailsUserAttributes">
-        <value>mail</value>
-    </util:list>
-
-    <util:list id="userDetailsRoleAttributes">
-        <value>uugid</value>
-    </util:list>
     <alias name="defaultPrincipalFactory" alias="principalFactory" />
     <alias name="defaultAuthenticationTransactionManager" alias="authenticationTransactionManager" />
     <alias name="defaultPrincipalElectionStrategy" alias="principalElectionStrategy" />
