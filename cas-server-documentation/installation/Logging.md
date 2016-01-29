@@ -55,6 +55,15 @@ The `log4j2.xml` file by default at `WEB-INF/classes` provides the following `ap
 decide where and how messages from components should be displayed. Two are provided by default that
 output messages to the system console and a `cas.log` file:
 
+###Logger Selection
+CAS by default attempts to scan the runtime application context looking for suitable logger frameworks. 
+By default, the framework that is chosen is Log4j. However, if you wish to instruct CAS to opt for
+a different framework, provide the following JVM variable to the container of your choice:
+
+{% highlight bash %}
+-DloggerFactory="org.apache.logging.slf4j.Log4jLoggerFactory"
+{% endhighlight %}
+
 ###Refresh Interval
 The `log4j2.xml` itself controls the refresh interval of the logging configuration. Log4j has the ability
 to automatically detect changes to the configuration file and reconfigure itself. If the `monitorInterval`
@@ -143,6 +152,9 @@ troubleshooting and diagnostics. This is achieved by providing a specific bindin
 
 ##AsyncLoggers Shutdown with Tomcat
 
-Log4j automatically insert itself into the runtime application context in a Servlet 3 environment (i.e. Tomcat 8.x) and will clean up the logging context once the container is instructed to shut down. However, Tomcat ignores all JAR files named log4j.jar, which prevents this feature from working. You may need to change `catalina.properties` and remove "log4j.jar" from the `jarsToSkip` property. You may need to do something similar on other containers if they skip scanning Log4j JAR files.
+Log4j automatically insert itself into the runtime application context in a Servlet 3 environment (i.e. Tomcat 8.x) and will clean up 
+the logging context once the container is instructed to shut down. However, Tomcat ignores all JAR files named log4j.jar, which prevents 
+this feature from working. You may need to change `catalina.properties` and remove "log4j.jar" from the `jarsToSkip` property. 
+You may need to do something similar on other containers if they skip scanning Log4j JAR files.
 
 Failure to do so will stop Tomcat to gracefully shut down and causes logger context threads to hang. 
