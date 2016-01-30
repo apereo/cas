@@ -26,7 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class CasLoggerFactory implements ILoggerFactory {
 
-    private static final String DEFAULT_LOGGER_FACTORY_CLASS = "org.apache.logging.slf4j.Log4jLoggerFactory";
     private static final String ENVIRONMENT_VAR_LOGGER_FACTORY = "loggerFactory";
 
     private static final String PACKAGE_TO_SCAN = "org.slf4j.impl";
@@ -52,6 +51,9 @@ public final class CasLoggerFactory implements ILoggerFactory {
             for (final Class<? extends ILoggerFactory> c : loggerFactories) {
                 Util.report("* " + c.getCanonicalName());
             }
+            Util.report("This generally indicates a configuration problem which is a result of dependency conflicts.");
+            Util.report("If you wish to use a different logging framework, specify the ILoggerFactory binding via -D"
+                    + ENVIRONMENT_VAR_LOGGER_FACTORY + "=<binding-class> to the runtime environment");
         }
 
         if (loggerFactories.isEmpty()) {
@@ -64,6 +66,7 @@ public final class CasLoggerFactory implements ILoggerFactory {
         }
         this.realLoggerFactoryClass = null;
         for (final Class<? extends ILoggerFactory> factory : loggerFactories) {
+            Util.report("Attempting to locate ILoggerFactory instance from: " + factory.getName());
             if (getLoggerFactoryBeInstantiated(factory) != null) {
                 this.realLoggerFactoryClass = factory;
                 Util.report("ILoggerFactory to be used for logging is: " + this.realLoggerFactoryClass.getName());
