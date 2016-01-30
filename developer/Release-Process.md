@@ -10,6 +10,7 @@ This page documents the steps that a release engineer should take for cutting a 
 
 - Set up your environment:
 	- Load your SSH key and ensure this SSH key is also referenced in Github.
+	- Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
 	- Load your `~/.gradle/gradle.properties` file with the following:
 
 {% highlight bash %}
@@ -18,6 +19,7 @@ signing.password=
 signing.secretKeyRingFile=
 sonatypeUsername=
 sonatypePassword=
+org.gradle.daemon=false
 {% endhighlight %}
 
 - Checkout the CAS project: `git clone git@github.com:Jasig/cas.git cas-server`
