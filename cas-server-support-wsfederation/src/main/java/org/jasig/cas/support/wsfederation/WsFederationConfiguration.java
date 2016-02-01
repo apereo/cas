@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -31,6 +32,25 @@ public final class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * Describes how the WS-FED principal resolution machinery
+     * should process attributes from WS-FED.
+     */
+    public enum WsFedPrincipalResolutionAttributesType {
+        /**
+         * Cas ws fed principal resolution attributes type.
+         */
+        CAS,
+        /**
+         * Wsfed ws fed principal resolution attributes type.
+         */
+        WSFED,
+        /**
+         * Both ws fed principal resolution attributes type.
+         */
+        BOTH
+    }
 
     @NotNull
     @Value("${cas.wsfed.idp.idattribute:upn}")
@@ -55,11 +75,19 @@ public final class WsFederationConfiguration implements Serializable {
     @Value("${cas.wsfed.idp.tolerance:10000}")
     private int tolerance;
 
+    @Value("${cas.wsfed.idp.attribute.resolver.type:WSFED}")
+    private WsFedPrincipalResolutionAttributesType attributesType;
+
     @Autowired(required=false)
     @Qualifier("wsfedAttributeMutator")
     private WsFederationAttributeMutator attributeMutator;
 
     private List<Credential> signingWallet;
+
+    @PostConstruct
+    private void initCertificates() {
+        createSigningWallet(this.signingCertificateFiles);
+    }
 
     /**
      * gets the identity of the IdP.
@@ -158,13 +186,14 @@ public final class WsFederationConfiguration implements Serializable {
      */
     public void setSigningCertificateFiles(final Resource... signingCertificateFiles) {
         this.signingCertificateFiles = Arrays.asList(signingCertificateFiles);
+        createSigningWallet(this.signingCertificateFiles);
+    }
 
+    private void createSigningWallet(final List<Resource> signingCertificateFiles) {
         final List<Credential> signingCerts = new ArrayList<>();
-
         for (final Resource file : signingCertificateFiles) {
             signingCerts.add(getSigningCredential(file));
         }
-
         this.signingWallet = signingCerts;
     }
 
@@ -202,6 +231,14 @@ public final class WsFederationConfiguration implements Serializable {
      */
     public void setAttributeMutator(final WsFederationAttributeMutator attributeMutator) {
         this.attributeMutator = attributeMutator;
+    }
+
+    public WsFedPrincipalResolutionAttributesType getAttributesType() {
+        return attributesType;
+    }
+
+    public void setAttributesType(final WsFedPrincipalResolutionAttributesType attributesType) {
+        this.attributesType = attributesType;
     }
 
     /**

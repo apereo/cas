@@ -30,7 +30,7 @@
       id="dataSourceTicket"
       class="com.mchange.v2.c3p0.ComboPooledDataSource"
       p:driverClass="${database.driverClass:org.hsqldb.jdbcDriver}"
-      p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry}"
+      p:jdbcUrl="${database.url:jdbc:hsqldb:mem:cas-ticket-registry;hsqldb.tx_level=serializable}"
       p:user="${database.user:sa}"
       p:password="${database.password:}"
       p:initialPoolSize="${database.pool.minSize:6}"
