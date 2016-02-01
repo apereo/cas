@@ -7,7 +7,6 @@ import java.io.Serializable;
 /**
  * This is {@link AuthenticationResultBuilder}. It attempts to collect authentication objects
  * and will put the computed finalized primary {@link Authentication} into {@link AuthenticationResult}.
- * <p/>
  * <strong>Concurrency semantics: implementations MUST be thread-safe.</strong>
  * Instances of this class should never be declared as a field. Rather they should always be passedaround to methods that need them.
  *
