@@ -31,6 +31,8 @@ import java.util.Map;
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
     private static final long serialVersionUID = -6231886395225437320L;
 
+    private static final String DEFAULT_NAME_ID_FORMAT = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient";
+
     @Override
     public final NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                               final Assertion assertion, final SamlRegisteredService service,
@@ -45,6 +47,11 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
         final List<String> supportedNameFormats = adaptor.getSupportedNameFormats();
         logger.debug("Metadata for [{}] declares support for the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
+
+        // there are no explicitly defined NameIDFormats, include the default format
+        if (supportedNameFormats.isEmpty()) {
+            supportedNameFormats.add(DEFAULT_NAME_ID_FORMAT);
+        }
 
         String requiredNameFormat = null;
         if (authnRequest.getNameIDPolicy() != null) {
