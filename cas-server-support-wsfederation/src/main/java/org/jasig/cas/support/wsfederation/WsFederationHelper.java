@@ -92,21 +92,17 @@ public final class WsFederationHelper {
         }
 
         //retrieve an attributes from the assertion
-        final HashMap<String, Object> attributes = new HashMap<String, Object>();
+        final HashMap<String, List<Object>> attributes = new HashMap<>();
         for (final Attribute item : assertion.getAttributeStatements().get(0).getAttributes()) {
             LOGGER.debug("Processed attribute: {}", item.getAttributeName());
 
-            if (item.getAttributeValues().size() == 1) {
-                attributes.put(item.getAttributeName(), ((XSAny) item.getAttributeValues().get(0)).getTextContent());
-            } else {
-                final List<String> itemList = new ArrayList<String>();
-                for (int i = 0; i < item.getAttributeValues().size(); i++) {
-                    itemList.add(((XSAny) item.getAttributeValues().get(i)).getTextContent());
-                }
+            final List<Object> itemList = new ArrayList<>();
+            for (int i = 0; i < item.getAttributeValues().size(); i++) {
+                itemList.add(((XSAny) item.getAttributeValues().get(i)).getTextContent());
+            }
 
-                if (!itemList.isEmpty()) {
-                    attributes.put(item.getAttributeName(), itemList);
-                }
+            if (!itemList.isEmpty()) {
+                attributes.put(item.getAttributeName(), itemList);
             }
         }
         credential.setAttributes(attributes);
