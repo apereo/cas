@@ -1,7 +1,6 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.authentication.OAuthAuthentication;
@@ -9,6 +8,7 @@ import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
 import org.jasig.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+import org.jasig.cas.util.AuthTestUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
