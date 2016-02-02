@@ -29,31 +29,34 @@ these levels to  `DEBUG`.
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though,
 you probably want to run them both as `WARN`.</p></div>
 
-
-##Components
-The log4j configuration is by default loaded using the following components
-at `cas-server-webapp/src/main/webapp/WEB-INF/spring-configuration/log4jConfiguration.xml`:
-
-{% highlight xml %}
-<bean id="log4jInitialization" class="org.jasig.cas.util.CasAsyncLoggerContextInitializer"
-    c:logConfigurationField="log4jConfiguration"
-    c:logConfigurationFile="${log4j.config.location:classpath:log4j2.xml}"
-    c:AsyncLoggerContextPackageName="org.apache.logging.log4j.web"/>
-{% endhighlight %}
-
+##Configuration
 It is often time helpful to externalize `log4j2.xml` to a system path to preserve settings between upgrades.
-The location of `log4j2.xml` file by default is on the runtime classpath and at minute intervals
-respective. These may be overridden by the `cas.properties` file
+The location of `log4j2.xml` file by default is on the runtime classpath. 
+These may be overridden by the `cas.properties` file
 
 {% highlight bash %}
 # log4j.config.location=classpath:log4j2.xml
 {% endhighlight %}
 
-
-##Configuration
 The `log4j2.xml` file by default at `WEB-INF/classes` provides the following `appender` elements that
 decide where and how messages from components should be displayed. Two are provided by default that
 output messages to the system console and a `cas.log` file:
+
+### Multiple Logger Bindings
+CAS by default attempts to scan the runtime application context looking for suitable logger frameworks. 
+By default, the framework that is chosen is Log4j. If there are multiple logging frameworks found 
+on the application classpath at runtime, you can instruct CAS to specifically select Log4j as the logging framework
+via the following property passed to the JVM runtime instance:
+
+{% highlight bash %}
+-DloggerFactory="org.apache.logging.slf4j.Log4jLoggerFactory"
+{% endhighlight %}
+
+###Alternative Loggers
+If you wish to use an alternative logging framework other than Log4j, you will need to exclude
+all `log4j` JAR artifacts and the `cas-server-core-logging` module from your configuration. Ensure
+an alternative framework such as Logback is provided instead to the application runtime and the necessary
+configuration is available per the framework. 
 
 ###Refresh Interval
 The `log4j2.xml` itself controls the refresh interval of the logging configuration. Log4j has the ability
@@ -143,6 +146,9 @@ troubleshooting and diagnostics. This is achieved by providing a specific bindin
 
 ##AsyncLoggers Shutdown with Tomcat
 
-Log4j automatically insert itself into the runtime application context in a Servlet 3 environment (i.e. Tomcat 8.x) and will clean up the logging context once the container is instructed to shut down. However, Tomcat ignores all JAR files named log4j.jar, which prevents this feature from working. You may need to change `catalina.properties` and remove "log4j.jar" from the `jarsToSkip` property. You may need to do something similar on other containers if they skip scanning Log4j JAR files.
+Log4j automatically inserts itself into the runtime application context in a Servlet 3 environment (i.e. Tomcat 8.x) and will clean up 
+the logging context once the container is instructed to shut down. However, Tomcat ignores all JAR files named `log4j*.jar`, which prevents 
+this feature from working. You may need to change the `catalina.properties` and remove `log4j*.jar` from the `jarsToSkip` property. 
+You may need to do something similar on other containers if they skip scanning Log4j JAR files.
 
 Failure to do so will stop Tomcat to gracefully shut down and causes logger context threads to hang. 
