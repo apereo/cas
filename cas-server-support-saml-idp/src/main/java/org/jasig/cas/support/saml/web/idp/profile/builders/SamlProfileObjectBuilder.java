@@ -23,7 +23,6 @@ public interface SamlProfileObjectBuilder<T extends SAMLObject> {
     /**
      * Build response.
      *
-     * @param <T>          the type parameter
      * @param authnRequest the authn request
      * @param request      the request
      * @param response     the response
@@ -33,7 +32,7 @@ public interface SamlProfileObjectBuilder<T extends SAMLObject> {
      * @return the response
      * @throws SamlException the exception
      */
-    <T> T build(final AuthnRequest authnRequest, final HttpServletRequest request,
-                final HttpServletResponse response, final Assertion assertion,
-                final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException;
+    T build(final AuthnRequest authnRequest, final HttpServletRequest request,
+            final HttpServletResponse response, final Assertion assertion,
+            final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException;
 }
