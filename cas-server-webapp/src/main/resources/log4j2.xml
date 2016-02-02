@@ -51,6 +51,10 @@
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
         </AsyncLogger>
+        <AsyncLogger name="com.hazelcast" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+        </AsyncLogger>
         -->
 
         <AsyncLogger name="perfStatsLogger" level="info" additivity="false" includeLocation="true">
