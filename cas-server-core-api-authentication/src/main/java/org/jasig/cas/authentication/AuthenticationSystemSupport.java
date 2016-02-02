@@ -41,7 +41,7 @@ public interface AuthenticationSystemSupport {
      *
      * @since 4.3.0
      */
-    AuthenticationResultBuilder handleInitialAuthenticationTransaction(Authentication authentication);
+    AuthenticationResultBuilder establishAuthenticationContextFromInitial(Authentication authentication);
 
     /**
      * Initiate potential multi-transaction authentication event by handling the initial authentication transaction.

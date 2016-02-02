@@ -71,7 +71,8 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             return resumeFlow();
         }
 
-        final AuthenticationResultBuilder builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(authentication);
+        final AuthenticationResultBuilder builder =
+                this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication);
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
