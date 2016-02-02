@@ -30,8 +30,8 @@ public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEvent
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
-        final RegisteredServiceMultifactorPolicy policy = service.getAuthenticationPolicy();
-        if (policy == null || service.getAuthenticationPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
+        final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
+        if (policy == null || service.getMultifactorPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
             logger.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
             return null;
         }

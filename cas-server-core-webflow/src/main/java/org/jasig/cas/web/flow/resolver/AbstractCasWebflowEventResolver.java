@@ -208,7 +208,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the authentication provider for service
      */
     protected Set<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
-        final RegisteredServiceMultifactorPolicy policy = service.getAuthenticationPolicy();
+        final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy != null) {
             final Set<String> providers = policy.getMultifactorAuthenticationProviders();
             final Set<MultifactorAuthenticationProvider> providersSet = new HashSet<>(providers.size());

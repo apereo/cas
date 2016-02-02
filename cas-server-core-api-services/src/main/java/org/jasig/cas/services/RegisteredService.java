@@ -94,7 +94,7 @@ public interface RegisteredService extends Cloneable, Serializable {
      *
      * @return the authentication policy
      */
-    RegisteredServiceMultifactorPolicy getAuthenticationPolicy();
+    RegisteredServiceMultifactorPolicy getMultifactorPolicy();
 
     /**
      * Gets the set of handler names that must successfully authenticate credentials in order to access the service.

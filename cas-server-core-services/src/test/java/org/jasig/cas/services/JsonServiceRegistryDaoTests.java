@@ -72,7 +72,7 @@ public class JsonServiceRegistryDaoTests {
         policy.setMultifactorAuthenticationProviders(set);
         policy.setPrincipalAttributeNameTrigger("memberOf");
         policy.setPrincipalAttributeValueToMatch("cas|CAS|admin");
-        r.setAuthenticationPolicy(policy);
+        r.setMultifactorPolicy(policy);
         final RegisteredService r2 = this.dao.save(r);
         assertEquals(r2, r);
     }

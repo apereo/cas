@@ -37,7 +37,7 @@ public class DuoMultifactorAuthenticationProvider implements MultifactorAuthenti
         if (duoAuthenticationService.canPing()) {
             return true;
         }
-        final RegisteredServiceMultifactorPolicy policy = service.getAuthenticationPolicy();
+        final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy != null && policy.isFailOpen()) {
             logger.warn("Duo could not be reached. Since the authentication provider is configured to fail-open, authentication will "
                     + "proceed without Duo for service {}", service.getServiceId());
