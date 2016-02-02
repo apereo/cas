@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,7 +27,7 @@ public final class WsFederationCredential implements Credential {
     private DateTime notBefore;
     private DateTime notOnOrAfter;
     private DateTime retrievedOn;
-    private Map<String, Object> attributes;
+    private Map<String, List<Object>> attributes;
 
     public String getAuthenticationMethod() {
         return this.authenticationMethod;
@@ -44,11 +45,11 @@ public final class WsFederationCredential implements Credential {
         this.audience = audience;
     }
 
-    public Map<String, Object> getAttributes() {
+    public Map<String, List<Object>> getAttributes() {
         return this.attributes;
     }
 
-    public void setAttributes(final Map<String, Object> attributes) {
+    public void setAttributes(final Map<String, List<Object>> attributes) {
         this.attributes = attributes;
     }
 
