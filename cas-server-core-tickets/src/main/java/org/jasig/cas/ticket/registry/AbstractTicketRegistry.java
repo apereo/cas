@@ -42,9 +42,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     @Qualifier("ticketCipherExecutor")
     private CipherExecutor<byte[], byte[]> cipherExecutor;
 
-    @Nullable
-    @Autowired(required = false)
-    @Qualifier("ticketDelegators")
     private List<Pair<Class<? extends Ticket>, Constructor<? extends AbstractTicketDelegator>>> ticketDelegators = new ArrayList<>();
 
     /**

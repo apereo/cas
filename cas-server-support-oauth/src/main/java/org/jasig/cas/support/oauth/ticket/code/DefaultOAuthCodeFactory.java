@@ -7,7 +7,6 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.pac4j.core.util.CommonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +34,13 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
 
     /** ExpirationPolicy for OAuth code. */
-    @Autowired(required = false)
+    @NotNull
+    @Autowired
     @Qualifier("oAuthCodeExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
     public OAuthCode create(final Service service, final Authentication authentication) {
-        CommonHelper.assertNotNull("expirationPolicy", expirationPolicy);
-
         final String codeId = oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
         return new OAuthCodeImpl(codeId, service, authentication, expirationPolicy);
     }
