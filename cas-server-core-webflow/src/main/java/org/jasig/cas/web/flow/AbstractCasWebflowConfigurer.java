@@ -16,8 +16,12 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
+import org.springframework.context.expression.BeanExpressionContextAccessor;
+import org.springframework.context.expression.EnvironmentAccessor;
+import org.springframework.context.expression.MapAccessor;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.WebApplicationContext;
@@ -186,6 +190,7 @@ public abstract class AbstractCasWebflowConfigurer {
         return decisionState;
 
     }
+
     /**
      * Sets start state.
      *
@@ -216,7 +221,7 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param clazz         the exception class
      */
     protected void createGlobalTransition(final Flow flow, final String targetStateId,
-                                                             final Class<? extends Throwable> clazz) {
+                                          final Class<? extends Throwable> clazz) {
 
         try {
             final TransitionExecutingFlowExecutionExceptionHandler handler = new TransitionExecutingFlowExecutionExceptionHandler();
@@ -277,13 +282,14 @@ public abstract class AbstractCasWebflowConfigurer {
                 .parseExpression(expression, ctx);
         final EvaluateAction newAction = new EvaluateAction(action, null);
 
-        logger.debug("Created evaluate action for expression", action.getExpressionString());
+        logger.debug("Created evaluate action for expression {}", action.getExpressionString());
         return newAction;
     }
 
     /**
      * Add a default transition to a given state.
-     * @param state the state to include the default transition
+     *
+     * @param state       the state to include the default transition
      * @param targetState the id of the destination state to which the flow should transfer
      */
     protected void createStateDefaultTransition(final TransitionableState state, final String targetState) {
@@ -298,12 +304,12 @@ public abstract class AbstractCasWebflowConfigurer {
     /**
      * Add transition to action state.
      *
-     * @param state     the action state
+     * @param state           the action state
      * @param criteriaOutcome the criteria outcome
      * @param targetState     the target state
      */
     protected void createTransitionForState(final TransitionableState state,
-                                               final String criteriaOutcome, final String targetState) {
+                                            final String criteriaOutcome, final String targetState) {
         try {
             final Transition transition = createTransition(criteriaOutcome, targetState);
             state.getTransitionSet().add(transition);
@@ -386,13 +392,19 @@ public abstract class AbstractCasWebflowConfigurer {
         parser.addPropertyAccessor(new MapAdaptablePropertyAccessor());
         parser.addPropertyAccessor(new MessageSourcePropertyAccessor());
         parser.addPropertyAccessor(new ScopeSearchingPropertyAccessor());
+        parser.addPropertyAccessor(new BeanExpressionContextAccessor());
+        parser.addPropertyAccessor(new MapAccessor());
+        parser.addPropertyAccessor(new MapAdaptablePropertyAccessor());
+        parser.addPropertyAccessor(new EnvironmentAccessor());
+        parser.addPropertyAccessor(new ReflectivePropertyAccessor());
         return parser;
 
     }
+
     /**
      * Create transition without a criteria.
      *
-     * @param targetState     the target state
+     * @param targetState the target state
      * @return the transition
      */
     protected Transition createTransition(final String targetState) {
@@ -408,19 +420,41 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param viewId the view id
      */
     protected void createEndState(final Flow flow, final String id, final String viewId) {
+        createEndState(flow, id, new LiteralExpression(viewId));
+    }
+
+    /**
+     * Add end state backed by view.
+     *
+     * @param flow       the flow
+     * @param id         the id
+     * @param expression the expression
+     */
+    protected void createEndState(final Flow flow, final String id, final Expression expression) {
+        final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
+                expression,
+                this.flowBuilderServices.getExpressionParser(),
+                this.flowBuilderServices.getConversionService(),
+                null,
+                this.flowBuilderServices.getValidator(),
+                this.flowBuilderServices.getValidationHintResolver());
+
+        createEndState(flow, id, viewFactory);
+    }
+
+    /**
+     * Add end state backed by view.
+     *
+     * @param flow        the flow
+     * @param id          the id
+     * @param viewFactory the view factory
+     */
+    protected void createEndState(final Flow flow, final String id, final ViewFactory viewFactory) {
         try {
             final EndState endState = new EndState(flow, id);
-            final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
-                    new LiteralExpression(viewId),
-                    this.flowBuilderServices.getExpressionParser(),
-                    this.flowBuilderServices.getConversionService(),
-                    null,
-                    this.flowBuilderServices.getValidator(),
-                    this.flowBuilderServices.getValidationHintResolver());
-
             final Action finalResponseAction = new ViewFactoryActionAdapter(viewFactory);
             endState.setFinalResponseAction(finalResponseAction);
-            logger.debug("Created end state state {} on flow id {}, backed by view {}", id, flow.getId(), viewId);
+            logger.debug("Created end state state {} on flow id {}, backed by view factory {}", id, flow.getId(), viewFactory);
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         }
@@ -443,15 +477,15 @@ public abstract class AbstractCasWebflowConfigurer {
     /**
      * Add view state.
      *
-     * @param flow   the flow
-     * @param id     the id
-     * @param viewId the view id
+     * @param flow       the flow
+     * @param id         the id
+     * @param expression the expression
      * @return the view state
      */
-    protected ViewState createViewState(final Flow flow, final String id, final String viewId) {
+    protected ViewState createViewState(final Flow flow, final String id, final Expression expression) {
         try {
             final ViewFactory viewFactory = this.flowBuilderServices.getViewFactoryCreator().createViewFactory(
-                    new LiteralExpression(viewId),
+                    expression,
                     this.flowBuilderServices.getExpressionParser(),
                     this.flowBuilderServices.getConversionService(),
                     null,
@@ -468,11 +502,23 @@ public abstract class AbstractCasWebflowConfigurer {
     }
 
     /**
+     * Add view state.
+     *
+     * @param flow   the flow
+     * @param id     the id
+     * @param viewId the view id
+     * @return the view state
+     */
+    protected ViewState createViewState(final Flow flow, final String id, final String viewId) {
+        return createViewState(flow, id, new LiteralExpression(viewId));
+    }
+
+    /**
      * Create subflow state.
      *
-     * @param flow the flow
-     * @param id the id
-     * @param subflow the subflow
+     * @param flow        the flow
+     * @param id          the id
+     * @param subflow     the subflow
      * @param entryAction the entry action
      * @return the subflow state
      */
@@ -516,10 +562,10 @@ public abstract class AbstractCasWebflowConfigurer {
     /**
      * Create mapping to subflow state.
      *
-     * @param name the name
-     * @param value the value
+     * @param name     the name
+     * @param value    the value
      * @param required the required
-     * @param type the type
+     * @param type     the type
      * @return the default mapping
      */
     protected DefaultMapping createMappingToSubflowState(final String name, final String value,
@@ -542,7 +588,7 @@ public abstract class AbstractCasWebflowConfigurer {
     /**
      * Create subflow attribute mapper.
      *
-     * @param inputMapper the input mapper
+     * @param inputMapper  the input mapper
      * @param outputMapper the output mapper
      * @return the subflow attribute mapper
      */
