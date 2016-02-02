@@ -51,8 +51,8 @@ public class YubiKeyAuthenticationHandler extends AbstractUsernamePasswordAuthen
      * @param secretKey the secret key
      */
     @Autowired
-    public YubiKeyAuthenticationHandler(@NotNull @Value("${yubikey.client.id:}") final Integer clientId,
-                                        @NotNull @Value("${yubikey.secret.key:}") final String secretKey) {
+    public YubiKeyAuthenticationHandler(@NotNull @Value("${cas.mfa.yubikey.client.id:}") final Integer clientId,
+                                        @NotNull @Value("${cas.mfa.yubikey.secret.key:}") final String secretKey) {
         this.client = YubicoClient.getClient(clientId, secretKey);
     }
 
