@@ -13,6 +13,7 @@ import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSer
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,8 +32,6 @@ import java.util.Map;
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
     private static final long serialVersionUID = -6231886395225437320L;
 
-    private static final String DEFAULT_NAME_ID_FORMAT = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient";
-
     @Override
     public final NameID build(final AuthnRequest authnRequest, final HttpServletRequest request, final HttpServletResponse response,
                               final Assertion assertion, final SamlRegisteredService service,
@@ -49,8 +48,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         logger.debug("Metadata for [{}] declares support for the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
 
         // there are no explicitly defined NameIDFormats, include the default format
+        // see: http://saml2int.org/profile/current/#section92
         if (supportedNameFormats.isEmpty()) {
-            supportedNameFormats.add(DEFAULT_NAME_ID_FORMAT);
+            supportedNameFormats.add(NameIDType.TRANSIENT);
         }
 
         String requiredNameFormat = null;
