@@ -1,7 +1,6 @@
 package org.jasig.cas.authentication;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +20,6 @@ public final class DefaultAuthenticationResult implements AuthenticationResult {
     private static final long serialVersionUID = 8454900425245262824L;
 
     private final Authentication authentication;
-    private final Principal principal;
 
     private final Service service;
 
@@ -34,7 +32,6 @@ public final class DefaultAuthenticationResult implements AuthenticationResult {
     public DefaultAuthenticationResult(final Authentication authentication, final Service service) {
         this.authentication = authentication;
         this.service = service;
-        this.principal = this.authentication.getPrincipal();
     }
 
     /**
@@ -52,11 +49,6 @@ public final class DefaultAuthenticationResult implements AuthenticationResult {
     }
 
     @Override
-    public Principal getPrincipal() {
-        return this.principal;
-    }
-
-    @Override
     public Service getService() {
         return this.service;
     }
@@ -65,7 +57,6 @@ public final class DefaultAuthenticationResult implements AuthenticationResult {
     public String toString() {
         return new ToStringBuilder(this)
                 .append("authentication", this.authentication)
-                .append("principal", this.principal)
                 .toString();
     }
 }
