@@ -85,6 +85,7 @@ org.jasig.cas.ticket
 org.jasig.cas.ticket.proxy
 org.jasig.cas.ticket.proxy.support
 org.jasig.cas.ticket.registry
+org.jasig.cas.ticket.registry.config
 org.jasig.cas.ticket.registry.support
 org.jasig.cas.ticket.registry.support.kryo
 org.jasig.cas.ticket.registry.support.kryo.serial
