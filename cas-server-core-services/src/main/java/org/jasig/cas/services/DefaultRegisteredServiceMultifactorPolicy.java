@@ -1,5 +1,9 @@
 package org.jasig.cas.services;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -58,5 +62,47 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
 
     public void setPrincipalAttributeValueToMatch(final String principalAttributeValueToMatch) {
         this.principalAttributeValueToMatch = principalAttributeValueToMatch;
+    }
+
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final DefaultRegisteredServiceMultifactorPolicy rhs = (DefaultRegisteredServiceMultifactorPolicy) obj;
+        return new EqualsBuilder()
+                .append(this.multifactorAuthenticationProviders, rhs.multifactorAuthenticationProviders)
+                .append(this.failOpen, rhs.failOpen)
+                .append(this.principalAttributeNameTrigger, rhs.principalAttributeNameTrigger)
+                .append(this.principalAttributeValueToMatch, rhs.principalAttributeValueToMatch)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder()
+                .append(multifactorAuthenticationProviders)
+                .append(failOpen)
+                .append(principalAttributeNameTrigger)
+                .append(principalAttributeValueToMatch)
+                .toHashCode();
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("multifactorAuthenticationProviders", multifactorAuthenticationProviders)
+                .append("failOpen", failOpen)
+                .append("principalAttributeNameTrigger", principalAttributeNameTrigger)
+                .append("principalAttributeValueToMatch", principalAttributeValueToMatch)
+                .toString();
     }
 }

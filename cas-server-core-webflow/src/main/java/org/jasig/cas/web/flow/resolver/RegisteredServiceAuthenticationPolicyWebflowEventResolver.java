@@ -30,7 +30,7 @@ public class RegisteredServiceAuthenticationPolicyWebflowEventResolver extends A
             return null;
         }
 
-        final RegisteredServiceMultifactorPolicy policy = service.getAuthenticationPolicy();
+        final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
         if (policy == null || policy.getMultifactorAuthenticationProviders().isEmpty()) {
             logger.debug("Authentication policy does not contain any multifactor authentication providers");
             return null;
