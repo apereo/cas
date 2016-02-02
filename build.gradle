@@ -310,13 +310,15 @@ ext.libraries = [
                     force = true
                 }
         ],
-        inspektr         : [
+        inspektraspects         : [
                 dependencies.create("org.jasig.inspektr:inspektr-aspects:$inspektrVersion") {
                     exclude(group: 'javax.validation', module: 'validation-api')
                     exclude(group: 'org.aspectj', module: 'aspectjrt')
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     force = true
-                },
+                }
+        ],
+        inspektr         : [
                 dependencies.create("org.jasig.inspektr:inspektr-audit:$inspektrVersion") {
                     exclude(group: 'org.slf4j', module: 'slf4j-api')
                     exclude(group: 'javax.validation', module: 'validation-api')
@@ -956,10 +958,11 @@ subprojects {
         compile libraries.guava
         compile libraries.commons
         compile libraries.jodatime
+        compile libraries.inspektr
 
         if (!Boolean.getBoolean("skipAspectJ")) {
-            compile libraries.inspektr
-            aspectpath libraries.inspektr
+            compile libraries.inspektraspects
+            aspectpath libraries.inspektraspects
         }
 
         if (!Boolean.getBoolean("skipFindbugs")) {

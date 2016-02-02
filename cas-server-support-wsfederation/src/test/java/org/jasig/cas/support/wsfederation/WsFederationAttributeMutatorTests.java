@@ -2,7 +2,9 @@ package org.jasig.cas.support.wsfederation;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -16,28 +18,33 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
 
     @Test
     public void verifyModifyAttributes() {
-        final Map<String, Object> attributes = new HashMap<String, Object>();
-        attributes.put("upn", "test@example.com");
+        final Map<String, List<Object>> attributes = new HashMap<>();
+
+        final List values = new ArrayList();
+        values.add("test@example.com");
+        attributes.put("upn", values);
         
         final WsFederationAttributeMutator instance = new WsFederationAttributeMutatorImpl();
         instance.modifyAttributes(attributes);
-        assertTrue("testModifyAttributes() - true", attributes.containsKey("test"));
-        assertTrue("testModifyAttributes() - true",
-                "newtest".equalsIgnoreCase(attributes.get("test").toString()));
 
-        assertTrue("testModifyAttributes() - true",
-                attributes.containsKey("upn"));
-        assertTrue("testModifyAttributes() - true",
-                "testing".equalsIgnoreCase(attributes.get("upn").toString()));
+        assertTrue(attributes.containsKey("test"));
+        assertTrue("newtest".equalsIgnoreCase(attributes.get("test").get(0).toString()));
+        assertTrue(attributes.containsKey("upn"));
+        assertTrue("testing".equalsIgnoreCase(attributes.get("upn").get(0).toString()));
     }
 
     private static class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
         private static final long serialVersionUID = -1858140387002752668L;
 
         @Override
-        public void modifyAttributes(final Map<String, Object> attributes) {
-            attributes.put("test", "newtest");
-            attributes.put("upn", "testing");
+        public void modifyAttributes(final Map<String, List<Object>> attributes) {
+            List values = new ArrayList();
+            values.add("newtest");
+            attributes.put("test", values);
+
+            values = new ArrayList();
+            values.add("testing");
+            attributes.put("upn", values);
         }
     }
 }
