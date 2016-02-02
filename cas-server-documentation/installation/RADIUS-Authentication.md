@@ -4,12 +4,22 @@ title: CAS - RADIUS Authentication
 ---
 
 # RADIUS Authentication
-RADIUS support is enabled by including the following dependency in the Maven WAR overlay:
+RADIUS support is enabled by only including the following dependency in the Maven WAR overlay:
 
 {% highlight xml %}
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-radius</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+{% endhighlight %}
+
+RSA RADIUS support for MFA is enabled by only including the following dependency in the Maven WAR overlay:
+
+{% highlight xml %}
+<dependency>
+  <groupId>org.jasig.cas</groupId>
+  <artifactId>cas-server-support-radius-mfa</artifactId>
   <version>${cas.version}</version>
 </dependency>
 {% endhighlight %}
