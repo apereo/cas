@@ -3,6 +3,7 @@ package org.jasig.cas.web.flow.resolver;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationResultBuilder;
@@ -186,8 +187,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         logger.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         final AuthenticationResult authenticationResult =
                 authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-        logger.debug("Resulting final authentication is {} with principal {}", authenticationResult.getAuthentication(),
-                authenticationResult.getPrincipal());
+
+        final Authentication authentication = authenticationResult.getAuthentication();
+        logger.debug("Resulting final authentication is {} with principal {}", authentication, authentication.getPrincipal());
         final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
