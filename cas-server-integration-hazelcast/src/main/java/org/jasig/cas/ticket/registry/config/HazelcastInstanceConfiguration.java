@@ -103,7 +103,7 @@ public class HazelcastInstanceConfiguration {
                     .setJoin(joinConfig);
 
             //Map config
-            final MapConfig mapConfig = new MapConfig().setName("tickets")
+            final MapConfig mapConfig = new MapConfig().setName(this.hazelcastProperties.getMapName())
                     .setMaxIdleSeconds(this.hazelcastProperties.getMaxIdleSeconds())
                     .setEvictionPolicy(this.hazelcastProperties.getEvictionPolicy())
                     .setEvictionPercentage(this.hazelcastProperties.getEvictionPercentage())
