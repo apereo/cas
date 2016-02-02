@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.Controller;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,7 @@ public final class OAuth20ProfileControllerTests {
         final HttpProfile profile = new HttpProfile();
         profile.setId(ID);
         profile.addAttributes(map);
-        profile.addAttribute(JwtConstants.EXPIRATION_TIME, ZonedDateTime.now().plusSeconds(5));
+        profile.addAttribute(JwtConstants.EXPIRATION_TIME, Date.from(ZonedDateTime.now().plusSeconds(5).toInstant()));
         ((OAuth20WrapperController) oauth20WrapperController).getTicketRegistry().addTicket(impl);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -150,7 +151,7 @@ public final class OAuth20ProfileControllerTests {
         final HttpProfile profile = new HttpProfile();
         profile.setId(ID);
         profile.addAttributes(map);
-        profile.addAttribute(JwtConstants.EXPIRATION_TIME, ZonedDateTime.now().plusSeconds(5));
+        profile.addAttribute(JwtConstants.EXPIRATION_TIME, Date.from(ZonedDateTime.now().plusSeconds(5).toInstant()));
         ((OAuth20WrapperController) oauth20WrapperController).getTicketRegistry().addTicket(impl);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
