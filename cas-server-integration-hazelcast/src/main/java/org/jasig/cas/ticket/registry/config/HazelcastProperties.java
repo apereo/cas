@@ -27,6 +27,12 @@ public class HazelcastProperties {
     public static final String MAX_HEARTBEAT_SECONDS_PROP = "hazelcast.max.no.heartbeat.seconds";
 
     /**
+     * Map name.
+     */
+    @Value("${hz.mapname:tickets}")
+    private String mapName;
+
+    /**
      * Logging type.
      */
     @Value("${hz.cluster.logging.type:slf4j}")
@@ -103,6 +109,10 @@ public class HazelcastProperties {
      */
     @Value("${tgt.maxTimeToLiveInSeconds:28800}")
     private int maxIdleSeconds;
+
+    public String getMapName() {
+        return mapName;
+    }
 
     public String getLoggingType() {
         return loggingType;
