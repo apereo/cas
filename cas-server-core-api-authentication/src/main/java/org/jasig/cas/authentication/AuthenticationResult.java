@@ -1,6 +1,5 @@
 package org.jasig.cas.authentication;
 
-import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 
 import java.io.Serializable;
@@ -24,11 +23,6 @@ public interface AuthenticationResult extends Serializable {
      */
     Authentication getAuthentication();
 
-    /**
-     * The principal associated with the result of this authentication.
-     * @return the principal
-     */
-    Principal getPrincipal();
 
     /**
      * Gets the service for which this authentication result is relevant.
