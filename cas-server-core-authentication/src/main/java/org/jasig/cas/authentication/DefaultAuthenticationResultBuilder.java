@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -40,11 +41,12 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
     }
 
     @Override
-    public Authentication getInitialAuthentication() {
+    public Optional<Authentication> getInitialAuthentication() {
         if (this.authentications.isEmpty()) {
-            throw new IllegalArgumentException("Authentication chain is empty; no authentications have been collected yet");
+            LOGGER.warn("Authentication chain is empty as no authentications have been collected");
+            return Optional.empty();
         }
-        return this.authentications.iterator().next();
+        return Optional.of(this.authentications.iterator().next());
     }
 
     @Override

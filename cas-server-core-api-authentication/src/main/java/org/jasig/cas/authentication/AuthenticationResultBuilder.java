@@ -3,6 +3,7 @@ package org.jasig.cas.authentication;
 import org.jasig.cas.authentication.principal.Service;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * This is {@link AuthenticationResultBuilder}. It attempts to collect authentication objects
@@ -20,7 +21,7 @@ public interface AuthenticationResultBuilder extends Serializable {
      *
      * @return the initial authentication
      */
-    Authentication getInitialAuthentication();
+    Optional<Authentication> getInitialAuthentication();
 
     /**
      * Collect authentication objects from any number of processed authentication transactions.
