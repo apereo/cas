@@ -5,7 +5,7 @@ import org.jasig.cas.support.saml.services.SamlRegisteredService;
 import org.jasig.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.jasig.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.jasig.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSigner;
-import org.joda.time.DateTime;
+
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Statement;
@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.SecureRandom;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         statements.add(samlProfileSamlAttributeStatementBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
 
         final String id = String.valueOf(Math.abs(new SecureRandom().nextLong()));
-        final Assertion assertion = newAssertion(statements, this.entityId, DateTime.now(), id);
+        final Assertion assertion = newAssertion(statements, this.entityId, ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(samlProfileSamlSubjectBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
         assertion.setConditions(samlProfileSamlConditionsBuilder.build(authnRequest, request, response, casAssertion, service, adaptor));
 

@@ -1,6 +1,5 @@
 package org.jasig.cas.support.saml.web.flow.mdui;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.ServiceFactory;
 import org.jasig.cas.authentication.principal.WebApplicationService;
 import org.jasig.cas.services.RegisteredService;
@@ -8,6 +7,8 @@ import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.web.support.WebUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
@@ -133,13 +134,11 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
         final SimpleMetadataUIInfo mdui = new SimpleMetadataUIInfo(registeredService);
 
-        for (final XMLObject obj : spExtensions) {
-            if (obj instanceof UIInfo) {
-                final UIInfo uiInfo = (UIInfo) obj;
-                logger.debug("Found UI info for [{}] and added to flow context", entityId);
-                mdui.setUIInfo(uiInfo);
-            }
-        }
+        spExtensions.stream().filter(obj -> obj instanceof UIInfo).forEach(obj -> {
+            final UIInfo uiInfo = (UIInfo) obj;
+            logger.debug("Found UI info for [{}] and added to flow context", entityId);
+            mdui.setUIInfo(uiInfo);
+        });
 
         requestContext.getFlowScope().put(MDUI_FLOW_PARAMETER_NAME, mdui);
         return success();

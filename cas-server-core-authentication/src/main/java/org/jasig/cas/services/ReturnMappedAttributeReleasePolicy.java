@@ -58,17 +58,17 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     protected Map<String, Object> getAttributesInternal(final Map<String, Object> resolvedAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
 
-        for (final Map.Entry<String, String> entry : this.allowedAttributes.entrySet()) {
-            final String key = entry.getKey();
-            final Object value = resolvedAttributes.get(key);
-
-            if (value != null) {
-                final String mappedAttributeName = entry.getValue();
-                logger.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
-                        key, mappedAttributeName);
-                attributesToRelease.put(mappedAttributeName, value);
-            }
-        }
+        this.allowedAttributes.entrySet().stream()
+                .map(entry -> {
+                    final String key = entry.getKey();
+                    return new Object[]{key, resolvedAttributes.get(key), entry};
+                })
+                .filter(entry -> entry[1] != null).forEach(entry -> {
+            final String mappedAttributeName = ((Map.Entry<String, String>) entry[2]).getValue();
+            logger.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
+                    entry[0], mappedAttributeName);
+            attributesToRelease.put(mappedAttributeName, entry[1]);
+        });
         return attributesToRelease;
     }
 

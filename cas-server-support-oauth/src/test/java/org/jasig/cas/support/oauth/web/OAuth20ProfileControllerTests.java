@@ -1,13 +1,13 @@
 package org.jasig.cas.support.oauth.web;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.pac4j.http.profile.HttpProfile;
@@ -22,8 +22,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.servlet.mvc.Controller;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +111,7 @@ public final class OAuth20ProfileControllerTests {
         final HttpProfile profile = new HttpProfile();
         profile.setId(ID);
         profile.addAttributes(map);
-        profile.addAttribute(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), 5));
+        profile.addAttribute(JwtConstants.EXPIRATION_TIME, ZonedDateTime.now().plusSeconds(5));
         ((OAuth20WrapperController) oauth20WrapperController).getTicketRegistry().addTicket(impl);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
@@ -150,7 +150,7 @@ public final class OAuth20ProfileControllerTests {
         final HttpProfile profile = new HttpProfile();
         profile.setId(ID);
         profile.addAttributes(map);
-        profile.addAttribute(JwtConstants.EXPIRATION_TIME, DateUtils.addSeconds(new Date(), 5));
+        profile.addAttribute(JwtConstants.EXPIRATION_TIME, ZonedDateTime.now().plusSeconds(5));
         ((OAuth20WrapperController) oauth20WrapperController).getTicketRegistry().addTicket(impl);
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT

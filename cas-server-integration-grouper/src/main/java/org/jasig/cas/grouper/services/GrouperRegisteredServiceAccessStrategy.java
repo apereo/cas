@@ -1,11 +1,13 @@
 package org.jasig.cas.grouper.services;
 
+import org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy;
+
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
-import org.jasig.cas.services.TimeBasedRegisteredServiceAccessStrategy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,18 +71,24 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
             return false;
         }
 
-        for (final WsGetGroupsResult groupsResult : results) {
+        final boolean denied = Arrays.stream(results).filter(groupsResult -> {
             if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
                 logger.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
-                return false;
+                return true;
             }
 
-            for (final WsGroup group : groupsResult.getWsGroups()) {
+            Arrays.stream(groupsResult.getWsGroups()).forEach(group -> {
                 final String groupName = constructGrouperGroupAttribute(group);
                 logger.debug("Found group name [{}] for [{}]", groupName, principal);
                 grouperGroups.add(groupName);
-            }
+            });
+            return false;
+        }).findFirst().isPresent();
+
+        if (denied) {
+            return false;
         }
+
         logger.debug("Adding [{}] under attribute name [{}] to collection of CAS attributes",
                 grouperGroups, GROUPER_GROUPS_ATTRIBUTE_NAME);
 

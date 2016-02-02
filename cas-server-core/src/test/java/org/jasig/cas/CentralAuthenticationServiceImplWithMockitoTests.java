@@ -1,6 +1,5 @@
 package org.jasig.cas;
 
-import com.google.common.base.Predicates;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationHandler;
@@ -35,19 +34,23 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.validation.Assertion;
-import org.joda.time.DateTime;
+
+import com.google.common.base.Predicates;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -92,7 +95,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     @Before
     public void prepareNewCAS() throws Exception {
         this.authentication = mock(Authentication.class);
-        when(this.authentication.getAuthenticationDate()).thenReturn(DateTime.now());
+        when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         final CredentialMetaData metadata = new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         final Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("handler1", new DefaultHandlerResult(mock(AuthenticationHandler.class), metadata));
@@ -211,10 +214,8 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         assertEquals(assertion.getService(), svc);
         assertEquals(assertion.getPrimaryAuthentication().getPrincipal().getId(), PRINCIPAL);
         assertTrue(assertion.getChainedAuthentications().size()  == 2);
-        for (int i = 0; i < assertion.getChainedAuthentications().size(); i++) {
-            final Authentication auth = assertion.getChainedAuthentications().get(i);
-            assertEquals(auth, authentication);
-        }
+        IntStream.range(0, assertion.getChainedAuthentications().size())
+                .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
     }
     
     private TicketGrantingTicket createRootTicketGrantingTicket() {

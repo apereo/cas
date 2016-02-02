@@ -1,14 +1,13 @@
 package org.jasig.cas.support.saml.web.view;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.principal.WebApplicationService;
+import org.jasig.cas.services.web.view.AbstractCasView;
 import org.jasig.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.jasig.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.DefaultArgumentExtractor;
-import org.jasig.cas.services.web.view.AbstractCasView;
-import org.joda.time.DateTime;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml1.core.Response;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 /**
@@ -102,7 +103,8 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
             logger.debug("Using {} as the recipient of the SAML response for {}", serviceId, service);
             final Response samlResponse = this.samlObjectBuilder.newResponse(
                     this.samlObjectBuilder.generateSecureRandomId(),
-                    DateTime.now().minusSeconds(this.skewAllowance), serviceId, service);
+                    ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(this.skewAllowance), serviceId, service);
+
             prepareResponse(samlResponse, model);
             this.samlObjectBuilder.encodeSamlResponse(response, request, samlResponse);
         } catch (final Exception e) {

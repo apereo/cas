@@ -1,8 +1,6 @@
 package org.jasig.cas.support.wsfederation;
 
 import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.security.credential.Credential;
@@ -10,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +44,9 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
         final Assertion assertion = wsFederationHelper.parseTokenFromString(wresult);
         
         final WsFederationCredential expResult = new WsFederationCredential();
-        expResult.setIssuedOn(new DateTime("2014-02-26T22:51:16.504Z").withZone(DateTimeZone.UTC));
-        expResult.setNotBefore(new DateTime("2014-02-26T22:51:16.474Z").withZone(DateTimeZone.UTC));
-        expResult.setNotOnOrAfter(new DateTime("2014-02-26T23:51:16.474Z").withZone(DateTimeZone.UTC));
+        expResult.setIssuedOn(ZonedDateTime.parse("2014-02-26T22:51:16.504Z"));
+        expResult.setNotBefore(ZonedDateTime.parse("2014-02-26T22:51:16.474Z"));
+        expResult.setNotOnOrAfter(ZonedDateTime.parse("2014-02-26T23:51:16.474Z"));
         expResult.setIssuer("http://adfs.example.com/adfs/services/trust");
         expResult.setAudience("urn:federation:cas");
         expResult.setId("_6257b2bf-7361-4081-ae1f-ec58d4310f61");

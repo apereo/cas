@@ -7,7 +7,8 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.proxy.ProxyTicket;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.DigestUtils;
+import org.jasig.cas.util.SerializationUtils;
 
 import com.google.common.io.ByteSource;
 import org.apache.commons.lang3.StringUtils;
@@ -19,8 +20,8 @@ import org.springframework.util.Assert;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Scott Battaglia
@@ -65,14 +66,14 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
     }
 
     @Override
-    public int sessionCount() {
+    public long sessionCount() {
       logger.debug("sessionCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
     }
 
     @Override
-    public int serviceTicketCount() {
+    public long serviceTicketCount() {
       logger.debug("serviceTicketCount() operation is not implemented by the ticket registry instance {}. Returning unknown as {}",
                 this.getClass().getName(), Integer.MIN_VALUE);
       return Integer.MIN_VALUE;
@@ -90,16 +91,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         if (ticket instanceof TicketGrantingTicket) {
+            if (ticket instanceof ProxyGrantingTicket) {
+                logger.debug("Removing proxy-granting ticket [{}]", ticketId);
+            }
+
             logger.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
             deleteChildren(tgt);
 
             final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
-            for (final ProxyGrantingTicket proxyGrantingTicket : proxyGrantingTickets) {
-                logger.debug("Removing proxy-granting ticket [{}]", proxyGrantingTicket.getId());
-                deleteTicket(proxyGrantingTicket.getId());
-            }
-
+            proxyGrantingTickets.stream().map(Ticket::getId).forEach(this::deleteTicket);
         }
         logger.debug("Removing ticket [{}] from the registry.", ticket);
         return deleteSingleTicket(ticketId);
@@ -115,17 +116,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
-            for (final Map.Entry<String, Service> entry : services.entrySet()) {
-                final String ticketId = entry.getKey();
+            services.keySet().stream().forEach(ticketId -> {
                 if (deleteSingleTicket(ticketId)) {
-                    logger.debug("Removed ticket [{}]", entry.getKey());
+                    logger.debug("Removed ticket [{}]", ticketId);
                 } else {
-                    logger.debug("Unable to remove ticket [{}]", entry.getKey());
+                    logger.debug("Unable to remove ticket [{}]", ticketId);
                 }
-            }
+            });
         }
     }
-
 
     /**
      * Delete a single ticket instance from the store.
@@ -208,7 +207,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             return ticketId;
         }
 
-        return CompressionUtils.sha512Hex(ticketId);
+        return DigestUtils.sha512(ticketId);
     }
 
     /**
@@ -228,7 +227,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         }
 
         logger.info("Encoding [{}]", ticket);
-        final byte[] encodedTicketObject = CompressionUtils.serializeAndEncodeObject(
+        final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(
                 this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
         final Ticket encodedTicket = new EncodedTicket(
@@ -256,7 +255,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
         logger.info("Attempting to decode {}", result);
         final EncodedTicket encodedTicket = (EncodedTicket) result;
 
-        final Ticket ticket = CompressionUtils.decodeAndSerializeObject(
+        final Ticket ticket = SerializationUtils.decodeAndSerializeObject(
                 encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
         logger.info("Decoded {}",  ticket);
         return ticket;
@@ -274,15 +273,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry, TicketRe
             return items;
         }
 
-        if (items == null || items.isEmpty()) {
-            return items;
-        }
-
-        final Collection<Ticket> tickets = new HashSet<>(items.size());
-        for (final Ticket item : items) {
-            final Ticket ticket = decodeTicket(item);
-            tickets.add(ticket);
-        }
-        return tickets;
+        return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
     }
 }

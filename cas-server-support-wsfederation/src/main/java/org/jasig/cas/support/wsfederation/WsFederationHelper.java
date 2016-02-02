@@ -1,10 +1,10 @@
 package org.jasig.cas.support.wsfederation;
 
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.jasig.cas.support.saml.OpenSamlConfigBean;
 import org.jasig.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.jasig.cas.util.DateTimeUtils;
+
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.io.Unmarshaller;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
@@ -40,6 +40,8 @@ import org.w3c.dom.Element;
 import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,19 +73,19 @@ public final class WsFederationHelper {
      * @return an equivalent credential.
      */
     public WsFederationCredential createCredentialFromToken(final Assertion assertion) {
-        final DateTime retrievedOn = new DateTime().withZone(DateTimeZone.UTC);
+        final ZonedDateTime retrievedOn = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Retrieved on {}", retrievedOn);
 
         final WsFederationCredential credential = new WsFederationCredential();
         credential.setRetrievedOn(retrievedOn);
         credential.setId(assertion.getID());
         credential.setIssuer(assertion.getIssuer());
-        credential.setIssuedOn(assertion.getIssueInstant());
+        credential.setIssuedOn(DateTimeUtils.zonedDateTimeOf(assertion.getIssueInstant()));
 
         final Conditions conditions = assertion.getConditions();
         if (conditions != null) {
-            credential.setNotBefore(conditions.getNotBefore());
-            credential.setNotOnOrAfter(conditions.getNotOnOrAfter());
+            credential.setNotBefore(DateTimeUtils.zonedDateTimeOf(conditions.getNotBefore()));
+            credential.setNotOnOrAfter(DateTimeUtils.zonedDateTimeOf(conditions.getNotOnOrAfter()));
             credential.setAudience(conditions.getAudienceRestrictionConditions().get(0).getAudiences().get(0).getUri());
         }
 
