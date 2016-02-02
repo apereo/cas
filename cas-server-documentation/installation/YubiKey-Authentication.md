@@ -23,9 +23,9 @@ following dependencies in the Maven WAR overlay:
 ## Configuration
 
 {% highlight properties %}
-# yubikey.client.id=
-# yubikey.secret.key=
-# yubikey.rank = 0
+# cas.mfa.yubikey.client.id=
+# cas.mfa.yubikey.secret.key=
+# cas.mfa.yubikey.rank = 0
 {% endhighlight %}
 
 By default, all YubiKey accounts for users are allowed to authenticate. If you wish to plug in a custom registry implementation that would determine 

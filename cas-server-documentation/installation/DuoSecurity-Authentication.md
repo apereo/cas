@@ -26,11 +26,11 @@ Duo offers several options for authenticating users:
 ## Configuration
 
 {% highlight properties %}
-# cas.duo.api.host=
-# cas.duo.integration.key=
-# cas.duo.secret.key=
-# cas.duo.application.key=
-# cas.duo.rank=0
+# cas.mfa.duo.api.host=
+# cas.mfa.duo.integration.key=
+# cas.mfa.duo.secret.key=
+# cas.mfa.duo.application.key=
+# cas.mfa.duo.rank=0
 {% endhighlight %}
 
 
