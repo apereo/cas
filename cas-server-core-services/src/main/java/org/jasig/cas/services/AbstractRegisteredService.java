@@ -111,7 +111,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     /** The authentication policy. */
     @Lob
     @Column(name = "authn_policy", nullable = true, length = Integer.MAX_VALUE)
-    private RegisteredServiceAuthenticationPolicy authenticationPolicy;
+    private RegisteredServiceMultifactorPolicy authenticationPolicy;
 
     @Column(name = "logo")
     private URL logo;
@@ -195,7 +195,7 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
             this.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         }
         if (this.authenticationPolicy == null) {
-            this.authenticationPolicy = new DefaultRegisteredServiceAuthenticationPolicy();
+            this.authenticationPolicy = new DefaultRegisteredServiceMultifactorPolicy();
         }
         if (this.properties == null) {
             this.properties = new HashMap<>();
@@ -485,11 +485,11 @@ public abstract class AbstractRegisteredService implements RegisteredService, Co
     }
 
     @Override
-    public RegisteredServiceAuthenticationPolicy getAuthenticationPolicy() {
+    public RegisteredServiceMultifactorPolicy getAuthenticationPolicy() {
         return authenticationPolicy;
     }
 
-    public void setAuthenticationPolicy(final RegisteredServiceAuthenticationPolicy authenticationPolicy) {
+    public void setAuthenticationPolicy(final RegisteredServiceMultifactorPolicy authenticationPolicy) {
         this.authenticationPolicy = authenticationPolicy;
     }
 }
