@@ -33,12 +33,14 @@ configuration in this auto-configuration mode are controlled by the following ex
 an external `cas.properties` file (with sensible defaults for all the properties if not explicitly set):
 
 {% highlight properties %}
+# hz.config.location=file:/etc/cas/hazelcast.xml
 # hz.mapname=tickets
+# hz.cluster.logging.type=slf4j
 # hz.cluster.portAutoIncrement=true
 # hz.cluster.port=5701
-# hz.cluster.multicast.enabled=false
 # hz.cluster.members=cas1.example.com,cas2.example.com
 # hz.cluster.tcpip.enabled=true
+# hz.cluster.multicast.enabled=false
 # hz.cluster.max.heapsize.percentage=85
 # hz.cluster.max.heartbeat.seconds=5
 # hz.cluster.eviction.percentage=10
@@ -48,7 +50,7 @@ an external `cas.properties` file (with sensible defaults for all the properties
 {% endhighlight %}
 
 Should the more fine-grained configuration need arise, there is an option to use a native Hazelcast configuration XML format
-where all the available configuration options for `HazelcastInstance` are available. In order to trigger this configuration mode,
+where all the configuration options for `HazelcastInstance` exposed by Hazelcast are available. In order to trigger this configuration mode,
 there are two basic steps required:
 
 * Place native `hazelcast.xml` file containing the custom configuration for Hazelcast Instance into an external filesystem location
