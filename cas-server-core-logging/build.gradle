@@ -2,6 +2,7 @@
 description = 'Apereo CAS Core Logging'
 dependencies {
   compile project(':cas-server-core-api-ticket')
+  compile project(':cas-server-core-web')
   compile group: 'org.reflections', name: 'reflections', version:reflectionsVersion
   compile(group: 'org.springframework', name: 'spring-core', version:springVersion) {
     exclude(group: 'commons-logging', module: 'commons-logging')
