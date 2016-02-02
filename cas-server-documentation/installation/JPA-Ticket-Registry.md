@@ -73,7 +73,7 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
             <tx:method name="validateServiceTicket" read-only="false" />
             <tx:method name="createTicketGrantingTicket" read-only="false" />
 
-            <tx:method name="getTicket" read-only="true" />
+            <tx:method name="getTicket" read-only="false" />
             <tx:method name="getTickets" read-only="true" />
         </tx:attributes>
     </tx:advice>
@@ -83,7 +83,7 @@ The JPA Ticket Registry allows CAS to store client authenticated state data (tic
             <tx:method name="deleteTicket" read-only="false" />
             <tx:method name="addTicket" read-only="false" />
             <tx:method name="updateTicket" read-only="false" />
-            <tx:method name="getTicket" read-only="false" />
+            <tx:method name="getTicket" read-only="true" />
             <tx:method name="getTickets" read-only="true" />
             <tx:method name="sessionCount" read-only="true" />
             <tx:method name="serviceTicketCount" read-only="true" />
