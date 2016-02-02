@@ -17,7 +17,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.MultifactorAuthenticationProviderSelector;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
+import org.jasig.cas.services.RegisteredServiceMultifactorPolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.web.flow.CasWebflowConstants;
@@ -208,7 +208,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the authentication provider for service
      */
     protected Set<MultifactorAuthenticationProvider> getAuthenticationProviderForService(final RegisteredService service) {
-        final RegisteredServiceAuthenticationPolicy policy = service.getAuthenticationPolicy();
+        final RegisteredServiceMultifactorPolicy policy = service.getAuthenticationPolicy();
         if (policy != null) {
             final Set<String> providers = policy.getMultifactorAuthenticationProviders();
             final Set<MultifactorAuthenticationProvider> providersSet = new HashSet<>(providers.size());
