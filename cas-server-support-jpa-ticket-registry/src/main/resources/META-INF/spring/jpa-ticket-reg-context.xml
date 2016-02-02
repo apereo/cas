@@ -76,7 +76,7 @@
             <tx:method name="createProxyGrantingTicket" read-only="false" />
             <tx:method name="grantProxyTicket" read-only="false" />
 
-            <tx:method name="getTicket" read-only="true" />
+            <tx:method name="getTicket" read-only="false" />
             <tx:method name="getTickets" read-only="true" />
         </tx:attributes>
     </tx:advice>
