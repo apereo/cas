@@ -1,6 +1,6 @@
 package org.jasig.cas.grouper.services;
 
-import org.jasig.cas.services.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
             final Map<String, Set<String>> requiredAttributes = new HashMap<>();
             requiredAttributes.put("memberOf", Collections.singleton("admin"));
             strategy.setRequiredAttributes(requiredAttributes);
-            strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) TestUtils.getTestAttributes());
+            strategy.doPrincipalAttributesAllowServiceAccess("banderson", (Map) ServicesTestUtils.getTestAttributes());
         } else {
             logger.info("{} is not configured. Skipping tests", resource.getFilename());
         }

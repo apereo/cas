@@ -1,8 +1,9 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -73,11 +74,11 @@ public class HazelcastTicketRegistryTests {
     @Test
     public void verifyDeleteTicketWithChildren() throws Exception {
         this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
-                "TGT", org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+                "TGT", AuthTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = ServicesTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), true, false);

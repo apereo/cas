@@ -1,5 +1,6 @@
 package org.jasig.cas.web.view;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.validation.ImmutableAssertion;
 import org.junit.Before;
@@ -31,10 +32,10 @@ public class Cas10ResponseViewTests {
     public void setUp() throws Exception {
         this.model = new HashMap<>();
         final List<Authentication> list = new ArrayList<>();
-        list.add(org.jasig.cas.authentication.TestUtils.getAuthentication("someothername"));
+        list.add(AuthTestUtils.getAuthentication("someothername"));
         this.model.put("assertion", new ImmutableAssertion(
-                org.jasig.cas.authentication.TestUtils.getAuthentication(), list,
-                org.jasig.cas.authentication.TestUtils.getService("TestService"), true));
+                AuthTestUtils.getAuthentication(), list,
+                AuthTestUtils.getService("TestService"), true));
     }
 
     @Test

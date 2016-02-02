@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.util.AuthTestUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class StormpathAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthentication() throws Exception {
-        final HandlerResult result = this.authenticationHandler.authenticate(TestUtils
+        final HandlerResult result = this.authenticationHandler.authenticate(AuthTestUtils
                 .getCredentialsWithDifferentUsernameAndPassword("casuser", "12345678mM"));
         assertEquals(result.getPrincipal().getId(), "casuser");
         assertTrue(result.getPrincipal().getAttributes().containsKey("fullName"));

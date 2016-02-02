@@ -1,7 +1,7 @@
 package org.jasig.cas.adaptors.jdbc;
 
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -85,7 +85,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"));
+                AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("usernotfound", "psw1"));
 
     }
 
@@ -95,7 +95,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"));
+                AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("user1", "psw11"));
 
     }
 
@@ -105,7 +105,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+                AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
 
     }
 
@@ -115,7 +115,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL.replace("password", "*"));
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
+                AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0"));
 
     }
 
@@ -124,7 +124,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
         q.setDataSource(this.dataSource);
         q.setSql(SQL);
         assertNotNull(q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3")));
+                AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3")));
 
     }
 }

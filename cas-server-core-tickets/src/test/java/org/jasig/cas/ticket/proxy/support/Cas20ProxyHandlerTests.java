@@ -1,5 +1,6 @@
 package org.jasig.cas.ticket.proxy.support;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
@@ -46,14 +47,14 @@ public class Cas20ProxyHandlerTests {
     public void verifyValidProxyTicketWithoutQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
             new URL("https://www.google.com/"),
-                org.jasig.cas.authentication.TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
+                AuthTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 
     @Test
     public void verifyValidProxyTicketWithQueryString() throws Exception {
         assertNotNull(this.handler.handle(new HttpBasedServiceCredential(
             new URL("https://www.google.com/?test=test"),
-                        org.jasig.cas.authentication.TestUtils.getRegisteredService("https://some.app.edu")),
+                        AuthTestUtils.getRegisteredService("https://some.app.edu")),
                 proxyGrantingTicket));
     }
 
@@ -65,6 +66,6 @@ public class Cas20ProxyHandlerTests {
         this.handler.setHttpClient(httpClient);
         assertNull(this.handler.handle(new HttpBasedServiceCredential(new URL(
             "http://www.rutgers.edu"),
-                org.jasig.cas.authentication.TestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
+                AuthTestUtils.getRegisteredService("https://some.app.edu")), proxyGrantingTicket));
     }
 }

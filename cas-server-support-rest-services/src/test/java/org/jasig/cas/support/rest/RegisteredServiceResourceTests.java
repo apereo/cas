@@ -1,9 +1,10 @@
 package org.jasig.cas.support.rest;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
-import org.jasig.cas.services.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.junit.Before;
 import org.junit.Test;
@@ -126,13 +127,13 @@ public class RegisteredServiceResourceTests {
     private void configureCasMockToCreateValidTGT() throws Exception {
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
-        when(tgt.getAuthentication()).thenReturn(org.jasig.cas.authentication.TestUtils.getAuthentication(
-                org.jasig.cas.authentication.TestUtils.getPrincipal("casuser",
-                        new HashMap(TestUtils.getTestAttributes()))));
+        when(tgt.getAuthentication()).thenReturn(AuthTestUtils.getAuthentication(
+                AuthTestUtils.getPrincipal("casuser",
+                        new HashMap(ServicesTestUtils.getTestAttributes()))));
         final Class<TicketGrantingTicket> clazz = TicketGrantingTicket.class;
 
         when(this.casMock.getTicket(anyString(), any(clazz.getClass()))).thenReturn(tgt);
         when(this.servicesManager.save(any(RegisteredService.class))).thenReturn(
-                org.jasig.cas.services.TestUtils.getRegisteredService("TEST"));
+                ServicesTestUtils.getRegisteredService("TEST"));
     }
 }

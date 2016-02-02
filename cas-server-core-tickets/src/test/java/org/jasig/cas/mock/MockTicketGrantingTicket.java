@@ -1,5 +1,6 @@
 package org.jasig.cas.mock;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
@@ -54,7 +55,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket {
     public MockTicketGrantingTicket(final String principal) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         final CredentialMetaData metaData = new BasicCredentialMetaData(
-                org.jasig.cas.authentication.TestUtils.getCredentialsWithSameUsernameAndPassword());
+                AuthTestUtils.getCredentialsWithSameUsernameAndPassword());
         authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal))
                             .addCredential(metaData)
                             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),

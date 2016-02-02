@@ -1,5 +1,7 @@
 package org.jasig.cas.validation;
 
+import org.jasig.cas.util.ValidationTestUtils;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -36,22 +38,22 @@ public class Cas10ProtocolValidationSpecificationTests {
 
     @Test
     public void verifySatisfiesSpecOfTrue() {
-        assertTrue(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(true)));
+        assertTrue(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(ValidationTestUtils.getAssertion(true)));
     }
 
     @Test
     public void verifyNotSatisfiesSpecOfTrue() {
-        assertFalse(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(TestUtils.getAssertion(false)));
+        assertFalse(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(ValidationTestUtils.getAssertion(false)));
     }
 
     @Test
     public void verifySatisfiesSpecOfFalse() {
-        assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(true)));
+        assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(ValidationTestUtils.getAssertion(true)));
     }
 
     @Test
     public void verifySatisfiesSpecOfFalse2() {
-        assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(TestUtils.getAssertion(false)));
+        assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(ValidationTestUtils.getAssertion(false)));
     }
 
 }

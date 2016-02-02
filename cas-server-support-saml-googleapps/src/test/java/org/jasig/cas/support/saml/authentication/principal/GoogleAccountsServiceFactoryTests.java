@@ -1,6 +1,6 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.support.saml.AbstractOpenSamlTests;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
@@ -38,7 +38,7 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
 
         final GoogleAccountsService service = this.factory.createService(request);
-        service.setPrincipal(TestUtils.getPrincipal());
+        service.setPrincipal(AuthTestUtils.getPrincipal());
         assertNotNull(service);
         final Response response = service.getResponse("SAMPLE_TICKET");
         assertNotNull(response);

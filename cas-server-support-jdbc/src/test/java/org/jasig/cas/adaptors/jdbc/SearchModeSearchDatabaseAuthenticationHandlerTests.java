@@ -1,6 +1,6 @@
 package org.jasig.cas.adaptors.jdbc;
 
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.After;
 import org.junit.Before;
@@ -88,19 +88,19 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @Test(expected = FailedLoginException.class)
     public void verifyNotFoundUser() throws Exception {
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
+        final UsernamePasswordCredential c = AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
         this.handler.authenticateUsernamePasswordInternal(c);
     }
 
     @Test
     public void verifyFoundUser() throws Exception {
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
+        final UsernamePasswordCredential c = AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3");
         assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
     }
 
     @Test
     public void verifyMultipleUsersFound() throws Exception {
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
+        final UsernamePasswordCredential c = AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
         assertNotNull(this.handler.authenticateUsernamePasswordInternal(c));
     }
 

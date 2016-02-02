@@ -68,7 +68,7 @@ public class SessionMonitorTests {
         IntStream.range(0, tgtCount).forEach(i -> {
             ticket[0] = new TicketGrantingTicketImpl(
                     GENERATOR.getNewTicketId("TGT"),
-                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
+                    AuthTestUtils.getAuthentication(),
                     TEST_EXP_POLICY);
             registry.addTicket(ticket[0]);
         });

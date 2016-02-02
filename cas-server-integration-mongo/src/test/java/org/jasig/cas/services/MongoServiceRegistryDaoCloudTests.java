@@ -3,6 +3,8 @@ package org.jasig.cas.services;
 
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
+import org.jasig.cas.util.ServicesTestUtils;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,7 +78,7 @@ public class MongoServiceRegistryDaoCloudTests {
     }
 
     private static RegisteredService buildService(final int i) {
-        final AbstractRegisteredService rs = TestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
+        final AbstractRegisteredService rs = ServicesTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
 
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();

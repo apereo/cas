@@ -48,7 +48,7 @@ public class DefaultCasAttributeEncoderTests {
 
     @Test
     public void checkNoPublicKeyDefined() {
-        final Service service = TestUtils.getService("testDefault");
+        final Service service = ServicesTestUtils.getService("testDefault");
         final CasAttributeEncoder encoder = new DefaultCasAttributeEncoder(this.servicesManager);
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, service);
         assertEquals(encoded.size(), this.attributes.size() - 2);
@@ -56,7 +56,7 @@ public class DefaultCasAttributeEncoderTests {
 
     @Test
     public void checkAttributesEncodedCorrectly() {
-        final Service service = TestUtils.getService("testencryption");
+        final Service service = ServicesTestUtils.getService("testencryption");
         final CasAttributeEncoder encoder = new DefaultCasAttributeEncoder(this.servicesManager);
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, service);
         assertEquals(encoded.size(), this.attributes.size());

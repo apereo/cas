@@ -1,6 +1,8 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.ServicesTestUtils;
+
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -27,7 +29,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         when(p.getId()).thenReturn("person");
         when(p.getAttributes()).thenReturn(attrs);
         
-        final String id = provider.resolveUsername(p, TestUtils.getService("usernameAttributeProviderService"));
+        final String id = provider.resolveUsername(p, ServicesTestUtils.getService("usernameAttributeProviderService"));
         assertEquals(id, "TheName");
         
     }
@@ -44,7 +46,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         when(p.getId()).thenReturn("person");
         when(p.getAttributes()).thenReturn(attrs);
         
-        final String id = provider.resolveUsername(p, TestUtils.getService("usernameAttributeProviderService"));
+        final String id = provider.resolveUsername(p, ServicesTestUtils.getService("usernameAttributeProviderService"));
         assertEquals(id, p.getId());
         
     }

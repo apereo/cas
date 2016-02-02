@@ -1,6 +1,8 @@
 package org.jasig.cas.ticket;
 
 import org.jasig.cas.authentication.principal.Service;
+import org.jasig.cas.util.ServicesTestUtils;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -12,7 +14,7 @@ import static org.junit.Assert.*;
  */
 public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
 
-    private final Service service = org.jasig.cas.services.TestUtils.getService();
+    private final Service service = ServicesTestUtils.getService();
 
     @Test
     public void verifyThrowableConstructor() {

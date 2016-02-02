@@ -1,5 +1,7 @@
 package org.jasig.cas.ticket.support;
 
+import org.jasig.cas.util.ServicesTestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
@@ -27,7 +29,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
         this.expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         this.expirationPolicy.setTimeInBetweenUsesInMilliSeconds(TIMEOUT / 5);
 
-        this.ticket = new TicketGrantingTicketImpl("test", org.jasig.cas.authentication.TestUtils
+        this.ticket = new TicketGrantingTicketImpl("test", AuthTestUtils
             .getAuthentication(), this.expirationPolicy);
 
     }
@@ -45,7 +47,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
 
     @Test
     public void verifyTicketUsedButWithTimeout() throws InterruptedException {
-        this.ticket.grantServiceTicket("test", org.jasig.cas.services.TestUtils.getService(), this.expirationPolicy, false,
+        this.ticket.grantServiceTicket("test", ServicesTestUtils.getService(), this.expirationPolicy, false,
                 true);
         expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         expirationPolicy.setTimeInBetweenUsesInMilliSeconds(-10);
@@ -54,7 +56,7 @@ public class ThrottledUseAndTimeoutExpirationPolicyTests  {
 
     @Test
     public void verifyNotWaitingEnoughTime() {
-        this.ticket.grantServiceTicket("test", org.jasig.cas.services.TestUtils.getService(), this.expirationPolicy, false,
+        this.ticket.grantServiceTicket("test", ServicesTestUtils.getService(), this.expirationPolicy, false,
                 true);
         expirationPolicy.setTimeToKillInMilliSeconds(TIMEOUT);
         assertTrue(this.ticket.isExpired());

@@ -1,5 +1,6 @@
 package org.jasig.cas.support.saml.authentication.principal;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.principal.DefaultResponse;
 import org.jasig.cas.authentication.principal.Response;
 import org.jasig.cas.authentication.principal.Service;
@@ -58,7 +59,7 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     @Before
     public void setUp() throws Exception {
         this.googleAccountsService = getGoogleAccountsService();
-        this.googleAccountsService.setPrincipal(org.jasig.cas.authentication.TestUtils.getPrincipal());
+        this.googleAccountsService.setPrincipal(AuthTestUtils.getPrincipal());
     }
 
     @Test

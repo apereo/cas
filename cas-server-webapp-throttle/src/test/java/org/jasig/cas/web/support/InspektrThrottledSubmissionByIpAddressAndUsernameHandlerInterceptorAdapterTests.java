@@ -3,7 +3,7 @@ package org.jasig.cas.web.support;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationTransaction;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.inspektr.common.web.ClientInfo;
 import org.jasig.inspektr.common.web.ClientInfoHolder;
@@ -82,7 +82,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         getThrottle().preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(AuthenticationTransaction.wrap(TestUtils.getService(), badCredentials(username)));
+            authenticationManager.authenticate(AuthenticationTransaction.wrap(AuthTestUtils.getService(), badCredentials(username)));
         } catch (final AuthenticationException e) {
             getThrottle().postHandle(request, response, null, null);
             return response;

@@ -5,7 +5,7 @@ import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationTransaction;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.ticket.InvalidTicketException;
@@ -54,13 +54,13 @@ public class TicketsResourceTests {
     @Before
     public void setup() throws Exception {
         final AuthenticationManager mgmr = mock(AuthenticationManager.class);
-        when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(TestUtils.getAuthentication());
+        when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(AuthTestUtils.getAuthentication());
 
         this.ticketsResourceUnderTest.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .setAuthenticationManager(mgmr);
         this.ticketsResourceUnderTest.setWebApplicationServiceFactory(new WebApplicationServiceFactory());
 
-        when(this.ticketSupport.getAuthenticationFrom(anyString())).thenReturn(TestUtils.getAuthentication());
+        when(this.ticketSupport.getAuthenticationFrom(anyString())).thenReturn(AuthTestUtils.getAuthentication());
         this.ticketsResourceUnderTest.setTicketRegistrySupport(ticketSupport);
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketsResourceUnderTest)
                 .defaultRequest(get("/")
@@ -127,7 +127,7 @@ public class TicketsResourceTests {
         configureCasMockToCreateValidST();
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", TestUtils.getService().getId()))
+                .param("service", AuthTestUtils.getService().getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("text/plain;charset=ISO-8859-1"))
                 .andExpect(content().string("ST-1"));
@@ -138,7 +138,7 @@ public class TicketsResourceTests {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", TestUtils.getService().getId()))
+                .param("service", AuthTestUtils.getService().getId()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("TicketGrantingTicket could not be found"));
     }
@@ -148,7 +148,7 @@ public class TicketsResourceTests {
         configureCasMockSTCreationToThrow(new RuntimeException("Other exception"));
 
         this.mockMvc.perform(post("/cas/v1/tickets/TGT-1")
-                .param("service", TestUtils.getService().getId()))
+                .param("service", AuthTestUtils.getService().getId()))
                 .andExpect(status().is5xxServerError())
                 .andExpect(content().string("Other exception"));
     }

@@ -3,6 +3,8 @@ package org.jasig.cas.services;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.jasig.cas.util.ServicesTestUtils;
+
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -162,14 +164,14 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void verifyServiceEquality() {
-        final RegisteredService svc1 = TestUtils.getRegisteredService(SERVICEID);
-        final RegisteredService svc2 = TestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc1 = ServicesTestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc2 = ServicesTestUtils.getRegisteredService(SERVICEID);
         assertEquals(svc1, svc2);
     }
 
     @Test
     public void verifyServiceCopy() throws Exception {
-        final RegisteredService svc1 = TestUtils.getRegisteredService(SERVICEID);
+        final RegisteredService svc1 = ServicesTestUtils.getRegisteredService(SERVICEID);
         final RegisteredService svc2 = svc1.clone();
         assertEquals(svc1, svc2);
     }

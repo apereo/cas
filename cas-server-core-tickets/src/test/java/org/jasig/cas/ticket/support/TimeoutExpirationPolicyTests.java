@@ -1,6 +1,6 @@
 package org.jasig.cas.ticket.support;
 
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -26,7 +26,7 @@ public class TimeoutExpirationPolicyTests {
     public void setUp() throws Exception {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 
-        this.ticket = new TicketGrantingTicketImpl("test", TestUtils
+        this.ticket = new TicketGrantingTicketImpl("test", AuthTestUtils
             .getAuthentication(), this.expirationPolicy);
 
     }
@@ -43,7 +43,7 @@ public class TimeoutExpirationPolicyTests {
 
     @Test
     public void verifyTicketIsExpired() throws InterruptedException {
-        ticket = new TicketGrantingTicketImpl("test", TestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
+        ticket = new TicketGrantingTicketImpl("test", AuthTestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
         assertTrue(ticket.isExpired());
     }
 }

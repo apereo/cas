@@ -3,6 +3,9 @@ package org.jasig.cas.ticket.support;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.util.AuthTestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,7 +36,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
                 TimeUnit.MILLISECONDS);
 
         this.ticket = new TicketGrantingTicketImpl("test",
-                org.jasig.cas.authentication.TestUtils.getAuthentication(), this.expirationPolicy);
+                AuthTestUtils.getAuthentication(), this.expirationPolicy);
 
     }
 

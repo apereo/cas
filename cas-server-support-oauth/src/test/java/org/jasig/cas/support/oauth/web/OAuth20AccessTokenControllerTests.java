@@ -14,6 +14,7 @@ import org.jasig.cas.support.oauth.ticket.code.DefaultOAuthCodeFactory;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
+import org.jasig.cas.util.AuthTestUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -193,7 +194,7 @@ public final class OAuth20AccessTokenControllerTests {
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
+        final Principal principal = AuthTestUtils.getPrincipal(ID, map);
         final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
         final DefaultOAuthCodeFactory expiringOAuthCodeFactory = new DefaultOAuthCodeFactory();
         expiringOAuthCodeFactory.setExpirationPolicy(new ExpirationPolicy() {
@@ -229,7 +230,7 @@ public final class OAuth20AccessTokenControllerTests {
         final List<String> list = Arrays.asList(VALUE, VALUE);
         map.put(NAME2, list);
 
-        final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
+        final Principal principal = AuthTestUtils.getPrincipal(ID, map);
         final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
         final Service service = new OAuthWebApplicationService("" + registeredService.getId(), registeredService.getServiceId());
         final OAuthCodeImpl code = (OAuthCodeImpl) oAuthCodeFactory.create(service, authentication);
@@ -244,6 +245,7 @@ public final class OAuth20AccessTokenControllerTests {
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertNull(oAuth20AccessTokenController.getTicketRegistry().getTicket((code.getId())));
+
         assertEquals("text/plain", mockResponse.getContentType());
         assertEquals(200, mockResponse.getStatus());
         final String body = mockResponse.getContentAsString();

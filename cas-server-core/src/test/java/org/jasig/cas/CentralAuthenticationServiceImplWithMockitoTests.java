@@ -1,13 +1,12 @@
 package org.jasig.cas;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.BasicCredentialMetaData;
 import org.jasig.cas.authentication.CredentialMetaData;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
@@ -33,6 +32,8 @@ import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+import org.jasig.cas.util.AuthTestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.jasig.cas.validation.Assertion;
 
 import com.google.common.base.Predicates;
@@ -47,6 +48,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,10 +98,11 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     public void prepareNewCAS() throws Exception {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
-        final CredentialMetaData metadata = new BasicCredentialMetaData(TestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
+        final CredentialMetaData metadata =
+                new BasicCredentialMetaData(AuthTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         final Map<String, HandlerResult> successes = new HashMap<>();
         successes.put("handler1", new DefaultHandlerResult(mock(AuthenticationHandler.class), metadata));
-        when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
+        when(this.authentication.getCredentials()).thenReturn(Collections.singletonList(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
         when(this.authentication.getPrincipal()).thenReturn(new DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
          
@@ -183,7 +186,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test(expected=UnauthorizedProxyingException.class)
     public void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() throws Exception {
-        this.cas.grantServiceTicket(TGT_ID, org.jasig.cas.services.TestUtils.getService(SVC1_ID), getAuthenticationContext());
+        this.cas.grantServiceTicket(TGT_ID, ServicesTestUtils.getService(SVC1_ID), getAuthenticationContext());
     }
 
     @Test(expected=IllegalArgumentException.class)
@@ -204,7 +207,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void verifyChainedAuthenticationsOnValidation() throws Exception {
-        final Service svc = org.jasig.cas.services.TestUtils.getService(SVC2_ID);
+        final Service svc = ServicesTestUtils.getService(SVC2_ID);
         final ServiceTicket st = this.cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
         assertNotNull(st);
         

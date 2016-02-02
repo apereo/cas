@@ -6,7 +6,8 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.AuthenticationManager;
 import org.jasig.cas.authentication.AuthenticationTransaction;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.pac4j.test.MockFacebookClient;
 import org.jasig.cas.ticket.ExpirationPolicy;
@@ -74,7 +75,7 @@ public final class ClientActionTests {
         final MockRequestContext mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
         mockRequestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE,
-                org.jasig.cas.services.TestUtils.getService(MY_SERVICE));
+                ServicesTestUtils.getService(MY_SERVICE));
 
         final FacebookClient facebookClient = new FacebookClient(MY_KEY, MY_SECRET);
         final TwitterClient twitterClient = new TwitterClient(MY_KEY, MY_SECRET);
@@ -106,7 +107,7 @@ public final class ClientActionTests {
         mockSession.setAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
         mockSession.setAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME, MY_LOCALE);
         mockSession.setAttribute(CasProtocolConstants.PARAMETER_METHOD, MY_METHOD);
-        final Service service = org.jasig.cas.authentication.TestUtils.getService(MY_SERVICE);
+        final Service service = AuthTestUtils.getService(MY_SERVICE);
         mockSession.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         mockRequest.setSession(mockSession);
 
@@ -125,7 +126,7 @@ public final class ClientActionTests {
         final ClientAction action = new ClientAction();
 
         final AuthenticationManager authNManager = mock(AuthenticationManager.class);
-        when(authNManager.authenticate(any(AuthenticationTransaction.class))).thenReturn(TestUtils.getAuthentication());
+        when(authNManager.authenticate(any(AuthenticationTransaction.class))).thenReturn(AuthTestUtils.getAuthentication());
         action.getAuthenticationSystemSupport().getAuthenticationTransactionManager()
                 .setAuthenticationManager(authNManager);
         action.setCentralAuthenticationService(casImpl);

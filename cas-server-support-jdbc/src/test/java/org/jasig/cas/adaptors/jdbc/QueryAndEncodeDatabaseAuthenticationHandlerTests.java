@@ -2,7 +2,7 @@ package org.jasig.cas.adaptors.jdbc;
 
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.PrefixSuffixPrincipalNameTransformer;
 
@@ -84,7 +84,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
                         ALG_NAME);
-        q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticateUsernamePasswordInternal(AuthTestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -93,7 +93,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         final QueryAndEncodeDatabaseAuthenticationHandler q =
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql("makesNoSenseInSql"),
                         ALG_NAME);
-        q.authenticateUsernamePasswordInternal(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        q.authenticateUsernamePasswordInternal(AuthTestUtils.getCredentialsWithSameUsernameAndPassword());
 
     }
 
@@ -103,7 +103,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
                 new QueryAndEncodeDatabaseAuthenticationHandler(this.dataSource, buildSql(),
                         ALG_NAME);
         q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
+                AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
 
     }
 
@@ -115,7 +115,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         q.setNumberOfIterationsFieldName("numIterations");
         q.setStaticSalt(STATIC_SALT);
 
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword("user1");
+        final UsernamePasswordCredential c = AuthTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
         final HandlerResult r = q.authenticateUsernamePasswordInternal(c);
 
         assertNotNull(r);
@@ -133,7 +133,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
         final HandlerResult r = q.authenticateUsernamePasswordInternal(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
+                AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
         assertEquals(r.getPrincipal().getId(), "user1");

@@ -1,4 +1,4 @@
-package org.jasig.cas.services;
+package org.jasig.cas.util;
 
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -7,6 +7,14 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.jasig.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.jasig.cas.services.AbstractRegisteredService;
+import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.jasig.cas.services.LogoutType;
+import org.jasig.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider;
+import org.jasig.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
+import org.jasig.cas.services.RegexRegisteredService;
+import org.jasig.cas.services.RegisteredServicePublicKeyImpl;
+import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -21,17 +29,17 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This is {@link TestUtils}.
+ * This is {@link ServicesTestUtils}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-public final class TestUtils {
+public final class ServicesTestUtils {
 
     public static final String CONST_TEST_URL = "https://google.com";
     public static final String CONST_TEST_URL2 = "https://example.com";
 
-    private TestUtils() {}
+    private ServicesTestUtils() {}
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_TEST_URL);
@@ -41,7 +49,7 @@ public final class TestUtils {
             final String url) {
         try {
             return new HttpBasedServiceCredential(new URL(url),
-                    TestUtils.getRegisteredService(url));
+                    ServicesTestUtils.getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }

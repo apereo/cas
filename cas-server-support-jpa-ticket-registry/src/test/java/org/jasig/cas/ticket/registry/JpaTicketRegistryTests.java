@@ -1,6 +1,6 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.mock.MockService;
@@ -166,7 +166,7 @@ public class JpaTicketRegistryTests {
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
                 ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
-                TestUtils.getAuthentication(principal),
+                AuthTestUtils.getAuthentication(principal),
                 EXP_POLICY_TGT);
     }
 
@@ -182,7 +182,7 @@ public class JpaTicketRegistryTests {
     static ProxyGrantingTicket newPGT(final ServiceTicket parent) {
         return parent.grantProxyGrantingTicket(
                 ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
-                TestUtils.getAuthentication(),
+                AuthTestUtils.getAuthentication(),
                 EXP_POLICY_PGT);
     }
 

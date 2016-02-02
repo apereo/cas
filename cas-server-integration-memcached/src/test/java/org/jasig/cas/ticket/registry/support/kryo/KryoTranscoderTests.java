@@ -17,7 +17,7 @@ import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -97,12 +97,12 @@ public class KryoTranscoderTests {
 
         final TicketGrantingTicket expectedTGT =
                 new TicketGrantingTicketImpl(TGT_ID,
-                        org.jasig.cas.services.TestUtils.getService(),
+                        ServicesTestUtils.getService(),
                         null, bldr.build(),
                         new NeverExpiresExpirationPolicy());
 
         final ServiceTicket ticket = expectedTGT.grantServiceTicket(ST_ID,
-                org.jasig.cas.services.TestUtils.getService(),
+                ServicesTestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), false, true);
         CachedData result = transcoder.encode(expectedTGT);
         final TicketGrantingTicket resultTicket = (TicketGrantingTicket) transcoder.decode(result);
@@ -130,7 +130,8 @@ public class KryoTranscoderTests {
     }
 
     private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
-        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl), TestUtils.getRegisteredService("https://.+"));
+        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl),
+                ServicesTestUtils.getRegisteredService("https://.+"));
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(TGT_ID, proxyCredential, this.principalAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
@@ -209,7 +210,7 @@ public class KryoTranscoderTests {
 
     @Test
     public void verifyEncodeDecodeRegisteredService() throws Exception {
-        final RegisteredService service = TestUtils.getRegisteredService("helloworld");
+        final RegisteredService service = ServicesTestUtils.getRegisteredService("helloworld");
         assertEquals(service, transcoder.decode(transcoder.encode(service)));
     }
 
