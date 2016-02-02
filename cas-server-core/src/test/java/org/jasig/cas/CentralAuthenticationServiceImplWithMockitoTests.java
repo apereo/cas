@@ -214,9 +214,8 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         assertEquals(assertion.getService(), svc);
         assertEquals(assertion.getPrimaryAuthentication().getPrincipal().getId(), PRINCIPAL);
         assertTrue(assertion.getChainedAuthentications().size()  == 2);
-        IntStream.range(0, assertion.getChainedAuthentications().size()).forEach(i -> {
-            assertEquals(assertion.getChainedAuthentications().get(i), authentication);
-        });
+        IntStream.range(0, assertion.getChainedAuthentications().size())
+                .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
     }
     
     private TicketGrantingTicket createRootTicketGrantingTicket() {

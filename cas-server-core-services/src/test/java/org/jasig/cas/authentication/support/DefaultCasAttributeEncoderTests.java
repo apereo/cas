@@ -37,9 +37,7 @@ public class DefaultCasAttributeEncoderTests {
     @Before
     public void before() {
         this.attributes = new HashMap<>();
-        IntStream.range(0, 3).forEach(i -> {
-            this.attributes.put("attr" + i, newSingleAttribute("value" + i));
-        });
+        IntStream.range(0, 3).forEach(i -> this.attributes.put("attr" + i, newSingleAttribute("value" + i)));
         this.attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, newSingleAttribute("PGT-1234567"));
         this.attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, newSingleAttribute("PrincipalPassword"));
     }
