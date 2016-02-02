@@ -7,6 +7,7 @@ import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.ticket.registry.DefaultTicketRegistry;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
 
 import org.junit.Before;

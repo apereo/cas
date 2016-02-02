@@ -1,6 +1,6 @@
 package org.jasig.cas.logout;
 
-import org.jasig.cas.services.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -29,7 +29,7 @@ public class SamlCompliantLogoutMessageCreatorTests {
     public void verifyMessageBuilding() throws Exception {
 
         final SingleLogoutService service = mock(SingleLogoutService.class);
-        when(service.getOriginalUrl()).thenReturn(TestUtils.CONST_TEST_URL);
+        when(service.getOriginalUrl()).thenReturn(ServicesTestUtils.CONST_TEST_URL);
         final URL logoutUrl = new URL(service.getOriginalUrl());
         final DefaultLogoutRequest request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl);
 

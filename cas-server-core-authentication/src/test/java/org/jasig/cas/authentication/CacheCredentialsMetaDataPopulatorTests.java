@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.util.AuthTestUtils;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -15,8 +17,8 @@ public class CacheCredentialsMetaDataPopulatorTests {
     public void verifyPasswordAsAuthenticationAttribute() {
         final CacheCredentialsMetaDataPopulator populator = new CacheCredentialsMetaDataPopulator();
 
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
-        final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(TestUtils.getAuthentication());
+        final UsernamePasswordCredential c = AuthTestUtils.getCredentialsWithSameUsernameAndPassword();
+        final AuthenticationBuilder builder = DefaultAuthenticationBuilder.newInstance(AuthTestUtils.getAuthentication());
         populator.populateAttributes(builder, c);
         final Authentication authn = builder.build();
         assertTrue(authn.getAttributes().containsKey(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD));

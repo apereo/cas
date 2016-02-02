@@ -1,7 +1,7 @@
 package org.jasig.cas.authentication.principal;
 
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -25,8 +25,8 @@ public class PersonDirectoryPrincipalResolverTests {
     public void verifyNullAttributes() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
         resolver.setReturnNullIfNoAttributes(true);
-        resolver.setPrincipalAttributeName(TestUtils.CONST_USERNAME);
-        final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        resolver.setPrincipalAttributeName(AuthTestUtils.CONST_USERNAME);
+        final Credential c = AuthTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c);
         assertNull(p);
     }
@@ -34,8 +34,8 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNoAttributesWithPrincipal() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setPrincipalAttributeName(TestUtils.CONST_USERNAME);
-        final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        resolver.setPrincipalAttributeName(AuthTestUtils.CONST_USERNAME);
+        final Credential c = AuthTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c);
         assertNotNull(p);
     }
@@ -43,12 +43,12 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyAttributesWithPrincipal() {
         final PersonDirectoryPrincipalResolver resolver = new PersonDirectoryPrincipalResolver();
-        resolver.setAttributeRepository(TestUtils.getAttributeRepository());
+        resolver.setAttributeRepository(AuthTestUtils.getAttributeRepository());
         resolver.setPrincipalAttributeName("cn");
-        final Credential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final Credential c = AuthTestUtils.getCredentialsWithSameUsernameAndPassword();
         final Principal p = resolver.resolve(c);
         assertNotNull(p);
-        assertNotEquals(p.getId(), TestUtils.CONST_USERNAME);
+        assertNotEquals(p.getId(), AuthTestUtils.CONST_USERNAME);
         assertTrue(p.getAttributes().containsKey("memberOf"));
     }
 

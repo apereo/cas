@@ -5,6 +5,7 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.LogoutType;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.util.http.HttpClient;
 import org.jasig.cas.util.http.HttpMessage;
@@ -72,11 +73,11 @@ public class LogoutManagerImplTests {
         this.logoutManager.setSingleLogoutServiceMessageHandler(handler);
 
         this.services = new HashMap<>();
-        this.simpleWebApplicationServiceImpl = org.jasig.cas.services.TestUtils.getService(URL);
+        this.simpleWebApplicationServiceImpl = ServicesTestUtils.getService(URL);
         this.services.put(ID, this.simpleWebApplicationServiceImpl);
         when(this.tgt.getServices()).thenReturn(this.services);
 
-        this.registeredService = org.jasig.cas.services.TestUtils.getRegisteredService(URL);
+        this.registeredService = ServicesTestUtils.getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
     }
 

@@ -1,7 +1,7 @@
 package org.jasig.cas.authentication.handler.support;
 
 import org.jasig.cas.authentication.HandlerResult;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,24 +27,24 @@ public final class SimpleTestUsernamePasswordHandlerTests {
     @Test
     public void verifySupportsProperUserCredentials() {
         assertTrue(this.authenticationHandler.supports(
-                TestUtils.getCredentialsWithSameUsernameAndPassword()));
+                AuthTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler.supports(TestUtils.getHttpBasedServiceCredentials()));
+        assertFalse(this.authenticationHandler.supports(AuthTestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
     public void verifyValidUsernamePassword() throws Exception {
         final HandlerResult result = authenticationHandler.authenticate(
-                TestUtils.getCredentialsWithSameUsernameAndPassword());
+                AuthTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }
 
     @Test(expected = FailedLoginException.class)
     public void verifyInvalidUsernamePassword() throws Exception {
-        this.authenticationHandler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword());
+        this.authenticationHandler.authenticate(AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword());
     }
 
 }

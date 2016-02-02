@@ -3,7 +3,7 @@ package org.jasig.cas.authentication.handler.support;
 import javax.security.auth.login.LoginException;
 
 
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,24 +39,24 @@ public class JaasAuthenticationHandlerTests {
     public void verifyWithAlternativeRealm() throws Exception {
 
         this.handler.setRealm("TEST");
-        this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+        this.handler.authenticate(AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
     }
 
     @Test
     public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
         this.handler.setRealm("TEST");
         assertNotNull(this.handler.authenticate(
-                TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
+                AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test")));
     }
 
     @Test
     public void verifyWithValidCredenials() throws Exception {
-        assertNotNull(this.handler.authenticate(TestUtils.getCredentialsWithSameUsernameAndPassword()));
+        assertNotNull(this.handler.authenticate(AuthTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
     @Test(expected = LoginException.class)
     public void verifyWithInvalidCredentials() throws Exception {
-        this.handler.authenticate(TestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
+        this.handler.authenticate(AuthTestUtils.getCredentialsWithDifferentUsernameAndPassword("test", "test1"));
     }
 
 }

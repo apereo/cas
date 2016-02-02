@@ -59,7 +59,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
     @Test
     public void verifyTicketIsExpiredByCount() {
         IntStream.range(0, NUMBER_OF_USES)
-                .forEach(i -> this.ticket.grantServiceTicket("test", org.jasig.cas.services.TestUtils.getService(),
+                .forEach(i -> this.ticket.grantServiceTicket("test", ServicesTestUtils.getService(),
                         new NeverExpiresExpirationPolicy(), false, true));
         assertTrue(this.ticket.isExpired());
     }

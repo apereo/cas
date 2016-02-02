@@ -29,7 +29,7 @@ public class TicketEncryptionDecryptionTests {
 
     @Test
     public void checkSerializationOfSt() {
-        final MockServiceTicket st = new MockServiceTicket("serviceid", org.jasig.cas.services.TestUtils.getService(), tgt);
+        final MockServiceTicket st = new MockServiceTicket("serviceid", ServicesTestUtils.getService(), tgt);
         final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
         final Ticket obj = SerializationUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
@@ -37,7 +37,7 @@ public class TicketEncryptionDecryptionTests {
 
     @Test
     public void checkSerializationOfStBase64Encode() {
-        final MockServiceTicket st = new MockServiceTicket("serviceid", org.jasig.cas.services.TestUtils.getService(), tgt);
+        final MockServiceTicket st = new MockServiceTicket("serviceid", ServicesTestUtils.getService(), tgt);
         final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
         final String string = EncodingUtils.encodeBase64(bytes);
         assertNotNull(string);
