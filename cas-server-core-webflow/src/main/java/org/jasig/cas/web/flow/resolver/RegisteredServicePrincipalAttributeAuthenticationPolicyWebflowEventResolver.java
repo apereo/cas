@@ -6,7 +6,7 @@ import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
+import org.jasig.cas.services.RegisteredServiceMultifactorPolicy;
 import org.jasig.cas.web.support.WebUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.webflow.execution.Event;
@@ -30,7 +30,7 @@ public class RegisteredServicePrincipalAttributeAuthenticationPolicyWebflowEvent
         final RegisteredService service = WebUtils.getRegisteredService(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
-        final RegisteredServiceAuthenticationPolicy policy = service.getAuthenticationPolicy();
+        final RegisteredServiceMultifactorPolicy policy = service.getAuthenticationPolicy();
         if (policy == null || service.getAuthenticationPolicy().getMultifactorAuthenticationProviders().isEmpty()) {
             logger.debug("Authentication policy is absent or does not contain any multifactor authentication providers");
             return null;

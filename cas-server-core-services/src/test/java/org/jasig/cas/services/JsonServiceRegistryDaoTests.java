@@ -63,8 +63,8 @@ public class JsonServiceRegistryDaoTests {
         r.setTheme("theme");
         r.setDescription("description");
 
-        final DefaultRegisteredServiceAuthenticationPolicy policy =
-                new DefaultRegisteredServiceAuthenticationPolicy();
+        final DefaultRegisteredServiceMultifactorPolicy policy =
+                new DefaultRegisteredServiceMultifactorPolicy();
         policy.setFailOpen(true);
 
         final Set<String> set = new HashSet<>();

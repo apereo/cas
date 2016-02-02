@@ -59,7 +59,7 @@ MFA can be triggered for a specific application registered inside the CAS servic
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "authenticationPolicy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider" ] ],
     "failOpen" : false
   }
@@ -97,7 +97,7 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "authenticationPolicy" : {
-    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "@class" : "org.jasig.cas.services.DefaultRegisteredServiceMultifactorPolicy",
     "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "duoAuthenticationProvider" ] ],
     "principalAttributeNameTrigger" : "memberOf",
     "principalAttributeValueToMatch" : "faculty|allMfaMembers"

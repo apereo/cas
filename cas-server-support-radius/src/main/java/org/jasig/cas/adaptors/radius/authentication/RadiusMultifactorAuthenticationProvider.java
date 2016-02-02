@@ -5,7 +5,7 @@ import org.jasig.cas.adaptors.radius.web.flow.RadiusMultifactorWebflowConfigurer
 import org.jasig.cas.authentication.AuthenticationException;
 import org.jasig.cas.services.MultifactorAuthenticationProvider;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.RegisteredServiceAuthenticationPolicy;
+import org.jasig.cas.services.RegisteredServiceMultifactorPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class RadiusMultifactorAuthenticationProvider implements MultifactorAuthe
             return true;
         }
 
-        final RegisteredServiceAuthenticationPolicy policy = service.getAuthenticationPolicy();
+        final RegisteredServiceMultifactorPolicy policy = service.getAuthenticationPolicy();
         if (policy != null && policy.isFailOpen()) {
             logger.warn("RADIUS servers could not be reached. Since the authentication provider is configured to fail-open, "
                     + "authentication will proceed without RADIUS for service {}", service.getServiceId());
