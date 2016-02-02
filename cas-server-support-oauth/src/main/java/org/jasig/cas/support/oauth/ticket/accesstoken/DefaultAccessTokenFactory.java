@@ -7,7 +7,6 @@ import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
-import org.pac4j.core.util.CommonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +34,13 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
 
     /** ExpirationPolicy for access tokens. */
-    @Autowired(required = false)
+    @NotNull
+    @Autowired
     @Qualifier("oAuthAcccessTokenExpirationPolicy")
     protected ExpirationPolicy expirationPolicy;
 
     @Override
     public AccessToken create(final Service service, final Authentication authentication) {
-        CommonHelper.assertNotNull("expirationPolicy", expirationPolicy);
-
         final String codeId = accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
         return new AccessTokenImpl(codeId, service, authentication, expirationPolicy);
     }

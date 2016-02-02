@@ -1,7 +1,6 @@
 description = 'Apereo CAS OAuth Server Support'
 dependencies {
     compile project(':cas-server-support-oauth-core')
-    compile project(':cas-server-core-tickets')
     testCompile project(':cas-server-core-util')
     testCompile project(path: ":cas-server-core-authentication", configuration: "tests")
     testCompile project(':cas-server-core-logout')

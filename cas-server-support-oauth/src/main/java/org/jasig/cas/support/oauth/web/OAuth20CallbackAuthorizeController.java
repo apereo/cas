@@ -1,7 +1,6 @@
 package org.jasig.cas.support.oauth.web;
 
 import org.pac4j.core.config.Config;
-import org.pac4j.core.util.CommonHelper;
 import org.pac4j.springframework.web.CallbackController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,6 +11,7 @@ import org.springframework.web.servlet.mvc.AbstractController;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 /**
  * OAuth callback authorize controller based on the pac4j callback controller.
@@ -22,24 +22,22 @@ import javax.servlet.http.HttpServletResponse;
 @Component("callbackAuthorizeController")
 public class OAuth20CallbackAuthorizeController extends AbstractController {
 
-    @Autowired(required = false)
+    @NotNull
+    @Autowired
     @Qualifier("oauthSecConfig")
     private Config config;
 
-    @Autowired(required = false)
+    @NotNull
+    @Autowired
     private CallbackController callbackController;
 
     @PostConstruct
     private void postConstruct() {
-        if (callbackController != null) {
-            callbackController.setConfig(config);
-        }
+        callbackController.setConfig(config);
     }
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        CommonHelper.assertNotNull("callbackController", callbackController);
-
         return new ModelAndView(callbackController.callback(request, response));
     }
 }
