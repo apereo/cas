@@ -74,14 +74,8 @@ public class SessionMonitorTests {
         });
 
         if (ticket[0] != null) {
-            IntStream.range(0, stCount).forEach(i -> {
-                registry.addTicket(ticket[0].grantServiceTicket(
-                        GENERATOR.getNewTicketId("ST"),
-                        new MockService("junit"),
-                        TEST_EXP_POLICY,
-                        false,
-                        true));
-            });
+            IntStream.range(0, stCount).forEach(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
+                                    new MockService("junit"), TEST_EXP_POLICY, false, true)));
         }
     }
 }

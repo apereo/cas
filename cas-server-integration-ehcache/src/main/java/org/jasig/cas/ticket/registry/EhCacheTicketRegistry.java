@@ -154,13 +154,9 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry implemen
 
         final Collection<Ticket> allTickets = new HashSet<>(serviceTickets.size() + tgtTicketsTickets.size());
 
-        serviceTickets.stream().forEach(ticket -> {
-            allTickets.add(getProxiedTicketInstance((Ticket) ticket.getObjectValue()));
-        });
+        serviceTickets.stream().forEach(ticket -> allTickets.add(getProxiedTicketInstance((Ticket) ticket.getObjectValue())));
 
-        tgtTicketsTickets.stream().forEach(ticket -> {
-            allTickets.add(getProxiedTicketInstance((Ticket) ticket.getObjectValue()));
-        });
+        tgtTicketsTickets.stream().forEach(ticket -> allTickets.add(getProxiedTicketInstance((Ticket) ticket.getObjectValue())));
 
         return decodeTickets(allTickets);
     }
