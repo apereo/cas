@@ -108,14 +108,14 @@ value can be an arbitrary regex pattern. See below to learn about how to configu
 
 ## Fail-Open vs Fail-Closed
 The authentication policy by default supports fail-close mode, which means that if you attempt to exercise a particular
-provider available to CAS and the provider is not available cannot be pinged, authentication will be stopped and an error
+provider available to CAS and the provider is not available and cannot be reached, authentication will be stopped and an error
 will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
 functionality, if that provider cannot respond. 
 
 ## Ranking Providers
 At times, CAS needs to determine the correct provider when step-up authentication is required. Consider for a moment that CAS
-already has established an SSO session with/without a provider and has established a level of authentication. Another incoming
-request attempts to exercise that SSO session with a different and often competing authentication requirements that may differ
+already has established an SSO session with/without a provider and has reached a level of authentication. Another incoming
+request attempts to exercise that SSO session with a different and often competing authentication requirement that may differ
 from the authentication level CAS has already established. Concretely, examples may be:
 
 - CAS has achieved an SSO session, but a separate request now requires step-up authentication with DuoSecurity.
@@ -127,7 +127,10 @@ that is higher than what the incoming request requires, no step-up authenticatio
 route the authentication flow to the required authentication level and upon success, will adjust the SSO session with the new higher 
 authentication level now satisfied. 
 
-Ranking of authentication methods is done per provider via specific properties for each in `cas.properties`.
+Ranking of authentication methods is done per provider via specific properties for each in `cas.properties`. Note that
+the lower the rank value is, the higher on the security scale it remains. A provider that ranks lower trumps and override
+others with a higher value. The best way to remember this is to think of the ranking scale as a sports league where providers/teams
+that rank near the top with a lower index value are considered the best.
 
 ## Settings
 The following general MFA settings are available for configuration in `cas.properties`:

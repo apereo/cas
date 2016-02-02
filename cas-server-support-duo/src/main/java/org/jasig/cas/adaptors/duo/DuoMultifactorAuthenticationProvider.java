@@ -25,7 +25,7 @@ public class DuoMultifactorAuthenticationProvider implements MultifactorAuthenti
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Value("${cas.duo.rank:0}")
+    @Value("${cas.mfa.duo.rank:0}")
     private int rank;
 
     @Autowired

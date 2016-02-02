@@ -35,7 +35,7 @@ public class YubiKeyMultifactorAuthenticationProvider implements MultifactorAuth
     @Qualifier("yubiKeyAuthenticationHandler")
     private YubiKeyAuthenticationHandler yubiKeyAuthenticationHandler;
 
-    @Value("${yubikey.rank:0}")
+    @Value("${cas.mfa.yubikey.rank:0}")
     private int rank;
 
     /**
