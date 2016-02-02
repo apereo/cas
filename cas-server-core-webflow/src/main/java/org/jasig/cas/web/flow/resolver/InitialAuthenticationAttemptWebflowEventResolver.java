@@ -58,8 +58,10 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                 final AuthenticationResultBuilder builder =
                         this.authenticationSystemSupport.handleInitialAuthenticationTransaction(credential);
 
-                WebUtils.putAuthenticationResultBuilder(builder, context);
-                WebUtils.putAuthentication(builder.getInitialAuthentication(), context);
+                if (builder.getInitialAuthentication().isPresent()) {
+                    WebUtils.putAuthenticationResultBuilder(builder, context);
+                    WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
+                }
             }
             final Service service = WebUtils.getService(context);
             if (service != null) {
