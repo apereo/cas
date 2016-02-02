@@ -5,10 +5,8 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
 
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -18,8 +16,6 @@ import javax.validation.constraints.NotNull;
  * @since 4.3.0
  */
 @Entity
-@Table(name="OAUTH_TOKENS")
-@DiscriminatorColumn(name="TYPE")
 @DiscriminatorValue(AccessToken.PREFIX)
 public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
 
