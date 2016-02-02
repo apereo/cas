@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,9 +89,9 @@ public final class OAuth20ProfileController extends BaseOAuthWrapperController {
             try {
 
                 final UserProfile profile = this.accessTokenJwtAuthenticator.validateToken(accessToken);
-                final ZonedDateTime expirationDate = (ZonedDateTime) profile.getAttribute(JwtConstants.EXPIRATION_TIME);
-                final ZonedDateTime now = ZonedDateTime.now();
-                if (expirationDate == null || expirationDate.isBefore(now)) {
+                final Date expirationDate = (Date) profile.getAttribute(JwtConstants.EXPIRATION_TIME);
+                final Date now = new Date();
+                if (expirationDate == null || expirationDate.before(now)) {
                     LOGGER.error("Expired access token: {}", OAuthConstants.ACCESS_TOKEN);
                     jsonGenerator.writeStartObject();
                     jsonGenerator.writeStringField("error", OAuthConstants.EXPIRED_ACCESS_TOKEN);
