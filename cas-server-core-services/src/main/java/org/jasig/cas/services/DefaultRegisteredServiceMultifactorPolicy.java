@@ -4,12 +4,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * This is {@link DefaultRegisteredServiceAuthenticationPolicy}.
+ * This is {@link DefaultRegisteredServiceMultifactorPolicy}.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-public class DefaultRegisteredServiceAuthenticationPolicy implements RegisteredServiceAuthenticationPolicy {
+public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
 
     private static final long serialVersionUID = -3068390754996358337L;
 
@@ -21,7 +21,7 @@ public class DefaultRegisteredServiceAuthenticationPolicy implements RegisteredS
     /**
      * Instantiates a new Default registered service authentication policy.
      */
-    public DefaultRegisteredServiceAuthenticationPolicy() {
+    public DefaultRegisteredServiceMultifactorPolicy() {
     }
 
     @Override

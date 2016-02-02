@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.Set;
 
 /**
- * This is {@link RegisteredServiceAuthenticationPolicy} that describes how a service
+ * This is {@link RegisteredServiceMultifactorPolicy} that describes how a service
  * should handle authentication requests.
  *
  * @author Misagh Moayyed
  * @since 4.3.0
  */
-public interface RegisteredServiceAuthenticationPolicy extends Serializable {
+public interface RegisteredServiceMultifactorPolicy extends Serializable {
 
     /**
      * Gets MFA authentication provider id.
