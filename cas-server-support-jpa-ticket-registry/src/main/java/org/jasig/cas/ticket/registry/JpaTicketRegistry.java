@@ -10,7 +10,6 @@ import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
 import org.jasig.cas.util.DateTimeUtils;
 
-import com.google.common.collect.Collections2;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -40,6 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * JPA implementation of a CAS {@link TicketRegistry}. This implementation of
@@ -290,23 +290,21 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
             logger.debug("Acquired lock.  Proceeding with cleanup.");
 
             logger.info("Beginning ticket cleanup...");
-            final Collection<Ticket> ticketsToRemove = Collections2.filter(this.getTickets(), ticket -> {
-                if (ticket.isExpired()) {
-                    if (ticket instanceof TicketGrantingTicket) {
-                        logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                        logoutManager.performLogout((TicketGrantingTicket) ticket);
-                        deleteTicket(ticket.getId());
-                    } else if (ticket instanceof ServiceTicket) {
-                        logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-                        deleteTicket(ticket.getId());
-                    } else {
-                        logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
-                    }
-                    return true;
-                }
-                return false;
-            });
-            logger.info("{} expired tickets found and removed.", ticketsToRemove.size());
+            this.getTickets().stream()
+                    .filter(ticket -> ticket.isExpired())
+                    .collect(Collectors.toSet())
+                    .forEach(ticket -> {
+                        if (ticket instanceof TicketGrantingTicket) {
+                            logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
+                            logoutManager.performLogout((TicketGrantingTicket) ticket);
+                            deleteTicket(ticket.getId());
+                        } else if (ticket instanceof ServiceTicket) {
+                            logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
+                            deleteTicket(ticket.getId());
+                        } else {
+                            logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
+                        }
+                    });
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
