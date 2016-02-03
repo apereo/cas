@@ -5,6 +5,9 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 
 import java.time.ZonedDateTime;
 
+import java.lang.reflect.Constructor;
+
+
 /**
  * This is {@link AbstractTicketDelegator}.
  *
@@ -34,7 +37,6 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
         this.ticket = ticket;
         this.callback = callback;
     }
-
 
     /**
      * Update ticket by the delegated registry.
@@ -92,5 +94,22 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
     @Override
     public boolean equals(final Object o) {
         return this.ticket.equals(o);
+    }
+
+    /**
+     * Get the default constructor.
+     *
+     * @param clazz the ticket delegator class
+     * @return the default constructor.
+     */
+    @SuppressWarnings("unchecked")
+    public static Constructor<? extends AbstractTicketDelegator> getDefaultConstructor(final Class<? extends AbstractTicketDelegator>
+                                                                                                   clazz) {
+        try {
+            return (Constructor<? extends AbstractTicketDelegator>) Class.forName(clazz.getName())
+                    .getDeclaredConstructors()[0];
+        } catch (final ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
