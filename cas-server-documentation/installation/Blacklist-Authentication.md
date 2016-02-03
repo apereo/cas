@@ -13,21 +13,21 @@ These are:
 ## Authentication Components
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-generic</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ###`RejectUsersAuthenticationHandler`
-{% highlight xml %}
+```xml
 <alias name="rejectUsersAuthenticationHandler" alias="primaryAuthenticationHandler" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # reject.authn.users=user1,user2
-{% endhighlight %}
+```

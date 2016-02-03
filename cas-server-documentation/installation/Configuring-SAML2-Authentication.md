@@ -30,7 +30,7 @@ removed.</p></div>
 
 Here is a generated metadata file as an example:
 
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <EntityDescriptor  xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" 
                 xmlns:shibmd="urn:mace:shibboleth:metadata:1.0" xmlns:xml="http://www.w3.org/XML/1998/namespace" 
@@ -66,7 +66,7 @@ Here is a generated metadata file as an example:
                              Location="https://HOST_NAME/cas/idp/profile/SAML2/Redirect/SSO"/>
     </IDPSSODescriptor>
 </EntityDescriptor>
-{% endhighlight %}
+```
 
 ### SP Metadata
 - `/cas/idp/servicemetadatagen`
@@ -85,20 +85,20 @@ service providers that do not publish a defined metadata. The following paramete
 ## Components
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-saml-idp</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Configuration
 
 ### Settings
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # cas.samlidp.metadata.location=file:/etc/cas/saml
 # cas.samlidp.hostname=cas.example.org
 # cas.samlidp.scope=example.org
@@ -109,13 +109,13 @@ The following settings are applicable:
 # cas.samlidp.metadata.require.valid=true
 # cas.samlidp.logout.request.force.signed=true
 # cas.samlidp.logout.slo.callbacks.disabled=false
-{% endhighlight %}
+```
 
 
 ### SAML Services
 SAML relying parties and services must be registered within the CAS service registry similar to the following example:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.support.saml.services.SamlRegisteredService",
   "serviceId" : "^https:\/\/sp\\.testshib\\.org.+",
@@ -124,7 +124,7 @@ SAML relying parties and services must be registered within the CAS service regi
   "evaluationOrder" : 10,
   "metadataLocation" : "http://www.testshib.org/metadata/testshib-providers.xml"
 }
-{% endhighlight %}
+```
 
 
 <div class="alert alert-info"><strong>Aggregated Metadata</strong><p>If metadata 
@@ -148,7 +148,7 @@ CAS also supports the [Dynamic Metadata Query Protocol](https://spaces.internet2
 which is a REST-like API for requesting and receiving arbitrary metadata. In order to configure a CAS SAML service to retrieve its metadata
 from a Metadata query server, the metadata location must be configured to point to the query server instance. Here is an example:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.support.saml.services.SamlRegisteredService",
   "serviceId" : "^https:\/\/sp\\.testshib\\.org.+",
@@ -157,7 +157,7 @@ from a Metadata query server, the metadata location must be configured to point 
   "evaluationOrder" : 10,
   "metadataLocation" : "http://mdq.server.org/entities/{0}"
 }
-{% endhighlight %}
+```
 
 ...where `{0}` serves as an entityID placeholder for which metadata is to be queried. 
 

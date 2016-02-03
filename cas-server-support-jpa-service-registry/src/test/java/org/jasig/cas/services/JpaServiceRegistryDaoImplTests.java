@@ -2,7 +2,6 @@ package org.jasig.cas.services;
 
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +51,7 @@ public class JpaServiceRegistryDaoImplTests  {
         assertEquals(r, r2);
         assertEquals(r2, r3);
     }
-    
+
     @Test
     public void verifySaveAttributeReleasePolicy() {
         final RegexRegisteredService r = new RegexRegisteredService();
@@ -147,7 +146,7 @@ public class JpaServiceRegistryDaoImplTests  {
     public void verifyOAuthServicesCallback() {
         final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
         r.setName("test345");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
         r.setTheme("theme");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
@@ -157,9 +156,9 @@ public class JpaServiceRegistryDaoImplTests  {
 
     @Test
     public void verifyOAuthRegisteredServicesCallback() {
-        final OAuthRegisteredCallbackAuthorizeService r = new OAuthRegisteredCallbackAuthorizeService();
+        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
         r.setName("testoauth");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
         r.setTheme("theme");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());

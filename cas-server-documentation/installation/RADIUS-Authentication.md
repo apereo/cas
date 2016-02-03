@@ -6,23 +6,23 @@ title: CAS - RADIUS Authentication
 # RADIUS Authentication
 RADIUS support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-radius</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Configuration
 
-{% highlight xml %}
+```xml
 <alias name="radiusAuthenticationHandler" alias="primaryAuthenticationHandler" />
-{% endhighlight %}
+```
 
 The following settings may control the configuration RADIUS server and client:
 
-{% highlight properties %}
+```properties
 # cas.radius.client.inetaddr=localhost
 # cas.radius.client.port.acct=
 # cas.radius.client.socket.timeout=60
@@ -39,4 +39,4 @@ The following settings may control the configuration RADIUS server and client:
 # cas.radius.server.nasIpv6Address=
 # cas.radius.failover.authn=false
 # cas.radius.failover.exception=false
-{% endhighlight %}
+```
