@@ -11,7 +11,8 @@ import javax.persistence.Entity;
 /**
  * An extension of the {@link RegexRegisteredService} that attempts to enforce the
  * correct url syntax for the OAuth callback authorize url. The url must end with
- * {@link OAuthConstants#CALLBACK_AUTHORIZE_URL}.
+ * {@link OAuthConstants#CALLBACK_AUTHORIZE_URL_DEFINITION}.
+ *
  * @author Misagh Moayyed
  * @since 4.0.0
  */
@@ -28,9 +29,9 @@ public final class OAuthCallbackAuthorizeService extends RegexRegisteredService 
      */
     @Override
     public void setServiceId(final String id) {
-        if (!id.endsWith(OAuthConstants.CALLBACK_AUTHORIZE_URL)) {
+        if (!id.endsWith(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION)) {
             final String msg = String.format("OAuth callback authorize service id must end with [%s]",
-                    OAuthConstants.CALLBACK_AUTHORIZE_URL);
+                    OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
             throw new IllegalArgumentException(msg);
         }
         super.setServiceId(id);

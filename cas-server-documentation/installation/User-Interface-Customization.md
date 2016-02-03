@@ -23,25 +23,25 @@ Note that certain older version of IE, particularly IE 9 and below may impose ad
 ## Internet Explorer
 To instruct CAS to render UI in compatibility mode, add the following to relevant UI components:
 
-{% highlight jsp %}
+```jsp
 <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
-{% endhighlight %}
+```
 
 #Getting Started
 
 ##CSS
 The default styles are all contained in a single file located in `css/cas.css`. This location is set in `WEB-INF/classes/cas-theme-default.properties`. If you would like to create your own `css/custom.css file`, for example, you will need to update `standard.custom.css.file` key in that file.
 
-{% highlight bash %}
+```bash
 standard.custom.css.file=/css/cas.css
 cas.javascript.file=/js/cas.js
-{% endhighlight %}
+```
 
 
 ###CSS per Locale
 Selecting CSS files per enabled locale would involve changing the `top.jsp` file to include the below sample code:
 
-{% highlight jsp %}
+```jsp
 <%
     String cssFileName = "cas.css"; // default
     Locale locale = request.getLocale();
@@ -53,7 +53,7 @@ Selecting CSS files per enabled locale would involve changing the `top.jsp` file
 
 %>
 <link href="/path/to/css/<%=cssFileName%>" rel="stylesheet" type="text/css"/>
-{% endhighlight %}
+```
 
 
 ###Responsive Design
@@ -66,9 +66,9 @@ If you need to add some JavaScript, feel free to append `js/cas.js`.
 You can also create your own `custom.js` file, for example, and call it from within `WEB-INF/view/jsp/default/ui/includes/bottom.jsp` like so:
 
 
-{% highlight html %}
+```html
 <script type="text/javascript" src="<c:url value="/js/custom.js" />"></script>
-{% endhighlight %}
+```
 
 If you are developing themes per service, each theme also has the ability to specify a custom `cas.js` file under the `cas.javascript.file` setting.
 
@@ -90,11 +90,11 @@ that relies on these libraries may not immediately function on page load. CAS pr
 adopters to be notified when script loading has completed and this would be a safe time to execute/load other Javascript-related
 functions that depend on JQuery inside the actual page.
 
-{% highlight javascript %}
+```javascript
 function jqueryReady() {
     //Custom Javascript tasks can be carried out now via JQuery...
 }
-{% endhighlight %}
+```
 
 
 ###Checking CAPSLOCK
@@ -109,7 +109,7 @@ Anchors/fragments may be lost across redirects as the server-side handler of the
 This is needed if you want a CAS-authenticated application to be able to use anchors/fragments when bookmarking.
 
 ####Changes to `cas.js`
-{% highlight javascript %}
+```javascript
 /**
  * Prepares the login form for submission by appending any URI
  * fragment (hash) to the form action in order to propagate it
@@ -130,16 +130,16 @@ function prepareSubmit(form) {
     form.action = form.action + hash;
     return true;
 }
-{% endhighlight %}
+```
 
 
 ####Changes to Login Form
 
-{% highlight jsp %}
+```jsp
 <form:form method="post" id="fm1" cssClass="fm-v clearfix"
         commandName="${commandName}" htmlEscape="true"
         onsubmit="return prepareSubmit(this);">
-{% endhighlight %}
+```
 
 ## JSP
 The default views are found at `WEB-INF/view/jsp/default/ui/`.
@@ -149,12 +149,12 @@ Notice `top.jsp` and `bottom.jsp` include files located in the `../includes` dir
 ####Tag Libraries
 The following JSP tag libraries are used by the user interface:
 
-{% highlight jsp %}
+```jsp
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-{% endhighlight %}
+```
 
 
 ####Glossary of Views
@@ -200,24 +200,24 @@ CAS has the ability to warn the user before being redirected to the service. Thi
 (If they don't elect the warning, they may not see any CAS screen when accessing an application that successfully relies upon an existing CAS single sign-on session.)
 Some CAS adopters remove the 'warn' checkbox in the CAS login view and don't offer this interstitial advisement that single sign-on is happening.
 
-{% highlight jsp %}
+```jsp
 ...
 <input id="warn" name="warn" value="true" tabindex="3" accesskey="<spring:message code="screen.welcome.label.warn.accesskey" />" type="checkbox" />
 <label for="warn"><spring:message code="screen.welcome.label.warn" /></label>
 ...
-{% endhighlight %}
+```
 
 ###"I am at a public workstation" authentication
 CAS has the ability to allow the user to opt-out of SSO, by indicating on the login page that the authentication
 is happening at a public workstation. By electing to do so, CAS will not honor the subsequent SSO session
 and will not generate the TGC that is designed to do so.
 
-{% highlight jsp %}
+```jsp
 ...
 <input id="publicWorkstation" name="publicWorkstation" value="false" tabindex="4" type="checkbox" />
 <label for="publicWorkstation"><spring:message code="screen.welcome.label.publicstation" /></label>
 ...
-{% endhighlight %}
+```
 
 ##Localization
 The CAS Web application includes a number of localized message files:
@@ -244,9 +244,9 @@ The CAS Web application includes a number of localized message files:
 
 In order to "invoke" a specific language for the UI, the `/login` endpoint may be passed a `locale` parameter as such:
 
-{% highlight jsp %}
+```jsp
 https://cas.server.edu/login?locale=it
-{% endhighlight %}
+```
 
 Note that not all languages are complete and accurate across CAS server releases as translations are entirely dependent upon community contributions.
 For an accurate and complete list of localized messages, always refer to the English language bundle.
@@ -258,9 +258,9 @@ they may also be formatted under `custom_messages.properties` files.
 
 Messages are then read on each JSP view via the following sample configuration:
 
-{% highlight jsp %}
+```jsp
 <spring:message code="message.key" />
-{% endhighlight %}
+```
 
 In the event that the code is not found in the activated resource bundle, the code itself will be used verbatim.
 
@@ -294,12 +294,12 @@ using the `ServiceThemeResolver` is not practical to augment the default views. 
 
 Views associated with a particular theme by default are expected to be found at: `/WEB-INF/view/jsp/<theme-id>/ui/`
 
-{% highlight jsp %}
+```jsp
 <bean id="internalViewResolver" class="org.jasig.cas.services.web.RegisteredServiceThemeBasedViewResolver"
         c:servicesManager-ref="servicesManager"
         p:prefix="${cas.themeResolver.pathprefix:/WEB-INF/view/jsp/}"
         p:order="2001"/>
-{% endhighlight %}
+```
 
 ####Configuration
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `/WEB-INF/view/jsp/<theme-id>/ui/`).
