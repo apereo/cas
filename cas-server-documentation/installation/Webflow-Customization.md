@@ -34,7 +34,7 @@ and keep track of this state on the client in an encrypted form to remove the ne
 Default encryption strategy controlled via the `loginFlowStateTranscoder` component is using the 128-bit AES in CBC ciphering mode with 
 compression turned on. These settings can be controlled via the following settings defined in the `cas.properties` file:
 
-{% highlight properties %}
+```properties
 # cas.webflow.cipher.alg=AES
 # cas.webflow.cipher.mode=CBC
 # cas.webflow.cipher.padding=PKCS7
@@ -43,7 +43,7 @@ compression turned on. These settings can be controlled via the following settin
 # cas.webflow.keystore.password=changeit
 # cas.webflow.keyalias=aes128
 # cas.webflow.keypassword=changeit
-{% endhighlight %}
+```
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>
 While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and 
@@ -61,10 +61,10 @@ and instead presents a message when users visit CAS directly without specifying 
 
 This behavior is controlled via `cas.properties`:
 
-{% highlight properties %}
+```properties
 # Indicates whether an SSO session can be created if no service is present.
 # create.sso.missing.service=false
-{% endhighlight %}
+```
 
 ##Acceptable Usage Policy
 CAS presents the ability to allow the user to accept the usage policy before moving on to the application. 

@@ -7,7 +7,7 @@ title: CAS - Monitoring & Statistics
 The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software. 
 Access to the endpoint is secured by pac4j at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
 
-{% highlight xml %}
+```xml
 <mvc:interceptor>
     <mvc:mapping path="/status/**" />
     <mvc:mapping path="/statistics/**" />
@@ -16,38 +16,38 @@ Access to the endpoint is secured by pac4j at `src/main/webapp/WEB-INF/spring-co
         <constructor-arg name="clientName" value="IpClient" />
     </bean>
 </mvc:interceptor>
-{% endhighlight %}
+```
 
 Access is granted the following settings in `cas.properties` file:
 
-{% highlight bash %}
+```bash
 # security configuration based on IP address to access the /status and /statistics pages
 # cas.securityContext.adminpages.ip=127\.0\.0\.1
-{% endhighlight %}
+```
 
 
 ##Sample Output
 
-{% highlight bash %}
+```bash
 Health: OK
 
     1.MemoryMonitor: OK - 322.13MB free, 495.09MB total.
-{% endhighlight %}
+```
 
 The list of configured monitors are all defined in `deployerConfigContext.xml` file:
 
-{% highlight xml %}
+```xml
 <util:list id="monitorsList">
     <ref bean="memoryMonitor" />
     <ref bean="sessionMonitor" />
 </util:list>
-{% endhighlight %}
+```
 
 The following optional monitors are also available:
 
 - `MemcachedMonitor`
 
-{% highlight xml %}
+```xml
 
 <dependency>
     <groupId>org.jasig.cas</groupId>
@@ -63,19 +63,19 @@ The following optional monitors are also available:
 
 ...
 
-{% endhighlight %}
+```
 
 
 The following settings are available:
 
-{% highlight properties %}
+```properties
 # cache.monitor.warn.free.threshold=10
 # cache.monitor.eviction.threshold=0
-{% endhighlight %}
+```
 
 - `EhcacheMonitor`
 
-{% highlight xml %}
+```xml
 
 <dependency>
     <groupId>org.jasig.cas</groupId>
@@ -89,18 +89,18 @@ The following settings are available:
     <ref bean="ehcacheMonitor" />
 </util:list>
 <alias name="ticketGrantingTicketsCache" alias="ehcacheMonitorCache" />
-{% endhighlight %}
+```
 
 The following settings are available:
 
-{% highlight properties %}
+```properties
 # cache.monitor.warn.free.threshold=10
 # cache.monitor.eviction.threshold=0
-{% endhighlight %}
+```
 
 - `DataSourceMonitor`
 
-{% highlight xml %}
+```xml
 
 <dependency>
     <groupId>org.jasig.cas</groupId>
@@ -121,11 +121,11 @@ The following settings are available:
 
 <alias name="myDataSource" alias="monitorDataSource" />
 
-{% endhighlight %}
+```
 
 - `PooledConnectionFactoryMonitor`
 
-{% highlight xml %}
+```xml
 
 <dependency>
     <groupId>org.jasig.cas</groupId>
@@ -159,7 +159,7 @@ The following settings are available:
 
 <bean id="pooledConnectionFactoryMonitorValidator" class="org.ldaptive.pool.SearchValidator" />
 
-{% endhighlight %}
+```
 
 ## Internal Configuration Report
 
@@ -179,12 +179,12 @@ CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/me
 ###Configuration
 The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
 
-{% highlight bash %}
+```bash
 
 # Define how often should metric data be reported. Default is 30 seconds.
 # metrics.refresh.internal=30s
 
-{% endhighlight %}
+```
 
 Various metrics can also be reported via JMX. Metrics are exposes via JMX MBeans.
 Supported metrics include:
@@ -198,7 +198,7 @@ Supported metrics include:
 ###Loggers
 All performance data and metrics are routed to a log file via the Log4j configuration:
 
-{% highlight xml %}
+```xml
 ...
 <RollingFile name="perfFileAppender" fileName="perfStats.log" append="true"
              filePattern="perfStats-%d{yyyy-MM-dd-HH}-%i.log">
@@ -216,11 +216,11 @@ All performance data and metrics are routed to a log file via the Log4j configur
     <AppenderRef ref="perfFileAppender"/>
 </Logger>
 
-{% endhighlight %}
+```
 
 
 ###Sample Output
-{% highlight bash %}
+```bash
 type=GAUGE, name=jvm.gc.Copy.count, value=22
 type=GAUGE, name=jvm.gc.Copy.time, value=466
 type=GAUGE, name=jvm.gc.MarkSweepCompact.count, value=3
@@ -237,15 +237,15 @@ type=METER, name=org.jasig.cas.CentralAuthenticationServiceImpl.DESTROY_TICKET_G
 
 type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.GRANT_SERVICE_TICKET_TIMER, count=0, min=0.0, max=0.0, mean=0.0, stddev=0.0, median=0.0, p75=0.0, p95=0.0, p98=0.0, p99=0.0, p999=0.0, mean_rate=0.0, m1=0.0, m5=0.0, m15=0.0, rate_unit=events/millisecond, duration_unit=milliseconds
 
-{% endhighlight %}
+```
 
 ###Viewing Metrics on the Web
 The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser. The endpoint is protected by pac4j, and the access rules are placed inside the `cas.properties` file:
 
-{% highlight bash %}
+```bash
 # security configuration based on IP address to access the /status and /statistics pages
 # cas.securityContext.adminpages.ip=127\.0\.0\.1
-{% endhighlight %}
+```
 
 Once access is granted, the following sub-endpoints can be used to query the CAS server's status and metrics:
 
@@ -264,7 +264,7 @@ Unused at this point, but may be used later to output health examinations of the
 ##Routing logs to SysLog
 CAS logging framework does have the ability to route messages to an external syslog instance. To configure this, you first to configure the `SysLogAppender` and then specify which messages needs to be routed over to this instance:
 
-{% highlight xml %}
+```xml
 ...
 <Appenders>
     <Syslog name="SYSLOG" format="RFC5424" host="localhost" port="8514"
@@ -281,11 +281,11 @@ CAS logging framework does have the ability to route messages to an external sys
     <appender-ref ref="SYSLOG" />
 </logger>
 
-{% endhighlight %}
+```
 
 You can also configure the remote destination output over SSL and specify the related keystore configuration:
 
-{% highlight xml %}
+```xml
 ...
 
 <Appenders>
@@ -299,7 +299,7 @@ You can also configure the remote destination output over SSL and specify the re
 
 ...
 
-{% endhighlight %}
+```
 
 For additional logging functionality, please refer to the Log4j configuration url or view
 the [CAS Logging functionality](Logging.html).

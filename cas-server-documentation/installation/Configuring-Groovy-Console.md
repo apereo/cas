@@ -11,13 +11,13 @@ may want to peek inside the CAS configuration, invoke its API and perhaps report
 
 Support is provided via the following dependency:
 
-{% highlight xml %}
+```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-support-console</artifactId>
      <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Security
 Note that deployers have access to the full power of CAS APIs via the console. Extra care must be taken into account when
@@ -43,12 +43,12 @@ This means that in order to connect, you could use:
 
 Successful connection attempts should present the groovy shell prompt, that is:
 
-{% highlight groovy %}
+```groovy
 Groovy Shell (2.1.7, JVM: 1.7.0_25)
 Type 'help' or '\h' for help.
 --------------------------------------------------------------------------------------
 groovy:000>
-{% endhighlight %}
+```
 
 ### Groovy Bindings
 The following variables are available to the shell automatically:
@@ -67,12 +67,12 @@ affect. Rather, you would need to invoke `defaultTicketRegistry` which is the re
 are extra helpful.
 * Directly interact with the bindings. For instance you may inspect the `defaultTicketRegistry` bean:
 
-{% highlight groovy %}
+```groovy
 groovy:000> defaultTicketRegistry
 ===> org.jasig.cas.ticket.registry.DefaultTicketRegistry@bc1fe6
 groovy:000> defaultTicketRegistry.getTickets()
 ===> []
-{% endhighlight %}
+```
 
 All CAS public APIs may be used by the shell to interact with the application context.
 
@@ -83,7 +83,7 @@ The shell by default will compile and load all groovy scripts that are found at 
 Scripts are loaded by their class name and added to the shell binding collection. A sample `CasVersion` is provided
 that shows how a groovy script, with access to the application context may report back results about the webapp:
 
-{% highlight groovy %}
+```groovy
 groovy:000> CasVersion.run(ctx)
 
 CasVersion.run(ctx)
@@ -91,11 +91,11 @@ CasVersion.run(ctx)
 Ticket registry instance: DefaultTicketRegistry
 
 groovy:000>
-{% endhighlight %}
+```
 
 The script itself is available as `CasVersion.groovy` that is the following:
 
-{% highlight groovy %}
+```groovy
 package scripts
 
 def class CasVersion {
@@ -106,10 +106,10 @@ def class CasVersion {
         return output
     }
 }
-{% endhighlight %}
+```
 
 ### Settings
-{% highlight properties %}
+```properties
 # cas.console.scripts.location:classpath:/scripts
 # cas.console.socket.port=6789
-{% endhighlight %}
+```
