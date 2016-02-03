@@ -21,62 +21,62 @@ to obtain a new (valid) TGT.
 ####`TicketGrantingTicketExpirationPolicy`
 This is default option, which provides a hard-time out as well as a sliding window.
 
-{% highlight xml %}
+```xml
 <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-{% endhighlight %}
+```
 
 Settings are controlled via:
 
-{% highlight properties %}
+```properties
 # tgt.maxTimeToLiveInSeconds=28800
 # tgt.timeToKillInSeconds=7200
-{% endhighlight %}
+```
 
 ####`TimeoutExpirationPolicy`
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout. 
 For example, a 2-hour time span with this policy in effect would require a TGT to be used every 2 hours or less, otherwise 
 it would be marked as expired.
 
-{% highlight xml %}
+```xml
 <alias name="timeoutExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-{% endhighlight %}
+```
 
 Settings are controlled via:
 
-{% highlight properties %}
+```properties
 # tgt.timeout.maxTimeToLiveInSeconds=28800
-{% endhighlight %}
+```
 
 ####`HardTimeoutExpirationPolicy`
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation. For example, a 4-hour time span 
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired 
 and the user will be forced to re-authenticate.
 
-{% highlight xml %}
+```xml
 <alias name="ticketGrantingTicketExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-{% endhighlight %}
+```
 
 Settings are controlled via:
 
-{% highlight properties %}
+```properties
 # tgt.timeout.hard.maxTimeToLiveInSeconds
-{% endhighlight %}
+```
 
 ####`ThrottledUseAndTimeoutExpirationPolicy`
 The throttled timeout policy extends the TimeoutExpirationPolicy with the concept of throttling where a ticket may be used at 
 most every N seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client 
 attempts to consume CAS server resources by requesting high volumes of service tickets in a short time.
 
-{% highlight xml %}
+```xml
 <alias name="throttledUseAndTimeoutExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-{% endhighlight %}
+```
 
 Settings are controlled via:
 
-{% highlight properties %}
+```properties
 # tgt.throttled.maxTimeToLiveInSeconds=28800
 # tgt.throttled.timeInBetweenUsesInSeconds=5
-{% endhighlight %}
+```
 
 ####`NeverExpiresExpirationPolicy`
 The never expires policy allows tickets to exist indefinitely.
@@ -87,9 +87,9 @@ server resource usage for the ticket registries backed by filesystem storage. Si
 for those registries with this policy in effect, use of this policy with those ticket registry implementations 
 is strongly discouraged.</p></div>
 
-{% highlight xml %}
+```xml
 <alias name="neverExpiresExpirationPolicy" alias="grantingTicketExpirationPolicy" />
-{% endhighlight %}
+```
 
 ### Service Ticket Policies
 
@@ -97,7 +97,7 @@ is strongly discouraged.</p></div>
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum 
 period of inactivity elapses. This is default and only option.
 
-{% highlight properties %}
+```properties
 # st.timeToKillInSeconds=10
 # st.numberOfUses=1
-{% endhighlight %}
+```

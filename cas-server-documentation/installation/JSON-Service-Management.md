@@ -9,19 +9,19 @@ JSON files are
 expected to be found inside a configured directory location and this DAO will recursively look through
 the directory structure to find relevant JSON files.
 
-{% highlight xml %}
+```xml
 <alias name="jsonServiceRegistryDao" alias="serviceRegistryDao" />
-{% endhighlight %}
+```
 
 Path to the JSON service definitions directory is controlled via:
 
-{% highlight properties %}
+```properties
 service.registry.config.location=classpath:services
-{% endhighlight %}
+```
 
 A sample JSON file follows:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
@@ -29,7 +29,7 @@ A sample JSON file follows:
   "id" : 1,
   "evaluationOrder" : 0
 }
-{% endhighlight %}
+```
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have
@@ -47,11 +47,11 @@ Please make sure all field values in the JSON blob are correctly escaped, specia
 
 The naming convention for new JSON files is recommended to be the following:
 
-{% highlight bash %}
+```bash
 
 JSON fileName = serviceName + "-" + serviceNumericId + ".json"
 
-{% endhighlight %}
+```
 
 
 Based on the above formula, for example the above JSON snippet shall be named: `testJsonFile-103935657744185.json`
