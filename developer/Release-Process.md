@@ -13,14 +13,14 @@ This page documents the steps that a release engineer should take for cutting a 
 	- Adjust `$GRADLE_OPTS` to initialize the JVM heap size, if necessary.
 	- Load your `~/.gradle/gradle.properties` file with the following:
 
-{% highlight bash %}
+```bash
 signing.keyId=
 signing.password=
 signing.secretKeyRingFile=
 sonatypeUsername=
 sonatypePassword=
 org.gradle.daemon=false
-{% endhighlight %}
+```
 
 - Checkout the CAS project: `git clone git@github.com:Jasig/cas.git cas-server`
 
@@ -31,15 +31,15 @@ org.gradle.daemon=false
 - In the project's `gradle.properties`, change the project version to the release version (i.e. `4.2.0-RC1`)
 - Build the project using the following command:
 
-{% highlight bash %}
+```bash
 ./gradlew clean build -x test --parallel -DskipCheckstyle=true -DskipFindbugs=true
-{% endhighlight %}
+```
 
 - Release the project using the following commands:
 
-{% highlight bash %}
+```bash
 ./gradlew uploadArchives -DpublishReleases=true
-{% endhighlight %}
+```
 
 - In the project's `gradle.properties`, change the project version to the *next* release version (i.e. `4.2.0-RC2`) 
 - Create a tag for the released version and push the tag to the upstream Jasig repository. (i.e. `v4.2.0-RC1`).
@@ -66,16 +66,16 @@ To generate the changelog and release notes, use the below steps:
 2. Generate a github access token [here](https://github.com/settings/tokens)
 3. Execute the following command:
 
-{% highlight bash %}
+```bash
 github-changes -o Jasig -r cas -b x.y.z -k <TOKEN> -a --use-commit-body
-{% endhighlight %}
+```
 
 Note that `x.y.z` is the name of the branch that is released. The output will be saved in `ChangeLog.md` file. Comb
 through the file, edit, format and paste the final content under the release tag. 
 
 - Send an announcement message to @cas-announce, @cas-user and @cas-dev mailing lists. A template follows:
 
-{% highlight bash %}
+```bash
 CAS Community,
 
 CAS x.y.z is available for testing and evaluation. We encourage adopters to grab 
@@ -84,7 +84,7 @@ this release from Maven Central, integrate into your environment, and provide fe
 Regards,
 John Smith
 
-{% endhighlight %}
+```
 
 ##Update Maven Overlay
 Update the following overlay projects to point to the newly released CAS version. This task is only relevant when dealing with GA releases.

@@ -11,7 +11,7 @@ The following document describes the set of coding conventions that are specific
 ##Brackets
 All brackets should appear in compact form and are mandatory even for single line statements.
 
-{% highlight java %}
+```java
 public class FooClass {
     public void barMethod() {
         if (...) {
@@ -19,11 +19,11 @@ public class FooClass {
         }
     }
 }
-{% endhighlight %}
+```
 
 
 ##Needless else clauses
-{% highlight java %}
+```java
 public class FooClass {
     public String barMethod() {
         if (...) {
@@ -33,7 +33,7 @@ public class FooClass {
         return bar;
     }
 }
-{% endhighlight %}
+```
 
 
 ##Indentations
@@ -49,15 +49,15 @@ modifications to the program state.
 ##Static Members
 Static member variables will always be in uppercase wherein each word is separated by an underscore:
 
-{% highlight java %}
+```java
 private static final String SOME_OBJECT = "TheObject"; 
-{% endhighlight %}
+```
 
 
 ##Logging
 We use [SLF4J](http://www.slf4j.org/index.html) for logging. In abstract classes, the provided logger should be mark as `protected` so that it can be reused in subclasses. In the case where we create our own Log instance, we will use the [recommended practice](http://www.slf4j.org/faq.html#declaration_pattern) of declaring logger objects by SLF4j:
 
-{% highlight java %}
+```java
 package some.package;
 
 import org.slf4j.Logger;
@@ -72,13 +72,13 @@ public class MyClass {
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
   ... etc
 }
-{% endhighlight %}
+```
 
 [Parameterized log messages](http://www.slf4j.org/faq.html#logging_performance) are preferred:
-{% highlight java %}
+```java
 final Object entry = new SomeObject();
 log.debug("The entry is {}.", entry);
-{% endhighlight %}
+```
 
 This is the preferred method over checking for a particular logging level and concatenating parameters through String objects.
 
