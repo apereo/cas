@@ -42,7 +42,12 @@ org.jasig.cas.services.web.factory
 org.jasig.cas.services.web.view
 org.jasig.cas.support.events
 org.jasig.cas.support.oauth
+org.jasig.cas.support.oauth.authentication
 org.jasig.cas.support.oauth.services
+org.jasig.cas.support.oauth.ticket
+org.jasig.cas.support.oauth.ticket.accesstoken
+org.jasig.cas.support.oauth.ticket.code
+org.jasig.cas.support.oauth.ticket.registry
 org.jasig.cas.support.oauth.web
 org.jasig.cas.support.openid
 org.jasig.cas.support.openid.authentication.handler.support
