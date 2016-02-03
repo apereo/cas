@@ -66,7 +66,7 @@ public class MongoServiceRegistryDaoCloudTests {
     @Test
     public void verifyOauthService() {
         final OAuthCallbackAuthorizeService service = new OAuthCallbackAuthorizeService();
-        service.setServiceId(OAuthConstants.ENDPOINT_OAUTH2_CALLBACK_AUTHORIZE);
+        service.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
         this.serviceRegistryDao.save(service);
     }
 
