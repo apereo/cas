@@ -15,7 +15,7 @@ public interface TicketRegistryState {
      * @return Number of ticket-granting tickets in the registry at time of invocation
      *         or {@link Integer#MIN_VALUE} if unknown.
      */
-    long sessionCount();
+    int sessionCount();
 
 
     /**
@@ -24,5 +24,5 @@ public interface TicketRegistryState {
      * @return Number of service tickets in the registry at time of invocation
      *         or {@link Integer#MIN_VALUE} if unknown.
      */
-    long serviceTicketCount();
+    int serviceTicketCount();
 }

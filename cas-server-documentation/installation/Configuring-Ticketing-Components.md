@@ -40,12 +40,12 @@ RDBMS-based ticket registries provide a distributed ticket store across multiple
 ### Ticket Generators
 CAS presents a pluggable architecture for generating unique ticket ids for each ticket type.
 
-{% highlight properties %}
+```properties
 # lt.ticket.maxlength=20
 # st.ticket.maxlength=20
 # tgt.ticket.maxlength=50
 # pgt.ticket.maxlength=50
-{% endhighlight %}
+```
 
 ## Ticket Expiration Policies
 CAS supports a pluggable and extensible policy framework to control the expiration policy of ticket-granting tickets (TGT) and service tickets (ST). [See this guide](Configuring-Ticket-Expiration-Policy.html) for details on how to configure the expiration policies.

@@ -6,13 +6,13 @@ title: CAS - Memcached Ticket Registry
 # Memcached Ticket Registry
 Memcached integration is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-integration-memcached</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 `MemCacheTicketRegistry` stores tickets in one or more [memcached](http://memcached.org/) instances. The
 [spymemcached](https://code.google.com/p/spymemcached/) library used by this component presents memcached as a
 key/value store that accepts `String` keys and Java `Object` values.
@@ -29,9 +29,9 @@ Note that a change in the set of available cache nodes may produce a different t
 
 Enable the registry via:
 
-{% highlight xml %}
+```xml
 <alias name="memcachedTicketRegistry" alias="ticketRegistry" />
-{% endhighlight %}
+```
 
 ## Configuration Considerations
 There are three core configuration concerns with memcached:
@@ -78,13 +78,13 @@ compact data, which benefits both storage requirements and throughput.
 
 
 ## Configuration
-{% highlight properties %}
+```properties
 # memcached.servers=cas-1.example.org:11211,cas-2.example.org:11211,cas-3.example.org:11211
 # memcached.hashAlgorithm=FNV1_64_HASH
 # memcached.protocol=BINARY
 # memcached.locatorType=ARRAY_MOD
 # memcached.failureMode=Redistribute
-{% endhighlight %}
+```
 
 ## High Availability Considerations
 Memcached does not provide for replication by design, but the client is tolerant to node failures with

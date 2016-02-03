@@ -6,13 +6,13 @@ title: CAS - Ehcache Ticket Registry
 # Ehcache Ticket Registry
 Ehcache integration is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-integration-ehcache</artifactId>
      <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 `EhCacheTicketRegistry` stores tickets in an [Ehcache](http://ehcache.org/) instance.
 
@@ -33,12 +33,12 @@ replication with Ehcache, [see this resource](http://ehcache.org/documentation/u
 
 Enable the registry via:
 
-{% highlight xml %}
+```xml
 <alias name="ehcacheTicketRegistry" alias="ticketRegistry" />
-{% endhighlight %}
+```
 
 ####Configuration
-{% highlight properties %}
+```properties
 # ehcache.config.file=classpath:ehcache-replicated.xml
 # ehcache.cachemanager.shared=false
 # ehcache.cachemanager.name=ticketRegistryCacheManager
@@ -64,10 +64,10 @@ Enable the registry via:
 # ehcache.repl.sync.updates=true
 # ehcache.repl.sync.updatesCopy=true
 # ehcache.repl.sync.removals=true
-{% endhighlight %}
+```
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows.
-{% highlight xml %}
+```xml
 <ehcache name="ehCacheTicketRegistryCache"
     updateCheck="false"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -99,7 +99,7 @@ The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config f
       class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
       properties="port=41001,remoteObjectPort=41002" />
 </ehcache>
-{% endhighlight %}
+```
 
 
 
