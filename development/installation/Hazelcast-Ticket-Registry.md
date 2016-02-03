@@ -11,28 +11,28 @@ Hazelcast will evenly distribute the ticket data among all the members of a clus
 
 This ticket registry implementation is enabled by simply including the module in the Maven overlay pom:
 
-{% highlight xml %}
+```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-integration-hazelcast</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## Configuration
 
 Enable the registry via:
 
-{% highlight xml %}
+```xml
 <alias name="hazelcastTicketRegistry" alias="ticketRegistry" />
-{% endhighlight %}
+```
 
 This module has a flexible configuration strategy which by default auto-configures `HazelcastInstance` used by the TicketRegistry
 implementation to retrieve Hazelcast's `IMap` instance for its distributed tickets storage. Some aspects of `HazelcastInstance`
 configuration in this auto-configuration mode are controlled by the following exposed properties which could be set via
 an external `cas.properties` file (with sensible defaults for all the properties if not explicitly set):
 
-{% highlight properties %}
+```properties
 # hz.config.location=file:/etc/cas/hazelcast.xml
 # hz.mapname=tickets
 # hz.cluster.logging.type=slf4j
@@ -47,7 +47,7 @@ an external `cas.properties` file (with sensible defaults for all the properties
 # hz.cluster.eviction.policy=LRU
 # hz.cluster.instance.name=${host.name}
 # hz.cluster.logging.type=slf4j
-{% endhighlight %}
+```
 
 Should the more fine-grained configuration need arise, there is an option to use a native Hazelcast configuration XML format
 where all the configuration options for `HazelcastInstance` exposed by Hazelcast are available. In order to trigger this configuration mode,
@@ -58,13 +58,13 @@ there are two basic steps required:
 
 * Indicate the location of the external native config file by the following property:
 
-{% highlight properties %}
+```properties
 hz.config.location=file:/etc/cas/hazelcast.xml
-{% endhighlight %}
+```
 
 Here's a simple example of `hazelcast.xml` that configures AWS cluster join strategy instead of a default TCP/IP one:
 
-{% highlight xml %}
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.6.xsd"
            xmlns="http://www.hazelcast.com/schema/config"
@@ -124,7 +124,7 @@ Here's a simple example of `hazelcast.xml` that configures AWS cluster join stra
     </map>
 
 </hazelcast>
-{% endhighlight %}
+```
 
 For more information on the Hazelcast configuration options available, refer to [the Hazelcast documentation](http://docs.hazelcast.org/docs/3.6/manual/html/configuringhazelcast.html)
 
@@ -132,11 +132,11 @@ For more information on the Hazelcast configuration options available, refer to 
 To enable additional logging for the registry, configure the log4j configuration file to add the following
 levels:
 
-{% highlight xml %}
+```xml
 ...
 <AsyncLogger name="com.hazelcast" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </AsyncLogger>
 ...
-{% endhighlight %}
+```

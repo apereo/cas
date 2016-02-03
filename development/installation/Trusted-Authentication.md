@@ -10,19 +10,19 @@ components that perform authentication in front of CAS.
 
 Trusted authentication handler support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-trusted-webflow</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 
 ## Configure Trusted Authentication Handler
 Update `deployerConfigContext.xml` according to the following template:
 
-{% highlight xml %}
+```xml
 ...
 <entry key-ref="principalBearingCredentialsAuthenticationHandler"
        value-ref="trustedPrincipalResolver" />
@@ -30,4 +30,4 @@ Update `deployerConfigContext.xml` according to the following template:
   <ref bean="successfulHandlerMetaDataPopulator" />
 </util:list>
 ...
-{% endhighlight %}
+```

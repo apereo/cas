@@ -36,10 +36,10 @@ configuration for two common examples:
 
 Configuration consists of:
 
-{% highlight properties %}
+```properties
 # cas.principal.resolver.persondir.principal.attribute=cn
 # cas.principal.resolver.persondir.return.null=false
-{% endhighlight %}
+```
 
 ## PrincipalResolver vs. AuthenticationHandler
 The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to
@@ -47,9 +47,9 @@ The principal resolution machinery provided by `AuthenticationHandler` component
 If the principal that is resolved by the authentication handler
 suffices, then a `null` value may be passed in place of the resolver bean id:
 
-{% highlight xml %}
+```xml
 <util:map id="authenticationHandlersResolvers">
     ...
     <entry key-ref="primaryAuthenticationHandler" value="#{null}" />
 </util:map>
-{% endhighlight %}
+```
