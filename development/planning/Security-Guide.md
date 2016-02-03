@@ -201,13 +201,13 @@ As part of the CAS Security Filter, the CAS project automatically provides the n
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently off by default, and may be enabled via the following settings:
 
-{% highlight xml %}
+```xml
 # httpresponse.header.cache=false
 # httpresponse.header.hsts=false
 # httpresponse.header.xframe=false
 # httpresponse.header.xcontent=false
 # httpresponse.header.xss=false
-{% endhighlight %}
+```
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 

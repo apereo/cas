@@ -19,24 +19,24 @@ registries for higher availability.</p></div>
 
 Support is enabled by adding the following module into the Maven overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-jpa-ticket-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 
 ## Configuration
 
-{% highlight xml %}
+```xml
 <alias name="jpaTicketRegistry" alias="ticketRegistry" />
-{% endhighlight %}
+```
 
 The following settings are expected:
 
-{% highlight properties %}
+```properties
 # ticketreg.database.ddl.auto=create-drop
 # ticketreg.database.hibernate.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
 # ticketreg.database.hibernate.batchSize=10
@@ -54,7 +54,7 @@ The following settings are expected:
 # ticketreg.database.pool.acquireRetryAttempts=5
 # ticketreg.database.pool.acquireRetryDelay=2000
 # ticketreg.database.pool.connectionHealthQuery=select 1
-{% endhighlight %}
+```
 
 
 ## TicketGrantingTicket Locking
@@ -70,6 +70,6 @@ TicketGrantingTicket.
 
 The following setting can disable this locking behavior:
 
-{% highlight properties %}
+```properties
 # ticketreg.database.jpa.locking.tgt.enabled=false
-{% endhighlight %}
+```

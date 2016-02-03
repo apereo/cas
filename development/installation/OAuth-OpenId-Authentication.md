@@ -12,13 +12,13 @@ To get a better understanding of the OAuth/OpenID protocol support in CAS, [see 
 ## Configuration
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-oauth</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 After enabling OAuth support, three new urls will be available:
 
@@ -36,7 +36,7 @@ It's the url to call to get the profile of the authorized user. Input GET parame
 
 Every OAuth client must be defined as a CAS service (notice the new *clientId* and *clientSecret* properties, specific to OAuth):
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.support.oauth.services.OAuthRegisteredService",
   "clientId": "clientid",
@@ -46,7 +46,7 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "name" : "HTTPS and IMAPS",
   "id" : 10000001
 }
-{% endhighlight %}
+```
 
 # OpenID Authentication
 
