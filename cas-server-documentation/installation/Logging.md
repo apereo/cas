@@ -14,7 +14,7 @@ By default logging is set to `INFO` for all functionality related to `org.jasig.
 messages related to Spring framework, etc. For debugging and diagnostic purposes you may want to set
 these levels to  `DEBUG`.
 
-{% highlight xml %}
+```xml
 ...
 
 <AsyncLogger name="org.jasig" level="info" additivity="false">
@@ -24,7 +24,7 @@ these levels to  `DEBUG`.
 
 <AsyncLogger name="org.springframework" level="warn" />
 ...
-{% endhighlight %}
+```
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>When in production though,
 you probably want to run them both as `WARN`.</p></div>
@@ -34,9 +34,9 @@ It is often time helpful to externalize `log4j2.xml` to a system path to preserv
 The location of `log4j2.xml` file by default is on the runtime classpath. 
 These may be overridden by the `cas.properties` file
 
-{% highlight bash %}
+```bash
 # log4j.config.location=classpath:log4j2.xml
-{% endhighlight %}
+```
 
 The `log4j2.xml` file by default at `WEB-INF/classes` provides the following `appender` elements that
 decide where and how messages from components should be displayed. Two are provided by default that
@@ -48,9 +48,9 @@ By default, the framework that is chosen is Log4j. If there are multiple logging
 on the application classpath at runtime, you can instruct CAS to specifically select Log4j as the logging framework
 via the following property passed to the JVM runtime instance:
 
-{% highlight bash %}
+```bash
 -DloggerFactory="org.apache.logging.slf4j.Log4jLoggerFactory"
-{% endhighlight %}
+```
 
 ###Alternative Loggers
 If you wish to use an alternative logging framework other than Log4j, you will need to exclude
@@ -66,15 +66,15 @@ checked the next time a log event is evaluated and/or logged and the `monitorInt
 the last check. This will allow you to adjust the log levels and configuration without restarting the
 server environment.
 
-{% highlight xml %}
+```xml
 <!-- Specify the refresh internal in seconds. -->
 <Configuration monitorInterval="60">
     <Appenders>
         ...
-{% endhighlight %}
+```
 
 ###Appenders
-{% highlight xml %}
+```xml
 <Console name="console" target="SYSTEM_OUT">
     <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
 </Console>
@@ -87,13 +87,13 @@ server environment.
         <TimeBasedTriggeringPolicy />
     </Policies>
 </RollingFile>
-{% endhighlight %}
+```
 
 
 ###AsyncLoggers
 Additional AsyncLoggers are available to specify the logging level for component categories.
 
-{% highlight xml %}
+```xml
 <AsyncLogger name="org.jasig" level="info" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
@@ -112,24 +112,24 @@ Additional AsyncLoggers are available to specify the logging level for component
 <Root level="error">
     <AppenderRef ref="console"/>
 </Root>
-{% endhighlight %}
+```
 
 If you wish enable another package for logging, you can simply add another `AsyncLogger`
 element to the configuration. Here is an example:
 
-{% highlight xml %}
+```xml
 <AsyncLogger name="org.ldaptive" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </AsyncLogger>
-{% endhighlight %}
+```
 
 ##Log Data Sanitation
 For security purposes, CAS by default will attempt to remove TGT and PGT ids from all log data.
 This will of course include messages that are routed to a log destination by the logging framework as
  well as all audit messages. A sample follows below:
 
-{% highlight bash %}
+```bash
 =============================================================
 WHO: audit:unknown
 WHAT: TGT-****************************************************123456-cas01.example.org
@@ -139,7 +139,7 @@ WHEN: Sat Jul 12 04:10:35 PDT 2014
 CLIENT IP ADDRESS: ...
 SERVER IP ADDRESS: ...
 =============================================================
-{% endhighlight %}
+```
 
 Certain number of characters are left at the trailing end of the ticket id to assist with
 troubleshooting and diagnostics. This is achieved by providing a specific binding for the SLF4j configuration.
