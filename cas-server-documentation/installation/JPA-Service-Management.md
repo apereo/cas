@@ -8,17 +8,17 @@ Stores registered service data in a database.
 
 Support is enabled by adding the following module into the Maven overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-jpa-service-registry</artifactId>
     <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 The following settings are expected:
 
-{% highlight properties %}
+```properties
 # svcreg.database.ddl.auto=create-drop
 # svcreg.database.hibernate.dialect=org.hibernate.dialect.OracleDialect|MySQLInnoDBDialect|HSQLDialect
 # svcreg.database.hibernate.batchSize=10
@@ -36,7 +36,7 @@ The following settings are expected:
 # svcreg.database.pool.acquireRetryAttempts=5
 # svcreg.database.pool.acquireRetryDelay=2000
 # svcreg.database.pool.connectionHealthQuery=select 1
-{% endhighlight %}
+```
 
 
 ## Configuration
@@ -44,6 +44,6 @@ The following settings are expected:
 The following configuration template may be applied to `deployerConfigContext.xml` to provide for persistent
 registered service storage. The configuration assumes a `dataSource` bean is defined in the context.
 
-{% highlight xml %}
+```xml
 <alias name="jpaServiceRegistryDao" alias="serviceRegistryDao" />
-{% endhighlight %}
+```

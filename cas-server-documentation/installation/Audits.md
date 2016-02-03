@@ -16,25 +16,25 @@ Configuration of the audit trail manager is defined inside `deployerConfigContex
 By default, audit messages appear in log files via the `Slf4jLoggingAuditTrailManager` and are routed to
 a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the usual `cas.log` file.
 
-{% highlight properties %}
+```properties
 # cas.audit.singleline=true
 # cas.audit.singleline.separator=|
 # cas.audit.appcode=CAS
-{% endhighlight %}
+```
 
 ###Database Audits
 If you intend to use a database
 for auditing functionality, adjust the audit manager to match the configuration below:
 
-{% highlight xml %}
+```xml
 <import resource="classpath:inspektr-jdbc-audit-config.xml" />
-{% endhighlight %}
+```
 
 
 #### Configuration
 Configuration consists of:
 
-{% highlight properties %}
+```properties
 #cas.audit.max.agedays=
 #cas.audit.database.dialect=
 #cas.audit.database.batchSize=
@@ -55,11 +55,11 @@ Configuration consists of:
 #cas.audit.database.pool.acquireRetryDelay=
 #cas.audit.database.pool.idleConnectionTestPeriod=
 #cas.audit.database.pool.connectionHealthQuery=
-{% endhighlight %}
+```
 
 
 ##Sample Log Output
-{% highlight bash %}
+```bash
 WHO: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
 WHAT: supplied credentials: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
 ACTION: AUTHENTICATION_SUCCESS
@@ -75,4 +75,4 @@ APPLICATION: CAS
 WHEN: Mon Aug 26 12:35:59 IST 2013
 CLIENT IP ADDRESS: 172.16.5.181
 SERVER IP ADDRESS: 192.168.200.22
-{% endhighlight %}
+```
