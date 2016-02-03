@@ -20,18 +20,6 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-and defining the appropriate keys for JWT signing and encryption:
-
-```properties
-cas.oauth.jwt.signingSecret=
-cas.oauth.jwt.encryptionSecret=
-```
-
-These keys must be 32 characters long (the default signature algorithm is HS256 and the default encryption algorithm is A256GCM).
-
-You can even customize the way JWT tokens are generated and verified by overriding the `META-INF\spring\cas-servlet-oauth.xml` file.
-
-
 After enabling OAuth support, three new urls will be available:
 
 * **/oauth2.0/authorize**  
