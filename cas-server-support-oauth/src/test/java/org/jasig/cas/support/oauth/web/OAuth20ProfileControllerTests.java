@@ -15,7 +15,6 @@ import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenImpl;
 import org.jasig.cas.support.oauth.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketState;
-import org.joda.time.DateTime;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +25,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +89,7 @@ public final class OAuth20ProfileControllerTests {
     @Test
     public void verifyExpiredAccessToken() throws Exception {
         final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, new HashMap<String, Object>());
-        final Authentication authentication = new OAuthAuthentication(new DateTime(), principal);
+        final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
         final DefaultAccessTokenFactory expiringAccessTokenFactory = new DefaultAccessTokenFactory();
         expiringAccessTokenFactory.setExpirationPolicy(new ExpirationPolicy() {
             @Override
@@ -117,7 +117,7 @@ public final class OAuth20ProfileControllerTests {
         map.put(NAME2, list);
 
         final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
-        final Authentication authentication = new OAuthAuthentication(new DateTime(), principal);
+        final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
         final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(TestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
@@ -152,7 +152,7 @@ public final class OAuth20ProfileControllerTests {
         map.put(NAME2, list);
 
         final Principal principal = org.jasig.cas.authentication.TestUtils.getPrincipal(ID, map);
-        final Authentication authentication = new OAuthAuthentication(new DateTime(), principal);
+        final Authentication authentication = new OAuthAuthentication(ZonedDateTime.now(), principal);
         final AccessTokenImpl accessToken = (AccessTokenImpl) accessTokenFactory.create(TestUtils.getService(), authentication);
         oAuth20ProfileController.getTicketRegistry().addTicket(accessToken);
 
