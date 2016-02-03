@@ -13,7 +13,7 @@ for custom functionality on a per-service basis.
 
 A sample JSON file follows:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
@@ -27,4 +27,4 @@ A sample JSON file follows:
     }
   }
 }
-{% endhighlight %}
+```
