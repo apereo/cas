@@ -132,13 +132,13 @@ public final class DefaultTicketRegistry extends AbstractTicketRegistry implemen
     }
 
     @Override
-    public long sessionCount() {
-        return this.cache.values().stream().filter(t -> t instanceof TicketGrantingTicket).count();
+    public int sessionCount() {
+        return (int) this.cache.values().stream().filter(t -> t instanceof TicketGrantingTicket).count();
     }
 
     @Override
-    public long serviceTicketCount() {
-        return this.cache.values().stream().filter(t -> t instanceof ServiceTicket).count();
+    public int serviceTicketCount() {
+        return (int) this.cache.values().stream().filter(t -> t instanceof ServiceTicket).count();
     }
 
     /**
