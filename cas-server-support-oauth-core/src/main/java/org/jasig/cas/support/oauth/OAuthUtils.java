@@ -3,14 +3,15 @@ package org.jasig.cas.support.oauth;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
 
 /**
  * This class has some usefull methods to output data in plain text,
@@ -73,9 +74,7 @@ public final class OAuthUtils {
      * @return null, or the located {@link OAuthRegisteredService} instance in the service registry.
      */
     public static OAuthRegisteredService getRegisteredOAuthService(final ServicesManager servicesManager, final String clientId) {
-        final Iterator<RegisteredService> it = servicesManager.getAllServices().iterator();
-        while (it.hasNext()) {
-            final RegisteredService aService = it.next();
+        for (final RegisteredService aService : servicesManager.getAllServices()) {
             if (aService instanceof OAuthRegisteredService) {
                 final OAuthRegisteredService service = (OAuthRegisteredService) aService;
                 if (service.getClientId().equals(clientId)) {

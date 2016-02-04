@@ -1,6 +1,8 @@
 package org.jasig.cas.services;
 
 import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.util.ServicesTestUtils;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -19,7 +21,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         
         final Principal principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
-        final String id = provider.resolveUsername(principal, TestUtils.getService());
+        final String id = provider.resolveUsername(principal, ServicesTestUtils.getService());
         assertEquals(id, principal.getId());
     }
 

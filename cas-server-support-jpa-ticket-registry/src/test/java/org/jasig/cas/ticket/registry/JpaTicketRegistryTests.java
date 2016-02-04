@@ -1,6 +1,6 @@
 package org.jasig.cas.ticket.registry;
 
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.mock.MockService;
@@ -15,13 +15,13 @@ import org.jasig.cas.ticket.proxy.ProxyTicket;
 import org.jasig.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.jasig.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -166,7 +166,7 @@ public class JpaTicketRegistryTests {
                 "bob", Collections.singletonMap("displayName", (Object) "Bob"));
         return new TicketGrantingTicketImpl(
                 ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
-                TestUtils.getAuthentication(principal),
+                AuthTestUtils.getAuthentication(principal),
                 EXP_POLICY_TGT);
     }
 
@@ -182,7 +182,7 @@ public class JpaTicketRegistryTests {
     static ProxyGrantingTicket newPGT(final ServiceTicket parent) {
         return parent.grantProxyGrantingTicket(
                 ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
-                TestUtils.getAuthentication(),
+                AuthTestUtils.getAuthentication(),
                 EXP_POLICY_PGT);
     }
 
@@ -195,64 +195,44 @@ public class JpaTicketRegistryTests {
     }
 
     void addTicketInTransaction(final Ticket ticket) {
-        new TransactionTemplate(txManager).execute(new TransactionCallback<Object>() {
-            @Override
-            public Void doInTransaction(final TransactionStatus status) {
-                jpaTicketRegistry.addTicket(ticket);
-                return null;
-            }
+        new TransactionTemplate(txManager).execute(status -> {
+            jpaTicketRegistry.addTicket(ticket);
+            return null;
         });
     }
 
     void deleteTicketInTransaction(final String ticketId) {
-        new TransactionTemplate(txManager).execute(new TransactionCallback<Void>() {
-            @Override
-            public Void doInTransaction(final TransactionStatus status) {
-                jpaTicketRegistry.deleteTicket(ticketId);
-                return null;
-            }
+        new TransactionTemplate(txManager).execute((TransactionCallback<Void>) status -> {
+            jpaTicketRegistry.deleteTicket(ticketId);
+            return null;
         });
     }
 
     Ticket getTicketInTransaction(final String ticketId) {
-        return new TransactionTemplate(txManager).execute(new TransactionCallback<Ticket>() {
-            @Override
-            public Ticket doInTransaction(final TransactionStatus status) {
-                return jpaTicketRegistry.getTicket(ticketId);
-            }
-        });
+        return new TransactionTemplate(txManager).execute(status -> jpaTicketRegistry.getTicket(ticketId));
     }
 
     ServiceTicket grantServiceTicketInTransaction(final TicketGrantingTicket parent) {
-        return new TransactionTemplate(txManager).execute(new TransactionCallback<ServiceTicket>() {
-            @Override
-            public ServiceTicket doInTransaction(final TransactionStatus status) {
-                final ServiceTicket st = newST(parent);
-                jpaTicketRegistry.addTicket(st);
-                return st;
-            }
+        return new TransactionTemplate(txManager).execute(status -> {
+            final ServiceTicket st = newST(parent);
+            jpaTicketRegistry.addTicket(st);
+            return st;
         });
     }
 
     ProxyGrantingTicket grantProxyGrantingTicketInTransaction(final ServiceTicket parent) {
-        return new TransactionTemplate(txManager).execute(new TransactionCallback<ProxyGrantingTicket>() {
-            @Override
-            public ProxyGrantingTicket doInTransaction(final TransactionStatus status) {
-                final ProxyGrantingTicket pgt = newPGT(parent);
-                jpaTicketRegistry.addTicket(pgt);
-                return pgt;
-            }
+        return new TransactionTemplate(txManager).execute(status -> {
+            final ProxyGrantingTicket pgt = newPGT(parent);
+            jpaTicketRegistry.addTicket(pgt);
+            return pgt;
         });
     }
 
     ProxyTicket grantProxyTicketInTransaction(final ProxyGrantingTicket parent) {
-        return new TransactionTemplate(txManager).execute(new TransactionCallback<ProxyTicket>() {
-            @Override
-            public ProxyTicket doInTransaction(final TransactionStatus status) {
-                final ProxyTicket st = newPT(parent);
-                jpaTicketRegistry.addTicket(st);
-                return st;
-            }
+        return new TransactionTemplate(txManager).execute(status -> {
+            final ProxyTicket st = newPT(parent);
+            jpaTicketRegistry.addTicket(st);
+            return st;
         });
     }
 
@@ -271,15 +251,12 @@ public class JpaTicketRegistryTests {
 
         @Override
         public String call() throws Exception {
-            return new TransactionTemplate(txManager).execute(new TransactionCallback<String>() {
-                @Override
-                public String doInTransaction(final TransactionStatus status) {
-                    // Querying for the TGT prior to updating it as done in
-                    // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credential)
-                    final ServiceTicket st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
-                    jpaTicketRegistry.addTicket(st);
-                    return st.getId();
-                }
+            return new TransactionTemplate(txManager).execute(status -> {
+                // Querying for the TGT prior to updating it as done in
+                // CentralAuthenticationServiceImpl#grantServiceTicket(String, Service, Credential)
+                final ServiceTicket st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
+                jpaTicketRegistry.addTicket(st);
+                return st.getId();
             });
         }
 

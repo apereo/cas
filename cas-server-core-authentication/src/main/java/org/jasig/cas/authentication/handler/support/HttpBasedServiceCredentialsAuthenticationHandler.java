@@ -1,22 +1,22 @@
 package org.jasig.cas.authentication.handler.support;
 
-import java.net.URL;
-import java.security.GeneralSecurityException;
-
-import javax.security.auth.login.FailedLoginException;
-import javax.validation.constraints.NotNull;
-
 import org.jasig.cas.authentication.AbstractAuthenticationHandler;
 import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.util.http.HttpClient;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import javax.security.auth.login.FailedLoginException;
+import javax.validation.constraints.NotNull;
+import java.net.URL;
+import java.security.GeneralSecurityException;
 
 /**
  * Class to validate the credential presented by communicating with the web

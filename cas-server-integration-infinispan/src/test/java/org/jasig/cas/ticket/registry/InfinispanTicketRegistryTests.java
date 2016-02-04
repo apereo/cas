@@ -1,7 +1,7 @@
 package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.authentication.Authentication;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -69,7 +69,7 @@ public class InfinispanTicketRegistryTests {
     }
 
     private Ticket getTicket() {
-        final Authentication authentication = TestUtils.getAuthentication();
+        final Authentication authentication = AuthTestUtils.getAuthentication();
         return new TicketGrantingTicketImpl("123", authentication, new NeverExpiresExpirationPolicy());
     }
 }

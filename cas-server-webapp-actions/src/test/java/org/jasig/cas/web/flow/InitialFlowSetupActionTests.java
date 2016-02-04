@@ -3,6 +3,7 @@ package org.jasig.cas.web.flow;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.authentication.principal.WebApplicationServiceFactory;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.jasig.cas.web.support.ArgumentExtractor;
 import org.jasig.cas.web.support.DefaultArgumentExtractor;
 import org.jasig.cas.web.support.CookieRetrievingCookieGenerator;
@@ -53,7 +54,7 @@ public class InitialFlowSetupActionTests {
 
         this.servicesManager = mock(ServicesManager.class);
         when(this.servicesManager.findServiceBy(any(Service.class))).thenReturn(
-                org.jasig.cas.services.TestUtils.getRegisteredService("test"));
+                ServicesTestUtils.getRegisteredService("test"));
         this.action.setServicesManager(this.servicesManager);
 
         this.action.afterPropertiesSet();

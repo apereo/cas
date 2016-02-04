@@ -1,6 +1,6 @@
 package org.jasig.cas.authentication.support;
 
-import org.jasig.cas.services.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.CasViewConstants;
@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -36,9 +37,7 @@ public class DefaultCasAttributeEncoderTests {
     @Before
     public void before() {
         this.attributes = new HashMap<>();
-        for (int i = 0; i < 3; i++) {
-            this.attributes.put("attr" + i, newSingleAttribute("value" + i));
-        }
+        IntStream.range(0, 3).forEach(i -> this.attributes.put("attr" + i, newSingleAttribute("value" + i)));
         this.attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, newSingleAttribute("PGT-1234567"));
         this.attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, newSingleAttribute("PrincipalPassword"));
     }
@@ -49,7 +48,7 @@ public class DefaultCasAttributeEncoderTests {
 
     @Test
     public void checkNoPublicKeyDefined() {
-        final Service service = TestUtils.getService("testDefault");
+        final Service service = ServicesTestUtils.getService("testDefault");
         final CasAttributeEncoder encoder = new DefaultCasAttributeEncoder(this.servicesManager);
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, service);
         assertEquals(encoded.size(), this.attributes.size() - 2);
@@ -57,7 +56,7 @@ public class DefaultCasAttributeEncoderTests {
 
     @Test
     public void checkAttributesEncodedCorrectly() {
-        final Service service = TestUtils.getService("testencryption");
+        final Service service = ServicesTestUtils.getService("testencryption");
         final CasAttributeEncoder encoder = new DefaultCasAttributeEncoder(this.servicesManager);
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, service);
         assertEquals(encoded.size(), this.attributes.size());

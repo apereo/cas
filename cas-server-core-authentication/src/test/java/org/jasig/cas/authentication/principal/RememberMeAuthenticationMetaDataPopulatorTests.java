@@ -10,7 +10,7 @@ import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.DefaultHandlerResult;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.RememberMeUsernamePasswordCredential;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     @Test
     public void verifyWithoutRememberMeCredentials() {
-        final AuthenticationBuilder builder = newBuilder(TestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationBuilder builder = newBuilder(AuthTestUtils.getCredentialsWithSameUsernameAndPassword());
         final Authentication auth = builder.build();
 
         assertNull(auth.getAttributes().get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
@@ -58,7 +58,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
     private AuthenticationBuilder newBuilder(final Credential credential) {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(TestUtils.getPrincipal())
+        final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(AuthTestUtils.getPrincipal())
                 .addCredential(meta)
                 .addSuccess("test", new DefaultHandlerResult(handler, meta));
 

@@ -1,5 +1,7 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.util.ServicesTestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -39,7 +41,7 @@ public final class DistributedTicketRegistryTests {
     @Test
     public void verifyProxiedInstancesEqual() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                org.jasig.cas.authentication.TestUtils.getAuthentication(),
+                AuthTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
 
@@ -56,7 +58,7 @@ public final class DistributedTicketRegistryTests {
         assertEquals(t.isExpired(), returned.isExpired());
         assertEquals(t.isRoot(), returned.isRoot());
 
-        final ServiceTicket s = t.grantServiceTicket("stest", org.jasig.cas.services.TestUtils.getService(),
+        final ServiceTicket s = t.grantServiceTicket("stest", ServicesTestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), false, true);
         this.ticketRegistry.addTicket(s);
 
@@ -76,20 +78,20 @@ public final class DistributedTicketRegistryTests {
     @Test
     public void verifyUpdateOfRegistry() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test",
-                org.jasig.cas.authentication.TestUtils.getAuthentication(),
+                AuthTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(t);
         final TicketGrantingTicket returned = (TicketGrantingTicket) this.ticketRegistry.getTicket("test");
 
-        final ServiceTicket s = returned.grantServiceTicket("test2", org.jasig.cas.services.TestUtils.getService(),
+        final ServiceTicket s = returned.grantServiceTicket("test2", ServicesTestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), true, true);
 
         this.ticketRegistry.addTicket(s);
         final ServiceTicket s2 = (ServiceTicket) this.ticketRegistry.getTicket("test2");
-        assertNotNull(s2.grantProxyGrantingTicket("ff", org.jasig.cas.authentication.TestUtils.getAuthentication(),
+        assertNotNull(s2.grantProxyGrantingTicket("ff", AuthTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy()));
 
-        assertTrue(s2.isValidFor(org.jasig.cas.services.TestUtils.getService()));
+        assertTrue(s2.isValidFor(ServicesTestUtils.getService()));
         assertTrue(this.wasTicketUpdated);
 
         returned.markTicketExpired();

@@ -7,7 +7,7 @@ import org.jasig.cas.authentication.Credential;
 import org.jasig.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.jasig.cas.authentication.OneTimePasswordCredential;
 import org.jasig.cas.authentication.SuccessfulHandlerMetaDataPopulator;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ServiceTicket;
@@ -133,7 +133,7 @@ public class MultifactorAuthenticationTests {
     }
 
     private static Service newService(final String id) {
-        return TestUtils.getService(id);
+        return AuthTestUtils.getService(id);
     }
 
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws

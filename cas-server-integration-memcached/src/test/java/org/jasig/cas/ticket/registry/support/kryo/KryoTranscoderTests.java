@@ -1,9 +1,5 @@
 package org.jasig.cas.ticket.registry.support.kryo;
 
-import com.esotericsoftware.kryo.Serializer;
-import com.esotericsoftware.kryo.serializers.FieldSerializer;
-import net.spy.memcached.CachedData;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.AuthenticationBuilder;
@@ -21,14 +17,17 @@ import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.PrincipalFactory;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
-import org.jasig.cas.services.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
+
+import net.spy.memcached.CachedData;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.junit.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -37,10 +36,11 @@ import javax.validation.constraints.NotNull;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -73,14 +73,8 @@ public class KryoTranscoderTests {
 
     public KryoTranscoderTests() {
         transcoder = new KryoTranscoder();
-        final Map<Class<?>, Serializer> serializerMap = new HashMap<Class<?>, Serializer>();
-        serializerMap.put(
-                MockServiceTicket.class,
-                new FieldSerializer(transcoder.getKryo(), MockServiceTicket.class));
-        serializerMap.put(
-                MockTicketGrantingTicket.class,
-                new FieldSerializer(transcoder.getKryo(), MockTicketGrantingTicket.class));
-        transcoder.setSerializerMap(serializerMap);
+        transcoder.getKryo().register(MockServiceTicket.class);
+        transcoder.getKryo().register(MockTicketGrantingTicket.class);
         transcoder.initialize();
 
         this.principalAttributes = new HashMap<>();
@@ -94,7 +88,7 @@ public class KryoTranscoderTests {
                 new DefaultPrincipalFactory()
                         .createPrincipal("user", Collections.unmodifiableMap(this.principalAttributes)));
         bldr.setAttributes(Collections.unmodifiableMap(this.principalAttributes));
-        bldr.setAuthenticationDate(new DateTime());
+        bldr.setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC));
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", AccountNotFoundException.class);
         bldr.addSuccess("authn", new DefaultHandlerResult(
@@ -103,12 +97,12 @@ public class KryoTranscoderTests {
 
         final TicketGrantingTicket expectedTGT =
                 new TicketGrantingTicketImpl(TGT_ID,
-                        org.jasig.cas.services.TestUtils.getService(),
+                        ServicesTestUtils.getService(),
                         null, bldr.build(),
                         new NeverExpiresExpirationPolicy());
 
         final ServiceTicket ticket = expectedTGT.grantServiceTicket(ST_ID,
-                org.jasig.cas.services.TestUtils.getService(),
+                ServicesTestUtils.getService(),
                 new NeverExpiresExpirationPolicy(), false, true);
         CachedData result = transcoder.encode(expectedTGT);
         final TicketGrantingTicket resultTicket = (TicketGrantingTicket) transcoder.decode(result);
@@ -136,7 +130,8 @@ public class KryoTranscoderTests {
     }
 
     private void internalProxyTest(final String proxyUrl) throws MalformedURLException {
-        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl), TestUtils.getRegisteredService("https://.+"));
+        final Credential proxyCredential = new HttpBasedServiceCredential(new URL(proxyUrl),
+                ServicesTestUtils.getRegisteredService("https://.+"));
         final TicketGrantingTicket expectedTGT = new MockTicketGrantingTicket(TGT_ID, proxyCredential, this.principalAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
         assertEquals(expectedTGT, transcoder.decode(transcoder.encode(expectedTGT)));
@@ -215,7 +210,7 @@ public class KryoTranscoderTests {
 
     @Test
     public void verifyEncodeDecodeRegisteredService() throws Exception {
-        final RegisteredService service = TestUtils.getRegisteredService("helloworld");
+        final RegisteredService service = ServicesTestUtils.getRegisteredService("helloworld");
         assertEquals(service, transcoder.decode(transcoder.encode(service)));
     }
 
@@ -267,8 +262,8 @@ public class KryoTranscoderTests {
         }
 
         @Override
-        public long getCreationTime() {
-            return 0;
+        public ZonedDateTime getCreationTime() {
+            return DateTimeUtils.zonedDateTimeOf(0);
         }
 
         @Override
@@ -299,7 +294,7 @@ public class KryoTranscoderTests {
 
         private Service proxiedBy;
 
-        private final Date creationDate = new Date();
+        private final ZonedDateTime creationDate = ZonedDateTime.now(ZoneOffset.UTC);
 
         private final Authentication authentication;
 
@@ -318,7 +313,7 @@ public class KryoTranscoderTests {
             final CredentialMetaData credentialMetaData = new BasicCredentialMetaData(credential);
             final AuthenticationBuilder builder = new DefaultAuthenticationBuilder();
             builder.setPrincipal(this.principalFactory.createPrincipal(USERNAME, principalAttributes));
-            builder.setAuthenticationDate(new DateTime());
+            builder.setAuthenticationDate(ZonedDateTime.now(ZoneOffset.UTC));
             builder.addCredential(credentialMetaData);
             builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
             final AuthenticationHandler handler = new MockAuthenticationHandler();
@@ -404,8 +399,8 @@ public class KryoTranscoderTests {
         }
 
         @Override
-        public long getCreationTime() {
-            return this.creationDate.getTime();
+        public ZonedDateTime getCreationTime() {
+            return this.creationDate;
         }
 
         @Override
@@ -418,7 +413,7 @@ public class KryoTranscoderTests {
             return other instanceof MockTicketGrantingTicket
                     && ((MockTicketGrantingTicket) other).getId().equals(this.id)
                     && ((MockTicketGrantingTicket) other).getCountOfUses() == this.usageCount
-                    && ((MockTicketGrantingTicket) other).getCreationTime() == this.creationDate.getTime()
+                    && ((MockTicketGrantingTicket) other).getCreationTime().equals(this.creationDate)
                     && ((MockTicketGrantingTicket) other).getAuthentication().equals(this.authentication);
         }
 
@@ -427,7 +422,7 @@ public class KryoTranscoderTests {
             final HashCodeBuilder bldr = new HashCodeBuilder(17, 33);
             return bldr.append(this.id)
                         .append(this.usageCount)
-                        .append(this.creationDate.getTime())
+                        .append(this.creationDate)
                         .append(this.authentication).toHashCode();
         }
     }

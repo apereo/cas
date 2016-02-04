@@ -19,7 +19,7 @@ war {
         attributes("Implementation-Title": project.name,
                 "Implementation-Vendor": project.group,
                 "Created-By": project.group,
-                "Implementation-Date": new Date(),
+                "Implementation-Date": java.time.ZonedDateTime.now(),
                 "Implementation-Version": project.version)
     }
 }

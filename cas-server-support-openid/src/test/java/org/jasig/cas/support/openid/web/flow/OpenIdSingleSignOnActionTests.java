@@ -1,6 +1,7 @@
 package org.jasig.cas.support.openid.web.flow;
 
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.jasig.cas.support.openid.OpenIdProtocolConstants;
@@ -79,7 +80,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
     public void verifySuccessfulServiceTicket() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        final Authentication authentication = org.jasig.cas.authentication.TestUtils.getAuthentication("scootman28");
+        final Authentication authentication = AuthTestUtils.getAuthentication("scootman28");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("TGT-11", authentication,
                 new NeverExpiresExpirationPolicy());
 

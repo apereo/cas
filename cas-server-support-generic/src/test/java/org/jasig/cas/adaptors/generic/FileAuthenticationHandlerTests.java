@@ -1,5 +1,6 @@
 package org.jasig.cas.adaptors.generic;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
@@ -43,7 +44,7 @@ public class FileAuthenticationHandlerTests  {
     public void verifyDoesntSupportBadUserCredentials() {
         try {
             final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
-                new URL("http://www.rutgers.edu"), org.jasig.cas.authentication.TestUtils.getRegisteredService());
+                new URL("http://www.rutgers.edu"), AuthTestUtils.getRegisteredService());
             assertFalse(this.authenticationHandler.supports(c));
         } catch (final MalformedURLException e) {
             fail("MalformedURLException caught.");

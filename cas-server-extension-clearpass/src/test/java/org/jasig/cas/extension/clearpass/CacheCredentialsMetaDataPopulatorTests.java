@@ -3,7 +3,7 @@ package org.jasig.cas.extension.clearpass;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
 import org.jasig.cas.authentication.Credential;
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
 
@@ -21,11 +21,11 @@ public class CacheCredentialsMetaDataPopulatorTests {
 
     @Test
     public void verifyAttributePopulationWithPassword() {
-        final Authentication auth = TestUtils.getAuthentication();
+        final Authentication auth = AuthTestUtils.getAuthentication();
         final Map<String, String> map = new HashMap<>();
         final CacheCredentialsMetaDataPopulator populator = new CacheCredentialsMetaDataPopulator(map);
 
-        final UsernamePasswordCredential c = TestUtils.getCredentialsWithSameUsernameAndPassword();
+        final UsernamePasswordCredential c = AuthTestUtils.getCredentialsWithSameUsernameAndPassword();
         populator.populateAttributes(DefaultAuthenticationBuilder.newInstance(auth), c);
 
         assertTrue(map.containsKey(auth.getPrincipal().getId()));
@@ -34,16 +34,11 @@ public class CacheCredentialsMetaDataPopulatorTests {
 
     @Test
     public void verifyAttributePopulationWithPasswordWithDifferentCredentialsType() {
-        final Authentication auth = TestUtils.getAuthentication();
+        final Authentication auth = AuthTestUtils.getAuthentication();
         final Map<String, String> map = new HashMap<>();
         final CacheCredentialsMetaDataPopulator populator = new CacheCredentialsMetaDataPopulator(map);
 
-        final Credential c = new Credential() {
-            @Override
-            public String getId() {
-                return "something";
-            }
-        };
+        final Credential c = () -> "something";
 
         if (populator.supports(c)) {
             populator.populateAttributes(DefaultAuthenticationBuilder.newInstance(auth), c);

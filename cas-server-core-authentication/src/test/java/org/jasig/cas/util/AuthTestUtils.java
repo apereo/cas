@@ -1,6 +1,17 @@
-package org.jasig.cas.authentication;
+package org.jasig.cas.util;
 
-import com.google.common.collect.ImmutableList;
+import org.jasig.cas.authentication.Authentication;
+import org.jasig.cas.authentication.AuthenticationException;
+import org.jasig.cas.authentication.AuthenticationHandler;
+import org.jasig.cas.authentication.AuthenticationResult;
+import org.jasig.cas.authentication.AuthenticationSystemSupport;
+import org.jasig.cas.authentication.BasicCredentialMetaData;
+import org.jasig.cas.authentication.Credential;
+import org.jasig.cas.authentication.CredentialMetaData;
+import org.jasig.cas.authentication.DefaultAuthenticationBuilder;
+import org.jasig.cas.authentication.DefaultHandlerResult;
+import org.jasig.cas.authentication.HttpBasedServiceCredential;
+import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
 import org.jasig.cas.authentication.principal.Principal;
@@ -8,6 +19,8 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.services.persondir.IPersonAttributeDao;
 import org.jasig.services.persondir.support.StubPersonAttributeDao;
+
+import com.google.common.collect.ImmutableList;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,7 +35,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0.2
  */
-public final class TestUtils {
+public final class AuthTestUtils {
 
     public static final String CONST_USERNAME = "test";
 
@@ -34,7 +47,7 @@ public final class TestUtils {
 
     private static final String CONST_PASSWORD = "test1";
 
-    private TestUtils() {
+    private AuthTestUtils() {
         // do not instantiate
     }
 
@@ -70,7 +83,7 @@ public final class TestUtils {
             final String url) {
         try {
             return new HttpBasedServiceCredential(new URL(url),
-                    TestUtils.getRegisteredService(url));
+                    AuthTestUtils.getRegisteredService(url));
         } catch (final MalformedURLException e) {
             throw new IllegalArgumentException();
         }

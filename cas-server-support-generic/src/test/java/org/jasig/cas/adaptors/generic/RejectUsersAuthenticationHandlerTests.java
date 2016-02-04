@@ -1,5 +1,6 @@
 package org.jasig.cas.adaptors.generic;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.HttpBasedServiceCredential;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.junit.Test;
@@ -49,7 +50,7 @@ public class RejectUsersAuthenticationHandlerTests {
         try {
             assertFalse(this.authenticationHandler
                 .supports(new HttpBasedServiceCredential(new URL(
-                    "http://www.rutgers.edu"), org.jasig.cas.authentication.TestUtils.getRegisteredService())));
+                    "http://www.rutgers.edu"), AuthTestUtils.getRegisteredService())));
         } catch (final MalformedURLException e) {
             fail("Could not resolve URL.");
         }

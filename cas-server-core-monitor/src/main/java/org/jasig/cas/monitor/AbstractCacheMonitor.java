@@ -2,6 +2,8 @@ package org.jasig.cas.monitor;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Arrays;
+
 /**
  * Abstract base class for monitors that observe cache storage systems.
  *
@@ -52,16 +54,11 @@ public abstract class AbstractCacheMonitor extends AbstractNamedMonitor<CacheSta
             if (statistics == null || statistics.length == 0) {
                 return new CacheStatus(StatusCode.ERROR, "Cache statistics not available.");
             }
-            StatusCode overall = StatusCode.OK;
-            StatusCode code;
-            for (final CacheStatistics stats : statistics) {
-                code = status(stats);
-                // Record highest status which is equivalent to worst case
-                if (code.value() > overall.value()) {
-                    overall = code;
-                }
-            }
-            status = new CacheStatus(overall, null, statistics);
+            final StatusCode[] overall = {StatusCode.OK};
+            Arrays.stream(statistics).map(this::status)
+                    .filter(code -> code.value() > overall[0].value())
+                    .forEach(code -> overall[0] = code);
+            status = new CacheStatus(overall[0], null, statistics);
         } catch (final Exception e) {
             status = new CacheStatus(e);
         }

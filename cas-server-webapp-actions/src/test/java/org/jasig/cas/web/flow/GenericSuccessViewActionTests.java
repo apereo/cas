@@ -1,6 +1,7 @@
 package org.jasig.cas.web.flow;
 
 import org.jasig.cas.CentralAuthenticationService;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.NullPrincipal;
 import org.jasig.cas.authentication.principal.Principal;
@@ -24,7 +25,7 @@ public class GenericSuccessViewActionTests {
         final CentralAuthenticationService cas = mock(CentralAuthenticationService.class);
         final Authentication authn = mock(Authentication.class);
         when(authn.getPrincipal()).thenReturn(
-                org.jasig.cas.authentication.TestUtils.getPrincipal("cas"));
+                AuthTestUtils.getPrincipal("cas"));
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(authn);
 

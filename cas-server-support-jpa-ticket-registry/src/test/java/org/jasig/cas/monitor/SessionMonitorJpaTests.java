@@ -1,6 +1,6 @@
 package org.jasig.cas.monitor;
 
-import org.jasig.cas.authentication.TestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -59,7 +59,7 @@ public class SessionMonitorJpaTests {
         for (int i = 0; i < tgtCount; i++) {
             ticket = new TicketGrantingTicketImpl(
                     GENERATOR.getNewTicketId("TGT"),
-                    TestUtils.getAuthentication(),
+                    AuthTestUtils.getAuthentication(),
                     TEST_EXP_POLICY);
             registry.addTicket(ticket);
         }

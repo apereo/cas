@@ -1,15 +1,16 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.Authentication;
-
 import org.jasig.cas.authentication.principal.Service;
-import org.jasig.cas.services.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
-import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.jasig.cas.util.DateTimeUtils;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -72,11 +74,11 @@ public class HazelcastTicketRegistryTests {
     @Test
     public void verifyDeleteTicketWithChildren() throws Exception {
         this.hzTicketRegistry1.addTicket(new TicketGrantingTicketImpl(
-                "TGT", org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+                "TGT", AuthTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.hzTicketRegistry1.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
-        final Service service = TestUtils.getService("TGT_DELETE_TEST");
+        final Service service = ServicesTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), true, false);
@@ -187,8 +189,8 @@ public class HazelcastTicketRegistryTests {
         }
 
         @Override
-        public long getCreationTime() {
-            return 0;
+        public ZonedDateTime getCreationTime() {
+            return DateTimeUtils.zonedDateTimeOf(0);
         }
 
         @Override
@@ -238,8 +240,8 @@ public class HazelcastTicketRegistryTests {
         }
 
         @Override
-        public long getCreationTime() {
-            return 0;
+        public ZonedDateTime getCreationTime() {
+            return DateTimeUtils.zonedDateTimeOf(0);
         }
 
         @Override

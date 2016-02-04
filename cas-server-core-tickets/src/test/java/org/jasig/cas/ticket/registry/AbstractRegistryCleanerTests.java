@@ -1,5 +1,6 @@
 package org.jasig.cas.ticket.registry;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
@@ -8,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -48,7 +50,7 @@ public abstract class AbstractRegistryCleanerTests {
     public void verifyCleanRegistryOneNonExpired() {
         populateRegistryWithExpiredTickets();
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("testNoExpire",
-                org.jasig.cas.authentication.TestUtils.getAuthentication(),
+                AuthTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy());
         this.ticketRegistry.addTicket(ticket);
         clean();
@@ -56,13 +58,13 @@ public abstract class AbstractRegistryCleanerTests {
     }
 
     protected void populateRegistryWithExpiredTickets() {
-        for (int i = 0; i < 10; i++) {
+        IntStream.range(0, 10).forEach(i -> {
             final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("test" + i,
-                    org.jasig.cas.authentication.TestUtils.getAuthentication(),
+                    AuthTestUtils.getAuthentication(),
                     new NeverExpiresExpirationPolicy());
             ticket.markTicketExpired();
             this.ticketRegistry.addTicket(ticket);
-        }
+        });
     }
 
     private void clean() {

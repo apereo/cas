@@ -1,11 +1,12 @@
 package org.jasig.cas.services;
 
-import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.events.CasRegisteredServiceDeletedEvent;
 import org.jasig.cas.support.events.CasRegisteredServiceSavedEvent;
+import org.jasig.cas.util.DateTimeUtils;
 import org.jasig.inspektr.audit.annotation.Audit;
-import org.joda.time.DateTime;
+
+import com.google.common.base.Predicate;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -27,12 +28,16 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of the {@link ServicesManager} interface. If there are
@@ -62,7 +67,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
     /**
      * Map to store all services.
      */
-    private ConcurrentHashMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
+    private ConcurrentMap<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
     @Value("${service.registry.quartz.reloader.repeatInterval:60}")
     private int refreshInterval;
@@ -115,13 +120,8 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
     @Override
     public RegisteredService findServiceBy(final Service service) {
-        final Collection<RegisteredService> c = convertToTreeSet();
-        for (final RegisteredService r : c) {
-            if (r.matches(service)) {
-                return r;
-            }
-        }
-        return null;
+        final TreeSet<RegisteredService> c = convertToTreeSet();
+        return c.stream().filter(r -> r.matches(service)).findFirst().orElse(null);
     }
 
     @Override
@@ -186,15 +186,11 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
      * Load services that are provided by the DAO.
      */
     public void load() {
-        final ConcurrentHashMap<Long, RegisteredService> localServices =
-            new ConcurrentHashMap<>();
-
-        for (final RegisteredService r : this.serviceRegistryDao.load()) {
-            LOGGER.debug("Adding registered service {}", r.getServiceId());
-            localServices.put(r.getId(), r);
-        }
-
-        this.services = localServices;
+        this.services = this.serviceRegistryDao.load().stream()
+                .collect(Collectors.toConcurrentMap(r -> {
+                    LOGGER.debug("Adding registered service {}", r.getServiceId());
+                    return r.getId();
+                }, r -> r, (r, s) -> s == null ? r : s == null ? r : s));
         LOGGER.info("Loaded {} services from {}.", this.services.size(),
             this.serviceRegistryDao);
 
@@ -215,7 +211,7 @@ public final class DefaultServicesManagerImpl implements ReloadableServicesManag
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(DateTime.now().plusSeconds(this.startDelay).toDate())
+                    .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(this.startDelay)))
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
                         .withIntervalInSeconds(this.refreshInterval)
                         .repeatForever()).build();

@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication.principal;
 
+import org.jasig.cas.util.ServicesTestUtils;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -19,7 +21,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
 
         final Principal p = mock(Principal.class);
         when(p.getId()).thenReturn("testuser");
-        final String value = generator.generate(p, org.jasig.cas.services.TestUtils.getService());
+        final String value = generator.generate(p, ServicesTestUtils.getService());
 
         assertNotNull(value);
     }

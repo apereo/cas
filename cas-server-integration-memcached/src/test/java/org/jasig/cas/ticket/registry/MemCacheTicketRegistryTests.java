@@ -1,6 +1,8 @@
 package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.AbstractMemcachedTests;
+import org.jasig.cas.util.ServicesTestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
@@ -102,12 +104,12 @@ public class MemCacheTicketRegistryTests extends AbstractMemcachedTests {
     public void verifyDeleteTicketWithChildren() throws Exception {
         this.registry.addTicket(new TicketGrantingTicketImpl(
                 "TGT",
-                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
+                AuthTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy()));
         final TicketGrantingTicket tgt = this.registry.getTicket(
                 "TGT", TicketGrantingTicket.class);
 
         final Service service =
-                org.jasig.cas.services.TestUtils.getService("TGT_DELETE_TEST");
+                ServicesTestUtils.getService("TGT_DELETE_TEST");
 
         final ServiceTicket st1 = tgt.grantServiceTicket(
                 "ST1", service, new NeverExpiresExpirationPolicy(), true, false);

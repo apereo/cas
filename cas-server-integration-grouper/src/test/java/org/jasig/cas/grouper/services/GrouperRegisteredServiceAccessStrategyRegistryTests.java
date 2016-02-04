@@ -3,7 +3,7 @@ package org.jasig.cas.grouper.services;
 import org.apache.commons.io.FileUtils;
 import org.jasig.cas.services.AbstractRegisteredService;
 import org.jasig.cas.services.JsonServiceRegistryDao;
-import org.jasig.cas.services.TestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -38,7 +38,7 @@ public class GrouperRegisteredServiceAccessStrategyRegistryTests {
         v1.add("admin");
         attributes.put("memberOf", v1);
 
-        final AbstractRegisteredService service = TestUtils.getRegisteredService("test");
+        final AbstractRegisteredService service = ServicesTestUtils.getRegisteredService("test");
         final GrouperRegisteredServiceAccessStrategy grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);

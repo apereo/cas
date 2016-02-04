@@ -1,14 +1,18 @@
 package org.jasig.cas.ticket.support;
 
-import static org.junit.Assert.*;
-
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
+import org.jasig.cas.util.AuthTestUtils;
+import org.jasig.cas.util.ServicesTestUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
+
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
@@ -32,7 +36,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
                 TimeUnit.MILLISECONDS);
 
         this.ticket = new TicketGrantingTicketImpl("test",
-                org.jasig.cas.authentication.TestUtils.getAuthentication(), this.expirationPolicy);
+                AuthTestUtils.getAuthentication(), this.expirationPolicy);
 
     }
 
@@ -54,11 +58,9 @@ public class MultiTimeUseOrTimeoutExpirationPolicyTests {
 
     @Test
     public void verifyTicketIsExpiredByCount() {
-        for (int i = 0; i < NUMBER_OF_USES; i++) {
-            this.ticket.grantServiceTicket("test",
-                    org.jasig.cas.services.TestUtils.getService(), new NeverExpiresExpirationPolicy(), false,
-                    true);
-        }
+        IntStream.range(0, NUMBER_OF_USES)
+                .forEach(i -> this.ticket.grantServiceTicket("test", ServicesTestUtils.getService(),
+                        new NeverExpiresExpirationPolicy(), false, true));
         assertTrue(this.ticket.isExpired());
     }
 }

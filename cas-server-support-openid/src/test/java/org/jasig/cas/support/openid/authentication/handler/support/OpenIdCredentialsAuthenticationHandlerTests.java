@@ -1,5 +1,6 @@
 package org.jasig.cas.support.openid.authentication.handler.support;
 
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.support.openid.AbstractOpenIdTests;
 import org.jasig.cas.support.openid.authentication.principal.OpenIdCredential;
@@ -63,6 +64,6 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
 
     protected TicketGrantingTicket getTicketGrantingTicket() {
         return new TicketGrantingTicketImpl("test",
-                org.jasig.cas.authentication.TestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                AuthTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     }
 }

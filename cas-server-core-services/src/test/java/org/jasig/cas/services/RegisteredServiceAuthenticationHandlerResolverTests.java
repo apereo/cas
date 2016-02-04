@@ -5,6 +5,8 @@ import org.jasig.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationHandler;
 import org.jasig.cas.authentication.AuthenticationTransaction;
 import org.jasig.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
+import org.jasig.cas.util.ServicesTestUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -33,11 +35,11 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         final InMemoryServiceRegistryDaoImpl dao = new InMemoryServiceRegistryDaoImpl();
         final List<RegisteredService> list = new ArrayList<>();
 
-        AbstractRegisteredService svc = TestUtils.getRegisteredService("serviceid1");
+        AbstractRegisteredService svc = ServicesTestUtils.getRegisteredService("serviceid1");
         svc.setRequiredHandlers(ImmutableSet.of("handler1", "handler3"));
         list.add(svc);
 
-        svc = TestUtils.getRegisteredService("serviceid2");
+        svc = ServicesTestUtils.getRegisteredService("serviceid2");
         svc.setRequiredHandlers(Collections.EMPTY_SET);
         list.add(svc);
 
@@ -63,8 +65,8 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
                 new RegisteredServiceAuthenticationHandlerResolver();
         resolver.setServicesManager(this.defaultServicesManagerImpl);
 
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getService("serviceid1"),
-                TestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(ServicesTestUtils.getService("serviceid1"),
+                ServicesTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
         final Set<AuthenticationHandler> handlers =  resolver.resolve(this.handlers, transaction);
         assertEquals(handlers.size(), 2);
@@ -75,8 +77,8 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         final RegisteredServiceAuthenticationHandlerResolver resolver =
                 new RegisteredServiceAuthenticationHandlerResolver();
         resolver.setServicesManager(this.defaultServicesManagerImpl);
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(TestUtils.getService("serviceid2"),
-                TestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(ServicesTestUtils.getService("serviceid2"),
+                ServicesTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         final Set<AuthenticationHandler> handlers =  resolver.resolve(this.handlers, transaction);
         assertEquals(handlers.size(), this.handlers.size());
     }

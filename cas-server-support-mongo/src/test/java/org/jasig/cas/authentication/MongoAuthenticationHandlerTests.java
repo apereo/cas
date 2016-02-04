@@ -1,5 +1,7 @@
 package org.jasig.cas.authentication;
 
+import org.jasig.cas.util.AuthTestUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ public class MongoAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthentication() throws Exception {
-        final HandlerResult result = this.authenticationHandler.authenticate(TestUtils
+        final HandlerResult result = this.authenticationHandler.authenticate(AuthTestUtils
                 .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
         assertEquals(result.getPrincipal().getId(), "u1");
         assertTrue(result.getPrincipal().getAttributes().containsKey("loc"));

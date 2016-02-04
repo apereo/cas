@@ -4,14 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nullable;
 import javax.sql.DataSource;
 import javax.validation.constraints.NotNull;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * Monitors a data source that describes a single connection or connection pool to a database.
@@ -58,14 +56,11 @@ public class DataSourceMonitor extends AbstractPoolMonitor {
 
     @Override
     protected StatusCode checkPool() throws Exception {
-        return this.jdbcTemplate.query(this.validationQuery, new ResultSetExtractor<StatusCode>() {
-            @Override
-            public StatusCode extractData(final ResultSet rs) throws SQLException {
-                if (rs.next()) {
-                    return StatusCode.OK;
-                }
-                return StatusCode.WARN;
+        return this.jdbcTemplate.query(this.validationQuery, (ResultSet rs) -> {
+            if (rs.next()) {
+                return StatusCode.OK;
             }
+            return StatusCode.WARN;
         });
     }
 

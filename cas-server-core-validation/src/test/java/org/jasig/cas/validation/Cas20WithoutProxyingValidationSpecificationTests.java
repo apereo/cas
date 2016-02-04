@@ -1,5 +1,7 @@
 package org.jasig.cas.validation;
 
+import org.jasig.cas.util.ValidationTestUtils;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,23 +22,23 @@ public class Cas20WithoutProxyingValidationSpecificationTests {
 
     @Test
     public void verifySatisfiesSpecOfTrue() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(true)));
+        assertTrue(this.validationSpecification.isSatisfiedBy(ValidationTestUtils.getAssertion(true)));
     }
 
     @Test
     public void verifyNotSatisfiesSpecOfTrue() {
         this.validationSpecification.setRenew(true);
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
+        assertFalse(this.validationSpecification.isSatisfiedBy(ValidationTestUtils.getAssertion(false)));
     }
 
     @Test
     public void verifySatisfiesSpecOfFalse() {
-        assertTrue(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false)));
+        assertTrue(this.validationSpecification.isSatisfiedBy(ValidationTestUtils.getAssertion(false)));
     }
 
     @Test
     public void verifyDoesNotSatisfiesSpecOfFalse() {
-        assertFalse(this.validationSpecification.isSatisfiedBy(TestUtils.getAssertion(false, new String[] {"test2"})));
+        assertFalse(this.validationSpecification.isSatisfiedBy(ValidationTestUtils.getAssertion(false, new String[] {"test2"})));
     }
 
     @Test

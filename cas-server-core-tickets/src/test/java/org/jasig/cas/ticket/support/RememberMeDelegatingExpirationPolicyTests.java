@@ -1,5 +1,7 @@
 package org.jasig.cas.ticket.support;
 
+import org.jasig.cas.util.ServicesTestUtils;
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.RememberMeCredential;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
@@ -38,23 +40,23 @@ public final class RememberMeDelegatingExpirationPolicyTests {
 
     @Test
     public void verifyTicketExpirationWithRememberMe() {
-        final Authentication authentication = org.jasig.cas.authentication.TestUtils.getAuthentication(
+        final Authentication authentication = AuthTestUtils.getAuthentication(
                 this.principalFactory.createPrincipal("test"),
                 Collections.<String, Object>singletonMap(
                         RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", org.jasig.cas.services.TestUtils.getService(), this.p, false, true);
+        t.grantServiceTicket("55", ServicesTestUtils.getService(), this.p, false, true);
         assertTrue(t.isExpired());
 
     }
 
     @Test
     public void verifyTicketExpirationWithoutRememberMe() {
-        final Authentication authentication = org.jasig.cas.authentication.TestUtils.getAuthentication();
+        final Authentication authentication = AuthTestUtils.getAuthentication();
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
-        t.grantServiceTicket("55", org.jasig.cas.services.TestUtils.getService(), this.p, false, true);
+        t.grantServiceTicket("55", ServicesTestUtils.getService(), this.p, false, true);
         assertFalse(t.isExpired());
 
     }

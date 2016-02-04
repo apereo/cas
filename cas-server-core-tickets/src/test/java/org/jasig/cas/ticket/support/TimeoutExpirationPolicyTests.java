@@ -1,12 +1,13 @@
 package org.jasig.cas.ticket.support;
 
-import static org.junit.Assert.*;
-
+import org.jasig.cas.util.AuthTestUtils;
 import org.jasig.cas.ticket.ExpirationPolicy;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -15,7 +16,7 @@ import org.junit.Test;
  */
 public class TimeoutExpirationPolicyTests {
 
-    private static final long TIMEOUT = 50;
+    private static final long TIMEOUT = 1;
 
     private ExpirationPolicy expirationPolicy;
 
@@ -25,7 +26,7 @@ public class TimeoutExpirationPolicyTests {
     public void setUp() throws Exception {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 
-        this.ticket = new TicketGrantingTicketImpl("test", org.jasig.cas.authentication.TestUtils
+        this.ticket = new TicketGrantingTicketImpl("test", AuthTestUtils
             .getAuthentication(), this.expirationPolicy);
 
     }
@@ -42,8 +43,7 @@ public class TimeoutExpirationPolicyTests {
 
     @Test
     public void verifyTicketIsExpired() throws InterruptedException {
-        Thread.sleep(TIMEOUT + 10); // this failed when it was only +1...not
-        // accurate??
-        assertTrue(this.ticket.isExpired());
+        ticket = new TicketGrantingTicketImpl("test", AuthTestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
+        assertTrue(ticket.isExpired());
     }
 }

@@ -1,12 +1,13 @@
 package org.jasig.cas.support.oauth.web;
 
+import org.jasig.cas.authentication.principal.Principal;
+import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
+
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.authentication.principal.Principal;
-import org.jasig.cas.support.oauth.OAuthConstants;
-import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;

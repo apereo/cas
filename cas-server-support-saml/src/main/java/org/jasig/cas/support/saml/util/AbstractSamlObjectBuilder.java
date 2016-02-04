@@ -1,6 +1,7 @@
 package org.jasig.cas.support.saml.util;
 
-import org.bouncycastle.util.encoders.Hex;
+import org.jasig.cas.util.EncodingUtils;
+
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
@@ -155,7 +156,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             final SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
             final byte[] buf = new byte[RANDOM_ID_SIZE];
             random.nextBytes(buf);
-            return "_".concat(new String(Hex.encode(buf)));
+            return "_".concat(EncodingUtils.hexEncode(buf));
         } catch (final Exception e) {
             throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.", e);
         }

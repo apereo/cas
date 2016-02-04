@@ -1,5 +1,7 @@
 package org.jasig.cas.web.support;
 
+import org.jasig.cas.util.DateTimeUtils;
+
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -18,9 +20,11 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,20 +60,17 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     @Qualifier("scheduler")
     private Scheduler scheduler;
 
-    private final ConcurrentMap<String, Date> ipMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
 
     @Override
     protected final boolean exceedsThreshold(final HttpServletRequest request) {
-        final Date last = this.ipMap.get(constructKey(request));
-        if (last == null) {
-            return false;
-        }
-        return submissionRate(new Date(), last) > getThresholdRate();
+        final ZonedDateTime last = this.ipMap.get(constructKey(request));
+        return last != null && (submissionRate(ZonedDateTime.now(ZoneOffset.UTC), last) > getThresholdRate());
     }
 
     @Override
     protected final void recordSubmissionFailure(final HttpServletRequest request) {
-        this.ipMap.put(constructKey(request), new Date());
+        this.ipMap.put(constructKey(request), ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     /**
@@ -84,12 +85,12 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      * This class relies on an external configuration to clean it up. It ignores the threshold data in the parent class.
      */
     public final void decrementCounts() {
-        final Set<Map.Entry<String, Date>> keys = this.ipMap.entrySet();
+        final Set<Entry<String, ZonedDateTime>> keys = this.ipMap.entrySet();
         logger.debug("Decrementing counts for throttler.  Starting key count: {}", keys.size());
 
-        final Date now = new Date();
-        for (final Iterator<Map.Entry<String, Date>> iter = keys.iterator(); iter.hasNext();) {
-            final Map.Entry<String, Date> entry = iter.next();
+        final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+        for (final Iterator<Entry<String, ZonedDateTime>> iter = keys.iterator(); iter.hasNext();) {
+            final Entry<String, ZonedDateTime> entry = iter.next();
             if (submissionRate(now, entry.getValue()) < getThresholdRate()) {
                 logger.trace("Removing entry for key {}", entry.getKey());
                 iter.remove();
@@ -106,8 +107,8 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
      *
      * @return  Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
      */
-    private static double submissionRate(final Date a, final Date b) {
-        return SUBMISSION_RATE_DIVIDEND / (a.getTime() - b.getTime());
+    private double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
+        return SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
     }
 
 
@@ -126,7 +127,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(new Date(System.currentTimeMillis() + this.startDelay))
+                    .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plus(this.startDelay, ChronoUnit.MILLIS)))
                     .withSchedule(SimpleScheduleBuilder.simpleSchedule()
                         .withIntervalInMinutes(this.refreshInterval)
                         .repeatForever()).build();
