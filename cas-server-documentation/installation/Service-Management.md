@@ -60,21 +60,21 @@ Registered services present the following metadata:
 | `logoutUrl`                       | URL endpoint for this service to receive logout requests. See [this guide](Logout-Single-Signout.html) for more details
 | `properties`                  		| Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis.
 
-###Configure Service Access Strategy
+### Configure Service Access Strategy
 
 [See this guide](Configuring-Service-Access-Strategy.html) for more info please.
 
-###Configure Service Custom Properties
+### Configure Service Custom Properties
 
 [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
 
 
-###Configure Proxy Authentication Policy
+### Configure Proxy Authentication Policy
 Each registered application in the registry may be assigned a proxy policy to determine whether the service is allowed for proxy authentication. This means that a PGT will not be issued to a service unless the proxy policy is configured to allow it. Additionally, the policy could also define which endpoint urls are in fact allowed to receive the PGT.
 
 Note that by default, the proxy authentication is disallowed for all applications.
 
-####Components
+#### Components
 
 #####`RefuseRegisteredServiceProxyPolicy`
 Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
