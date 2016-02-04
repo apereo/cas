@@ -29,6 +29,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * and encode the data in base 64.
      *
      * @param data the data
+     * @param service the registered service
      * @return the encoded piece of data in base64
      */
     @Override
