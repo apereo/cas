@@ -7,7 +7,7 @@ title: CAS - Delegate authentication
   <img src="https://pac4j.github.io/pac4j/img/logo-cas.png" width="300" />
 </p>
 
-#Overview
+# Overview
 The CAS server implements the CAS protocol on server side and may even behave like an OAuth provider, an OpenID provider or a SAML IdP. Whatever the protocol, the CAS server is first of all a server.
 
 But the CAS server can also act as a client using the [pac4j security engine](https://github.com/pac4j/pac4j) and delegate the authentication to:
@@ -29,9 +29,9 @@ Support is enabled by including the following dependency in the Maven WAR overla
 {% endhighlight %}
 
 
-##Configuration
+## Configuration
 
-###Add the needed clients
+### Add the needed clients
 
 An identity provider is a server which can authenticate users (like Google, Yahoo...) instead of a CAS server. If you want to delegate the CAS authentication to Twitter for example, you have to add an OAuth client for the provider: Twitter. For each delegated authentication mechanism, you must define the appropriate client.
 
@@ -99,14 +99,14 @@ Notice that for each OAuth provider, the CAS server is considered as an OAuth cl
 
 For the CAS OAuth wrapping, the *casOAuthUrl* property must be set to the OAuth wrapping url of the other CAS server which is using OAuth wrapping (for example: *http://mycasserver2/oauth2.0*).
 
-###Add links on the login page to authenticate on remote providers
+### Add links on the login page to authenticate on remote providers
 
 All available clients are automatically displayed on the login page as clickable buttons under the "Or login with:" label.
 
 If you customize the login page, you can access the text to display (which is mostly the name of the client) and the url for the redirection to the identity provider in the `pac4jUrls` object (which is a map of names to urls).
 
 
-###Identifier of the authenticated user
+### Identifier of the authenticated user
 
 After a successful delegated authentication, a user is created inside the CAS server with a specific identifier: this one can be created only from the technical identifier received from the external identity provider (like 1234) or as a "typed identifier" (like FacebookProfile#1234), which is the default.
 
@@ -117,14 +117,14 @@ cas.pac4j.client.authn.typedidused=true
 {% endhighlight %}
 
 
-##Demo
+## Demo
 
 Take a look at this demo: [cas-pac4j-oauth-demo](https://github.com/leleuj/cas-pac4j-oauth-demo) to see this authentication delegation mechanism in action.
 
 
-##How to use this support on CAS applications side?
+## How to use this support on CAS applications side?
 
-###Information returned by a delegated authentication
+### Information returned by a delegated authentication
 
 Once you have configured (see information above) your CAS server to act as an OAuth, CAS, OpenID (Connect) or SAML client, users will be able to authenticate at a OAuth/CAS/OpenID/SAML provider (like Facebook) instead of authenticating directly inside the CAS server.
 
@@ -140,7 +140,7 @@ The `Principal` object of the `Authentication` object has:
 * An identifier which is the profile type + `#` + the identifier of the user for this provider (i.e `FacebookProfile#0000000001`)
 * Attributes populated by the data retrieved from the provider (first name, last name, birthdate...)
 
-###How to send profile attributes to CAS client applications?
+### How to send profile attributes to CAS client applications?
 
 In CAS applications, through service ticket validation, user information are pushed to the CAS client and therefore to the application itself.
 
@@ -164,7 +164,7 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 
 On CAS client side, to receive attributes, you need to use the SAML validation or the CAS 3.0 validation, that is the `/p3/serviceValidate` url.
 
-###How to recreate user profiles in CAS applications?
+### How to recreate user profiles in CAS applications?
 
 In the CAS server, the complete user profile is known but when attributes are sent back to the CAS client applications, there is some kind of "CAS serialization" which makes data uneasy to be restored at their original state.
 
