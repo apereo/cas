@@ -16,18 +16,21 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.springframework" level="warn" />
-        <Logger name="org.springframework.webflow" level="warn" />
-        <Logger name="org.springframework.web" level="warn" />
-        <Logger name="org.pac4j" level="warn" />
-
-        <Logger name="org.jasig" level="info" additivity="false">
+        <AsyncLogger name="org.springframework" level="warn" />
+        <AsyncLogger name="org.springframework.webflow" level="warn" />
+        <AsyncLogger name="org.springframework.web" level="warn" />
+        <AsyncLogger name="org.pac4j" level="info" additivity="false">
             <AppenderRef ref="cas-management"/>
             <AppenderRef ref="console"/>
-        </Logger>
-        <Logger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+        </AsyncLogger>
+
+        <AsyncLogger name="org.jasig" level="info" additivity="false">
             <AppenderRef ref="cas-management"/>
-        </Logger>
+            <AppenderRef ref="console"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.jasig.inspektr.audit.support.Slf4jLoggingAuditTrailManager" level="info">
+            <AppenderRef ref="cas-management"/>
+        </AsyncLogger>
 
         <Root level="error">
             <AppenderRef ref="console"/>

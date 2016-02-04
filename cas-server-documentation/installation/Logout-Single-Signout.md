@@ -28,10 +28,10 @@ Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is
 
 The redirect behavior is turned off by default, and is activated via the following setting in `cas.properties`:
 
-{% highlight bash %}
+```bash
 # Specify whether CAS should redirect to the specified service parameter on /logout requests
 # cas.logout.followServiceRedirects=false
-{% endhighlight %}
+```
 
 The specified url must be registered in the service registry of CAS and enabled.
 
@@ -55,7 +55,7 @@ The way the notification is done (_back_ or _front_ channel) is configured at a 
 
 A sample SLO message:
 
-{% highlight xml %}
+```xml
 <samlp:LogoutRequest
     xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
     xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
@@ -65,7 +65,7 @@ A sample SLO message:
     <saml:NameID>@NOT_USED@</saml:NameID>
     <samlp:SessionIndex>[SESSION IDENTIFIER]</samlp:SessionIndex>
 </samlp:LogoutRequest>
-{% endhighlight %}
+```
 
 The session identifier is the CAS service ticket ID that was provided to the service when it originally authenticated
 to CAS. The session identifier is used to correlate a CAS session with an application session; for example, the SLO
@@ -74,17 +74,17 @@ session identifier maps to a servlet session that can subsequently be destroyed 
 ###Turning Off Single Logout
 To disable single logout, adjust the following setting in `cas.properties` file:
 
-{% highlight bash %}
+```bash
 # To turn off all back channel SLO requests set slo.disabled to true
 # slo.callbacks.disabled=false
-{% endhighlight %}
+```
 
 ###Single Logout Per Service
 Registered applications with CAS have the option to control single logout behavior individually via the [Service Managament](Service-Management.html) component. Each registered service in the service registry will include configuration that describes how to the logout request should be submitted. This behavior is controlled via the `logoutType` property which allows to specify whether the logout request should be submitted via back/front channel or turned off for this application.
 
 Sample configuration follows:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
@@ -92,7 +92,7 @@ Sample configuration follows:
   "id" : 1,
   "logoutType" : "BACK_CHANNEL"
 }
-{% endhighlight %}
+```
 
 ###Service Endpoint for Logout Requests
 By default, logout requests are submitted to the original service id. CAS has the option to submit such requests to a specific service endpoint that is different
@@ -101,7 +101,7 @@ does not exactly use a CAS client that supports intercepting such requests and i
 
 To configure a service specific endpoint, try the following example:
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "testId",
@@ -110,15 +110,15 @@ To configure a service specific endpoint, try the following example:
   "logoutType" : "BACK_CHANNEL",
   "logoutUrl" : "https://web.application.net/logout",
 }
-{% endhighlight %}
+```
 
 ###Aynchronous SLO Messages
 By default, backchannel logout messages are sent to endpoint in an asynchronous fashion. To allow synchronous messages, modify the following setting in `cas.properties`:
 
-{% highlight bash %}
+```bash
 # To send callbacks to endpoints synchronously, set this to false
 # slo.callbacks.asynchronous=true
-{% endhighlight %}
+```
 
 ## SSO Session vs. Application Session
 In order to better understand the SSO session management of CAS and how it regards application sessions, one important note is to be first and foremost considered:

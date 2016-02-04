@@ -1,6 +1,10 @@
 package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.support.oauth.ticket.OAuthToken;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
@@ -127,6 +131,8 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
                 // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
                 return entityManager.find(TicketGrantingTicketImpl.class, ticketId,
                         lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
+            } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)) {
+                return entityManager.find(OAuthCodeImpl.class, ticketId);
             }
 
             return entityManager.find(ServiceTicketImpl.class, ticketId);
@@ -173,7 +179,9 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
         final Ticket ticket = getTicket(ticketId);
         int failureCount = 0;
 
-        if (ticket instanceof ServiceTicket) {
+        if (ticket instanceof OAuthToken) {
+            failureCount = deleteOAuthTokens(ticketId);
+        } else if (ticket instanceof ServiceTicket) {
             failureCount = deleteServiceTickets(ticketId);
         } else if (ticket instanceof TicketGrantingTicket) {
             failureCount = deleteTicketGrantingTickets(ticketId);
@@ -187,6 +195,12 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
         return entityManager.createQuery(query, clazz)
                 .setParameter("id", ticketId)
                 .getResultList();
+    }
+
+    private int deleteOAuthTokens(final String ticketId) {
+        final List<OAuthCodeImpl> oAuthCodeImpls = getTicketQueryResultList(ticketId,
+                "select o from OAuthCodeImpl o where o.id = :id", OAuthCodeImpl.class);
+        return deleteTicketsFromResultList(oAuthCodeImpls);
     }
 
     private int deleteServiceTickets(final String ticketId) {
@@ -296,6 +310,9 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
                         if (ticket instanceof TicketGrantingTicket) {
                             logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
                             logoutManager.performLogout((TicketGrantingTicket) ticket);
+                            deleteTicket(ticket.getId());
+                        } else if (ticket instanceof OAuthToken) {
+                            logger.debug("Cleaning up expired OAuth token [{}]", ticket.getId());
                             deleteTicket(ticket.getId());
                         } else if (ticket instanceof ServiceTicket) {
                             logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
