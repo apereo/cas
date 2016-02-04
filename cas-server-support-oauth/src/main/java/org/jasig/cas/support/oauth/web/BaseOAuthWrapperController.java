@@ -2,18 +2,17 @@ package org.jasig.cas.support.oauth.web;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.services.ServicesManager;
+import org.jasig.cas.support.oauth.OAuthConstants;
+import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -23,16 +22,10 @@ import javax.validation.constraints.NotNull;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Component("baseOAuthWrapperController")
 public abstract class BaseOAuthWrapperController extends AbstractController {
 
     /** The logger. */
     protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    /** The login url. */
-    @NotNull
-    @Value("${server.prefix:http://localhost:8080/cas}/login")
-    protected String loginUrl;
 
     /** The services manager. */
     @NotNull
@@ -46,48 +39,77 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-    /** The timeout. */
-    @NotNull
-    @Value("${tgt.timeToKillInSeconds:7200}")
-    protected long timeout;
-
-    @Override
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response)
-            throws Exception {
-
-        final String method = getMethod(request);
-        logger.debug("method : {}", method);
-        return internalHandleRequest(method, request, response);
+    /**
+     * Check if a parameter exists.
+     *
+     * @param request the HTTP request
+     * @param name the parameter name
+     * @return whether the parameter exists
+     */
+    protected boolean checkParameterExist(final HttpServletRequest request, final String name) {
+        final String parameter = request.getParameter(name);
+        logger.debug("{}: {}", name, parameter);
+        if (StringUtils.isBlank(parameter)) {
+            logger.error("Missing: {}", name);
+            return false;
+        }
+        return true;
     }
 
     /**
-     * Internal handle request.
+     * Check if the service is valid.
      *
-     * @param method the method
-     * @param request the request
-     * @param response the response
-     * @return the model and view
-     * @throws Exception the exception
+     * @param request the HTTP request
+     * @return whether the service is valid
      */
-    protected abstract ModelAndView internalHandleRequest(String method, HttpServletRequest request,
-            HttpServletResponse response) throws Exception;
+    protected boolean checkServiceValid(final HttpServletRequest request) {
+        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        logger.debug("Found: {} for: {}", service, clientId);
+        if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
+            logger.error("Service {} is not found in the registry or it is disabled.", clientId);
+            return false;
+        }
+        return true;
+    }
+
 
     /**
-     * Return the method to call according to the url.
+     * Check if the callback url is valid.
      *
-     * @param request the incoming http request
-     * @return the method to call according to the url
+     * @param request the HTTP request
+     * @return whether the callback url is valid
      */
-    private String getMethod(final HttpServletRequest request) {
-        String method = request.getRequestURI();
-        if (method.indexOf('?') >= 0) {
-            method = StringUtils.substringBefore(method, "?");
+    protected boolean checkCallbackValid(final HttpServletRequest request) {
+        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
+        final String serviceId = service.getServiceId();
+        logger.debug("Found: {} for: {} vs redirectUri: {}", service, clientId, redirectUri);
+        if (!redirectUri.matches(serviceId)) {
+            logger.error("Unsupported {}: {} for serviceId: {}", OAuthConstants.REDIRECT_URI, redirectUri, serviceId);
+            return false;
         }
-        final int pos = method.lastIndexOf('/');
-        if (pos >= 0) {
-            method = method.substring(pos + 1);
+        return true;
+    }
+
+
+    /**
+     * Check the client secret.
+     *
+     * @param request the HTTP request
+     * @return whether the secret is valid
+     */
+    protected boolean checkClientSecret(final HttpServletRequest request) {
+        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
+        logger.debug("Found: {} for: {} in secret check", service, clientId);
+        if (!StringUtils.equals(service.getClientSecret(), clientSecret)) {
+            logger.error("Wrong client secret for service: {}", service);
+            return false;
         }
-        return method;
+        return true;
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {
@@ -98,27 +120,11 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         this.ticketRegistry = ticketRegistry;
     }
 
-    public void setLoginUrl(final String loginUrl) {
-        this.loginUrl = loginUrl;
-    }
-
-    public String getLoginUrl() {
-        return loginUrl;
-    }
-
     public ServicesManager getServicesManager() {
         return servicesManager;
     }
 
     public TicketRegistry getTicketRegistry() {
         return ticketRegistry;
-    }
-
-    public long getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(final long timeout) {
-        this.timeout = timeout;
     }
 }

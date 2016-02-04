@@ -1,6 +1,10 @@
 package org.jasig.cas.ticket.registry;
 
 import org.jasig.cas.logout.LogoutManager;
+import org.jasig.cas.support.oauth.ticket.OAuthToken;
+import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
+import org.jasig.cas.support.oauth.ticket.code.OAuthCodeImpl;
 import org.jasig.cas.ticket.ServiceTicket;
 import org.jasig.cas.ticket.ServiceTicketImpl;
 import org.jasig.cas.ticket.Ticket;
@@ -8,8 +12,8 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
-import org.jasig.cas.util.DateTimeUtils;
 
+import com.google.common.base.Predicate;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -26,16 +30,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -128,6 +132,8 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
                 // There is no need to distinguish between TGTs and PGTs since PGTs inherit from TGTs
                 return entityManager.find(TicketGrantingTicketImpl.class, ticketId,
                         lockTgt ? LockModeType.PESSIMISTIC_WRITE : null);
+            } else if (ticketId.startsWith(OAuthCode.PREFIX) || ticketId.startsWith(AccessToken.PREFIX)) {
+                return entityManager.find(OAuthCodeImpl.class, ticketId);
             }
 
             return entityManager.find(ServiceTicketImpl.class, ticketId);
@@ -159,13 +165,13 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
     }
 
     @Override
-    public long sessionCount() {
+    public int sessionCount() {
         return countToInt(entityManager.createQuery(
                 "select count(t) from TicketGrantingTicketImpl t").getSingleResult());
     }
 
     @Override
-    public long serviceTicketCount() {
+    public int serviceTicketCount() {
         return countToInt(entityManager.createQuery("select count(t) from ServiceTicketImpl t").getSingleResult());
     }
 
@@ -174,7 +180,9 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
         final Ticket ticket = getTicket(ticketId);
         int failureCount = 0;
 
-        if (ticket instanceof ServiceTicket) {
+        if (ticket instanceof OAuthToken) {
+            failureCount = deleteOAuthTokens(ticketId);
+        } else if (ticket instanceof ServiceTicket) {
             failureCount = deleteServiceTickets(ticketId);
         } else if (ticket instanceof TicketGrantingTicket) {
             failureCount = deleteTicketGrantingTickets(ticketId);
@@ -188,6 +196,12 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
         return entityManager.createQuery(query, clazz)
                 .setParameter("id", ticketId)
                 .getResultList();
+    }
+
+    private int deleteOAuthTokens(final String ticketId) {
+        final List<OAuthCodeImpl> oAuthCodeImpls = getTicketQueryResultList(ticketId,
+                "select o from OAuthCodeImpl o where o.id = :id", OAuthCodeImpl.class);
+        return deleteTicketsFromResultList(oAuthCodeImpls);
     }
 
     private int deleteServiceTickets(final String ticketId) {
@@ -253,21 +267,21 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
             if (shouldScheduleCleanerJob()) {
                 logger.info("Preparing to schedule cleaner job");
                 final JobDetail job = JobBuilder.newJob(this.getClass())
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .build();
+                        .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                        .build();
 
                 final Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
-                    .startAt(DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC).plus(this.startDelay, ChronoUnit.MILLIS)))
-                    .withSchedule(SimpleScheduleBuilder.simpleSchedule()
-                        .withIntervalInMinutes(this.refreshInterval)
-                        .repeatForever()).build();
+                        .withIdentity(this.getClass().getSimpleName().concat(UUID.randomUUID().toString()))
+                        .startAt(Date.from(ZonedDateTime.now().plusSeconds(this.startDelay).toInstant()))
+                        .withSchedule(SimpleScheduleBuilder.simpleSchedule()
+                                .withIntervalInSeconds(this.refreshInterval)
+                                .repeatForever()).build();
 
                 logger.debug("Scheduling {} job", this.getClass().getName());
                 scheduler.scheduleJob(job, trigger);
                 logger.info("{} will clean tickets every {} seconds",
-                    this.getClass().getSimpleName(),
-                    TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
+                        this.getClass().getSimpleName(),
+                        TimeUnit.MILLISECONDS.toSeconds(this.refreshInterval));
             }
         } catch (final Exception e) {
             logger.warn(e.getMessage(), e);
@@ -298,12 +312,16 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
                             logger.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
                             logoutManager.performLogout((TicketGrantingTicket) ticket);
                             deleteTicket(ticket.getId());
+                        } else if (ticket instanceof OAuthToken) {
+                            logger.debug("Cleaning up expired OAuth token [{}]", ticket.getId());
+                            deleteTicket(ticket.getId());
                         } else if (ticket instanceof ServiceTicket) {
                             logger.debug("Cleaning up expired service ticket [{}]", ticket.getId());
                             deleteTicket(ticket.getId());
                         } else {
                             logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
                         }
+                }
                     });
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
