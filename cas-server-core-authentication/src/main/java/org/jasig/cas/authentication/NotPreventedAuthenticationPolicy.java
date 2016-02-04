@@ -15,10 +15,10 @@ public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) {
-        for (final String handler : authentication.getFailures().keySet()) {
-            if (authentication.getFailures().get(handler).isAssignableFrom(PreventedException.class)) {
-                return false;
-            }
+        final boolean fail  = authentication.getFailures().values().stream()
+                .anyMatch(failure -> failure.isAssignableFrom(PreventedException.class));
+        if (fail) {
+            return false;
         }
         return super.isSatisfiedBy(authentication);
     }

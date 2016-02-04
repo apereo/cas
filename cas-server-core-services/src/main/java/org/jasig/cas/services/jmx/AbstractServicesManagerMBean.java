@@ -3,15 +3,15 @@ package org.jasig.cas.services.jmx;
 import org.jasig.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
+
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Abstract base class to support both the {@link org.jasig.cas.services.ServicesManager} and the
@@ -46,14 +46,11 @@ public abstract class AbstractServicesManagerMBean<T extends ServicesManager> {
      */
     @ManagedAttribute(description = "Retrieves the list of Registered Services in a slightly friendlier output.")
     public final List<String> getRegisteredServicesAsStrings() {
-        final List<String> services = new ArrayList<>();
-
-        for (final RegisteredService r : this.servicesManager.getAllServices()) {
-        services.add(new StringBuilder().append("id: ").append(r.getId())
+        final List<String> services = this.servicesManager.getAllServices().stream()
+                .map(r -> new StringBuilder().append("id: ").append(r.getId())
                 .append(" name: ").append(r.getName())
                 .append(" serviceId: ").append(r.getServiceId())
-                .toString());
-        }
+                .toString()).collect(Collectors.toList());
 
         return services;
     }

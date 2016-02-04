@@ -4,6 +4,7 @@ import org.jasig.cas.authentication.HandlerResult;
 import org.jasig.cas.authentication.PreventedException;
 import org.jasig.cas.authentication.UsernamePasswordCredential;
 import org.jasig.cas.authentication.principal.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.validation.constraints.NotNull;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -206,17 +208,19 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         @Override
         public void handle(final Callback[] callbacks)
             throws UnsupportedCallbackException {
-            for (final Callback callback : callbacks) {
+            Arrays.stream(callbacks).filter(callback -> {
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);
+                    return false;
                 } else if (callback.getClass().equals(PasswordCallback.class)) {
                     ((PasswordCallback) callback).setPassword(this.password
-                        .toCharArray());
-                } else {
-                    throw new UnsupportedCallbackException(callback,
-                        "Unrecognized Callback");
+                            .toCharArray());
+                    return false;
                 }
-            }
+                return true;
+            }).findFirst().ifPresent(callback -> {
+                throw new RuntimeException(new UnsupportedCallbackException(callback, "Unrecognized Callback"));
+            });
         }
     }
 }

@@ -187,12 +187,7 @@ public class GroovyShellService {
     }
 
     private void loadCustomGroovyScriptsIntoClasspath(final Binding binding) {
-        final FilenameFilter filter = new FilenameFilter() {
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return name.endsWith("groovy");
-            }
-        };
+        final FilenameFilter filter = (dir, name) -> name.endsWith("groovy");
 
         final ClassLoader thisClassLoader = this.getClass().getClassLoader();
         try (final GroovyClassLoader loader = new GroovyClassLoader(thisClassLoader)) {

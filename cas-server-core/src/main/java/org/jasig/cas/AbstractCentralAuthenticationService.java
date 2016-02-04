@@ -1,9 +1,5 @@
 package org.jasig.cas;
 
-import com.codahale.metrics.annotation.Counted;
-import com.codahale.metrics.annotation.Metered;
-import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Predicate;
 import org.jasig.cas.authentication.AcceptAnyAuthenticationPolicyFactory;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.ContextualAuthenticationPolicy;
@@ -23,6 +19,11 @@ import org.jasig.cas.ticket.TicketFactory;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.jasig.cas.ticket.registry.TicketRegistry;
+
+import com.codahale.metrics.annotation.Counted;
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,12 +214,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         if (policy.isSatisfiedBy(ticket.getAuthentication())) {
             return ticket.getAuthentication();
         }
-        for (final Authentication auth : ticket.getSupplementalAuthentications()) {
-            if (policy.isSatisfiedBy(auth)) {
-                return auth;
-            }
-        }
-        throw new UnsatisfiedAuthenticationPolicyException(policy);
+        return (Authentication) ticket.getSupplementalAuthentications().stream().filter(policy::isSatisfiedBy)
+                .findFirst().orElseThrow(() -> new UnsatisfiedAuthenticationPolicyException(policy));
     }
 
 

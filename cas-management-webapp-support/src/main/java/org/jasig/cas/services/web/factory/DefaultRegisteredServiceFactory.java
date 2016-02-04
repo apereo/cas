@@ -83,7 +83,7 @@ public final class DefaultRegisteredServiceFactory implements RegisteredServiceF
         this.usernameAttributeProviderMapper = usernameAttributeProviderMapper;
     }
 
-    public void setFormDataPopulators(final List<? extends FormDataPopulator> formDataPopulators) {
+    public void setFormDataPopulators(@NotNull final List<? extends FormDataPopulator> formDataPopulators) {
         this.formDataPopulators = formDataPopulators;
     }
 
@@ -145,11 +145,7 @@ public final class DefaultRegisteredServiceFactory implements RegisteredServiceF
     @Override
     public FormData createFormData() {
         final FormData data = new FormData();
-        if (formDataPopulators != null) {
-            for (final FormDataPopulator populator : formDataPopulators) {
-                populator.populateFormData(data);
-            }
-        }
+        formDataPopulators.stream().forEach(populator -> populator.populateFormData(data));
         return data;
     }
 

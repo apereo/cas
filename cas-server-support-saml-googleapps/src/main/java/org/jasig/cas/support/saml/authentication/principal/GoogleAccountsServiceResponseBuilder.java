@@ -9,7 +9,7 @@ import org.jasig.cas.services.UnauthorizedServiceException;
 import org.jasig.cas.support.saml.SamlProtocolConstants;
 import org.jasig.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.jasig.cas.util.ApplicationContextProvider;
-import org.joda.time.DateTime;
+
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -22,6 +22,8 @@ import org.springframework.context.ApplicationContext;
 import java.io.StringWriter;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,8 +77,8 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @return the SAML response
      */
     protected String constructSamlResponse(final GoogleAccountsService service) {
-        final DateTime currentDateTime = new DateTime();
-        final DateTime notBeforeIssueInstant = DateTime.parse("2003-04-17T00:46:02Z");
+        final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
+        final ZonedDateTime notBeforeIssueInstant = ZonedDateTime.parse("2003-04-17T00:46:02Z");
 
         /*
          * Must be looked up directly from the context

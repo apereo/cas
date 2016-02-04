@@ -1,8 +1,9 @@
 package org.slf4j.impl;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.Marker;
 import org.slf4j.helpers.MarkerIgnoringBase;
@@ -10,6 +11,7 @@ import org.slf4j.helpers.MarkerIgnoringBase;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,20 +77,8 @@ public final class CasDelegatingLogger extends MarkerIgnoringBase implements Ser
                 return args;
             }
 
-            final Object[] out = new Object[args.length];
-            for (int i = 0; i < args.length; i++) {
-                if (args[i] != null) {
-                    final String message = args[i].toString();
-                    if (ticketIdPresentInLogMessage(message)) {
-                        out[i] = removeTicketId(message);
-                    } else {
-                        out[i] = args[i];
-                    }
-                } else {
-                    out[i] = null;
-                }
-            }
-            return out;
+            return Arrays.stream(args).filter(arg -> arg != null).map(Object::toString)
+                    .map(message -> ticketIdPresentInLogMessage(message) ? removeTicketId(message) : message).toArray();
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }

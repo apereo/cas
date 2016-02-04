@@ -95,41 +95,42 @@ public class PolicyBasedAuthenticationManager extends AbstractAuthenticationMana
 
         final Collection<Credential> credentials = transaction.getCredentials();
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
-        for (final Credential c : credentials) {
-            builder.addCredential(new BasicCredentialMetaData(c));
-        }
-        boolean found;
+        credentials.stream().forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
         final Set<AuthenticationHandler> handlerSet = this.authenticationHandlerResolver
                 .resolve(this.handlerResolverMap.keySet(), transaction);
 
-        for (final Credential credential : credentials) {
-            found = false;
-
-            for (final AuthenticationHandler handler : handlerSet) {
-                if (handler.supports(credential)) {
-                    found = true;
-                    try {
-                        authenticateAndResolvePrincipal(builder, credential, this.handlerResolverMap.get(handler), handler);
-                        if (this.authenticationPolicy.isSatisfiedBy(builder.build())) {
-                            return builder;
+        final boolean success = credentials.stream().anyMatch(credential -> {
+            final boolean[] found = {false};
+            final boolean isSatisfied = handlerSet.stream().filter(handler -> handler.supports(credential) && (found[0] = true))
+                    .anyMatch(handler -> {
+                        try {
+                            authenticateAndResolvePrincipal(builder, credential, this.handlerResolverMap.get(handler), handler);
+                            return this.authenticationPolicy.isSatisfiedBy(builder.build());
+                        } catch (final GeneralSecurityException e) {
+                            logger.info("{} failed authenticating {}", handler.getName(), credential);
+                            logger.debug("{} exception details: {}", handler.getName(), e.getMessage());
+                            builder.addFailure(handler.getName(), e.getClass());
+                        } catch (final PreventedException e) {
+                            logger.error("{}: {}  (Details: {})", handler.getName(), e.getMessage(), e.getCause().getMessage());
+                            builder.addFailure(handler.getName(), e.getClass());
                         }
-                    } catch (final GeneralSecurityException e) {
-                        logger.info("{} failed authenticating {}", handler.getName(), credential);
-                        logger.debug("{} exception details: {}", handler.getName(), e.getMessage());
-                        builder.addFailure(handler.getName(), e.getClass());
-                    } catch (final PreventedException e) {
-                        logger.error("{}: {}  (Details: {})", handler.getName(), e.getMessage(), e.getCause().getMessage());
-                        builder.addFailure(handler.getName(), e.getClass());
-                    }
-                }
+                        return false;
+                    });
+            if (isSatisfied) {
+                return true;
             }
-            if (!found) {
+
+            if (!found[0]) {
                 logger.warn(
                         "Cannot find authentication handler that supports [{}] of type [{}], which suggests a configuration problem.",
                         credential, credential.getClass().getSimpleName());
             }
+            return false;
+        });
+
+        if(!success) {
+            evaluateProducedAuthenticationContext(builder);
         }
-        evaluateProducedAuthenticationContext(builder);
 
         return builder;
     }

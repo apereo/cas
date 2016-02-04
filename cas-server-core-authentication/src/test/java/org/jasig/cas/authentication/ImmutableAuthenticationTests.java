@@ -2,12 +2,13 @@ package org.jasig.cas.authentication;
 
 import org.jasig.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.jasig.cas.authentication.principal.DefaultPrincipalFactory;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,7 @@ public class ImmutableAuthenticationTests {
         final Map<String, Class<? extends Exception>> failures = new HashMap<>();
         failures.put("handler2", FailedLoginException.class);
         final ImmutableAuthentication auth = new ImmutableAuthentication(
-                new DateTime(),
+                ZonedDateTime.now(ZoneOffset.UTC),
                 credentials,
                 new DefaultPrincipalFactory().createPrincipal("test"),
                 attributes,

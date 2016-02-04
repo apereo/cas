@@ -1,13 +1,13 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
-import org.joda.time.DateTime;
+import org.jasig.cas.util.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRLEntry;
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 
 /**
@@ -80,7 +80,7 @@ public final class RevokedCertificateException extends GeneralSecurityException 
     }
 
     /** The revocation date. */
-    private final DateTime revocationDate;
+    private final ZonedDateTime revocationDate;
 
     /** The serial. */
     private final BigInteger serial;
@@ -94,7 +94,7 @@ public final class RevokedCertificateException extends GeneralSecurityException 
      * @param revoked the revoked
      * @param serial the serial
      */
-    public RevokedCertificateException(final Date revoked, final BigInteger serial) {
+    public RevokedCertificateException(final ZonedDateTime revoked, final BigInteger serial) {
         this(revoked, serial, null);
     }
 
@@ -105,8 +105,8 @@ public final class RevokedCertificateException extends GeneralSecurityException 
      * @param serial the serial
      * @param reason the reason
      */
-    public RevokedCertificateException(final Date revoked, final BigInteger serial, final Reason reason) {
-        this.revocationDate = new DateTime(revoked);
+    public RevokedCertificateException(final ZonedDateTime revoked, final BigInteger serial, final Reason reason) {
+        this.revocationDate = ZonedDateTime.from(revoked);
         this.serial = serial;
         this.reason = reason;
     }
@@ -117,7 +117,7 @@ public final class RevokedCertificateException extends GeneralSecurityException 
      * @param entry the entry
      */
     public RevokedCertificateException(final X509CRLEntry entry) {
-        this(entry.getRevocationDate(), entry.getSerialNumber(), getReasonFromX509Entry(entry));
+        this(DateTimeUtils.zonedDateTimeOf(entry.getRevocationDate()), entry.getSerialNumber(), getReasonFromX509Entry(entry));
     }
 
     /**
@@ -145,8 +145,8 @@ public final class RevokedCertificateException extends GeneralSecurityException 
      *
      * @return Returns the revocationDate.
      */
-    public DateTime getRevocationDate() {
-        return this.revocationDate == null ? null : new DateTime(this.revocationDate);
+    public ZonedDateTime getRevocationDate() {
+        return this.revocationDate == null ? null : ZonedDateTime.from(this.revocationDate);
     }
 
     /**
