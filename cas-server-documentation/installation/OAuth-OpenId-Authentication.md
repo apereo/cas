@@ -32,7 +32,7 @@ It's the url to call to exchange the code for an access token. Input GET paramet
 It's the url to call to get the profile of the authorized user. Input GET parameter required: *access_token*. The response is in JSON format with all attributes of the user.
 
 
-##Add OAuth Clients
+## Add OAuth Clients
 
 Every OAuth client must be defined as a CAS service (notice the new *clientId* and *clientSecret* properties, specific to OAuth):
 

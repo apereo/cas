@@ -4,7 +4,7 @@ title: CAS - Web Flow Customization
 ---
 
 
-#Webflow Customization
+# Webflow Customization
 CAS uses [Spring Web Flow](projects.spring.io/spring-webflow) to do "script" processing of login and logout protocols. 
 Spring Web Flow builds on Spring MVC and allows implementing the "flows" of a web application. A flow encapsulates a sequence 
 of steps that guide a user through the execution of some business task. It spans multiple HTTP requests, has state, deals with
@@ -20,7 +20,7 @@ flow to account for additional use cases and processes. Note that to customize t
 of understanding of the webflow's internals and injection policies. The intention of this document is not to describe Spring Web Flow, 
 but merely to demonstrate how the framework is used by CAS to carry out various aspects of the protocol and business logic execution.
 
-##Termination of Web Flow Sessions
+## Termination of Web Flow Sessions
 CAS provides a facility for storing flow execution state on the client in Spring Webflow. Flow state is stored as an encoded byte 
 stream in the flow execution identifier provided to the client when rendering a view. The following features are presented via this strategy:
 
@@ -49,7 +49,7 @@ compression turned on. These settings can be controlled via the following settin
 While the above settings are all optional, it is recommended that you provide your own configuration and settings for encrypting and 
 transcoding of the web session state.</p></div>
 
-##Required Service for Authentication
+## Required Service for Authentication
 By default, CAS will present a generic success page if the initial authentication request does not identify
 the target application. In some cases, the ability to login to CAS without logging
 in to a particular service may be considered a misfeature because in practice, too few users and institutions
@@ -66,6 +66,6 @@ This behavior is controlled via `cas.properties`:
 # create.sso.missing.service=false
 ```
 
-##Acceptable Usage Policy
+## Acceptable Usage Policy
 CAS presents the ability to allow the user to accept the usage policy before moving on to the application. 
 See [this guide](Webflow-Customization-AUP.html) for more info.

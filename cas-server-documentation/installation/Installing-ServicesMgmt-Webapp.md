@@ -47,12 +47,12 @@ cas-management.securityContext.serviceProperties.service=${cas-management.prefix
 cas-management.securityContext.serviceProperties.adminRoles=ROLE_ADMIN
 ```
 
-##Securing Access and Authorization
+## Securing Access and Authorization
 Access to the management webapp is controlled via pac4j. Rules are defined in 
 the `/WEB-INF/managementConfigContext.xml` file.
 
 
-###Static List of Users
+### Static List of Users
 By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` 
 file that should be available on the runtime classpath.
 
@@ -82,7 +82,7 @@ The format of the file should be as such:
 # casuser=notused,ROLE_ADMIN
 ```
 
-###CAS ABAC
+### CAS ABAC
 
 The following authorization generator examines the CAS response for attributes
 and will grant access if an attribute name matches the value of `adminRoles` defined in the configuration.
@@ -92,7 +92,7 @@ and will grant access if an attribute name matches the value of `adminRoles` def
     c:roleAttributes="ROLE_ADMIN,ROLE_CUSTOM" c:permissionAttributes="CUSTOM_PERMISSION1,CUSTOM_PERMISSION2" />
 ```
 
-###Custom ABAC
+### Custom ABAC
 
 Define a custom set of roles and permissions that would be cross-checked later against the value of `adminRoles`
 defined in the configuration.
@@ -102,7 +102,7 @@ defined in the configuration.
     c:defaultRoles="ROLE_ADMIN,ROLE_CUSTOM" c:defaultPermissions="CUSTOM_PERMISSION1,CUSTOM_PERMISSION2" />
 ```
 
-###LDAP
+### LDAP
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
