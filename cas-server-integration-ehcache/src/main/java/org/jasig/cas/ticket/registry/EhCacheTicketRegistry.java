@@ -233,18 +233,13 @@ public final class EhCacheTicketRegistry extends AbstractTicketRegistry implemen
         }
     }
 
-    /**
-     * @see Cache#getKeysWithExpiryCheck()
-     */
+
     @Override
     public int sessionCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.ticketGrantingTicketsCache
                 .getKeysWithExpiryCheck().size(), super.sessionCount());
     }
 
-    /**
-     * @see Cache#getKeysWithExpiryCheck()
-     */
     @Override
     public int serviceTicketCount() {
         return BooleanUtils.toInteger(this.supportRegistryState, this.serviceTicketsCache.getKeysWithExpiryCheck()
