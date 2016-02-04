@@ -8,13 +8,13 @@ CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-saml</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 ## SAML2
 CAS provides support for [SAML2 Authentication](../integration/Configuring-SAML2-Authentication.html). 
@@ -32,7 +32,7 @@ A SAML 1.1 ticket validation response is obtained by validating a ticket via POS
 
 
 ##Sample Request
-{% highlight xml %}
+```xml
 POST /cas/samlValidate?ticket=
 Host: cas.example.com
 Content-Length: 491
@@ -50,11 +50,11 @@ Content-Type: text/xml
     </samlp:Request>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-{% endhighlight %}
+```
 
 
 ##Sample Response
-{% highlight xml %}
+```xml
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />
   <SOAP-ENV:Body>
@@ -116,19 +116,19 @@ Content-Type: text/xml
     </Response>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
-{% endhighlight %}
+```
 
 
 ##Configuration
 SAML configuration in CAS is contained within the `cas.properties` file.
 
-{% highlight properties %}
+```properties
 # Indicates the SAML response issuer
 # cas.saml.response.issuer=localhost
 
 # Indicates the skew allowance which controls the issue instant of the SAML response
 # cas.saml.response.skewAllowance=0
-{% endhighlight %}
+```
 
 
 

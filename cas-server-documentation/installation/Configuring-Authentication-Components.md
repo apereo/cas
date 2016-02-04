@@ -96,22 +96,22 @@ Password encoders are responsible during the authentication event to convert and
 the credential password to a form that is acceptable by the authentication source.
 
 ### Default Encoder
-{% highlight xml %}
+```xml
 <alias name="defaultPasswordEncoder" alias="passwordEncoder" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # cas.authn.password.encoding.char=UTF-8
 # cas.authn.password.encoding.alg=SHA-256
-{% endhighlight %}
+```
 
 ### Plain Text
 
-{% highlight xml %}
+```xml
 <alias name="plainTextPasswordEncoder" alias="passwordEncoder" />
-{% endhighlight %}
+```
 
 ##Argument Extractors
 Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction.
@@ -126,39 +126,39 @@ can be configured to transform the user id prior to executing the authentication
 ######`NoOpPrincipalNameTransformer`
 Default transformer, that actually does no transformation on the user id.
 
-{% highlight xml %}
+```xml
 <alias name="noOpPrincipalNameTransformer" alias="principalNameTransformer" />
-{% endhighlight %}
+```
 
 
 ######`PrefixSuffixPrincipalNameTransformer`
 Transforms the user id by adding a postfix or suffix.
 
-{% highlight xml %}
+```xml
 <alias name="prefixSuffixPrincipalNameTransformer" alias="principalNameTransformer" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # cas.principal.transform.prefix=
 # cas.principal.transform.suffix=
-{% endhighlight %}
+```
 
 ######`ConvertCasePrincipalNameTransformer`
 A transformer that converts the form uid to either lowercase or uppercase. The result is also trimmed.
 The transformer is also able to accept and work on the result of
 a previous transformer that might have modified the uid, such that the two can be chained.
 
-{% highlight xml %}
+```xml
 <alias name="convertCasePrincipalNameTransformer" alias="principalNameTransformer" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # cas.principal.transform.upperCase=false
-{% endhighlight %}
+```
 
 ## Authentication Metadata
 `AuthenticationMetaDataPopulator` components provide a pluggable strategy for injecting arbitrary metadata into the

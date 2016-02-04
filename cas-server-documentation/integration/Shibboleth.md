@@ -20,14 +20,14 @@ It is possible to designate CAS to serve as the authentication provider for the 
 Download the latest Java CAS Client Release and modify the IdP war deployable such that the following jars are 
 included in the `./lib` installer folder, then redeploy the Idp with these files:
 
-{% highlight bash %}
+```bash
 cas-client-$VERSION/modules/cas-client-core-$VERSION.jar
-{% endhighlight %}
+```
 
 ####Modify `$SHIB_HOME/conf/handler.xml`
 
 Define the `RemoteUser` authentication method to be used with CAS authentication.
-{% highlight xml %}
+```xml
 <!-- Remote User handler for CAS support -->
 <LoginHandler xsi:type="RemoteUser">
   <AuthenticationMethod>
@@ -37,12 +37,12 @@ Define the `RemoteUser` authentication method to be used with CAS authentication
     urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
   </AuthenticationMethod>
 </LoginHandler>
-{% endhighlight %}
+```
 
 
 ####Modify IdP Deployable `web.xml`
 Add the following XML blocks to the `web.xml` file for the IdP war deployable.
-{% highlight xml %}
+```xml
 <!-- For CAS client support -->
 <context-param>
   <param-name>serverName</param-name>
@@ -97,13 +97,13 @@ CAS Filters
   <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name>
   <url-pattern>/Authn/RemoteUser</url-pattern>
 </filter-mapping>
-{% endhighlight %}
+```
 
 
 ####Enable `RemoteUserHandler` in Idp Deployable `web.xml`
 Ensure the following is defined:
 
-{% highlight xml %}
+```xml
 <!-- Servlet protected by container user for RemoteUser authentication -->
 <servlet>
   <servlet-name>RemoteUserAuthHandler</servlet-name>
@@ -114,7 +114,7 @@ Ensure the following is defined:
   <servlet-name>RemoteUserAuthHandler</servlet-name>
   <url-pattern>/Authn/RemoteUser</url-pattern>
 </servlet-mapping>
-{% endhighlight %}
+```
 
 
 ##SSO for Shibboleth IdP (External)
@@ -141,29 +141,29 @@ about metadata sources that the identity provider uses.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
   <groupId>org.jasig.cas</groupId>
   <artifactId>cas-server-support-saml-mdui</artifactId>
   <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 Then, adjust `cas-servlet.xml` with the following:
 
-{% highlight xml %}
+```xml
 <bean id="samlDynamicMetadataUIParserAction"
   class="org.jasig.cas.support.saml.web.flow.mdui.SamlMetadataUIParserAction"
   c:entityIdParameterName="entityId"
   c:metadataAdapter-ref="metadataAdapter"/>
-{% endhighlight %}
+```
 
 Metadata sources in the CAS server can be configured via the following ways:
 
 #### Static
 In this case, metadata sources are statically provided via classpath, file or url resources.
 
-{% highlight xml %}
+```xml
 <bean id="metadataAdapter"
       class="org.jasig.cas.support.saml.web.flow.mdui.StaticMetadataResolverAdapter"
       c:metadataResources-ref="metadataResources"
@@ -179,7 +179,7 @@ In this case, metadata sources are statically provided via classpath, file or ur
         </bean>
     </entry>
 </util:map>
-{% endhighlight %}
+```
 
 #### Dynamic
 In this case, metadata sources are provided via the
@@ -187,7 +187,7 @@ In this case, metadata sources are provided via the
 is a REST-like API for requesting and receiving arbitrary metadata. CAS will contact
 the metadata server to query for the metadata based on the `entityId` provided.
 
-{% highlight xml %}
+```xml
 <bean id="metadataAdapter"
       class="org.jasig.cas.support.saml.web.flow.mdui.DynamicMetadataResolverAdapter"
       c:metadataResources-ref="metadataResources"
@@ -203,7 +203,7 @@ the metadata server to query for the metadata based on the `entityId` provided.
     </bean>
   </entry>
 </util:map>
-{% endhighlight %}
+```
 
 ####Configure Metadata Filters
 Metadata filters can be configured to validate and verify the received
@@ -211,7 +211,7 @@ metadata in both scenarios. Filters typically check for validity of signaures,
 whether `validUntil` exists, etc. The following example attempts to validate
 the signature on the metadata via a pre-configured public key:
 
-{% highlight xml %}
+```xml
 <bean id="metadataFilters"
     class="org.opensaml.saml.metadata.resolver.filter.impl.MetadataFilterChain">
     <property name="filters">
@@ -251,7 +251,7 @@ the signature on the metadata via a pre-configured public key:
       class="net.shibboleth.idp.profile.spring.relyingparty.security.credential.BasicResourceCredentialFactoryBean"
       p:publicKeyInfo="classpath:inc-md-pub.pem" >
 </bean>
-{% endhighlight %}
+```
 
 You will need to modify your metadata retrieval process, whether static or dynamic,
 to adjust for the appropriate metadata filter if need be.
@@ -260,7 +260,7 @@ to adjust for the appropriate metadata filter if need be.
 Modify the `login-webflow.xml` to execute the `SamlMetadataUIParserAction` action
 when the login form is rendered:
 
-{% highlight xml %}
+```xml
 <view-state id="viewLoginForm" ...>
     ...
     <on-entry>
@@ -270,7 +270,7 @@ when the login form is rendered:
     </on-entry>
     ...
 </view-state>
-{% endhighlight %}
+```
 
 A sample screenshot of the above configuration in action:
 
