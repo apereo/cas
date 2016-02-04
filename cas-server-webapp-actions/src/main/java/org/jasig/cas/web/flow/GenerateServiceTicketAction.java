@@ -49,9 +49,24 @@ public final class GenerateServiceTicketAction extends AbstractAction {
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
 
         try {
+            /**
+             * In the initial primary authentication flow, credentials are cached and available.
+             * Since they are authenticated as part of submission first, there is no need to doubly
+             * authenticate and verify credentials.
+             *
+             * In subsequent authentication flows where a TGT is available and only an ST needs to be
+             * created, there are no cached copies of the credential, since we do have a TGT available.
+             * So we will simply grab the available authentication and produce the final result based on that.
+             */
             final Credential credential = WebUtils.getCredential(context);
-            final AuthenticationResult authenticationResult =
-                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+
+            final AuthenticationResult authenticationResult;
+            if (credential == null) {
+
+            } else {
+                authenticationResult =
+                        this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            }
 
             final ServiceTicket serviceTicketId = this.centralAuthenticationService
                     .grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
