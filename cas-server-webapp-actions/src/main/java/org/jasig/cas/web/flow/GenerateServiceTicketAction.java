@@ -65,6 +65,10 @@ public final class GenerateServiceTicketAction extends AbstractAction {
              * So we will simply grab the available authentication and produce the final result based on that.
              */
             final Authentication authentication = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
+            if (authentication == null) {
+                throw new InvalidTicketException(
+                        new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
+            }
             final AuthenticationResultBuilder authenticationResultBuilder = authenticationSystemSupport
                     .establishAuthenticationContextFromInitial(authentication);
             final AuthenticationResult authenticationResult = authenticationResultBuilder.build(service);
@@ -94,6 +98,10 @@ public final class GenerateServiceTicketAction extends AbstractAction {
 
     public void setAuthenticationSystemSupport(final AuthenticationSystemSupport authenticationSystemSupport) {
         this.authenticationSystemSupport = authenticationSystemSupport;
+    }
+
+    public void setTicketRegistrySupport(final TicketRegistrySupport ticketRegistrySupport) {
+        this.ticketRegistrySupport = ticketRegistrySupport;
     }
 
     /**

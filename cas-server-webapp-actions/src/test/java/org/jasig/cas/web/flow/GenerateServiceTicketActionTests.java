@@ -4,6 +4,7 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
+import org.jasig.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
         this.action = new GenerateServiceTicketAction();
         this.action.setCentralAuthenticationService(getCentralAuthenticationService());
         this.action.setAuthenticationSystemSupport(getAuthenticationSystemSupport());
+        this.action.setTicketRegistrySupport(getTicketRegistrySupport());
         this.action.afterPropertiesSet();
 
         final AuthenticationResult authnResult =
@@ -41,6 +43,7 @@ public final class GenerateServiceTicketActionTests extends AbstractCentralAuthe
                                 TestUtils.getCredentialsWithSameUsernameAndPassword());
 
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
+        getTicketRegistry().addTicket(this.ticketGrantingTicket);
     }
 
     @Test
