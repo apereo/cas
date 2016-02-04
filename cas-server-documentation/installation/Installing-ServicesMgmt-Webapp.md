@@ -29,10 +29,10 @@ It should be the same configuration you already use in your CAS server in the `W
 By default, the `cas-management-webapp` is configured to authenticate against a CAS server. We assume that it's the case in this documentation. However, you could change the authentication method by overriding the `WEB-INF/spring-configuration/securityContext.xml` file.
 
 
-##Securing Access and Authorization
+## Securing Access and Authorization
 Access to the management webapp is controlled via Spring Security. Rules are defined in the `WEB-INF/managementConfigContext.xml` file.
 
-###Static List of Users
+### Static List of Users
 By default, access is limited to a static list of users whose credentials may be specified in a `user-details.properties` file that should be available on the runtime classpath.
 
 {% highlight xml %}
@@ -62,7 +62,7 @@ The format of the file should be as such:
 {% endhighlight %}
 
 
-###LDAP-managed List of Users
+### LDAP-managed List of Users
 If you wish allow access to the services management application via an LDAP group/server, open up the `WEB-INF/managementConfigContext` file of the management web application and adjust for the following:
 
 {% highlight xml %}

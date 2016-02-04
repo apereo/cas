@@ -79,11 +79,11 @@ Distributed caches are recommended for HA architectures since they offer fault t
 * Service Tickets are short lived and must be replicated right away because the requests to validate them may very likely arrive at different CAS cluster nodes
 
 
-###RMI Replication
+### RMI Replication
 Ehcache supports [RMI](http://docs.oracle.com/javase/6/docs/technotes/guides/rmi/index.html) replication for distributed caches composed of two or more nodes. To learn more about RMI replication with Ehcache, [see this resource](http://ehcache.org/documentation/user-guide/rmi-replicated-caching).
 
 
-####Spring configuration template for `ticketRegistry.xml`.
+#### Spring configuration template for `ticketRegistry.xml`.
 {% highlight xml %}
 <bean id="ticketRegistry"
       class="org.jasig.cas.ticket.registry.EhCacheTicketRegistry"
@@ -194,11 +194,11 @@ helpful to place the configuration file on the filesystem at a well-known locati
 
 
 
-###JGroups Replication
+### JGroups Replication
 [JGroups](http://ehcache.org/documentation/2.5/replication/jgroups-replicated-caching) can be used as the underlying mechanism for the replication operations in Ehcache. JGroups offers a very flexible protocol stack, reliable unicast, and multicast message transmission. On the down side JGroups can be complex to configure and some protocol stacks have dependencies on others.
 
 
-####Spring configuration template for `ticketRegistry.xml`.
+#### Spring configuration template for `ticketRegistry.xml`.
 The configuration is similar to above, except that ticket replicators and cache loaders need to be swapped out for their JGroups counterpart:
 
 {% highlight xml %}
@@ -259,13 +259,13 @@ Your maven overlay `pom.xml` will also need to declare the following dependencie
 
 
 
-###Eviction Policy
+### Eviction Policy
 Ehcache manages the internal eviction policy of cached objects via `timeToIdle` and `timeToLive` settings. This results of having *no need* for a Ticket Registry Cleaner.
 
 There have been reports of cache eviction problems when tickets are expired, but haven't been removed from the cache due to ehache configuration. This can be a problem because old ticket references "hang around" in the cache despite being expired. In other words, Ehcache does [inline eviction](http://lists.terracotta.org/pipermail/ehcache-list/2011-November/000423.html) where expired objects in the cache object won't be collected from memory until the cache max size is reached or the expired entry is explicitly accessed. To reclaim memory on expired tickets, cache eviction policies are must be carefully configured to avoid memory creep. Disk offload and/or a more aggressive eviction could provide a suitable workaround.
 
 
-###Troubleshooting Guidelines
+### Troubleshooting Guidelines
 
 * You will need to ensure that network communication across CAS nodes is allowed and no firewall or other component is blocking traffic. 
 

@@ -77,7 +77,7 @@ The never expires policy allows tickets to exist indefinitely.
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Use of this policy has significant consequences to overall security policy and should be enabled only after thorough review by a qualified security team. There are also implications to server resource usage for the ticket registries backed by filesystem storage. Since disk storage for tickets can never be reclaimed for those registries with this policy in effect, use of this policy with those ticket registry implementations is strongly discouraged.</p></div>
 
 
-#####Usage Example
+##### Usage Example
 {% highlight xml %}
 <!-- TGT never expires -->
 <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy" />
@@ -88,7 +88,7 @@ The never expires policy allows tickets to exist indefinitely.
 This policy implements applies to [long term authentication](Configuring-Authentication-Components.html) features of CAS known as "Remember Me". 
 
 
-#####Usage Example
+##### Usage Example
 {% highlight xml %}
 <bean id="grantingTicketExpirationPolicy" class="org.jasig.cas.ticket.support.RememberMeDelegatingExpirationPolicy">
    <property name="sessionExpirationPolicy">
@@ -110,13 +110,13 @@ This policy implements applies to [long term authentication](Configuring-Authent
 This is the default policy applied to service tickets where a ticket is expired after a fixed number of uses or after a maximum period of inactivity elapses.
 
 
-#####Parameters
+##### Parameters
 * `numberOfUses` - Maximum number of times the ticket can be used.
 * `timeToKill` - Maximum amount of inactivity from the last time the ticket was used beyond which it is considered expired.
 * `timeUnit` - The unit of time based on which `timeToKill` will be calculated.
 
 
-#####Usage Example
+##### Usage Example
 {% highlight xml %}
 <!-- ST may be used exactly once and must be validated within 10 seconds. -->
 <util:constant id="SECONDS" static-field="java.util.concurrent.TimeUnit.SECONDS"/>

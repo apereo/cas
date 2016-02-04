@@ -134,7 +134,7 @@ There are some additional handlers for small deployments and special cases:
 * [Blacklist](Blacklist-Authentication.html)
 
 
-##Argument Extractors
+## Argument Extractors
 Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction. 
 
 Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-configuration/argumentExtractorsConfiguration.xml`. Here's a brief sample:
@@ -148,7 +148,7 @@ Argument extractor configuration is defined at `src/main/webapp/WEB-INF/spring-c
 {% endhighlight %}
 
 
-###Components
+### Components
 
 ####`ArgumentExtractor`
 Strategy parent interface that defines operations needed to extract arguments from the http request.
