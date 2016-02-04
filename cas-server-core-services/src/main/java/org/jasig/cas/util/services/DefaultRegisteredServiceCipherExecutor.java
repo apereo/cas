@@ -2,7 +2,8 @@ package org.jasig.cas.util.services;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceCipherExecutor;
-import org.jasig.cas.util.CompressionUtils;
+import org.jasig.cas.util.EncodingUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * and encode the data in base 64.
      *
      * @param data the data
+     * @param service the registered service
      * @return the encoded piece of data in base64
      */
     @Override
@@ -36,7 +38,7 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
             final PublicKey publicKey = createRegisteredServicePublicKey(service);
             final byte[] result = encodeInternal(data, publicKey, service);
             if (result != null) {
-                return CompressionUtils.encodeBase64(result);
+                return EncodingUtils.encodeBase64(result);
             }
         } catch (final Exception e) {
             logger.warn(e.getMessage(), e);

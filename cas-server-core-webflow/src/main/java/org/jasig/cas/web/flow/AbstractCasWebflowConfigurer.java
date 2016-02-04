@@ -1,6 +1,5 @@
 package org.jasig.cas.web.flow;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -178,13 +177,10 @@ public abstract class AbstractCasWebflowConfigurer {
      * @param excludedFlowIds the excluded flow ids
      * @return the flow definition ids
      */
-    protected List<String> getFlowDefinitionIds(final String[] excludedFlowIds) {
-        String[] flowIds = loginFlowDefinitionRegistry.getFlowDefinitionIds();
-
-        for (final String flowId : excludedFlowIds) {
-            flowIds = ArrayUtils.removeElement(flowIds, flowId);
-        }
-        return Arrays.asList(flowIds);
+    protected List<String> getFlowDefinitionIds(final List<String> excludedFlowIds) {
+        final List<String> flowIds = Arrays.asList(loginFlowDefinitionRegistry.getFlowDefinitionIds());
+        flowIds.removeAll(excludedFlowIds);
+        return flowIds;
     }
 
     /**
@@ -575,9 +571,7 @@ public abstract class AbstractCasWebflowConfigurer {
      */
     protected Mapper createMapperToSubflowState(final List<DefaultMapping> mappings) {
         final DefaultMapper inputMapper = new DefaultMapper();
-        for (final DefaultMapping mapping : mappings) {
-            inputMapper.addMapping(mapping);
-        }
+        mappings.forEach(inputMapper::addMapping);
         return inputMapper;
     }
 

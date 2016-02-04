@@ -1,9 +1,10 @@
 package org.jasig.cas.adaptors.x509.authentication.handler.support;
 
+import org.jasig.cas.adaptors.x509.util.MockWebServer;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.apache.commons.io.IOUtils;
-import org.jasig.cas.adaptors.x509.util.MockWebServer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -19,9 +20,10 @@ import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 
 /**
@@ -121,7 +123,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
                 defaultPolicy,
                 new String[] {"user-revoked-distcrl.crt"},
                 "userCA-valid.crl",
-                new RevokedCertificateException(new Date(), new BigInteger("1")),
+                new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
         });
 
         // Test case #3
@@ -133,7 +135,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
                 zeroThresholdPolicy,
                 new String[] {"user-valid-distcrl.crt"},
                 "userCA-expired.crl",
-                new ExpiredCRLException("test", new Date()),
+                new ExpiredCRLException("test", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #4
@@ -143,10 +145,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         CacheManager.getInstance().addCache(cache);
         params.add(new Object[] {
                 new CRLDistributionPointRevocationChecker(cache),
-                new RevocationPolicy<X509CRL>() {
-                    @Override
-                    public void apply(final X509CRL crl) {/* Do nothing to allow unconditionally */}
-                },
+                (RevocationPolicy<X509CRL>) crl -> {/* Do nothing to allow unconditionally */},
                 new String[] {"user-valid-distcrl.crt"},
                 "userCA-expired.crl",
                 null,
@@ -180,7 +179,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
                 defaultPolicy,
                 new String[] {"user-revoked-distcrl2.crt"},
                 "userCA-valid.crl",
-                new RevokedCertificateException(new Date(), new BigInteger("1")),
+                new RevokedCertificateException(ZonedDateTime.now(ZoneOffset.UTC), new BigInteger("1")),
         });
 
         return params;

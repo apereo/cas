@@ -1,6 +1,5 @@
 package org.jasig.cas.services.web.view;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.CasProtocolConstants;
 import org.jasig.cas.CasViewConstants;
 import org.jasig.cas.authentication.Authentication;
@@ -12,22 +11,24 @@ import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.jasig.cas.services.ServicesManager;
 import org.jasig.cas.validation.Assertion;
-import org.joda.time.DateTime;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Abstract class to handle retrieving the Assertion from the model.
@@ -218,18 +219,16 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the map of attributes to return
      */
     private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
-        final Map<String, Object> attributesToReturn = new HashMap<>();
         final Set<Map.Entry<String, Object>> entries = attributes.entrySet();
-        for (final Map.Entry<String, Object> entry : entries) {
+        return attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
             final Object value = entry.getValue();
             if (value instanceof Collection || value instanceof Map || value instanceof Object[]
                     || value instanceof Iterator || value instanceof Enumeration) {
-                attributesToReturn.put(entry.getKey(), value);
+                return value;
             } else {
-                attributesToReturn.put(entry.getKey(), Collections.singleton(value));
+                return Collections.singleton(value);
             }
-        }
-        return attributesToReturn;
+        }));
     }
 
     /**
@@ -239,7 +238,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @return the authentication date
      * @since 4.1.0
      */
-    protected final DateTime getAuthenticationDate(final Map<String, Object> model) {
+    protected final ZonedDateTime getAuthenticationDate(final Map<String, Object> model) {
         return getPrimaryAuthenticationFrom(model).getAuthenticationDate();
     }
 
@@ -273,11 +272,7 @@ public abstract class AbstractCasView extends AbstractView {
          * The most recently-visited proxy MUST be the first proxy listed, and all the
          * other proxies MUST be shifted down as new proxies are added. I
          */
-        final int numberAuthenticationsExceptPrimary = chainedAuthentications.size() - 1;
-        for (int i = 0; i < numberAuthenticationsExceptPrimary; i++) {
-            chainedAuthenticationsToReturn.add(chainedAuthentications.get(i));
-        }
-        return chainedAuthenticationsToReturn;
+        return chainedAuthentications.stream().limit(chainedAuthentications.size() - 1).collect(Collectors.toList());
     }
 
     /**

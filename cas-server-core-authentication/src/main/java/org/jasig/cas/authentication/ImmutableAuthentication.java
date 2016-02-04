@@ -3,9 +3,9 @@ package org.jasig.cas.authentication;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.jasig.cas.authentication.principal.Principal;
-import org.joda.time.DateTime;
 import org.springframework.util.Assert;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +26,7 @@ public final class ImmutableAuthentication implements Authentication {
     private static final long serialVersionUID = 3206127526058061391L;
 
     /** Authentication date stamp. */
-    private final DateTime authenticationDate;
+    private final ZonedDateTime authenticationDate;
 
     /** List of metadata about credentials presented at authentication. */
     private final List<CredentialMetaData> credentials;
@@ -64,7 +64,7 @@ public final class ImmutableAuthentication implements Authentication {
      * @param failures Nullable map of authentication failures.
      */
     public ImmutableAuthentication(
-            final DateTime date,
+            final ZonedDateTime date,
             final List<CredentialMetaData> credentials,
             final Principal principal,
             final Map<String, Object> attributes,
@@ -92,7 +92,7 @@ public final class ImmutableAuthentication implements Authentication {
     }
 
     @Override
-    public DateTime getAuthenticationDate() {
+    public ZonedDateTime getAuthenticationDate() {
         return authenticationDate;
     }
 
