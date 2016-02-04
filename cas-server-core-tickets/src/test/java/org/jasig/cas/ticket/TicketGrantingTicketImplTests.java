@@ -5,8 +5,11 @@ import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.mock.MockService;
 import org.jasig.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.jasig.cas.util.DefaultUniqueTicketIdGenerator;
+
 import org.junit.Test;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -85,11 +88,11 @@ public class TicketGrantingTicketImplTests {
         final List<Authentication> principals = new ArrayList<>();
         principals.add(authentication);
 
-        final long startTime = System.currentTimeMillis();
+        final ZonedDateTime startTime = ZonedDateTime.now(ZoneOffset.UTC).minusNanos(100);
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("test", null, null,
             authentication, new NeverExpiresExpirationPolicy());
-        final long finishTime = System.currentTimeMillis();
-        assertTrue(startTime <= t.getCreationTime() && finishTime >= t.getCreationTime());
+        final ZonedDateTime finishTime = ZonedDateTime.now(ZoneOffset.UTC).plusNanos(100);
+        assertTrue(startTime.isBefore(t.getCreationTime()) && finishTime.isAfter(t.getCreationTime()));
     }
 
     @Test

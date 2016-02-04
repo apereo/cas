@@ -264,12 +264,7 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
 
     }
 
-    /**
-     * Note:
-     * Synchronization on ticket object in case of cache based registry doesn't serialize
-     * access to critical section. The reason is that cache pulls serialized data and
-     * builds new object, most likely for each pull. Is this synchronization needed here?
-     */
+
     @Audit(
         action="SERVICE_TICKET_VALIDATE",
         actionResolverName="VALIDATE_SERVICE_TICKET_RESOLVER",
@@ -290,6 +285,11 @@ public final class CentralAuthenticationServiceImpl extends AbstractCentralAuthe
         }
 
         try {
+            /**
+             * Synchronization on ticket object in case of cache based registry doesn't serialize
+             * access to critical section. The reason is that cache pulls serialized data and
+             * builds new object, most likely for each pull. Is this synchronization needed here?
+             */
             synchronized (serviceTicket) {
                 if (serviceTicket.isExpired()) {
                     logger.info("ServiceTicket [{}] has expired.", serviceTicketId);

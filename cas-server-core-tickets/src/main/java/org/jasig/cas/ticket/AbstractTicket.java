@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -43,15 +45,15 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     /** The last time this ticket was used. */
     @Column(name="LAST_TIME_USED")
-    private long lastTimeUsed;
+    private ZonedDateTime lastTimeUsed;
 
     /** The previous last time this ticket was used. */
     @Column(name="PREVIOUS_LAST_TIME_USED")
-    private long previousLastTimeUsed;
+    private ZonedDateTime previousLastTimeUsed;
 
     /** The time the ticket was created. */
     @Column(name="CREATION_TIME")
-    private long creationTime;
+    private ZonedDateTime creationTime;
 
     /** The number of times this was used. */
     @Column(name="NUMBER_OF_TIMES_USED")
@@ -79,8 +81,8 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         Assert.notNull(id, "id cannot be null");
 
         this.id = id;
-        this.creationTime = System.currentTimeMillis();
-        this.lastTimeUsed = System.currentTimeMillis();
+        this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
+        this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.expirationPolicy = expirationPolicy;
     }
 
@@ -101,7 +103,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      */
     protected final void updateState() {
         this.previousLastTimeUsed = this.lastTimeUsed;
-        this.lastTimeUsed = System.currentTimeMillis();
+        this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.countOfUses++;
     }
 
@@ -111,17 +113,17 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     @Override
-    public final long getCreationTime() {
+    public final ZonedDateTime getCreationTime() {
         return this.creationTime;
     }
 
     @Override
-    public final long getLastTimeUsed() {
+    public final ZonedDateTime getLastTimeUsed() {
         return this.lastTimeUsed;
     }
 
     @Override
-    public final long getPreviousTimeUsed() {
+    public final ZonedDateTime getPreviousTimeUsed() {
         return this.previousLastTimeUsed;
     }
 

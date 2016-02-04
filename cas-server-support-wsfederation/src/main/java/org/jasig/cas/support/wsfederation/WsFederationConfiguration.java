@@ -16,9 +16,9 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class gathers configuration information for the WS Federation Identity Provider.
@@ -190,11 +190,7 @@ public final class WsFederationConfiguration implements Serializable {
     }
 
     private void createSigningWallet(final List<Resource> signingCertificateFiles) {
-        final List<Credential> signingCerts = new ArrayList<>();
-        for (final Resource file : signingCertificateFiles) {
-            signingCerts.add(getSigningCredential(file));
-        }
-        this.signingWallet = signingCerts;
+        this.signingWallet = signingCertificateFiles.stream().map(this::getSigningCredential).collect(Collectors.toList());
     }
 
     /**

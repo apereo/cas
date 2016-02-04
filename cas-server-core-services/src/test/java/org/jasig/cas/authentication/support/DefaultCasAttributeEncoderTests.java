@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -36,9 +37,7 @@ public class DefaultCasAttributeEncoderTests {
     @Before
     public void before() {
         this.attributes = new HashMap<>();
-        for (int i = 0; i < 3; i++) {
-            this.attributes.put("attr" + i, newSingleAttribute("value" + i));
-        }
+        IntStream.range(0, 3).forEach(i -> this.attributes.put("attr" + i, newSingleAttribute("value" + i)));
         this.attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, newSingleAttribute("PGT-1234567"));
         this.attributes.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, newSingleAttribute("PrincipalPassword"));
     }

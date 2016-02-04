@@ -1,9 +1,10 @@
 package org.jasig.cas.util;
 
-import com.google.common.io.ByteSource;
 import org.jasig.cas.mock.MockServiceTicket;
 import org.jasig.cas.mock.MockTicketGrantingTicket;
 import org.jasig.cas.ticket.Ticket;
+
+import com.google.common.io.ByteSource;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -21,34 +22,34 @@ public class TicketEncryptionDecryptionTests {
 
     @Test
     public void checkSerializationOfTgt() {
-        final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, tgt);
-        final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
+        final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, tgt);
+        final Ticket obj = SerializationUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
     @Test
     public void checkSerializationOfSt() {
         final MockServiceTicket st = new MockServiceTicket("serviceid", org.jasig.cas.services.TestUtils.getService(), tgt);
-        final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, st);
-        final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
+        final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
+        final Ticket obj = SerializationUtils.decodeAndSerializeObject(bytes, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
     @Test
     public void checkSerializationOfStBase64Encode() {
         final MockServiceTicket st = new MockServiceTicket("serviceid", org.jasig.cas.services.TestUtils.getService(), tgt);
-        final byte[] bytes = CompressionUtils.serializeAndEncodeObject(cipher, st);
-        final String string = CompressionUtils.encodeBase64(bytes);
+        final byte[] bytes = SerializationUtils.serializeAndEncodeObject(cipher, st);
+        final String string = EncodingUtils.encodeBase64(bytes);
         assertNotNull(string);
-        final byte[] result = CompressionUtils.decodeBase64(string);
-        final Ticket obj = CompressionUtils.decodeAndSerializeObject(result, cipher, Ticket.class);
+        final byte[] result = EncodingUtils.decodeBase64(string);
+        final Ticket obj = SerializationUtils.decodeAndSerializeObject(result, cipher, Ticket.class);
         assertNotNull(obj);
     }
 
     @Test
     public void checkSerializationOfTgtByteSource() throws Exception {
-        final ByteSource bytes = ByteSource.wrap(CompressionUtils.serializeAndEncodeObject(cipher, tgt));
-        final Ticket obj = CompressionUtils.decodeAndSerializeObject(bytes.read(), cipher, Ticket.class);
+        final ByteSource bytes = ByteSource.wrap(SerializationUtils.serializeAndEncodeObject(cipher, tgt));
+        final Ticket obj = SerializationUtils.decodeAndSerializeObject(bytes.read(), cipher, Ticket.class);
         assertNotNull(obj);
     }
 

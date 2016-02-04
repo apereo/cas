@@ -76,9 +76,9 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
                 && checkParameterExist(request, OAuthConstants.CODE);
 
         return checkParameterExist
-            && checkServiceValid(request)
-            && checkCallbackValid(request)
-            && checkClientSecret(request);
+                && checkServiceValid(request)
+                && checkCallbackValid(request)
+                && checkClientSecret(request);
     }
 
     public AccessTokenFactory getAccessTokenFactory() {
