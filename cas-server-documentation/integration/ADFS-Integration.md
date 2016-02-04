@@ -3,7 +3,7 @@ layout: default
 title: CAS - ADFS Integration
 ---
 
-#Overview
+# Overview
 The integration between the CAS Server and ADFS delegates user authentication from CAS Server to ADFS, making CAS Server a WS-Federation client. 
 Claims released from ADFS are made available as attributes to CAS Server, and by extension CAS Clients.
 
@@ -17,7 +17,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 ```
 
-##Components
+## Components
 
 ### WsFed Configuration
 

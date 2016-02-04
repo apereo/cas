@@ -28,56 +28,56 @@ Support is enabled by including the following in your `pom.xml` file:
 
 REST support is currently provided internally by the [Spring framework](http://spring.io/guides/gs/rest-service/).
 
-#Protocol
+# Protocol
 
-##Request a Ticket Granting Ticket
+## Request a Ticket Granting Ticket
 
-###Sample Request
+### Sample Request
 ```bash
 POST /cas/v1/tickets HTTP/1.0
 
 username=battags&password=password&additionalParam1=paramvalue
 ```
 
-###Sample Response
+### Sample Response
 
-####Successful Response
+#### Successful Response
 ```bash
 201 Created
 Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
 
-####Unsuccessful Response
+#### Unsuccessful Response
 If incorrect credentials are sent, CAS will respond with a 400 Bad Request error
 (will also respond for missing parameters, etc.). If you send a media type
 it does not understand, it will send the 415 Unsupported Media Type.
 
-##Request a Service Ticket
+## Request a Service Ticket
 
-###Sample Request
+### Sample Request
 ```bash
 POST /cas/v1/tickets/{TGT id} HTTP/1.0
 
 service={form encoded parameter for the service url}
 ```
 
-###Sample Response
+### Sample Response
 
-####Successful Response
+#### Successful Response
 ```bash
 200 OK
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
 ```
-####Unsuccessful Response
+#### Unsuccessful Response
 CAS will send a 400 Bad Request. If an incorrect media type is
 sent, it will send the 415 Unsupported Media Type.
 
-##Logout
+## Logout
 ```bash
 DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
 ```
 
-##Add Service
+## Add Service
 
 Support is enabled by including the following in your maven overlay:
 
@@ -106,7 +106,7 @@ POST /cas/v1/services/add/{TGT id} HTTP/1.0
 serviceId=svcid&name=svcname&description=svcdesc&evaluationOrder=1234&enabled=true&ssoEnabled=true
 ```
 
-####Successful Response
+#### Successful Response
 If the request is successful, the returned value in the response would be
 the generated identifier of the new service.
 

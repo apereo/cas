@@ -47,7 +47,7 @@ The following settings are applicable:
 # file.authn.separator=::
 ```
 
-####Example Password File
+#### Example Password File
 ```bash
 scott::password
 bob::password2

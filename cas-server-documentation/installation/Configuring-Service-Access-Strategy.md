@@ -3,7 +3,7 @@ layout: default
 title: CAS - Configuring Service Access Strategy
 ---
 
-#Configure Service Access Strategy
+# Configure Service Access Strategy
 The access strategy of a registered service provides fine-grained control over the service authorization rules.
 it describes whether the service is allowed to use the CAS server, allowed to participate in
 single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal
@@ -11,7 +11,7 @@ attributes that must exist before access can be granted to the service. This beh
 various attributes in terms of access roles for the application and define rules that would be enacted and
 validated when an authentication request from the application arrives.
 
-##Default Strategy
+## Default Strategy
 The `DefaultRegisteredServiceAccessStrategy` allows one to configure a service with the following properties:
 
 | Field                             | Description
@@ -29,7 +29,7 @@ case-sensitive. Exact matches are required for any individual attribute name.</p
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-##Time-based Strategy
+## Time-based Strategy
 The `TimeBasedRegisteredServiceAccessStrategy` access strategy is an extension of the default which additionally,
 allows one to configure a service with the following properties:
 
@@ -38,7 +38,7 @@ allows one to configure a service with the following properties:
 | `startingDateTime`                | Indicates the starting date/time whence service access may be granted.  (i.e. `2015-10-11T09:55:16.552-07:00`)
 | `endingDateTime`                  | Indicates the ending date/time whence service access may be granted.  (i.e. `2015-10-20T09:55:16.552-07:00`)
 
-##Grouper Strategy
+## Grouper Strategy
 The `GrouperRegisteredServiceAccessStrategy` is enabled by including the following dependency in the Maven WAR overlay:
 
 ```xml
@@ -68,7 +68,7 @@ grouperClient.webService.password = password
 ```
 
 
-##Configuration of Access Control
+## Configuration of Access Control
 Some examples of RBAC configuration follow:
 
 * Service is not allowed to use CAS:
