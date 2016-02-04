@@ -3,7 +3,7 @@ layout: default
 title: CAS - CAS SAML Protocol
 ---
 
-#SAML Protocol
+# SAML Protocol
 CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. This document deals with CAS-specific concerns.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
@@ -16,7 +16,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-#SAML 1.1
+# SAML 1.1
 CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/SAML_1.1) primarily to:
 
 - Support a method of [attribute release](../integration/Attribute-Release.html)
@@ -25,7 +25,7 @@ CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/S
 A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
 
 
-##Sample Request
+## Sample Request
 {% highlight xml %}
 POST /cas/samlValidate?ticket=
 Host: cas.example.com
@@ -47,7 +47,7 @@ Content-Type: text/xml
 {% endhighlight %}
 
 
-##Sample Response
+## Sample Response
 {% highlight xml %}
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />
@@ -113,7 +113,7 @@ Content-Type: text/xml
 {% endhighlight %}
 
 
-##Configuration
+## Configuration
 SAML configuration in CAS is contained within the `cas.properties` file.
 
 {% highlight properties %}
@@ -124,7 +124,7 @@ SAML configuration in CAS is contained within the `cas.properties` file.
 # cas.saml.response.skewAllowance=0
 {% endhighlight %}
 
-#SAML 2
+# SAML 2
 
 CAS support for SAML 2 at this point is mostly limited to 
 [Google Apps Integration](../integration/Google-Apps-Integration.html). 

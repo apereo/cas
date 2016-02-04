@@ -196,7 +196,7 @@ length of the SSO session. If there are any attribute value changes since the
 commencement of SSO session, the changes are not reflected and returned back
 to the service upon release time.
 
-###Components
+### Components
 
 ###`PrincipalAttributesRepository`
 Parent component that describes the relationship between a CAS `Principal`
@@ -251,7 +251,7 @@ Sample configuration follows:
 {% endhighlight %}
 
 
-####Merging Strategies
+#### Merging Strategies
 By default, no merging strategy takes place, which means the principal attributes are always ignored and
 attributes from the source are always returned. But any of the following merging strategies may be a suitable option:
 
@@ -347,7 +347,7 @@ For example:
 }
 {% endhighlight %}
 
-###Encrypting Attributes
+### Encrypting Attributes
 CAS by default supports the ability to encrypt certain attributes, such as the proxy-granting ticket and the credential conditionally.
 If you wish to take this a step further and encrypt other attributes that you deem sensitive, you can use the following components
 as a baseline to carry out the task at hand:
