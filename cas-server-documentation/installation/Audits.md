@@ -3,13 +3,13 @@ layout: default
 title: CAS - Audit Configuration
 ---
 
-#Audits
+# Audits
 CAS uses the [Inspektr framework](https://github.com/Jasig/inspektr) for auditing purposes
 and statistics. The Inspektr project allows for non-intrusive auditing and logging of the
 coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations
 and Spring-managed `@Aspect`-style aspects.
 
-##Configuration
+## Configuration
 Configuration of the audit trail manager is defined inside `deployerConfigContext.xml`.
 
 ### File-based Audits
@@ -22,7 +22,7 @@ a `cas_audit.log` file defined in the `log4j2.xml` configuration as well as the 
 # cas.audit.appcode=CAS
 {% endhighlight %}
 
-###Database Audits
+### Database Audits
 If you intend to use a database
 for auditing functionality, adjust the audit manager to match the configuration below:
 
@@ -58,7 +58,7 @@ Configuration consists of:
 {% endhighlight %}
 
 
-##Sample Log Output
+## Sample Log Output
 {% highlight bash %}
 WHO: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975
 WHAT: supplied credentials: org.jasig.cas.support.oauth.authentication.principal.OAuthCredentials@6cd7c975

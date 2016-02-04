@@ -47,7 +47,7 @@ The following settings are applicable:
 # file.authn.separator=::
 {% endhighlight %}
 
-####Example Password File
+#### Example Password File
 {% highlight bash %}
 scott::password
 bob::password2

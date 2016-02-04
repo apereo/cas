@@ -19,7 +19,7 @@ Support is enabled by including the following dependency in the Maven WAR overla
 </dependency>
 {% endhighlight %}
 
-###Shiro Configuration
+### Shiro Configuration
 Apache Shiro supports retrieving and checking roles and permissions for an authenticated
 subject. CAS exposes a modest configuration to enforce roles and permissions as part
 of the authentication, so that in their absence, the authentication may fail.

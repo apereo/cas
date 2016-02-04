@@ -9,7 +9,7 @@ Each registered application in the registry may be assigned a proxy policy to de
 
 Note that by default, the proxy authentication is disallowed for all applications.
 
-##Components
+## Components
 
 ###`RefuseRegisteredServiceProxyPolicy`
 Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.

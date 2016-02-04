@@ -113,7 +113,7 @@ The following settings are applicable:
 <alias name="plainTextPasswordEncoder" alias="passwordEncoder" />
 {% endhighlight %}
 
-##Argument Extractors
+## Argument Extractors
 Extractors are responsible to examine the http request received for parameters that describe the authentication request such as the requesting `service`, etc. Extractors exist for a number of supported authentication protocols and each create appropriate instances of `WebApplicationService` that contains the results of the extraction.
 
 ## Principal Resolution
