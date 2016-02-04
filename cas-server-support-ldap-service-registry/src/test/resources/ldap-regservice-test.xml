@@ -21,14 +21,4 @@
     <alias name="provisioningConnectionFactory" alias="ldapServiceRegistryConnectionFactory" />
     <alias name="searchRequest" alias="ldapServiceRegistrySearchRequest" />
 
-    <!-- just for tests -->
-    <bean id="accessTokenJwtGenerator" class="org.pac4j.jwt.profile.JwtGenerator">
-        <constructor-arg name="signingSecret" value="12345678901234567890123456789012" />
-        <constructor-arg name="encryptionSecret" value="12345678901234567890123456789012" />
-    </bean>
-
-    <bean id="accessTokenJwtAuthenticator" class="org.pac4j.jwt.credentials.authenticator.JwtAuthenticator">
-        <constructor-arg name="signingSecret" value="12345678901234567890123456789012" />
-        <constructor-arg name="encryptionSecret" value="12345678901234567890123456789012" />
-    </bean>
 </beans>

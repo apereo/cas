@@ -6,13 +6,13 @@ title: CAS - LDAP Authentication
 # LDAP Authentication
 LDAP integration is enabled by including the following dependency in the Maven WAR overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
      <groupId>org.jasig.cas</groupId>
      <artifactId>cas-server-support-ldap</artifactId>
      <version>${cas.version}</version>
 </dependency>
-{% endhighlight %}
+```
 
 `LdapAuthenticationHandler` authenticates a username/password against an LDAP directory such as Active Directory
 or OpenLDAP. There are numerous directory architectures and we provide configuration for four common cases:
@@ -28,7 +28,7 @@ See the [ldaptive documentation](http://www.ldaptive.org/) for more information 
 ## Ldap Authentication Principal Attributes
 The `LdapAuthenticationHandler` is capable of resolving and retrieving principal attributes independently without the need for [extra principal resolver machinery](../integration/Attribute-Resolution.html).
 
-{% highlight xml %}
+```xml
 <bean id="ldapAuthenticationHandler"
 class="org.jasig.cas.authentication.LdapAuthenticationHandler"
       p:principalIdAttribute="sAMAccountName"
@@ -41,11 +41,11 @@ class="org.jasig.cas.authentication.LdapAuthenticationHandler"
         </map>
     </property>
 </bean>
-{% endhighlight %}
+```
 
 The above configuration defines a map of attributes. Keys are LDAP attribute names and values are CAS attribute names which allow you to optionally, retrieve a given attribute and release it under a virtual name. (i.e. Retrieve `mail` from LDAP and remap/rename it to `email` to be released later). If you have no need for this virtual mapping mechanism, you could directly specify the attributes as a list, in which case the above configuration would become:
 
-{% highlight xml %}
+```xml
 <bean id="ldapAuthenticationHandler"
     class="org.jasig.cas.authentication.LdapAuthenticationHandler"
     p:principalIdAttribute="sAMAccountName"
@@ -58,18 +58,18 @@ The above configuration defines a map of attributes. Keys are LDAP attribute nam
        </list>
     </property>
 </bean>
-{% endhighlight %}
+```
 
 ## Schema Declaration
 LDAP authentication is declared using a custom schema to reduce configuration noise. Before configuration, ensure that the XML configuration file contains the `ldaptive` namespace declarations:
 
-{% highlight xml %}
+```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
        xsi:schemaLocation="
        http://www.ldaptive.org/schema/spring-ext
        http://www.ldaptive.org/schema/spring-ext.xsd">
-{% endhighlight %}
+```
 
 ## Active Directory Authentication
 The following configuration authenticates users with a custom filter,
@@ -78,7 +78,7 @@ the authentication is executed by _UPN_ without performing a search. It is
 therefore the most performant and secure solution for the typical Active Directory deployment.
 Simply copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 
-{% highlight xml %}
+```xml
 <ldaptive:ad-authenticator id="authenticator"
         ldapUrl="${ldap.url}"
         userFilter="${ldap.authn.searchFilter}"
@@ -100,13 +100,13 @@ Simply copy the configuration to `deployerConfigContext.xml` and provide values 
         subtreeSearch="${ldap.subtree.search:true}"
         useStartTLS="${ldap.useStartTLS}"
             />
-{% endhighlight %}
+```
 
 ## LDAP Requiring Authenticated Search
 The following configuration snippet provides a template for LDAP authentication performed with manager credentials
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
 
-{% highlight xml %}
+```xml
 <ldaptive:bind-search-authenticator id="authenticator"
         ldapUrl="${ldap.url}"
         baseDn="${ldap.baseDn}"
@@ -129,12 +129,12 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
         subtreeSearch="${ldap.subtree.search:true}"
         useSSL="${ldap.use.ssl:false}"
 />
-{% endhighlight %}
+```
 
 ## LDAP Supporting Anonymous Search
 The following configuration snippet provides a template for LDAP authentication performed with an anonymous search
 followed by a bind. Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
-{% highlight xml %}
+```xml
 <ldaptive:anonymous-search-authenticator id="authenticator"
        ldapUrl="${ldap.url}"
        connectTimeout="${ldap.connectTimeout}"
@@ -155,7 +155,7 @@ followed by a bind. Copy the configuration to `deployerConfigContext.xml` and pr
        subtreeSearch="${ldap.subtree.search:true}"
        userFilter="${ldap.authn.searchFilter}"
 />
-{% endhighlight %}
+```
 
 
 ## LDAP Supporting Direct Bind
@@ -166,7 +166,7 @@ compute the DN needed for a bind operation. There are two requirements for this 
 2. The username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`.
 
 Copy the configuration to `deployerConfigContext.xml` and provide values for property placeholders.
-{% highlight xml %}
+```xml
 
 <ldaptive:direct-authenticator id="authenticator"
         format="${ldap.authn.searchFilter}"
@@ -185,7 +185,7 @@ Copy the configuration to `deployerConfigContext.xml` and provide values for pro
         useSSL="${ldap.use.ssl:false}"
         useStartTLS="${ldap.useStartTLS}" />
 
-{% endhighlight %}
+```
 
 ## LDAP Provider Configuration
 In certain cases, it may be desirable to use a specific provider implementation when
@@ -194,7 +194,7 @@ configuration must be modified to include a reference to the selected provider.
 
 Here's an example for configuring an UnboundID provider:
 
-{% highlight xml %}
+```xml
 ...
 <ldaptive:ad-authenticator id="authenticator"
     ...
@@ -202,7 +202,7 @@ Here's an example for configuring an UnboundID provider:
     ...
 />
 ...
-{% endhighlight %}
+```
 
 Note that additional dependencies must be available to CAS at runtime depending on the probider, so it's able to locate the provider implementation and supply that to connections.
 
@@ -212,7 +212,7 @@ authentication handler. The `ldap.url` property must be changed at a minumum. LD
 `cas.properties` configuration file; alternatively they may be isolated in an `ldap.properties` file and loaded
 into the Spring application context by modifying the `propertyFileConfigurer.xml` configuration file.
 
-{% highlight properties %}
+```properties
 #========================================
 # General properties
 #========================================
@@ -272,7 +272,7 @@ ldap.usePpolicy=false
 
 # Allow multiple DNs during authentication?
 ldap.allowMultipleDns=false
-{% endhighlight %}
+```
 
 ## LDAP Password Policy Enforcement
 The purpose of the LPPE is twofold:
@@ -303,37 +303,37 @@ LPPE is also able to warn the user when the account is about to expire. The expi
 </ul></p></div>
 
 ## Configuration
-{% highlight xml %}
+```xml
 <alias name="ldapPasswordPolicyConfiguration" alias="passwordPolicyConfiguration" />
-{% endhighlight %}
+```
 
 The following settings are applicable:
 
-{% highlight properties %}
+```properties
 # password.policy.warnAll=false
 # password.policy.warningDays=30
 # password.policy.url=https://password.example.edu/change
-{% endhighlight %}
+```
 
 Next, in your `ldapAuthenticationHandler` bean, configure the password policy configuration above:
 
-{% highlight xml %}
+```xml
 <bean id="ldapAuthenticationHandler"
       class="org.jasig.cas.authentication.LdapAuthenticationHandler"
       p:passwordPolicyConfiguration-ref="passwordPolicyConfiguration">
       ...
 </bean>
-{% endhighlight %}  
+```  
 
 Next, make sure `Authenticator` is set to enable/use password policy:
 
-{% highlight xml %}
+```xml
 <ldaptive:bind-search-authenticator id="authenticator"
       ...
       usePasswordPolicy="${ldap.usePpolicy:true}"
       ...
 />
-{% endhighlight %}
+```
 
 ### Components
 
@@ -344,22 +344,22 @@ maps LDAP errors to the CAS workflow.
 #### `OptionalWarningAccountStateHandler`
 Supports both opt-in and opt-out warnings on a per-user basis.
 
-{% highlight xml %}
+```xml
 <alias name="optionalWarningAccountStateHandler" alias="passwordPolicyConfiguration" />
-{% endhighlight %}
+```
 
-{% highlight properties %}
+```properties
 # password.policy.warn.attribute.name=attributeName
 # password.policy.warn.attribute.value=attributeValue
 # password.policy.warn.display.matched=true
-{% endhighlight %}
+```
 
 ## Troubleshooting
 To enable additional logging, modify the log4j configuration file to add the following:
 
-{% highlight xml %}
+```xml
 <Logger name="org.ldaptive" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </Logger>
-{% endhighlight %}
+```
