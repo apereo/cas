@@ -25,12 +25,21 @@ public class AuthenticationException extends Exception {
 
     /**
      * Creates a new instance for the case when no handlers were attempted, i.e. no successes or failures.
+     *
+     * @param msg the msg
      */
-    public AuthenticationException() {
+    public AuthenticationException(final String msg) {
         this(
-            "No supported authentication handlers found for given credentials.",
+            msg,
             Collections.<String, Class<? extends Exception>>emptyMap(),
             Collections.<String, HandlerResult>emptyMap());
+    }
+
+    /**
+     * Instantiates a new Authentication exception.
+     */
+    public AuthenticationException() {
+        this("No supported authentication handlers found for given credentials.");
     }
 
     /**
