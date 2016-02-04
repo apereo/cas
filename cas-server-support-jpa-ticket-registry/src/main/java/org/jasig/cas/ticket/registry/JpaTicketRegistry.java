@@ -12,8 +12,6 @@ import org.jasig.cas.ticket.TicketGrantingTicket;
 import org.jasig.cas.ticket.TicketGrantingTicketImpl;
 import org.jasig.cas.ticket.proxy.ProxyGrantingTicket;
 import org.jasig.cas.ticket.registry.support.LockingStrategy;
-
-import com.google.common.base.Predicate;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDetail;
@@ -30,7 +28,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -321,8 +318,7 @@ public final class JpaTicketRegistry extends AbstractTicketRegistry implements J
                         } else {
                             logger.warn("Unknown ticket type [{} found to clean", ticket.getClass().getSimpleName());
                         }
-                }
-                    });
+                });
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
         } finally {
