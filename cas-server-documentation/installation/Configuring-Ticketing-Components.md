@@ -73,7 +73,7 @@ CAS presents a pluggable architecture for generating unique ticket ids for each 
 
 {% endhighlight %}
 
-####Components
+#### Components
 
 
 #####`UniqueTicketIdGenerator`
@@ -104,7 +104,7 @@ Unique Ticket Id Generator compliant with the SAML 1.1 specification for artifac
 The ticket registry cleaner should be used for ticket registries that cannot manage their own state. That would include the default in-memory registry and the JPA ticket registry. Cache-based ticket registry implementations such as Memcached, Hazelcast or Ehcache do not require a registry cleaner. The ticket registry cleaner configuration is specified in the `spring-configuration/ticketRegistry.xml` file.
 
 
-####Components
+#### Components
 
 #####`RegistryCleaner`
 Strategy interface to denote the start of cleaning the registry.
@@ -122,7 +122,7 @@ Strategy pattern for defining a locking strategy in support of exclusive executi
 #####`NoOpLockingStrategy`
 No-Op locking strategy that allows the use of `DefaultTicketRegistryCleaner` in environments where exclusive access to the registry for cleaning is either unnecessary or not possible.
 
-####Configuration
+#### Configuration
 If you're using the default ticket registry configuration, your `/cas-server-webapp/WEB-INF/spring-configuration/ticketRegistry.xml` probably looks like this:
 
 {% highlight xml %}

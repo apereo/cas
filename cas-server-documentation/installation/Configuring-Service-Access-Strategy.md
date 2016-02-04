@@ -3,7 +3,7 @@ layout: default
 title: CAS - Configuring Service Access Strategy
 ---
 
-#Configure Service Access Strategy
+# Configure Service Access Strategy
 The access strategy of a registered service provides fine-grained control over the service authorization rules.
 it describes whether the service is allowed to use the CAS server, allowed to participate in
 single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal
@@ -11,7 +11,7 @@ attributes that must exist before access can be granted to the service. This beh
 various attributes in terms of access roles for the application and define rules that would be enacted and
 validated when an authentication request from the application arrives.
 
-##Components
+## Components
 
 ###`RegisteredServiceAccessStrategy`
 This is the parent interface that outlines the required operations from the CAS perspective that need to be carried out in order to determine whether the service can proceed to the next step in the authentication flow.
@@ -35,7 +35,7 @@ case-sensitive. Exact matches are required for any individual attribute name.</p
 
 <div class="alert alert-info"><strong>Released Attributes</strong><p>Note that if the CAS server is configured to cache attributes upon release, all required attributes must also be released to the relying party. <a href="../integration/Attribute-Release.html">See this guide</a> for more info on attribute release and filters.</p></div>
 
-##Configuration of Access Control
+## Configuration of Access Control
 Some examples of RBAC configuration follow:
 
 * Service is not allowed to use CAS:

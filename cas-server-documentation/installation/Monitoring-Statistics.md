@@ -3,7 +3,7 @@ layout: default
 title: CAS - Monitoring & Statistics
 ---
 
-#Monitoring
+# Monitoring
 The CAS server exposes a `/status` endpoint that may be used to inquire about the health and general state of the software. Access to the endpoint is secured by Spring Security at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
 
 {% highlight xml %}
@@ -21,7 +21,7 @@ cas.securityContext.status.access=hasIpAddress('127.0.0.1')
 {% endhighlight %}
 
 
-##Sample Output
+## Sample Output
 
 {% highlight bash %}
 Health: OK
@@ -37,7 +37,7 @@ package as well as settings defined in the `cas.properties` file. The output of 
 
 ![](https://cloud.githubusercontent.com/assets/1205228/7085296/35819ff0-df2a-11e4-9818-9119fd30588e.jpg)
 
-#Statistics
+# Statistics
 Furthermore, the CAS web application has the ability to present statistical data about the runtime environment as well as ticket registry's performance.
 
 The CAS server exposes a `/statistics` endpoint that may be used to inquire about the runtime state of the software. Access to the endpoint is secured by Spring Security at `src/main/webapp/WEB-INF/spring-configuration/securityContext.xml`:
@@ -58,10 +58,10 @@ cas.securityContext.statistics.access=hasIpAddress('127.0.0.1')
 
 ![](http://i.imgur.com/8CXPgOC.png)
 
-##Performance Statistics
+## Performance Statistics
 CAS also uses the [Dropwizard Metrics framework](https://dropwizard.github.io/metrics/), that provides set of utilities for calculating and displaying performance statistics. 
 
-###Configuration
+### Configuration
 The metrics configuration is controlled via the `/src/main/webapp/WEB-INF/spring-configuration/metricsContext.xml` file. The configuration will output all performance-related data and metrics to the logging framework. The reporting interval can be configured via the `cas.properties` file:
 
 {% highlight bash %}
@@ -104,7 +104,7 @@ Supported metrics include:
 - File descriptor usage
 - ...
 
-###Loggers
+### Loggers
 All performance data and metrics are routed to a log file via the Log4j configuration:
 
 {% highlight xml %}
@@ -128,7 +128,7 @@ All performance data and metrics are routed to a log file via the Log4j configur
 {% endhighlight %}
 
 
-###Sample Output
+### Sample Output
 {% highlight bash %}
 type=GAUGE, name=jvm.gc.Copy.count, value=22
 type=GAUGE, name=jvm.gc.Copy.time, value=466
@@ -150,7 +150,7 @@ type=TIMER, name=org.jasig.cas.CentralAuthenticationServiceImpl.VALIDATE_SERVICE
 
 {% endhighlight %}
 
-###Viewing Metrics on the Web
+### Viewing Metrics on the Web
 The CAS web application exposes a `/statistics` endpoint that can be used to view metrics and stats in the browser. The endpoint is protected by Spring Security, and the access rules are placed inside the `cas.properties` file:
 
 {% highlight bash %}
@@ -172,7 +172,7 @@ Reports back JVM thread info.
 ####`/statistics/healthcheck`
 Unused at this point, but may be used later to output health examinations of the CAS server's internals, such as ticket registry, etc.
 
-##Routing logs to SysLog
+## Routing logs to SysLog
 CAS logging framework does have the ability to route messages to an external syslog instance. To configure this, you first to configure the `SysLogAppender` and then specify which messages needs to be routed over to this instance:
 
 {% highlight xml %}
