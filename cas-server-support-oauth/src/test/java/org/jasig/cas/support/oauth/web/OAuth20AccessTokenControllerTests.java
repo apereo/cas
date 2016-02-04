@@ -1,5 +1,6 @@
 package org.jasig.cas.support.oauth.web;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Principal;
@@ -18,6 +19,7 @@ import org.jasig.cas.ticket.TicketState;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.pac4j.core.context.HttpConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -218,7 +220,16 @@ public final class OAuth20AccessTokenControllerTests {
     }
 
     @Test
-    public void verifyOK() throws Exception {
+    public void verifyOKAuthByParameter() throws Exception {
+        internalVerifyOK(false);
+    }
+
+    @Test
+    public void verifyOKAuthByHeader() throws Exception {
+        internalVerifyOK(true);
+    }
+
+    private void internalVerifyOK(final boolean basicAuth) throws Exception {
         clearAllServices();
         final RegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
         oAuth20AccessTokenController.getServicesManager().save(registeredService);
@@ -236,9 +247,15 @@ public final class OAuth20AccessTokenControllerTests {
 
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest("GET", CONTEXT
                 + OAuthConstants.ACCESS_TOKEN_URL);
-        mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuthConstants.REDIRECT_URI, REDIRECT_URI);
-        mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
+        if (basicAuth) {
+            final String auth = CLIENT_ID + ":" + CLIENT_SECRET;
+            final String value = Base64.encodeBase64String(auth.getBytes("UTF-8"));
+            mockRequest.addHeader(HttpConstants.AUTHORIZATION_HEADER, HttpConstants.BASIC_HEADER_PREFIX + value);
+        } else {
+            mockRequest.setParameter(OAuthConstants.CLIENT_ID, CLIENT_ID);
+            mockRequest.setParameter(OAuthConstants.CLIENT_SECRET, CLIENT_SECRET);
+        }
         mockRequest.setParameter(OAuthConstants.CODE, code.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);

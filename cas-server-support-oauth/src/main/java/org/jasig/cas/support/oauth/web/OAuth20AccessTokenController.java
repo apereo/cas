@@ -1,13 +1,19 @@
 package org.jasig.cas.support.oauth.web;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.jasig.cas.authentication.Authentication;
 import org.jasig.cas.authentication.principal.Service;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.OAuthUtils;
+import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessToken;
 import org.jasig.cas.support.oauth.ticket.accesstoken.AccessTokenFactory;
 import org.jasig.cas.support.oauth.ticket.code.OAuthCode;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.exception.TechnicalException;
+import org.pac4j.http.credentials.UsernamePasswordCredentials;
+import org.pac4j.http.credentials.extractor.BasicAuthExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +40,8 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
     @NotNull
     @Value("${tgt.timeToKillInSeconds:7200}")
     private long timeout;
+
+    private BasicAuthExtractor basicAuthExtractor = new BasicAuthExtractor(null);
 
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
@@ -70,15 +78,83 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      */
     private boolean verifyAccessTokenRequest(final HttpServletRequest request) {
 
-        final boolean checkParameterExist = checkParameterExist(request, OAuthConstants.CLIENT_ID)
+        final boolean checkParameterExist = checkCredentialsExist(request)
                 && checkParameterExist(request, OAuthConstants.REDIRECT_URI)
-                && checkParameterExist(request, OAuthConstants.CLIENT_SECRET)
                 && checkParameterExist(request, OAuthConstants.CODE);
 
         return checkParameterExist
             && checkServiceValid(request)
             && checkCallbackValid(request)
             && checkClientSecret(request);
+    }
+
+    /**
+     * Check if the credentials exist.
+     *
+     * @param request the HTTP request
+     * @return whether the credentials exist
+     */
+    private boolean checkCredentialsExist(final HttpServletRequest request) {
+        final UsernamePasswordCredentials credential = getCredentials(request);
+        if (StringUtils.isBlank(credential.getUsername())) {
+            logger.error("Missing clientId");
+            return false;
+        } else if (StringUtils.isBlank(credential.getPassword())) {
+            logger.error("Missing secret");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Check the client secret.
+     *
+     * @param request the HTTP request
+     * @return whether the secret is valid
+     */
+    private boolean checkClientSecret(final HttpServletRequest request) {
+        final UsernamePasswordCredentials credential = getCredentials(request);
+        final String clientId = credential.getUsername();
+        final String clientSecret = credential.getPassword();
+        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
+        logger.debug("Found: {} for: {} in secret check", service, clientId);
+
+        if (!StringUtils.equals(service.getClientSecret(), clientSecret)) {
+            logger.error("Wrong client secret for service: {}", service);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    protected String getClientId(final HttpServletRequest request) {
+        return getCredentials(request).getUsername();
+    }
+
+    /**
+     * Get the client credentials.
+     *
+     * @param request the HTTP request
+     * @return the client credentials
+     */
+    protected UsernamePasswordCredentials getCredentials(final HttpServletRequest request) {
+        final String id = request.getParameter(OAuthConstants.CLIENT_ID);
+        final String secret = request.getParameter(OAuthConstants.CLIENT_SECRET);
+        UsernamePasswordCredentials credentials = null;
+        if (StringUtils.isNotBlank(id) && StringUtils.isNotBlank(secret)) {
+            credentials = new UsernamePasswordCredentials(id, secret, null);
+        } else {
+            try {
+                credentials = basicAuthExtractor.extract(new J2EContext(request, null));
+            } catch (final TechnicalException e) {
+                logger.error("Cannot get clientId / secret from header", e);
+            }
+        }
+        if (credentials != null) {
+            return credentials;
+        } else {
+            return new UsernamePasswordCredentials(null, null, null);
+        }
     }
 
     public AccessTokenFactory getAccessTokenFactory() {
