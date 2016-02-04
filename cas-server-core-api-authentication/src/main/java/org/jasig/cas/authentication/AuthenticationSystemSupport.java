@@ -35,6 +35,17 @@ public interface AuthenticationSystemSupport {
     /**
      * Initiate potential multi-transaction authentication event by handling the initial authentication transaction.
      *
+     * @param authentication a pre-established authentication object in a multi-legged authentication flow.
+     *
+     * @return authentication result builder used to accumulate authentication transactions in this authentication event.
+     *
+     * @since 4.3.0
+     */
+    AuthenticationResultBuilder establishAuthenticationContextFromInitial(Authentication authentication);
+
+    /**
+     * Initiate potential multi-transaction authentication event by handling the initial authentication transaction.
+     *
      * @param credential a credential for the initial authentication transaction.
      *
      * @return authentication result builder used to accumulate authentication transactions in this authentication event.
