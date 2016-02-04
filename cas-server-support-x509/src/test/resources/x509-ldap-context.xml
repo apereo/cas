@@ -29,13 +29,15 @@
           c:connectionPool-ref="connectionPool"/>
 
     <ldaptive:search-executor id="searchExecutor"
-                              baseDn="${ldap.baseDn}" searchFilter="${ldap.searchfilter.cert}"
-                              returnAttributes="certificateRevocationList" binaryAttributes="certificateRevocationList" />
+                              baseDn="${ldap.baseDn}"
+                              searchFilter="${ldap.searchfilter.cert}"
+                              returnAttributes="certificateRevocationList"
+                              binaryAttributes="certificateRevocationList" />
 
     <ldaptive:connection-config connectTimeout="${ldap.connectTimeout}"
                                 id="provisioningConnectionConfig"
-                                managerDN=""
-                                password=""
+                                bindDn="${ldap.managerDn}"
+                                bindCredential="${ldap.managerPassword}"
                                 useStartTLS="${ldap.useStartTLS:false}" />
 
     <ldaptive:connection-pool id="connectionPool"

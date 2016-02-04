@@ -34,8 +34,6 @@
             provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
     />
 
-    <bean id="searchValidator" class="org.ldaptive.pool.SearchValidator" />
-
     <alias name="anyAuthenticationPolicy" alias="authenticationPolicy" />
     <util:map id="authenticationHandlersResolvers"/>
     <util:list id="authenticationMetadataPopulators" />
