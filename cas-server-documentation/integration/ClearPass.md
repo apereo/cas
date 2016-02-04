@@ -34,12 +34,12 @@ returning attributes to CAS, such as SAML1 will **not** support the additional r
 ###Create Public/Private Keys
 
 
-{% highlight bash %}
+```bash
 openssl genrsa -out private.key 1024
 openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
 openssl pkcs8 -topk8 -inform PER -outform DER -nocrypt -in private.key -out private.p8
 openssl req -new -x509 -key private.key -out x509.pem -days 365
-{% endhighlight %}
+```
 
 ###Register Service
 Once you have received the public key from the client application owner, it must be first
@@ -47,7 +47,7 @@ registered inside the CAS server's service registry. The service that holds the 
 be authorized to receive the password
 as an attribute for the given attribute release policy of choice.
 
-{% highlight json %}
+```json
 {
   "@class" : "org.jasig.cas.services.RegexRegisteredService",
   "serviceId" : "^https://.+",
@@ -68,14 +68,14 @@ as an attribute for the given attribute release policy of choice.
     "algorithm" : "RSA"
   }
 }
-{% endhighlight %}
+```
 
 ###Decrypt the Password
 Once the client application has received the `credential` attribute in the CAS validation response, it can decrypt
 it via its own private key. Since the attribute is base64 encoded by default, it needs to be decoded first before
 decryption can occur. Here's a sample code snippet:
 
-{% highlight java %}
+```java
 
 final Map<?, ?> attributes = ...
 final String encodedPsw = (String) attributes.get("credential");
@@ -88,7 +88,7 @@ cipher.init(Cipher.DECRYPT_MODE, privateKey);
 final byte[] cipherData = cipher.doFinal(cred64);
 return new String(cipherData);
 
-{% endhighlight %}
+```
 
 
 ##Components
@@ -110,7 +110,7 @@ The default implementation of the attribute encoder that will use a per-service 
 to encrypt. It will attempt to query the collection of attributes that resolved to determine
 which attributes can be encoded. Attributes will be encoded via a `RegisteredServiceCipherExecutor`.
 
-{% highlight xml %}
+```xml
 <bean id="cas3ServiceSuccessView"
     class="Cas30ResponseView"
     c:view-ref="cas3JstlSuccessView"
@@ -125,4 +125,4 @@ which attributes can be encoded. Attributes will be encoded via a `RegisteredSer
     class="org.jasig.cas.authentication.support.DefaultCasAttributeEncoder"
     c:servicesManager-ref="servicesManager"
     c:cipherExecutor-ref="casRegisteredServiceCipherExecutor"  />
-{% endhighlight %}
+```

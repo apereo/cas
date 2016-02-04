@@ -17,7 +17,6 @@ import org.jasig.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jasig.cas.services.ServiceRegistryDao;
 import org.jasig.cas.support.oauth.OAuthConstants;
 import org.jasig.cas.support.oauth.services.OAuthCallbackAuthorizeService;
-import org.jasig.cas.support.oauth.services.OAuthRegisteredCallbackAuthorizeService;
 import org.jasig.cas.support.oauth.services.OAuthRegisteredService;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -126,7 +125,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     public void verifyOAuthServicesCallback() {
         final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
         r.setName("test345");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
         r.setTheme("theme");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
@@ -136,9 +135,9 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Test
     public void verifyOAuthRegisteredServicesCallback() {
-        final OAuthRegisteredCallbackAuthorizeService r = new OAuthRegisteredCallbackAuthorizeService();
+        final OAuthCallbackAuthorizeService r = new OAuthCallbackAuthorizeService();
         r.setName("testoauth");
-        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL);
+        r.setServiceId(OAuthConstants.CALLBACK_AUTHORIZE_URL_DEFINITION);
         r.setTheme("theme");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());

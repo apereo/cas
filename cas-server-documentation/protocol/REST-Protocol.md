@@ -17,14 +17,14 @@ by exposing a way to RESTfully obtain a Ticket Granting Ticket and then use that
 # Components
 Support is enabled by including the following in your `pom.xml` file:
 
-{% highlight xml %}
+```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-rest</artifactId>
     <version>${cas.version}</version>
     <scope>runtime</scope>
 </dependency>
-{% endhighlight %}
+```
 
 REST support is currently provided internally by the [Spring framework](http://spring.io/guides/gs/rest-service/).
 
@@ -33,19 +33,19 @@ REST support is currently provided internally by the [Spring framework](http://s
 ##Request a Ticket Granting Ticket
 
 ###Sample Request
-{% highlight bash %}
+```bash
 POST /cas/v1/tickets HTTP/1.0
 
 username=battags&password=password&additionalParam1=paramvalue
-{% endhighlight %}
+```
 
 ###Sample Response
 
 ####Successful Response
-{% highlight bash %}
+```bash
 201 Created
 Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
-{% endhighlight %}
+```
 
 ####Unsuccessful Response
 If incorrect credentials are sent, CAS will respond with a 400 Bad Request error
@@ -55,40 +55,40 @@ it does not understand, it will send the 415 Unsupported Media Type.
 ##Request a Service Ticket
 
 ###Sample Request
-{% highlight bash %}
+```bash
 POST /cas/v1/tickets/{TGT id} HTTP/1.0
 
 service={form encoded parameter for the service url}
-{% endhighlight %}
+```
 
 ###Sample Response
 
 ####Successful Response
-{% highlight bash %}
+```bash
 200 OK
 ST-1-FFDFHDSJKHSDFJKSDHFJKRUEYREWUIFSD2132
-{% endhighlight %}
+```
 ####Unsuccessful Response
 CAS will send a 400 Bad Request. If an incorrect media type is
 sent, it will send the 415 Unsupported Media Type.
 
 ##Logout
-{% highlight bash %}
+```bash
 DELETE /cas/v1/tickets/TGT-fdsjfsdfjkalfewrihfdhfaie HTTP/1.0
-{% endhighlight %}
+```
 
 ##Add Service
 
 Support is enabled by including the following in your maven overlay:
 
-{% highlight xml %}
+```xml
 <dependency>
     <groupId>org.jasig.cas</groupId>
     <artifactId>cas-server-support-rest-services</artifactId>
     <version>${cas.version}</version>
     <scope>runtime</scope>
 </dependency>
-{% endhighlight %}
+```
 
 Invoke CAS to register applications into its own service registry. The REST
 call must be authenticated as it requires a TGT from the CAS server, and furthermore,
@@ -96,31 +96,31 @@ the authenticated principal that submits the request must be authorized with a
 preconfigured role name and value that is designated in the CAS configuration
 via the following properties:
 
-{% highlight properties %}
+```properties
 # cas.rest.services.attributename=
 # cas.rest.services.attributevalue=
-{% endhighlight %}
+```
 
-{% highlight bash %}
+```bash
 POST /cas/v1/services/add/{TGT id} HTTP/1.0
 serviceId=svcid&name=svcname&description=svcdesc&evaluationOrder=1234&enabled=true&ssoEnabled=true
-{% endhighlight %}
+```
 
 ####Successful Response
 If the request is successful, the returned value in the response would be
 the generated identifier of the new service.
 
-{% highlight bash %}
+```bash
 200 OK
 5463544213
-{% endhighlight %}
+```
 
 ## CAS REST Clients
 In order to interact with the CAS REST API, a REST client must be used to submit credentials,
 receive tickets and validate them. The following Java REST client is available
 by [pac4j](https://github.com/pac4j/pac4j):
 
-{% highlight java %}
+```java
 String casUrlPrefix = "http://localhost:8080/cas";
 CasRestAuthenticator authenticator = new CasRestAuthenticator(casUrlPrefix);
 CasRestFormClient client = new CasRestFormClient(authenticator);
@@ -131,4 +131,4 @@ final HttpTGTProfile profile = client.requestTicketGrantingTicket(context);
 final CasCredentials casCreds = client.requestServiceTicket("<SERVICE_URL>", profile);
 final CasProfile casProfile = client.validateServiceTicket("<SERVICE_URL>", casCreds);
 client.destroyTicketGrantingTicket(context, profile);
-{% endhighlight %}
+```
