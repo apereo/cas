@@ -4,7 +4,6 @@ import org.jasig.cas.AbstractCentralAuthenticationServiceTests;
 import org.jasig.cas.authentication.AuthenticationResult;
 import org.jasig.cas.authentication.TestUtils;
 import org.jasig.cas.ticket.TicketGrantingTicket;
-import org.jasig.cas.ticket.registry.DefaultTicketRegistrySupport;
 import org.jasig.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
