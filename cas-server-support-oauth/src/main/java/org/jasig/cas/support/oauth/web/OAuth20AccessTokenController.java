@@ -137,7 +137,7 @@ public final class OAuth20AccessTokenController extends BaseOAuthWrapperControll
      * @param request the HTTP request
      * @return the client credentials
      */
-    protected UsernamePasswordCredentials getCredentials(final HttpServletRequest request) {
+    private UsernamePasswordCredentials getCredentials(final HttpServletRequest request) {
         final String id = request.getParameter(OAuthConstants.CLIENT_ID);
         final String secret = request.getParameter(OAuthConstants.CLIENT_SECRET);
         UsernamePasswordCredentials credentials = null;
