@@ -182,7 +182,9 @@
         <module name="EqualsAvoidNull">
             <property name="severity" value="error"/>
         </module>
-        <module name="RightCurly"/>
+        <module name="RightCurly">
+            <property name="severity" value="error"/>
+        </module>
         <module name="NoFinalizer">
             <property name="severity" value="error"/>
         </module>
