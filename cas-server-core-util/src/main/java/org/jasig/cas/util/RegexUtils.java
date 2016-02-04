@@ -1,12 +1,12 @@
 package org.jasig.cas.util;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 /**
  * Utility class to assist with regex operations.
@@ -43,11 +43,7 @@ public final class RegexUtils {
      * @return the pattern
      */
     public static Pattern concatenate(final Collection<String> requiredValues, final boolean caseInsensitive) {
-        final StringBuilder builder = new StringBuilder(requiredValues.size());
-        for (final String requiredValue : requiredValues) {
-            builder.append('(').append(requiredValue).append(")|");
-        }
-        final String pattern = StringUtils.removeEnd(builder.toString(), "|");
+        final String pattern = requiredValues.stream().collect(Collectors.joining("|", "(", ")"));
         if (isValidRegex(pattern)) {
             return Pattern.compile(pattern, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
         }

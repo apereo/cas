@@ -1,12 +1,14 @@
 package org.jasig.cas.authentication;
 
-import com.google.common.collect.ImmutableSet;
 import org.jasig.cas.authentication.principal.Principal;
 import org.jasig.cas.authentication.principal.Service;
-import org.joda.time.DateTime;
+
+import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -83,7 +85,7 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
         authenticationBuilder.setAttributes(authenticationAttributes);
         LOGGER.debug("Collected authentication attributes for this result are [{}]", authenticationAttributes);
 
-        final DateTime dt = DateTime.now();
+        final ZonedDateTime dt = ZonedDateTime.now(ZoneOffset.UTC);
         authenticationBuilder.setAuthenticationDate(dt);
         LOGGER.debug("Authentication result commenced at [{}]", dt);
 
@@ -97,7 +99,7 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
                                             final AuthenticationBuilder authenticationBuilder) {
 
         LOGGER.debug("Collecting authentication history based on [{}] authentication events", authentications.size());
-        for (final Authentication authn : authentications) {
+        authentications.stream().forEach(authn -> {
             final Principal authenticatedPrincipal = authn.getPrincipal();
             LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
 
@@ -105,16 +107,8 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                     principalAttributes, authenticatedPrincipal.getId());
 
-            for (final String attrName : authn.getAttributes().keySet()) {
-                if (!authenticationAttributes.containsKey(attrName)) {
-                    final Object value = authn.getAttributes().get(attrName);
-                    if (value != null) {
-                        authenticationAttributes.put(attrName, value);
-                        LOGGER.debug("Collected single authentication attribute [{}] -> [{}]", attrName, value);
-                    } else {
-                        LOGGER.warn("Authentication attribute [{}] has no value and is not collected", attrName);
-                    }
-                } else {
+            authn.getAttributes().keySet().stream().forEach(attrName -> {
+                if (authenticationAttributes.containsKey(attrName)) {
                     LOGGER.debug("Collecting multi-valued authentication attribute [{}]", attrName);
                     final Object oldValue = authenticationAttributes.remove(attrName);
 
@@ -123,15 +117,24 @@ public final class DefaultAuthenticationResultBuilder implements AuthenticationR
                     listOfValues.add(authn.getAttributes().get(attrName));
                     authenticationAttributes.put(attrName, listOfValues);
                     LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
+                } else {
+                    final Object value = authn.getAttributes().get(attrName);
+                    if (value != null) {
+                        authenticationAttributes.put(attrName, value);
+                        LOGGER.debug("Collected single authentication attribute [{}] -> [{}]", attrName, value);
+                    } else {
+                        LOGGER.warn("Authentication attribute [{}] has no value and is not collected", attrName);
+                    }
                 }
-            }
+            });
+
             LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result",
                     authenticationAttributes);
 
             authenticationBuilder.addSuccesses(authn.getSuccesses())
                     .addFailures(authn.getFailures())
                     .addCredentials(authn.getCredentials());
-        }
+        });
     }
 
     /**

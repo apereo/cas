@@ -1,15 +1,16 @@
 package org.jasig.cas.support.saml.util;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-
 import org.jasig.cas.ticket.UniqueTicketIdGenerator;
+import org.jasig.cas.util.DigestUtils;
+
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 /**
  * Unique Ticket Id Generator compliant with the SAML 1.1 specification for
@@ -47,9 +48,7 @@ public final class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketI
     @Autowired
     public SamlCompliantUniqueTicketIdGenerator(@Value("${server.name}") final String sourceId) {
         try {
-            final MessageDigest messageDigest = MessageDigest.getInstance("SHA");
-            messageDigest.update(sourceId.getBytes("8859_1"));
-            this.sourceIdDigest = messageDigest.digest();
+            this.sourceIdDigest = DigestUtils.rawDigest("SHA", sourceId.getBytes("8859_1"));
         } catch (final Exception e) {
             throw new IllegalStateException("Exception generating digest of source ID.", e);
         }

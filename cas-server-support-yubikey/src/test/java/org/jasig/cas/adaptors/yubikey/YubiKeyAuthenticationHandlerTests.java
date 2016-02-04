@@ -44,12 +44,7 @@ public class YubiKeyAuthenticationHandlerTests {
     public void checkAccountNotFound() throws Exception {
         final YubiKeyAuthenticationHandler handler =
                 new YubiKeyAuthenticationHandler(CLIENT_ID, SECRET_KEY);
-        handler.setRegistry(new YubiKeyAccountRegistry() {
-            @Override
-            public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
-                return false;
-            }
-        });
+        handler.setRegistry((uid, yubikeyPublicId) -> false);
 
         handler.authenticate(new UsernamePasswordCredential("casuser", OTP));
     }

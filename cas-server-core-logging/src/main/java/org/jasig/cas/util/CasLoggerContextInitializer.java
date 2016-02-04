@@ -47,6 +47,7 @@ public final class CasLoggerContextInitializer extends AbstractServletContextIni
     }
 
     /**
+     * {@inheritDoc}
      * Reinitialize the logger by updating the location for the logging config file.
      */
     @Override

@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * MultiActionController to handle the deletion of RegisteredServices as well as
@@ -158,9 +159,7 @@ public final class ManageRegisteredServicesMultiActionController extends Abstrac
         final Map<String, Object> model = new HashMap<>();
         final List<RegisteredServiceViewBean> serviceBeans = new ArrayList<>();
         final List<RegisteredService> services = new ArrayList<>(this.servicesManager.getAllServices());
-        for (final RegisteredService svc : services) {
-            serviceBeans.add(registeredServiceFactory.createServiceViewBean(svc));
-        }
+        serviceBeans.addAll(services.stream().map(registeredServiceFactory::createServiceViewBean).collect(Collectors.toList()));
         model.put("services", serviceBeans);
         model.put("status", HttpServletResponse.SC_OK);
         JsonViewUtils.render(model, response);

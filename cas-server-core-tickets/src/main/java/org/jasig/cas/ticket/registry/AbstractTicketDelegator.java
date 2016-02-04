@@ -3,7 +3,10 @@ package org.jasig.cas.ticket.registry;
 import org.jasig.cas.ticket.Ticket;
 import org.jasig.cas.ticket.TicketGrantingTicket;
 
+import java.time.ZonedDateTime;
+
 import java.lang.reflect.Constructor;
+
 
 /**
  * This is {@link AbstractTicketDelegator}.
@@ -74,7 +77,7 @@ public abstract class AbstractTicketDelegator<T extends Ticket> implements Ticke
     }
 
     @Override
-    public final long getCreationTime() {
+    public final ZonedDateTime getCreationTime() {
         return this.ticket.getCreationTime();
     }
 

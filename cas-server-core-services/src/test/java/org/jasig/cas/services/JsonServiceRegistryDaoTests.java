@@ -1,15 +1,17 @@
 package org.jasig.cas.services;
 
-import com.google.common.collect.Sets;
-import org.apache.commons.io.FileUtils;
 import org.jasig.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.jasig.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.joda.time.DateTime;
+
+import com.google.common.collect.Sets;
+import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.net.URI;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -235,7 +238,7 @@ public class JsonServiceRegistryDaoTests {
     @Test
     public void verifyServiceRemovals() throws Exception{
         final List<RegisteredService> list = new ArrayList<>(5);
-        for (int i = 1; i < 5; i++) {
+        IntStream.range(1, 5).forEach(i -> {
             final RegexRegisteredService r = new RegexRegisteredService();
             r.setServiceId("^https://.+");
             r.setName("testServiceType");
@@ -243,15 +246,18 @@ public class JsonServiceRegistryDaoTests {
             r.setEvaluationOrder(1000);
             r.setId(i * 100);
             list.add(this.dao.save(r));
-        }
+        });
 
-        for (final RegisteredService r2 : list) {
-            Thread.sleep(500);
-            this.dao.delete(r2);
-            Thread.sleep(2000);
+        list.stream().forEach(r2 -> {
+            try {
+                Thread.sleep(500);
+                this.dao.delete(r2);
+                Thread.sleep(2000);
+            } catch (final InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             assertNull(this.dao.findServiceById(r2.getId()));
-        }
-
+        });
     }
 
     @Test
@@ -285,8 +291,8 @@ public class JsonServiceRegistryDaoTests {
         final TimeBasedRegisteredServiceAccessStrategy authz =
                 new TimeBasedRegisteredServiceAccessStrategy(true, false);
 
-        authz.setStartingDateTime(DateTime.now().plusDays(1).toString());
-        authz.setEndingDateTime(DateTime.now().plusDays(10).toString());
+        authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
+        authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
 
         authz.setUnauthorizedRedirectUrl(new URI("https://www.github.com"));
         r.setAccessStrategy(authz);
