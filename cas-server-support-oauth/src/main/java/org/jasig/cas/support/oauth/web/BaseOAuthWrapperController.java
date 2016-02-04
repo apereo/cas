@@ -63,7 +63,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      * @return whether the service is valid
      */
     protected boolean checkServiceValid(final HttpServletRequest request) {
-        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+        final String clientId = getClientId(request);
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         logger.debug("Found: {} for: {}", service, clientId);
         if (service == null || !service.getAccessStrategy().isServiceAccessAllowed()) {
@@ -73,7 +73,6 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         return true;
     }
 
-
     /**
      * Check if the callback url is valid.
      *
@@ -81,7 +80,7 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
      * @return whether the callback url is valid
      */
     protected boolean checkCallbackValid(final HttpServletRequest request) {
-        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
+        final String clientId = getClientId(request);
         final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
         final String redirectUri = request.getParameter(OAuthConstants.REDIRECT_URI);
         final String serviceId = service.getServiceId();
@@ -93,23 +92,14 @@ public abstract class BaseOAuthWrapperController extends AbstractController {
         return true;
     }
 
-
     /**
-     * Check the client secret.
+     * Get the client identifier.
      *
      * @param request the HTTP request
-     * @return whether the secret is valid
+     * @return the client identifier
      */
-    protected boolean checkClientSecret(final HttpServletRequest request) {
-        final String clientId = request.getParameter(OAuthConstants.CLIENT_ID);
-        final OAuthRegisteredService service = OAuthUtils.getRegisteredOAuthService(this.servicesManager, clientId);
-        final String clientSecret = request.getParameter(OAuthConstants.CLIENT_SECRET);
-        logger.debug("Found: {} for: {} in secret check", service, clientId);
-        if (!StringUtils.equals(service.getClientSecret(), clientSecret)) {
-            logger.error("Wrong client secret for service: {}", service);
-            return false;
-        }
-        return true;
+    protected String getClientId(final HttpServletRequest request) {
+        return request.getParameter(OAuthConstants.CLIENT_ID);
     }
 
     public void setServicesManager(final ServicesManager servicesManager) {
