@@ -3,7 +3,7 @@ layout: default
 title: CAS - CAS SAML Protocol
 ---
 
-#SAML Protocol
+# SAML Protocol
 CAS has support for versions 1.1 and 2 of the SAML protocol to a specific extent. This document deals with CAS-specific concerns.
 
 Support is enabled by including the following dependency in the Maven WAR overlay:
@@ -31,7 +31,7 @@ CAS supports the [standardized SAML 1.1 protocol](http://en.wikipedia.org/wiki/S
 A SAML 1.1 ticket validation response is obtained by validating a ticket via POST at the `/samlValidate URI`.
 
 
-##Sample Request
+## Sample Request
 ```xml
 POST /cas/samlValidate?ticket=
 Host: cas.example.com
@@ -53,7 +53,7 @@ Content-Type: text/xml
 ```
 
 
-##Sample Response
+## Sample Response
 ```xml
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
   <SOAP-ENV:Header />
@@ -119,7 +119,7 @@ Content-Type: text/xml
 ```
 
 
-##Configuration
+## Configuration
 SAML configuration in CAS is contained within the `cas.properties` file.
 
 ```properties
