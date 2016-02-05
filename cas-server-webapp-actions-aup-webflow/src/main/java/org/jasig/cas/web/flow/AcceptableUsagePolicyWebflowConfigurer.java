@@ -28,7 +28,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
 
         final ViewState viewState = createViewState(flow, "acceptableUsagePolicyView", "casAcceptableUsagePolicyView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "aupAcceptedAction");
-        createStateDefaultTransition(actionState, CasWebflowConstants.STATE_ID_GENERATE_LOGIN_TICKET);
+        createStateDefaultTransition(actionState, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
 
         final ActionState aupAcceptedAction = createActionState(flow, "aupAcceptedAction",
                 createEvaluateAction("acceptableUsagePolicyFormAction.submit(flowRequestContext, flowScope.credential, messageContext)"));

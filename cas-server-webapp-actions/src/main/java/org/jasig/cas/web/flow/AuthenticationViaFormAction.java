@@ -20,10 +20,6 @@ import org.springframework.webflow.execution.RequestContext;
 public class AuthenticationViaFormAction extends AbstractAction {
 
     @Autowired
-    @Qualifier("loginTicketRequestValidationWebflowEventResolver")
-    private CasWebflowEventResolver loginTicketRequestValidationWebflowEventResolver;
-
-    @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
     private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
 
@@ -34,11 +30,6 @@ public class AuthenticationViaFormAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final Event event = this.loginTicketRequestValidationWebflowEventResolver.resolveSingle(requestContext);
-        if (event != null) {
-            return event;
-        }
-
         final Event serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
         if (serviceTicketEvent != null) {
             return serviceTicketEvent;

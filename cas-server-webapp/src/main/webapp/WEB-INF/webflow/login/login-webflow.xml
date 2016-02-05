@@ -16,7 +16,7 @@
     <action-state id="initialAuthenticationRequestValidationCheck">
         <evaluate expression="initialAuthenticationRequestValidationAction"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
-        <transition on="error" to="generateLoginTicket"/>
+        <transition on="error" to="initializeLoginForm"/>
         <transition on="success" to="ticketGrantingTicketCheck"/>
     </action-state>
 
@@ -49,7 +49,7 @@
     <!-- Do a service authorization check early without the need to login first -->
     <action-state id="serviceAuthorizationCheck">
         <evaluate expression="serviceAuthorizationCheck"/>
-        <transition to="generateLoginTicket"/>
+        <transition to="initializeLoginForm"/>
     </action-state>
 
     <!--
@@ -60,9 +60,8 @@
         <if test="flowScope.warnCookieValue" then="showWarningView" else="redirect"/>
     </decision-state>
 
-    <action-state id="generateLoginTicket">
-        <evaluate expression="generateLoginTicketAction.generate(flowRequestContext)"/>
-        <transition on="generated" to="viewLoginForm"/>
+    <action-state id="initializeLoginForm">
+        <transition to="viewLoginForm"/>
     </action-state>
 
     <view-state id="viewLoginForm" view="casLoginView" model="credential">
@@ -94,7 +93,7 @@
         <transition on="success" to="sendTicketGrantingTicket"/>
         <transition on="successWithWarnings" to="showMessages"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
-        <transition on="error" to="generateLoginTicket"/>
+        <transition on="error" to="initializeLoginForm"/>
     </action-state>
 
     <view-state id="showMessages" view="casLoginMessageView">
@@ -113,10 +112,10 @@
         <transition on="CredentialExpiredException" to="casExpiredPassView"/>
         <transition on="InvalidLoginLocationException" to="casBadWorkstationView"/>
         <transition on="InvalidLoginTimeException" to="casBadHoursView"/>
-        <transition on="FailedLoginException" to="generateLoginTicket"/>
-        <transition on="AccountNotFoundException" to="generateLoginTicket"/>
-        <transition on="UnauthorizedServiceForPrincipalException" to="generateLoginTicket" />
-        <transition on="UNKNOWN" to="generateLoginTicket"/>
+        <transition on="FailedLoginException" to="initializeLoginForm"/>
+        <transition on="AccountNotFoundException" to="initializeLoginForm"/>
+        <transition on="UnauthorizedServiceForPrincipalException" to="initializeLoginForm" />
+        <transition on="UNKNOWN" to="initializeLoginForm"/>
     </action-state>
 
     <action-state id="sendTicketGrantingTicket">
@@ -132,7 +131,7 @@
         <evaluate expression="generateServiceTicketAction"/>
         <transition on="success" to="warn"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
-        <transition on="error" to="generateLoginTicket"/>
+        <transition on="error" to="initializeLoginForm"/>
         <transition on="gateway" to="gatewayServicesManagementCheck"/>
     </action-state>
 
