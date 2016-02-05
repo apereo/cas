@@ -1,4 +1,4 @@
-package org.jasig.cas.support.oauth;
+package org.jasig.cas.support.oauth.util;
 
 import org.jasig.cas.services.RegisteredService;
 import org.jasig.cas.services.ServicesManager;
@@ -12,7 +12,6 @@ import org.springframework.web.servlet.view.RedirectView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-
 
 /**
  * This class has some usefull methods to output data in plain text,
@@ -66,7 +65,6 @@ public final class OAuthUtils {
     public static ModelAndView redirectTo(final String url) {
         return new ModelAndView(new RedirectView(url));
     }
-
 
     /**
      * Locate the requested instance of {@link OAuthRegisteredService} by the given clientId.
