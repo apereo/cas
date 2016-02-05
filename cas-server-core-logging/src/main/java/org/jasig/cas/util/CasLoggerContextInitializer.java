@@ -6,7 +6,6 @@ import org.jasig.cas.web.AbstractServletContextInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
@@ -51,7 +50,7 @@ public final class CasLoggerContextInitializer extends AbstractServletContextIni
      * Reinitialize the logger by updating the location for the logging config file.
      */
     @Override
-    public void initializeApplicationContext(final ConfigurableApplicationContext configurableApplicationContext) {
+    protected void initializeRootApplicationContext() {
         if (this.logConfigurationFile == null || !this.logConfigurationFile.exists()) {
             throw new RuntimeException("Log4j configuration file cannot be located");
         }
@@ -63,7 +62,8 @@ public final class CasLoggerContextInitializer extends AbstractServletContextIni
                 final URI location = logConfigurationFile.getURI();
                 if (!location.equals(oldLocation)) {
                     context.setConfigLocation(location);
-                    LOGGER.debug("Updated logging config file from [{}] to [{}]", oldLocation, location);
+                    LOGGER.debug("Updated logging config file from [{}] to [{}]",
+                            oldLocation != null ? oldLocation : "", location);
                 }
                 INITIALIZED.set(true);
             }
